@@ -14,9 +14,9 @@ const baseManifest = {
   type: 'deployManifest',
 }
 
-const baseSpinnaker = {
-  name: 'Simple deploy',
-  application: 'testepipelinemustache',
+const baseSpinnaker = (pipelineName, applicationName) => ({
+  name: pipelineName,
+  application: applicationName,
   appConfig: {},
   keepWaitingPipelines: false,
   lastModifiedBy: '',
@@ -24,7 +24,7 @@ const baseSpinnaker = {
   stages: [],
   triggers: [],
   updateTs: '1560803000000',
-}
+})
 
 export {
   baseManifest,

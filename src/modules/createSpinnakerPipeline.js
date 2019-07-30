@@ -8,7 +8,9 @@ export default async (auth, owner, repo, path, view) => {
   const allCompiledFiles = await GetMustacheResult(auth, owner, repo, path, view)
   const deployOrderFile = await GetReposFiles(auth, owner, repo, `${path}/spinnaker/order.json`)
   const deployOrder = JSON.parse(new Buffer.from(deployOrderFile.content, 'base64').toString())
-  const cloneBase = cloneDeep(baseSpinnaker)
+  const pipelineName = view.pipelineName ? view.pipelineName : 'Name default'
+  const applicationName = view.applicationName ? view.applicationName : 'Name default'
+  const cloneBase = cloneDeep(baseSpinnaker(pipelineName, applicationName))
   deployOrder.map((orderId) => {
     if (orderId.length) {
       return orderId.map((orderIdUnic) => {
