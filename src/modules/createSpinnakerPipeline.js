@@ -13,17 +13,14 @@ export default async (auth, owner, repo, path, view) => {
   const cloneBase = cloneDeep(baseSpinnaker(pipelineName, applicationName))
   deployOrder.map((orderId) => {
     if (orderId.length) {
-      return orderId.map((orderIdUnic) => {
+      return orderId.map((orderIdUnic, index) => {
         return allCompiledFiles.map((object) => {
           if (object.length) {
-            return object.map((deployment) => {
-              if (orderIdUnic.kind === deployment.kind
-                && orderIdUnic.labels === deployment.metadata.labels.version) {
-                const formatedStage = createSpinnakerStage(deployment, orderIdUnic)
+              if (orderIdUnic.kind === object[index].kind) {
+                const formatedStage = createSpinnakerStage(object[index], orderIdUnic, view)
 
                 return cloneBase.stages.push(formatedStage)
               }
-            })
           }
         })
       })
@@ -31,7 +28,7 @@ export default async (auth, owner, repo, path, view) => {
 
     return allCompiledFiles.map((object) => {
       if (orderId.kind === object.kind) {
-        const formatedStage = createSpinnakerStage(object, orderId)
+        const formatedStage = createSpinnakerStage(object, orderId, view)
         cloneBase.stages.push(formatedStage)
       }
     })

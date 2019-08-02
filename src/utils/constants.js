@@ -1,32 +1,30 @@
 const baseManifest = {
-  account: 'vivo-qa-account',
-  cloudProvider: 'kubernetes',
-  manifestArtifactAccount: 'embedded-artifact',
+  cloudProvider: "kubernetes",
+  manifestArtifactAccount: "embedded-artifact",
   manifests: [],
   name: null,
   refId: null,
   relationships: {
     loadBalancers: [],
-    securityGroups: [],
+    securityGroups: []
   },
   requisiteStageRefIds: [],
-  source: 'text',
-  type: 'deployManifest',
+  source: "text",
+  type: "deployManifest"
+};
+
+function baseSpinnaker(pipelineName, applicationName) {
+  return {
+    name: pipelineName,
+    application: applicationName,
+    appConfig: {},
+    keepWaitingPipelines: false,
+    lastModifiedBy: "",
+    limitConcurrent: true,
+    stages: [],
+    triggers: [],
+    updateTs: "1560803000000"
+  };
 }
 
-const baseSpinnaker = (pipelineName, applicationName) => ({
-  name: pipelineName,
-  application: applicationName,
-  appConfig: {},
-  keepWaitingPipelines: false,
-  lastModifiedBy: '',
-  limitConcurrent: true,
-  stages: [],
-  triggers: [],
-  updateTs: '1560803000000',
-})
-
-export {
-  baseManifest,
-  baseSpinnaker
-}
+export { baseManifest, baseSpinnaker };
