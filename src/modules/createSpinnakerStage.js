@@ -9,9 +9,8 @@ export default (deployment, refId, view) => {
   newObj.requisiteStageRefIds = refId.requireId
   newObj.account = view.account ? view.account : 'default'
   newObj.moniker = {
-    app: view.applicationName ? view.applicationName : 'default',
+    app: view.applicationName ? view.applicationName : 'default'
   }
 
   return newObj
 }
-

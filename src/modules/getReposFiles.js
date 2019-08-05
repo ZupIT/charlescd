@@ -1,4 +1,4 @@
-import Octokit from "@octokit/rest"
+import Octokit from '@octokit/rest'
 
 export default (auth, owner, repo, path) => {
   const client = new Octokit({
@@ -10,11 +10,11 @@ export default (auth, owner, repo, path) => {
     repo,
     path
   })
-  .then((result) => {
-    return result.data
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+    .then((result) => {
+      return result.data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   return contents
 }

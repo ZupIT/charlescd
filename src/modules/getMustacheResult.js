@@ -3,7 +3,7 @@ import Mustache from 'mustache'
 import map from 'lodash/map'
 import yaml from 'js-yaml'
 
-Mustache.escape = function (text) { return text; }
+Mustache.escape = function (text) { return text }
 
 export default async (auth, owner, repo, path, view) => {
   const allTemplates = await GetAllRepoContent(auth, owner, repo, path)
