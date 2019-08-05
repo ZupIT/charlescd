@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import cloneDeep from 'lodash/cloneDeep'
-import { baseSpinnaker } from '../utils/constants'
+import { baseSpinnaker, webhookBaseStage } from '../utils/constants'
 import createSpinnakerStage from './createSpinnakerStage'
 import GetMustacheResult from './getMustacheResult'
 import GetReposFiles from './getReposFiles'
@@ -43,5 +43,8 @@ export default async (auth, owner, repo, path, view) => {
     })
   })
   console.log(cloneBase)
+  if (view.webhookUri) {
+    cloneBase.stages.push(webhookBaseStage(view.webhookUri))
+  }
   return cloneBase
 }
