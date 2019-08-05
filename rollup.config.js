@@ -7,8 +7,8 @@ import { uglify } from 'rollup-plugin-uglify'
 export default {
   input: 'src/index.js',
   output: {
-    file: "spinnaker.js",
-    format: "cjs"
+    file: 'dist/spinnaker.js',
+    format: 'cjs'
   },
   plugins: [
     json(),
@@ -24,5 +24,5 @@ export default {
     }),
     uglify()
   ],
-  external: ["@octokit/rest", "@babel/runtime/regenerator", "lodash/map", "@babel/runtime/helpers/asyncToGenerator" ]
+  external: ['@octokit/rest', '@babel/runtime/regenerator', 'lodash/map', '@babel/runtime/helpers/asyncToGenerator']
 }

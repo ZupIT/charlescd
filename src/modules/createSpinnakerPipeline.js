@@ -15,7 +15,6 @@ export default async (auth, owner, repo, path, view) => {
   const cloneBase = cloneDeep(baseSpinnaker(pipelineName, applicationName, appName))
   deployOrder.map((orderId) => {
     if (orderId.length) {
-      console.log('passou aqui no length')
       return orderId.map((orderIdUnic, index) => {
         return allCompiledFiles.map((object, index) => {
           if (object.length) {
@@ -42,7 +41,6 @@ export default async (auth, owner, repo, path, view) => {
       }
     })
   })
-  console.log(cloneBase)
   if (view.webhookUri) {
     cloneBase.stages.push(webhookBaseStage(view.webhookUri))
   }
