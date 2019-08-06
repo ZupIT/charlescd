@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { SpinnakerService } from '../../../core/integrations/spinnaker/spinnaker.service';
 
 @Injectable()
 export class PipelinesService {
 
+  constructor(private readonly spinnakerService: SpinnakerService) {}
+
   public getPipelines(): string[] {
-    return [
-      'pipeline 1',
-      'pipeline 2'
-    ];
+    return this.spinnakerService.getPipelines();
   }
 }
