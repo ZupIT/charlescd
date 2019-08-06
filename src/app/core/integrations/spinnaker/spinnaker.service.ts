@@ -13,7 +13,7 @@ export class SpinnakerService {
       data.repo,
       data.folder,
       data.contract,
-    );
+    )
     const result = await this.httpService.post(
       'https://darwin-spinnaker-gate.continuousplatform.com/pipelines',
       pipeline,
@@ -22,7 +22,7 @@ export class SpinnakerService {
           'Content-Type': 'application/json',
         },
       },
-    ).toPromise();
+    ).toPromise()
     await this.httpService.post(
       `https://darwin-spinnaker-gate.continuousplatform.com/webhooks/webhook/${data.contract.pipelineName}`,
       {},
