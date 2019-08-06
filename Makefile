@@ -19,6 +19,7 @@ HOST=127.0.0.1
 
 all: test build
 build: 
+	${NODECMD}
 	${NODEBUILD} 
 	$(DOCKERBUILD) -t "${REGISTRY}/${BINARY_NAME}:${RELEASE}" .
 	$(DOCKERTAG) "${REGISTRY}/${BINARY_NAME}:${RELEASE}" "${REGISTRY}/${BINARY_NAME}:latest"
