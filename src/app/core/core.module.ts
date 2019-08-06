@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { IntegrationsModule } from './integrations/integrations.module';
+import { Module } from '@nestjs/common'
+import { IntegrationsModule } from './integrations/integrations.module'
 
 @Module({
   imports: [
