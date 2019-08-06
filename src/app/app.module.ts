@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { CoreModule } from './core/core.module';
-import { ApiModule } from './api/api.module';
+import { Module } from '@nestjs/common'
+import { CoreModule } from './core/core.module'
+import { ApiModule } from './api/api.module'
 
 @Module({
   imports: [

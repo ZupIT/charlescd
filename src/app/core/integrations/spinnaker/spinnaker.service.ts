@@ -1,17 +1,10 @@
-import { HttpService, Injectable } from '@nestjs/common';
-import { CreateSpinnakerPipeline } from 'lib-spinnaker';
+import { HttpService, Injectable } from '@nestjs/common'
+import { CreateSpinnakerPipeline } from 'lib-spinnaker'
 
 @Injectable()
 export class SpinnakerService {
 
   constructor(private readonly httpService: HttpService) {}
-
-  public getPipelines(): string[] {
-    return [
-      'pipeline 1',
-      'pipeline 2'
-    ];
-  }
 
   public async createPipeline(data): Promise<void> {
     const pipeline = await CreateSpinnakerPipeline(
@@ -38,6 +31,6 @@ export class SpinnakerService {
           'Content-Type': 'application/json',
         },
       },
-    ).toPromise();
+    ).toPromise()
   }
 }

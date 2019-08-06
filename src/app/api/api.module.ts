@@ -1,9 +1,7 @@
-import { Module } from '@nestjs/common';
-import { PipelinesModule } from './pipelines/pipelines.module';
+import { Module } from '@nestjs/common'
+import { DeploymentsModule } from './deployments/deployments.module'
 
 @Module({
-  imports: [
-    PipelinesModule
-  ]
+  imports: [DeploymentsModule]
 })
 export class ApiModule {}
