@@ -10,6 +10,6 @@ RUN npm install
 
 ADD . $APP_PATH
 
-# RUN npm test
+RUN npm run build
 
 CMD npm run start:prod
