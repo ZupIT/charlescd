@@ -3,6 +3,7 @@ import { SpinnakerService } from './spinnaker/spinnaker.service';
 
 @Module({
   imports: [HttpModule],
-  providers: [SpinnakerService]
+  providers: [SpinnakerService],
+  exports: [SpinnakerService]
 })
 export class IntegrationsModule {}
