@@ -8,7 +8,7 @@ node {
       dockerRepositoryName = projectName
       dockerFileLocation = "."
       team = "Realwave"
-      dockerBuildingImage = "lukascaska/nodedindbuilder"
+      dockerBuildingImage = "nodedindbuilder"
     }
 
     deployDockerServiceK8s {
