@@ -1,14 +1,13 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { CreateSpinnakerPipeline } from 'lib-spinnaker';
+import { Observable } from 'rxjs';
 
 @Injectable()
-export class AppService {
+export class SpinnakerService {
+
   constructor(private readonly httpService: HttpService) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-  createPipeline = async (data: any) => {
+  public async createPipeline(data): Promise<void> {
     const pipeline = await CreateSpinnakerPipeline(
       data.auth,
       data.githubUser,
@@ -25,7 +24,7 @@ export class AppService {
         },
       },
     ).toPromise();
-    const promise = await this.httpService.post(
+    await this.httpService.post(
       `https://darwin-spinnaker-gate.continuousplatform.com/webhooks/webhook/${data.contract.pipelineName}`,
       {},
       {
@@ -34,6 +33,5 @@ export class AppService {
         },
       },
     ).toPromise();
-    return "alegria"
-  };
+  }
 }
