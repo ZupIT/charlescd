@@ -4,18 +4,11 @@ node {
 
     def projectName = "darwin-deploy"
 
-    buildDockerBuilder {
-        dockerFileBuilder = "DockerfileBuilder"
-        dockerRepositoryName = projectName
-        dockerFileLocation = "."
-        team = "Realwave"
-    }
-
     buildWithMakefile {
       dockerRepositoryName = projectName
       dockerFileLocation = "."
       team = "Realwave"
-      dockerBuildingImage = "${projectName}:builder"
+      dockerBuildingImage = "lukascaska/nodedindbuilder"
     }
 
     deployDockerServiceK8s {
