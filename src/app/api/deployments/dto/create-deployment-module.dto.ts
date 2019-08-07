@@ -1,16 +1,14 @@
 import { DeploymentModule } from '../entity/deployment-module.entity'
-import { Deployment } from '../entity/deployment.entity'
 
 export class CreateDeploymentModuleDto {
 
-  public readonly id: string
+  public readonly moduleId: string
 
   public readonly buildImageTag: string
 
-  public toEntity(deployment: Deployment): DeploymentModule {
+  public toEntity(): DeploymentModule {
     return new DeploymentModule(
-      deployment,
-      this.id,
+      this.moduleId,
       this.buildImageTag
     )
   }

@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Put, Body } from '@nestjs/common'
+import { Controller, Delete, Get, Param, Post, Put, Body, ValidationPipe } from '@nestjs/common'
 import {
   CreateDeploymentDto,
   ReadDeploymentDto,
@@ -12,10 +12,10 @@ export class DeploymentsController {
   constructor(private readonly deploymentsService: DeploymentsService) {}
 
   @Post()
-  public createDeployment(
-    @Body() createDeploymentDto: CreateDeploymentDto
-  ): ReadDeploymentDto {
-    return this.deploymentsService.createDeployment(createDeploymentDto)
+  public async createDeployment(
+    @Body(new ValidationPipe({transform: true})) createDeploymentDto: CreateDeploymentDto
+  ): Promise<ReadDeploymentDto> {
+    return await this.deploymentsService.createDeployment(createDeploymentDto)
   }
 
   @Get()
@@ -28,16 +28,16 @@ export class DeploymentsController {
     return this.deploymentsService.getDeploymentById(id)
   }
 
-  @Put(':id')
-  public updateDeployment(
-    @Param('id') id: string,
-    @Body() updateDeploymentDto: UpdateDeploymentDto
-  ): ReadDeploymentDto {
-    return this.deploymentsService.updateDeployment(id, updateDeploymentDto)
-  }
-
-  @Delete(':id')
-  public deleteDeployment(@Param('id') id: string) {
-    return this.deploymentsService.deleteDeployment(id)
-  }
+  // @Put(':id')
+  // public updateDeployment(
+  //   @Param('id') id: string,
+  //   @Body() updateDeploymentDto: UpdateDeploymentDto
+  // ): ReadDeploymentDto {
+  //   return this.deploymentsService.updateDeployment(id, updateDeploymentDto)
+  // }
+  //
+  // @Delete(':id')
+  // public deleteDeployment(@Param('id') id: string) {
+  //   return this.deploymentsService.deleteDeployment(id)
+  // }
 }
