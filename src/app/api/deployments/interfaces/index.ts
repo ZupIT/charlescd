@@ -1,9 +1,5 @@
-import { CreateDeploymentRequest } from './create-deployment-request.interface'
-import { DeploymentRepresentation } from './deployment-representation.interface'
-import { UpdateDeploymentRequest } from './update-deployment-request.interface'
+import { DeploymentModuleRequest } from './deployment-module-request.interface'
 
 export {
-  CreateDeploymentRequest,
-  DeploymentRepresentation,
-  UpdateDeploymentRequest
+  DeploymentModuleRequest
 }

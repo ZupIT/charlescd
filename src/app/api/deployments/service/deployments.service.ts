@@ -1,27 +1,31 @@
 import { Injectable } from '@nestjs/common'
-import { CreateDeploymentRequest, DeploymentRepresentation, UpdateDeploymentRequest } from '../interfaces'
+import {
+  CreateDeploymentDto,
+  ReadDeploymentDto,
+  UpdateDeploymentDto
+} from '../dto'
 
 @Injectable()
 export class DeploymentsService {
 
   public createDeployment(
-    createDeploymentRequest: CreateDeploymentRequest
-  ): DeploymentRepresentation {
+    createDeploymentDto: CreateDeploymentDto
+  ): ReadDeploymentDto {
 
   }
 
-  public getDeployments(): DeploymentRepresentation[] {
+  public getDeployments(): ReadDeploymentDto[] {
 
   }
 
-  public getDeploymentById(id: string): DeploymentRepresentation {
+  public getDeploymentById(id: string): ReadDeploymentDto {
 
   }
 
   public updateDeployment(
     id: string,
-    updateDeploymentRequest: UpdateDeploymentRequest
-  ): DeploymentRepresentation {
+    updateDeploymentDto: UpdateDeploymentDto
+  ): ReadDeploymentDto {
 
   }
 

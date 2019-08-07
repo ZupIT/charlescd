@@ -1,9 +1,9 @@
 import { Controller, Delete, Get, Param, Post, Put, Body } from '@nestjs/common'
 import {
-  CreateDeploymentRequest,
-  DeploymentRepresentation,
-  UpdateDeploymentRequest
-} from '../interfaces'
+  CreateDeploymentDto,
+  ReadDeploymentDto,
+  UpdateDeploymentDto
+} from '../dto'
 import { DeploymentsService } from '../service'
 
 @Controller('deployments')
@@ -13,27 +13,27 @@ export class DeploymentsController {
 
   @Post()
   public createDeployment(
-    @Body() createDeploymentRequest: CreateDeploymentRequest
-  ): DeploymentRepresentation {
-    return this.deploymentsService.createDeployment(createDeploymentRequest)
+    @Body() createDeploymentDto: CreateDeploymentDto
+  ): ReadDeploymentDto {
+    return this.deploymentsService.createDeployment(createDeploymentDto)
   }
 
   @Get()
-  public getDeployments(): DeploymentRepresentation[] {
+  public getDeployments(): ReadDeploymentDto[] {
     return this.deploymentsService.getDeployments()
   }
 
   @Get(':id')
-  public getDeploymentById(@Param('id') id: string): DeploymentRepresentation {
+  public getDeploymentById(@Param('id') id: string): ReadDeploymentDto {
     return this.deploymentsService.getDeploymentById(id)
   }
 
   @Put(':id')
   public updateDeployment(
     @Param('id') id: string,
-    @Body() updateDeploymentRequest: UpdateDeploymentRequest
-  ): DeploymentRepresentation {
-    return this.deploymentsService.updateDeployment(id)
+    @Body() updateDeploymentDto: UpdateDeploymentDto
+  ): ReadDeploymentDto {
+    return this.deploymentsService.updateDeployment(id, updateDeploymentDto)
   }
 
   @Delete(':id')
