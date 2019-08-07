@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { Deployment } from '../entity/deployment.entity'
+import { Deployment, DeploymentModule } from '../entity'
 import { Repository } from 'typeorm'
-import { DeploymentModule } from '../entity/deployment-module.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
@@ -33,15 +32,4 @@ export class DeploymentsService {
     return this.deploymentsRepository.findOne({ id })
       .then(deployment => deployment.toReadDto())
   }
-
-  // public updateDeployment(
-  //   id: string,
-  //   updateDeploymentDto: UpdateDeploymentDto
-  // ): ReadDeploymentDto {
-  //
-  // }
-  //
-  // public deleteDeployment(id: string) {
-  //
-  // }
 }
