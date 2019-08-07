@@ -6,6 +6,8 @@ const postgresqlOptions = {
   password: 'darwin',
   database: 'darwin',
   entities: ['src/**/*.entity.ts'],
+  migrationsTableName: 'darwin-deploy-migrations',
+  migrations: ['src/app/resources/migrations/*.ts'],
   synchronize: true
 }
 
