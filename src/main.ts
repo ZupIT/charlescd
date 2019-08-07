@@ -1,17 +1,34 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app/app.module'
-import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app/app.module";
+import { ValidationPipe } from "@nestjs/common";
+import * as consul from "consul";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const config = { baseUrl: `${process.env.CONSUL}/v1` };
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    })
-  )
+  await consul(config).kv.get(`config/${process.env.MODULE}/data`, async (err, item) => {
+    if (err) {
+      throw new Error("Fail to load consul, verify the consul server.");
+    }
 
-  await app.listen(3000)
+    if (!item) {
+      throw new Error("Fail to load config from url.");
+    }
+
+    const consulEnvs = item.Value
+    //aqui as configs
+
+    const app = await NestFactory.create(AppModule);
+  
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true
+      })
+    );
+  
+    await app.listen(3000);
+  });
+
 }
 
-bootstrap()
+bootstrap();
