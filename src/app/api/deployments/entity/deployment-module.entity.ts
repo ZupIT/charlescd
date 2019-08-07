@@ -15,7 +15,7 @@ export class DeploymentModule extends BaseEntity {
   public id: string
 
   @ManyToOne(type => Deployment)
-  @JoinColumn({ name: 'deployment_id' })
+  @JoinColumn({ name: 'deployment_id', referencedColumnName: 'id' })
   public deployment: Deployment
 
   @Column({ name: 'module_id' })
@@ -25,12 +25,10 @@ export class DeploymentModule extends BaseEntity {
   public buildImageTag: string
 
   constructor(
-    deployment: Deployment,
     moduleId: string,
     buildImageTag: string
   ) {
     super()
-    this.deployment = deployment
     this.moduleId = moduleId
     this.buildImageTag = buildImageTag
   }

@@ -16,7 +16,8 @@ export class Deployment extends BaseEntity {
 
   @OneToMany(
     type => DeploymentModule,
-    deploymentModule => deploymentModule.deployment
+    deploymentModule => deploymentModule.deployment,
+    { cascade: ['insert', 'update'] }
   )
   public modules: DeploymentModule[]
 

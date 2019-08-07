@@ -1,46 +1,24 @@
 import { Injectable } from '@nestjs/common'
-import {
-  CreateDeploymentDto,
-  ReadDeploymentDto,
-  UpdateDeploymentDto
-} from '../dto'
+import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
 import { Deployment } from '../entity/deployment.entity'
 import { Repository } from 'typeorm'
 import { DeploymentModule } from '../entity/deployment-module.entity'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class DeploymentsService {
 
   constructor(
+    @InjectRepository(Deployment)
     private readonly deploymentsRepository: Repository<Deployment>,
+    @InjectRepository(DeploymentModule)
     private readonly deploymentModulesRepository: Repository<DeploymentModule>
   ) {}
 
-  private async saveDeployment(createDeploymentDto: CreateDeploymentDto): Promise<Deployment> {
-    return this.deploymentsRepository.save(createDeploymentDto.toEntity())
-  }
-
-  private getDeploymentModuleEntities(
-    createDeploymentDto: CreateDeploymentDto,
-    deployment: Deployment
-  ): DeploymentModule[] {
-    return createDeploymentDto.modules.map(module => module.toEntity(deployment))
-  }
-
-  private async saveDeploymentModules(
-    createDeploymentDto: CreateDeploymentDto,
-    deployment: Deployment
-  ): Promise<DeploymentModule[]> {
-    return this.deploymentModulesRepository.save(
-      this.getDeploymentModuleEntities(createDeploymentDto, deployment)
-    )
-  }
-
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
-    const deployment: Deployment = await this.saveDeployment(createDeploymentDto)
-    await this.saveDeploymentModules(createDeploymentDto, deployment)
-    return deployment.toReadDto()
-
+    const a =  await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+    console.log(JSON.stringify(a))
+    return a.toReadDto()
   }
 
   private convertDeploymentsToDto(deployments: Deployment[]): ReadDeploymentDto[] {
@@ -57,14 +35,14 @@ export class DeploymentsService {
       .then(deployment => deployment.toReadDto())
   }
 
-  public updateDeployment(
-    id: string,
-    updateDeploymentDto: UpdateDeploymentDto
-  ): ReadDeploymentDto {
-
-  }
-
-  public deleteDeployment(id: string) {
-
-  }
+  // public updateDeployment(
+  //   id: string,
+  //   updateDeploymentDto: UpdateDeploymentDto
+  // ): ReadDeploymentDto {
+  //
+  // }
+  //
+  // public deleteDeployment(id: string) {
+  //
+  // }
 }
