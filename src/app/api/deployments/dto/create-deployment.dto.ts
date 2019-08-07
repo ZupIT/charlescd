@@ -1,4 +1,4 @@
-import { DeploymentModuleRequest } from '../interfaces'
+import { DeploymentModuleRequest } from '../interface'
 
 export class CreateDeploymentDto {
 
