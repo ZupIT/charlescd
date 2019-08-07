@@ -21,6 +21,6 @@ export class DeploymentsController {
 
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
-    return this.deploymentsService.getDeploymentById(id)
+    return await this.deploymentsService.getDeploymentById(id)
   }
 }
