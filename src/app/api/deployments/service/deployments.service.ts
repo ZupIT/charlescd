@@ -21,7 +21,6 @@ export class DeploymentsService {
   }
 
   private async convertDeploymentsToReadDto(deployments: Deployment[]): Promise<ReadDeploymentDto[]> {
-    console.log(JSON.stringify(deployments))
     return deployments.map(deployment => deployment.toReadDto())
   }
 
