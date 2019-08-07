@@ -17,7 +17,7 @@ export class Deployment extends BaseEntity {
   @OneToMany(
     type => DeploymentModule,
     deploymentModule => deploymentModule.deployment,
-    { cascade: ['insert', 'update'] }
+    { cascade: true, eager: true }
   )
   public modules: DeploymentModule[]
 
@@ -34,12 +34,14 @@ export class Deployment extends BaseEntity {
   public circleHeader: string
 
   constructor(
+    modules: DeploymentModule[],
     authorId: string,
     description: string,
     callbackUrl: string,
     circleHeader: string
   ) {
     super()
+    this.modules = modules
     this.authorId = authorId
     this.description = description
     this.callbackUrl = callbackUrl
@@ -49,12 +51,14 @@ export class Deployment extends BaseEntity {
   private getDeploymentModulesResponseArray(): DeploymentModuleResponse[] {
     return this.modules.map(module => ({
       id: module.id,
+      moduleId: module.moduleId,
       buildImageTag: module.buildImageTag
     }))
   }
 
   public toReadDto(): ReadDeploymentDto {
     return new ReadDeploymentDto(
+      this.id,
       this.getDeploymentModulesResponseArray(),
       this.authorId,
       this.description,

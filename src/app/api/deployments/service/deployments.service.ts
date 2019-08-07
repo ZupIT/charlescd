@@ -16,18 +16,18 @@ export class DeploymentsService {
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
-    const a =  await this.deploymentsRepository.save(createDeploymentDto.toEntity())
-    console.log(JSON.stringify(a))
-    return a.toReadDto()
+    return this.deploymentsRepository.save(createDeploymentDto.toEntity())
+      .then(deployment => deployment.toReadDto())
   }
 
-  private convertDeploymentsToDto(deployments: Deployment[]): ReadDeploymentDto[] {
+  private async convertDeploymentsToReadDto(deployments: Deployment[]): Promise<ReadDeploymentDto[]> {
+    console.log(JSON.stringify(deployments))
     return deployments.map(deployment => deployment.toReadDto())
   }
 
   public async getDeployments(): Promise<ReadDeploymentDto[]> {
-    return this.deploymentsRepository.find()
-      .then(deployments => this.convertDeploymentsToDto(deployments))
+    return this.deploymentsRepository.find({ relations: ['modules'] })
+      .then(deployments => this.convertDeploymentsToReadDto(deployments))
   }
 
   public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {

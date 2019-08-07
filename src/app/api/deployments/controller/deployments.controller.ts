@@ -1,9 +1,5 @@
-import { Controller, Delete, Get, Param, Post, Put, Body, ValidationPipe } from '@nestjs/common'
-import {
-  CreateDeploymentDto,
-  ReadDeploymentDto,
-  UpdateDeploymentDto
-} from '../dto'
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
 import { DeploymentsService } from '../service'
 
 @Controller('deployments')
@@ -13,7 +9,7 @@ export class DeploymentsController {
 
   @Post()
   public async createDeployment(
-    @Body(new ValidationPipe({transform: true})) createDeploymentDto: CreateDeploymentDto
+    @Body() createDeploymentDto: CreateDeploymentDto
   ): Promise<ReadDeploymentDto> {
     return await this.deploymentsService.createDeployment(createDeploymentDto)
   }
