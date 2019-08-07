@@ -1,18 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { SpinnakerService } from './spinnaker.service'
+import { DeploymentsService } from './deployments.service'
 
-describe('SpinnakerService', () => {
-  let service: SpinnakerService
+describe('DeploymentsService', () => {
+  let service: DeploymentsService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SpinnakerService],
+      providers: [DeploymentsService],
     }).compile()
 
-    service = module.get<SpinnakerService>(SpinnakerService)
+    service = module.get<DeploymentsService>(DeploymentsService)
   })
 
   it('should be defined', () => {
     expect(service).toBeDefined()
   })
 })
+
