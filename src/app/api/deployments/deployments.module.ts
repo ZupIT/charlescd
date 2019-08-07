@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { DeploymentsController } from './controller/deployments.controller'
-import { DeploymentsService } from './service/deployments.service'
+import { DeploymentsService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 
 @Module({
