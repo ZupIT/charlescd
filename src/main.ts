@@ -15,7 +15,8 @@ async function bootstrap() {
       throw new Error("Fail to load config from url.");
     }
 
-    console.log(item.Value)
+    const consulEnvs = item.Value
+    //aqui as configs
 
     const app = await NestFactory.create(AppModule);
   
