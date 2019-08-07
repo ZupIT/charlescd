@@ -14,8 +14,11 @@ export class DeploymentModule extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string
 
-  @ManyToOne(type => Deployment)
-  @JoinColumn({ name: 'deployment_id', referencedColumnName: 'id' })
+  @ManyToOne(
+    type => Deployment,
+    deployment => deployment.modules
+  )
+  @JoinColumn({ name: 'deployment_id' })
   public deployment: Deployment
 
   @Column({ name: 'module_id' })
