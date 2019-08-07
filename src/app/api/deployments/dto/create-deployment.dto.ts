@@ -1,8 +1,9 @@
-import { DeploymentModuleRequest } from '../interface'
+import { CreateDeploymentModuleDto } from './create-deployment-module.dto'
+import { Deployment } from '../entity/deployment.entity'
 
 export class CreateDeploymentDto {
 
-  public readonly modules: DeploymentModuleRequest[]
+  public readonly modules: CreateDeploymentModuleDto[]
 
   public readonly authorId: string
 
@@ -13,6 +14,11 @@ export class CreateDeploymentDto {
   public readonly circleHeader: string
 
   public toEntity(): Deployment {
-
+    return new Deployment(
+      this.authorId,
+      this.description,
+      this.callbackUrl,
+      this.circleHeader
+    )
   }
 }

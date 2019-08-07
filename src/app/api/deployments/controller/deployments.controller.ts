@@ -19,12 +19,12 @@ export class DeploymentsController {
   }
 
   @Get()
-  public getDeployments(): ReadDeploymentDto[] {
-    return this.deploymentsService.getDeployments()
+  public async getDeployments(): Promise<ReadDeploymentDto[]> {
+    return await this.deploymentsService.getDeployments()
   }
 
   @Get(':id')
-  public getDeploymentById(@Param('id') id: string): ReadDeploymentDto {
+  public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
     return this.deploymentsService.getDeploymentById(id)
   }
 
