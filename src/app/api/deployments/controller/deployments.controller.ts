@@ -23,17 +23,4 @@ export class DeploymentsController {
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
     return this.deploymentsService.getDeploymentById(id)
   }
-
-  // @Put(':id')
-  // public updateDeployment(
-  //   @Param('id') id: string,
-  //   @Body() updateDeploymentDto: UpdateDeploymentDto
-  // ): ReadDeploymentDto {
-  //   return this.deploymentsService.updateDeployment(id, updateDeploymentDto)
-  // }
-  //
-  // @Delete(':id')
-  // public deleteDeployment(@Param('id') id: string) {
-  //   return this.deploymentsService.deleteDeployment(id)
-  // }
 }
