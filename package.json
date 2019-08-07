@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start": "CONSUL=https://consul-darwin.apirealwave.io MODULE=darwin-deploy ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "node dist/main.js",
@@ -27,6 +27,7 @@
     "@octokit/rest": "^16.28.7",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
+    "consul": "^0.35.0",
     "js-yaml": "^3.13.1",
     "lib-spinnaker": "^1.1.4",
     "lodash": "^4.17.15",
