@@ -23,4 +23,15 @@ export class DeploymentModule extends BaseEntity {
 
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
+
+  constructor(
+    deployment: Deployment,
+    moduleId: string,
+    buildImageTag: string
+  ) {
+    super()
+    this.deployment = deployment
+    this.moduleId = moduleId
+    this.buildImageTag = buildImageTag
+  }
 }

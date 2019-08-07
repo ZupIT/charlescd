@@ -5,6 +5,8 @@ import {
   BaseEntity,
   OneToMany, Column
 } from 'typeorm'
+import { ReadDeploymentDto } from '../dto'
+import { DeploymentModuleResponse } from '../interface'
 
 @Entity('deployments')
 export class Deployment extends BaseEntity {
@@ -29,4 +31,33 @@ export class Deployment extends BaseEntity {
 
   @Column({ name: 'circle_header'} )
   public circleHeader: string
+
+  constructor(
+    authorId: string,
+    description: string,
+    callbackUrl: string,
+    circleHeader: string
+  ) {
+    super()
+    this.authorId = authorId
+    this.description = description
+    this.callbackUrl = callbackUrl
+    this.circleHeader = circleHeader
+  }
+
+  private getDeploymentModulesResponseArray(): DeploymentModuleResponse[] {
+    return this.modules.map(module => ({
+      id: module.id,
+      buildImageTag: module.buildImageTag
+    }))
+  }
+
+  public toReadDto(): ReadDeploymentDto {
+    return new ReadDeploymentDto(
+      this.getDeploymentModulesResponseArray(),
+      this.authorId,
+      this.description,
+      this.circleHeader
+    )
+  }
 }
