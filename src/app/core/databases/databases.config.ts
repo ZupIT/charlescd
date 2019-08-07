@@ -1,7 +1,9 @@
-const postgresqlOptions = {
+import { ConnectionOptions } from 'typeorm'
+
+const postgresqlOptions: ConnectionOptions = {
   type: 'postgres',
   host: 'localhost',
-  port: '5432',
+  port: 5432,
   username: 'darwin',
   password: 'darwin',
   database: 'darwin',
