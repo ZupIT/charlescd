@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column
 } from 'typeorm'
+import { ReadComponentDeploymentDto } from '../dto'
 
 @Entity('component_deployments')
 export class ComponentDeployment extends BaseEntity {
@@ -29,5 +30,14 @@ export class ComponentDeployment extends BaseEntity {
     this.componentId = componentId
     this.buildImageTag = buildImageTag
     this.buildImageName = buildImageName
+  }
+
+  public toReadDto() {
+    return new ReadComponentDeploymentDto(
+      this.id,
+      this.componentId,
+      this.buildImageTag,
+      this.buildImageName
+    )
   }
 }

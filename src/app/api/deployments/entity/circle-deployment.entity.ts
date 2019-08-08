@@ -15,6 +15,9 @@ export class CircleDeployment {
   }
 
   public toReadDto(): ReadCircleDeploymentDto {
-
+    return new ReadCircleDeploymentDto(
+      this.headerValue,
+      this.removeCircle
+    )
   }
 }
