@@ -2,6 +2,7 @@ import { ModuleDeployment } from './module-deployment.entity'
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeployment } from './circle-deployment.entity'
+import { plainToClass } from 'class-transformer'
 
 @Entity('deployments')
 export class Deployment extends BaseEntity {
@@ -25,7 +26,16 @@ export class Deployment extends BaseEntity {
   @Column({ name: 'callback_url'} )
   public callbackUrl: string
 
-  @Column({ type: 'jsonb', name: 'circles'} )
+  @Column({
+    type: 'jsonb',
+    name: 'circles',
+    transformer: {
+      from: circles => circles.map(
+        circle => plainToClass(CircleDeployment, circle)
+      ),
+      to: circles => circles
+    }
+  } )
   public circles: CircleDeployment[]
 
   constructor(
