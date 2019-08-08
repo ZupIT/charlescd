@@ -7,9 +7,10 @@ import {
   JoinColumn
 } from 'typeorm'
 import { Deployment } from './deployment.entity'
+import { ComponentDeployment } from './component-deployment.entity'
 
-@Entity('deployment_modules')
-export class DeploymentModule extends BaseEntity {
+@Entity('module_deployments')
+export class ModuleDeployment extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string
@@ -24,15 +25,15 @@ export class DeploymentModule extends BaseEntity {
   @Column({ name: 'module_id' })
   public moduleId: string
 
-  @Column({ name: 'build_image_tag' })
-  public buildImageTag: string
+  @Column({ name: 'components' })
+  public components: ComponentDeployment[]
 
   constructor(
     moduleId: string,
-    buildImageTag: string
+    components: ComponentDeployment[]
   ) {
     super()
     this.moduleId = moduleId
-    this.buildImageTag = buildImageTag
+    this.components = components
   }
 }

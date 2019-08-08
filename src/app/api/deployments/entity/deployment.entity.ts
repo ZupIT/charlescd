@@ -1,12 +1,8 @@
-import { DeploymentModule } from './deployment-module.entity'
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-  OneToMany, Column
-} from 'typeorm'
+import { ModuleDeployment } from './module-deployment.entity'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { DeploymentModuleResponse } from '../interface'
+import { CircleDeployment } from './circle-deployment.entity'
 
 @Entity('deployments')
 export class Deployment extends BaseEntity {
@@ -15,11 +11,11 @@ export class Deployment extends BaseEntity {
   public id: string
 
   @OneToMany(
-    type => DeploymentModule,
-    deploymentModule => deploymentModule.deployment,
+    type => ModuleDeployment,
+    moduleDeployment => moduleDeployment.deployment,
     { cascade: true, eager: true }
   )
-  public modules: DeploymentModule[]
+  public modules: ModuleDeployment[]
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -30,22 +26,22 @@ export class Deployment extends BaseEntity {
   @Column({ name: 'callback_url'} )
   public callbackUrl: string
 
-  @Column({ name: 'circle_header'} )
-  public circleHeader: string
+  @Column({ type: 'jsonb', name: 'circles'} )
+  public circles: CircleDeployment[]
 
   constructor(
-    modules: DeploymentModule[],
+    modules: ModuleDeployment[],
     authorId: string,
     description: string,
     callbackUrl: string,
-    circleHeader: string
+    circles: CircleDeployment[]
   ) {
     super()
     this.modules = modules
     this.authorId = authorId
     this.description = description
     this.callbackUrl = callbackUrl
-    this.circleHeader = circleHeader
+    this.circles = circles
   }
 
   private getDeploymentModulesResponseArray(): DeploymentModuleResponse[] {
@@ -62,7 +58,7 @@ export class Deployment extends BaseEntity {
       this.getDeploymentModulesResponseArray(),
       this.authorId,
       this.description,
-      this.circleHeader
+      this.circles
     )
   }
 }

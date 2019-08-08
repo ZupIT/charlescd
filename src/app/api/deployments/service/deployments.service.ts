@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { Deployment, DeploymentModule } from '../entity'
+import { Deployment, ModuleDeployment } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 
@@ -10,8 +10,8 @@ export class DeploymentsService {
   constructor(
     @InjectRepository(Deployment)
     private readonly deploymentsRepository: Repository<Deployment>,
-    @InjectRepository(DeploymentModule)
-    private readonly deploymentModulesRepository: Repository<DeploymentModule>
+    @InjectRepository(ModuleDeployment)
+    private readonly deploymentModulesRepository: Repository<ModuleDeployment>
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
