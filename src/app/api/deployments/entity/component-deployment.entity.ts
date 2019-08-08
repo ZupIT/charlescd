@@ -2,15 +2,24 @@ import {
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
-  Column
+  Column, ManyToOne, JoinColumn
 } from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
+import { Deployment } from './deployment.entity'
+import { ModuleDeployment } from './module-deployment.entity'
 
 @Entity('component_deployments')
 export class ComponentDeployment extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string
+
+  @ManyToOne(
+    type => ModuleDeployment,
+    moduleDeployment => moduleDeployment.components
+  )
+  @JoinColumn({ name: 'module_deployment_id' })
+  public moduleDeployment: ModuleDeployment
 
   @Column()
   public componentId: string
