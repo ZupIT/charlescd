@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn
+  JoinColumn, OneToMany
 } from 'typeorm'
 import { Deployment } from './deployment.entity'
 import { ComponentDeployment } from './component-deployment.entity'
@@ -26,7 +26,11 @@ export class ModuleDeployment extends BaseEntity {
   @Column({ name: 'module_id' })
   public moduleId: string
 
-  @Column({ name: 'components' })
+  @OneToMany(
+    type => ComponentDeployment,
+    componentDeployment => componentDeployment.moduleDeployment,
+    { cascade: true, eager: true }
+  )
   public components: ComponentDeployment[]
 
   constructor(
