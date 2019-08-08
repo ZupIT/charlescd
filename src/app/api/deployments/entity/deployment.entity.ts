@@ -1,7 +1,6 @@
 import { ModuleDeployment } from './module-deployment.entity'
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
-import { DeploymentModuleResponse } from '../interface'
 import { CircleDeployment } from './circle-deployment.entity'
 
 @Entity('deployments')
@@ -44,21 +43,13 @@ export class Deployment extends BaseEntity {
     this.circles = circles
   }
 
-  private getDeploymentModulesResponseArray(): DeploymentModuleResponse[] {
-    return this.modules.map(module => ({
-      id: module.id,
-      moduleId: module.moduleId,
-      buildImageTag: module.buildImageTag
-    }))
-  }
-
   public toReadDto(): ReadDeploymentDto {
     return new ReadDeploymentDto(
       this.id,
-      this.getDeploymentModulesResponseArray(),
+      this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circles
+      this.circles.map(circle => circle.toReadDto())
     )
   }
 }

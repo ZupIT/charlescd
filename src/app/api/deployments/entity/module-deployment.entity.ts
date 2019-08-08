@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { Deployment } from './deployment.entity'
 import { ComponentDeployment } from './component-deployment.entity'
+import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
 
 @Entity('module_deployments')
 export class ModuleDeployment extends BaseEntity {
@@ -35,5 +36,9 @@ export class ModuleDeployment extends BaseEntity {
     super()
     this.moduleId = moduleId
     this.components = components
+  }
+
+  public toReadDto(): ReadModuleDeploymentDto {
+
   }
 }

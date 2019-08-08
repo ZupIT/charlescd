@@ -1,3 +1,5 @@
+import { ReadCircleDeploymentDto } from '../dto/read-circle-deployment.dto'
+
 export class CircleDeployment {
 
   public headerValue: string
@@ -10,5 +12,9 @@ export class CircleDeployment {
   ) {
     this.headerValue = headerValue
     this.removeCircle = removeCircle
+  }
+
+  public toReadDto(): ReadCircleDeploymentDto {
+
   }
 }
