@@ -21,13 +21,13 @@ export class ComponentDeployment extends BaseEntity {
   @JoinColumn({ name: 'module_deployment_id' })
   public moduleDeployment: ModuleDeployment
 
-  @Column()
+  @Column({ name: 'component_id' })
   public componentId: string
 
-  @Column()
+  @Column({ name: 'build_image_tag' })
   public buildImageTag: string
 
-  @Column()
+  @Column({ name: 'build_image_name' })
   public buildImageName: string
 
   constructor(
