@@ -3,14 +3,14 @@ import { DeploymentsController } from './controller'
 import { DeploymentsService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Deployment, DeploymentModule } from './entity'
+import { Deployment, ModuleDeployment } from './entity'
 
 @Module({
   imports: [
     IntegrationsModule,
     TypeOrmModule.forFeature([
       Deployment,
-      DeploymentModule
+      ModuleDeployment
     ])
   ],
   controllers: [DeploymentsController],

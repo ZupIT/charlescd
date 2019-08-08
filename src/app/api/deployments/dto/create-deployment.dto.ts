@@ -1,13 +1,14 @@
-import { CreateDeploymentModuleDto } from './create-deployment-module.dto'
-import { Deployment } from '../entity/deployment.entity'
+import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
+import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
+import { Deployment } from '../entity'
 import { Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
 
 export class CreateDeploymentDto {
 
   @ValidateNested({ each: true })
-  @Type(() => CreateDeploymentModuleDto)
-  public readonly modules: CreateDeploymentModuleDto[]
+  @Type(() => CreateModuleDeploymentDto)
+  public readonly modules: CreateModuleDeploymentDto[]
 
   public readonly authorId: string
 
@@ -15,7 +16,9 @@ export class CreateDeploymentDto {
 
   public readonly callbackUrl: string
 
-  public readonly circleHeader: string
+  @ValidateNested({ each: true })
+  @Type(() => CreateCircleDeploymentDto)
+  public readonly circles: CreateCircleDeploymentDto[]
 
   public toEntity(): Deployment {
     return new Deployment(
@@ -23,7 +26,7 @@ export class CreateDeploymentDto {
       this.authorId,
       this.description,
       this.callbackUrl,
-      this.circleHeader
+      this.circles.map(circle => circle.toEntity())
     )
   }
 }

@@ -1,7 +1,7 @@
 import { Deployment } from './deployment.entity'
-import { DeploymentModule } from './deployment-module.entity'
+import { ModuleDeployment } from './module-deployment.entity'
 
 export {
   Deployment,
-  DeploymentModule
+  ModuleDeployment
 }
