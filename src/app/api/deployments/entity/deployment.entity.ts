@@ -35,7 +35,7 @@ export class Deployment extends BaseEntity {
       ),
       to: circles => circles
     }
-  } )
+  })
   public circles: CircleDeployment[]
 
   constructor(
