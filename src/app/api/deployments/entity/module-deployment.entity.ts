@@ -39,6 +39,10 @@ export class ModuleDeployment extends BaseEntity {
   }
 
   public toReadDto(): ReadModuleDeploymentDto {
-
+    return new ReadModuleDeploymentDto(
+      this.id,
+      this.moduleId,
+      this.components.map(component => component.toReadDto())
+    )
   }
 }
