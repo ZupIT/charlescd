@@ -11,7 +11,7 @@ export class ReadDeploymentDto {
 
   public readonly description: string
 
-  public readonly circles: ReadCircleDeploymentDto
+  public readonly circles: ReadCircleDeploymentDto[]
 
   constructor(
     id: string,
