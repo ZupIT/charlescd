@@ -6,36 +6,36 @@ import {
   ManyToOne,
   JoinColumn, OneToMany
 } from 'typeorm'
-import { Deployment } from './deployment.entity'
-import { ComponentDeployment } from './component-deployment.entity'
-import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
+import { DeploymentEntity } from './deployment.entity'
+import { ComponentDeploymentEntity } from './component-deployment.entity'
+import { ReadModuleDeploymentDto } from '../dto'
 
 @Entity('module_deployments')
-export class ModuleDeployment extends BaseEntity {
+export class ModuleDeploymentEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string
 
   @ManyToOne(
-    type => Deployment,
+    type => DeploymentEntity,
     deployment => deployment.modules
   )
   @JoinColumn({ name: 'deployment_id' })
-  public deployment: Deployment
+  public deployment: DeploymentEntity
 
   @Column({ name: 'module_id' })
   public moduleId: string
 
   @OneToMany(
-    type => ComponentDeployment,
+    type => ComponentDeploymentEntity,
     componentDeployment => componentDeployment.moduleDeployment,
     { cascade: true, eager: true }
   )
-  public components: ComponentDeployment[]
+  public components: ComponentDeploymentEntity[]
 
   constructor(
     moduleId: string,
-    components: ComponentDeployment[]
+    components: ComponentDeploymentEntity[]
   ) {
     super()
     this.moduleId = moduleId

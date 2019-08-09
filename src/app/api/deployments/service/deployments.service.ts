@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { Deployment, ModuleDeployment } from '../entity'
+import { DeploymentEntity, ModuleDeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 
@@ -8,10 +8,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 export class DeploymentsService {
 
   constructor(
-    @InjectRepository(Deployment)
-    private readonly deploymentsRepository: Repository<Deployment>,
-    @InjectRepository(ModuleDeployment)
-    private readonly deploymentModulesRepository: Repository<ModuleDeployment>
+    @InjectRepository(DeploymentEntity)
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    @InjectRepository(ModuleDeploymentEntity)
+    private readonly deploymentModulesRepository: Repository<ModuleDeploymentEntity>
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
@@ -19,7 +19,7 @@ export class DeploymentsService {
       .then(deployment => deployment.toReadDto())
   }
 
-  private async convertDeploymentsToReadDto(deployments: Deployment[]): Promise<ReadDeploymentDto[]> {
+  private async convertDeploymentsToReadDto(deployments: DeploymentEntity[]): Promise<ReadDeploymentDto[]> {
     return deployments.map(deployment => deployment.toReadDto())
   }
 

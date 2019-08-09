@@ -1,4 +1,4 @@
-import { CircleDeployment } from '../entity/circle-deployment.entity'
+import { CircleDeploymentEntity } from '../entity/circle-deployment.entity'
 
 export class CreateCircleDeploymentDto {
 
@@ -6,8 +6,8 @@ export class CreateCircleDeploymentDto {
 
   public readonly removeCircle: boolean
 
-  public toEntity(): CircleDeployment {
-    return new CircleDeployment(
+  public toEntity(): CircleDeploymentEntity {
+    return new CircleDeploymentEntity(
       this.headerValue,
       this.removeCircle
     )

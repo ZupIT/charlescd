@@ -1,7 +1,11 @@
-import { Deployment } from './deployment.entity'
-import { ModuleDeployment } from './module-deployment.entity'
+import { DeploymentEntity } from './deployment.entity'
+import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { ComponentDeploymentEntity } from './component-deployment.entity'
+import { CircleDeploymentEntity } from './circle-deployment.entity'
 
 export {
-  Deployment,
-  ModuleDeployment
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  ComponentDeploymentEntity,
+  CircleDeploymentEntity
 }

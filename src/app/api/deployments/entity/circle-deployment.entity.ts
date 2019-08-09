@@ -1,6 +1,6 @@
-import { ReadCircleDeploymentDto } from '../dto/read-circle-deployment.dto'
+import { ReadCircleDeploymentDto } from '../dto'
 
-export class CircleDeployment {
+export class CircleDeploymentEntity {
 
   public headerValue: string
 
