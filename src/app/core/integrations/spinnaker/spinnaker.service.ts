@@ -2,6 +2,7 @@ import { HttpService, Injectable } from '@nestjs/common'
 import { CreateSpinnakerPipeline } from 'lib-spinnaker'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/modules/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
+import { AppConstants } from '../../constants'
 
 @Injectable()
 export class SpinnakerService {
@@ -161,7 +162,7 @@ export class SpinnakerService {
 
     return {
       headers: [{
-        headerName: 'x-darwin-circle',
+        headerName: AppConstants.DEFAULT_CIRCLE_HEADER_NAME,
         headerValue: circle.headerValue
       }],
       destination: [{
@@ -200,7 +201,7 @@ export class SpinnakerService {
       data.contract,
     )
     const result = await this.httpService.post(
-      'https://darwin-spinnaker-gate.continuousplatform.com/pipelines',
+      `${AppConstants.SPINNAKER_URL}/pipelines`,
       pipeline,
       {
         headers: {
@@ -209,7 +210,7 @@ export class SpinnakerService {
       },
     ).toPromise()
     await this.httpService.post(
-      `https://darwin-spinnaker-gate.continuousplatform.com/webhooks/webhook/${data.contract.pipelineName}`,
+      `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${data.contract.pipelineName}`,
       {},
       {
         headers: {
