@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import {
-  CircleDeploymentEntity,
-  ComponentDeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity
-} from '../entity'
+import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentEntity, ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../../modules/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
+import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
+import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 
 @Injectable()
 export class DeploymentsService {
 
   constructor(
     private readonly spinnakerService: SpinnakerService,
+    private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
@@ -56,7 +54,7 @@ export class DeploymentsService {
     circles: CircleDeploymentEntity[]
   ) {
 
-    return this.modulesRepository.save(new ModuleEntity(
+    await this.modulesRepository.save(new ModuleEntity(
       moduleDeploymentEntity.moduleId,
       this.getComponentEntitiesFromDeployments(moduleDeploymentEntity.components, circles)
     ))
@@ -105,6 +103,7 @@ export class DeploymentsService {
     circles: CircleDeploymentEntity[]
   ) {
 
+
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
 
@@ -120,12 +119,51 @@ export class DeploymentsService {
     )
   }
 
+  private async deployComponentPipeline(componentEntity: ComponentEntity, callbackUrl: string) {
+    const deploymentConfiguration: IDeploymentConfiguration =
+      await this.deploymentConfigurationService.getConfiguration()
+
+    await this.spinnakerService.createDeployment(
+      componentEntity.pipelineOptions,
+      deploymentConfiguration,
+      callbackUrl
+    )
+  }
+
+  private async deployModulePipelines(moduleEntity: ModuleEntity, callbackUrl: string) {
+    return Promise.all(
+      moduleEntity.components.map(
+        component => this.deployComponentPipeline(component, callbackUrl)
+      )
+    )
+  }
+
+  private async deployModuleEntities(
+    moduleEntities: ModuleEntity[],
+    callbackUrl: string
+  ): Promise<any> {
+
+    return moduleEntities.map(
+      moduleEntity => this.deployModulePipelines(moduleEntity, callbackUrl)
+    )
+  }
+
+  private async deployPipelines(deployment: DeploymentEntity) {
+    const { callbackUrl } = deployment
+    return Promise.all(
+      deployment.modules
+        .map(module => this.modulesRepository.findOne({ moduleId: module.moduleId }))
+    ).then(
+      moduleEntities => this.deployModuleEntities(moduleEntities, callbackUrl)
+    )
+  }
+
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
     const deployment: DeploymentEntity =
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
 
     await this.processDeploymentPipelines(deployment)
-    // TODO do deploy
+    await this.deployPipelines(deployment)
 
     return deployment.toReadDto()
   }
