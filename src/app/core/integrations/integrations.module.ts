@@ -1,5 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common'
-import { SpinnakerService } from './spinnaker/spinnaker.service'
+import { SpinnakerService } from './spinnaker'
 
 @Module({
   imports: [HttpModule],

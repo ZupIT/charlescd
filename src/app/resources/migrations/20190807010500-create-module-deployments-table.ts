@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateDeploymentsTable20190807003400 implements MigrationInterface {
+export class CreateModuleDeploymentsTable20190807010500 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner) {
     await queryRunner.createTable(new Table({
-      name: 'deployments',
+      name: 'module_deployments',
       columns: [
         {
           name: 'id',
@@ -12,26 +12,18 @@ export class CreateDeploymentsTable20190807003400 implements MigrationInterface 
           isPrimary: true
         },
         {
-          name: 'user_id',
+          name: 'deployment_id',
           type: 'varchar'
         },
         {
-          name: 'description',
+          name: 'module_id',
           type: 'varchar'
-        },
-        {
-          name: 'callback_url',
-          type: 'varchar'
-        },
-        {
-          name: 'circles',
-          type: 'jsonb'
         }
       ]
     }), true)
   }
 
   public async down(queryRunner: QueryRunner) {
-    await queryRunner.dropTable('deployments')
+    await queryRunner.dropTable('module_deployments')
   }
 }
