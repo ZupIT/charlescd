@@ -165,7 +165,7 @@ export class SpinnakerService {
         headerValue: circle.headerValue
       }],
       destination: [{
-        version: componentDeployment.buildImageTag
+        version: componentDeployment.buildImageName
       }]
     }
   }
