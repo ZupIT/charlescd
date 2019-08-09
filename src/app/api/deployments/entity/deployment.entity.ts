@@ -1,21 +1,21 @@
-import { ModuleDeployment } from './module-deployment.entity'
+import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
-import { CircleDeployment } from './circle-deployment.entity'
+import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 
 @Entity('deployments')
-export class Deployment extends BaseEntity {
+export class DeploymentEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string
 
   @OneToMany(
-    type => ModuleDeployment,
+    type => ModuleDeploymentEntity,
     moduleDeployment => moduleDeployment.deployment,
     { cascade: true, eager: true }
   )
-  public modules: ModuleDeployment[]
+  public modules: ModuleDeploymentEntity[]
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -31,19 +31,19 @@ export class Deployment extends BaseEntity {
     name: 'circles',
     transformer: {
       from: circles => circles.map(
-        circle => plainToClass(CircleDeployment, circle)
+        circle => plainToClass(CircleDeploymentEntity, circle)
       ),
       to: circles => circles
     }
   })
-  public circles: CircleDeployment[]
+  public circles: CircleDeploymentEntity[]
 
   constructor(
-    modules: ModuleDeployment[],
+    modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
     callbackUrl: string,
-    circles: CircleDeployment[]
+    circles: CircleDeploymentEntity[]
   ) {
     super()
     this.modules = modules

@@ -1,6 +1,6 @@
 import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
 import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
-import { Deployment } from '../entity'
+import { DeploymentEntity } from '../entity'
 import { Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
 
@@ -20,8 +20,8 @@ export class CreateDeploymentDto {
   @Type(() => CreateCircleDeploymentDto)
   public readonly circles: CreateCircleDeploymentDto[]
 
-  public toEntity(): Deployment {
-    return new Deployment(
+  public toEntity(): DeploymentEntity {
+    return new DeploymentEntity(
       this.modules.map(module => module.toEntity()),
       this.authorId,
       this.description,
