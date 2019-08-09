@@ -37,6 +37,10 @@ export class ComponentEntity extends BaseEntity {
     this.pipelineOptions = pipelineOptions
   }
 
+  public async updatePipelineOptions(pipelineOptions: IPipelineOptions): Promise<void> {
+    this.pipelineOptions = pipelineOptions
+  }
+
   public toReadDto(): ReadComponentDto {
     return new ReadComponentDto(
       this.id,
