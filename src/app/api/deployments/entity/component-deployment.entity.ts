@@ -1,12 +1,9 @@
-import {
-  Entity,
-  BaseEntity,
-  PrimaryGeneratedColumn,
-  Column, ManyToOne, JoinColumn
-} from 'typeorm'
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
-import { DeploymentEntity } from './deployment.entity'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { CircleDeploymentEntity } from './circle-deployment.entity'
+import { ComponentEntity } from '../../modules/entity'
+import { IPipelineOptions } from '../../modules/interfaces'
 
 @Entity('component_deployments')
 export class ComponentDeploymentEntity extends BaseEntity {
@@ -41,7 +38,7 @@ export class ComponentDeploymentEntity extends BaseEntity {
     this.buildImageName = buildImageName
   }
 
-  public toReadDto() {
+  public toReadDto(): ReadComponentDeploymentDto {
     return new ReadComponentDeploymentDto(
       this.id,
       this.componentId,

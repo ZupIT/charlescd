@@ -3,11 +3,8 @@ import { DeploymentsController } from './controller'
 import { DeploymentsService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import {
-  DeploymentEntity,
-  ModuleDeploymentEntity,
-  ComponentDeploymentEntity
-} from './entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from './entity'
+import { ModuleEntity } from '../modules/entity'
 
 @Module({
   imports: [
@@ -15,7 +12,8 @@ import {
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ModuleDeploymentEntity,
-      ComponentDeploymentEntity
+      ComponentDeploymentEntity,
+      ModuleEntity
     ])
   ],
   controllers: [DeploymentsController],

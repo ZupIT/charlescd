@@ -1,7 +1,4 @@
-import {
-  BaseEntity, Column,
-  Entity, OneToMany, PrimaryGeneratedColumn
-} from 'typeorm'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadModuleDto } from '../dto'
 import { ComponentEntity } from './component.entity'
 
@@ -31,6 +28,14 @@ export class ModuleEntity extends BaseEntity {
     super()
     this.moduleId = moduleId
     this.components = components
+  }
+
+  public async addComponent(component: ComponentEntity): Promise<void> {
+    this.components = [...this.components, component]
+  }
+
+  public getComponentById(componentId: string): ComponentEntity {
+    return this.components.find(component => component.componentId === componentId)
   }
 
   public toReadDto(): ReadModuleDto {

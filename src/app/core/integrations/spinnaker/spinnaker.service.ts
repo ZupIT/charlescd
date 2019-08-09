@@ -1,10 +1,33 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { CreateSpinnakerPipeline } from 'lib-spinnaker'
+import { IPipelineOptions } from '../../../api/modules/interfaces'
+import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 
 @Injectable()
 export class SpinnakerService {
 
   constructor(private readonly httpService: HttpService) {}
+
+  public updatePipelineOptions(
+    pipelineOptions: IPipelineOptions,
+    circles: CircleDeploymentEntity[],
+    componentDeployment: ComponentDeploymentEntity
+  ): IPipelineOptions {
+    return {
+      pipelineCircles: [],
+      pipelineVersions: []
+    }
+  }
+
+  public createNewPipelineOptions(
+    circles: CircleDeploymentEntity[],
+    componentDeployment: ComponentDeploymentEntity
+  ): IPipelineOptions {
+    return {
+      pipelineCircles: [],
+      pipelineVersions: []
+    }
+  }
 
   public async createPipeline(data): Promise<void> {
     const pipeline = await CreateSpinnakerPipeline(
