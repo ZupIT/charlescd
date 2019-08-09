@@ -1,25 +1,21 @@
-import { DeploymentModule } from './deployment-module.entity'
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-  OneToMany, Column
-} from 'typeorm'
+import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
-import { DeploymentModuleResponse } from '../interface'
+import { CircleDeploymentEntity } from './circle-deployment.entity'
+import { plainToClass } from 'class-transformer'
 
 @Entity('deployments')
-export class Deployment extends BaseEntity {
+export class DeploymentEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string
 
   @OneToMany(
-    type => DeploymentModule,
-    deploymentModule => deploymentModule.deployment,
+    type => ModuleDeploymentEntity,
+    moduleDeployment => moduleDeployment.deployment,
     { cascade: true, eager: true }
   )
-  public modules: DeploymentModule[]
+  public modules: ModuleDeploymentEntity[]
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -30,39 +26,40 @@ export class Deployment extends BaseEntity {
   @Column({ name: 'callback_url'} )
   public callbackUrl: string
 
-  @Column({ name: 'circle_header'} )
-  public circleHeader: string
+  @Column({
+    type: 'jsonb',
+    name: 'circles',
+    transformer: {
+      from: circles => circles.map(
+        circle => plainToClass(CircleDeploymentEntity, circle)
+      ),
+      to: circles => circles
+    }
+  })
+  public circles: CircleDeploymentEntity[]
 
   constructor(
-    modules: DeploymentModule[],
+    modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
     callbackUrl: string,
-    circleHeader: string
+    circles: CircleDeploymentEntity[]
   ) {
     super()
     this.modules = modules
     this.authorId = authorId
     this.description = description
     this.callbackUrl = callbackUrl
-    this.circleHeader = circleHeader
-  }
-
-  private getDeploymentModulesResponseArray(): DeploymentModuleResponse[] {
-    return this.modules.map(module => ({
-      id: module.id,
-      moduleId: module.moduleId,
-      buildImageTag: module.buildImageTag
-    }))
+    this.circles = circles
   }
 
   public toReadDto(): ReadDeploymentDto {
     return new ReadDeploymentDto(
       this.id,
-      this.getDeploymentModulesResponseArray(),
+      this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circleHeader
+      this.circles.map(circle => circle.toReadDto())
     )
   }
 }
