@@ -3,13 +3,14 @@ import { ModulesController } from './controller'
 import { ModulesService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ModuleEntity } from './entity'
+import { ComponentEntity, ModuleEntity } from './entity'
 
 @Module({
   imports: [
     IntegrationsModule,
     TypeOrmModule.forFeature([
-      ModuleEntity
+      ModuleEntity,
+      ComponentEntity
     ])
   ],
   controllers: [ModulesController],
