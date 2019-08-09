@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../entity'
+import {
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity
+} from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentEntity, ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../../modules/interfaces'
-import { SpinnakerService } from '../../../core/integrations/spinnaker/spinnaker.service'
+import { SpinnakerService } from '../../../core/integrations/spinnaker'
 
 @Injectable()
 export class DeploymentsService {
