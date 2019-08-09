@@ -118,8 +118,10 @@ export class DeploymentsService {
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
     const deployment: DeploymentEntity =
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+
     await this.processDeploymentPipelines(deployment)
     // TODO do deploy
+
     return deployment.toReadDto()
   }
 
