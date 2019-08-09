@@ -17,8 +17,6 @@ async function bootstrap() {
 
     const consulEnvs = item.Value
 
-    console.log(consulEnvs)
-
     const app = await NestFactory.create(AppModule)
 
     app.useGlobalPipes(
