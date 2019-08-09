@@ -28,6 +28,6 @@ publish:
 	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:${RELEASE}"
 	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:latest"
 test: 
-	@echo "don`t have time for test right now"
+	@echo "don't have time for test right now"
 run:
 	${NODERUN}
