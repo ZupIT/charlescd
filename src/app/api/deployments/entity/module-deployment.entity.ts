@@ -4,17 +4,18 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn, OneToMany
+  JoinColumn, OneToMany, PrimaryColumn
 } from 'typeorm'
 import { DeploymentEntity } from './deployment.entity'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
 import { ReadModuleDeploymentDto } from '../dto'
-import { DeploymentStatusEnum } from '../enums';
+import { DeploymentStatusEnum } from '../enums'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity('module_deployments')
 export class ModuleDeploymentEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id: string
 
   @ManyToOne(
@@ -42,6 +43,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
     components: ComponentDeploymentEntity[]
   ) {
     super()
+    this.id = uuidv4()
     this.moduleId = moduleId
     this.components = components
     this.status = DeploymentStatusEnum.CREATED
