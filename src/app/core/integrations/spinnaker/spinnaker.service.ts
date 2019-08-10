@@ -237,12 +237,7 @@ export class SpinnakerService {
     spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration
   ): Promise<void> {
 
-    console.log(JSON.stringify(spinnakerPipelineConfiguraton))
-    console.log('\n\n\n')
-
     const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
-
-    console.log(JSON.stringify(pipeline))
     await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/pipelines`,
       pipeline,
