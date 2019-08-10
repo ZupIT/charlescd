@@ -6,5 +6,5 @@ export const DeploymentsConfigurationConstants = {
   TEMPLATE_GITHUB_USER: 'lucassaleszup',
   TEMPLATE_GITHUB_REPO: 'templates-charts',
   TEMPLATE_GITHUB_FOLDER: 'demoApp',
-  DARWIN_DEPLOY_URL: 'darwin-deploy.zup.com.br'
+  DARWIN_DEPLOY_URL: 'https://darwin-deploy.zup.com.br'
 }
