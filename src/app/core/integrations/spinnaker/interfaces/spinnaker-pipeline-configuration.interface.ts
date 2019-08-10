@@ -13,8 +13,6 @@ export interface ISpinnakerPipelineConfiguration {
 
   appNamespace: string,
 
-  imgUri: string,
-
   webhookUri: string,
 
   healthCheckPath: string,
