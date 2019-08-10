@@ -11,7 +11,6 @@ export class DeploymentConfigurationService {
       applicationName: 'testelucas',
       appName: 'darwin-content',
       appNamespace: 'qa',
-      imgUri: 'realwave-lab.azurecr.io/darwin-content',
       healthCheckPath: '/darwin-content/health',
       uri: {
         uriName: '/darwin-content'

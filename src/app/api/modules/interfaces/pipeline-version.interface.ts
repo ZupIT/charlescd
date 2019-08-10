@@ -1,6 +1,6 @@
 export interface IPipelineVersion {
 
-  version: string,
+  versionUrl: string,
 
-  versionTag: string
+  version: string
 }
