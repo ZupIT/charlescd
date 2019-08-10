@@ -185,6 +185,6 @@ export class DeploymentsService {
     public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
 
         const deployment: DeploymentEntity = await this.deploymentsRepository.findOne(deploymentId)
-        await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status, '')
+        await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status, deployment.callbackUrl)
     }
 }
