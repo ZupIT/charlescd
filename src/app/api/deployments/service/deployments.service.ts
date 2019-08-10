@@ -1,195 +1,192 @@
-import { Injectable } from '@nestjs/common'
-import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { FinishDeploymentDto } from '../../notifications/dto'
-import {
-  CircleDeploymentEntity,
-  ComponentDeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity
-} from '../entity'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
-import { ComponentEntity, ModuleEntity } from '../../modules/entity'
-import { IPipelineOptions } from '../../modules/interfaces'
-import { SpinnakerService } from '../../../core/integrations/spinnaker'
-import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
-import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
+import {Injectable} from '@nestjs/common'
+import {CreateDeploymentDto, ReadDeploymentDto} from '../dto'
+import {FinishDeploymentDto} from '../../notifications/dto'
+import {CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity} from '../entity'
+import {Repository} from 'typeorm'
+import {InjectRepository} from '@nestjs/typeorm'
+import {ComponentEntity, ModuleEntity} from '../../modules/entity'
+import {IPipelineOptions} from '../../modules/interfaces'
+import {SpinnakerService} from '../../../core/integrations/spinnaker'
+import {IDeploymentConfiguration} from '../../../core/integrations/configuration/interfaces'
+import {DeploymentConfigurationService} from '../../../core/integrations/configuration'
+import {MooveService} from '../../../core/integrations/moove'
 
 @Injectable()
 export class DeploymentsService {
 
-  constructor(
-    private readonly spinnakerService: SpinnakerService,
-    private readonly deploymentConfigurationService: DeploymentConfigurationService,
-    @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>,
-    @InjectRepository(ComponentEntity)
-    private readonly componentsRepository: Repository<ComponentEntity>
-  ) {}
-
-  private async createModuleComponent(
-    moduleEntity: ModuleEntity,
-    componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
-
-    const pipelineOptions: IPipelineOptions =
-      this.spinnakerService.createNewPipelineOptions(circles, componentDeployment)
-
-    return moduleEntity.addComponent(new ComponentEntity(
-      componentDeployment.componentId,
-      pipelineOptions
-    ))
-  }
-
-  private getComponentEntitiesFromDeployments(
-    componentDeployments: ComponentDeploymentEntity[],
-    circles: CircleDeploymentEntity[]
-  ): ComponentEntity[] {
-
-    return componentDeployments.map(
-      component => new ComponentEntity(
-        component.componentId,
-        this.spinnakerService.createNewPipelineOptions(circles, component)
-      )
-    )
-  }
-
-  private async createModulePipelines(
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
-
-    return this.modulesRepository.save(new ModuleEntity(
-      moduleDeploymentEntity.moduleId,
-      this.getComponentEntitiesFromDeployments(moduleDeploymentEntity.components, circles)
-    ))
-  }
-
-  private async updateComponentPipeline(
-    componentEntity: ComponentEntity,
-    componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
-
-    const pipelineOptions: IPipelineOptions = this.spinnakerService.updatePipelineOptions(
-      componentEntity.pipelineOptions, circles, componentDeployment
-    )
-    return componentEntity.updatePipelineOptions(pipelineOptions)
-  }
-
-  private async updateModuleComponentsPipelines(
-    moduleEntity: ModuleEntity,
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
-
-    for (const componentDeployment of moduleDeploymentEntity.components) {
-      const componentEntity: ComponentEntity =
-        moduleEntity.getComponentById(componentDeployment.componentId)
-
-      componentEntity ?
-        await this.updateComponentPipeline(componentEntity, componentDeployment, circles) :
-        await this.createModuleComponent(moduleEntity, componentDeployment, circles)
+    constructor(
+        private readonly mooveService: MooveService,
+        private readonly spinnakerService: SpinnakerService,
+        private readonly deploymentConfigurationService: DeploymentConfigurationService,
+        @InjectRepository(DeploymentEntity)
+        private readonly deploymentsRepository: Repository<DeploymentEntity>,
+        @InjectRepository(ModuleEntity)
+        private readonly modulesRepository: Repository<ModuleEntity>,
+        @InjectRepository(ComponentEntity)
+        private readonly componentsRepository: Repository<ComponentEntity>
+    ) {
     }
-  }
 
-  private async updateModulePipelines(
-    moduleEntity: ModuleEntity,
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
+    private async createModuleComponent(
+        moduleEntity: ModuleEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-    await this.updateModuleComponentsPipelines(moduleEntity, moduleDeploymentEntity, circles)
-    return this.modulesRepository.save(moduleEntity)
-  }
+        const pipelineOptions: IPipelineOptions =
+            this.spinnakerService.createNewPipelineOptions(circles, componentDeployment)
 
-  private async processModulePipelines(
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
+        return moduleEntity.addComponent(new ComponentEntity(
+            componentDeployment.componentId,
+            pipelineOptions
+        ))
+    }
 
-    const moduleEntity: ModuleEntity =
-      await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
+    private getComponentEntitiesFromDeployments(
+        componentDeployments: ComponentDeploymentEntity[],
+        circles: CircleDeploymentEntity[]
+    ): ComponentEntity[] {
 
-    return moduleEntity ?
-      this.updateModulePipelines(moduleEntity, moduleDeploymentEntity, circles) :
-      this.createModulePipelines(moduleDeploymentEntity, circles)
-  }
+        return componentDeployments.map(
+            component => new ComponentEntity(
+                component.componentId,
+                this.spinnakerService.createNewPipelineOptions(circles, component)
+            )
+        )
+    }
 
-  private async processDeploymentPipelines(deployment: DeploymentEntity) {
-    const { circles, modules } = deployment
-    return Promise.all(
-      modules.map(module => this.processModulePipelines(module, circles))
-    )
-  }
+    private async createModulePipelines(
+        moduleDeploymentEntity: ModuleDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-  private async deployComponentPipeline(
-    componentDeployment: ComponentDeploymentEntity,
-    callbackUrl: string
-  ): Promise<void> {
+        return this.modulesRepository.save(new ModuleEntity(
+            moduleDeploymentEntity.moduleId,
+            this.getComponentEntitiesFromDeployments(moduleDeploymentEntity.components, circles)
+        ))
+    }
 
-    const componentEntity: ComponentEntity =
-      await this.componentsRepository.findOne({ componentId: componentDeployment.componentId })
-    const deploymentConfiguration: IDeploymentConfiguration =
-      await this.deploymentConfigurationService.getConfiguration()
+    private async updateComponentPipeline(
+        componentEntity: ComponentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-    await this.spinnakerService.createDeployment(
-      componentEntity.pipelineOptions,
-      deploymentConfiguration,
-      callbackUrl
-    )
-  }
+        const pipelineOptions: IPipelineOptions = this.spinnakerService.updatePipelineOptions(
+            componentEntity.pipelineOptions, circles, componentDeployment
+        )
+        return componentEntity.updatePipelineOptions(pipelineOptions)
+    }
 
-  private async deployRequestedComponents(
-    componentDeployments: ComponentDeploymentEntity[],
-    callbackUrl: string
-  ): Promise<void> {
+    private async updateModuleComponentsPipelines(
+        moduleEntity: ModuleEntity,
+        moduleDeploymentEntity: ModuleDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-    await Promise.all(
-      componentDeployments.map(
-        component => this.deployComponentPipeline(component, callbackUrl)
-      )
-    )
-  }
+        for (const componentDeployment of moduleDeploymentEntity.components) {
+            const componentEntity: ComponentEntity =
+                moduleEntity.getComponentById(componentDeployment.componentId)
 
-  private async deployPipelines(deployment: DeploymentEntity) {
-    const { callbackUrl } = deployment
-    return Promise.all(
-      deployment.modules.map(
-        module => this.deployRequestedComponents(module.components, callbackUrl)
-      )
-    )
-  }
+            componentEntity ?
+                await this.updateComponentPipeline(componentEntity, componentDeployment, circles) :
+                await this.createModuleComponent(moduleEntity, componentDeployment, circles)
+        }
+    }
 
-  public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
-    const deployment: DeploymentEntity =
-      await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+    private async updateModulePipelines(
+        moduleEntity: ModuleEntity,
+        moduleDeploymentEntity: ModuleDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-    await this.processDeploymentPipelines(deployment)
-    await this.deployPipelines(deployment)
+        await this.updateModuleComponentsPipelines(moduleEntity, moduleDeploymentEntity, circles)
+        return this.modulesRepository.save(moduleEntity)
+    }
 
-    return deployment.toReadDto()
-  }
+    private async processModulePipelines(
+        moduleDeploymentEntity: ModuleDeploymentEntity,
+        circles: CircleDeploymentEntity[]
+    ) {
 
-  private async convertDeploymentsToReadDto(deployments: DeploymentEntity[]): Promise<ReadDeploymentDto[]> {
-    return deployments.map(deployment => deployment.toReadDto())
-  }
+        const moduleEntity: ModuleEntity =
+            await this.modulesRepository.findOne({moduleId: moduleDeploymentEntity.moduleId})
 
-  public async getDeployments(): Promise<ReadDeploymentDto[]> {
-    return this.deploymentsRepository.find({ relations: ['modules'] })
-      .then(deployments => this.convertDeploymentsToReadDto(deployments))
-  }
+        return moduleEntity ?
+            this.updateModulePipelines(moduleEntity, moduleDeploymentEntity, circles) :
+            this.createModulePipelines(moduleDeploymentEntity, circles)
+    }
 
-  public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
-    return this.deploymentsRepository.findOne({ id })
-      .then(deployment => deployment.toReadDto())
-  }
+    private async processDeploymentPipelines(deployment: DeploymentEntity) {
+        const {circles, modules} = deployment
+        return Promise.all(
+            modules.map(module => this.processModulePipelines(module, circles))
+        )
+    }
 
-  public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
-    console.log(deploymentId)
-    //TODO moove call
-  }
+    private async deployComponentPipeline(
+        componentDeployment: ComponentDeploymentEntity,
+        callbackUrl: string
+    ): Promise<void> {
+
+        const componentEntity: ComponentEntity =
+            await this.componentsRepository.findOne({componentId: componentDeployment.componentId})
+        const deploymentConfiguration: IDeploymentConfiguration =
+            await this.deploymentConfigurationService.getConfiguration()
+
+        await this.spinnakerService.createDeployment(
+            componentEntity.pipelineOptions,
+            deploymentConfiguration,
+            callbackUrl
+        )
+    }
+
+    private async deployRequestedComponents(
+        componentDeployments: ComponentDeploymentEntity[],
+        callbackUrl: string
+    ): Promise<void> {
+
+        await Promise.all(
+            componentDeployments.map(
+                component => this.deployComponentPipeline(component, callbackUrl)
+            )
+        )
+    }
+
+    private async deployPipelines(deployment: DeploymentEntity) {
+        const {callbackUrl} = deployment
+        return Promise.all(
+            deployment.modules.map(
+                module => this.deployRequestedComponents(module.components, callbackUrl)
+            )
+        )
+    }
+
+    public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
+        const deployment: DeploymentEntity =
+            await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+
+        await this.processDeploymentPipelines(deployment)
+        await this.deployPipelines(deployment)
+
+        return deployment.toReadDto()
+    }
+
+    private async convertDeploymentsToReadDto(deployments: DeploymentEntity[]): Promise<ReadDeploymentDto[]> {
+        return deployments.map(deployment => deployment.toReadDto())
+    }
+
+    public async getDeployments(): Promise<ReadDeploymentDto[]> {
+        return this.deploymentsRepository.find({relations: ['modules']})
+            .then(deployments => this.convertDeploymentsToReadDto(deployments))
+    }
+
+    public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
+        return this.deploymentsRepository.findOne({id})
+            .then(deployment => deployment.toReadDto())
+    }
+
+    public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
+        await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status)
+    }
 }
