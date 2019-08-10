@@ -61,7 +61,7 @@ export class DeploymentsService {
     circles: CircleDeploymentEntity[]
   ) {
 
-    await this.modulesRepository.save(new ModuleEntity(
+    return this.modulesRepository.save(new ModuleEntity(
       moduleDeploymentEntity.moduleId,
       this.getComponentEntitiesFromDeployments(moduleDeploymentEntity.components, circles)
     ))
@@ -109,7 +109,6 @@ export class DeploymentsService {
     moduleDeploymentEntity: ModuleDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ) {
-
 
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
