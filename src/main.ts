@@ -5,7 +5,7 @@ import * as consul from 'consul'
 
 async function bootstrap() {
   const config = { baseUrl: `${process.env.CONSUL}/v1` };
-
+  console.log(process.env)
   await consul(config).kv.get(`config/${process.env.MODULE}/data`, async (err, item) => {
     if (err) {
       throw new Error('Fail to load consul, verify the consul server.')
