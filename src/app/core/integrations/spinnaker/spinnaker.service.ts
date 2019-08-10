@@ -206,19 +206,19 @@ export class SpinnakerService {
     ).toPromise()
   }
 
-  private getSpinnakerCallbackUrl(): string {
-    const deploymentId: string = '12345'
-    return `${AppConstants.DARWIN_DEPLOY_URL}?deploymentId=${deploymentId}`
+  private getSpinnakerCallbackUrl(componentDeploymentId: string): string {
+    return `${AppConstants.DARWIN_DEPLOY_URL}?componentDeploymentId=${componentDeploymentId}&`
   }
 
   private createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration
+    deploymentConfiguration: IDeploymentConfiguration,
+    componentDeploymentId: string
   ): ISpinnakerPipelineConfiguration {
 
     return {
       ...deploymentConfiguration,
-      webhookUri: this.getSpinnakerCallbackUrl(),
+      webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
       subsets: pipelineCirclesOptions.pipelineVersions,
       circle: pipelineCirclesOptions.pipelineCircles
     }
@@ -255,11 +255,12 @@ export class SpinnakerService {
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration
+    deploymentConfiguration: IDeploymentConfiguration,
+    componentDeploymentId: string
   ): Promise<void> {
 
     const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
-      this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration)
+      this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId)
 
     await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
     await this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)

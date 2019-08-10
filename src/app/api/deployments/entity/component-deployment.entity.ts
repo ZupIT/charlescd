@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { DeploymentStatusEnum } from '../enums'
 
 @Entity('component_deployments')
 export class ComponentDeploymentEntity extends BaseEntity {
@@ -24,6 +25,9 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
 
+  @Column({ name: 'status' })
+  public status: DeploymentStatusEnum
+
   constructor(
     componentId: string,
     buildImageUrl: string,
@@ -33,6 +37,7 @@ export class ComponentDeploymentEntity extends BaseEntity {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
+    this.status = DeploymentStatusEnum.CREATED
   }
 
   public toReadDto(): ReadComponentDeploymentDto {
@@ -40,7 +45,8 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.id,
       this.componentId,
       this.buildImageUrl,
-      this.buildImageTag
+      this.buildImageTag,
+      this.status
     )
   }
 }

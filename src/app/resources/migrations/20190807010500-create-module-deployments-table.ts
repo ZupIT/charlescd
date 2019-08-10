@@ -18,6 +18,10 @@ export class CreateModuleDeploymentsTable20190807010500 implements MigrationInte
         {
           name: 'module_id',
           type: 'varchar'
+        },
+        {
+          name: 'status',
+          type: 'varchar'
         }
       ]
     }), true)
