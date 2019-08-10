@@ -20,11 +20,11 @@ export class CreateComponentDeploymentsTable20190808190900 implements MigrationI
           type: 'varchar'
         },
         {
-          name: 'build_image_tag',
+          name: 'build_image_url',
           type: 'varchar'
         },
         {
-          name: 'build_image_name',
+          name: 'build_image_tag',
           type: 'varchar'
         }
       ]
