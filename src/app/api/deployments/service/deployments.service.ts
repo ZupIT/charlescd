@@ -126,8 +126,7 @@ export class DeploymentsService {
   }
 
   private async deployComponentPipeline(
-    componentDeployment: ComponentDeploymentEntity,
-    callbackUrl: string
+    componentDeployment: ComponentDeploymentEntity
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
@@ -137,28 +136,25 @@ export class DeploymentsService {
 
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
-      deploymentConfiguration,
-      callbackUrl
+      deploymentConfiguration
     )
   }
 
   private async deployRequestedComponents(
-    componentDeployments: ComponentDeploymentEntity[],
-    callbackUrl: string
+    componentDeployments: ComponentDeploymentEntity[]
   ): Promise<void> {
 
     await Promise.all(
       componentDeployments.map(
-        component => this.deployComponentPipeline(component, callbackUrl)
+        component => this.deployComponentPipeline(component)
       )
     )
   }
 
   private async deployPipelines(deployment: DeploymentEntity) {
-    const { callbackUrl } = deployment
     return Promise.all(
       deployment.modules.map(
-        module => this.deployRequestedComponents(module.components, callbackUrl)
+        module => this.deployRequestedComponents(module.components)
       )
     )
   }
