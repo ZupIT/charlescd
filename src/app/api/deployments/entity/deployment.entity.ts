@@ -3,6 +3,7 @@ import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 't
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
+import { DeploymentStatusEnum } from '../enums'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
@@ -13,7 +14,7 @@ export class DeploymentEntity extends BaseEntity {
   @OneToMany(
     type => ModuleDeploymentEntity,
     moduleDeployment => moduleDeployment.deployment,
-    { cascade: true, eager: true }
+    { cascade: true }
   )
   public modules: ModuleDeploymentEntity[]
 
@@ -25,6 +26,9 @@ export class DeploymentEntity extends BaseEntity {
 
   @Column({ name: 'callback_url'} )
   public callbackUrl: string
+
+  @Column({ name: 'status'} )
+  public status: DeploymentStatusEnum
 
   @Column({
     type: 'jsonb',
@@ -51,6 +55,7 @@ export class DeploymentEntity extends BaseEntity {
     this.description = description
     this.callbackUrl = callbackUrl
     this.circles = circles
+    this.status = DeploymentStatusEnum.CREATED
   }
 
   public toReadDto(): ReadDeploymentDto {
@@ -59,7 +64,8 @@ export class DeploymentEntity extends BaseEntity {
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circles.map(circle => circle.toReadDto())
+      this.circles.map(circle => circle.toReadDto()),
+      this.status
     )
   }
 }

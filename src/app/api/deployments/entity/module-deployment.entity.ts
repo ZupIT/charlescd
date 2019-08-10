@@ -9,6 +9,7 @@ import {
 import { DeploymentEntity } from './deployment.entity'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
 import { ReadModuleDeploymentDto } from '../dto'
+import { DeploymentStatusEnum } from '../enums';
 
 @Entity('module_deployments')
 export class ModuleDeploymentEntity extends BaseEntity {
@@ -18,13 +19,16 @@ export class ModuleDeploymentEntity extends BaseEntity {
 
   @ManyToOne(
     type => DeploymentEntity,
-    deployment => deployment.modules
+    deployment => deployment.modules,
   )
   @JoinColumn({ name: 'deployment_id' })
   public deployment: DeploymentEntity
 
   @Column({ name: 'module_id' })
   public moduleId: string
+
+  @Column({ name: 'status' })
+  public status: DeploymentStatusEnum
 
   @OneToMany(
     type => ComponentDeploymentEntity,
@@ -40,13 +44,15 @@ export class ModuleDeploymentEntity extends BaseEntity {
     super()
     this.moduleId = moduleId
     this.components = components
+    this.status = DeploymentStatusEnum.CREATED
   }
 
   public toReadDto(): ReadModuleDeploymentDto {
     return new ReadModuleDeploymentDto(
       this.id,
       this.moduleId,
-      this.components.map(component => component.toReadDto())
+      this.components.map(component => component.toReadDto()),
+      this.status
     )
   }
 }
