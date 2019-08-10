@@ -29,7 +29,7 @@ export class SpinnakerService {
   ): void {
 
     pipelineOptions.pipelineVersions = pipelineOptions.pipelineVersions.filter(
-      pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageName
+      pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
     )
     pipelineOptions.pipelineVersions.push(
       this.getNewPipelineVersionObject(componentDeployment)
@@ -143,8 +143,8 @@ export class SpinnakerService {
   ): IPipelineVersion {
 
     return {
-      version: componentDeployment.buildImageName,
-      versionTag: componentDeployment.buildImageTag
+      versionUrl: componentDeployment.buildImageUrl,
+      version: componentDeployment.buildImageTag
     }
   }
 
@@ -168,7 +168,7 @@ export class SpinnakerService {
         headerValue: circle.headerValue
       }],
       destination: [{
-        version: componentDeployment.buildImageName
+        version: componentDeployment.buildImageTag
       }]
     }
   }
