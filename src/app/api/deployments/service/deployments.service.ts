@@ -11,16 +11,21 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentEntity, ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../../modules/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
+import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
+import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 
 @Injectable()
 export class DeploymentsService {
 
   constructor(
     private readonly spinnakerService: SpinnakerService,
+    private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>
+    private readonly modulesRepository: Repository<ModuleEntity>,
+    @InjectRepository(ComponentEntity)
+    private readonly componentsRepository: Repository<ComponentEntity>
   ) {}
 
   private async createModuleComponent(
@@ -120,12 +125,50 @@ export class DeploymentsService {
     )
   }
 
+  private async deployComponentPipeline(
+    componentDeployment: ComponentDeploymentEntity,
+    callbackUrl: string
+  ): Promise<void> {
+
+    const componentEntity: ComponentEntity =
+      await this.componentsRepository.findOne({ componentId: componentDeployment.componentId })
+    const deploymentConfiguration: IDeploymentConfiguration =
+      await this.deploymentConfigurationService.getConfiguration()
+
+    await this.spinnakerService.createDeployment(
+      componentEntity.pipelineOptions,
+      deploymentConfiguration,
+      callbackUrl
+    )
+  }
+
+  private async deployRequestedComponents(
+    componentDeployments: ComponentDeploymentEntity[],
+    callbackUrl: string
+  ): Promise<void> {
+
+    await Promise.all(
+      componentDeployments.map(
+        component => this.deployComponentPipeline(component, callbackUrl)
+      )
+    )
+  }
+
+  private async deployPipelines(deployment: DeploymentEntity) {
+    const { callbackUrl } = deployment
+    return Promise.all(
+      deployment.modules.map(
+        module => this.deployRequestedComponents(module.components, callbackUrl)
+      )
+    )
+  }
+
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
     const deployment: DeploymentEntity =
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
 
     await this.processDeploymentPipelines(deployment)
-    // TODO do deploy
+    await this.deployPipelines(deployment)
 
     return deployment.toReadDto()
   }
