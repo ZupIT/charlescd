@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
+import { FinishDeploymentDto } from '../../notifications/dto'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity,
@@ -187,8 +188,8 @@ export class DeploymentsService {
       .then(deployment => deployment.toReadDto())
   }
 
-  public async finishDeployment(): Promise<void> {
-    
+  public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
+    console.log(deploymentId)
     //TODO moove call
   }
 }
