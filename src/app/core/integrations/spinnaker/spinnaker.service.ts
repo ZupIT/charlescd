@@ -195,6 +195,7 @@ export class SpinnakerService {
   }
 
   private async deploySpinnakerPipeline(pipelineName: string): Promise<void> {
+    await this.waitForPipelineCreation()
     await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${pipelineName}`,
       {},
@@ -237,6 +238,14 @@ export class SpinnakerService {
     )
   }
 
+  private async waitForPipelineCreation(): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve()
+      }, 10000)
+    })
+  }
+
   private async createSpinnakerPipeline(
     spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration
   ): Promise<void> {
@@ -253,6 +262,10 @@ export class SpinnakerService {
     ).toPromise()
   }
 
+  private setDeploymentStatusAsFailed() {
+    // TODO
+  }
+
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration
@@ -262,6 +275,8 @@ export class SpinnakerService {
       this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration)
 
     await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
-    await this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
+
+    this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
+      .catch(error => this.setDeploymentStatusAsFailed())
   }
 }
