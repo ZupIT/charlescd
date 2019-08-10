@@ -4,15 +4,15 @@ export class CreateComponentDeploymentDto {
 
   public readonly componentId: string
 
-  public readonly buildImageTag: string
+  public readonly buildImageUrl: string
 
-  public readonly buildImageName: string
+  public readonly buildImageTag: string
 
   public toEntity(): ComponentDeploymentEntity {
     return new ComponentDeploymentEntity(
       this.componentId,
-      this.buildImageTag,
-      this.buildImageName
+      this.buildImageUrl,
+      this.buildImageTag
     )
   }
 }
