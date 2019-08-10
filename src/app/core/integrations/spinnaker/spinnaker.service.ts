@@ -3,6 +3,8 @@ import { CreateSpinnakerPipeline } from 'lib-spinnaker'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/modules/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
+import { IDeploymentConfiguration } from '../configuration/interfaces'
+import { ISpinnakerPipelineConfiguration } from './interfaces'
 
 @Injectable()
 export class SpinnakerService {
@@ -192,15 +194,51 @@ export class SpinnakerService {
     }
   }
 
-  public async createPipeline(data): Promise<void> {
-    const pipeline = await CreateSpinnakerPipeline(
-      data.auth,
-      data.githubUser,
-      data.repo,
-      data.folder,
-      data.contract,
+  private async deploySpinnakerPipeline(pipelineName: string): Promise<void> {
+    await this.httpService.post(
+      `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${pipelineName}`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    ).toPromise()
+  }
+
+  private createPipelineConfigurationObject(
+    pipelineCirclesOptions: IPipelineOptions,
+    deploymentConfiguration: IDeploymentConfiguration,
+    callbackUrl: string
+  ): ISpinnakerPipelineConfiguration {
+
+    return {
+      ...deploymentConfiguration,
+      webhookUri: callbackUrl,
+      subsets: pipelineCirclesOptions.pipelineVersions,
+      circle: pipelineCirclesOptions.pipelineCircles
+    }
+  }
+
+  private async getSpinnakerPipeline(
+    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
+  ): Promise<void> {
+
+    return await CreateSpinnakerPipeline(
+      AppConstants.TEMPLATE_GITHUB_AUTH,
+      AppConstants.TEMPLATE_GITHUB_USER,
+      AppConstants.TEMPLATE_GITHUB_REPO,
+      AppConstants.TEMPLATE_GITHUB_FOLDER,
+      spinnakerPipelineConfiguration,
     )
-    const result = await this.httpService.post(
+  }
+
+  private async createSpinnakerPipeline(
+    spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration
+  ): Promise<void> {
+
+    const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
+    await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/pipelines`,
       pipeline,
       {
@@ -209,14 +247,18 @@ export class SpinnakerService {
         },
       },
     ).toPromise()
-    await this.httpService.post(
-      `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${data.contract.pipelineName}`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).toPromise()
+  }
+
+  public async createDeployment(
+    pipelineCirclesOptions: IPipelineOptions,
+    deploymentConfiguration: IDeploymentConfiguration,
+    callbackUrl: string
+  ): Promise<void> {
+
+    const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
+      this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, callbackUrl)
+
+    await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
+    await this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
   }
 }
