@@ -187,6 +187,7 @@ export class DeploymentsService {
     }
 
     public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
-        await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status)
+        // TODO add the real callback url
+        await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status, '')
     }
 }
