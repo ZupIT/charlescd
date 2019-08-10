@@ -125,8 +125,7 @@ export class DeploymentsService {
     }
 
     private async deployComponentPipeline(
-        componentDeployment: ComponentDeploymentEntity,
-        callbackUrl: string
+        componentDeployment: ComponentDeploymentEntity
     ): Promise<void> {
 
         const componentEntity: ComponentEntity =
@@ -137,7 +136,6 @@ export class DeploymentsService {
         await this.spinnakerService.createDeployment(
             componentEntity.pipelineOptions,
             deploymentConfiguration,
-            callbackUrl
         )
     }
 
