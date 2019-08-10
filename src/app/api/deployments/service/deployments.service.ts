@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../entity'
+import {
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity
+} from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentEntity, ModuleEntity } from '../../modules/entity'
@@ -18,7 +23,9 @@ export class DeploymentsService {
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>
+    private readonly modulesRepository: Repository<ModuleEntity>,
+    @InjectRepository(ComponentEntity)
+    private readonly componentsRepository: Repository<ComponentEntity>
   ) {}
 
   private async createModuleComponent(
@@ -119,7 +126,13 @@ export class DeploymentsService {
     )
   }
 
-  private async deployComponentPipeline(componentEntity: ComponentEntity, callbackUrl: string) {
+  private async deployComponentPipeline(
+    componentDeployment: ComponentDeploymentEntity,
+    callbackUrl: string
+  ): Promise<void> {
+
+    const componentEntity: ComponentEntity =
+      await this.componentsRepository.findOne({ componentId: componentDeployment.componentId })
     const deploymentConfiguration: IDeploymentConfiguration =
       await this.deploymentConfigurationService.getConfiguration()
 
@@ -130,31 +143,24 @@ export class DeploymentsService {
     )
   }
 
-  private async deployModulePipelines(moduleEntity: ModuleEntity, callbackUrl: string) {
-    return Promise.all(
-      moduleEntity.components.map(
+  private async deployRequestedComponents(
+    componentDeployments: ComponentDeploymentEntity[],
+    callbackUrl: string
+  ): Promise<void> {
+
+    await Promise.all(
+      componentDeployments.map(
         component => this.deployComponentPipeline(component, callbackUrl)
       )
-    )
-  }
-
-  private async deployModuleEntities(
-    moduleEntities: ModuleEntity[],
-    callbackUrl: string
-  ): Promise<any> {
-
-    return moduleEntities.map(
-      moduleEntity => this.deployModulePipelines(moduleEntity, callbackUrl)
     )
   }
 
   private async deployPipelines(deployment: DeploymentEntity) {
     const { callbackUrl } = deployment
     return Promise.all(
-      deployment.modules
-        .map(module => this.modulesRepository.findOne({ moduleId: module.moduleId }))
-    ).then(
-      moduleEntities => this.deployModuleEntities(moduleEntities, callbackUrl)
+      deployment.modules.map(
+        module => this.deployRequestedComponents(module.components, callbackUrl)
+      )
     )
   }
 
