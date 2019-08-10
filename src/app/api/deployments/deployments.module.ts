@@ -18,6 +18,7 @@ import { ComponentEntity, ModuleEntity } from '../modules/entity'
     ])
   ],
   controllers: [DeploymentsController],
-  providers: [DeploymentsService]
+  providers: [DeploymentsService],
+  exports: [DeploymentsService]
 })
 export class DeploymentsModule {}
