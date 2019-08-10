@@ -185,6 +185,11 @@ export class DeploymentsService {
   }
 
   public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
+
+    const deployment: DeploymentEntity =
+      await this.deploymentsRepository.findOne(deploymentId)
+    
+
     console.log(finishDeploymentDto.status)
     //TODO moove call
   }
