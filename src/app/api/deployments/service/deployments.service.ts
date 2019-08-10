@@ -186,4 +186,9 @@ export class DeploymentsService {
     return this.deploymentsRepository.findOne({ id })
       .then(deployment => deployment.toReadDto())
   }
+
+  public async finishDeployment(): Promise<void> {
+    
+    //TODO moove call
+  }
 }
