@@ -12,8 +12,6 @@ export interface IDeploymentConfiguration {
 
   appNamespace: string,
 
-  imgUri: string,
-
   healthCheckPath: string,
 
   uri: ISpinnakerPipelineUri,
