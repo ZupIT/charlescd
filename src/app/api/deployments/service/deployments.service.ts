@@ -189,7 +189,7 @@ export class DeploymentsService {
   }
 
   public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
-    console.log(deploymentId)
+    console.log(finishDeploymentDto.status)
     //TODO moove call
   }
 }
