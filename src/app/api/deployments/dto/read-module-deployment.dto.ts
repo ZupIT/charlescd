@@ -8,13 +8,17 @@ export class ReadModuleDeploymentDto {
 
   public readonly components: ReadComponentDeploymentDto[]
 
+  public readonly status: string
+
   constructor(
     id: string,
     moduleId: string,
-    components: ReadComponentDeploymentDto[]
+    components: ReadComponentDeploymentDto[],
+    status: string
   ) {
     this.id = id
     this.moduleId = moduleId
     this.components = components
+    this.status = status
   }
 }

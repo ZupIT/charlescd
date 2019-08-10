@@ -1,11 +1,12 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
 import { ReadModuleDto } from '../dto'
 import { ComponentEntity } from './component.entity'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity()
 export class ModuleEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id: string
 
   @Column({
@@ -26,6 +27,7 @@ export class ModuleEntity extends BaseEntity {
     components: ComponentEntity[]
   ) {
     super()
+    this.id = uuidv4()
     this.moduleId = moduleId
     this.components = components
   }

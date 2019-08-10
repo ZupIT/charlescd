@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
+import { FinishDeploymentDto } from '../../notifications/dto'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity,
@@ -13,6 +14,9 @@ import { IPipelineOptions } from '../../modules/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
+import { DeploymentStatusEnum } from '../enums'
+import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum'
+import { DeploymentsStatusManagementService } from './deployments-status-management-service'
 
 @Injectable()
 export class DeploymentsService {
@@ -20,12 +24,15 @@ export class DeploymentsService {
   constructor(
     private readonly spinnakerService: SpinnakerService,
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
+    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
     private readonly modulesRepository: Repository<ModuleEntity>,
     @InjectRepository(ComponentEntity)
-    private readonly componentsRepository: Repository<ComponentEntity>
+    private readonly componentsRepository: Repository<ComponentEntity>,
+    @InjectRepository(ComponentDeploymentEntity)
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
 
   private async createModuleComponent(
@@ -136,7 +143,8 @@ export class DeploymentsService {
 
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
-      deploymentConfiguration
+      deploymentConfiguration,
+      componentDeployment.id
     )
   }
 
@@ -164,8 +172,12 @@ export class DeploymentsService {
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
 
     await this.processDeploymentPipelines(deployment)
-    await this.deployPipelines(deployment)
-
+    try {
+      await this.deployPipelines(deployment)
+    } catch(e) {
+      this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+      throw e
+    }
     return deployment.toReadDto()
   }
 
@@ -179,7 +191,28 @@ export class DeploymentsService {
   }
 
   public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
-    return this.deploymentsRepository.findOne({ id })
+    return this.deploymentsRepository.findOne({where: { id }, relations: ['modules']})
       .then(deployment => deployment.toReadDto())
+  }
+
+  public async finishDeployment(componentDeploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
+
+    const componentDeployment: ComponentDeploymentEntity = 
+        await this.componentDeploymentRepository.findOne({ 
+            where: {id: componentDeploymentId},
+            relations: ['moduleDeployment', 'moduleDeployment.deployment']
+          })
+
+    let status = DeploymentStatusEnum.FAILED
+
+    if(finishDeploymentDto &&
+        finishDeploymentDto.status && 
+        finishDeploymentDto.status === NotificationStatusEnum.SUCCESSED) {
+          status = DeploymentStatusEnum.FINISHED;
+    }
+
+    this.deploymentsStatusManagementService.deepUpdateDeploymentStatusByDeploymentId(componentDeployment.moduleDeployment.deployment.id, status)
+
+    //TODO moove call
   }
 }
