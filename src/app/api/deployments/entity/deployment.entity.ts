@@ -1,14 +1,15 @@
 import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 import { DeploymentStatusEnum } from '../enums'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({name: 'id'})
   public id: string
 
   @OneToMany(
@@ -50,6 +51,7 @@ export class DeploymentEntity extends BaseEntity {
     circles: CircleDeploymentEntity[]
   ) {
     super()
+    this.id = uuidv4()
     this.modules = modules
     this.authorId = authorId
     this.description = description
