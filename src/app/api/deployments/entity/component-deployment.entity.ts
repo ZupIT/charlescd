@@ -1,11 +1,13 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { DeploymentStatusEnum } from '../enums'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity('component_deployments')
 export class ComponentDeploymentEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id: string
 
   @ManyToOne(
@@ -24,15 +26,20 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
 
+  @Column({ name: 'status' })
+  public status: DeploymentStatusEnum
+
   constructor(
     componentId: string,
     buildImageUrl: string,
     buildImageTag: string
   ) {
     super()
+    this.id = uuidv4()
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
+    this.status = DeploymentStatusEnum.CREATED
   }
 
   public toReadDto(): ReadComponentDeploymentDto {
@@ -40,7 +47,8 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.id,
       this.componentId,
       this.buildImageUrl,
-      this.buildImageTag
+      this.buildImageTag,
+      this.status
     )
   }
 }

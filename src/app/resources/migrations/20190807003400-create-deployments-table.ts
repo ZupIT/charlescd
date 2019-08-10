@@ -26,6 +26,10 @@ export class CreateDeploymentsTable20190807003400 implements MigrationInterface 
         {
           name: 'circles',
           type: 'jsonb'
+        },
+        {
+          name: 'status',
+          type: 'varchar'
         }
       ]
     }), true)

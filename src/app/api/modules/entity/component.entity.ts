@@ -1,12 +1,13 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from './module.entity'
 import { IPipelineOptions } from '../interfaces'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity()
 export class ComponentEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id: string
 
   @Column({
@@ -33,6 +34,7 @@ export class ComponentEntity extends BaseEntity {
     pipelineOptions: IPipelineOptions
   ) {
     super()
+    this.id = uuidv4()
     this.componentId = componentId
     this.pipelineOptions = pipelineOptions
   }
