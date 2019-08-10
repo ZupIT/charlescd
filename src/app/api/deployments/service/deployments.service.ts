@@ -135,27 +135,25 @@ export class DeploymentsService {
 
         await this.spinnakerService.createDeployment(
             componentEntity.pipelineOptions,
-            deploymentConfiguration,
+            deploymentConfiguration
         )
     }
 
     private async deployRequestedComponents(
-        componentDeployments: ComponentDeploymentEntity[],
-        callbackUrl: string
+        componentDeployments: ComponentDeploymentEntity[]
     ): Promise<void> {
 
         await Promise.all(
             componentDeployments.map(
-                component => this.deployComponentPipeline(component, callbackUrl)
+                component => this.deployComponentPipeline(component)
             )
         )
     }
 
     private async deployPipelines(deployment: DeploymentEntity) {
-        const {callbackUrl} = deployment
         return Promise.all(
             deployment.modules.map(
-                module => this.deployRequestedComponents(module.components, callbackUrl)
+                module => this.deployRequestedComponents(module.components)
             )
         )
     }
@@ -185,7 +183,8 @@ export class DeploymentsService {
     }
 
     public async finishDeployment(deploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
-        // TODO add the real callback url
+
+        const deployment: DeploymentEntity = await this.deploymentsRepository.findOne(deploymentId)
         await this.mooveService.notifyDeploymentStatus(deploymentId, finishDeploymentDto.status, '')
     }
 }
