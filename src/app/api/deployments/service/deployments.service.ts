@@ -17,6 +17,7 @@ import { DeploymentConfigurationService } from '../../../core/integrations/confi
 import { DeploymentStatusEnum } from '../enums'
 import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum'
 import { DeploymentsStatusManagementService } from './deployments-status-management-service'
+import { MooveService } from 'src/app/core/integrations/moove'
 
 @Injectable()
 export class DeploymentsService {
@@ -25,6 +26,7 @@ export class DeploymentsService {
     private readonly spinnakerService: SpinnakerService,
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly mooveService: MooveService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
@@ -207,12 +209,18 @@ export class DeploymentsService {
 
     if(finishDeploymentDto &&
         finishDeploymentDto.status && 
-        finishDeploymentDto.status === NotificationStatusEnum.SUCCESSED) {
+        finishDeploymentDto.status === NotificationStatusEnum.SUCCEEDED) {
           status = DeploymentStatusEnum.FINISHED;
     }
 
-    this.deploymentsStatusManagementService.deepUpdateDeploymentStatusByDeploymentId(componentDeployment.moduleDeployment.deployment.id, status)
+    const deployment: DeploymentEntity = 
+        await this.deploymentsRepository.findOne({
+          where: { id: componentDeployment.moduleDeployment.deployment.id },
+          relations: ['modules']
+        })
 
-    //TODO moove call
+    this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, status)
+    
+    await this.mooveService.notifyDeploymentStatus(deployment.id, finishDeploymentDto.status, deployment.callbackUrl)
   }
 }
