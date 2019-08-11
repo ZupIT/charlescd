@@ -7,9 +7,11 @@ const postgresqlOptions: ConnectionOptions = {
   username: process.env.POSTGRES_USER || 'darwin',
   password: process.env.POSTGRES_PASS || 'darwin',
   database: process.env.POSTGRES_DB_NAME || 'darwin',
-  entities: ['**/*.entity{.ts,.js}'],
+  entities: [
+    __dirname + '/../**/**.entity.js'
+  ],
   migrationsTableName: 'darwin-deploy-migrations',
-  migrations: ['src/app/resources/migrations/*.ts'],
+  migrations: ['**/migrations/*(.ts|.js)'],
   synchronize: true
 }
 

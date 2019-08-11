@@ -17,7 +17,7 @@ import { DeploymentConfigurationService } from '../../../core/integrations/confi
 import { DeploymentStatusEnum } from '../enums'
 import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum'
 import { DeploymentsStatusManagementService } from './deployments-status-management-service'
-import { MooveService } from 'src/app/core/integrations/moove'
+import { MooveService } from '../../../core/integrations/moove'
 
 @Injectable()
 export class DeploymentsService {
