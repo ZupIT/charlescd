@@ -1,5 +1,5 @@
-import { DeploymentStatusEnum } from './deployment-status.enum'
+import { NotificationStatusEnum } from './notification-status.enum'
 
 export {
-  DeploymentStatusEnum
+  NotificationStatusEnum
 }
