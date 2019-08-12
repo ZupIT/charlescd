@@ -272,6 +272,10 @@ export class SpinnakerService {
       .deepUpdateDeploymentStatusByDeploymentId(deploymentId, DeploymentStatusEnum.FAILED)
   }
 
+  private async checkPipelineExistence(pipelineName: string): Promise<void> {
+    await this.
+  }
+
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
@@ -281,6 +285,8 @@ export class SpinnakerService {
 
     const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId)
+
+    await this.checkPipelineExistence(spinnakerPipelineConfiguraton.pipelineName)
 
     await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
 
