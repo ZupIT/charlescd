@@ -67,7 +67,8 @@ export class DeploymentEntity extends BaseEntity {
       this.authorId,
       this.description,
       this.circles.map(circle => circle.toReadDto()),
-      this.status
+      this.status,
+      this.callbackUrl
     )
   }
 }
