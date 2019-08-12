@@ -267,13 +267,36 @@ export class SpinnakerService {
     ).toPromise()
   }
 
+  private async updateSpinnakerPipeline(
+    spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration, pipelineId: string
+  ): Promise<void> {
+
+    const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
+    const updatePipelineObject = Object.assign({
+      id: pipelineId,
+      application: spinnakerPipelineConfiguraton.applicationName,
+      name: spinnakerPipelineConfiguraton.pipelineName
+    }, pipeline)
+    await this.httpService.post(
+      `${AppConstants.SPINNAKER_URL}/pipelines`,
+      updatePipelineObject,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    ).toPromise()
+  }
+
   private async setDeploymentStatusAsFailed(deploymentId: string): Promise<void> {
     await this.deploymentsStatusManagementService
       .deepUpdateDeploymentStatusByDeploymentId(deploymentId, DeploymentStatusEnum.FAILED)
   }
 
-  private async checkPipelineExistence(pipelineName: string): Promise<void> {
-    await this.
+  private async checkPipelineExistence(pipelineName: string): Promise<string> {
+    const { data } = await this.httpService.get(`${AppConstants.SPINNAKER_URL}/applications/testelucas/pipelineConfigs/${pipelineName}`).toPromise()
+    const { id } = data
+    return id
   }
 
   public async createDeployment(
@@ -286,10 +309,13 @@ export class SpinnakerService {
     const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId)
 
-    await this.checkPipelineExistence(spinnakerPipelineConfiguraton.pipelineName)
+    const pipelineId = await this.checkPipelineExistence(spinnakerPipelineConfiguraton.pipelineName)
 
-    await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
-
+    if (pipelineId) {
+      await this.updateSpinnakerPipeline(spinnakerPipelineConfiguraton, pipelineId)
+    } else {
+      await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
+    }
     this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
       .catch(() => this.setDeploymentStatusAsFailed(deploymentId))
   }
