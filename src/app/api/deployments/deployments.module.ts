@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common'
 import { DeploymentsController } from './controller'
 import { DeploymentsService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
+import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from './entity'
 import { ComponentEntity, ModuleEntity } from '../modules/entity'
-import { DeploymentsStatusManagementService } from './service/deployments-status-management-service';
 
 @Module({
   imports: [
     IntegrationsModule,
+    ServicesModule,
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ModuleDeploymentEntity,
@@ -19,7 +20,7 @@ import { DeploymentsStatusManagementService } from './service/deployments-status
     ])
   ],
   controllers: [DeploymentsController],
-  providers: [DeploymentsService, DeploymentsStatusManagementService],
-  exports: [DeploymentsService, DeploymentsStatusManagementService]
+  providers: [DeploymentsService],
+  exports: [DeploymentsService]
 })
 export class DeploymentsModule {}

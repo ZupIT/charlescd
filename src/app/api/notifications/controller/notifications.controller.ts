@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, HttpStatus, HttpCode, Query } from '@nestjs/common'
+import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
 import { DeploymentsService } from '../../deployments/service'
 import { FinishDeploymentDto } from '../dto'
 
