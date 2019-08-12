@@ -15,13 +15,16 @@ export class ReadDeploymentDto {
 
   public readonly status: string
 
+  public readonly callbackUrl: string
+
   constructor(
     id: string,
     modules: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
     circles: ReadCircleDeploymentDto[],
-    status: string
+    status: string,
+    callbackUrl: string
   ) {
     this.id = id
     this.modules = modules
@@ -29,5 +32,6 @@ export class ReadDeploymentDto {
     this.description = description
     this.circles = circles
     this.status = status
+    this.callbackUrl = callbackUrl
   }
 }
