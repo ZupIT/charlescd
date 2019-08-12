@@ -6,11 +6,13 @@ import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from './entity'
 import { ComponentEntity, ModuleEntity } from '../modules/entity'
+import { LogsModule } from '../../core/logs/logs.module'
 
 @Module({
   imports: [
     IntegrationsModule,
     ServicesModule,
+    LogsModule,
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ModuleDeploymentEntity,
