@@ -7,7 +7,6 @@ export class MooveService {
     }
 
     public async notifyDeploymentStatus(deploymentId: string, status: string, callbackUrl: string): Promise<void> {
-        console.log(callbackUrl)
         await this.httpService.post(
             callbackUrl,
             {deploymentStatus: status},

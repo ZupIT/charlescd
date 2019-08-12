@@ -4,10 +4,13 @@ import { IDeploymentConfiguration } from './interfaces'
 @Injectable()
 export class DeploymentConfigurationService {
 
-  public async getConfiguration(): Promise<IDeploymentConfiguration> {
+  public async getConfiguration(
+    componentId: string
+  ): Promise<IDeploymentConfiguration> {
+
     return {
       account: 'k8s-account',
-      pipelineName: 'darwin-content',
+      pipelineName: componentId,
       applicationName: 'testelucas',
       appName: 'darwin-content',
       appNamespace: 'qa',
