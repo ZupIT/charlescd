@@ -220,6 +220,8 @@ export class DeploymentsService {
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
+    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentRepository.findOne({
             where: {id: componentDeploymentId},
@@ -244,5 +246,7 @@ export class DeploymentsService {
     this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, status)
 
     await this.mooveService.notifyDeploymentStatus(deployment.id, finishDeploymentDto.status, deployment.callbackUrl)
+
+    this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
   }
 }
