@@ -5,11 +5,18 @@ import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/
 import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ISpinnakerPipelineConfiguration } from './interfaces'
+import { DeploymentStatusEnum } from '../../../api/deployments/enums'
+import {
+  DeploymentsStatusManagementService
+} from '../../../api/deployments/service'
 
 @Injectable()
 export class SpinnakerService {
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+  ) {}
 
   private checkVersionUsage(
     pipelineVersion: IPipelineVersion,
@@ -262,14 +269,16 @@ export class SpinnakerService {
     ).toPromise()
   }
 
-  private setDeploymentStatusAsFailed() {
-    // TODO
+  private async setDeploymentStatusAsFailed(deploymentId: string): Promise<void> {
+    await this.deploymentsStatusManagementService
+      .deepUpdateDeploymentStatusByDeploymentId(deploymentId, DeploymentStatusEnum.FAILED)
   }
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
-    componentDeploymentId: string
+    componentDeploymentId: string,
+    deploymentId: string
   ): Promise<void> {
 
     const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
@@ -278,6 +287,6 @@ export class SpinnakerService {
     await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
 
     this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
-      .catch(error => this.setDeploymentStatusAsFailed())
+      .catch(() => this.setDeploymentStatusAsFailed(deploymentId))
   }
 }

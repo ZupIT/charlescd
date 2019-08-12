@@ -15,7 +15,7 @@ import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { DeploymentStatusEnum } from '../enums'
-import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum'
+import { NotificationStatusEnum } from '../../notifications/enums'
 import { DeploymentsStatusManagementService } from './deployments-status-management-service'
 import { MooveService } from '../../../core/integrations/moove'
 
@@ -135,7 +135,8 @@ export class DeploymentsService {
   }
 
   private async deployComponentPipeline(
-    componentDeployment: ComponentDeploymentEntity
+    componentDeployment: ComponentDeploymentEntity,
+    deploymentId: string
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
@@ -146,17 +147,19 @@ export class DeploymentsService {
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
       deploymentConfiguration,
-      componentDeployment.id
+      componentDeployment.id,
+      deploymentId
     )
   }
 
   private async deployRequestedComponents(
-    componentDeployments: ComponentDeploymentEntity[]
+    componentDeployments: ComponentDeploymentEntity[],
+    deploymentId: string
   ): Promise<void> {
 
     await Promise.all(
       componentDeployments.map(
-        component => this.deployComponentPipeline(component)
+        component => this.deployComponentPipeline(component, deploymentId)
       )
     )
   }
@@ -164,9 +167,19 @@ export class DeploymentsService {
   private async deployPipelines(deployment: DeploymentEntity) {
     return Promise.all(
       deployment.modules.map(
-        module => this.deployRequestedComponents(module.components)
+        module => this.deployRequestedComponents(module.components, deployment.id)
       )
     )
+  }
+
+  private async deployRequestedPipelines(deployment: DeploymentEntity): Promise<void> {
+    try {
+      await this.deployPipelines(deployment)
+    } catch (error) {
+      await this.deploymentsStatusManagementService
+        .deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+      throw error
+    }
   }
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
@@ -174,12 +187,7 @@ export class DeploymentsService {
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
 
     await this.processDeploymentPipelines(deployment)
-    try {
-      await this.deployPipelines(deployment)
-    } catch(e) {
-      this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      throw e
-    }
+    await this.deployRequestedPipelines(deployment)
     return deployment.toReadDto()
   }
 
@@ -197,30 +205,34 @@ export class DeploymentsService {
       .then(deployment => deployment.toReadDto())
   }
 
-  public async finishDeployment(componentDeploymentId: string, finishDeploymentDto: FinishDeploymentDto): Promise<void> {
+  public async finishDeployment(
+    componentDeploymentId: string,
+    finishDeploymentDto: FinishDeploymentDto
+  ): Promise<void> {
 
-    const componentDeployment: ComponentDeploymentEntity = 
-        await this.componentDeploymentRepository.findOne({ 
+    const componentDeployment: ComponentDeploymentEntity =
+        await this.componentDeploymentRepository.findOne({
             where: {id: componentDeploymentId},
             relations: ['moduleDeployment', 'moduleDeployment.deployment']
           })
 
     let status = DeploymentStatusEnum.FAILED
 
-    if(finishDeploymentDto &&
-        finishDeploymentDto.status && 
+    if (finishDeploymentDto &&
+        finishDeploymentDto.status &&
         finishDeploymentDto.status === NotificationStatusEnum.SUCCEEDED) {
-          status = DeploymentStatusEnum.FINISHED;
+
+      status = DeploymentStatusEnum.FINISHED
     }
 
-    const deployment: DeploymentEntity = 
+    const deployment: DeploymentEntity =
         await this.deploymentsRepository.findOne({
           where: { id: componentDeployment.moduleDeployment.deployment.id },
           relations: ['modules']
         })
 
     this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, status)
-    
+
     await this.mooveService.notifyDeploymentStatus(deployment.id, finishDeploymentDto.status, deployment.callbackUrl)
   }
 }
