@@ -7,13 +7,15 @@ import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class SpinnakerService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService
+    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly consoleLoggerService: ConsoleLoggerService,
   ) {}
 
   private checkVersionUsage(
@@ -201,6 +203,8 @@ export class SpinnakerService {
 
   private async deploySpinnakerPipeline(pipelineName: string): Promise<void> {
     await this.waitForPipelineCreation()
+    this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
+
     await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${pipelineName}`,
       {},
@@ -210,6 +214,7 @@ export class SpinnakerService {
         },
       },
     ).toPromise()
+    this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
   private getSpinnakerCallbackUrl(componentDeploymentId: string): string {
@@ -267,7 +272,8 @@ export class SpinnakerService {
     ).toPromise()
   }
 
-  private async setDeploymentStatusAsFailed(deploymentId: string): Promise<void> {
+  private async setDeploymentStatusAsFailed(error: Error, deploymentId: string): Promise<void> {
+    this.consoleLoggerService.error(`ERROR:DEPLOY_SPINNAKER_PIPELINE ${deploymentId}`, error)
     await this.deploymentsStatusManagementService
       .deepUpdateDeploymentStatusByDeploymentId(deploymentId, DeploymentStatusEnum.FAILED)
   }
@@ -279,12 +285,24 @@ export class SpinnakerService {
     deploymentId: string
   ): Promise<void> {
 
-    const spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration =
-      this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId)
+    try {
+      this.consoleLoggerService.log(
+        'START:CREATE_SPINNAKER_PIPELINE',
+        { pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, deploymentId }
+      )
 
-    await this.createSpinnakerPipeline(spinnakerPipelineConfiguraton)
+      const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
+        this.createPipelineConfigurationObject(pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId)
 
-    this.deploySpinnakerPipeline(spinnakerPipelineConfiguraton.pipelineName)
-      .catch(() => this.setDeploymentStatusAsFailed(deploymentId))
+      await this.createSpinnakerPipeline(spinnakerPipelineConfiguration)
+
+      this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
+
+      this.deploySpinnakerPipeline(spinnakerPipelineConfiguration.pipelineName)
+        .catch(error => this.setDeploymentStatusAsFailed(error, deploymentId))
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:CREATE_SPINNAKER_DEPLOYMENT', error)
+      throw error
+    }
   }
 }
