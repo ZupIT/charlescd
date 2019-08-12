@@ -1,5 +1,4 @@
 import { ConnectionOptions } from 'typeorm'
-import { join } from 'path'
 
 const rootPath = __dirname.split('/app')[0]
 
@@ -12,7 +11,7 @@ const postgresqlOptions: ConnectionOptions = {
   database: process.env.POSTGRES_DB_NAME || 'darwin',
   entities: [`${rootPath}/app/**/**.entity{.ts,.js}`],
   migrationsTableName: 'darwin-deploy-migrations',
-  migrations: [`${rootPath}/app/resources/migrations/*{.ts,.js}'],
+  migrations: [`${rootPath}/app/resources/migrations/*{.ts,.js}`],
   synchronize: true
 }
 
