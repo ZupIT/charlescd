@@ -217,7 +217,7 @@ export class SpinnakerService {
   }
 
   private getSpinnakerCallbackUrl(componentDeploymentId: string): string {
-    return `${AppConstants.DARWIN_DEPLOY_URL}?componentDeploymentId=${componentDeploymentId}`
+    return `${AppConstants.DARWIN_NOTIFICATION_URL}?componentDeploymentId=${componentDeploymentId}`
   }
 
   private createPipelineConfigurationObject(
