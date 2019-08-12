@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { ModuleDeploymentEntity, DeploymentEntity, ComponentDeploymentEntity } from '../entity'
-import { DeploymentStatusEnum } from '../enums'
+import {
+  ModuleDeploymentEntity,
+  DeploymentEntity,
+  ComponentDeploymentEntity
+} from '../../api/deployments/entity'
+import { DeploymentStatusEnum } from '../../api/deployments/enums'
 
 @Injectable()
 export class DeploymentsStatusManagementService {
@@ -38,5 +42,4 @@ export class DeploymentsStatusManagementService {
             module.components.map(c =>
             this.componentDeploymentRepository.update(c.id, { status })))
     }
-
 }

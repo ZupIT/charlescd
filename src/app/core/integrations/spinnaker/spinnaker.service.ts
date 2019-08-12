@@ -6,16 +6,14 @@ import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
-import {
-  DeploymentsStatusManagementService
-} from '../../../api/deployments/service'
+import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
 
 @Injectable()
 export class SpinnakerService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService
   ) {}
 
   private checkVersionUsage(
