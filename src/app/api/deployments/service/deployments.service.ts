@@ -18,6 +18,7 @@ import { DeploymentStatusEnum } from '../enums'
 import { NotificationStatusEnum } from '../../notifications/enums'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
 import { MooveService } from '../../../core/integrations/moove'
+import { ConsoleLoggerService } from '../../../core/logs/console'
 
 @Injectable()
 export class DeploymentsService {
@@ -27,6 +28,7 @@ export class DeploymentsService {
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly mooveService: MooveService,
+    private readonly consoleLoggerService: ConsoleLoggerService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
@@ -109,7 +111,6 @@ export class DeploymentsService {
     moduleDeploymentEntity: ModuleDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ) {
-
     await this.updateModuleComponentsPipelines(moduleEntity, moduleDeploymentEntity, circles)
     return this.modulesRepository.save(moduleEntity)
   }
@@ -182,13 +183,22 @@ export class DeploymentsService {
     }
   }
 
-  public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
+  private async createDeploymentEntity(createDeploymentDto: CreateDeploymentDto): Promise<DeploymentEntity> {
     const deployment: DeploymentEntity =
       await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+    return deployment
+  }
+
+  public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
+    this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
+    const deployment: DeploymentEntity = await this.createDeploymentEntity(createDeploymentDto)
 
     await this.processDeploymentPipelines(deployment)
     await this.deployRequestedPipelines(deployment)
-    return deployment.toReadDto()
+    const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
+    this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
+
+    return deploymentReadDto
   }
 
   private async convertDeploymentsToReadDto(deployments: DeploymentEntity[]): Promise<ReadDeploymentDto[]> {
@@ -209,6 +219,8 @@ export class DeploymentsService {
     componentDeploymentId: string,
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
+
+    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
 
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentRepository.findOne({
@@ -234,5 +246,7 @@ export class DeploymentsService {
     this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, status)
 
     await this.mooveService.notifyDeploymentStatus(deployment.id, finishDeploymentDto.status, deployment.callbackUrl)
+
+    this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
   }
 }
