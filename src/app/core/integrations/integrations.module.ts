@@ -3,11 +3,13 @@ import { SpinnakerService } from './spinnaker'
 import { DeploymentConfigurationService } from './configuration'
 import { MooveService } from './moove'
 import { ServicesModule } from '../services/services.module'
+import { LogsModule } from '../logs/logs.module'
 
 @Module({
   imports: [
     HttpModule,
-    ServicesModule
+    ServicesModule,
+    LogsModule
   ],
   providers: [
     SpinnakerService,
