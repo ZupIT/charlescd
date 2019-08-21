@@ -17,7 +17,7 @@ export class PipelineProcessingService {
   constructor(
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>,
+    private readonly modulesRepository: Repository<ModuleEntity>
   ) {}
 
   private async createModuleComponent(

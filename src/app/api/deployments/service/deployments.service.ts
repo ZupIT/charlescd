@@ -4,10 +4,6 @@ import { FinishDeploymentDto } from '../../notifications/dto'
 import { ComponentDeploymentEntity, DeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ComponentEntity, ModuleEntity } from '../../modules/entity'
-import { SpinnakerService } from '../../../core/integrations/spinnaker'
-import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
-import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { DeploymentStatusEnum } from '../enums'
 import { NotificationStatusEnum } from '../../notifications/enums'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
@@ -19,67 +15,15 @@ import { QueuedDeploymentsService } from './queued-deployments.service'
 export class DeploymentsService {
 
   constructor(
-    private readonly spinnakerService: SpinnakerService,
-    private readonly deploymentConfigurationService: DeploymentConfigurationService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly mooveService: MooveService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly queuedDeploymentsService: QueuedDeploymentsService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(ComponentEntity)
-    private readonly componentsRepository: Repository<ComponentEntity>,
     @InjectRepository(ComponentDeploymentEntity)
     private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
-
-  private async deployComponentPipeline(
-    componentDeployment: ComponentDeploymentEntity,
-    deploymentId: string
-  ): Promise<void> {
-
-    const componentEntity: ComponentEntity =
-      await this.componentsRepository.findOne({ componentId: componentDeployment.componentId })
-    const deploymentConfiguration: IDeploymentConfiguration =
-      await this.deploymentConfigurationService.getConfiguration(componentEntity.componentId)
-
-    await this.spinnakerService.createDeployment(
-      componentEntity.pipelineOptions,
-      deploymentConfiguration,
-      componentDeployment.id,
-      deploymentId
-    )
-  }
-
-  private async deployRequestedComponents(
-    componentDeployments: ComponentDeploymentEntity[],
-    deploymentId: string
-  ): Promise<void> {
-
-    await Promise.all(
-      componentDeployments.map(
-        component => this.deployComponentPipeline(component, deploymentId)
-      )
-    )
-  }
-
-  private async deployPipelines(deployment: DeploymentEntity) {
-    return Promise.all(
-      deployment.modules.map(
-        module => this.deployRequestedComponents(module.components, deployment.id)
-      )
-    )
-  }
-
-  private async deployRequestedPipelines(deployment: DeploymentEntity): Promise<void> {
-    try {
-      await this.deployPipelines(deployment)
-    } catch (error) {
-      await this.deploymentsStatusManagementService
-        .deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      throw error
-    }
-  }
 
   private async createDeploymentEntity(createDeploymentDto: CreateDeploymentDto): Promise<DeploymentEntity> {
     const deployment: DeploymentEntity =
