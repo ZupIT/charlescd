@@ -1,22 +1,26 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateDeploymentsQueueTable20190808220901 implements MigrationInterface {
+export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner) {
     await queryRunner.createTable(new Table({
-      name: 'deployments_queue',
+      name: 'queued_deployments',
       columns: [
         {
           name: 'id',
-          type: 'varchar',
+          type: 'integer',
           isPrimary: true
         },
         {
-          name: 'position',
-          type: 'integer'
+          name: 'component_id',
+          type: 'varchar'
         },
         {
           name: 'component_deployment_id',
+          type: 'varchar'
+        },
+        {
+          name: 'status',
           type: 'varchar'
         }
       ]
@@ -24,6 +28,6 @@ export class CreateDeploymentsQueueTable20190808220901 implements MigrationInter
   }
 
   public async down(queryRunner: QueryRunner) {
-    await queryRunner.dropTable('deployments_queue')
+    await queryRunner.dropTable('queued_deployments')
   }
 }
