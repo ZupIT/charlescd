@@ -58,7 +58,7 @@ export class PipelineDeploymentService {
     )
   }
 
-  private async deployRequestedPipelines(deployment: DeploymentEntity): Promise<void> {
+  public async deployRequestedPipelines(deployment: DeploymentEntity): Promise<void> {
     try {
       await this.deployPipelines(deployment)
     } catch (error) {
