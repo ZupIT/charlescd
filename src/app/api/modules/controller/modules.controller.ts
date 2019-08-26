@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { ReadModuleDto } from '../dto'
-import { ModulesService } from '../service'
+import { ModulesService } from '../services'
 
 @Controller('modules')
 export class ModulesController {

@@ -8,13 +8,15 @@ import {
 } from '../entity'
 import { QueuedDeploymentsRepository } from '../repository'
 import { PipelineProcessingService } from './pipeline-processing.service'
+import { PipelineDeploymentService } from './pipeline-deployment.service'
 
 @Injectable()
 export class QueuedDeploymentsService {
 
   constructor(
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    private readonly pipelineProcessingService: PipelineProcessingService
+    private readonly pipelineProcessingService: PipelineProcessingService,
+    private readonly pipelineDeploymentService: PipelineDeploymentService
   ) {}
 
   private async getQueuedDeploymentStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
@@ -53,6 +55,7 @@ export class QueuedDeploymentsService {
   ): Promise<void> {
 
     await this.pipelineProcessingService.processPipeline(componentDeploymentId)
+    await this.pipelineDeploymentService.processDeployment(componentDeploymentId)
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
   }
 

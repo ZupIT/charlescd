@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { DeploymentsService } from '../service'
+import { DeploymentsService } from '../services'
 
 @Controller('deployments')
 export class DeploymentsController {

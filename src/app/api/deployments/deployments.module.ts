@@ -12,7 +12,7 @@ import {
   QueuedDeploymentsService,
   PipelineProcessingService,
   PipelineDeploymentService
-} from './service'
+} from './services'
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
-import { DeploymentsService } from '../../deployments/service'
+import { DeploymentsService } from '../../deployments/services'
 import { FinishDeploymentDto } from '../dto'
 
 @Controller('notifications')

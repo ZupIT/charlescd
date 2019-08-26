@@ -18,6 +18,8 @@ export class PipelineDeploymentService {
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
+    @InjectRepository(ComponentDeploymentEntity)
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
 
   private async deployComponentPipeline(
@@ -38,33 +40,23 @@ export class PipelineDeploymentService {
     )
   }
 
-  private async deployRequestedComponents(
-    componentDeployments: ComponentDeploymentEntity[],
-    deploymentId: string
-  ): Promise<void> {
-
-    await Promise.all(
-      componentDeployments.map(
-        component => this.deployComponentPipeline(component, deploymentId)
-      )
-    )
-  }
-
-  private async deployPipelines(deployment: DeploymentEntity) {
-    return Promise.all(
-      deployment.modules.map(
-        module => this.deployRequestedComponents(module.components, deployment.id)
-      )
-    )
-  }
-
-  public async deployRequestedPipelines(deployment: DeploymentEntity): Promise<void> {
+  public async deployComponent(componentDeploymentEntity: ComponentDeploymentEntity): Promise<void> {
     try {
-      await this.deployPipelines(deployment)
+      const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
+      await this.deployComponentPipeline(componentDeploymentEntity, deploymentId)
     } catch (error) {
-      await this.deploymentsStatusManagementService
-        .deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+      const { moduleDeployment: { deployment } } = componentDeploymentEntity
+      await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
       throw error
     }
+  }
+
+  public async processDeployment(componentDeploymentId: string): Promise<void> {
+    const componentDeploymentEntity: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({
+        where: { id: componentDeploymentId },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      })
+    await this.deployComponent(componentDeploymentEntity)
   }
 }
