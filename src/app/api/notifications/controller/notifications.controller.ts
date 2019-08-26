@@ -1,11 +1,11 @@
 import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
-import { DeploymentsService } from '../../deployments/services'
 import { FinishDeploymentDto } from '../dto'
+import { NotificationsService } from '../services'
 
 @Controller('notifications')
 export class NotificationsController {
 
-  constructor(private readonly deploymentsService: DeploymentsService) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
   @HttpCode(204)
@@ -13,7 +13,7 @@ export class NotificationsController {
     @Query('componentDeploymentId') componentDeploymentId: string,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
-    return await this.deploymentsService.finishDeployment(componentDeploymentId, finishDeploymentDto)
-  }
 
+    return await this.notificationsService.finishDeployment(componentDeploymentId, finishDeploymentDto)
+  }
 }
