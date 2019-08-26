@@ -17,7 +17,9 @@ export class PipelineProcessingService {
   constructor(
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>
+    private readonly modulesRepository: Repository<ModuleEntity>,
+    @InjectRepository(ComponentDeploymentEntity)
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
 
   private async createModuleComponent(
@@ -35,31 +37,34 @@ export class PipelineProcessingService {
     ))
   }
 
-  private getComponentEntitiesFromDeployments(
-    componentDeployments: ComponentDeploymentEntity[],
+  private getCreateModuleComponentDeployments(
+    componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ): ComponentEntity[] {
 
-    return componentDeployments.map(
-      component => new ComponentEntity(
-        component.componentId,
-        this.spinnakerService.createNewPipelineOptions(circles, component)
+    return [
+      new ComponentEntity(
+        componentDeploymentEntity.componentId,
+        this.spinnakerService.createNewPipelineOptions(circles, componentDeploymentEntity)
+      )
+    ]
+  }
+
+  private async createModuleEntity(
+    moduleDeploymentEntity: ModuleDeploymentEntity,
+    componentDeploymentEntity: ComponentDeploymentEntity,
+    circles: CircleDeploymentEntity[]
+  ) {
+
+    return this.modulesRepository.save(
+      new ModuleEntity(
+        moduleDeploymentEntity.moduleId,
+        this.getCreateModuleComponentDeployments(componentDeploymentEntity, circles)
       )
     )
   }
 
-  private async createModulePipelines(
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ) {
-
-    return this.modulesRepository.save(new ModuleEntity(
-      moduleDeploymentEntity.moduleId,
-      this.getComponentEntitiesFromDeployments(moduleDeploymentEntity.components, circles)
-    ))
-  }
-
-  private async updateComponentPipeline(
+  private async updateComponentPipelineObject(
     componentEntity: ComponentEntity,
     componentDeployment: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
@@ -71,48 +76,51 @@ export class PipelineProcessingService {
     return componentEntity.updatePipelineOptions(pipelineOptions)
   }
 
-  private async updateModuleComponentsPipelines(
+  private async updateModuleComponentPipeline(
     moduleEntity: ModuleEntity,
-    moduleDeploymentEntity: ModuleDeploymentEntity,
+    componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<void> {
 
-    for (const componentDeployment of moduleDeploymentEntity.components) {
-      const componentEntity: ComponentEntity =
-        moduleEntity.getComponentById(componentDeployment.componentId)
+    const componentEntity: ComponentEntity =
+      moduleEntity.getComponentById(componentDeploymentEntity.componentId)
 
-      componentEntity ?
-        await this.updateComponentPipeline(componentEntity, componentDeployment, circles) :
-        await this.createModuleComponent(moduleEntity, componentDeployment, circles)
-    }
+    componentEntity ?
+      await this.updateComponentPipelineObject(componentEntity, componentDeploymentEntity, circles) :
+      await this.createModuleComponent(moduleEntity, componentDeploymentEntity, circles)
   }
 
-  private async updateModulePipelines(
+  private async updateModuleEntity(
     moduleEntity: ModuleEntity,
-    moduleDeploymentEntity: ModuleDeploymentEntity,
+    componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ) {
-    await this.updateModuleComponentsPipelines(moduleEntity, moduleDeploymentEntity, circles)
+
+    await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circles)
     return this.modulesRepository.save(moduleEntity)
   }
 
-  private async processModulePipelines(
-    moduleDeploymentEntity: ModuleDeploymentEntity,
+  private async processComponentPipeline(
+    componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ) {
 
+    const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
 
     return moduleEntity ?
-      this.updateModulePipelines(moduleEntity, moduleDeploymentEntity, circles) :
-      this.createModulePipelines(moduleDeploymentEntity, circles)
+      this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles) :
+      this.createModuleEntity(moduleDeploymentEntity, componentDeploymentEntity, circles)
   }
 
-  public async processDeploymentPipelines(deployment: DeploymentEntity) {
-    const { circles, modules } = deployment
-    return Promise.all(
-      modules.map(module => this.processModulePipelines(module, circles))
-    )
+  public async processPipeline(componentDeploymentId: string): Promise<void> {
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({
+        where: { id: componentDeploymentId },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      })
+    const { circles } = componentDeployment.moduleDeployment.deployment
+    await this.processComponentPipeline(componentDeployment, circles)
   }
 }

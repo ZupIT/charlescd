@@ -52,7 +52,7 @@ export class QueuedDeploymentsService {
     status: QueuedDeploymentStatusEnum
   ): Promise<void> {
 
-    // TRIGGER DEPLOY
+    await this.pipelineProcessingService.processPipeline(componentDeploymentId)
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
   }
 
