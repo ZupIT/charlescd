@@ -25,34 +25,20 @@ export class DeploymentsService {
     private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
 
-  private async createDeploymentEntity(createDeploymentDto: CreateDeploymentDto): Promise<DeploymentEntity> {
-    const deployment: DeploymentEntity =
-      await this.deploymentsRepository.save(createDeploymentDto.toEntity())
-    return deployment
-  }
-
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
     this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
-    const deployment: DeploymentEntity = await this.createDeploymentEntity(createDeploymentDto)
-
-    // await this.processDeploymentPipelines(deployment)
-    // await this.deployRequestedPipelines(deployment)
+    const deployment: DeploymentEntity =
+      await this.deploymentsRepository.save(createDeploymentDto.toEntity())
 
     await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
-
     const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
     this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
-
     return deploymentReadDto
-  }
-
-  private async convertDeploymentsToReadDto(deployments: DeploymentEntity[]): Promise<ReadDeploymentDto[]> {
-    return deployments.map(deployment => deployment.toReadDto())
   }
 
   public async getDeployments(): Promise<ReadDeploymentDto[]> {
     return this.deploymentsRepository.find({ relations: ['modules'] })
-      .then(deployments => this.convertDeploymentsToReadDto(deployments))
+      .then(deployments => deployments.map(deployment => deployment.toReadDto()))
   }
 
   public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
