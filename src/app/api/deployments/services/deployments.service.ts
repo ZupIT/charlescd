@@ -5,7 +5,6 @@ import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { QueuedDeploymentsService } from './queued-deployments.service'
-import { ReadQueuedDeploymentDto } from '../dto/read-queued-deployment.dto'
 
 @Injectable()
 export class DeploymentsService {
@@ -36,13 +35,5 @@ export class DeploymentsService {
   public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
     return this.deploymentsRepository.findOne({where: { id }, relations: ['modules']})
       .then(deployment => deployment.toReadDto())
-  }
-
-  public async getComponentDeploymentQueue(id: string): Promise<ReadQueuedDeploymentDto[]> {
-    return this.queuedDeploymentsService.getComponentDeploymentQueue(id)
-      .then(queuedDeployments => queuedDeployments.map(
-        queuedDeployment => queuedDeployment.toReadDto()
-        )
-      )
   }
 }

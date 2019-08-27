@@ -12,13 +12,13 @@ export class ModulesService {
     private readonly modulesRepository: Repository<ModuleEntity>
   ) {}
 
-  private async convertModulesToReadDto(modules: ModuleEntity[]): Promise<ReadModuleDto[]> {
+  private static async convertModulesToReadDto(modules: ModuleEntity[]): Promise<ReadModuleDto[]> {
     return modules.map(module => module.toReadDto())
   }
 
   public async getModules(): Promise<ReadModuleDto[]> {
     return this.modulesRepository.find()
-      .then(modules => this.convertModulesToReadDto(modules))
+      .then(modules => ModulesService.convertModulesToReadDto(modules))
   }
 
   public async getModuleById(id: string): Promise<ReadModuleDto> {
