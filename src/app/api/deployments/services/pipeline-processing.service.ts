@@ -5,11 +5,13 @@ import { IPipelineOptions } from '../../modules/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { ConsoleLoggerService } from '../../../core/logs/console'
 
 @Injectable()
 export class PipelineProcessingService {
 
   constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ModuleEntity)
     private readonly modulesRepository: Repository<ModuleEntity>,
@@ -110,6 +112,7 @@ export class PipelineProcessingService {
   }
 
   public async processPipeline(componentDeploymentId: string): Promise<void> {
+    this.consoleLoggerService.log(`START:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentRepository.findOne({
         where: { id: componentDeploymentId },
@@ -117,5 +120,6 @@ export class PipelineProcessingService {
       })
     const { circles } = componentDeployment.moduleDeployment.deployment
     await this.processComponentPipeline(componentDeployment, circles)
+    this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
   }
 }

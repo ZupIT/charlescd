@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { ComponentDeploymentEntity, DeploymentEntity } from '../entity'
+import { DeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
-import { MooveService } from '../../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { QueuedDeploymentsService } from './queued-deployments.service'
 
@@ -12,14 +10,10 @@ import { QueuedDeploymentsService } from './queued-deployments.service'
 export class DeploymentsService {
 
   constructor(
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
-    private readonly mooveService: MooveService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly queuedDeploymentsService: QueuedDeploymentsService,
     @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(ComponentDeploymentEntity)
-    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
+    private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {

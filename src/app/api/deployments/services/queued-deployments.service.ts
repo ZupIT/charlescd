@@ -6,11 +6,13 @@ import { PipelineProcessingService } from './pipeline-processing.service'
 import { PipelineDeploymentService } from './pipeline-deployment.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { ConsoleLoggerService } from '../../../core/logs/console'
 
 @Injectable()
 export class QueuedDeploymentsService {
 
   constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     private readonly pipelineProcessingService: PipelineProcessingService,
     private readonly pipelineDeploymentService: PipelineDeploymentService,
@@ -50,7 +52,9 @@ export class QueuedDeploymentsService {
     status: QueuedDeploymentStatusEnum
   ): Promise<void> {
 
+    this.consoleLoggerService.log(`START:CREATE_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId, status })
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
+    this.consoleLoggerService.log(`FINISH:CREATE_QUEUED_DEPLOYMENT`)
   }
 
   private async createRunningQueuedDeployment(
@@ -59,9 +63,11 @@ export class QueuedDeploymentsService {
     status: QueuedDeploymentStatusEnum
   ): Promise<void> {
 
+    this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
     await this.pipelineProcessingService.processPipeline(componentDeploymentId)
     await this.pipelineDeploymentService.processDeployment(componentDeploymentId)
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
+    this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
   }
 
   private async createQueuedDeployment(
@@ -89,12 +95,14 @@ export class QueuedDeploymentsService {
     )
   }
 
-  public async queueDeploymentTasks(deployment: DeploymentEntity): Promise<void[][]> {
-    return Promise.all(
+  public async queueDeploymentTasks(deployment: DeploymentEntity): Promise<void> {
+    this.consoleLoggerService.log(`START:QUEUE_DEPLOYMENTS`)
+    await Promise.all(
       deployment.modules.map(
         moduleDeployment => this.queueModuleDeploymentTasks(moduleDeployment)
       )
     )
+    this.consoleLoggerService.log(`FINISH:QUEUE_DEPLOYMENTS`)
   }
 
   private async deployNextComponent(orderedQueuedDeployments: QueuedDeploymentEntity[]): Promise<void> {

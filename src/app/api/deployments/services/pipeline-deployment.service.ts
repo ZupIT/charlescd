@@ -8,11 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
+import { ConsoleLoggerService } from '../../../core/logs/console'
 
 @Injectable()
 export class PipelineDeploymentService {
 
   constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     private readonly spinnakerService: SpinnakerService,
@@ -52,11 +54,13 @@ export class PipelineDeploymentService {
   }
 
   public async processDeployment(componentDeploymentId: string): Promise<void> {
+    this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentRepository.findOne({
         where: { id: componentDeploymentId },
         relations: ['moduleDeployment', 'moduleDeployment.deployment']
       })
     await this.deployComponent(componentDeploymentEntity)
+    this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }
 }
