@@ -6,7 +6,8 @@ import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { LogsModule } from '../../core/logs/logs.module'
 import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity } from '../deployments/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../deployments/entity'
+import { QueuedDeploymentsRepository } from '../deployments/repository'
 
 @Module({
   imports: [
@@ -16,7 +17,9 @@ import { ComponentDeploymentEntity, DeploymentEntity } from '../deployments/enti
     ServicesModule,
     TypeOrmModule.forFeature([
       ComponentDeploymentEntity,
-      DeploymentEntity
+      DeploymentEntity,
+      QueuedDeploymentEntity,
+      QueuedDeploymentsRepository
     ])
   ],
   controllers: [NotificationsController],
