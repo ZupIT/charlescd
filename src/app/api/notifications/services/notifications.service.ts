@@ -26,25 +26,34 @@ export class NotificationsService {
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
-  // se sucesso
-  //   atualizar status p/ finished OK
-  //   contabilizar sucesso no component deployment OK
-  //   atualizar deployment e module deployment caso todos tenham terminado OK
-  //   realizar deploy do proximo da fila OK
-
-  // se falha
-  //   atualizar status p/ finished
-  //   contabilizar falha no component deployment
-  //   propagar falha para modulo e deployment correspondente
-  //   realizar deploy do proximo da fila
-
-  // notificar moove se o deployment falhar ou todos componentes forem deployados
-
-  private async handleDeploymentFailure(
-    componentDeploymentId: string,
-    finishDeploymentDto: FinishDeploymentDto
+  private async notifyMooveIfDeploymentJustFailed(
+    componentDeploymentId: string
   ): Promise<void> {
 
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({
+        where: { id: componentDeploymentId },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      })
+    const { moduleDeployment: { deployment } } = componentDeployment
+
+    if (deployment.status !== DeploymentStatusEnum.FAILED) {
+      await this.mooveService.notifyDeploymentStatus(
+        deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl
+      )
+    }
+  }
+
+  private async handleDeploymentFailure(
+    componentDeploymentId: string
+  ): Promise<void> {
+
+    this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
+    await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
+    await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
+    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+    this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
   }
 
   private async notifyMooveIfDeploymentFinished(
@@ -69,10 +78,12 @@ export class NotificationsService {
     componentDeploymentId: string
   ): Promise<void> {
 
+    this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
     await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
     await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
     await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+    this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
   }
 
   public async finishDeployment(
@@ -83,7 +94,7 @@ export class NotificationsService {
     this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
     finishDeploymentDto.status === NotificationStatusEnum.SUCCEEDED ?
       await this.handleDeploymentSuccess(componentDeploymentId) :
-      await this.handleDeploymentFailure(componentDeploymentId, finishDeploymentDto)
+      await this.handleDeploymentFailure(componentDeploymentId)
     this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
   }
 }
