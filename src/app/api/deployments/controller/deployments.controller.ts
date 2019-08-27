@@ -1,9 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
-import {
-  CreateDeploymentDto,
-  ReadDeploymentDto,
-  ReadQueuedDeploymentDto
-} from '../dto'
+import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
 import { DeploymentsService } from '../services'
 
 @Controller('deployments')
@@ -27,10 +23,5 @@ export class DeploymentsController {
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
     return await this.deploymentsService.getDeploymentById(id)
-  }
-
-  @Get('component/:id/queue')
-  public async getComponentDeploymentQueue(@Param('id') id: string): Promise<ReadQueuedDeploymentDto[]> {
-    return await this.deploymentsService.getComponentDeploymentQueue(id)
   }
 }

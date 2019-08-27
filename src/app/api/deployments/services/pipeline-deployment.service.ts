@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../entity'
-import { ComponentEntity } from '../../modules/entity'
+import { ComponentDeploymentEntity } from '../entity'
+import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
