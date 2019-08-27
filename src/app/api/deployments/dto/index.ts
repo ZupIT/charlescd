@@ -6,6 +6,7 @@ import { ReadDeploymentDto } from './read-deployment.dto'
 import { ReadCircleDeploymentDto } from './read-circle-deployment.dto'
 import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
 import { ReadModuleDeploymentDto } from './read-module-deployment.dto'
+import { ReadQueuedDeploymentDto } from './read-queued-deployment.dto'
 
 export {
   CreateDeploymentDto,
@@ -15,5 +16,6 @@ export {
   ReadDeploymentDto,
   ReadCircleDeploymentDto,
   ReadComponentDeploymentDto,
-  ReadModuleDeploymentDto
+  ReadModuleDeploymentDto,
+  ReadQueuedDeploymentDto
 }
