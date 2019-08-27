@@ -132,4 +132,37 @@ export class DeploymentsStatusManagementService {
       await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
       await this.propagateSuccessStatusChange(componentDeploymentEntity)
     }
+
+    private async propagageFailedStatusChangeToDeployment(
+      deployment: DeploymentEntity
+    ): Promise<void> {
+
+      await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FAILED)
+    }
+
+    private async propagateFailedStatusChangeToModule(
+      moduleDeployment: ModuleDeploymentEntity
+    ): Promise<void> {
+
+      await this.updateModuleDeploymentStatus(moduleDeployment.id, DeploymentStatusEnum.FAILED)
+    }
+
+    private async propagateFailedStatusChange(
+      componentDeploymentEntity: ComponentDeploymentEntity
+    ): Promise<void> {
+
+      await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
+      await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
+    }
+
+    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
+    const componentDeploymentEntity: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({
+        where: { id: componentDeploymentId },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      })
+
+    await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
+    await this.propagateFailedStatusChange(componentDeploymentEntity)
+  }
 }
