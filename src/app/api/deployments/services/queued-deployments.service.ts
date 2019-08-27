@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { QueuedDeploymentStatusEnum } from '../enums'
-import {
-  ComponentDeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity,
-  QueuedDeploymentEntity
-} from '../entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
 import { QueuedDeploymentsRepository } from '../repository'
 import { PipelineProcessingService } from './pipeline-processing.service'
 import { PipelineDeploymentService } from './pipeline-deployment.service'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class QueuedDeploymentsService {
@@ -16,8 +13,16 @@ export class QueuedDeploymentsService {
   constructor(
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     private readonly pipelineProcessingService: PipelineProcessingService,
-    private readonly pipelineDeploymentService: PipelineDeploymentService
+    private readonly pipelineDeploymentService: PipelineDeploymentService,
+    @InjectRepository(ComponentDeploymentEntity)
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}
+
+  public async setQueuedDeploymentStatusFinished(componentDeploymentId: string): Promise<void> {
+    await this.queuedDeploymentsRepository.update(
+      { componentDeploymentId }, { status: QueuedDeploymentStatusEnum.FINISHED }
+    )
+  }
 
   private async getQueuedDeploymentStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
     const runningDeployment: QueuedDeploymentEntity =
@@ -90,5 +95,28 @@ export class QueuedDeploymentsService {
         moduleDeployment => this.queueModuleDeploymentTasks(moduleDeployment)
       )
     )
+  }
+
+  private async deployNextComponent(orderedQueuedDeployments: QueuedDeploymentEntity[]): Promise<void> {
+    if (orderedQueuedDeployments.length) {
+      const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentRepository.findOne(
+        { id: orderedQueuedDeployments[0].componentDeploymentId }
+      )
+      await this.createRunningQueuedDeployment(
+        componentDeployment.componentId, componentDeployment.id, QueuedDeploymentStatusEnum.RUNNING
+      )
+    }
+  }
+
+  public async triggerNextComponentDeploy(
+    finishedComponentDeploymentId: string
+  ): Promise<void> {
+
+    const finishedComponentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({ id : finishedComponentDeploymentId })
+    const { componentId: finishedComponentId } = finishedComponentDeployment
+    const queuedDeployments: QueuedDeploymentEntity[] =
+      await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
+    await this.deployNextComponent(queuedDeployments)
   }
 }

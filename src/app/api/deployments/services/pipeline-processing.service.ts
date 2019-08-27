@@ -21,7 +21,7 @@ export class PipelineProcessingService {
     moduleEntity: ModuleEntity,
     componentDeployment: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions =
       this.spinnakerService.createNewPipelineOptions(circles, componentDeployment)
@@ -32,7 +32,7 @@ export class PipelineProcessingService {
     ))
   }
 
-  private getCreateModuleComponentDeployments(
+  private getCreateModuleComponentDeployment(
     componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
   ): ComponentEntity[] {
@@ -49,12 +49,12 @@ export class PipelineProcessingService {
     moduleDeploymentEntity: ModuleDeploymentEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<ModuleEntity> {
 
     return this.modulesRepository.save(
       new ModuleEntity(
         moduleDeploymentEntity.moduleId,
-        this.getCreateModuleComponentDeployments(componentDeploymentEntity, circles)
+        this.getCreateModuleComponentDeployment(componentDeploymentEntity, circles)
       )
     )
   }
@@ -63,7 +63,7 @@ export class PipelineProcessingService {
     componentEntity: ComponentEntity,
     componentDeployment: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions = this.spinnakerService.updatePipelineOptions(
       componentEntity.pipelineOptions, circles, componentDeployment
@@ -89,7 +89,7 @@ export class PipelineProcessingService {
     moduleEntity: ModuleEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<ModuleEntity> {
 
     await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circles)
     return this.modulesRepository.save(moduleEntity)
@@ -98,7 +98,7 @@ export class PipelineProcessingService {
   private async processComponentPipeline(
     componentDeploymentEntity: ComponentDeploymentEntity,
     circles: CircleDeploymentEntity[]
-  ) {
+  ): Promise<ModuleEntity> {
 
     const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =

@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity } from 'typeorm'
-import { PrimaryGeneratedColumn } from 'typeorm/browser'
+import { CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm/browser'
 import { QueuedDeploymentStatusEnum } from '../enums'
 
 @Entity('queued_deployments')
@@ -16,6 +16,9 @@ export class QueuedDeploymentEntity extends BaseEntity {
 
   @Column({ name: 'status' })
   public status: QueuedDeploymentStatusEnum
+
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
 
   constructor(
     componentId: string,

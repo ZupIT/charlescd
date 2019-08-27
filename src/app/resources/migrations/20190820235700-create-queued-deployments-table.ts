@@ -22,6 +22,10 @@ export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInte
         {
           name: 'status',
           type: 'varchar'
+        },
+        {
+          name: 'created_at',
+          type: 'date'
         }
       ]
     }), true)

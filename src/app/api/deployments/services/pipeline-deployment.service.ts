@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ComponentDeploymentEntity, DeploymentEntity } from '../entity'
+import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../entity'
 import { ComponentEntity } from '../../modules/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
