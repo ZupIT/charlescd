@@ -1,5 +1,4 @@
-import { BaseEntity, Column, Entity } from 'typeorm'
-import { CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm/browser'
+import { BaseEntity, Column, Entity, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
 import { QueuedDeploymentStatusEnum } from '../enums'
 
 @Entity('queued_deployments')

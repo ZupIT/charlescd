@@ -33,13 +33,15 @@ import {
     DeploymentsService,
     QueuedDeploymentsService,
     PipelineProcessingService,
-    PipelineDeploymentService
+    PipelineDeploymentService,
+    QueuedDeploymentsRepository
   ],
   exports: [
     DeploymentsService,
     QueuedDeploymentsService,
     PipelineProcessingService,
-    PipelineDeploymentService
+    PipelineDeploymentService,
+    QueuedDeploymentsRepository
   ]
 })
 export class DeploymentsModule {}
