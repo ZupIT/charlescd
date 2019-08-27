@@ -18,7 +18,9 @@ export class QueuedDeploymentsService {
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentEntity)
-    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
+    @InjectRepository(DeploymentEntity)
+    private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
   public async setQueuedDeploymentStatusFinished(componentDeploymentId: string): Promise<void> {
@@ -58,6 +60,11 @@ export class QueuedDeploymentsService {
     this.consoleLoggerService.log(`FINISH:CREATE_QUEUED_DEPLOYMENT`)
   }
 
+  private async prepareComponentDeployment(componentDeploymentId: string): Promise<void> {
+    await this.pipelineProcessingService.processPipeline(componentDeploymentId)
+    await this.pipelineDeploymentService.processDeployment(componentDeploymentId)
+  }
+
   private async createRunningQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
@@ -65,10 +72,32 @@ export class QueuedDeploymentsService {
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.pipelineProcessingService.processPipeline(componentDeploymentId)
-    await this.pipelineDeploymentService.processDeployment(componentDeploymentId)
+    await this.prepareComponentDeployment(componentDeploymentId)
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
     this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
+  }
+
+  private async updateQueuedDeploymentStatus(
+    componentDeploymentId: string,
+    status: QueuedDeploymentStatusEnum
+  ): Promise<void> {
+
+    await this.queuedDeploymentsRepository.update(
+      { componentDeploymentId },
+    { status }
+    )
+  }
+
+  private async updateRunningQueuedDeployment(
+    componentId: string,
+    componentDeploymentId: string,
+    status: QueuedDeploymentStatusEnum
+  ): Promise<void> {
+
+    this.consoleLoggerService.log(`START:RUN_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId, status })
+    await this.prepareComponentDeployment(componentDeploymentId)
+    await this.updateQueuedDeploymentStatus(componentDeploymentId, status)
+    this.consoleLoggerService.log(`FINISH:RUN_QUEUED_DEPLOYMENT`)
   }
 
   private async createQueuedDeployment(
@@ -111,7 +140,7 @@ export class QueuedDeploymentsService {
       const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentRepository.findOne(
         { id: orderedQueuedDeployments[0].componentDeploymentId }
       )
-      await this.createRunningQueuedDeployment(
+      await this.updateRunningQueuedDeployment(
         componentDeployment.componentId, componentDeployment.id, QueuedDeploymentStatusEnum.RUNNING
       )
     }
@@ -127,5 +156,12 @@ export class QueuedDeploymentsService {
     const queuedDeployments: QueuedDeploymentEntity[] =
       await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
     await this.deployNextComponent(queuedDeployments)
+  }
+
+  public async getComponentDeploymentQueue(
+    componentId: string
+  ): Promise<QueuedDeploymentEntity[]> {
+
+    return this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentId)
   }
 }
