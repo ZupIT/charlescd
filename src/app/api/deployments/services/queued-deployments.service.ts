@@ -13,9 +13,10 @@ export class QueuedDeploymentsService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     private readonly pipelineProcessingService: PipelineProcessingService,
     private readonly pipelineDeploymentService: PipelineDeploymentService,
+    @InjectRepository(QueuedDeploymentsRepository)
+    private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentEntity)
     private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
   ) {}

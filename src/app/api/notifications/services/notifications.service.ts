@@ -19,6 +19,7 @@ export class NotificationsService {
     private readonly mooveService: MooveService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly queuedDeploymentsService: QueuedDeploymentsService,
+    @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentEntity)
     private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
