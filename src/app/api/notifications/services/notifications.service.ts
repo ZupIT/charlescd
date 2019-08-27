@@ -85,34 +85,5 @@ export class NotificationsService {
       await this.handleDeploymentSuccess(componentDeploymentId) :
       await this.handleDeploymentFailure(componentDeploymentId, finishDeploymentDto)
     this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
-
-    // this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-    //
-    // const componentDeployment: ComponentDeploymentEntity =
-    //   await this.componentDeploymentRepository.findOne({
-    //     where: {id: componentDeploymentId},
-    //     relations: ['moduleDeployment', 'moduleDeployment.deployment']
-    //   })
-    //
-    // let status = DeploymentStatusEnum.FAILED
-    //
-    // if (finishDeploymentDto &&
-    //   finishDeploymentDto.status &&
-    //   finishDeploymentDto.status === NotificationStatusEnum.SUCCEEDED) {
-    //
-    //   status = DeploymentStatusEnum.FINISHED
-    // }
-    //
-    // const deployment: DeploymentEntity =
-    //   await this.deploymentsRepository.findOne({
-    //     where: { id: componentDeployment.moduleDeployment.deployment.id },
-    //     relations: ['modules']
-    //   })
-    //
-    // this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, status)
-    //
-    // await this.mooveService.notifyDeploymentStatus(deployment.id, finishDeploymentDto.status, deployment.callbackUrl)
-    //
-    // this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
   }
 }
