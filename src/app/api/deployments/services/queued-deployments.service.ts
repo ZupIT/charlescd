@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import { QueuedDeploymentStatusEnum } from '../enums'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import {
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity
+} from '../entity'
 import { QueuedDeploymentsRepository } from '../repository'
 import { PipelineProcessingService } from './pipeline-processing.service'
 import { PipelineDeploymentService } from './pipeline-deployment.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
+import { ModuleEntity } from '../../modules/entity'
 
 @Injectable()
 export class QueuedDeploymentsService {
@@ -20,7 +27,9 @@ export class QueuedDeploymentsService {
     @InjectRepository(ComponentDeploymentEntity)
     private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
     @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    @InjectRepository(ModuleEntity)
+    private readonly modulesRepository: Repository<ModuleEntity>
   ) {}
 
   public async setQueuedDeploymentStatusFinished(componentDeploymentId: string): Promise<void> {
@@ -117,7 +126,26 @@ export class QueuedDeploymentsService {
     await this.createQueuedDeployment(componentId, componentDeploymentId, status)
   }
 
+  private async createNewModuleEntity(moduleDeploymentEntity: ModuleDeploymentEntity): Promise<void> {
+    await this.modulesRepository.save(
+      new ModuleEntity(
+        moduleDeploymentEntity.moduleId,
+        []
+      )
+    )
+  }
+
+  private async createModuleIfInexistent(moduleDeploymentEntity: ModuleDeploymentEntity): Promise<void> {
+    const moduleEntity: ModuleEntity =
+      await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
+
+    if (!moduleEntity) {
+      await this.createNewModuleEntity(moduleDeploymentEntity)
+    }
+  }
+
   private async queueModuleDeploymentTasks(moduleDeployment: ModuleDeploymentEntity): Promise<void[]> {
+    await this.createModuleIfInexistent(moduleDeployment)
     return Promise.all(
       moduleDeployment.components.map(
         componentDeployment => this.queueComponentDeploymentTask(componentDeployment)

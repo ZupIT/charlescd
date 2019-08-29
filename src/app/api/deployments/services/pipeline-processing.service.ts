@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
-import { CircleDeploymentEntity, ComponentDeploymentEntity, ModuleDeploymentEntity } from '../entity'
+import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../entity'
 import { IPipelineOptions } from '../../components/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -33,33 +33,6 @@ export class PipelineProcessingService {
       componentDeployment.componentId,
       pipelineOptions
     ))
-  }
-
-  private getCreateModuleComponentDeployment(
-    componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ): ComponentEntity[] {
-
-    return [
-      new ComponentEntity(
-        componentDeploymentEntity.componentId,
-        this.spinnakerService.createNewPipelineOptions(circles, componentDeploymentEntity)
-      )
-    ]
-  }
-
-  private async createModuleEntity(
-    moduleDeploymentEntity: ModuleDeploymentEntity,
-    componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
-  ): Promise<ModuleEntity> {
-
-    return this.modulesRepository.save(
-      new ModuleEntity(
-        moduleDeploymentEntity.moduleId,
-        this.getCreateModuleComponentDeployment(componentDeploymentEntity, circles)
-      )
-    )
   }
 
   private async updateComponentPipelineObject(
@@ -106,10 +79,7 @@ export class PipelineProcessingService {
     const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
-
-    return moduleEntity ?
-      this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles) :
-      this.createModuleEntity(moduleDeploymentEntity, componentDeploymentEntity, circles)
+    return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles)
   }
 
   public async processPipeline(componentDeploymentId: string): Promise<void> {
