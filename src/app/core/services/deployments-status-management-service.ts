@@ -126,7 +126,7 @@ export class DeploymentsStatusManagementService {
       const componentDeploymentEntity: ComponentDeploymentEntity =
         await this.componentDeploymentRepository.findOne({
           where: { id: componentDeploymentId },
-          relations: ['moduleDeployment', 'moduleDeployment.deployment']
+          relations: ['moduleDeployment', 'moduleDeployment.components', 'moduleDeployment.deployment']
         })
 
       await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
