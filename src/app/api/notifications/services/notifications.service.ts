@@ -51,9 +51,10 @@ export class NotificationsService {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
     await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+
     await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
-    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
   }
 
@@ -81,9 +82,10 @@ export class NotificationsService {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
     await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
     await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
-    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
   }
 
