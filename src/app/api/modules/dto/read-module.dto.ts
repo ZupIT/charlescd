@@ -1,4 +1,4 @@
-import { ReadComponentDto } from './read-component.dto'
+import { ReadComponentDto } from '../../components/dto'
 
 export class ReadModuleDto {
 

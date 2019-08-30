@@ -1,3 +1,4 @@
 export enum NotificationStatusEnum {
-    SUCCEEDED = 'SUCCEEDED'
+    SUCCEEDED = 'SUCCEEDED',
+    FAILED = 'FAILED'
 }

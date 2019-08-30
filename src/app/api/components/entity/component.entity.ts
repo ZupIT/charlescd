@@ -1,6 +1,6 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ReadComponentDto } from '../dto'
-import { ModuleEntity } from './module.entity'
+import { ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../interfaces'
 import * as uuidv4 from 'uuid/v4'
 
