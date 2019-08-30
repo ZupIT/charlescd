@@ -1,4 +1,4 @@
-import { IPipelineCircle, IPipelineVersion } from '../../../../api/modules/interfaces'
+import { IPipelineCircle, IPipelineVersion } from '../../../../api/components/interfaces'
 import { ISpinnakerPipelineUri } from './spinnaker-pipeline-uri.interface'
 
 export interface ISpinnakerPipelineConfiguration {
