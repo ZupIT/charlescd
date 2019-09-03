@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common'
 import { DeploymentsController } from './controller'
-import { DeploymentsService } from './service'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from './entity'
-import { ComponentEntity, ModuleEntity } from '../modules/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from './entity'
+import { ModuleEntity } from '../modules/entity'
+import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
+import { QueuedDeploymentsRepository } from './repository'
+import {
+  DeploymentsService,
+  QueuedDeploymentsService,
+  PipelineProcessingService,
+  PipelineDeploymentService
+} from './services'
 
 @Module({
   imports: [
@@ -18,11 +25,23 @@ import { LogsModule } from '../../core/logs/logs.module'
       ModuleDeploymentEntity,
       ComponentDeploymentEntity,
       ModuleEntity,
-      ComponentEntity
+      ComponentEntity,
+      QueuedDeploymentEntity,
+      QueuedDeploymentsRepository
     ])
   ],
   controllers: [DeploymentsController],
-  providers: [DeploymentsService],
-  exports: [DeploymentsService]
+  providers: [
+    DeploymentsService,
+    QueuedDeploymentsService,
+    PipelineProcessingService,
+    PipelineDeploymentService
+  ],
+  exports: [
+    DeploymentsService,
+    QueuedDeploymentsService,
+    PipelineProcessingService,
+    PipelineDeploymentService
+  ]
 })
 export class DeploymentsModule {}

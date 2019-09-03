@@ -1,6 +1,6 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadModuleDto } from '../dto'
-import { ComponentEntity } from './component.entity'
+import { ComponentEntity } from '../../components/entity/component.entity'
 import * as uuidv4 from 'uuid/v4'
 
 @Entity()
