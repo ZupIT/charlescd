@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { CreateSpinnakerPipeline } from 'lib-spinnaker'
-import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/modules/interfaces'
+import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
@@ -236,7 +236,7 @@ export class SpinnakerService {
 
   private async getSpinnakerPipeline(
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
-  ): Promise<Object> {
+  ) {
 
     return await CreateSpinnakerPipeline(
       AppConstants.TEMPLATE_GITHUB_AUTH,
@@ -273,7 +273,7 @@ export class SpinnakerService {
 
   private createUpdatePipelineObject(
     pipelineId: string, spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration, pipeline
-  ): Object {
+  ) {
     const updatePipelineObject = {
       ...pipeline,
       id: pipelineId,
@@ -289,7 +289,7 @@ export class SpinnakerService {
 
     this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE')
 
-    const pipeline: Object = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
+    const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
     const updatePipelineObject = this.createUpdatePipelineObject(pipelineId, spinnakerPipelineConfiguraton, pipeline)
     await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/pipelines`,

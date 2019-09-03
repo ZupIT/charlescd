@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
-import { DeploymentsService } from '../service'
+import { DeploymentsService } from '../services'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -11,6 +11,7 @@ export class DeploymentsController {
   public async createDeployment(
     @Body() createDeploymentDto: CreateDeploymentDto
   ): Promise<ReadDeploymentDto> {
+
     return await this.deploymentsService.createDeployment(createDeploymentDto)
   }
 
