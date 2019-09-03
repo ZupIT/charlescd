@@ -81,8 +81,8 @@ export class QueuedDeploymentsService {
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.prepareComponentDeployment(componentDeploymentId)
     await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
+    await this.prepareComponentDeployment(componentDeploymentId)
     this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
   }
 
