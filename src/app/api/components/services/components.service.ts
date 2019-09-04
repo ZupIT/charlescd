@@ -12,7 +12,7 @@ export class ComponentsService {
   public async getComponentDeploymentQueue(id: string): Promise<ReadQueuedDeploymentDto[]> {
     return this.queuedDeploymentsService.getComponentDeploymentQueue(id)
       .then(queuedDeployments => queuedDeployments.map(
-        queuedDeployment => queuedDeployment.toReadDto()
+          queuedDeployment => queuedDeployment.toReadDto()
         )
       )
   }
