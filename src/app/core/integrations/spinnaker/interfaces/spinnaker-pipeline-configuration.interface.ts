@@ -23,5 +23,7 @@ export interface ISpinnakerPipelineConfiguration {
 
   subsets: IPipelineVersion[],
 
+  unusedVersions: IPipelineVersion[],
+
   circle: IPipelineCircle[]
 }
