@@ -6,4 +6,7 @@ export interface IPipelineOptions {
   pipelineCircles: IPipelineCircle[]
 
   pipelineVersions: IPipelineVersion[]
+
+  pipelineUnusedVersions: IPipelineVersion[]
+
 }
