@@ -240,7 +240,8 @@ export class SpinnakerService {
       ...deploymentConfiguration,
       webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
       subsets: pipelineCirclesOptions.pipelineVersions,
-      circle: pipelineCirclesOptions.pipelineCircles
+      circle: pipelineCirclesOptions.pipelineCircles,
+      unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions
     }
   }
 
