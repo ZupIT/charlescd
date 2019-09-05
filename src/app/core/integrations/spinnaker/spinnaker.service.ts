@@ -47,11 +47,11 @@ export class SpinnakerService {
     pipelineOptions: IPipelineOptions
   ): void {
 
-    let currentVersions = pipelineOptions.pipelineVersions.filter(
+    const currentVersions = pipelineOptions.pipelineVersions.filter(
       pipelineVersion => this.checkVersionUsage(pipelineVersion, pipelineOptions.pipelineCircles)
     )
 
-    let unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
+    const unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
 
     pipelineOptions.pipelineVersions = currentVersions
     pipelineOptions.pipelineUnusedVersions = unusedVersions
