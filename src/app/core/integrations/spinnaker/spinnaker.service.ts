@@ -47,9 +47,15 @@ export class SpinnakerService {
     pipelineOptions: IPipelineOptions
   ): void {
 
-    pipelineOptions.pipelineVersions = pipelineOptions.pipelineVersions.filter(
+    const currentVersions = pipelineOptions.pipelineVersions.filter(
       pipelineVersion => this.checkVersionUsage(pipelineVersion, pipelineOptions.pipelineCircles)
     )
+
+    const unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
+
+    pipelineOptions.pipelineVersions = currentVersions
+    pipelineOptions.pipelineUnusedVersions = unusedVersions
+
   }
 
   private updatePipelineVersions(
@@ -136,13 +142,16 @@ export class SpinnakerService {
     componentDeployment: ComponentDeploymentEntity
   ): IPipelineOptions {
 
-    const pipelineCircles = this.updatePipelineCircles(
+     this.updatePipelineCircles(
       pipelineOptions, circles, componentDeployment
     )
-    const pipelineVersions = this.updatePipelineVersions(
+
+    this.updatePipelineVersions(
       pipelineOptions, componentDeployment
     )
-    return { pipelineCircles, pipelineVersions }
+
+    return pipelineOptions
+
   }
 
   private getNewPipelineVersionObject(
@@ -197,7 +206,8 @@ export class SpinnakerService {
 
     return {
       pipelineCircles: this.getNewPipelineCircles(circles, componentDeployment),
-      pipelineVersions: this.getNewPipelineVersions(componentDeployment)
+      pipelineVersions: this.getNewPipelineVersions(componentDeployment),
+      pipelineUnusedVersions: []
     }
   }
 
@@ -230,7 +240,8 @@ export class SpinnakerService {
       ...deploymentConfiguration,
       webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
       subsets: pipelineCirclesOptions.pipelineVersions,
-      circle: pipelineCirclesOptions.pipelineCircles
+      circle: pipelineCirclesOptions.pipelineCircles,
+      unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions
     }
   }
 
