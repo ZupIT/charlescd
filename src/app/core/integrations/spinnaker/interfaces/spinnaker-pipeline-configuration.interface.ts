@@ -19,9 +19,11 @@ export interface ISpinnakerPipelineConfiguration {
 
   uri: ISpinnakerPipelineUri,
 
-  appPort: string,
+  appPort: number,
 
-  subsets: IPipelineVersion[],
+  versions: IPipelineVersion[],
 
-  circle: IPipelineCircle[]
+  unusedVersions: IPipelineVersion[],
+
+  circles: IPipelineCircle[]
 }
