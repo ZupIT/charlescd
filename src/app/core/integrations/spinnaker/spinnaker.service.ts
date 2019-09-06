@@ -1,5 +1,5 @@
 import { HttpService, Injectable } from '@nestjs/common'
-import { CreateSpinnakerPipeline } from 'lib-spinnaker'
+import { createSpinnakerPipeline } from 'lib-spinnaker'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
@@ -24,9 +24,7 @@ export class SpinnakerService {
   ): boolean {
 
     return !!pipelineCircles.find(pipelineCircle =>
-      !!pipelineCircle.destination.find(
-        destination => destination.version === pipelineVersion.version
-      )
+      pipelineCircle.destination.version === pipelineVersion.version
     )
   }
 
@@ -47,9 +45,15 @@ export class SpinnakerService {
     pipelineOptions: IPipelineOptions
   ): void {
 
-    pipelineOptions.pipelineVersions = pipelineOptions.pipelineVersions.filter(
+    const currentVersions = pipelineOptions.pipelineVersions.filter(
       pipelineVersion => this.checkVersionUsage(pipelineVersion, pipelineOptions.pipelineCircles)
     )
+
+    const unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
+
+    pipelineOptions.pipelineVersions = currentVersions
+    pipelineOptions.pipelineUnusedVersions = unusedVersions
+
   }
 
   private updatePipelineVersions(
@@ -67,14 +71,9 @@ export class SpinnakerService {
     circle: CircleDeploymentEntity
   ): void {
 
-    pipelineOptions.pipelineCircles.forEach(pipelineCircle => {
-      pipelineCircle.headers = pipelineCircle.headers.filter(
-        header => header.headerValue !== circle.headerValue
-      )
+    pipelineOptions.pipelineCircles = pipelineOptions.pipelineCircles.filter(pipelineCircle => {
+      return pipelineCircle.header.headerValue !== circle.headerValue
     })
-    pipelineOptions.pipelineCircles = pipelineOptions.pipelineCircles.filter(
-      pipelineCircle => pipelineCircle.headers.length
-    )
   }
 
   private removeRequestedCircles(
@@ -136,13 +135,15 @@ export class SpinnakerService {
     componentDeployment: ComponentDeploymentEntity
   ): IPipelineOptions {
 
-    const pipelineCircles = this.updatePipelineCircles(
+    this.updatePipelineCircles(
       pipelineOptions, circles, componentDeployment
     )
-    const pipelineVersions = this.updatePipelineVersions(
+
+    this.updatePipelineVersions(
       pipelineOptions, componentDeployment
     )
-    return { pipelineCircles, pipelineVersions }
+
+    return pipelineOptions
   }
 
   private getNewPipelineVersionObject(
@@ -170,13 +171,13 @@ export class SpinnakerService {
   ): IPipelineCircle {
 
     return {
-      headers: [{
+      header: {
         headerName: AppConstants.DEFAULT_CIRCLE_HEADER_NAME,
         headerValue: circle.headerValue
-      }],
-      destination: [{
+      },
+      destination: {
         version: componentDeployment.buildImageTag
-      }]
+      }
     }
   }
 
@@ -197,7 +198,8 @@ export class SpinnakerService {
 
     return {
       pipelineCircles: this.getNewPipelineCircles(circles, componentDeployment),
-      pipelineVersions: this.getNewPipelineVersions(componentDeployment)
+      pipelineVersions: this.getNewPipelineVersions(componentDeployment),
+      pipelineUnusedVersions: []
     }
   }
 
@@ -229,8 +231,9 @@ export class SpinnakerService {
     return {
       ...deploymentConfiguration,
       webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
-      subsets: pipelineCirclesOptions.pipelineVersions,
-      circle: pipelineCirclesOptions.pipelineCircles
+      versions: pipelineCirclesOptions.pipelineVersions,
+      unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
+      circles: pipelineCirclesOptions.pipelineCircles
     }
   }
 
@@ -238,12 +241,8 @@ export class SpinnakerService {
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ) {
 
-    return await CreateSpinnakerPipeline(
-      AppConstants.TEMPLATE_GITHUB_AUTH,
-      AppConstants.TEMPLATE_GITHUB_USER,
-      AppConstants.TEMPLATE_GITHUB_REPO,
-      AppConstants.TEMPLATE_GITHUB_FOLDER,
-      spinnakerPipelineConfiguration,
+    return await createSpinnakerPipeline(
+      spinnakerPipelineConfiguration
     )
   }
 
