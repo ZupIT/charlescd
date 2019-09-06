@@ -18,7 +18,7 @@ export class DeploymentConfigurationService {
       uri: {
         uriName: '/darwin-content'
       },
-      appPort: '3000'
+      appPort: 3000
     }
   }
 }
