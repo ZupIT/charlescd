@@ -21,9 +21,9 @@ export interface ISpinnakerPipelineConfiguration {
 
   appPort: string,
 
-  subsets: IPipelineVersion[],
+  versions: IPipelineVersion[],
 
   unusedVersions: IPipelineVersion[],
 
-  circle: IPipelineCircle[]
+  circles: IPipelineCircle[]
 }
