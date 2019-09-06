@@ -19,7 +19,7 @@ export interface ISpinnakerPipelineConfiguration {
 
   uri: ISpinnakerPipelineUri,
 
-  appPort: string,
+  appPort: number,
 
   versions: IPipelineVersion[],
 
