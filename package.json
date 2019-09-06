@@ -28,7 +28,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
     "js-yaml": "^3.13.1",
-    "lib-spinnaker": "^2.0.1",
+    "lib-spinnaker": "^2.0.2",
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "mustache": "^3.0.1",
