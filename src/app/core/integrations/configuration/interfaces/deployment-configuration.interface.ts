@@ -16,5 +16,5 @@ export interface IDeploymentConfiguration {
 
   uri: ISpinnakerPipelineUri,
 
-  appPort: string,
+  appPort: number,
 }
