@@ -28,7 +28,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
     "js-yaml": "^3.13.1",
-    "lib-spinnaker": "^2.0.1",
+    "lib-spinnaker": "^2.0.4",
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "mustache": "^3.0.1",
@@ -41,6 +41,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/types": "7.5.5",
     "@nestjs/testing": "6.1.1",
     "@types/express": "4.16.1",
     "@types/jest": "24.0.11",

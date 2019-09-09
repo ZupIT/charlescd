@@ -2,10 +2,11 @@ REGISTRY = $(DOCKER_REGISTRY)
 RELEASE = $(RELEASE_VERSION)
 
 # Go parameters
-NODECMD=yarn
-NODEBUILD=$(NODECMD) build
-NODETEST=$(NODECMD) test
-NODERUN=$(NODECMD) start:prod
+NODECMD=npm
+NODEINSTALL= ${NODECMD} install
+NODEBUILD=$(NODECMD) run build
+NODETEST=$(NODECMD) run test
+NODERUN=$(NODECMD) run start:prod
 BINARY_NAME=darwin-deploy
 
 # Docker
@@ -18,16 +19,16 @@ DOCKERTAG=${DOCKERCMD} tag
 HOST=127.0.0.1
 
 all: test build
-build: 
-	${NODECMD}
-	${NODEBUILD} 
+build:
+	${NODEINSTALL}
+	${NODEBUILD}
 	$(DOCKERBUILD) -t "${REGISTRY}/${BINARY_NAME}:${RELEASE}" .
 	$(DOCKERTAG) "${REGISTRY}/${BINARY_NAME}:${RELEASE}" "${REGISTRY}/${BINARY_NAME}:latest"
 
 publish:
 	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:${RELEASE}"
 	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:latest"
-test: 
+test:
 	@echo "don't have time for test right now"
 run:
 	${NODERUN}
