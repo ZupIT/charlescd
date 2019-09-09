@@ -12,7 +12,7 @@ interface IPipelineCircleHeader {
 
 export interface IPipelineCircle {
 
-  header: IPipelineCircleHeader
+  header?: IPipelineCircleHeader
 
   destination: IPipelineCircleDestination
 }
