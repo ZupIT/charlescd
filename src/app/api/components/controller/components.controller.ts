@@ -11,4 +11,5 @@ export class ComponentsController {
   public async getComponentDeploymentQueue(@Param('id') id: string): Promise<ReadQueuedDeploymentDto[]> {
     return await this.componentsService.getComponentDeploymentQueue(id)
   }
+
 }
