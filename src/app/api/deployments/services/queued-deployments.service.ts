@@ -32,6 +32,35 @@ export class QueuedDeploymentsService {
     private readonly modulesRepository: Repository<ModuleEntity>
   ) {}
 
+  public async queueDeploymentTasks(deployment: DeploymentEntity): Promise<void> {
+    this.consoleLoggerService.log(`START:QUEUE_DEPLOYMENTS`)
+    await Promise.all(
+      deployment.modules.map(
+        moduleDeployment => this.queueModuleDeploymentTasks(moduleDeployment)
+      )
+    )
+    this.consoleLoggerService.log(`FINISH:QUEUE_DEPLOYMENTS`)
+  }
+
+  public async triggerNextComponentDeploy(
+    finishedComponentDeploymentId: string
+  ): Promise<void> {
+
+    const finishedComponentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentRepository.findOne({ id : finishedComponentDeploymentId })
+    const { componentId: finishedComponentId } = finishedComponentDeployment
+    const queuedDeployments: QueuedDeploymentEntity[] =
+      await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
+    await this.deployNextComponent(queuedDeployments)
+  }
+
+  public async getComponentDeploymentQueue(
+    componentId: string
+  ): Promise<QueuedDeploymentEntity[]> {
+
+    return this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentId)
+  }
+
   public async setQueuedDeploymentStatusFinished(componentDeploymentId: string): Promise<void> {
     await this.queuedDeploymentsRepository.update(
       { componentDeploymentId }, { status: QueuedDeploymentStatusEnum.FINISHED }
@@ -153,16 +182,6 @@ export class QueuedDeploymentsService {
     )
   }
 
-  public async queueDeploymentTasks(deployment: DeploymentEntity): Promise<void> {
-    this.consoleLoggerService.log(`START:QUEUE_DEPLOYMENTS`)
-    await Promise.all(
-      deployment.modules.map(
-        moduleDeployment => this.queueModuleDeploymentTasks(moduleDeployment)
-      )
-    )
-    this.consoleLoggerService.log(`FINISH:QUEUE_DEPLOYMENTS`)
-  }
-
   private async deployNextComponent(orderedQueuedDeployments: QueuedDeploymentEntity[]): Promise<void> {
     if (orderedQueuedDeployments.length) {
       const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentRepository.findOne(
@@ -172,24 +191,5 @@ export class QueuedDeploymentsService {
         componentDeployment.componentId, componentDeployment.id, QueuedDeploymentStatusEnum.RUNNING
       )
     }
-  }
-
-  public async triggerNextComponentDeploy(
-    finishedComponentDeploymentId: string
-  ): Promise<void> {
-
-    const finishedComponentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({ id : finishedComponentDeploymentId })
-    const { componentId: finishedComponentId } = finishedComponentDeployment
-    const queuedDeployments: QueuedDeploymentEntity[] =
-      await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
-    await this.deployNextComponent(queuedDeployments)
-  }
-
-  public async getComponentDeploymentQueue(
-    componentId: string
-  ): Promise<QueuedDeploymentEntity[]> {
-
-    return this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentId)
   }
 }
