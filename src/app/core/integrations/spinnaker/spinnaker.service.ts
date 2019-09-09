@@ -76,7 +76,16 @@ export class SpinnakerService {
     })
   }
 
-  private removeRequestedCircles(
+  private static removeRequestedHeaderlessCircles(
+    pipelineOptions: IPipelineOptions
+  ): void {
+
+    pipelineOptions.pipelineCircles = pipelineOptions.pipelineCircles.filter(pipelineCircle => {
+      return !!pipelineCircle.header
+    })
+  }
+
+  private removeRequestedRoutedCircles(
     pipelineOptions: IPipelineOptions,
     circles: CircleDeploymentEntity[]
   ): void {
@@ -84,6 +93,16 @@ export class SpinnakerService {
     circles
       .filter(circle => circle.removeCircle)
       .map(circle => this.removeCircleFromPipeline(pipelineOptions, circle))
+  }
+
+  private removeRequestedCircles(
+    pipelineOptions: IPipelineOptions,
+    circles: CircleDeploymentEntity[]
+  ): void {
+
+    circles && circles.length ?
+      this.removeRequestedRoutedCircles(pipelineOptions, circles) :
+      SpinnakerService.removeRequestedHeaderlessCircles(pipelineOptions)
   }
 
   private static addCircleToPipeline(
@@ -107,7 +126,17 @@ export class SpinnakerService {
     SpinnakerService.addCircleToPipeline(pipelineOptions, circle, componentDeployment)
   }
 
-  private updateRequestedCircles(
+  private static updateRequestedHeaderlessCircles(
+    pipelineOptions: IPipelineOptions,
+    componentDeployment: ComponentDeploymentEntity
+  ): void {
+
+    pipelineOptions.pipelineCircles.push(
+      SpinnakerService.getPipelineHeaderlessCircleObject(componentDeployment)
+    )
+  }
+
+  private updateRequestedRoutedCircles(
     pipelineOptions: IPipelineOptions,
     circles: CircleDeploymentEntity[],
     componentDeployment: ComponentDeploymentEntity
@@ -116,6 +145,17 @@ export class SpinnakerService {
     circles
       .filter(circle => !circle.removeCircle)
       .map(circle => this.updatePipelineCircle(circle, pipelineOptions, componentDeployment))
+  }
+
+  private updateRequestedCircles(
+    pipelineOptions: IPipelineOptions,
+    circles: CircleDeploymentEntity[],
+    componentDeployment: ComponentDeploymentEntity
+  ): void {
+
+    circles && circles.length ?
+      this.updateRequestedRoutedCircles(pipelineOptions, circles, componentDeployment) :
+      SpinnakerService.updateRequestedHeaderlessCircles(pipelineOptions, componentDeployment)
   }
 
   private updatePipelineCircles(
