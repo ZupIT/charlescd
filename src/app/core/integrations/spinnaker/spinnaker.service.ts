@@ -72,7 +72,7 @@ export class SpinnakerService {
   ): void {
 
     pipelineOptions.pipelineCircles = pipelineOptions.pipelineCircles.filter(pipelineCircle => {
-      return pipelineCircle.header.headerValue !== circle.headerValue
+      return !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
     })
   }
 
