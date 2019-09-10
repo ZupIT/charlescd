@@ -31,7 +31,7 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'status'} )
   public status: DeploymentStatusEnum
 
-  @Column({ name: 'default_circle'} )
+  @Column({ name: 'default_circle', nullable: true } )
   public defaultCircle: boolean
 
   @Column({
