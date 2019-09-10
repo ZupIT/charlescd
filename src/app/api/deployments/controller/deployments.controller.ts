@@ -17,11 +17,13 @@ export class DeploymentsController {
 
   @Get()
   public async getDeployments(): Promise<ReadDeploymentDto[]> {
+
     return await this.deploymentsService.getDeployments()
   }
 
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
+
     return await this.deploymentsService.getDeploymentById(id)
   }
 }

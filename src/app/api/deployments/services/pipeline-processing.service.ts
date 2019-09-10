@@ -23,11 +23,12 @@ export class PipelineProcessingService {
   private async createModuleComponent(
     moduleEntity: ModuleEntity,
     componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions =
-      this.spinnakerService.createNewPipelineOptions(circles, componentDeployment)
+      this.spinnakerService.createNewPipelineOptions(circles, componentDeployment, defaultCircle)
 
     return moduleEntity.addComponent(new ComponentEntity(
       componentDeployment.componentId,
@@ -38,11 +39,12 @@ export class PipelineProcessingService {
   private async updateComponentPipelineObject(
     componentEntity: ComponentEntity,
     componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions = this.spinnakerService.updatePipelineOptions(
-      componentEntity.pipelineOptions, circles, componentDeployment
+      componentEntity.pipelineOptions, circles, componentDeployment, defaultCircle
     )
     return componentEntity.updatePipelineOptions(pipelineOptions)
   }
@@ -50,39 +52,46 @@ export class PipelineProcessingService {
   private async updateModuleComponentPipeline(
     moduleEntity: ModuleEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
       moduleEntity.getComponentById(componentDeploymentEntity.componentId)
 
     componentEntity ?
-      await this.updateComponentPipelineObject(componentEntity, componentDeploymentEntity, circles) :
-      await this.createModuleComponent(moduleEntity, componentDeploymentEntity, circles)
+      await this.updateComponentPipelineObject(componentEntity, componentDeploymentEntity, circles, defaultCircle) :
+      await this.createModuleComponent(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
   }
 
   private async updateModuleEntity(
     moduleEntity: ModuleEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ): Promise<ModuleEntity> {
 
-    await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circles)
+    await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
     return this.modulesRepository.save(moduleEntity)
   }
 
   private async processComponentPipeline(
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ): Promise<ModuleEntity> {
 
     const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
-    return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles)
+    return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
   }
 
-  public async processPipeline(componentDeploymentId: string): Promise<void> {
+  public async processPipeline(
+    componentDeploymentId: string,
+    defaultCircle: boolean
+  ): Promise<void> {
+
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentRepository.findOne({
@@ -90,7 +99,7 @@ export class PipelineProcessingService {
         relations: ['moduleDeployment', 'moduleDeployment.deployment']
       })
     const { circles } = componentDeployment.moduleDeployment.deployment
-    await this.processComponentPipeline(componentDeployment, circles)
+    await this.processComponentPipeline(componentDeployment, circles, defaultCircle)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
   }
 }
