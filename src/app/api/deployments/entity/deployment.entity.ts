@@ -31,6 +31,9 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'status'} )
   public status: DeploymentStatusEnum
 
+  @Column({ name: 'default_circle'} )
+  public defaultCircle: boolean
+
   @Column({
     type: 'jsonb',
     name: 'circles',
@@ -48,7 +51,8 @@ export class DeploymentEntity extends BaseEntity {
     authorId: string,
     description: string,
     callbackUrl: string,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ) {
     super()
     this.id = uuidv4()
@@ -57,6 +61,7 @@ export class DeploymentEntity extends BaseEntity {
     this.description = description
     this.callbackUrl = callbackUrl
     this.circles = circles
+    this.defaultCircle = defaultCircle
     this.status = DeploymentStatusEnum.CREATED
   }
 
@@ -68,7 +73,8 @@ export class DeploymentEntity extends BaseEntity {
       this.description,
       this.circles.map(circle => circle.toReadDto()),
       this.status,
-      this.callbackUrl
+      this.callbackUrl,
+      this.defaultCircle
     )
   }
 }
