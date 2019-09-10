@@ -16,6 +16,8 @@ export class CreateDeploymentDto {
 
   public readonly callbackUrl: string
 
+  public readonly defaultCircle: boolean
+
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
   public readonly circles: CreateCircleDeploymentDto[]
@@ -26,7 +28,8 @@ export class CreateDeploymentDto {
       this.authorId,
       this.description,
       this.callbackUrl,
-      this.circles.map(circle => circle.toEntity())
+      this.circles.map(circle => circle.toEntity()),
+      this.defaultCircle
     )
   }
 }
