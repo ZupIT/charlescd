@@ -35,7 +35,7 @@ export class ReadDeploymentDto {
     this.description = description
     this.circles = circles
     this.status = status
-    this.callbackUrl = callbackUrl,
+    this.callbackUrl = callbackUrl
     this.defaultCircle = defaultCircle
   }
 }
