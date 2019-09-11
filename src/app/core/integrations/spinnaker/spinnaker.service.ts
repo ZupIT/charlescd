@@ -280,6 +280,7 @@ export class SpinnakerService {
   }
 
   private async deploySpinnakerPipeline(pipelineName: string): Promise<void> {
+
     await this.waitForPipelineCreation()
     this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
     await this.httpService.post(
