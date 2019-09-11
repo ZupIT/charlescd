@@ -106,13 +106,13 @@ export class SpinnakerService {
       this.removeRequestedRoutedCircles(pipelineOptions, circles)
   }
 
-  private addCircleToPipeline(
+  private addRoutedCircleToPipeline(
     pipelineOptions: IPipelineOptions,
     circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity
   ): void {
 
-    pipelineOptions.pipelineCircles.push(
+    pipelineOptions.pipelineCircles.unshift(
       this.getNewPipelineRoutedCircleObject(circle, componentDeployment)
     )
   }
@@ -124,7 +124,7 @@ export class SpinnakerService {
   ): void {
 
     this.removeCircleFromPipeline(pipelineOptions, circle)
-    this.addCircleToPipeline(pipelineOptions, circle, componentDeployment)
+    this.addRoutedCircleToPipeline(pipelineOptions, circle, componentDeployment)
   }
 
   private updateRequestedHeaderlessCircles(
