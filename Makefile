@@ -15,7 +15,7 @@ DOCKERBUILD=${DOCKERCMD} build
 DOCKERPUSH=${DOCKERCMD} push
 DOCKERTAG=${DOCKERCMD} tag
 
-# Commons
+# Commons commands
 HOST=127.0.0.1
 
 all: test build
