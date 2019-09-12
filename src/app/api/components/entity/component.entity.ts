@@ -7,14 +7,10 @@ import * as uuidv4 from 'uuid/v4'
 @Entity()
 export class ComponentEntity extends BaseEntity {
 
-  @PrimaryColumn({ name: 'id' })
-  public id: string
-
-  @Column({
-    name: 'component_id',
-    unique: true
+  @PrimaryColumn({
+    name: 'id'
   })
-  public componentId: string
+  public id: string
 
   @ManyToOne(
     type => ModuleEntity,
@@ -37,8 +33,7 @@ export class ComponentEntity extends BaseEntity {
     pipelineOptions: IPipelineOptions
   ) {
     super()
-    this.id = uuidv4()
-    this.componentId = componentId
+    this.id = componentId
     this.pipelineOptions = pipelineOptions
   }
 
@@ -49,7 +44,6 @@ export class ComponentEntity extends BaseEntity {
   public toReadDto(): ReadComponentDto {
     return new ReadComponentDto(
       this.id,
-      this.componentId,
       this.pipelineOptions,
       this.createdAt
     )
