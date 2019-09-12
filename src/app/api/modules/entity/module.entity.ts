@@ -7,8 +7,7 @@ import * as uuidv4 from 'uuid/v4'
 export class ModuleEntity extends BaseEntity {
 
   @PrimaryColumn({
-    name: 'id',
-    unique: true
+    name: 'id'
   })
   public id: string
 
@@ -36,7 +35,7 @@ export class ModuleEntity extends BaseEntity {
   }
 
   public getComponentById(componentId: string): ComponentEntity {
-    return this.components.find(component => component.componentId === componentId)
+    return this.components.find(component => component.id === componentId)
   }
 
   public toReadDto(): ReadModuleDto {
