@@ -15,6 +15,10 @@ export class CreateModulesTable20190808220900 implements MigrationInterface {
           name: 'module_id',
           type: 'varchar',
           isUnique: true
+        },
+        {
+          name: 'created_at',
+          type: 'date'
         }
       ]
     }), true)

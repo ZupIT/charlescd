@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadModuleDto } from '../dto'
 import { ComponentEntity } from '../../components/entity/component.entity'
 import * as uuidv4 from 'uuid/v4'
@@ -22,6 +22,9 @@ export class ModuleEntity extends BaseEntity {
   )
   public components: ComponentEntity[]
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     moduleId: string,
     components: ComponentEntity[]
@@ -44,7 +47,8 @@ export class ModuleEntity extends BaseEntity {
     return new ReadModuleDto(
       this.id,
       this.moduleId,
-      this.components.map(component => component.toReadDto())
+      this.components.map(component => component.toReadDto()),
+      this.createdAt
     )
   }
 }

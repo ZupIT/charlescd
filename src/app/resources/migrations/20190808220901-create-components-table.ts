@@ -22,6 +22,10 @@ export class CreateComponentsTable20190808220901 implements MigrationInterface {
         {
           name: 'pipeline_options',
           type: 'jsonb'
+        },
+        {
+          name: 'created_at',
+          type: 'date'
         }
       ]
     }), true)
