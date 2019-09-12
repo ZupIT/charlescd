@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../interfaces'
@@ -29,6 +29,9 @@ export class ComponentEntity extends BaseEntity {
   })
   public pipelineOptions: IPipelineOptions
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     componentId: string,
     pipelineOptions: IPipelineOptions
@@ -47,7 +50,8 @@ export class ComponentEntity extends BaseEntity {
     return new ReadComponentDto(
       this.id,
       this.componentId,
-      this.pipelineOptions
+      this.pipelineOptions,
+      this.createdAt
     )
   }
 }
