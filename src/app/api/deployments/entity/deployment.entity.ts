@@ -1,5 +1,5 @@
 import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
@@ -46,6 +46,9 @@ export class DeploymentEntity extends BaseEntity {
   })
   public circles: CircleDeploymentEntity[]
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     modules: ModuleDeploymentEntity[],
     authorId: string,
@@ -74,7 +77,8 @@ export class DeploymentEntity extends BaseEntity {
       this.circles.map(circle => circle.toReadDto()),
       this.status,
       this.callbackUrl,
-      this.defaultCircle
+      this.defaultCircle,
+      this.createdAt
     )
   }
 }

@@ -19,6 +19,8 @@ export class ReadDeploymentDto {
 
   public readonly defaultCircle: boolean
 
+  public readonly createdAt: Date
+
   constructor(
     id: string,
     modules: ReadModuleDeploymentDto[],
@@ -27,7 +29,8 @@ export class ReadDeploymentDto {
     circles: ReadCircleDeploymentDto[],
     status: string,
     callbackUrl: string,
-    defaultCircle: boolean
+    defaultCircle: boolean,
+    createdAt: Date
   ) {
     this.id = id
     this.modules = modules
@@ -37,5 +40,6 @@ export class ReadDeploymentDto {
     this.status = status
     this.callbackUrl = callbackUrl
     this.defaultCircle = defaultCircle
+    this.createdAt = createdAt
   }
 }

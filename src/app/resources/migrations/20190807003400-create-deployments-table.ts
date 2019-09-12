@@ -34,6 +34,10 @@ export class CreateDeploymentsTable20190807003400 implements MigrationInterface 
         {
           name: 'status',
           type: 'varchar'
+        },
+        {
+          name: 'created_at',
+          type: 'date'
         }
       ]
     }), true)
