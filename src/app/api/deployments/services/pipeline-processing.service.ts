@@ -83,7 +83,7 @@ export class PipelineProcessingService {
 
     const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =
-      await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
+      await this.modulesRepository.findOne({ id: moduleDeploymentEntity.moduleId })
     return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
   }
 

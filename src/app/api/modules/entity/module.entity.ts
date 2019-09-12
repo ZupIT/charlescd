@@ -6,14 +6,11 @@ import * as uuidv4 from 'uuid/v4'
 @Entity()
 export class ModuleEntity extends BaseEntity {
 
-  @PrimaryColumn({ name: 'id' })
-  public id: string
-
-  @Column({
-    name: 'module_id',
+  @PrimaryColumn({
+    name: 'id',
     unique: true
   })
-  public moduleId: string
+  public id: string
 
   @OneToMany(
     type => ComponentEntity,
@@ -30,8 +27,7 @@ export class ModuleEntity extends BaseEntity {
     components: ComponentEntity[]
   ) {
     super()
-    this.id = uuidv4()
-    this.moduleId = moduleId
+    this.id = moduleId
     this.components = components
   }
 
@@ -46,7 +42,6 @@ export class ModuleEntity extends BaseEntity {
   public toReadDto(): ReadModuleDto {
     return new ReadModuleDto(
       this.id,
-      this.moduleId,
       this.components.map(component => component.toReadDto()),
       this.createdAt
     )
