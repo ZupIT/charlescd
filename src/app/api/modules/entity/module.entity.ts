@@ -7,7 +7,8 @@ import * as uuidv4 from 'uuid/v4'
 export class ModuleEntity extends BaseEntity {
 
   @PrimaryColumn({
-    name: 'id'
+    name: 'id',
+    type: 'uuid'
   })
   public id: string
 
