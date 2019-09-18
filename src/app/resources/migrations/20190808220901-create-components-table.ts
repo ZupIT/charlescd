@@ -12,16 +12,16 @@ export class CreateComponentsTable20190808220901 implements MigrationInterface {
           isPrimary: true
         },
         {
+          name: 'component_id',
+          type: 'varchar'
+        },
+        {
           name: 'module_id',
           type: 'varchar'
         },
         {
           name: 'pipeline_options',
           type: 'jsonb'
-        },
-        {
-          name: 'created_at',
-          type: 'date'
         }
       ]
     }), true)

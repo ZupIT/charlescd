@@ -30,10 +30,6 @@ export class CreateComponentDeploymentsTable20190808190900 implements MigrationI
         {
           name: 'status',
           type: 'varchar'
-        },
-        {
-          name: 'created_at',
-          type: 'date'
         }
       ]
     }), true)
