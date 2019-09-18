@@ -50,8 +50,7 @@ export class AddCreatedAtColumns20190918174700 implements MigrationInterface {
 
     await queryRunner.addColumn('components', new TableColumn({
       name: 'component_id',
-      type: 'varchar',
-      isUnique: true
+      type: 'varchar'
     }))
 
     await queryRunner.dropColumn('components', 'created_at')
