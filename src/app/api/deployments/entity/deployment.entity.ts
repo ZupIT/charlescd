@@ -1,5 +1,5 @@
 import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
@@ -31,6 +31,9 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'status'} )
   public status: DeploymentStatusEnum
 
+  @Column({ name: 'default_circle', nullable: true } )
+  public defaultCircle: boolean
+
   @Column({
     type: 'jsonb',
     name: 'circles',
@@ -43,12 +46,16 @@ export class DeploymentEntity extends BaseEntity {
   })
   public circles: CircleDeploymentEntity[]
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
     callbackUrl: string,
-    circles: CircleDeploymentEntity[]
+    circles: CircleDeploymentEntity[],
+    defaultCircle: boolean
   ) {
     super()
     this.id = uuidv4()
@@ -57,6 +64,7 @@ export class DeploymentEntity extends BaseEntity {
     this.description = description
     this.callbackUrl = callbackUrl
     this.circles = circles
+    this.defaultCircle = defaultCircle
     this.status = DeploymentStatusEnum.CREATED
   }
 
@@ -68,7 +76,9 @@ export class DeploymentEntity extends BaseEntity {
       this.description,
       this.circles.map(circle => circle.toReadDto()),
       this.status,
-      this.callbackUrl
+      this.callbackUrl,
+      this.defaultCircle,
+      this.createdAt
     )
   }
 }

@@ -5,7 +5,7 @@ export class ReadDeploymentDto {
 
   public readonly id: string
 
-  public readonly modules: ReadModuleDeploymentDto[]
+  public readonly modulesDeployments: ReadModuleDeploymentDto[]
 
   public readonly authorId: string
 
@@ -17,21 +17,29 @@ export class ReadDeploymentDto {
 
   public readonly callbackUrl: string
 
+  public readonly defaultCircle: boolean
+
+  public readonly createdAt: Date
+
   constructor(
     id: string,
-    modules: ReadModuleDeploymentDto[],
+    modulesDeployments: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
     circles: ReadCircleDeploymentDto[],
     status: string,
-    callbackUrl: string
+    callbackUrl: string,
+    defaultCircle: boolean,
+    createdAt: Date
   ) {
     this.id = id
-    this.modules = modules
+    this.modulesDeployments = modulesDeployments
     this.authorId = authorId
     this.description = description
     this.circles = circles
     this.status = status
     this.callbackUrl = callbackUrl
+    this.defaultCircle = defaultCircle
+    this.createdAt = createdAt
   }
 }
