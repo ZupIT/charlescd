@@ -177,7 +177,7 @@ export class QueuedDeploymentsService {
 
   private async createModuleIfInexistent(moduleDeploymentEntity: ModuleDeploymentEntity): Promise<void> {
     const moduleEntity: ModuleEntity =
-      await this.modulesRepository.findOne({ moduleId: moduleDeploymentEntity.moduleId })
+      await this.modulesRepository.findOne({ id: moduleDeploymentEntity.moduleId })
 
     if (!moduleEntity) {
       await this.createNewModuleEntity(moduleDeploymentEntity)
