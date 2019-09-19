@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinColumn, OneToMany, PrimaryColumn
+  JoinColumn, OneToMany, PrimaryColumn, CreateDateColumn
 } from 'typeorm'
 import { DeploymentEntity } from './deployment.entity'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
@@ -38,6 +38,9 @@ export class ModuleDeploymentEntity extends BaseEntity {
   )
   public components: ComponentDeploymentEntity[]
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     moduleId: string,
     components: ComponentDeploymentEntity[]
@@ -54,7 +57,8 @@ export class ModuleDeploymentEntity extends BaseEntity {
       this.id,
       this.moduleId,
       this.components.map(component => component.toReadDto()),
-      this.status
+      this.status,
+      this.createdAt
     )
   }
 }
