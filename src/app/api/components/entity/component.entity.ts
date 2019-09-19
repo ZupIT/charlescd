@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../interfaces'
@@ -7,14 +7,11 @@ import * as uuidv4 from 'uuid/v4'
 @Entity()
 export class ComponentEntity extends BaseEntity {
 
-  @PrimaryColumn({ name: 'id' })
-  public id: string
-
-  @Column({
-    name: 'component_id',
-    unique: true
+  @PrimaryColumn({
+    name: 'id',
+    type: 'uuid'
   })
-  public componentId: string
+  public id: string
 
   @ManyToOne(
     type => ModuleEntity,
@@ -29,13 +26,15 @@ export class ComponentEntity extends BaseEntity {
   })
   public pipelineOptions: IPipelineOptions
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     componentId: string,
     pipelineOptions: IPipelineOptions
   ) {
     super()
-    this.id = uuidv4()
-    this.componentId = componentId
+    this.id = componentId
     this.pipelineOptions = pipelineOptions
   }
 
@@ -46,8 +45,8 @@ export class ComponentEntity extends BaseEntity {
   public toReadDto(): ReadComponentDto {
     return new ReadComponentDto(
       this.id,
-      this.componentId,
-      this.pipelineOptions
+      this.pipelineOptions,
+      this.createdAt
     )
   }
 }
