@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  PrimaryColumn,
+  CreateDateColumn
+} from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { DeploymentStatusEnum } from '../enums'
@@ -29,6 +38,9 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'status' })
   public status: DeploymentStatusEnum
 
+  @CreateDateColumn({ name: 'created_at'})
+  public createdAt: Date
+
   constructor(
     componentId: string,
     buildImageUrl: string,
@@ -48,7 +60,8 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.componentId,
       this.buildImageUrl,
       this.buildImageTag,
-      this.status
+      this.status,
+      this.createdAt
     )
   }
 }

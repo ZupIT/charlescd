@@ -30,9 +30,9 @@ export class PipelineDeploymentService {
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
-      await this.componentsRepository.findOne({ componentId: componentDeployment.componentId })
+      await this.componentsRepository.findOne({ id: componentDeployment.componentId })
     const deploymentConfiguration: IDeploymentConfiguration =
-      await this.deploymentConfigurationService.getConfiguration(componentEntity.componentId)
+      await this.deploymentConfigurationService.getConfiguration(componentEntity.id)
 
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
