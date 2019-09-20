@@ -29,11 +29,23 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'component_id' })
   public componentId: string
 
+  @Column({ name: 'component_name' })
+  public componentName: string
+
   @Column({ name: 'build_image_url' })
   public buildImageUrl: string
 
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
+
+  @Column({ name: 'context_path' })
+  public contextPath: string
+
+  @Column({ name: 'health_check' })
+  public healthCheck: string
+
+  @Column({ name: 'port' })
+  public port: number
 
   @Column({ name: 'status' })
   public status: DeploymentStatusEnum
@@ -43,14 +55,22 @@ export class ComponentDeploymentEntity extends BaseEntity {
 
   constructor(
     componentId: string,
+    componentName: string,
     buildImageUrl: string,
-    buildImageTag: string
+    buildImageTag: string,
+    contextPath: string,
+    healthCheck: string,
+    port: number
   ) {
     super()
     this.id = uuidv4()
     this.componentId = componentId
+    this.componentName = componentName
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
+    this.contextPath = contextPath
+    this.healthCheck = healthCheck
+    this.port = port
     this.status = DeploymentStatusEnum.CREATED
   }
 

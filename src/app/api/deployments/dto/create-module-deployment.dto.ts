@@ -7,6 +7,8 @@ export class CreateModuleDeploymentDto {
 
   public readonly moduleId: string
 
+  public readonly k8sConfigurationId: string
+
   @ValidateNested({ each: true })
   @Type(() => CreateComponentDeploymentDto)
   public readonly components: CreateComponentDeploymentDto[]
@@ -14,6 +16,7 @@ export class CreateModuleDeploymentDto {
   public toEntity(): ModuleDeploymentEntity {
     return new ModuleDeploymentEntity(
       this.moduleId,
+      this.k8sConfigurationId,
       this.components.map(component => component.toEntity())
     )
   }

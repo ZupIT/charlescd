@@ -12,6 +12,9 @@ export class DeploymentEntity extends BaseEntity {
   @PrimaryColumn({name: 'id'})
   public id: string
 
+  @Column({ name: 'value_flow_id' })
+  public valueFlowId: string
+
   @OneToMany(
     type => ModuleDeploymentEntity,
     moduleDeployment => moduleDeployment.deployment,
@@ -50,6 +53,7 @@ export class DeploymentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
+    valueFlowId: string,
     modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
@@ -59,6 +63,7 @@ export class DeploymentEntity extends BaseEntity {
   ) {
     super()
     this.id = uuidv4()
+    this.valueFlowId = valueFlowId
     this.modules = modules
     this.authorId = authorId
     this.description = description
