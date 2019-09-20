@@ -27,7 +27,9 @@ export class DeploymentConfigurationService {
     const { moduleDeployment } = componentDeploymentEntity
     const { moduleDeployment: { deployment } } = componentDeploymentEntity
 
-    const k8sConfiguration = await this.mooveService.getK8sConfiguration(moduleDeployment.k8sConfigurationId)
+    const k8sConfiguration: any = await this.mooveService.getK8sConfiguration(moduleDeployment.k8sConfigurationId)
+
+    console.log(k8sConfiguration)
 
     return {
       account: k8sConfiguration.account,
