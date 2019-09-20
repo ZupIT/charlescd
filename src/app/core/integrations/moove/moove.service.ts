@@ -1,5 +1,6 @@
-import {HttpService, Injectable} from '@nestjs/common'
+import { HttpService, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
+import { AppConstants } from '../../constants'
 
 @Injectable()
 export class MooveService {
@@ -18,6 +19,17 @@ export class MooveService {
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
         this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
+        throw error
+      }
+    }
+
+    public async getK8sConfiguration(k8sConfigurationId: string) {
+      try {
+        return await this.httpService.get(
+          `${AppConstants.MOOVE_URL}/credentials/registry/${k8sConfigurationId}`,
+          { headers: { 'x-organization': 'zup' } }
+        ).toPromise()
+      } catch (error) {
         throw error
       }
     }
