@@ -61,6 +61,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
     return new ReadModuleDeploymentDto(
       this.id,
       this.moduleId,
+      this.k8sConfigurationId,
       this.components.map(component => component.toReadDto()),
       this.status,
       this.createdAt
