@@ -76,6 +76,7 @@ export class DeploymentEntity extends BaseEntity {
   public toReadDto(): ReadDeploymentDto {
     return new ReadDeploymentDto(
       this.id,
+      this.valueFlowId,
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,

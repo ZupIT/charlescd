@@ -78,8 +78,12 @@ export class ComponentDeploymentEntity extends BaseEntity {
     return new ReadComponentDeploymentDto(
       this.id,
       this.componentId,
+      this.componentName,
       this.buildImageUrl,
       this.buildImageTag,
+      this.contextPath,
+      this.healthCheck,
+      this.port,
       this.status,
       this.createdAt
     )
