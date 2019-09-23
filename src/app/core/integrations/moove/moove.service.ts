@@ -1,7 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import { AppConstants } from '../../constants'
-import { map } from 'rxjs/operators'
 
 @Injectable()
 export class MooveService {
@@ -26,21 +25,13 @@ export class MooveService {
 
     public async getK8sConfiguration(k8sConfigurationId: string) {
       try {
-        this.consoleLoggerService.log(
-          'START:GET_K8S_CONFIG',
-          { k8sConfigurationId, url: `${AppConstants.MOOVE_URL}/credentials/k8s/${k8sConfigurationId}` }
-        )
-
-        const k8sConfiguration =
-          await this.httpService.get(
+        this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
+        const k8sConfiguration = await this.httpService.get(
           `${AppConstants.MOOVE_URL}/credentials/k8s/${k8sConfigurationId}`,
           { headers: { 'x-organization': 'zup' } }
-        ).pipe(
-          map(res => res.data)
         ).toPromise()
-
-        this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
-        return k8sConfiguration.value
+        this.consoleLoggerService.log('FINISH:GET_K8S_CONFIG')
+        return k8sConfiguration.data.value
       } catch (error) {
         this.consoleLoggerService.error('ERROR:GET_K8S_CONFIG', error)
         throw error
