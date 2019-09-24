@@ -393,10 +393,9 @@ export class SpinnakerService {
   }
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {
-    const response = await this.httpService.get(
+    const { data: { id } } = await this.httpService.get(
       `${AppConstants.SPINNAKER_URL}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
     ).toPromise()
-    const { data: { id } } = response
     return id
   }
 
@@ -429,8 +428,8 @@ export class SpinnakerService {
     ).toPromise()
   }
 
-  private async getSpinnakerApplication(applicationName: string): Promise<string> {
-    const { data: { name } } = await this.httpService.get(
+  private async checkSpinnakerApplicationExistence(applicationName: string): Promise<void> {
+    await this.httpService.get(
       `${AppConstants.SPINNAKER_URL}/applications/${applicationName}`,
       {
         headers: {
@@ -438,7 +437,31 @@ export class SpinnakerService {
         },
       },
     ).toPromise()
-    return name
+  }
+
+  private async processSpinnakerPipeline(
+    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration,
+    deploymentConfiguration: IDeploymentConfiguration
+  ): Promise<void> {
+
+    const pipelineId: string = await this.checkPipelineExistence(
+      spinnakerPipelineConfiguration.pipelineName, deploymentConfiguration.applicationName
+    )
+
+    pipelineId ?
+      await this.updateSpinnakerPipeline(spinnakerPipelineConfiguration, pipelineId) :
+      await this.createSpinnakerPipeline(spinnakerPipelineConfiguration)
+  }
+
+  private async processSpinnakerApplication(
+    deploymentConfiguration: IDeploymentConfiguration
+  ): Promise<void> {
+
+    try {
+      await this.checkSpinnakerApplicationExistence(deploymentConfiguration.applicationName)
+    } catch (error) {
+      await this.createSpinnakerApplication(deploymentConfiguration.applicationName)
+    }
   }
 
   public async createDeployment(
@@ -458,18 +481,8 @@ export class SpinnakerService {
         pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId
       )
 
-    const spinnakerApplication: string = await this.getSpinnakerApplication(deploymentConfiguration.applicationName)
-    if (!spinnakerApplication) {
-      await this.createSpinnakerApplication(deploymentConfiguration.applicationName)
-    }
-
-    const pipelineId: string = await this.checkPipelineExistence(
-      spinnakerPipelineConfiguration.pipelineName, deploymentConfiguration.applicationName
-    )
-
-    pipelineId ?
-      await this.updateSpinnakerPipeline(spinnakerPipelineConfiguration, pipelineId) :
-      await this.createSpinnakerPipeline(spinnakerPipelineConfiguration)
+    await this.processSpinnakerApplication(deploymentConfiguration)
+    await this.processSpinnakerPipeline(spinnakerPipelineConfiguration, deploymentConfiguration)
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
 
