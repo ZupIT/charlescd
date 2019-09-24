@@ -6,6 +6,8 @@ import { ValidateNested } from 'class-validator'
 
 export class CreateDeploymentDto {
 
+  public readonly valueFlowId: string
+
   @ValidateNested({ each: true })
   @Type(() => CreateModuleDeploymentDto)
   public readonly modules: CreateModuleDeploymentDto[]
@@ -24,6 +26,7 @@ export class CreateDeploymentDto {
 
   public toEntity(): DeploymentEntity {
     return new DeploymentEntity(
+      this.valueFlowId,
       this.modules.map(module => module.toEntity()),
       this.authorId,
       this.description,
