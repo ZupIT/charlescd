@@ -415,7 +415,8 @@ export class SpinnakerService {
   }
 
   private async createSpinnakerApplication(applicationName: string): Promise<void> {
-    const createApplicationObject: Object = this.getCreateSpinnakerApplicationObject(applicationName)
+    const createApplicationObject = this.getCreateSpinnakerApplicationObject(applicationName)
+    this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
 
     await this.httpService.post(
       `${AppConstants.SPINNAKER_URL}/applications/${applicationName}/tasks`,
@@ -426,6 +427,7 @@ export class SpinnakerService {
         },
       },
     ).toPromise()
+    this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_APPLICATION')
   }
 
   private async checkSpinnakerApplicationExistence(applicationName: string): Promise<void> {
