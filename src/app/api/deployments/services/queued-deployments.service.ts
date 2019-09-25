@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { QueuedDeploymentStatusEnum } from '../enums'
 import {
-  CircleDeploymentEntity,
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,

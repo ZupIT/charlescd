@@ -4,7 +4,7 @@ import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../ap
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
-import { ISpinnakerPipelineConfiguration } from './interfaces'
+import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
 import { ConsoleLoggerService } from '../../logs/console'
@@ -399,7 +399,7 @@ export class SpinnakerService {
     return id
   }
 
-  private getCreateSpinnakerApplicationObject(applicationName: string): Object {
+  private getCreateSpinnakerApplicationObject(applicationName: string): ICreateSpinnakerApplication {
     return {
       job: [{
         type: 'createApplication',
@@ -415,7 +415,8 @@ export class SpinnakerService {
   }
 
   private async createSpinnakerApplication(applicationName: string): Promise<void> {
-    const createApplicationObject = this.getCreateSpinnakerApplicationObject(applicationName)
+    const createApplicationObject: ICreateSpinnakerApplication =
+      this.getCreateSpinnakerApplicationObject(applicationName)
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
 
     await this.httpService.post(
