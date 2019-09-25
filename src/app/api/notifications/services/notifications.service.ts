@@ -9,7 +9,7 @@ import { MooveService } from '../../../core/integrations/moove'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
 import { QueuedDeploymentsService } from '../../deployments/services'
 import { DeploymentStatusEnum } from '../../deployments/enums'
-import { QueuedDeploymentsRepository } from '../../deployments/repository'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 
 @Injectable()
 export class NotificationsService {
@@ -21,8 +21,8 @@ export class NotificationsService {
     private readonly queuedDeploymentsService: QueuedDeploymentsService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    @InjectRepository(ComponentDeploymentEntity)
-    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
@@ -32,13 +32,10 @@ export class NotificationsService {
   ): Promise<void> {
 
     const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({
-        where: { id: componentDeploymentId },
-        relations: ['moduleDeployment', 'moduleDeployment.deployment']
-      })
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const { moduleDeployment: { deployment } } = componentDeployment
 
-    if (deployment.status !== DeploymentStatusEnum.FAILED) {
+    if (deployment.hasNotFailed()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl
       )
@@ -63,13 +60,10 @@ export class NotificationsService {
   ): Promise<void> {
 
     const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({
-        where: { id: componentDeploymentId },
-        relations: ['moduleDeployment', 'moduleDeployment.deployment']
-      })
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const { moduleDeployment: { deployment } } = componentDeployment
 
-    if (deployment.status === DeploymentStatusEnum.FINISHED) {
+    if (deployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl
       )

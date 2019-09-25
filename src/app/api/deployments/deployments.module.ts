@@ -3,7 +3,12 @@ import { DeploymentsController } from './controller'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from './entity'
+import {
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity
+} from './entity'
 import { ModuleEntity } from '../modules/entity'
 import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
@@ -14,6 +19,7 @@ import {
   PipelineProcessingService,
   PipelineDeploymentService
 } from './services'
+import { ComponentDeploymentsRepository } from './repository/component-deployments.repository'
 
 @Module({
   imports: [
@@ -27,6 +33,7 @@ import {
       ModuleEntity,
       ComponentEntity,
       QueuedDeploymentEntity,
+      ComponentDeploymentsRepository,
       QueuedDeploymentsRepository
     ])
   ],
