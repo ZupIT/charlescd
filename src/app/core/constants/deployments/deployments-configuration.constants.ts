@@ -8,5 +8,5 @@ export const DeploymentsConfigurationConstants = {
   TEMPLATE_GITHUB_REPO: 'templates-charts',
   TEMPLATE_GITHUB_FOLDER: 'demoApp',
   DARWIN_DEPLOY_URL: 'https://darwin-deploy.continuousplatform.com',
-  DARWIN_NOTIFICATION_URL: 'https://darwin-api.continuousplatform.com/deploy/notifications'
+  DARWIN_NOTIFICATION_URL: 'https:/darwin-deploy.continuousplatform.com/notifications'
 }
