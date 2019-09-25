@@ -7,6 +7,7 @@ import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
+import { ComponentDeploymentsRepository } from '../repository'
 
 @Injectable()
 export class PipelineProcessingService {
@@ -16,8 +17,8 @@ export class PipelineProcessingService {
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ModuleEntity)
     private readonly modulesRepository: Repository<ModuleEntity>,
-    @InjectRepository(ComponentDeploymentEntity)
-    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
   ) {}
 
   private async createModuleComponent(
@@ -93,13 +94,12 @@ export class PipelineProcessingService {
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
+
     const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({
-        where: { id: componentDeploymentId },
-        relations: ['moduleDeployment', 'moduleDeployment.deployment']
-      })
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const { circles } = componentDeployment.moduleDeployment.deployment
     await this.processComponentPipeline(componentDeployment, circles, defaultCircle)
+
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
   }
 }
