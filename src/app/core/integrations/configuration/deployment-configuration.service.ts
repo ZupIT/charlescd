@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { IDeploymentConfiguration } from './interfaces'
+import { IDeploymentConfiguration, IK8sConfiguration } from './interfaces'
 import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -23,17 +23,22 @@ export class DeploymentConfigurationService {
         where: { id: componentDeploymentId },
         relations: ['moduleDeployment', 'moduleDeployment.deployment']
       })
+    const k8sConfiguration: IK8sConfiguration = await this.mooveService.getK8sConfiguration(
+      componentDeploymentEntity.moduleDeployment.k8sConfigurationId
+    )
 
-    const { moduleDeployment } = componentDeploymentEntity
-    const { moduleDeployment: { deployment } } = componentDeploymentEntity
+    return this.getConfigurationObject(k8sConfiguration, componentDeploymentEntity)
+  }
 
-    const k8sConfiguration =
-      await this.mooveService.getK8sConfiguration(moduleDeployment.k8sConfigurationId)
+  private getConfigurationObject(
+    k8sConfiguration: IK8sConfiguration,
+    componentDeploymentEntity: ComponentDeploymentEntity
+  ): IDeploymentConfiguration {
 
     return {
       account: k8sConfiguration.account,
       pipelineName: componentDeploymentEntity.componentId,
-      applicationName: deployment.valueFlowId,
+      applicationName: componentDeploymentEntity.moduleDeployment.deployment.valueFlowId,
       appName: componentDeploymentEntity.componentName,
       appNamespace: k8sConfiguration.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,
