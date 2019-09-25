@@ -1,6 +1,7 @@
 import { HttpService, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import { AppConstants } from '../../constants'
+import { IK8sConfiguration } from '../configuration/interfaces'
 
 @Injectable()
 export class MooveService {
@@ -23,7 +24,7 @@ export class MooveService {
       }
     }
 
-    public async getK8sConfiguration(k8sConfigurationId: string) {
+    public async getK8sConfiguration(k8sConfigurationId: string): Promise<IK8sConfiguration> {
       try {
         this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
         const k8sConfiguration = await this.httpService.get(
