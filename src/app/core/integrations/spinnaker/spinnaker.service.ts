@@ -402,12 +402,12 @@ export class SpinnakerService {
   private getCreateSpinnakerApplicationObject(applicationName: string): ICreateSpinnakerApplication {
     return {
       job: [{
-        type: 'createApplication',
+        type: AppConstants.SPINNAKER_CREATE_APPLICATION_JOB_TYPE,
         application: {
-          cloudProviders: 'kubernetes',
-          instancePort: 80,
+          cloudProviders: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD,
+          instancePort: AppConstants.SPINNAKER_CREATE_APPLICATION_PORT,
           name: applicationName,
-          email: `${applicationName}@${applicationName}.com`
+          email: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL
         }
       }],
       application: applicationName
