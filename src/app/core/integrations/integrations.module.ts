@@ -4,12 +4,17 @@ import { DeploymentConfigurationService } from './configuration'
 import { MooveService } from './moove'
 import { ServicesModule } from '../services/services.module'
 import { LogsModule } from '../logs/logs.module'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { ComponentDeploymentEntity } from '../../api/deployments/entity'
 
 @Module({
   imports: [
     HttpModule,
     ServicesModule,
-    LogsModule
+    LogsModule,
+    TypeOrmModule.forFeature([
+      ComponentDeploymentEntity
+    ])
   ],
   providers: [
     SpinnakerService,
