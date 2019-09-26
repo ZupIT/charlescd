@@ -32,8 +32,9 @@ export class PipelineDeploymentService {
 
     const componentEntity: ComponentEntity =
       await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+
     const deploymentConfiguration: IDeploymentConfiguration =
-      await this.deploymentConfigurationService.getConfiguration(componentEntity.id)
+      await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
 
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
