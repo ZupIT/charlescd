@@ -5,6 +5,8 @@ export class ReadDeploymentDto {
 
   public readonly id: string
 
+  public readonly valueFlowId: string
+
   public readonly modulesDeployments: ReadModuleDeploymentDto[]
 
   public readonly authorId: string
@@ -23,6 +25,7 @@ export class ReadDeploymentDto {
 
   constructor(
     id: string,
+    valueFlowId: string,
     modulesDeployments: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
@@ -33,6 +36,7 @@ export class ReadDeploymentDto {
     createdAt: Date
   ) {
     this.id = id
+    this.valueFlowId = valueFlowId
     this.modulesDeployments = modulesDeployments
     this.authorId = authorId
     this.description = description
