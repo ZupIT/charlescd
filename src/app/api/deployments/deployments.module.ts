@@ -12,14 +12,16 @@ import {
 import { ModuleEntity } from '../modules/entity'
 import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
-import { QueuedDeploymentsRepository } from './repository'
+import {
+  QueuedDeploymentsRepository,
+  ComponentDeploymentsRepository
+} from './repository'
 import {
   DeploymentsService,
   QueuedDeploymentsService,
   PipelineProcessingService,
   PipelineDeploymentService
 } from './services'
-import { ComponentDeploymentsRepository } from './repository/component-deployments.repository'
 
 @Module({
   imports: [
@@ -37,7 +39,9 @@ import { ComponentDeploymentsRepository } from './repository/component-deploymen
       QueuedDeploymentsRepository
     ])
   ],
-  controllers: [DeploymentsController],
+  controllers: [
+    DeploymentsController
+  ],
   providers: [
     DeploymentsService,
     QueuedDeploymentsService,
