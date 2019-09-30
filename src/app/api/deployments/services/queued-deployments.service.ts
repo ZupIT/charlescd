@@ -6,7 +6,7 @@ import {
   ModuleDeploymentEntity,
   QueuedDeploymentEntity
 } from '../entity'
-import { QueuedDeploymentsRepository } from '../repository'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
 import { PipelineProcessingService } from './pipeline-processing.service'
 import { PipelineDeploymentService } from './pipeline-deployment.service'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -23,8 +23,8 @@ export class QueuedDeploymentsService {
     private readonly pipelineDeploymentService: PipelineDeploymentService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    @InjectRepository(ComponentDeploymentEntity)
-    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
@@ -46,11 +46,12 @@ export class QueuedDeploymentsService {
   ): Promise<void> {
 
     const finishedComponentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({ id : finishedComponentDeploymentId })
+      await this.componentDeploymentsRepository.findOne({ id : finishedComponentDeploymentId })
     const { componentId: finishedComponentId } = finishedComponentDeployment
-    const queuedDeployments: QueuedDeploymentEntity[] =
+
+    const orderedDeployments: QueuedDeploymentEntity[] =
       await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
-    await this.deployNextComponent(queuedDeployments)
+    await this.deployNextComponent(orderedDeployments)
   }
 
   public async getComponentDeploymentQueue(
@@ -196,14 +197,12 @@ export class QueuedDeploymentsService {
     )
   }
 
-  private async deployNextComponent(orderedQueuedDeployments: QueuedDeploymentEntity[]): Promise<void> {
-    if (orderedQueuedDeployments.length) {
+  private async deployNextComponent(orderedDeployments: QueuedDeploymentEntity[]): Promise<void> {
+
+    if (orderedDeployments.length) {
 
       const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentRepository.findOne({
-          where: { id: orderedQueuedDeployments[0].componentDeploymentId },
-          relations: ['moduleDeployment', 'moduleDeployment.deployment']
-        })
+        await this.componentDeploymentsRepository.getOneWithRelations(orderedDeployments[0].componentDeploymentId)
 
       await this.updateRunningQueuedDeployment(
         componentDeployment.componentId,

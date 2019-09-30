@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../api/deployments/entity'
 import { DeploymentStatusEnum } from '../../api/deployments/enums'
+import { ComponentDeploymentsRepository } from '../../api/deployments/repository'
 
 @Injectable()
 export class DeploymentsStatusManagementService {
@@ -12,8 +13,8 @@ export class DeploymentsStatusManagementService {
         private readonly deploymentsRepository: Repository<DeploymentEntity>,
         @InjectRepository(ModuleDeploymentEntity)
         private readonly moduleDeploymentRepository: Repository<ModuleDeploymentEntity>,
-        @InjectRepository(ComponentDeploymentEntity)
-        private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>
+        @InjectRepository(ComponentDeploymentsRepository)
+        private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
     ) {}
 
     public async deepUpdateDeploymentStatusByDeploymentId(deploymentId: string, status: DeploymentStatusEnum) {
@@ -35,8 +36,17 @@ export class DeploymentsStatusManagementService {
     public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
       await this.moduleDeploymentRepository.update(module.id, { status })
       return Promise.all(
-          module.components.map(c =>
-          this.componentDeploymentRepository.update(c.id, { status })))
+          module.components.map(component =>
+          this.componentDeploymentsRepository.update(component.id, { status })))
+    }
+
+    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
+
+      const componentDeploymentEntity: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
+      await this.propagateFailedStatusChange(componentDeploymentEntity)
     }
 
     private getDeploymentFinishedModules(
@@ -148,7 +158,7 @@ export class DeploymentsStatusManagementService {
       status: DeploymentStatusEnum
     ): Promise<void> {
 
-      await this.componentDeploymentRepository.update(
+      await this.componentDeploymentsRepository.update(
         { id: componentDeploymentId },
         { status }
       )
@@ -159,13 +169,8 @@ export class DeploymentsStatusManagementService {
     ): Promise<void> {
 
       const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentRepository.findOne({
-          where: { id: componentDeploymentId },
-          relations: [
-            'moduleDeployment',
-            'moduleDeployment.deployment',
-          ]
-        })
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
       await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
       await this.propagateSuccessStatusChange(componentDeploymentEntity)
     }
@@ -191,15 +196,4 @@ export class DeploymentsStatusManagementService {
       await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
       await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
     }
-
-    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
-    const componentDeploymentEntity: ComponentDeploymentEntity =
-      await this.componentDeploymentRepository.findOne({
-        where: { id: componentDeploymentId },
-        relations: ['moduleDeployment', 'moduleDeployment.deployment']
-      })
-
-    await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
-    await this.propagateFailedStatusChange(componentDeploymentEntity)
-  }
 }
