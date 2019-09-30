@@ -40,6 +40,15 @@ export class DeploymentsStatusManagementService {
           this.componentDeploymentsRepository.update(component.id, { status })))
     }
 
+    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
+
+      const componentDeploymentEntity: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
+      await this.propagateFailedStatusChange(componentDeploymentEntity)
+    }
+
     private getDeploymentFinishedModules(
       deployment: DeploymentEntity
     ): ModuleDeploymentEntity[] {
@@ -186,14 +195,5 @@ export class DeploymentsStatusManagementService {
 
       await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
       await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
-    }
-
-    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
-
-      const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
-      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
-      await this.propagateFailedStatusChange(componentDeploymentEntity)
     }
 }

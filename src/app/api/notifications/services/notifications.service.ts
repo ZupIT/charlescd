@@ -27,6 +27,18 @@ export class NotificationsService {
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
+  public async finishDeployment(
+    componentDeploymentId: string,
+    finishDeploymentDto: FinishDeploymentDto
+  ): Promise<void> {
+
+    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+    finishDeploymentDto.isSuccessful() ?
+      await this.handleDeploymentSuccess(componentDeploymentId) :
+      await this.handleDeploymentFailure(componentDeploymentId)
+    this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+  }
+
   private async notifyMooveIfDeploymentJustFailed(
     componentDeploymentId: string
   ): Promise<void> {
@@ -35,7 +47,7 @@ export class NotificationsService {
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const { moduleDeployment: { deployment } } = componentDeployment
 
-    if (deployment.hasNotFailed()) {
+    if (!deployment.hasFailed()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl
       )
@@ -77,21 +89,8 @@ export class NotificationsService {
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
     await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
     await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
-
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
     await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
-  }
-
-  public async finishDeployment(
-    componentDeploymentId: string,
-    finishDeploymentDto: FinishDeploymentDto
-  ): Promise<void> {
-
-    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-    finishDeploymentDto.status === NotificationStatusEnum.SUCCEEDED ?
-      await this.handleDeploymentSuccess(componentDeploymentId) :
-      await this.handleDeploymentFailure(componentDeploymentId)
-    this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
   }
 }
