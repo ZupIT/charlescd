@@ -7,7 +7,7 @@ import { LogsModule } from '../../core/logs/logs.module'
 import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../deployments/entity'
-import { QueuedDeploymentsRepository } from '../deployments/repository'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../deployments/repository'
 
 @Module({
   imports: [
@@ -17,6 +17,7 @@ import { QueuedDeploymentsRepository } from '../deployments/repository'
     ServicesModule,
     TypeOrmModule.forFeature([
       ComponentDeploymentEntity,
+      ComponentDeploymentsRepository,
       DeploymentEntity,
       QueuedDeploymentEntity,
       QueuedDeploymentsRepository
