@@ -16,10 +16,10 @@ export class DeploymentsService {
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
-  public async createDeployment(createDeploymentDto: CreateDeploymentDto): Promise<ReadDeploymentDto> {
+  public async createDeployment(createDeploymentDto: CreateDeploymentDto, circleId: string): Promise<ReadDeploymentDto> {
     this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
     const deployment: DeploymentEntity =
-      await this.deploymentsRepository.save(createDeploymentDto.toEntity())
+      await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
 
     await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
     const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
