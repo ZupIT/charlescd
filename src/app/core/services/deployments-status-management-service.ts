@@ -30,6 +30,12 @@ export class DeploymentsStatusManagementService {
 
     public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
       await this.deploymentsRepository.update(deployment.id, { status })
+      if (!deployment.modules) {
+            deployment.modules =
+                await this.moduleDeploymentRepository.find({
+                    where: { deployment: {id: deployment.id} }
+                })
+        }
       return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
     }
 

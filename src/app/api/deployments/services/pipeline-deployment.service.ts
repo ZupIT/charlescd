@@ -9,7 +9,7 @@ import { Repository } from 'typeorm'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { ComponentDeploymentsRepository } from '../repository'
+import {ModuleEntity} from '../../modules/entity'
 
 @Injectable()
 export class PipelineDeploymentService {
@@ -21,8 +21,10 @@ export class PipelineDeploymentService {
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
-    @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
+    @InjectRepository(ComponentDeploymentEntity)
+    private readonly componentDeploymentRepository: Repository<ComponentDeploymentEntity>,
+    @InjectRepository(ModuleEntity)
+    private readonly modulesRepository: Repository<ModuleEntity>
   ) {}
 
   private async deployComponentPipeline(
@@ -45,7 +47,6 @@ export class PipelineDeploymentService {
   }
 
   public async deployComponent(componentDeploymentEntity: ComponentDeploymentEntity): Promise<void> {
-
     try {
       const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
       await this.deployComponentPipeline(componentDeploymentEntity, deploymentId)
@@ -57,11 +58,12 @@ export class PipelineDeploymentService {
   }
 
   public async processDeployment(componentDeploymentId: string): Promise<void> {
-
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
+      await this.componentDeploymentRepository.findOne({
+        where: { id: componentDeploymentId },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      })
     await this.deployComponent(componentDeploymentEntity)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }
