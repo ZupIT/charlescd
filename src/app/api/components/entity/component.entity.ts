@@ -2,9 +2,8 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, Pr
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../interfaces'
-import * as uuidv4 from 'uuid/v4'
 
-@Entity()
+@Entity('components')
 export class ComponentEntity extends BaseEntity {
 
   @PrimaryColumn({
