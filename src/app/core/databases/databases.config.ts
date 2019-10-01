@@ -12,7 +12,8 @@ const postgresqlOptions: ConnectionOptions = {
   entities: [`${rootPath}/app/**/**.entity{.ts,.js}`],
   migrationsTableName: 'darwin-deploy-migrations',
   migrations: [`${rootPath}/app/resources/migrations/*{.ts,.js}`],
-  migrationsRun: true
+  migrationsRun: true,
+  synchronize: false
 }
 
 export const databasesConfig = {

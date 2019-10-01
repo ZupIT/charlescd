@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInterface {
+export class CreateQueuedDeploymentsTable20190820235700 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner) {
     await queryRunner.createTable(new Table({
