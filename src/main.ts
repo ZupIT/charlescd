@@ -8,6 +8,7 @@ import { AppConstants } from './app/core/constants'
 async function bootstrap() {
 
   hpropagate({
+    setAndPropagateCorrelationId: false,
     headersToPropagate: [
       AppConstants.DEFAULT_CIRCLE_HEADER_NAME
     ]
