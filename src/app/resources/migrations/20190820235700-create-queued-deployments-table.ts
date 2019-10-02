@@ -9,7 +9,8 @@ export class CreateQueuedDeploymentsTable20190820235700 implements MigrationInte
         {
           name: 'id',
           type: 'integer',
-          isPrimary: true
+          isPrimary: true,
+          isGenerated: true
         },
         {
           name: 'component_id',
