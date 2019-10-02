@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Headers } from '@nestjs/common'
+import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common'
 import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
 import { DeploymentsService } from '../services'
 
@@ -10,8 +10,9 @@ export class DeploymentsController {
   @Post()
   public async createDeployment(
     @Body() createDeploymentDto: CreateDeploymentDto,
-    @Headers('X-Circle-Id') circleId: string
+    @Headers('x-circle-id') circleId: string
   ): Promise<ReadDeploymentDto> {
+
     return await this.deploymentsService.createDeployment(createDeploymentDto, circleId)
   }
 
