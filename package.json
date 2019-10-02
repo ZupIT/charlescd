@@ -27,6 +27,7 @@
     "@octokit/rest": "^16.28.7",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
+    "hpropagate": "0.0.6",
     "js-yaml": "^3.13.1",
     "lib-spinnaker": "^2.0.4",
     "lodash": "^4.17.15",

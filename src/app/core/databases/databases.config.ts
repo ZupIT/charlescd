@@ -4,15 +4,16 @@ const rootPath = __dirname.split('/app')[0]
 
 const postgresqlOptions: ConnectionOptions = {
   type: 'postgres',
-  host: process.env.POSTGRES_HOST || 'localhost',
+  host: 'darwin-database.gcp.zup.com.br',
   port: 5432,
-  username: process.env.POSTGRES_USER || 'darwin',
-  password: process.env.POSTGRES_PASS || 'darwin',
-  database: process.env.POSTGRES_DB_NAME || 'darwin',
+  username: 'darwindeploy',
+  password: 'acelera',
+  database: 'darwindeploy',
   entities: [`${rootPath}/app/**/**.entity{.ts,.js}`],
   migrationsTableName: 'darwin-deploy-migrations',
   migrations: [`${rootPath}/app/resources/migrations/*{.ts,.js}`],
-  synchronize: true
+  migrationsRun: true,
+  synchronize: false
 }
 
 export const databasesConfig = {
