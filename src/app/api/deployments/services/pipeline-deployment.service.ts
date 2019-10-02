@@ -9,7 +9,7 @@ import { Repository } from 'typeorm'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { ComponentDeploymentsRepository } from '../repository'
+import {ComponentDeploymentsRepository} from '../repository'
 
 @Injectable()
 export class PipelineDeploymentService {
@@ -45,7 +45,6 @@ export class PipelineDeploymentService {
   }
 
   public async deployComponent(componentDeploymentEntity: ComponentDeploymentEntity): Promise<void> {
-
     try {
       const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
       await this.deployComponentPipeline(componentDeploymentEntity, deploymentId)
@@ -57,11 +56,9 @@ export class PipelineDeploymentService {
   }
 
   public async processDeployment(componentDeploymentId: string): Promise<void> {
-
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     await this.deployComponent(componentDeploymentEntity)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }

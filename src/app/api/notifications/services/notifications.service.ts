@@ -49,7 +49,7 @@ export class NotificationsService {
 
     if (!deployment.hasFailed()) {
       await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl
+        deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
       )
     }
   }
@@ -77,7 +77,7 @@ export class NotificationsService {
 
     if (deployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl
+        deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
       )
     }
   }
