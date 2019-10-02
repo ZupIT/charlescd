@@ -1,9 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { BaseEntity, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { ReadModuleDto } from '../dto'
-import { ComponentEntity } from '../../components/entity/component.entity'
-import * as uuidv4 from 'uuid/v4'
+import { ComponentEntity } from '../../components/entity'
 
-@Entity()
+@Entity('modules')
 export class ModuleEntity extends BaseEntity {
 
   @PrimaryColumn({

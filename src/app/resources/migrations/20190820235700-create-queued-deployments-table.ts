@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInterface {
+export class CreateQueuedDeploymentsTable20190820235700 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner) {
     await queryRunner.createTable(new Table({
@@ -9,7 +9,8 @@ export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInte
         {
           name: 'id',
           type: 'integer',
-          isPrimary: true
+          isPrimary: true,
+          isGenerated: true
         },
         {
           name: 'component_id',
@@ -25,7 +26,8 @@ export class CreateQueuedDeploymentsTable20190808220901 implements MigrationInte
         },
         {
           name: 'created_at',
-          type: 'date'
+          type: 'date',
+          default: 'now()'
         }
       ]
     }), true)
