@@ -24,7 +24,7 @@ export class CreateDeploymentDto {
   @Type(() => CreateCircleDeploymentDto)
   public readonly circles: CreateCircleDeploymentDto[]
 
-  public toEntity(): DeploymentEntity {
+  public toEntity(circleId: string): DeploymentEntity {
     return new DeploymentEntity(
       this.valueFlowId,
       this.modules.map(module => module.toEntity()),
@@ -32,7 +32,8 @@ export class CreateDeploymentDto {
       this.description,
       this.callbackUrl,
       this.circles.map(circle => circle.toEntity()),
-      this.defaultCircle
+      this.defaultCircle,
+      circleId
     )
   }
 }
