@@ -16,7 +16,7 @@ export class MooveService {
         await this.httpService.post(
           callbackUrl,
           { deploymentStatus: status },
-          { headers: { 'x-circle-id': circleId } }
+          { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
         ).toPromise()
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
