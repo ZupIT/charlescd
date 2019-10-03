@@ -37,7 +37,7 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'default_circle', nullable: true } )
   public defaultCircle: boolean
 
-  @Column({ name: 'circle_id'} )
+  @Column({ name: 'circle_id', nullable: true } )
   public circleId: string
 
   @Column({
