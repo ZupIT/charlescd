@@ -1,5 +1,5 @@
 import { HttpService, Injectable } from '@nestjs/common'
-import { createSpinnakerPipeline } from 'lib-spinnaker'
+import { createSpinnakerPipeline } from 'lib-spinnaker-node'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
