@@ -5,19 +5,19 @@ export class AddCreatedAtColumns20190918174700 implements MigrationInterface {
   public async up(queryRunner: QueryRunner) {
     await queryRunner.addColumn('deployments', new TableColumn({
       name: 'created_at',
-      type: 'date',
+      type: 'timestamp',
       default: 'now()'
     }))
 
     await queryRunner.addColumn('module_deployments', new TableColumn({
       name: 'created_at',
-      type: 'date',
+      type: 'timestamp',
       default: 'now()'
     }))
 
     await queryRunner.addColumn('component_deployments', new TableColumn({
       name: 'created_at',
-      type: 'date',
+      type: 'timestamp',
       default: 'now()'
     }))
 
@@ -25,7 +25,7 @@ export class AddCreatedAtColumns20190918174700 implements MigrationInterface {
 
     await queryRunner.addColumn('modules', new TableColumn({
       name: 'created_at',
-      type: 'date',
+      type: 'timestamp',
       default: 'now()'
     }))
 
@@ -33,7 +33,7 @@ export class AddCreatedAtColumns20190918174700 implements MigrationInterface {
 
     await queryRunner.addColumn('components', new TableColumn({
       name: 'created_at',
-      type: 'date',
+      type: 'timestamp',
       default: 'now()'
     }))
   }
