@@ -26,7 +26,7 @@ export class CreateQueuedDeploymentsTable20190820235700 implements MigrationInte
         },
         {
           name: 'created_at',
-          type: 'date',
+          type: 'timestamp',
           default: 'now()'
         }
       ]
