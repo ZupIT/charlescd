@@ -1,3 +1,5 @@
+@Library('ZupSharedLibs@darwin') _
+
 node {
 
   try {
@@ -9,11 +11,6 @@ node {
       dockerFileLocation = "."
       team = "Realwave"
       dockerBuildingImage = "nodedindbuilder"
-    }
-
-    deployDockerServiceK8s {
-      microservice = projectName
-      dockerk8sGroup = "Darwin"
     }
 
   } catch (e) {
