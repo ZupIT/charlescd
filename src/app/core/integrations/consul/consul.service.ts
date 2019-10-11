@@ -22,7 +22,7 @@ export class ConsulService {
 
   private static getConnectionOptions(): IConsulConnectionOptions {
     return {
-      baseUrl: 'https://consul-darwin.apirealwave.io/v1' // process.env.CONSUL_HOST
+      baseUrl: process.env.CONSUL_HOST
     }
   }
 }
