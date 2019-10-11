@@ -1,4 +1,12 @@
 export interface IConsulKV {
 
-  [property: string]: string | number
+  postgresHost?: string
+
+  postgresPort?: number
+
+  postgresUser?: string
+
+  postgresPass?: string
+
+  postgresDbName?: string
 }
