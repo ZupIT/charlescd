@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import { ValidationPipe } from '@nestjs/common'
+import { AppConstants } from './app/core/constants'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
-import { AppConstants } from './app/core/constants'
 
 async function bootstrap() {
 

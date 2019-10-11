@@ -1,5 +1,9 @@
 FROM node:8-alpine
 
+ENV NODE_ENV qa
+
+ENV CONSUL_HOST consul-server
+
 ENV APP_PATH /opt/darwin-deploy
 
 RUN mkdir -p $APP_PATH
