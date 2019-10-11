@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { CoreModule } from './core/core.module'
 import { ApiModule } from './api/api.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { DatabasesConfig } from './core/databases'
+import { DatabasesService } from './core/databases'
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { DatabasesConfig } from './core/databases'
     ApiModule,
     TypeOrmModule.forRootAsync({
       useFactory: async () => (
-        await DatabasesConfig.getPostgresqlConnectionOptions()
+        await DatabasesService.getPostgresConnectionOptions()
       )
     })
   ]
