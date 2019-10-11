@@ -1,5 +1,5 @@
-import { DatabasesConfig } from './databases.config'
+import { DatabasesService } from './databases.service'
 
 export {
-  DatabasesConfig
+  DatabasesService
 }
