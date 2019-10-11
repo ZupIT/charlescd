@@ -8,5 +8,6 @@ export const DeploymentsConfigurationConstants = {
   SPINNAKER_CREATE_APPLICATION_JOB_TYPE: 'createApplication',
   SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD: 'kubernetes',
   SPINNAKER_CREATE_APPLICATION_PORT: 80,
-  SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL: 'darwin@zup.com'
+  SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL: 'darwin@zup.com',
+  CONSUL_KEY_PATH: 'config/darwin-deploy/data'
 }
