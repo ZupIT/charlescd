@@ -3,7 +3,7 @@ import { IConsulConnectionOptions, IConsulKV } from './interfaces'
 
 export class ConsulService {
 
-  private static readonly consulConnection: any = ConsulService.getConnection()
+  private static readonly consulConnection = ConsulService.getConnection()
 
   public static async getKV(key: string): Promise<IConsulKV> {
 
