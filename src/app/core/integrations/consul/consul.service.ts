@@ -22,7 +22,7 @@ export class ConsulService {
 
   private static getConnectionOptions(): IConsulConnectionOptions {
     return {
-      baseUrl: process.env.CONSUL_HOST
+      host: process.env.CONSUL_HOST
     }
   }
 }
