@@ -1,4 +1,4 @@
 export interface IConsulConnectionOptions {
 
-  baseUrl: string
+  host: string
 }
