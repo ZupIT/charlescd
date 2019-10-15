@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ComponentDeploymentEntity } from '../entity'
+import { ComponentDeploymentEntity, DeploymentEntity } from '../entity'
 import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
@@ -9,7 +9,7 @@ import { Repository } from 'typeorm'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import {ComponentDeploymentsRepository} from '../repository'
+import { ComponentDeploymentsRepository } from '../repository'
 
 @Injectable()
 export class PipelineDeploymentService {
@@ -22,8 +22,10 @@ export class PipelineDeploymentService {
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
     @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
-  ) {}
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(DeploymentEntity)
+    private readonly deploymentsRepository: Repository<DeploymentEntity>
+  ) { }
 
   private async deployComponentPipeline(
     componentDeployment: ComponentDeploymentEntity,
@@ -36,11 +38,15 @@ export class PipelineDeploymentService {
     const deploymentConfiguration: IDeploymentConfiguration =
       await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
 
+    const deploymentEntity: DeploymentEntity =
+      await this.deploymentsRepository.findOne({ id: deploymentId })
+
     await this.spinnakerService.createDeployment(
       componentEntity.pipelineOptions,
       deploymentConfiguration,
       componentDeployment.id,
-      deploymentId
+      deploymentId,
+      deploymentEntity.circleId
     )
   }
 
@@ -58,7 +64,7 @@ export class PipelineDeploymentService {
   public async processDeployment(componentDeploymentId: string): Promise<void> {
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     await this.deployComponent(componentDeploymentEntity)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }
