@@ -26,4 +26,6 @@ export interface ISpinnakerPipelineConfiguration {
   unusedVersions: IPipelineVersion[],
 
   circles: IPipelineCircle[]
+
+  xCircleId: string
 }
