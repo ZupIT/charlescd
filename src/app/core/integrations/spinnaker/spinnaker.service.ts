@@ -1,5 +1,4 @@
 import { HttpService, Injectable } from '@nestjs/common'
-import { createSpinnakerPipeline } from 'lib-spinnaker-node'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
@@ -8,6 +7,7 @@ import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
 import { ConsoleLoggerService } from '../../logs/console'
+import TotalPipeline from 'typescript-lib-spinnaker'
 
 @Injectable()
 export class SpinnakerService {
@@ -16,7 +16,7 @@ export class SpinnakerService {
     private readonly httpService: HttpService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) {}
+  ) { }
 
   private checkVersionUsage(
     pipelineVersion: IPipelineVersion,
@@ -49,7 +49,7 @@ export class SpinnakerService {
       pipelineVersion => this.checkVersionUsage(pipelineVersion, pipelineOptions.pipelineCircles)
     )
 
-    const unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
+    const unusedVersions = pipelineOptions.pipelineVersions.filter(v => !currentVersions.includes(v))
 
     pipelineOptions.pipelineVersions = currentVersions
     pipelineOptions.pipelineUnusedVersions = unusedVersions
@@ -318,7 +318,9 @@ export class SpinnakerService {
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ) {
 
-    return await createSpinnakerPipeline(
+    const spinnakerBuilder = new TotalPipeline()
+
+    return spinnakerBuilder.buildPipeline(
       spinnakerPipelineConfiguration
     )
   }
