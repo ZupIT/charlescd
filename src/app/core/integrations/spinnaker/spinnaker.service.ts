@@ -302,7 +302,8 @@ export class SpinnakerService {
   private createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
-    componentDeploymentId: string
+    componentDeploymentId: string,
+    circleId: string
   ): ISpinnakerPipelineConfiguration {
 
     return {
@@ -310,7 +311,8 @@ export class SpinnakerService {
       webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
-      circles: pipelineCirclesOptions.pipelineCircles
+      circles: pipelineCirclesOptions.pipelineCircles,
+      xCircleId: circleId
     }
   }
 
@@ -473,7 +475,8 @@ export class SpinnakerService {
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
     componentDeploymentId: string,
-    deploymentId: string
+    deploymentId: string,
+    circleId: string
   ): Promise<void> {
 
     this.consoleLoggerService.log(
@@ -483,7 +486,7 @@ export class SpinnakerService {
 
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId
+        pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, circleId
       )
 
     await this.processSpinnakerApplication(deploymentConfiguration)
