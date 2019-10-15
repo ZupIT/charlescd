@@ -312,7 +312,7 @@ export class SpinnakerService {
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
-      xCircleId: circleId
+      circleId
     }
   }
 
