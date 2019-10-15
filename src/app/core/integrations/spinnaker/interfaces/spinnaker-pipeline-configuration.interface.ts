@@ -27,5 +27,5 @@ export interface ISpinnakerPipelineConfiguration {
 
   circles: IPipelineCircle[]
 
-  xCircleId: string
+  circleId: string
 }
