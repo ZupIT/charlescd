@@ -1,5 +1,4 @@
 import { HttpService, Injectable } from '@nestjs/common'
-import { createSpinnakerPipeline } from 'lib-spinnaker-node'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
@@ -8,6 +7,7 @@ import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
 import { ConsoleLoggerService } from '../../logs/console'
+import TotalPipeline from 'typescript-lib-spinnaker'
 
 @Injectable()
 export class SpinnakerService {
@@ -16,7 +16,7 @@ export class SpinnakerService {
     private readonly httpService: HttpService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) {}
+  ) { }
 
   private checkVersionUsage(
     pipelineVersion: IPipelineVersion,
@@ -49,7 +49,7 @@ export class SpinnakerService {
       pipelineVersion => this.checkVersionUsage(pipelineVersion, pipelineOptions.pipelineCircles)
     )
 
-    const unusedVersions = pipelineOptions.pipelineVersions.filter( v => !currentVersions.includes(v) )
+    const unusedVersions = pipelineOptions.pipelineVersions.filter(v => !currentVersions.includes(v))
 
     pipelineOptions.pipelineVersions = currentVersions
     pipelineOptions.pipelineUnusedVersions = unusedVersions
@@ -302,7 +302,8 @@ export class SpinnakerService {
   private createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
-    componentDeploymentId: string
+    componentDeploymentId: string,
+    circleId: string
   ): ISpinnakerPipelineConfiguration {
 
     return {
@@ -310,7 +311,8 @@ export class SpinnakerService {
       webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
-      circles: pipelineCirclesOptions.pipelineCircles
+      circles: pipelineCirclesOptions.pipelineCircles,
+      circleId
     }
   }
 
@@ -318,7 +320,9 @@ export class SpinnakerService {
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ) {
 
-    return await createSpinnakerPipeline(
+    const spinnakerBuilder = new TotalPipeline()
+
+    return spinnakerBuilder.buildPipeline(
       spinnakerPipelineConfiguration
     )
   }
@@ -471,7 +475,8 @@ export class SpinnakerService {
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
     componentDeploymentId: string,
-    deploymentId: string
+    deploymentId: string,
+    circleId: string
   ): Promise<void> {
 
     this.consoleLoggerService.log(
@@ -481,7 +486,7 @@ export class SpinnakerService {
 
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId
+        pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, circleId
       )
 
     await this.processSpinnakerApplication(deploymentConfiguration)

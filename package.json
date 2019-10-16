@@ -30,7 +30,6 @@
     "consul": "^0.36.0",
     "hpropagate": "0.0.6",
     "js-yaml": "^3.13.1",
-    "lib-spinnaker-node": "^1.0.5",
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "mustache": "^3.0.1",
@@ -39,6 +38,7 @@
     "rimraf": "^2.6.2",
     "rxjs": "^6.5.2",
     "typeorm": "^0.2.19",
+    "typescript-lib-spinnaker": "^2.0.5",
     "uuid": "^3.3.2",
     "winston": "^3.2.1"
   },
