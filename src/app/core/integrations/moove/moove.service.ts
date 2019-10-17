@@ -1,14 +1,18 @@
-import { HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import { AppConstants } from '../../constants'
 import { IK8sConfiguration } from '../configuration/interfaces'
+import { IConsulKV } from '../consul/interfaces'
 
 @Injectable()
 export class MooveService {
 
     constructor(
       private readonly httpService: HttpService,
-      private readonly consoleLoggerService: ConsoleLoggerService) {}
+      private readonly consoleLoggerService: ConsoleLoggerService,
+      @Inject(AppConstants.CONSUL_PROVIDER)
+      private readonly consulConfiguration: IConsulKV
+    ) {}
 
     public async notifyDeploymentStatus(deploymentId: string, status: string, callbackUrl: string, circleId: string): Promise<void> {
       try {
@@ -29,7 +33,7 @@ export class MooveService {
       try {
         this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
         const k8sConfiguration = await this.httpService.get(
-          `${AppConstants.MOOVE_URL}/credentials/k8s/${k8sConfigurationId}`,
+          `${this.consulConfiguration.mooveUrl}/credentials/k8s/${k8sConfigurationId}`,
           { headers: { 'x-organization': 'zup' } }
         ).toPromise()
         this.consoleLoggerService.log('FINISH:GET_K8S_CONFIG')
