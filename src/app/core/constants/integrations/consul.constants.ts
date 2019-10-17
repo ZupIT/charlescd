@@ -9,6 +9,9 @@ export const ConsulConstants = {
     postgresPort: 5432,
     postgresUser: 'darwin',
     postgresPass: 'darwin',
-    postgresDbName: 'darwin'
+    postgresDbName: 'darwin',
+    mooveUrl: '',
+    darwinNotificationUrl: '',
+    spinnakerUrl: ''
   }
 }
