@@ -7,6 +7,7 @@ import { LogsModule } from '../logs/logs.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity } from '../../api/deployments/entity'
 import { ComponentDeploymentsRepository } from '../../api/deployments/repository'
+import { DatabasesService } from './databases'
 
 @Module({
   imports: [
@@ -21,12 +22,14 @@ import { ComponentDeploymentsRepository } from '../../api/deployments/repository
   providers: [
     SpinnakerService,
     DeploymentConfigurationService,
-    MooveService
+    MooveService,
+    DatabasesService
   ],
   exports: [
     SpinnakerService,
     DeploymentConfigurationService,
-    MooveService
+    MooveService,
+    DatabasesService
   ]
 })
 export class IntegrationsModule {}
