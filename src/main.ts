@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
-import { ValidationPipe } from '@nestjs/common'
+import { DynamicModule, INestApplication, ValidationPipe } from '@nestjs/common'
 import { AppConstants } from './app/core/constants'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
@@ -14,7 +14,8 @@ async function bootstrap() {
     ]
   })
 
-  const app = await NestFactory.create(AppModule)
+  const appModule: DynamicModule = await AppModule.forRootAsync()
+  const app: INestApplication = await NestFactory.create(appModule)
 
   app.use(morgan('dev'))
 
