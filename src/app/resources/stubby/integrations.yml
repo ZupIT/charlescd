@@ -1,0 +1,17 @@
+- request:
+    method: GET
+    url: ^/moove/credentials/k8s/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}
+    headers:
+      x-organization: zup
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "value": {
+          "namespace": "k8sNamespace",
+          "account": "k8sAccount"
+        }
+      }
