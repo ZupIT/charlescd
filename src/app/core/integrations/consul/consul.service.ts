@@ -8,7 +8,7 @@ export class ConsulService {
 
   public static async getAppConfiguration(): Promise<IConsulKV> {
 
-    return process.env.NODE_ENV === 'dev' ?
+    return AppConstants.NODE_ENV === 'dev' ?
       ConsulService.getDefaultConfiguration() :
       await ConsulService.getKV(AppConstants.CONSUL_KEY_PATH)
   }
@@ -34,7 +34,7 @@ export class ConsulService {
 
   private static getConnectionOptions(): IConsulConnectionOptions {
     return {
-      host: process.env.CONSUL_HOST
+      host: AppConstants.CONSUL_HOST
     }
   }
 }
