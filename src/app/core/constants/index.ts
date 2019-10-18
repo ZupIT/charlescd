@@ -1,9 +1,12 @@
 import { DeploymentsConstants } from './deployments'
-import { ConsulConstants } from './integrations/consul.constants'
+import { ApplicationConstants } from './application'
+import { IntegrationsConstants } from './integrations'
 
 export const AppConstants = {
 
   ...DeploymentsConstants,
 
-  ...ConsulConstants
+  ...IntegrationsConstants,
+
+  ...ApplicationConstants
 }
