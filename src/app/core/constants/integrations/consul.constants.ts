@@ -10,8 +10,8 @@ export const ConsulConstants = {
     postgresUser: 'darwin',
     postgresPass: 'darwin',
     postgresDbName: 'darwin',
-    mooveUrl: '',
-    darwinNotificationUrl: '',
-    spinnakerUrl: ''
+    mooveUrl: 'localhost:8883',
+    darwinNotificationUrl: 'localhost:8883',
+    spinnakerUrl: 'localhost:8883'
   }
 }
