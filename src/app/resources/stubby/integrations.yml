@@ -1,6 +1,8 @@
+# MOOVE
+
 - request:
     method: GET
-    url: ^/moove/credentials/k8s/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}
+    url: ^/moove/credentials/k8s/.*
     headers:
       x-organization: zup
 
@@ -15,3 +17,51 @@
           "account": "k8sAccount"
         }
       }
+
+# SPINNAKER
+
+- request:
+    method: POST
+    url: ^/spinnaker/pipelines
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: POST
+    url: ^/spinnaker/applications/.*/tasks
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: GET
+    url: ^/spinnaker/applications/.*/pipelineConfigs/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "486b0b26-b2fd-43d0-bdd0-df126e314c70"
+      }
+
+- request:
+    method: POST
+    url: ^/spinnaker/webhooks/webhook/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
