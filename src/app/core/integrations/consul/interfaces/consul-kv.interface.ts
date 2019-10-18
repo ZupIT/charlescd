@@ -9,4 +9,10 @@ export interface IConsulKV {
   postgresPass?: string
 
   postgresDbName?: string
+
+  mooveUrl?: string
+
+  darwinNotificationUrl?: string
+
+  spinnakerUrl?: string
 }
