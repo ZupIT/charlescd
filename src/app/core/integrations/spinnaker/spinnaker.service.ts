@@ -1,4 +1,4 @@
-import { HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../../api/components/interfaces'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { AppConstants } from '../../constants'
@@ -8,6 +8,7 @@ import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
 import { ConsoleLoggerService } from '../../logs/console'
 import TotalPipeline from 'typescript-lib-spinnaker'
+import { IConsulKV } from '../consul/interfaces'
 
 @Injectable()
 export class SpinnakerService {
@@ -15,7 +16,9 @@ export class SpinnakerService {
   constructor(
     private readonly httpService: HttpService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    @Inject(AppConstants.CONSUL_PROVIDER)
+    private readonly consulConfiguration: IConsulKV
   ) { }
 
   private checkVersionUsage(
@@ -284,7 +287,7 @@ export class SpinnakerService {
     await this.waitForPipelineCreation()
     this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
     await this.httpService.post(
-      `${AppConstants.SPINNAKER_URL}/webhooks/webhook/${pipelineName}`,
+      `${this.consulConfiguration.spinnakerUrl}/webhooks/webhook/${pipelineName}`,
       {},
       {
         headers: {
@@ -296,7 +299,7 @@ export class SpinnakerService {
   }
 
   private getSpinnakerCallbackUrl(componentDeploymentId: string): string {
-    return `${AppConstants.DARWIN_NOTIFICATION_URL}?componentDeploymentId=${componentDeploymentId}`
+    return `${this.consulConfiguration.darwinNotificationUrl}?componentDeploymentId=${componentDeploymentId}`
   }
 
   private createPipelineConfigurationObject(
@@ -342,7 +345,7 @@ export class SpinnakerService {
     try {
       const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
       await this.httpService.post(
-        `${AppConstants.SPINNAKER_URL}/pipelines`,
+        `${this.consulConfiguration.spinnakerUrl}/pipelines`,
         pipeline,
         {
           headers: {
@@ -351,7 +354,6 @@ export class SpinnakerService {
         },
       ).toPromise()
     } catch (error) {
-      console.log(error)
       throw error
     }
   }
@@ -378,7 +380,7 @@ export class SpinnakerService {
       this.createUpdatePipelineObject(pipelineId, spinnakerPipelineConfiguraton, pipeline)
 
     await this.httpService.post(
-      `${AppConstants.SPINNAKER_URL}/pipelines`,
+      `${this.consulConfiguration.spinnakerUrl}/pipelines`,
       updatePipelineObject,
       {
         headers: {
@@ -398,7 +400,7 @@ export class SpinnakerService {
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {
     const { data: { id } } = await this.httpService.get(
-      `${AppConstants.SPINNAKER_URL}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
+      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
     ).toPromise()
     return id
   }
@@ -424,7 +426,7 @@ export class SpinnakerService {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
 
     await this.httpService.post(
-      `${AppConstants.SPINNAKER_URL}/applications/${applicationName}/tasks`,
+      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}/tasks`,
       createApplicationObject,
       {
         headers: {
@@ -437,7 +439,7 @@ export class SpinnakerService {
 
   private async checkSpinnakerApplicationExistence(applicationName: string): Promise<void> {
     await this.httpService.get(
-      `${AppConstants.SPINNAKER_URL}/applications/${applicationName}`,
+      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}`,
       {
         headers: {
           'Content-Type': 'application/json',

@@ -1,0 +1,93 @@
+# MOOVE
+
+- request:
+    method: GET
+    url: ^/moove/credentials/k8s/.*
+    headers:
+      x-organization: zup
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "value": {
+          "namespace": "k8sNamespace",
+          "account": "k8sAccount"
+        }
+      }
+
+# SPINNAKER
+
+- request:
+    method: POST
+    url: ^/spinnaker/pipelines
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: POST
+    url: ^/spinnaker/applications/.*/tasks
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: GET
+    url: ^/spinnaker/applications/.*/pipelineConfigs/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "486b0b26-b2fd-43d0-bdd0-df126e314c70"
+      }
+
+- request:
+    method: POST
+    url: ^/spinnaker/webhooks/webhook/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+# CONSUL
+
+- request:
+    method: GET
+    url: .*/consul/kv/config/darwin-deploy/data$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "Value": {
+            "postgresHost": "localhost",
+            "postgresPort": 5432,
+            "postgresUser": "darwin",
+            "postgresPass": "darwin",
+            "postgresDbName": "darwin",
+            "mooveUrl": "http://localhost:8883/moove",
+            "darwinNotificationUrl": "http://localhost:8883/deploy",
+            "spinnakerUrl": "http://localhost:8883/spinnaker"
+          }
+        }
+      ]
