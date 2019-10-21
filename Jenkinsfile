@@ -13,7 +13,7 @@ node {
       dockerBuildingImage = "nodedindbuilder"
     }
 
-    packageJson = readJSON file: 'package.json'
+    packageJSON = readJSON file: 'package.json'
     sh "echo sonar.projectVersion=${packageJSON.version} >> sonar-project.properties"
 
     stage('SonarQube analysis') {
