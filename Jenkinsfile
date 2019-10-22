@@ -17,10 +17,16 @@ node {
     sh "echo sonar.projectVersion=${packageJSON.version} >> sonar-project.properties"
 
     stage('SonarQube analysis') {
-        def scannerHome = tool 'Sonar Zup';
-        withSonarQubeEnv('Sonar Zup') {
+      nodejs(nodeJSInstallationName: 'NodeJSAuto', configId: '') {
+
+        script {
+          def scannerHome = tool 'Sonar Zup';
+          withSonarQubeEnv('Sonar Zup') {
             sh "${scannerHome}/bin/sonar-scanner"
+          }
         }
+
+      }
     }
 
   } catch (e) {
