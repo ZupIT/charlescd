@@ -13,6 +13,12 @@ node {
       dockerBuildingImage = "nodedindbuilder"
     }
 
+    buildDockerContainer {
+      dockerRepositoryName = projectName
+      dockerFileLocation = "."
+      team = "Realwave"
+    }
+
     packageJSON = readJSON file: 'package.json'
     sh "echo sonar.projectVersion=${packageJSON.version} >> sonar-project.properties"
 
@@ -27,6 +33,17 @@ node {
         }
 
       }
+    }
+
+    sleep 5
+
+    stage("Quality Gate") {
+        timeout(time: 1, unit: 'HOURS') {
+           def qg = waitForQualityGate()
+           if (qg.status != 'OK') {
+               error "Pipeline aborted due to quality gate failure: ${qg.status}"
+           }
+       }
     }
 
   } catch (e) {
