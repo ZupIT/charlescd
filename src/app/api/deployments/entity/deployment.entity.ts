@@ -4,7 +4,6 @@ import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 import { DeploymentStatusEnum } from '../enums'
-import * as uuidv4 from 'uuid/v4'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
@@ -56,6 +55,7 @@ export class DeploymentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
+    deploymentId: string,
     valueFlowId: string,
     modules: ModuleDeploymentEntity[],
     authorId: string,
@@ -66,7 +66,7 @@ export class DeploymentEntity extends BaseEntity {
     circleId: string
   ) {
     super()
-    this.id = uuidv4()
+    this.id = deploymentId
     this.valueFlowId = valueFlowId
     this.modules = modules
     this.authorId = authorId
