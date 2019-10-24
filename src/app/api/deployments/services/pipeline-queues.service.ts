@@ -65,7 +65,7 @@ export class PipelineQueuesService {
     )
   }
 
-  public async getQueuedDeploymentStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
+  public async getQueuedPipelineStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
     const runningDeployment: QueuedDeploymentEntity =
       await this.queuedDeploymentsRepository.getOneByComponentIdRunning(componentId)
 
@@ -74,7 +74,7 @@ export class PipelineQueuesService {
       QueuedDeploymentStatusEnum.RUNNING
   }
 
-  public async saveQueuedDeployment(
+  public async enqueuePipelineExecution(
     componentId: string,
     componentDeploymentId: string,
     status: QueuedDeploymentStatusEnum
@@ -92,7 +92,7 @@ export class PipelineQueuesService {
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
+    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status)
     this.consoleLoggerService.log(`FINISH:CREATE_QUEUED_DEPLOYMENT`)
   }
 
@@ -112,7 +112,7 @@ export class PipelineQueuesService {
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.saveQueuedDeployment(componentId, componentDeploymentId, status)
+    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status)
     await this.prepareComponentDeployment(componentDeploymentId, defaultCircle)
     this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
   }
@@ -159,7 +159,7 @@ export class PipelineQueuesService {
   ): Promise<void> {
 
     const { id: componentDeploymentId, componentId } = componentDeployment
-    const status: QueuedDeploymentStatusEnum = await this.getQueuedDeploymentStatus(componentId)
+    const status: QueuedDeploymentStatusEnum = await this.getQueuedPipelineStatus(componentId)
     await this.createQueuedDeployment(componentId, componentDeploymentId, status, defaultCircle)
   }
 

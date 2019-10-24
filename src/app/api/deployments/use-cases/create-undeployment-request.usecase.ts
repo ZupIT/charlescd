@@ -17,7 +17,7 @@ export class CreateUndeploymentRequestUsecase {
     private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    private readonly queuedDeploymentsService: PipelineQueuesService,
+    private readonly pipelineQueuesService: PipelineQueuesService,
     private readonly pipelinesService: PipelinesService
   ) {}
 
@@ -68,7 +68,7 @@ export class CreateUndeploymentRequestUsecase {
     try {
       const { id: componentDeploymentId, componentId } = componentDeployment
       const status: QueuedDeploymentStatusEnum =
-        await this.queuedDeploymentsService.getQueuedDeploymentStatus(componentId)
+        await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
       await this.createUndeployment(componentId, componentDeploymentId, status)
     } catch (error) {
       return Promise.reject({})
@@ -81,10 +81,14 @@ export class CreateUndeploymentRequestUsecase {
     status: QueuedDeploymentStatusEnum
   ): Promise<void> {
 
-    // TODO passar o type = UNDEPLOYMENT
-    await this.queuedDeploymentsService.saveQueuedDeployment(componentId, componentDeploymentId, status)
-    if (status === QueuedDeploymentStatusEnum.RUNNING) {
-      await this.pipelinesService.triggerUndeployment(componentDeploymentId)
+    try {
+      // TODO passar o type = UNDEPLOYMENT
+      await this.pipelineQueuesService.enqueuePipelineExecution(componentId, componentDeploymentId, status)
+      if (status === QueuedDeploymentStatusEnum.RUNNING) {
+        await this.pipelinesService.triggerUndeployment(componentDeploymentId)
+      }
+    } catch (error) {
+      return Promise.reject({})
     }
   }
 }
