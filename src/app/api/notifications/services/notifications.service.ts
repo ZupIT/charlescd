@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { MooveService } from '../../../core/integrations/moove'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
-import { QueuedDeploymentsService } from '../../deployments/services'
+import { PipelineQueuesService } from '../../deployments/services'
 import { DeploymentStatusEnum } from '../../deployments/enums'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 
@@ -18,7 +18,7 @@ export class NotificationsService {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
-    private readonly queuedDeploymentsService: QueuedDeploymentsService,
+    private readonly queuedDeploymentsService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)

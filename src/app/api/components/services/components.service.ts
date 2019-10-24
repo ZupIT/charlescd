@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
-import { QueuedDeploymentsService } from '../../deployments/services'
+import { PipelineQueuesService } from '../../deployments/services'
 
 @Injectable()
 export class ComponentsService {
 
   constructor(
-    private readonly queuedDeploymentsService: QueuedDeploymentsService
+    private readonly queuedDeploymentsService: PipelineQueuesService
   ) {}
 
   public async getComponentDeploymentQueue(id: string): Promise<ReadQueuedDeploymentDto[]> {

@@ -4,6 +4,7 @@ import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 import { DeploymentStatusEnum } from '../enums'
+import { ComponentDeploymentEntity } from './component-deployment.entity'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
@@ -97,5 +98,11 @@ export class DeploymentEntity extends BaseEntity {
 
   public hasFailed(): boolean {
     return this.status === DeploymentStatusEnum.FAILED
+  }
+
+  public getComponentDeployments(): ComponentDeploymentEntity[] {
+    return this.modules.reduce(
+      (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components], []
+    )
   }
 }

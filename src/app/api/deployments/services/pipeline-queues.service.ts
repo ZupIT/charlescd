@@ -7,20 +7,18 @@ import {
   QueuedDeploymentEntity
 } from '../entity'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
-import { PipelineProcessingService } from './pipeline-processing.service'
-import { PipelineDeploymentService } from './pipeline-deployment.service'
+import { PipelinesService } from './pipelines.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ModuleEntity } from '../../modules/entity'
 
 @Injectable()
-export class QueuedDeploymentsService {
+export class PipelineQueuesService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly pipelineProcessingService: PipelineProcessingService,
-    private readonly pipelineDeploymentService: PipelineDeploymentService,
+    private readonly pipelinesService: PipelinesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
@@ -67,7 +65,7 @@ export class QueuedDeploymentsService {
     )
   }
 
-  private async getQueuedDeploymentStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
+  public async getQueuedDeploymentStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
     const runningDeployment: QueuedDeploymentEntity =
       await this.queuedDeploymentsRepository.getOneByComponentIdRunning(componentId)
 
@@ -76,7 +74,7 @@ export class QueuedDeploymentsService {
       QueuedDeploymentStatusEnum.RUNNING
   }
 
-  private async saveQueuedDeployment(
+  public async saveQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
     status: QueuedDeploymentStatusEnum
@@ -103,8 +101,7 @@ export class QueuedDeploymentsService {
     defaultCircle: boolean
   ): Promise<void> {
 
-    await this.pipelineProcessingService.processPipeline(componentDeploymentId, defaultCircle)
-    await this.pipelineDeploymentService.processDeployment(componentDeploymentId)
+    await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle)
   }
 
   private async createRunningQueuedDeployment(

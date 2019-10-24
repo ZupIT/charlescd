@@ -1,7 +1,9 @@
 import { DeploymentStatusEnum } from './deployment-status.enum'
 import { QueuedDeploymentStatusEnum } from './queued-deployment-status.enum'
+import { UndeploymentStatusEnum } from './undeployment-status.enum'
 
 export {
   DeploymentStatusEnum,
-  QueuedDeploymentStatusEnum
+  QueuedDeploymentStatusEnum,
+  UndeploymentStatusEnum
 }

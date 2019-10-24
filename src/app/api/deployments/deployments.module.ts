@@ -18,8 +18,8 @@ import {
 } from './repository'
 import {
   DeploymentsService,
-  QueuedDeploymentsService,
-  PipelineProcessingService,
+  PipelineQueuesService,
+  PipelinesService,
   PipelineDeploymentService
 } from './services'
 
@@ -44,14 +44,14 @@ import {
   ],
   providers: [
     DeploymentsService,
-    QueuedDeploymentsService,
-    PipelineProcessingService,
+    PipelineQueuesService,
+    PipelinesService,
     PipelineDeploymentService
   ],
   exports: [
     DeploymentsService,
-    QueuedDeploymentsService,
-    PipelineProcessingService,
+    PipelineQueuesService,
+    PipelinesService,
     PipelineDeploymentService
   ]
 })
