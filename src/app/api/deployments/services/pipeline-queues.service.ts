@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { QueuedDeploymentStatusEnum } from '../enums'
-import {
-  ComponentDeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity,
-  QueuedDeploymentEntity
-} from '../entity'
+import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
 import { PipelinesService } from './pipelines.service'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -61,38 +56,39 @@ export class PipelineQueuesService {
 
   public async setQueuedDeploymentStatusFinished(componentDeploymentId: string): Promise<void> {
     await this.queuedDeploymentsRepository.update(
-      { componentDeploymentId }, { status: QueuedDeploymentStatusEnum.FINISHED }
+      { componentDeploymentId }, { status: QueuedPipelineStatusEnum.FINISHED }
     )
   }
 
-  public async getQueuedPipelineStatus(componentId: string): Promise<QueuedDeploymentStatusEnum> {
+  public async getQueuedPipelineStatus(componentId: string): Promise<QueuedPipelineStatusEnum> {
     const runningDeployment: QueuedDeploymentEntity =
       await this.queuedDeploymentsRepository.getOneByComponentIdRunning(componentId)
 
     return runningDeployment ?
-      QueuedDeploymentStatusEnum.QUEUED :
-      QueuedDeploymentStatusEnum.RUNNING
+      QueuedPipelineStatusEnum.QUEUED :
+      QueuedPipelineStatusEnum.RUNNING
   }
 
   public async enqueuePipelineExecution(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum
+    status: QueuedPipelineStatusEnum,
+    type: QueuedPipelineTypesEnum
   ): Promise<void> {
 
     await this.queuedDeploymentsRepository.save(
-      new QueuedDeploymentEntity(componentId, componentDeploymentId, status)
+      new QueuedDeploymentEntity(componentId, componentDeploymentId, status, type)
     )
   }
 
   private async createDefaultQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum
+    status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status)
+    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status, QueuedPipelineTypesEnum.DEPLOYMENT)
     this.consoleLoggerService.log(`FINISH:CREATE_QUEUED_DEPLOYMENT`)
   }
 
@@ -107,19 +103,19 @@ export class PipelineQueuesService {
   private async createRunningQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum,
+    status: QueuedPipelineStatusEnum,
     defaultCircle: boolean
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status)
+    await this.enqueuePipelineExecution(componentId, componentDeploymentId, status, QueuedPipelineTypesEnum.DEPLOYMENT)
     await this.prepareComponentDeployment(componentDeploymentId, defaultCircle)
     this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
   }
 
   private async updateQueuedDeploymentStatus(
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum
+    status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
     await this.queuedDeploymentsRepository.update(
@@ -131,7 +127,7 @@ export class PipelineQueuesService {
   private async updateRunningQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum,
+    status: QueuedPipelineStatusEnum,
     defaultCircle: boolean
   ): Promise<void> {
 
@@ -144,11 +140,11 @@ export class PipelineQueuesService {
   private async createQueuedDeployment(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum,
+    status: QueuedPipelineStatusEnum,
     defaultCircle: boolean
   ): Promise<void> {
 
-    status === QueuedDeploymentStatusEnum.RUNNING ?
+    status === QueuedPipelineStatusEnum.RUNNING ?
       this.createRunningQueuedDeployment(componentId, componentDeploymentId, status, defaultCircle) :
       this.createDefaultQueuedDeployment(componentId, componentDeploymentId, status)
   }
@@ -159,7 +155,7 @@ export class PipelineQueuesService {
   ): Promise<void> {
 
     const { id: componentDeploymentId, componentId } = componentDeployment
-    const status: QueuedDeploymentStatusEnum = await this.getQueuedPipelineStatus(componentId)
+    const status: QueuedPipelineStatusEnum = await this.getQueuedPipelineStatus(componentId)
     await this.createQueuedDeployment(componentId, componentDeploymentId, status, defaultCircle)
   }
 
@@ -204,7 +200,7 @@ export class PipelineQueuesService {
       await this.updateRunningQueuedDeployment(
         componentDeployment.componentId,
         componentDeployment.id,
-        QueuedDeploymentStatusEnum.RUNNING,
+        QueuedPipelineStatusEnum.RUNNING,
         componentDeployment.moduleDeployment.deployment.defaultCircle
       )
     }
