@@ -3,7 +3,7 @@ import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, UndeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentStatusEnum } from '../enums'
+import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
 import { QueuedDeploymentsRepository } from '../repository'
 import { PipelineQueuesService, PipelinesService } from '../services'
 
@@ -67,7 +67,7 @@ export class CreateUndeploymentRequestUsecase {
 
     try {
       const { id: componentDeploymentId, componentId } = componentDeployment
-      const status: QueuedDeploymentStatusEnum =
+      const status: QueuedPipelineStatusEnum =
         await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
       await this.createUndeployment(componentId, componentDeploymentId, status)
     } catch (error) {
@@ -78,13 +78,14 @@ export class CreateUndeploymentRequestUsecase {
   private async createUndeployment(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum
+    status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
     try {
-      // TODO passar o type = UNDEPLOYMENT
-      await this.pipelineQueuesService.enqueuePipelineExecution(componentId, componentDeploymentId, status)
-      if (status === QueuedDeploymentStatusEnum.RUNNING) {
+      await this.pipelineQueuesService.enqueuePipelineExecution(
+        componentId, componentDeploymentId, status, QueuedPipelineTypesEnum.UNDEPLOYMENT
+      )
+      if (status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelinesService.triggerUndeployment(componentDeploymentId)
       }
     } catch (error) {
