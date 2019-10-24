@@ -24,7 +24,7 @@ export class CreateDeploymentDto {
 
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
-  public readonly circles: CreateCircleDeploymentDto[]
+  public readonly circle: CreateCircleDeploymentDto
 
   public toEntity(circleId: string): DeploymentEntity {
     return new DeploymentEntity(
@@ -34,7 +34,7 @@ export class CreateDeploymentDto {
       this.authorId,
       this.description,
       this.callbackUrl,
-      this.circles.map(circle => circle.toEntity()),
+      this.circle.toEntity(),
       this.defaultCircle,
       circleId
     )

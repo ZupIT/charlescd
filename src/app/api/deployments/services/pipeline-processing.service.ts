@@ -24,12 +24,12 @@ export class PipelineProcessingService {
   private async createModuleComponent(
     moduleEntity: ModuleEntity,
     componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions =
-      this.spinnakerService.createNewPipelineOptions(circles, componentDeployment, defaultCircle)
+      this.spinnakerService.createNewPipelineOptions(circle, componentDeployment, defaultCircle)
 
     return moduleEntity.addComponent(new ComponentEntity(
       componentDeployment.componentId,
@@ -40,12 +40,12 @@ export class PipelineProcessingService {
   private async updateComponentPipelineObject(
     componentEntity: ComponentEntity,
     componentDeployment: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): Promise<void> {
 
     const pipelineOptions: IPipelineOptions = this.spinnakerService.updatePipelineOptions(
-      componentEntity.pipelineOptions, circles, componentDeployment, defaultCircle
+      componentEntity.pipelineOptions, circle, componentDeployment, defaultCircle
     )
     return componentEntity.updatePipelineOptions(pipelineOptions)
   }
@@ -53,7 +53,7 @@ export class PipelineProcessingService {
   private async updateModuleComponentPipeline(
     moduleEntity: ModuleEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): Promise<void> {
 
@@ -61,31 +61,31 @@ export class PipelineProcessingService {
       moduleEntity.getComponentById(componentDeploymentEntity.componentId)
 
     componentEntity ?
-      await this.updateComponentPipelineObject(componentEntity, componentDeploymentEntity, circles, defaultCircle) :
-      await this.createModuleComponent(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
+      await this.updateComponentPipelineObject(componentEntity, componentDeploymentEntity, circle, defaultCircle) :
+      await this.createModuleComponent(moduleEntity, componentDeploymentEntity, circle, defaultCircle)
   }
 
   private async updateModuleEntity(
     moduleEntity: ModuleEntity,
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): Promise<ModuleEntity> {
 
-    await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
+    await this.updateModuleComponentPipeline(moduleEntity, componentDeploymentEntity, circle, defaultCircle)
     return this.modulesRepository.save(moduleEntity)
   }
 
   private async processComponentPipeline(
     componentDeploymentEntity: ComponentDeploymentEntity,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): Promise<ModuleEntity> {
 
     const { moduleDeployment: moduleDeploymentEntity } = componentDeploymentEntity
     const moduleEntity: ModuleEntity =
       await this.modulesRepository.findOne({ id: moduleDeploymentEntity.moduleId })
-    return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circles, defaultCircle)
+    return this.updateModuleEntity(moduleEntity, componentDeploymentEntity, circle, defaultCircle)
   }
 
   public async processPipeline(
@@ -97,8 +97,8 @@ export class PipelineProcessingService {
 
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const { circles } = componentDeployment.moduleDeployment.deployment
-    await this.processComponentPipeline(componentDeployment, circles, defaultCircle)
+    const { circle } = componentDeployment.moduleDeployment.deployment
+    await this.processComponentPipeline(componentDeployment, circle, defaultCircle)
 
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_PIPELINE`, { componentDeploymentId })
   }

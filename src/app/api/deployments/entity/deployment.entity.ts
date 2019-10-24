@@ -41,15 +41,13 @@ export class DeploymentEntity extends BaseEntity {
 
   @Column({
     type: 'jsonb',
-    name: 'circles',
+    name: 'circle',
     transformer: {
-      from: circles => circles.map(
-        circle => plainToClass(CircleDeploymentEntity, circle)
-      ),
-      to: circles => circles
+      from: circle => plainToClass(CircleDeploymentEntity, circle),
+      to: circle => circle
     }
   })
-  public circles: CircleDeploymentEntity[]
+  public circle: CircleDeploymentEntity
 
   @CreateDateColumn({ name: 'created_at'})
   public createdAt: Date
@@ -61,7 +59,7 @@ export class DeploymentEntity extends BaseEntity {
     authorId: string,
     description: string,
     callbackUrl: string,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean,
     circleId: string
   ) {
@@ -72,7 +70,7 @@ export class DeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.description = description
     this.callbackUrl = callbackUrl
-    this.circles = circles
+    this.circle = circle
     this.defaultCircle = defaultCircle
     this.status = DeploymentStatusEnum.CREATED
     this.circleId = circleId
@@ -85,7 +83,7 @@ export class DeploymentEntity extends BaseEntity {
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circles.map(circle => circle.toReadDto()),
+      this.circle.toReadDto(),
       this.status,
       this.callbackUrl,
       this.defaultCircle,

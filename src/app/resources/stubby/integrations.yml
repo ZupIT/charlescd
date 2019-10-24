@@ -70,7 +70,7 @@
 
 - request:
     method: GET
-    url: .*/consul/kv/config/darwin-deploy/data$
+    url: .*/kv/config/darwin-deploy/data$
 
   response:
     status: 200

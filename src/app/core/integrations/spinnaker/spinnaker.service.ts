@@ -90,23 +90,23 @@ export class SpinnakerService {
 
   private removeRequestedRoutedCircles(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[]
+    circle: CircleDeploymentEntity
   ): void {
 
-    circles
-      .filter(circle => circle.removeCircle)
-      .map(circle => this.removeCircleFromPipeline(pipelineOptions, circle))
+    if (circle.removeCircle) {
+      this.removeCircleFromPipeline(pipelineOptions, circle)
+    }
   }
 
   private removeRequestedCircles(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean
   ): void {
 
     defaultCircle ?
       this.removeRequestedHeaderlessCircles(pipelineOptions) :
-      this.removeRequestedRoutedCircles(pipelineOptions, circles)
+      this.removeRequestedRoutedCircles(pipelineOptions, circle)
   }
 
   private addRoutedCircleToPipeline(
@@ -142,48 +142,48 @@ export class SpinnakerService {
 
   private updateRequestedRoutedCircles(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity
   ): void {
 
-    circles
-      .filter(circle => !circle.removeCircle)
-      .map(circle => this.updatePipelineCircle(circle, pipelineOptions, componentDeployment))
+    if (!circle.removeCircle) {
+      this.updatePipelineCircle(circle, pipelineOptions, componentDeployment)
+    }
   }
 
   private updateRequestedCircles(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity,
     defaultCircle: boolean
   ): void {
 
     defaultCircle ?
       this.updateRequestedHeaderlessCircles(pipelineOptions, componentDeployment) :
-      this.updateRequestedRoutedCircles(pipelineOptions, circles, componentDeployment)
+      this.updateRequestedRoutedCircles(pipelineOptions, circle, componentDeployment)
   }
 
   private updatePipelineCircles(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity,
     defaultCircle: boolean
   ): IPipelineCircle[] {
 
-    this.removeRequestedCircles(pipelineOptions, circles, defaultCircle)
-    this.updateRequestedCircles(pipelineOptions, circles, componentDeployment, defaultCircle)
+    this.removeRequestedCircles(pipelineOptions, circle, defaultCircle)
+    this.updateRequestedCircles(pipelineOptions, circle, componentDeployment, defaultCircle)
     return pipelineOptions.pipelineCircles
   }
 
   public updatePipelineOptions(
     pipelineOptions: IPipelineOptions,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity,
     defaultCircle: boolean
   ): IPipelineOptions {
 
     this.updatePipelineCircles(
-      pipelineOptions, circles, componentDeployment, defaultCircle
+      pipelineOptions, circle, componentDeployment, defaultCircle
     )
 
     this.updatePipelineVersions(
@@ -249,34 +249,34 @@ export class SpinnakerService {
   }
 
   private getPipelineRoutedCircles(
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity
   ): IPipelineCircle[] {
 
-    return circles
-      .filter(circle => !circle.removeCircle)
-      .map(circle => this.getNewPipelineRoutedCircleObject(circle, componentDeployment))
+    return !circle.removeCircle ?
+      [this.getNewPipelineRoutedCircleObject(circle, componentDeployment)] :
+      []
   }
 
   private getNewPipelineCircles(
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity,
     defaultCircle: boolean
   ): IPipelineCircle[] {
 
     return defaultCircle ?
       this.getNewPipelineHeaderlessCircles(componentDeployment) :
-      this.getPipelineRoutedCircles(circles, componentDeployment)
+      this.getPipelineRoutedCircles(circle, componentDeployment)
   }
 
   public createNewPipelineOptions(
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     componentDeployment: ComponentDeploymentEntity,
     defaultCircle: boolean
   ): IPipelineOptions {
 
     return {
-      pipelineCircles: this.getNewPipelineCircles(circles, componentDeployment, defaultCircle),
+      pipelineCircles: this.getNewPipelineCircles(circle, componentDeployment, defaultCircle),
       pipelineVersions: this.getNewPipelineVersions(componentDeployment),
       pipelineUnusedVersions: []
     }
