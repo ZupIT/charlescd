@@ -4,14 +4,14 @@ import { DeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedDeploymentsService } from './queued-deployments.service'
+import { PipelineQueuesService } from './pipeline-queues.service'
 
 @Injectable()
 export class DeploymentsService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly queuedDeploymentsService: QueuedDeploymentsService,
+    private readonly queuedDeploymentsService: PipelineQueuesService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
