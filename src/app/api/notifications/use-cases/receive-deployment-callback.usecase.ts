@@ -3,22 +3,21 @@ import { FinishDeploymentDto } from '../dto'
 import { ComponentDeploymentEntity, DeploymentEntity } from '../../deployments/entity'
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { MooveService } from '../../../core/integrations/moove'
 import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
 import { PipelineQueuesService } from '../../deployments/services'
-import { DeploymentStatusEnum } from '../../deployments/enums'
+import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
+import { Repository } from 'typeorm'
 
 @Injectable()
-export class NotificationsService {
+export class ReceiveDeploymentCallbackUsecase {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
     private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
-    private readonly queuedDeploymentsService: PipelineQueuesService,
+    private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
@@ -27,16 +26,20 @@ export class NotificationsService {
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
-  public async finishDeployment(
+  public async execute(
     componentDeploymentId: string,
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
-    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-    finishDeploymentDto.isSuccessful() ?
-      await this.handleDeploymentSuccess(componentDeploymentId) :
-      await this.handleDeploymentFailure(componentDeploymentId)
-    this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+    try {
+      this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+      finishDeploymentDto.isSuccessful() ?
+        await this.handleDeploymentSuccess(componentDeploymentId) :
+        await this.handleDeploymentFailure(componentDeploymentId)
+      this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+    } catch (error) {
+      return Promise.reject({})
+    }
   }
 
   private async notifyMooveIfDeploymentJustFailed(
@@ -59,8 +62,8 @@ export class NotificationsService {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
-    await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
-    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.pipelineQueuesService.triggerNextComponentDeploy(componentDeploymentId)
 
     await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
@@ -87,8 +90,8 @@ export class NotificationsService {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
-    await this.queuedDeploymentsService.setQueuedDeploymentStatusFinished(componentDeploymentId)
-    await this.queuedDeploymentsService.triggerNextComponentDeploy(componentDeploymentId)
+    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.pipelineQueuesService.triggerNextComponentDeploy(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
     await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })

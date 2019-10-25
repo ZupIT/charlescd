@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common'
 import { NotificationsController } from './controller'
 import { DeploymentsModule } from '../deployments/deployments.module'
-import { NotificationsService } from './services'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { LogsModule } from '../../core/logs/logs.module'
 import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../deployments/entity'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../deployments/repository'
+import { ReceiveDeploymentCallbackUsecase } from './use-cases'
 
 @Module({
   imports: [
@@ -23,7 +23,11 @@ import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../
       QueuedDeploymentsRepository
     ])
   ],
-  controllers: [NotificationsController],
-  providers: [NotificationsService]
+  controllers: [
+    NotificationsController
+  ],
+  providers: [
+    ReceiveDeploymentCallbackUsecase
+  ]
 })
 export class NotificationsModule {}
