@@ -2,12 +2,16 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, On
 import { UndeploymentStatusEnum } from '../enums'
 import { ComponentUndeploymentEntity } from './component-undeployment.entity'
 import { UndeploymentEntity } from './undeployment.entity'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity('module_undeployments')
 export class ModuleUndeploymentEntity extends BaseEntity {
 
   @PrimaryColumn({ name: 'id' })
   public id: string
+
+  @Column({ name: 'module_id' })
+  public moduleId: string
 
   @ManyToOne(
     type => UndeploymentEntity,
@@ -30,15 +34,19 @@ export class ModuleUndeploymentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
-
+    moduleId: string,
+    componentUndeployments: ComponentUndeploymentEntity[]
   ) {
     super()
-
+    this.id = uuidv4()
+    this.moduleId = moduleId
+    this.componentUndeployments = componentUndeployments
+    this.status = UndeploymentStatusEnum.CREATED
   }
 
-  public toReadDto(): ReadModuleUndeploymentDto {
-    return new ReadModuleUndeploymentDto(
-
-    )
-  }
+  // public toReadDto(): ReadModuleUndeploymentDto {
+  //   return new ReadModuleUndeploymentDto(
+  //
+  //   )
+  // }
 }

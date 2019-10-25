@@ -4,6 +4,9 @@ import { UndeploymentStatusEnum } from '../enums'
 import { ReadUndeploymentDto } from '../dto'
 import * as uuidv4 from 'uuid/v4'
 import { ModuleUndeploymentEntity } from './module-undeployment.entity'
+import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { ComponentUndeploymentEntity } from './component-undeployment.entity'
+import { ComponentDeploymentEntity } from './component-deployment.entity'
 
 @Entity('undeployments')
 export class UndeploymentEntity extends BaseEntity {
@@ -40,6 +43,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
+    this.moduleUndeployments = this.getModuleUndeployments(deployment)
   }
 
   public toReadDto(): ReadUndeploymentDto {
@@ -49,6 +53,33 @@ export class UndeploymentEntity extends BaseEntity {
       this.createdAt,
       this.deployment.id,
       this.status
+    )
+  }
+
+  private getModuleUndeployments(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
+    return deployment.modules.map(
+      moduleDeployment => this.createModuleUndeployment(moduleDeployment)
+    )
+  }
+
+  private createModuleUndeployment(moduleDeployment: ModuleDeploymentEntity): ModuleUndeploymentEntity {
+    const componentUndeployments: ComponentUndeploymentEntity[] = this.getComponentUndeployments(moduleDeployment)
+
+    return new ModuleUndeploymentEntity(
+      moduleDeployment.moduleId,
+      componentUndeployments
+    )
+  }
+
+  private getComponentUndeployments(moduleDeployment: ModuleDeploymentEntity): ComponentUndeploymentEntity[] {
+    return moduleDeployment.components.map(
+      componentDeployment => this.createComponentUndeployment(componentDeployment)
+    )
+  }
+
+  private createComponentUndeployment(componentDeployment: ComponentDeploymentEntity): ComponentUndeploymentEntity {
+    return new ComponentUndeploymentEntity(
+      componentDeployment.componentId
     )
   }
 }
