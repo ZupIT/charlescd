@@ -4,8 +4,7 @@ import { ComponentDeploymentEntity, DeploymentEntity } from '../../deployments/e
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
-import { StatusManagementService } from '../../deployments/services/status-management-service'
-import { PipelineQueuesService } from '../../deployments/services'
+import { PipelineQueuesService, StatusManagementService } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 import { Repository } from 'typeorm'
@@ -63,8 +62,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
-    await this.pipelineQueuesService.triggerNextComponentDeploy(componentDeploymentId)
-
+    await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
     await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
@@ -91,9 +89,12 @@ export class ReceiveDeploymentCallbackUsecase {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
-    await this.pipelineQueuesService.triggerNextComponentDeploy(componentDeploymentId)
+    await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
+    // if type === DEPLOYMENT
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
     await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
+    // if type === UNDEPLOYMENT
+
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
   }
 }

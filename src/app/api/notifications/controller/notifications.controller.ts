@@ -1,6 +1,7 @@
 import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
 import { ReceiveDeploymentCallbackUsecase } from '../use-cases'
+import { QueuedPipelineTypesEnum } from '../../deployments/enums'
 
 @Controller('notifications')
 export class NotificationsController {
