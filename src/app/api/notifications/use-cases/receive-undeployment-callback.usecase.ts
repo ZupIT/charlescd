@@ -10,7 +10,7 @@ import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../
 import { Repository } from 'typeorm'
 
 @Injectable()
-export class ReceiveDeploymentCallbackUsecase {
+export class ReceiveUndeploymentCallbackUsecase {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
@@ -26,16 +26,16 @@ export class ReceiveDeploymentCallbackUsecase {
   ) {}
 
   public async execute(
-    componentDeploymentId: string,
+    componentUndeploymentId: string,
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
     try {
-      this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+      this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishDeploymentDto)
       finishDeploymentDto.isSuccessful() ?
         await this.handleDeploymentSuccess(componentDeploymentId) :
         await this.handleDeploymentFailure(componentDeploymentId)
-      this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+      this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
     } catch (error) {
       return Promise.reject({})
     }
