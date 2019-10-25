@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import {
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity
+} from '../entity'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
 import { PipelinesService } from './pipelines.service'
 import { InjectRepository } from '@nestjs/typeorm'

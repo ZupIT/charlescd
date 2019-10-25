@@ -1,12 +1,14 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm'
 import { DeploymentEntity } from './deployment.entity'
 import { UndeploymentStatusEnum } from '../enums'
+import { ReadUndeploymentDto } from '../dto'
+import * as uuidv4 from 'uuid/v4'
 
 @Entity('undeployments')
 export class UndeploymentEntity extends BaseEntity {
 
-  @PrimaryGeneratedColumn()
-  public id: number
+  @PrimaryColumn({ name: 'id' })
+  public id: string
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -26,13 +28,19 @@ export class UndeploymentEntity extends BaseEntity {
     deployment: DeploymentEntity
   ) {
     super()
+    this.id = uuidv4()
     this.authorId = authorId
     this.deployment = deployment
+    this.status = UndeploymentStatusEnum.CREATED
   }
 
-  // public toReadDto(): ReadUndeploymentDto {
-  //   return new ReadUndeploymentDto(
-  //     this.id
-  //   )
-  // }
+  public toReadDto(): ReadUndeploymentDto {
+    return new ReadUndeploymentDto(
+      this.id,
+      this.authorId,
+      this.createdAt,
+      this.deployment.id,
+      this.status
+    )
+  }
 }

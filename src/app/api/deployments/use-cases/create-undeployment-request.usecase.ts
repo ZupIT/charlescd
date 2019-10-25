@@ -6,6 +6,7 @@ import { Repository } from 'typeorm'
 import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
 import { QueuedDeploymentsRepository } from '../repository'
 import { PipelineQueuesService, PipelinesService } from '../services'
+import { ReadUndeploymentDto } from '../dto'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -30,6 +31,7 @@ export class CreateUndeploymentRequestUsecase {
       const undeployment: UndeploymentEntity =
         await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
       await this.scheduleUndeploymentComponents(undeployment.deployment)
+      return undeployment.toReadDto()
     } catch (error) {
       return Promise.reject({})
     }
