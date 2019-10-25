@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../api/deployments/entity'
-import { DeploymentStatusEnum } from '../../api/deployments/enums'
-import { ComponentDeploymentsRepository } from '../../api/deployments/repository'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../entity'
+import { DeploymentStatusEnum } from '../enums'
+import { ComponentDeploymentsRepository } from '../repository'
 
 @Injectable()
-export class DeploymentsStatusManagementService {
+export class StatusManagementService {
 
     constructor(
         @InjectRepository(DeploymentEntity)
@@ -53,6 +53,17 @@ export class DeploymentsStatusManagementService {
 
       await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
       await this.propagateFailedStatusChange(componentDeploymentEntity)
+    }
+
+    public async setComponentDeploymentStatusAsFinished(
+      componentDeploymentId: string
+    ): Promise<void> {
+
+      const componentDeploymentEntity: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
+      await this.propagateSuccessStatusChange(componentDeploymentEntity)
     }
 
     private getDeploymentFinishedModules(
@@ -168,17 +179,6 @@ export class DeploymentsStatusManagementService {
         { id: componentDeploymentId },
         { status }
       )
-    }
-
-    public async setComponentDeploymentStatusAsFinished(
-      componentDeploymentId: string
-    ): Promise<void> {
-
-      const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
-      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
-      await this.propagateSuccessStatusChange(componentDeploymentEntity)
     }
 
     private async propagageFailedStatusChangeToDeployment(

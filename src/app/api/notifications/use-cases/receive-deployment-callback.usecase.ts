@@ -4,7 +4,7 @@ import { ComponentDeploymentEntity, DeploymentEntity } from '../../deployments/e
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
-import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
+import { StatusManagementService } from '../../deployments/services/status-management-service'
 import { PipelineQueuesService } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
@@ -16,7 +16,7 @@ export class ReceiveDeploymentCallbackUsecase {
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly deploymentsStatusManagementService: StatusManagementService,
     private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,

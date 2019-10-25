@@ -11,7 +11,7 @@ import { ComponentDeploymentsRepository } from '../repository'
 import { AppConstants } from '../../../core/constants'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
-import { DeploymentsStatusManagementService } from '../../../core/services/deployments-status-management-service'
+import { StatusManagementService } from './status-management-service'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 
 @Injectable()
@@ -26,7 +26,7 @@ export class PipelinesService {
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly deploymentsStatusManagementService: StatusManagementService,
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
