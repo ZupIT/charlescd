@@ -9,8 +9,7 @@ export class CreateUndeploymentsTable20191024113700 implements MigrationInterfac
         {
           name: 'id',
           type: 'varchar',
-          isPrimary: true,
-          isGenerated: true
+          isPrimary: true
         },
         {
           name: 'user_id',
