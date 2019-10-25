@@ -22,6 +22,7 @@ import {
   PipelinesService,
   PipelineDeploymentService
 } from './services'
+import { CreateUndeploymentRequestUsecase } from './use-cases'
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import {
     DeploymentsService,
     PipelineQueuesService,
     PipelinesService,
-    PipelineDeploymentService
+    PipelineDeploymentService,
+    CreateUndeploymentRequestUsecase
   ],
   exports: [
     DeploymentsService,

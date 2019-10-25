@@ -1,19 +1,21 @@
 import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
-import { NotificationsService } from '../services'
+import { ReceiveDeploymentCallbackUsecase } from '../use-cases'
 
 @Controller('notifications')
 export class NotificationsController {
 
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly receiveDeploymentCallbackUsecase: ReceiveDeploymentCallbackUsecase
+  ) {}
 
   @Post()
   @HttpCode(204)
-  public async onFinishingDeployment(
+  public async receiveDeploymentCallback(
     @Query('componentDeploymentId') componentDeploymentId: string,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
-    return await this.notificationsService.finishDeployment(componentDeploymentId, finishDeploymentDto)
+    return await this.receiveDeploymentCallbackUsecase.execute(componentDeploymentId, finishDeploymentDto)
   }
 }

@@ -63,7 +63,6 @@ export class PipelinesService {
         await this.componentsRepository.findOne({ id: componentDeployment.componentId })
       this.removeCircleFromPipeline(component.pipelineOptions, circle)
       this.removeUnusedPipelineVersions(component.pipelineOptions)
-
     } catch (error) {
       return Promise.reject({})
     }
