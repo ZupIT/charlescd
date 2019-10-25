@@ -5,7 +5,7 @@ import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
-import { DeploymentsStatusManagementService } from '../../services/deployments-status-management-service'
+import { StatusManagementService } from '../../../api/deployments/services/status-management-service'
 import { ConsoleLoggerService } from '../../logs/console'
 import TotalPipeline from 'typescript-lib-spinnaker'
 import { IConsulKV } from '../consul/interfaces'
@@ -15,7 +15,7 @@ export class SpinnakerService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly deploymentsStatusManagementService: DeploymentsStatusManagementService,
+    private readonly deploymentsStatusManagementService: StatusManagementService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     @Inject(AppConstants.CONSUL_PROVIDER)
     private readonly consulConfiguration: IConsulKV
