@@ -32,11 +32,15 @@ export class PipelinesService {
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
-  public async triggerUndeployment(componentDeploymentId: string): Promise<void> {
+  public async triggerUndeployment(
+      componentDeploymentId: string,
+      componentUndeploymentId: string
+  ): Promise<void> {
 
     try {
+      const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(componentUndeploymentId)
       await this.processUndeploymentPipeline(componentDeploymentId)
-      await this.triggerPipelineDeployment(componentDeploymentId)
+      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
       return Promise.reject({})
     }
@@ -45,11 +49,20 @@ export class PipelinesService {
   public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean): Promise<void> {
 
     try {
+      const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(componentDeploymentId)
       await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
-      await this.triggerPipelineDeployment(componentDeploymentId)
+      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
       return Promise.reject({})
     }
+  }
+
+  private getDeploymentCallbackUrl(componentDeploymentId: string): string {
+    return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?componentDeploymentId=${componentDeploymentId}`
+  }
+
+  private getUndeploymentCallbackUrl(componentUndeploymentId: string): string {
+    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?componentUndeploymentId=${componentUndeploymentId}`
   }
 
   private async processUndeploymentPipeline(componentDeploymentId: string): Promise<void> {
@@ -58,7 +71,6 @@ export class PipelinesService {
       const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
       const { circle } = componentDeployment.moduleDeployment.deployment
-
       const component: ComponentEntity =
         await this.componentsRepository.findOne({ id: componentDeployment.componentId })
       this.removeCircleFromPipeline(component.pipelineOptions, circle)
@@ -85,7 +97,8 @@ export class PipelinesService {
 
   private async deployComponentPipeline(
     componentDeployment: ComponentDeploymentEntity,
-    deploymentId: string
+    deploymentId: string,
+    pipelineCallbackUrl: string
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
@@ -102,14 +115,19 @@ export class PipelinesService {
       deploymentConfiguration,
       componentDeployment.id,
       deploymentId,
-      deploymentEntity.circleId
+      deploymentEntity.circleId,
+      pipelineCallbackUrl
     )
   }
 
-  public async deployComponent(componentDeploymentEntity: ComponentDeploymentEntity): Promise<void> {
+  public async deployComponent(
+      componentDeploymentEntity: ComponentDeploymentEntity,
+      pipelineCallbackUrl: string
+  ): Promise<void> {
+
     try {
       const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
-      await this.deployComponentPipeline(componentDeploymentEntity, deploymentId)
+      await this.deployComponentPipeline(componentDeploymentEntity, deploymentId, pipelineCallbackUrl)
     } catch (error) {
       const { moduleDeployment: { deployment } } = componentDeploymentEntity
       await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
@@ -117,11 +135,15 @@ export class PipelinesService {
     }
   }
 
-  private async triggerPipelineDeployment(componentDeploymentId: string): Promise<void> {
+  private async triggerPipelineDeployment(
+      componentDeploymentId: string,
+      pipelineCallbackUrl: string
+  ): Promise<void> {
+
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    await this.deployComponent(componentDeploymentEntity)
+    await this.deployComponent(componentDeploymentEntity, pipelineCallbackUrl)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }
 
