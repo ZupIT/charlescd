@@ -51,7 +51,9 @@ export class CreateUndeploymentRequestUsecase {
     }
   }
 
-  private async scheduleUndeploymentComponents(deployment: DeploymentEntity): Promise<void> {
+  private async scheduleUndeploymentComponents(
+      deployment: DeploymentEntity
+  ): Promise<void> {
 
     try {
       const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
@@ -65,7 +67,9 @@ export class CreateUndeploymentRequestUsecase {
     }
   }
 
-  private async scheduleComponent(componentDeployment: ComponentDeploymentEntity): Promise<void> {
+  private async scheduleComponent(
+      componentDeployment: ComponentDeploymentEntity
+  ): Promise<void> {
 
     try {
       const { id: componentDeploymentId, componentId } = componentDeployment

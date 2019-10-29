@@ -25,7 +25,8 @@ export class SpinnakerService {
     deploymentConfiguration: IDeploymentConfiguration,
     componentDeploymentId: string,
     deploymentId: string,
-    circleId: string
+    circleId: string,
+    pipelineCallbackUrl: string
   ): Promise<void> {
 
     this.consoleLoggerService.log(
@@ -35,7 +36,7 @@ export class SpinnakerService {
 
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, circleId
+        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl
       )
 
     await this.processSpinnakerApplication(deploymentConfiguration)
@@ -63,20 +64,16 @@ export class SpinnakerService {
     this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
-  private getSpinnakerCallbackUrl(componentDeploymentId: string): string {
-    return `${this.consulConfiguration.darwinNotificationUrl}?componentDeploymentId=${componentDeploymentId}`
-  }
-
   private createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
-    componentDeploymentId: string,
-    circleId: string
+    circleId: string,
+    pipelineCallbackUrl: string
   ): ISpinnakerPipelineConfiguration {
 
     return {
       ...deploymentConfiguration,
-      webhookUri: this.getSpinnakerCallbackUrl(componentDeploymentId),
+      webhookUri: pipelineCallbackUrl,
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
