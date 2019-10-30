@@ -4,10 +4,11 @@ import { ComponentDeploymentEntity, DeploymentEntity } from '../../deployments/e
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
-import { PipelineQueuesService, StatusManagementService } from '../../deployments/services'
+import { PipelineQueuesService } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 import { Repository } from 'typeorm'
+import {StatusManagementService} from '../../../core/services/deployments'
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {

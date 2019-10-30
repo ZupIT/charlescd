@@ -11,7 +11,7 @@ import { ComponentDeploymentsRepository } from '../repository'
 import { AppConstants } from '../../../core/constants'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
-import { StatusManagementService } from './status-management-service'
+import { StatusManagementService } from '../../../core/services/deployments/status-management-service'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import {IConsulKV} from '../../../core/integrations/consul/interfaces'
 

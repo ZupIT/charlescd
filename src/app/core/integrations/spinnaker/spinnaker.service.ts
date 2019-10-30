@@ -4,10 +4,10 @@ import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
-import { StatusManagementService } from '../../../api/deployments/services'
 import { ConsoleLoggerService } from '../../logs/console'
 import TotalPipeline from 'typescript-lib-spinnaker'
 import { IConsulKV } from '../consul/interfaces'
+import {StatusManagementService} from '../../services/deployments'
 
 @Injectable()
 export class SpinnakerService {
