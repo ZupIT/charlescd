@@ -18,7 +18,8 @@ export class DatabasesService {
       migrationsTableName: 'darwin-deploy-migrations',
       migrations: [`${rootPath}/app/resources/migrations/*{.ts,.js}`],
       migrationsRun: true,
-      synchronize: false
+      synchronize: false,
+      logging: true
     }
   }
 
