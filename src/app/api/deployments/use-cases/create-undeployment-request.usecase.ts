@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common'
-import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
-import { InjectRepository } from '@nestjs/typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity, UndeploymentEntity } from '../entity'
-import { Repository } from 'typeorm'
-import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
-import { QueuedDeploymentsRepository } from '../repository'
-import { PipelineQueuesService, PipelinesService } from '../services'
-import { ReadUndeploymentDto } from '../dto'
+import {Injectable} from '@nestjs/common'
+import {CreateUndeploymentDto} from '../dto/create-undeployment.dto'
+import {InjectRepository} from '@nestjs/typeorm'
+import {ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, UndeploymentEntity} from '../entity'
+import {Repository} from 'typeorm'
+import {QueuedPipelineStatusEnum} from '../enums'
+import {QueuedDeploymentsRepository} from '../repository'
+import {PipelineQueuesService, PipelinesService} from '../services'
+import {ReadUndeploymentDto} from '../dto'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -23,14 +23,14 @@ export class CreateUndeploymentRequestUsecase {
   ) {}
 
   public async execute(
-    createUndeploymentDto: CreateUndeploymentDto,
-    deploymentId: string
+      createUndeploymentDto: CreateUndeploymentDto,
+      deploymentId: string
   ): Promise<ReadUndeploymentDto> {
 
     try {
       const undeployment: UndeploymentEntity =
-        await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
-      await this.scheduleUndeploymentComponents(undeployment.deployment)
+          await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
+      await this.scheduleUndeploymentComponents(undeployment)
       return undeployment.toReadDto()
     } catch (error) {
       return Promise.reject({})
@@ -38,29 +38,27 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async persistUndeploymentRequest(
-    createUndeploymentDto: CreateUndeploymentDto,
-    deploymentId: string
+      createUndeploymentDto: CreateUndeploymentDto,
+      deploymentId: string
   ): Promise<UndeploymentEntity> {
 
     try {
       const deployment: DeploymentEntity =
-        await this.deploymentsRepository.findOne({ id: deploymentId })
+          await this.deploymentsRepository.findOne({ id: deploymentId })
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment))
     } catch (error) {
       return Promise.reject({})
     }
   }
 
-  private async scheduleUndeploymentComponents(
-      deployment: DeploymentEntity
-  ): Promise<void> {
+  private async scheduleUndeploymentComponents(undeployment: UndeploymentEntity): Promise<void> {
 
     try {
-      const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
+      const componentUndeployments: ComponentUndeploymentEntity[] = undeployment.getComponentUndeployments()
       await Promise.all(
-        componentDeployments.map(
-          componentDeployment => this.scheduleComponent(componentDeployment)
-        )
+          componentUndeployments.map(
+              componentUndeployment => this.scheduleComponent(componentUndeployment)
+          )
       )
     } catch (error) {
       return Promise.reject({})
@@ -68,31 +66,32 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async scheduleComponent(
-      componentDeployment: ComponentDeploymentEntity
+      componentUndeployment: ComponentUndeploymentEntity
   ): Promise<void> {
 
     try {
-      const { id: componentDeploymentId, componentId } = componentDeployment
+      const { componentId } = componentUndeployment.componentDeployment
       const status: QueuedPipelineStatusEnum =
-        await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
-      await this.createUndeployment(componentId, componentDeploymentId, status)
+          await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
+      await this.createUndeployment(componentUndeployment, status)
     } catch (error) {
       return Promise.reject({})
     }
   }
 
   private async createUndeployment(
-    componentId: string,
-    componentDeploymentId: string,
-    status: QueuedPipelineStatusEnum
+      componentUndeployment: ComponentUndeploymentEntity,
+      status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
     try {
-      await this.pipelineQueuesService.enqueuePipelineExecution(
-        componentId, componentDeploymentId, status, QueuedPipelineTypesEnum.UNDEPLOYMENT
+      const { componentId, id: componentDeploymentId } = componentUndeployment.componentDeployment
+      const { id: componentUndeploymentId } = componentUndeployment
+      await this.pipelineQueuesService.enqueueUndeploymentExecution(
+          componentId, componentDeploymentId, status, componentUndeploymentId
       )
       if (status === QueuedPipelineStatusEnum.RUNNING) {
-        await this.pipelinesService.triggerUndeployment(componentDeploymentId)
+        await this.pipelinesService.triggerUndeployment(componentDeploymentId, componentUndeploymentId)
       }
     } catch (error) {
       return Promise.reject({})

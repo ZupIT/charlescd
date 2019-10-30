@@ -12,7 +12,9 @@ export interface IConsulKV {
 
   mooveUrl?: string
 
-  darwinNotificationUrl?: string
+  darwinDeploymentCallbackUrl?: string
+
+  darwinUndeploymentCallbackUrl?: string
 
   spinnakerUrl?: string
 }

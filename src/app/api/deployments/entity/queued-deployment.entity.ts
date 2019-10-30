@@ -1,8 +1,9 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
-import { ReadQueuedDeploymentDto } from '../dto'
+import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, TableInheritance} from 'typeorm'
+import {QueuedPipelineStatusEnum} from '../enums'
+import {ReadQueuedDeploymentDto} from '../dto'
 
 @Entity('queued_deployments')
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class QueuedDeploymentEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn()
@@ -20,20 +21,15 @@ export class QueuedDeploymentEntity extends BaseEntity {
   @CreateDateColumn({ name: 'created_at'})
   public createdAt: Date
 
-  @Column({ name: 'type' })
-  public type: QueuedPipelineTypesEnum
-
   constructor(
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedPipelineStatusEnum,
-    type: QueuedPipelineTypesEnum
+    status: QueuedPipelineStatusEnum
   ) {
     super()
     this.componentId = componentId
     this.componentDeploymentId = componentDeploymentId
     this.status = status
-    this.type = type
   }
 
   public toReadDto(): ReadQueuedDeploymentDto {
@@ -42,8 +38,7 @@ export class QueuedDeploymentEntity extends BaseEntity {
       this.componentId,
       this.componentDeploymentId,
       this.status,
-      this.createdAt,
-      this.type
+      this.createdAt
     )
   }
 }

@@ -30,15 +30,15 @@ export class ReceiveUndeploymentCallbackUsecase {
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
-    try {
-      this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-      finishDeploymentDto.isSuccessful() ?
-        await this.handleDeploymentSuccess(componentDeploymentId) :
-        await this.handleDeploymentFailure(componentDeploymentId)
-      this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
-    } catch (error) {
-      return Promise.reject({})
-    }
+    // try {
+    //   this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+    //   finishDeploymentDto.isSuccessful() ?
+    //     await this.handleDeploymentSuccess(componentDeploymentId) :
+    //     await this.handleDeploymentFailure(componentDeploymentId)
+    //   this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
+    // } catch (error) {
+    //   return Promise.reject({})
+    // }
   }
 
   private async notifyMooveIfDeploymentJustFailed(

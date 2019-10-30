@@ -16,7 +16,7 @@ export class CreateModuleUndeploymentsTable20191028150900 implements MigrationIn
                     type: 'varchar'
                 },
                 {
-                    name: 'module_id',
+                    name: 'module_deployment_id',
                     type: 'varchar'
                 },
                 {

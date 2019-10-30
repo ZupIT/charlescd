@@ -24,7 +24,7 @@ export class NotificationsController {
   @HttpCode(204)
   public async receiveUndeploymentCallback(
     @Query('componentUndeploymentId') componentUndeploymentId: string,
-    @Body() finishUndeploymentDto: FinishUndeploymentDto
+    @Body() finishUndeploymentDto: any //FinishUndeploymentDto
   ): Promise<void> {
 
     return await this.receiveUndeploymentCallbackUsecase.execute(componentUndeploymentId, finishUndeploymentDto)

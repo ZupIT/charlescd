@@ -16,7 +16,7 @@ export class CreateComponentUndeploymentsTable20191028151300 implements Migratio
                     type: 'varchar'
                 },
                 {
-                    name: 'component_id',
+                    name: 'component_deployment_id',
                     type: 'varchar'
                 },
                 {

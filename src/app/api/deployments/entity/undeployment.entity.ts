@@ -43,7 +43,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
-    this.moduleUndeployments = this.getModuleUndeployments(deployment)
+    this.moduleUndeployments = this.createModuleUndeploymentsArray(deployment)
   }
 
   public toReadDto(): ReadUndeploymentDto {
@@ -56,22 +56,28 @@ export class UndeploymentEntity extends BaseEntity {
     )
   }
 
-  private getModuleUndeployments(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
+  public getComponentUndeployments(): ComponentUndeploymentEntity[] {
+    return this.moduleUndeployments.reduce(
+        (accumulated, moduleUndeployment) => [...accumulated, ...moduleUndeployment.componentUndeployments], []
+    )
+  }
+
+  private createModuleUndeploymentsArray(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
     return deployment.modules.map(
       moduleDeployment => this.createModuleUndeployment(moduleDeployment)
     )
   }
 
   private createModuleUndeployment(moduleDeployment: ModuleDeploymentEntity): ModuleUndeploymentEntity {
-    const componentUndeployments: ComponentUndeploymentEntity[] = this.getComponentUndeployments(moduleDeployment)
+    const componentUndeployments: ComponentUndeploymentEntity[] = this.createComponentUndeploymentsArray(moduleDeployment)
 
     return new ModuleUndeploymentEntity(
-      moduleDeployment.moduleId,
+      moduleDeployment,
       componentUndeployments
     )
   }
 
-  private getComponentUndeployments(moduleDeployment: ModuleDeploymentEntity): ComponentUndeploymentEntity[] {
+  private createComponentUndeploymentsArray(moduleDeployment: ModuleDeploymentEntity): ComponentUndeploymentEntity[] {
     return moduleDeployment.components.map(
       componentDeployment => this.createComponentUndeployment(componentDeployment)
     )
@@ -79,7 +85,7 @@ export class UndeploymentEntity extends BaseEntity {
 
   private createComponentUndeployment(componentDeployment: ComponentDeploymentEntity): ComponentUndeploymentEntity {
     return new ComponentUndeploymentEntity(
-      componentDeployment.componentId
+      componentDeployment
     )
   }
 }

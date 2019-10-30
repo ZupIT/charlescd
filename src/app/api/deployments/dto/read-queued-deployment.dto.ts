@@ -12,21 +12,17 @@ export class ReadQueuedDeploymentDto {
 
   public readonly createdAt: Date
 
-  public readonly type: QueuedPipelineTypesEnum
-
   constructor(
     id: number,
     componentId: string,
     componentDeploymentId: string,
     status: QueuedPipelineStatusEnum,
-    createdAt: Date,
-    type: QueuedPipelineTypesEnum
+    createdAt: Date
   ) {
     this.id = id
     this.componentId = componentId
     this.componentDeploymentId = componentDeploymentId
     this.status = status
     this.createdAt = createdAt
-    this.type = type
   }
 }
