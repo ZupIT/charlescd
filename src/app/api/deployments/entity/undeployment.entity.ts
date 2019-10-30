@@ -43,7 +43,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
-    this.moduleUndeployments = this.createModuleUndeploymentsArray(deployment)
+    this.moduleUndeployments = deployment ? this.createModuleUndeploymentsArray(deployment) : null
   }
 
   public toReadDto(): ReadUndeploymentDto {
