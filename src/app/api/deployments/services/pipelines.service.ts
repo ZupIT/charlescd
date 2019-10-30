@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import {Inject, Injectable} from '@nestjs/common'
 import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
 import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity } from '../entity'
@@ -13,6 +13,7 @@ import { IDeploymentConfiguration } from '../../../core/integrations/configurati
 import { DeploymentStatusEnum } from '../enums'
 import { StatusManagementService } from './status-management-service'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
+import {IConsulKV} from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class PipelinesService {
@@ -29,7 +30,9 @@ export class PipelinesService {
     private readonly deploymentsStatusManagementService: StatusManagementService,
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    @Inject(AppConstants.CONSUL_PROVIDER)
+    private readonly consulConfiguration: IConsulKV
   ) {}
 
   public async triggerUndeployment(

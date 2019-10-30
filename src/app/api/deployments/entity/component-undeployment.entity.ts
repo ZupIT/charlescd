@@ -1,7 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-import { UndeploymentStatusEnum } from '../enums'
-import { ModuleUndeploymentEntity } from './module-undeployment.entity'
+import {BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn} from 'typeorm'
+import {UndeploymentStatusEnum} from '../enums'
+import {ModuleUndeploymentEntity} from './module-undeployment.entity'
 import * as uuidv4 from 'uuid/v4'
+import {ComponentDeploymentEntity} from './component-deployment.entity'
 
 @Entity('component_undeployments')
 export class ComponentUndeploymentEntity extends BaseEntity {
@@ -9,8 +10,9 @@ export class ComponentUndeploymentEntity extends BaseEntity {
   @PrimaryColumn({ name: 'id' })
   public id: string
 
-  @Column({ name: 'component_id' })
-  public componentId: string
+  @OneToOne(type => ComponentDeploymentEntity)
+  @JoinColumn({ name: 'component_deployment_id' })
+  public componentDeployment: ComponentDeploymentEntity
 
   @ManyToOne(
     type => ModuleUndeploymentEntity,
@@ -26,11 +28,11 @@ export class ComponentUndeploymentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
-    componentId: string
+    componentDeployment: ComponentDeploymentEntity
   ) {
     super()
     this.id = uuidv4()
-    this.componentId = componentId
+    this.componentDeployment = componentDeployment
     this.status = UndeploymentStatusEnum.CREATED
   }
 
