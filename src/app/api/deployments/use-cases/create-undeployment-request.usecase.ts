@@ -43,8 +43,10 @@ export class CreateUndeploymentRequestUsecase {
   ): Promise<UndeploymentEntity> {
 
     try {
-      const deployment: DeploymentEntity =
-          await this.deploymentsRepository.findOne({ id: deploymentId })
+      const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({
+        where: { id: deploymentId },
+        relations: ['modules', 'modules.components']
+      })
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment))
     } catch (error) {
       return Promise.reject({})

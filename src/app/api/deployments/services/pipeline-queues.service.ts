@@ -163,8 +163,8 @@ export class PipelineQueuesService {
   ): Promise<void> {
 
     status === QueuedPipelineStatusEnum.RUNNING ?
-      this.createRunningQueuedDeployment(componentId, componentDeploymentId, status, defaultCircle) :
-      this.createDefaultQueuedDeployment(componentId, componentDeploymentId, status)
+      await this.createRunningQueuedDeployment(componentId, componentDeploymentId, status, defaultCircle) :
+      await this.createDefaultQueuedDeployment(componentId, componentDeploymentId, status)
   }
 
   private async queueComponentDeploymentTask(

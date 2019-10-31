@@ -5,7 +5,8 @@ export class AddQueuedUndeploymentsColumn20191030154200 implements MigrationInte
     public async up(queryRunner: QueryRunner) {
         await queryRunner.addColumn('queued_deployments', new TableColumn({
             name: 'component_undeployment_id',
-            type: 'varchar'
+            type: 'varchar',
+            isNullable: true
         }))
     }
 
