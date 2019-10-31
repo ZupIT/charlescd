@@ -11,7 +11,7 @@ import { ComponentDeploymentsRepository } from '../repository'
 import { AppConstants } from '../../../core/constants'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentStatusEnum } from '../enums'
-import { StatusManagementService } from '../../../core/services/deployments/status-management-service'
+import { StatusManagementService } from '../../../core/services/deployments/'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import {IConsulKV} from '../../../core/integrations/consul/interfaces'
 
@@ -78,6 +78,7 @@ export class PipelinesService {
         await this.componentsRepository.findOne({ id: componentDeployment.componentId })
       this.removeCircleFromPipeline(component.pipelineOptions, circle)
       this.removeUnusedPipelineVersions(component.pipelineOptions)
+      await this.componentsRepository.save(component)
     } catch (error) {
       return Promise.reject({})
     }
