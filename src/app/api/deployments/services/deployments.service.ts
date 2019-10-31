@@ -17,14 +17,26 @@ export class DeploymentsService {
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto, circleId: string): Promise<ReadDeploymentDto> {
-    this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
-    const deployment: DeploymentEntity =
-      await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
+    try {
+      this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
+      await this.verifyIfDeploymentExists(createDeploymentDto.deploymentId)
+      const deployment: DeploymentEntity =
+          await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
+      await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
+      const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
+      this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
+      return deploymentReadDto
+    } catch (error) {
+      return Promise.reject({})
+    }
+  }
 
-    await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
-    const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
-    this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
-    return deploymentReadDto
+  private async verifyIfDeploymentExists(deploymentId: string): Promise<void> {
+    const deployment: DeploymentEntity =
+        await this.deploymentsRepository.findOne({ id: deploymentId })
+    if (deployment) {
+      return Promise.reject({})
+    }
   }
 
   public async getDeployments(): Promise<ReadDeploymentDto[]> {
