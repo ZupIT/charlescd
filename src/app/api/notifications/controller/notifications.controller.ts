@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
-import { FinishDeploymentDto } from '../dto'
+import { FinishDeploymentDto, FinishUndeploymentDto } from '../dto'
 import { ReceiveDeploymentCallbackUsecase, ReceiveUndeploymentCallbackUsecase } from '../use-cases'
 
 @Controller('notifications')
@@ -24,7 +24,7 @@ export class NotificationsController {
   @HttpCode(204)
   public async receiveUndeploymentCallback(
     @Query('queuedUndeploymentId') queuedUndeploymentId: number,
-    @Body() finishUndeploymentDto: any //FinishUndeploymentDto
+    @Body() finishUndeploymentDto: FinishUndeploymentDto
   ): Promise<void> {
 
     return await this.receiveUndeploymentCallbackUsecase.execute(queuedUndeploymentId, finishUndeploymentDto)

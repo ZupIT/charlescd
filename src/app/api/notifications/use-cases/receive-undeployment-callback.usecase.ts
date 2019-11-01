@@ -28,19 +28,19 @@ export class ReceiveUndeploymentCallbackUsecase {
   ) {}
 
   public async execute(
-    componentUndeploymentId: string,
+    queuedUndeploymentId: number,
     finishUndeploymentDto: FinishUndeploymentDto
   ): Promise<void> {
 
-    try {
-      this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishUndeploymentDto)
-      finishUndeploymentDto.isSuccessful() ?
-        await this.handleSuccessfulUndeployment(componentUndeploymentId) :
-        await this.handleDeploymentFailure(componentUndeploymentId)
-      this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
-    } catch (error) {
-      return Promise.reject({})
-    }
+    // try {
+    //   this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishUndeploymentDto)
+    //   finishUndeploymentDto.isSuccessful() ?
+    //     await this.handleSuccessfulUndeployment(componentUndeploymentId) :
+    //     await this.handleDeploymentFailure(componentUndeploymentId)
+    //   this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
+    // } catch (error) {
+    //   return Promise.reject({})
+    // }
   }
 
   private async notifyMooveIfDeploymentJustFailed(
@@ -63,7 +63,7 @@ export class ReceiveUndeploymentCallbackUsecase {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { componentDeploymentId })
-    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
+    await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(componentDeploymentId)
     await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
     await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
