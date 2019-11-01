@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import {StatusManagementService} from '../../../core/services/deployments'
+import {FinishUndeploymentDto} from '../dto/finish-undeployment.dto'
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {
@@ -28,18 +29,18 @@ export class ReceiveUndeploymentCallbackUsecase {
 
   public async execute(
     componentUndeploymentId: string,
-    finishDeploymentDto: FinishDeploymentDto
+    finishUndeploymentDto: FinishUndeploymentDto
   ): Promise<void> {
 
-    // try {
-    //   this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-    //   finishDeploymentDto.isSuccessful() ?
-    //     await this.handleDeploymentSuccess(componentDeploymentId) :
-    //     await this.handleDeploymentFailure(componentDeploymentId)
-    //   this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
-    // } catch (error) {
-    //   return Promise.reject({})
-    // }
+    try {
+      this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishUndeploymentDto)
+      finishUndeploymentDto.isSuccessful() ?
+        await this.handleSuccessfulUndeployment(componentUndeploymentId) :
+        await this.handleDeploymentFailure(componentUndeploymentId)
+      this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
+    } catch (error) {
+      return Promise.reject({})
+    }
   }
 
   private async notifyMooveIfDeploymentJustFailed(
@@ -84,15 +85,15 @@ export class ReceiveUndeploymentCallbackUsecase {
     }
   }
 
-  private async handleDeploymentSuccess(
-    componentDeploymentId: string
+  private async handleSuccessfulUndeployment(
+    componentUndeploymentId: string
   ): Promise<void> {
 
-    this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
-    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(componentDeploymentId)
-    await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
-    await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeploymentId)
-    await this.notifyMooveIfDeploymentFinished(componentDeploymentId)
-    this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentDeploymentId })
+    this.consoleLoggerService.log('START:UNDEPLOYMENT_SUCCESS_WEBHOOK', { componentUndeploymentId })
+    await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(componentUndeploymentId)
+    await this.pipelineQueuesService.triggerNextComponentPipeline(componentUndeploymentId)
+    await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentUndeploymentId)
+    await this.notifyMooveIfDeploymentFinished(componentUndeploymentId)
+    this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { componentUndeploymentId })
   }
 }

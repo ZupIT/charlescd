@@ -89,11 +89,11 @@ export class CreateUndeploymentRequestUsecase {
     try {
       const { componentId, id: componentDeploymentId } = componentUndeployment.componentDeployment
       const { id: componentUndeploymentId } = componentUndeployment
-      await this.pipelineQueuesService.enqueueUndeploymentExecution(
+      const { id: queuedUndeploymentId } = await this.pipelineQueuesService.enqueueUndeploymentExecution(
           componentId, componentDeploymentId, status, componentUndeploymentId
       )
       if (status === QueuedPipelineStatusEnum.RUNNING) {
-        await this.pipelinesService.triggerUndeployment(componentDeploymentId, componentUndeploymentId)
+        await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedUndeploymentId)
       }
     } catch (error) {
       return Promise.reject({})

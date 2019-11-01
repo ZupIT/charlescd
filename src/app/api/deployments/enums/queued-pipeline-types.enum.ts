@@ -1,4 +1,4 @@
 export enum QueuedPipelineTypesEnum {
-  DEPLOYMENT = 'DEPLOYMENT',
-  UNDEPLOYMENT = 'UNDEPLOYMENT'
+  QueuedDeploymentEntity = 'QueuedDeploymentEntity',
+  QueuedUndeploymentEntity = 'QueuedUndeploymentEntity'
 }

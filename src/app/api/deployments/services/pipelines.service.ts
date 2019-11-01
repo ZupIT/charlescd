@@ -37,11 +37,11 @@ export class PipelinesService {
 
   public async triggerUndeployment(
       componentDeploymentId: string,
-      componentUndeploymentId: string
+      queuedUndeploymentId: number
   ): Promise<void> {
 
     try {
-      const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(componentUndeploymentId)
+      const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeploymentId)
       await this.processUndeploymentPipeline(componentDeploymentId)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
@@ -49,10 +49,10 @@ export class PipelinesService {
     }
   }
 
-  public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean): Promise<void> {
+  public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean, queuedDeploymentId: number): Promise<void> {
 
     try {
-      const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(componentDeploymentId)
+      const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeploymentId)
       await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
@@ -60,12 +60,12 @@ export class PipelinesService {
     }
   }
 
-  private getDeploymentCallbackUrl(componentDeploymentId: string): string {
-    return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?componentDeploymentId=${componentDeploymentId}`
+  private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
+    return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
   }
 
-  private getUndeploymentCallbackUrl(componentUndeploymentId: string): string {
-    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?componentUndeploymentId=${componentUndeploymentId}`
+  private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
+    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
   }
 
   private async processUndeploymentPipeline(componentDeploymentId: string): Promise<void> {

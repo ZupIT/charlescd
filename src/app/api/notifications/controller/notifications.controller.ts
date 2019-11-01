@@ -13,20 +13,20 @@ export class NotificationsController {
   @Post('/deployment')
   @HttpCode(204)
   public async receiveDeploymentCallback(
-    @Query('componentDeploymentId') componentDeploymentId: string,
+    @Query('queuedDeploymentId') queuedDeploymentId: number,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
 
-    return await this.receiveDeploymentCallbackUsecase.execute(componentDeploymentId, finishDeploymentDto)
+    return await this.receiveDeploymentCallbackUsecase.execute(queuedDeploymentId, finishDeploymentDto)
   }
 
   @Post('/undeployment')
   @HttpCode(204)
   public async receiveUndeploymentCallback(
-    @Query('componentUndeploymentId') componentUndeploymentId: string,
+    @Query('queuedUndeploymentId') queuedUndeploymentId: number,
     @Body() finishUndeploymentDto: any //FinishUndeploymentDto
   ): Promise<void> {
 
-    return await this.receiveUndeploymentCallbackUsecase.execute(componentUndeploymentId, finishUndeploymentDto)
+    return await this.receiveUndeploymentCallbackUsecase.execute(queuedUndeploymentId, finishUndeploymentDto)
   }
 }
