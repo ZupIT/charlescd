@@ -143,7 +143,7 @@ export class PipelineQueuesService {
     queuedDeploymentId: number
   ): Promise<void> {
 
-    this.consoleLoggerService.log(`START:RUN_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId, status })
+    this.consoleLoggerService.log(`START:RUN_QUEUED_DEPLOYMENT`, { componentId, componentDeploymentId })
     await this.triggerNextQueuedPipeline(componentDeploymentId, queuedDeploymentId, defaultCircle)
     await this.updateQueuedDeploymentStatus(queuedDeploymentId, QueuedPipelineStatusEnum.RUNNING)
     this.consoleLoggerService.log(`FINISH:RUN_QUEUED_DEPLOYMENT`)
