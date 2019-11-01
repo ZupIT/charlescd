@@ -1,5 +1,5 @@
 import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, TableInheritance} from 'typeorm'
-import {QueuedPipelineStatusEnum} from '../enums'
+import {QueuedPipelineStatusEnum, QueuedPipelineTypesEnum} from '../enums'
 import {ReadQueuedDeploymentDto} from '../dto'
 
 @Entity('queued_deployments')
@@ -17,6 +17,9 @@ export class QueuedDeploymentEntity extends BaseEntity {
 
   @Column({ name: 'status' })
   public status: QueuedPipelineStatusEnum
+
+  @Column({ name: 'type' })
+  public type: QueuedPipelineTypesEnum
 
   @CreateDateColumn({ name: 'created_at'})
   public createdAt: Date
