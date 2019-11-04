@@ -40,7 +40,7 @@ export class ReceiveUndeploymentCallbackUsecase {
         await this.handleDeploymentFailure(queuedUndeploymentId)
       this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 

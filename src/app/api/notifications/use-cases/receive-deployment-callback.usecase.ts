@@ -38,7 +38,7 @@ export class ReceiveDeploymentCallbackUsecase {
         await this.handleDeploymentFailure(queuedDeploymentId)
       this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 
