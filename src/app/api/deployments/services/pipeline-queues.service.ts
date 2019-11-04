@@ -63,9 +63,9 @@ export class PipelineQueuesService {
     )
   }
 
-  public async setQueuedUndeploymentStatusFinished(componentUndeploymentId: string): Promise<void> {
+  public async setQueuedUndeploymentStatusFinished(queuedUndeploymentId: number): Promise<void> {
     await this.queuedUndeploymentsRepository.update(
-        { componentUndeploymentId }, { status: QueuedPipelineStatusEnum.FINISHED }
+        { id: queuedUndeploymentId }, { status: QueuedPipelineStatusEnum.FINISHED }
     )
   }
 
