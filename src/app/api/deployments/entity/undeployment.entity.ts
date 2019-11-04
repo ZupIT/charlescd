@@ -1,6 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm'
 import { DeploymentEntity } from './deployment.entity'
-import { UndeploymentStatusEnum } from '../enums'
+import {DeploymentStatusEnum, UndeploymentStatusEnum} from '../enums'
 import { ReadUndeploymentDto } from '../dto'
 import * as uuidv4 from 'uuid/v4'
 import { ModuleUndeploymentEntity } from './module-undeployment.entity'
@@ -54,6 +54,14 @@ export class UndeploymentEntity extends BaseEntity {
       this.deployment.id,
       this.status
     )
+  }
+
+  public hasFinished(): boolean {
+    return this.status === UndeploymentStatusEnum.FINISHED
+  }
+
+  public hasFailed(): boolean {
+    return this.status === UndeploymentStatusEnum.FAILED
   }
 
   public getComponentUndeployments(): ComponentUndeploymentEntity[] {
