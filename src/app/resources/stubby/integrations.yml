@@ -18,6 +18,17 @@
         }
       }
 
+- request:
+    method: POST
+    url: ^/moove/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
 # SPINNAKER
 
 - request:
@@ -86,7 +97,8 @@
             "postgresPass": "darwin",
             "postgresDbName": "darwin",
             "mooveUrl": "http://localhost:8883/moove",
-            "darwinNotificationUrl": "http://localhost:8883/deploy",
+            "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/deployment",
+            "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/undeployment",
             "spinnakerUrl": "http://localhost:8883/spinnaker"
           }
         }

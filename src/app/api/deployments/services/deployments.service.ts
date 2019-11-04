@@ -27,7 +27,7 @@ export class DeploymentsService {
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 
@@ -35,7 +35,7 @@ export class DeploymentsService {
     const deployment: DeploymentEntity =
         await this.deploymentsRepository.findOne({ id: deploymentId })
     if (deployment) {
-      return Promise.reject({})
+      throw new Error('Deployment already exists')
     }
   }
 

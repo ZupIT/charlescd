@@ -45,7 +45,7 @@ export class PipelinesService {
       await this.processUndeploymentPipeline(componentDeploymentId)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 
@@ -56,7 +56,7 @@ export class PipelinesService {
       await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 
@@ -80,7 +80,7 @@ export class PipelinesService {
       this.removeUnusedPipelineVersions(component.pipelineOptions)
       await this.componentsRepository.save(component)
     } catch (error) {
-      return Promise.reject({})
+      return Promise.reject({ error })
     }
   }
 

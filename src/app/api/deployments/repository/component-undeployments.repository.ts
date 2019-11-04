@@ -10,7 +10,11 @@ export class ComponentUndeploymentsRepository extends Repository<ComponentUndepl
 
         return this.findOne({
             where: { id: componentUndeploymentId },
-            relations: ['moduleUndeployment', 'moduleUndeployment.undeployment']
+            relations: [
+                'moduleUndeployment',
+                'moduleUndeployment.undeployment',
+                'moduleUndeployment.undeployment.deployment'
+            ]
         })
     }
 }
