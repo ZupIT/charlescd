@@ -1,4 +1,4 @@
-import {ChildEntity, Column, CreateDateColumn, PrimaryGeneratedColumn} from 'typeorm'
+import {ChildEntity, Column} from 'typeorm'
 import {QueuedPipelineStatusEnum} from '../enums'
 import {ReadQueuedDeploymentDto} from '../dto'
 import {QueuedDeploymentEntity} from './queued-deployment.entity'

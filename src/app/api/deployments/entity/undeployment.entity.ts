@@ -1,12 +1,12 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm'
-import { DeploymentEntity } from './deployment.entity'
-import {DeploymentStatusEnum, UndeploymentStatusEnum} from '../enums'
-import { ReadUndeploymentDto } from '../dto'
+import {BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn} from 'typeorm'
+import {DeploymentEntity} from './deployment.entity'
+import {UndeploymentStatusEnum} from '../enums'
+import {ReadUndeploymentDto} from '../dto'
 import * as uuidv4 from 'uuid/v4'
-import { ModuleUndeploymentEntity } from './module-undeployment.entity'
-import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { ComponentUndeploymentEntity } from './component-undeployment.entity'
-import { ComponentDeploymentEntity } from './component-deployment.entity'
+import {ModuleUndeploymentEntity} from './module-undeployment.entity'
+import {ModuleDeploymentEntity} from './module-deployment.entity'
+import {ComponentUndeploymentEntity} from './component-undeployment.entity'
+import {ComponentDeploymentEntity} from './component-deployment.entity'
 
 @Entity('undeployments')
 export class UndeploymentEntity extends BaseEntity {

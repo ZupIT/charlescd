@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common'
 import {CreateUndeploymentDto} from '../dto/create-undeployment.dto'
 import {InjectRepository} from '@nestjs/typeorm'
-import {ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, UndeploymentEntity} from '../entity'
+import {ComponentUndeploymentEntity, DeploymentEntity, UndeploymentEntity} from '../entity'
 import {Repository} from 'typeorm'
 import {QueuedPipelineStatusEnum} from '../enums'
 import {QueuedDeploymentsRepository} from '../repository'

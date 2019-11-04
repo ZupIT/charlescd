@@ -1,9 +1,8 @@
 import {BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn} from 'typeorm'
-import { UndeploymentStatusEnum } from '../enums'
-import { ComponentUndeploymentEntity } from './component-undeployment.entity'
-import { UndeploymentEntity } from './undeployment.entity'
+import {UndeploymentStatusEnum} from '../enums'
+import {ComponentUndeploymentEntity} from './component-undeployment.entity'
+import {UndeploymentEntity} from './undeployment.entity'
 import * as uuidv4 from 'uuid/v4'
-import {DeploymentEntity} from './deployment.entity'
 import {ModuleDeploymentEntity} from './module-deployment.entity'
 
 @Entity('module_undeployments')
