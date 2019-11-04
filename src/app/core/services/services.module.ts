@@ -1,7 +1,13 @@
 import { Module } from '@nestjs/common'
 import {StatusManagementService} from './deployments'
 import {TypeOrmModule} from '@nestjs/typeorm'
-import {ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity} from '../../api/deployments/entity'
+import {
+    ComponentDeploymentEntity,
+    ComponentUndeploymentEntity,
+    DeploymentEntity,
+    ModuleDeploymentEntity,
+    ModuleUndeploymentEntity, UndeploymentEntity
+} from '../../api/deployments/entity'
 import {ComponentDeploymentsRepository, ComponentUndeploymentsRepository} from '../../api/deployments/repository'
 
 @Module({
@@ -12,7 +18,9 @@ import {ComponentDeploymentsRepository, ComponentUndeploymentsRepository} from '
             DeploymentEntity,
             ModuleDeploymentEntity,
             ComponentUndeploymentEntity,
-            ComponentUndeploymentsRepository
+            ComponentUndeploymentsRepository,
+            ModuleUndeploymentEntity,
+            UndeploymentEntity
         ])
     ],
     providers: [
