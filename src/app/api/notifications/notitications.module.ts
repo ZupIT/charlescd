@@ -4,10 +4,11 @@ import { DeploymentsModule } from '../deployments/deployments.module'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { LogsModule } from '../../core/logs/logs.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../deployments/entity'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../deployments/repository'
+import {ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, QueuedDeploymentEntity} from '../deployments/entity'
+import {ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository} from '../deployments/repository'
 import {ReceiveDeploymentCallbackUsecase, ReceiveUndeploymentCallbackUsecase} from './use-cases'
 import {ServicesModule} from '../../core/services/services.module'
+import {QueuedUndeploymentEntity} from '../deployments/entity/queued-undeployment.entity'
 
 @Module({
   imports: [
@@ -20,7 +21,10 @@ import {ServicesModule} from '../../core/services/services.module'
       ComponentDeploymentsRepository,
       DeploymentEntity,
       QueuedDeploymentEntity,
-      QueuedDeploymentsRepository
+      QueuedDeploymentsRepository,
+      ComponentUndeploymentEntity,
+      ComponentUndeploymentsRepository,
+      QueuedUndeploymentEntity
     ])
   ],
   controllers: [
