@@ -61,7 +61,8 @@ export class UndeploymentEntity extends BaseEntity {
       this.authorId,
       this.createdAt,
       this.deployment.id,
-      this.status
+      this.status,
+      this.moduleUndeployments.map(module => module.toReadDto())
     )
   }
 
