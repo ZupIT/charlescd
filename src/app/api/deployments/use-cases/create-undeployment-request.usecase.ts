@@ -1,12 +1,19 @@
-import {Injectable} from '@nestjs/common'
-import {CreateUndeploymentDto} from '../dto/create-undeployment.dto'
-import {InjectRepository} from '@nestjs/typeorm'
-import {ComponentUndeploymentEntity, DeploymentEntity, UndeploymentEntity} from '../entity'
-import {Repository} from 'typeorm'
-import {QueuedPipelineStatusEnum} from '../enums'
-import {QueuedDeploymentsRepository} from '../repository'
-import {PipelineQueuesService, PipelinesService} from '../services'
-import {ReadUndeploymentDto} from '../dto'
+import { Injectable } from '@nestjs/common'
+import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
+import { InjectRepository } from '@nestjs/typeorm'
+import {
+  ComponentUndeploymentEntity,
+  DeploymentEntity,
+  UndeploymentEntity
+} from '../entity'
+import { Repository } from 'typeorm'
+import { QueuedPipelineStatusEnum } from '../enums'
+import { QueuedDeploymentsRepository } from '../repository'
+import {
+  PipelineQueuesService,
+  PipelinesService
+} from '../services'
+import { ReadUndeploymentDto } from '../dto'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {

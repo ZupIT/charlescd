@@ -1,4 +1,12 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn
+} from 'typeorm'
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import { IPipelineOptions } from '../interfaces'

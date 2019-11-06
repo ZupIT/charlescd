@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { IDeploymentConfiguration, IK8sConfiguration } from './interfaces'
+import {
+  IDeploymentConfiguration,
+  IK8sConfiguration
+} from './interfaces'
 import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MooveService } from '../moove'

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
+import {
+  CreateDeploymentDto,
+  ReadDeploymentDto
+} from '../dto'
 import { DeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'

@@ -1,6 +1,16 @@
-import {BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, TableInheritance} from 'typeorm'
-import {QueuedPipelineStatusEnum, QueuedPipelineTypesEnum} from '../enums'
-import {ReadQueuedDeploymentDto} from '../dto'
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  TableInheritance
+} from 'typeorm'
+import {
+  QueuedPipelineStatusEnum,
+  QueuedPipelineTypesEnum
+} from '../enums'
+import { ReadQueuedDeploymentDto } from '../dto'
 
 @Entity('queued_deployments')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })

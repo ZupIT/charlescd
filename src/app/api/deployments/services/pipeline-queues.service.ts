@@ -1,13 +1,24 @@
-import {Injectable} from '@nestjs/common'
-import {QueuedPipelineStatusEnum, QueuedPipelineTypesEnum} from '../enums'
-import {ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity} from '../entity'
-import {ComponentDeploymentsRepository, QueuedDeploymentsRepository} from '../repository'
-import {PipelinesService} from './pipelines.service'
-import {InjectRepository} from '@nestjs/typeorm'
-import {Repository} from 'typeorm'
-import {ConsoleLoggerService} from '../../../core/logs/console'
-import {ModuleEntity} from '../../modules/entity'
-import {QueuedUndeploymentEntity} from '../entity/queued-undeployment.entity'
+import { Injectable } from '@nestjs/common'
+import {
+  QueuedPipelineStatusEnum,
+  QueuedPipelineTypesEnum
+} from '../enums'
+import {
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity
+} from '../entity'
+import {
+  ComponentDeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../repository'
+import { PipelinesService } from './pipelines.service'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { ConsoleLoggerService } from '../../../core/logs/console'
+import { ModuleEntity } from '../../modules/entity'
+import { QueuedUndeploymentEntity } from '../entity/queued-undeployment.entity'
 
 @Injectable()
 export class PipelineQueuesService {

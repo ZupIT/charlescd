@@ -1,5 +1,12 @@
 import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn
+} from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'

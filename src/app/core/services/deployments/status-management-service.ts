@@ -6,10 +6,17 @@ import {
     ComponentUndeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    ModuleUndeploymentEntity, UndeploymentEntity
+    ModuleUndeploymentEntity,
+    UndeploymentEntity
 } from '../../../api/deployments/entity'
-import {DeploymentStatusEnum, UndeploymentStatusEnum} from '../../../api/deployments/enums'
-import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository } from '../../../api/deployments/repository'
+import {
+    DeploymentStatusEnum,
+    UndeploymentStatusEnum
+} from '../../../api/deployments/enums'
+import {
+    ComponentDeploymentsRepository,
+    ComponentUndeploymentsRepository
+} from '../../../api/deployments/repository'
 
 @Injectable()
 export class StatusManagementService {

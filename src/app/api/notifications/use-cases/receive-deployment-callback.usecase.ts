@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
-import {ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity} from '../../deployments/entity'
+import {
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  QueuedDeploymentEntity
+} from '../../deployments/entity'
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
 import { PipelineQueuesService } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
+import {
+  ComponentDeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../../deployments/repository'
 import { Repository } from 'typeorm'
-import {StatusManagementService} from '../../../core/services/deployments'
+import { StatusManagementService } from '../../../core/services/deployments'
 
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
