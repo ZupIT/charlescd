@@ -1,4 +1,7 @@
-import { DeploymentEntity, UndeploymentEntity } from '../entity'
+import {
+  DeploymentEntity,
+  UndeploymentEntity
+} from '../entity'
 
 export class CreateUndeploymentDto {
 

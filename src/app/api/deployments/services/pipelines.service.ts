@@ -1,8 +1,19 @@
-import {Inject, Injectable} from '@nestjs/common'
+import {
+  Inject,
+  Injectable
+} from '@nestjs/common'
 import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
-import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity } from '../entity'
-import { IPipelineCircle, IPipelineOptions, IPipelineVersion } from '../../components/interfaces'
+import {
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity
+} from '../entity'
+import {
+  IPipelineCircle,
+  IPipelineOptions,
+  IPipelineVersion
+} from '../../components/interfaces'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -13,7 +24,7 @@ import { IDeploymentConfiguration } from '../../../core/integrations/configurati
 import { DeploymentStatusEnum } from '../enums'
 import { StatusManagementService } from '../../../core/services/deployments/'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
-import {IConsulKV} from '../../../core/integrations/consul/interfaces'
+import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class PipelinesService {

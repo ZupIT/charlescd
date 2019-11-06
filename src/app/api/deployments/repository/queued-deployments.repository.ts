@@ -1,4 +1,7 @@
-import { EntityRepository, Repository } from 'typeorm'
+import {
+  EntityRepository,
+  Repository
+} from 'typeorm'
 import { QueuedDeploymentEntity } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 

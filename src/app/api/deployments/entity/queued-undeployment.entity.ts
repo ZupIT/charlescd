@@ -1,7 +1,10 @@
-import {ChildEntity, Column} from 'typeorm'
-import {QueuedPipelineStatusEnum} from '../enums'
-import {ReadQueuedDeploymentDto} from '../dto'
-import {QueuedDeploymentEntity} from './queued-deployment.entity'
+import {
+    ChildEntity,
+    Column
+} from 'typeorm'
+import { QueuedPipelineStatusEnum } from '../enums'
+import { ReadQueuedDeploymentDto } from '../dto'
+import { QueuedDeploymentEntity } from './queued-deployment.entity'
 
 @ChildEntity()
 export class QueuedUndeploymentEntity extends QueuedDeploymentEntity {

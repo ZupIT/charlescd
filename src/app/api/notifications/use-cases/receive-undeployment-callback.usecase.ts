@@ -1,15 +1,18 @@
-import {Injectable} from '@nestjs/common'
-import {FinishUndeploymentDto} from '../dto'
-import {ComponentUndeploymentEntity, DeploymentEntity} from '../../deployments/entity'
-import {NotificationStatusEnum} from '../enums'
-import {ConsoleLoggerService} from '../../../core/logs/console'
-import {MooveService} from '../../../core/integrations/moove'
-import {PipelineQueuesService} from '../../deployments/services'
-import {InjectRepository} from '@nestjs/typeorm'
-import {ComponentUndeploymentsRepository} from '../../deployments/repository'
-import {Repository} from 'typeorm'
-import {StatusManagementService} from '../../../core/services/deployments'
-import {QueuedUndeploymentEntity} from '../../deployments/entity/queued-undeployment.entity'
+import { Injectable } from '@nestjs/common'
+import { FinishUndeploymentDto } from '../dto'
+import {
+  ComponentUndeploymentEntity,
+  DeploymentEntity
+} from '../../deployments/entity'
+import { NotificationStatusEnum } from '../enums'
+import { ConsoleLoggerService } from '../../../core/logs/console'
+import { MooveService } from '../../../core/integrations/moove'
+import { PipelineQueuesService } from '../../deployments/services'
+import { InjectRepository } from '@nestjs/typeorm'
+import { ComponentUndeploymentsRepository } from '../../deployments/repository'
+import { Repository } from 'typeorm'
+import { StatusManagementService } from '../../../core/services/deployments'
+import { QueuedUndeploymentEntity } from '../../deployments/entity/queued-undeployment.entity'
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {

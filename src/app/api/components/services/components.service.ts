@@ -6,11 +6,11 @@ import { PipelineQueuesService } from '../../deployments/services'
 export class ComponentsService {
 
   constructor(
-    private readonly queuedDeploymentsService: PipelineQueuesService
+    private readonly pipelineQueuesService: PipelineQueuesService
   ) {}
 
   public async getComponentDeploymentQueue(id: string): Promise<ReadQueuedDeploymentDto[]> {
-    return this.queuedDeploymentsService.getComponentDeploymentQueue(id)
+    return this.pipelineQueuesService.getComponentDeploymentQueue(id)
       .then(queuedDeployments => queuedDeployments.map(
           queuedDeployment => queuedDeployment.toReadDto()
         )

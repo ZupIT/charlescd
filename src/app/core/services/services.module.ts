@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common'
-import {StatusManagementService} from './deployments'
-import {TypeOrmModule} from '@nestjs/typeorm'
+import { StatusManagementService } from './deployments'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import {
     ComponentDeploymentEntity,
     ComponentUndeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    ModuleUndeploymentEntity, UndeploymentEntity
+    ModuleUndeploymentEntity,
+    UndeploymentEntity
 } from '../../api/deployments/entity'
-import {ComponentDeploymentsRepository, ComponentUndeploymentsRepository} from '../../api/deployments/repository'
+import {
+    ComponentDeploymentsRepository,
+    ComponentUndeploymentsRepository
+} from '../../api/deployments/repository'
 
 @Module({
     imports: [
