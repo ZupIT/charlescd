@@ -1,3 +1,5 @@
+import { ReadComponentUndeploymentDto } from './read-component-undeployment.dto'
+
 export class ReadModuleUndeploymentDto {
 
     public readonly id: string
