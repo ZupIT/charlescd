@@ -14,6 +14,7 @@ import { ComponentUndeploymentEntity } from './component-undeployment.entity'
 import { UndeploymentEntity } from './undeployment.entity'
 import * as uuidv4 from 'uuid/v4'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
+import { ReadModuleUndeploymentDto } from '../dto'
 
 @Entity('module_undeployments')
 export class ModuleUndeploymentEntity extends BaseEntity {
@@ -56,9 +57,13 @@ export class ModuleUndeploymentEntity extends BaseEntity {
     this.status = UndeploymentStatusEnum.CREATED
   }
 
-  // public toReadDto(): ReadModuleUndeploymentDto {
-  //   return new ReadModuleUndeploymentDto(
-  //
-  //   )
-  // }
+  public toReadDto(): ReadModuleUndeploymentDto {
+    return new ReadModuleUndeploymentDto(
+      this.id,
+      this.moduleDeployment.id,
+      this.componentUndeployments.map(component => component.toReadDto()),
+      this.status,
+      this.createdAt
+    )
+  }
 }

@@ -12,6 +12,7 @@ import { UndeploymentStatusEnum } from '../enums'
 import { ModuleUndeploymentEntity } from './module-undeployment.entity'
 import * as uuidv4 from 'uuid/v4'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
+import { ReadComponentUndeploymentDto } from '../dto'
 
 @Entity('component_undeployments')
 export class ComponentUndeploymentEntity extends BaseEntity {
@@ -45,9 +46,12 @@ export class ComponentUndeploymentEntity extends BaseEntity {
     this.status = UndeploymentStatusEnum.CREATED
   }
 
-  // public toReadDto(): ReadComponentUndeploymentDto {
-  //   return new ReadComponentUndeploymentDto(
-  //
-  //   )
-  // }
+  public toReadDto(): ReadComponentUndeploymentDto {
+    return new ReadComponentUndeploymentDto(
+      this.id,
+      this.componentDeployment.id,
+      this.status,
+      this.createdAt
+    )
+  }
 }

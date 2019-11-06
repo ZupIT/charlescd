@@ -8,6 +8,8 @@ import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
 import { ReadModuleDeploymentDto } from './read-module-deployment.dto'
 import { ReadQueuedDeploymentDto } from './read-queued-deployment.dto'
 import { ReadUndeploymentDto } from './read-undeployment.dto'
+import { ReadModuleUndeploymentDto } from './read-module-undeployment.dto'
+import { ReadComponentUndeploymentDto } from './read-component-undeployment.dto'
 
 export {
   CreateDeploymentDto,
@@ -19,5 +21,7 @@ export {
   ReadComponentDeploymentDto,
   ReadModuleDeploymentDto,
   ReadQueuedDeploymentDto,
-  ReadUndeploymentDto
+  ReadUndeploymentDto,
+  ReadModuleUndeploymentDto,
+  ReadComponentUndeploymentDto
 }
