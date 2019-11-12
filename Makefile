@@ -16,10 +16,10 @@ all: build test
 build:
 	${NODEINSTALL}
 	${NODEBUILD}
-
+	${NODETEST}
 publish:
 
 test:
-	${NODETEST}
+
 run:
 	${NODERUN}
