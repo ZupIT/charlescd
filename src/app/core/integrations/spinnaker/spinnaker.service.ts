@@ -95,7 +95,7 @@ export class SpinnakerService {
 
     circles
       .filter(circle => circle.removeCircle)
-      .map(circle => this.removeCircleFromPipeline(pipelineOptions, circle))
+      .forEach(circle => this.removeCircleFromPipeline(pipelineOptions, circle))
   }
 
   private removeRequestedCircles(
@@ -148,7 +148,7 @@ export class SpinnakerService {
 
     circles
       .filter(circle => !circle.removeCircle)
-      .map(circle => this.updatePipelineCircle(circle, pipelineOptions, componentDeployment))
+      .forEach(circle => this.updatePipelineCircle(circle, pipelineOptions, componentDeployment))
   }
 
   private updateRequestedCircles(
