@@ -60,6 +60,11 @@
     "typescript": "3.4.3"
   },
   "jest": {
+    "collectCoverageFrom": [
+      "app/**/*.ts",
+      "!app/**/resources/**",
+      "!app/**/{index.ts,*.{module,enum,interface,constants}.ts}"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",
