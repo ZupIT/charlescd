@@ -20,6 +20,6 @@ build:
 publish:
 
 test:
-    ${NODETEST}
+	${NODETEST}
 run:
 	${NODERUN}
