@@ -5,7 +5,7 @@ RELEASE = $(RELEASE_VERSION)
 NODECMD=npm
 NODEINSTALL= ${NODECMD} install
 NODEBUILD=$(NODECMD) run build
-NODETEST=$(NODECMD) run test
+NODETEST=$(NODECMD) run test:cov
 NODERUN=$(NODECMD) run start:prod
 BINARY_NAME=darwin-deploy
 
@@ -20,6 +20,6 @@ build:
 publish:
 
 test:
-
+    ${NODETEST}
 run:
 	${NODERUN}
