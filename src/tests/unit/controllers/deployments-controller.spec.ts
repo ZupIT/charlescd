@@ -2,11 +2,6 @@ import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
-import {
-    CircleDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity
-} from '../../../app/api/deployments/entity'
 import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
 
 describe('DeploymentsController', () => {
