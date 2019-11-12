@@ -12,7 +12,7 @@ BINARY_NAME=darwin-deploy
 # Commons commands
 HOST=127.0.0.1
 
-all: test build
+all: build test
 build:
 	${NODEINSTALL}
 	${NODEBUILD}
