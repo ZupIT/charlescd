@@ -5,30 +5,21 @@ RELEASE = $(RELEASE_VERSION)
 NODECMD=npm
 NODEINSTALL= ${NODECMD} install
 NODEBUILD=$(NODECMD) run build
-NODETEST=$(NODECMD) run test
+NODETEST=$(NODECMD) run test:cov
 NODERUN=$(NODECMD) run start:prod
 BINARY_NAME=darwin-deploy
-
-# Docker
-DOCKERCMD=docker
-DOCKERBUILD=${DOCKERCMD} build
-DOCKERPUSH=${DOCKERCMD} push
-DOCKERTAG=${DOCKERCMD} tag
 
 # Commons commands
 HOST=127.0.0.1
 
-all: test build
+all: build test
 build:
 	${NODEINSTALL}
 	${NODEBUILD}
-	$(DOCKERBUILD) -t "${REGISTRY}/${BINARY_NAME}:${RELEASE}" .
-	$(DOCKERTAG) "${REGISTRY}/${BINARY_NAME}:${RELEASE}" "${REGISTRY}/${BINARY_NAME}:latest"
-
+	${NODETEST}
 publish:
-	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:${RELEASE}"
-	${DOCKERPUSH} "${REGISTRY}/${BINARY_NAME}:latest"
+
 test:
-	@echo "don't have time for test right now"
+
 run:
 	${NODERUN}
