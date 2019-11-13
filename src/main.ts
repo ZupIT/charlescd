@@ -18,6 +18,7 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(appModule)
 
   app.use(morgan('dev'))
+  app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
 
   app.useGlobalPipes(
     new ValidationPipe({
