@@ -6,7 +6,7 @@ export class AddQueuedDeploymentsType20191024195900 implements MigrationInterfac
     await queryRunner.addColumn('queued_deployments', new TableColumn({
       name: 'type',
       type: 'varchar',
-      default: 'QueuedDeploymentEntity'
+      default: '\'QueuedDeploymentEntity\''
     }))
   }
 
