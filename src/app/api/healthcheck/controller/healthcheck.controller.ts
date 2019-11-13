@@ -9,6 +9,6 @@ export class HealthcheckController {
 
   @Get()
   public async getHealthcheck(): Promise<IReadHealthcheckStatus> {
-    return await this.healthcheckService.getHealthcheckStatus()
+    return this.healthcheckService.getHealthcheckStatus()
   }
 }
