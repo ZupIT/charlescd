@@ -14,7 +14,7 @@ export class DeploymentsService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly queuedDeploymentsService: PipelineQueuesService,
+    private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
@@ -25,7 +25,7 @@ export class DeploymentsService {
       await this.verifyIfDeploymentExists(createDeploymentDto.deploymentId)
       const deployment: DeploymentEntity =
           await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
-      await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
+      await this.pipelineQueuesService.queueDeploymentTasks(deployment)
       const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
