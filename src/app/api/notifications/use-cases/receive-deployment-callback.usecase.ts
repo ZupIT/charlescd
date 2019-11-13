@@ -75,7 +75,7 @@ export class ReceiveDeploymentCallbackUsecase {
     await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
     await this.notifyMooveIfDeploymentJustFailed(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeploymentId)
-    this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
+    this.consoleLoggerService.log('FINISH:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
   }
 
   private async notifyMooveIfDeploymentFinished(
