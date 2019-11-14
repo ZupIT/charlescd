@@ -61,8 +61,8 @@ export class StatusManagementService {
     public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
       await this.moduleDeploymentRepository.update(module.id, { status })
       return Promise.all(
-          module.components.map(component =>
-          this.componentDeploymentsRepository.update(component.id, { status })))
+          module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
+      )
     }
 
     public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
