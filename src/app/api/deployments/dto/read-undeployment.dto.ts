@@ -14,6 +14,7 @@ export class ReadUndeploymentDto {
   public readonly status: UndeploymentStatusEnum
 
   public readonly modulesUndeployments: ReadModuleUndeploymentDto[]
+
   constructor(
     id: string,
     authorId: string,

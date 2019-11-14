@@ -2,6 +2,7 @@ import { CreateDeploymentDto } from './create-deployment.dto'
 import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
 import { CreateComponentDeploymentDto } from './create-component-deployment.dto'
 import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
+import { CreateUndeploymentDto } from './create-undeployment.dto'
 import { ReadDeploymentDto } from './read-deployment.dto'
 import { ReadCircleDeploymentDto } from './read-circle-deployment.dto'
 import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
@@ -16,6 +17,7 @@ export {
   CreateCircleDeploymentDto,
   CreateComponentDeploymentDto,
   CreateModuleDeploymentDto,
+  CreateUndeploymentDto,
   ReadDeploymentDto,
   ReadCircleDeploymentDto,
   ReadComponentDeploymentDto,
