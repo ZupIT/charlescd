@@ -15,6 +15,10 @@ export class PipelineQueuesServiceStub {
         return Promise.resolve()
     }
 
+    public async setQueuedDeploymentStatusFinished(): Promise<void> {
+        return Promise.resolve()
+    }
+
     public async triggerNextComponentPipeline(): Promise<void> {
         return Promise.resolve()
     }
