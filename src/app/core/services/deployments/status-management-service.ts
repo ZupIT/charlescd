@@ -117,7 +117,7 @@ export class StatusManagementService {
     }
 
     public async setComponentUndeploymentStatusAsFinished(
-            componentUndeploymentId: string
+        componentUndeploymentId: string
     ): Promise<void> {
 
         const componentUndeploymentEntity: ComponentUndeploymentEntity =
