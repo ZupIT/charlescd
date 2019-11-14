@@ -10,4 +10,12 @@ export class PipelineQueuesServiceStub {
     public async enqueueUndeploymentExecution(): Promise<QueuedUndeploymentEntity> {
         return Promise.resolve({} as QueuedUndeploymentEntity)
     }
+
+    public async setQueuedUndeploymentStatusFinished(): Promise<void> {
+        return Promise.resolve()
+    }
+
+    public async triggerNextComponentPipeline(): Promise<void> {
+        return Promise.resolve()
+    }
 }
