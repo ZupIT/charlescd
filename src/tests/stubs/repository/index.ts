@@ -6,6 +6,8 @@ import { ComponentDeploymentsRepositoryStub } from './component-deployments-repo
 import { ComponentsRepositoryStub } from './components-repository.stub'
 import { QueuedUndeploymentsRepositoryStub } from './queued-undeployments-repository.stub'
 import { ComponentUndeploymentsRepositoryStub } from './component-undeployments-repository.stub'
+import { ModuleDeploymentsRepositoryStub } from './module-deployments-repository.stub'
+import { ModuleUndeploymentsRepositoryStub } from './module-undeployments-repository.stub'
 
 export {
     DeploymentsRepositoryStub,
@@ -15,5 +17,7 @@ export {
     ComponentDeploymentsRepositoryStub,
     ComponentsRepositoryStub,
     QueuedUndeploymentsRepositoryStub,
-    ComponentUndeploymentsRepositoryStub
+    ComponentUndeploymentsRepositoryStub,
+    ModuleDeploymentsRepositoryStub,
+    ModuleUndeploymentsRepositoryStub
 }
