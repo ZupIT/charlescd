@@ -14,17 +14,13 @@ import {
     PipelineQueuesServiceStub,
     PipelinesServiceStub
 } from '../../stubs/services'
-import {
-    CreateUndeploymentDto,
-    ReadUndeploymentDto
-} from '../../../app/api/deployments/dto'
-import { UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
     ComponentDeploymentEntity,
-    ComponentUndeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    ModuleUndeploymentEntity,
+    QueuedUndeploymentEntity,
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
@@ -37,11 +33,10 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let createUndeploymentDto: CreateUndeploymentDto
     let deployment: DeploymentEntity
     let undeployment: UndeploymentEntity
-    let readUndeploymentDto: ReadUndeploymentDto
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
-    let moduleUndeployments: ModuleUndeploymentEntity[]
-    let componentUndeployments: ComponentUndeploymentEntity[]
+    let pipelineQueuesService: PipelineQueuesService
+    let queuedUndeploymentEntity: QueuedUndeploymentEntity
 
     beforeEach(async () => {
 
@@ -72,6 +67,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         }).compile()
 
         createUndeploymentRequestUsecase = module.get<CreateUndeploymentRequestUsecase>(CreateUndeploymentRequestUsecase)
+        pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
@@ -117,44 +113,32 @@ describe('CreateUndeploymentRequestUsecase', () => {
             'dummy-circle-id'
         )
 
-        componentUndeployments = [
-            new ComponentUndeploymentEntity(
-                componentDeployments[0]
-            ),
-            new ComponentUndeploymentEntity(
-                componentDeployments[1]
-            )
-        ]
-
-        moduleUndeployments = [
-            new ModuleUndeploymentEntity(
-                moduleDeployments[0],
-                componentUndeployments
-            )
-        ]
-
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
             deployment
         )
 
-        readUndeploymentDto = new ReadUndeploymentDto(
-            undeployment.id,
-            'dummy-author-id',
-            undeployment.createdAt,
-            'dummy-deployment-id',
-            UndeploymentStatusEnum.CREATED,
-            []
+        queuedUndeploymentEntity = new QueuedUndeploymentEntity(
+            'dummy-id',
+            componentDeployments[0].id,
+            QueuedPipelineStatusEnum.RUNNING,
+            'dummy-id-2'
         )
     })
 
     describe('execute', () => {
         it('should return the correct read dto for a given create dto', async () => {
-            jest.spyOn(deploymentsRepository, 'findOne').mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(undeploymentsRepository, 'save').mockImplementation( () => Promise.resolve(undeployment))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(undeploymentsRepository, 'save')
+                .mockImplementation( () => Promise.resolve(undeployment))
+            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
+                .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
+            jest.spyOn(pipelineQueuesService, 'enqueueUndeploymentExecution')
+                .mockImplementation(() => Promise.resolve(queuedUndeploymentEntity))
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
-                .toEqual(readUndeploymentDto)
+                .toEqual(undeployment.toReadDto())
         })
     })
 })
