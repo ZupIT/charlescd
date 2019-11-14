@@ -5,4 +5,8 @@ export class ComponentDeploymentsRepositoryStub {
     public async getOneWithRelations(): Promise<ComponentDeploymentEntity> {
         return Promise.resolve({} as ComponentDeploymentEntity)
     }
+
+    public async update(): Promise<void> {
+        return Promise.resolve()
+    }
 }
