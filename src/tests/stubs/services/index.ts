@@ -4,6 +4,8 @@ import { StatusManagementServiceStub } from './status-management-service.stub'
 import { ConsoleLoggerServiceStub } from './console-logger-service.stub'
 import { PipelineQueuesServiceStub } from './pipeline-queues-service.stub'
 import { PipelinesServiceStub } from './pipelines-service.stub'
+import { SpinnakerServiceStub } from './spinnaker-service.stub'
+import { DeploymentConfigurationServiceStub } from './deployment-configuration-service.stub'
 
 export {
     DeploymentsServiceStub,
@@ -11,5 +13,7 @@ export {
     StatusManagementServiceStub,
     ConsoleLoggerServiceStub,
     PipelineQueuesServiceStub,
-    PipelinesServiceStub
+    PipelinesServiceStub,
+    SpinnakerServiceStub,
+    DeploymentConfigurationServiceStub
 }
