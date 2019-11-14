@@ -6,6 +6,7 @@ import { PipelineQueuesServiceStub } from './pipeline-queues-service.stub'
 import { PipelinesServiceStub } from './pipelines-service.stub'
 import { SpinnakerServiceStub } from './spinnaker-service.stub'
 import { DeploymentConfigurationServiceStub } from './deployment-configuration-service.stub'
+import { MooveServiceStub } from './moove-service.stub'
 
 export {
     DeploymentsServiceStub,
@@ -15,5 +16,6 @@ export {
     PipelineQueuesServiceStub,
     PipelinesServiceStub,
     SpinnakerServiceStub,
-    DeploymentConfigurationServiceStub
+    DeploymentConfigurationServiceStub,
+    MooveServiceStub
 }

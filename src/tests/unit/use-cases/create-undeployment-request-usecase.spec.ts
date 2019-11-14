@@ -43,26 +43,11 @@ describe('CreateUndeploymentRequestUsecase', () => {
         const module = await Test.createTestingModule({
             providers: [
                 CreateUndeploymentRequestUsecase,
-                {
-                    provide: 'DeploymentEntityRepository',
-                    useClass: DeploymentsRepositoryStub
-                },
-                {
-                    provide: 'UndeploymentEntityRepository',
-                    useClass: UndeploymentsRepositoryStub
-                },
-                {
-                    provide: QueuedDeploymentsRepository,
-                    useClass: QueuedDeploymentsRepositoryStub
-                },
-                {
-                    provide: PipelineQueuesService,
-                    useClass: PipelineQueuesServiceStub
-                },
-                {
-                    provide: PipelinesService,
-                    useClass: PipelinesServiceStub
-                }
+                { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+                { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
+                { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
+                { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
+                { provide: PipelinesService, useClass: PipelinesServiceStub }
             ]
         }).compile()
 
@@ -128,6 +113,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
 
     describe('execute', () => {
         it('should return the correct read dto for a given create dto', async () => {
+
             jest.spyOn(deploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
