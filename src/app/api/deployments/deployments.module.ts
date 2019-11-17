@@ -1,33 +1,35 @@
 import { Module } from '@nestjs/common'
 import { DeploymentsController } from './controller'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
-import { ServicesModule } from '../../core/services/services.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
-  QueuedDeploymentEntity
+  QueuedDeploymentEntity,
+  UndeploymentEntity
 } from './entity'
 import { ModuleEntity } from '../modules/entity'
 import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
 import {
-  QueuedDeploymentsRepository,
-  ComponentDeploymentsRepository
+  ComponentDeploymentsRepository,
+  QueuedDeploymentsRepository
 } from './repository'
 import {
   DeploymentsService,
-  QueuedDeploymentsService,
-  PipelineProcessingService,
-  PipelineDeploymentService
+  PipelineQueuesService,
+  PipelinesService,
 } from './services'
+import { CreateUndeploymentRequestUsecase } from './use-cases'
+import { QueuedUndeploymentEntity } from './entity/queued-undeployment.entity'
+import { ServicesModule } from '../../core/services/services.module'
 
 @Module({
   imports: [
     IntegrationsModule,
-    ServicesModule,
     LogsModule,
+    ServicesModule,
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ModuleDeploymentEntity,
@@ -36,7 +38,9 @@ import {
       ComponentEntity,
       QueuedDeploymentEntity,
       ComponentDeploymentsRepository,
-      QueuedDeploymentsRepository
+      QueuedDeploymentsRepository,
+      QueuedUndeploymentEntity,
+      UndeploymentEntity
     ])
   ],
   controllers: [
@@ -44,15 +48,14 @@ import {
   ],
   providers: [
     DeploymentsService,
-    QueuedDeploymentsService,
-    PipelineProcessingService,
-    PipelineDeploymentService
+    PipelineQueuesService,
+    PipelinesService,
+    CreateUndeploymentRequestUsecase
   ],
   exports: [
     DeploymentsService,
-    QueuedDeploymentsService,
-    PipelineProcessingService,
-    PipelineDeploymentService
+    PipelineQueuesService,
+    PipelinesService
   ]
 })
 export class DeploymentsModule {}

@@ -1,4 +1,4 @@
-import { QueuedDeploymentStatusEnum } from '../enums'
+import { QueuedPipelineStatusEnum } from '../enums'
 
 export class ReadQueuedDeploymentDto {
 
@@ -8,7 +8,7 @@ export class ReadQueuedDeploymentDto {
 
   public readonly componentDeploymentId: string
 
-  public readonly status: QueuedDeploymentStatusEnum
+  public readonly status: QueuedPipelineStatusEnum
 
   public readonly createdAt: Date
 
@@ -16,7 +16,7 @@ export class ReadQueuedDeploymentDto {
     id: number,
     componentId: string,
     componentDeploymentId: string,
-    status: QueuedDeploymentStatusEnum,
+    status: QueuedPipelineStatusEnum,
     createdAt: Date
   ) {
     this.id = id

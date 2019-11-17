@@ -1,4 +1,8 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import {
+    HttpService,
+    Inject,
+    Injectable
+} from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import { AppConstants } from '../../constants'
 import { IK8sConfiguration } from '../configuration/interfaces'

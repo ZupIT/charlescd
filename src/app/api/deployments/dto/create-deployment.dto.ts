@@ -6,6 +6,8 @@ import { ValidateNested } from 'class-validator'
 
 export class CreateDeploymentDto {
 
+  public readonly deploymentId: string
+
   public readonly valueFlowId: string
 
   @ValidateNested({ each: true })
@@ -22,16 +24,17 @@ export class CreateDeploymentDto {
 
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
-  public readonly circles: CreateCircleDeploymentDto[]
+  public readonly circle: CreateCircleDeploymentDto
 
   public toEntity(circleId: string): DeploymentEntity {
     return new DeploymentEntity(
+      this.deploymentId,
       this.valueFlowId,
       this.modules.map(module => module.toEntity()),
       this.authorId,
       this.description,
       this.callbackUrl,
-      this.circles.map(circle => circle.toEntity()),
+      this.circle.toEntity(),
       this.defaultCircle,
       circleId
     )

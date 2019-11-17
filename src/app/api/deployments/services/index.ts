@@ -1,11 +1,9 @@
 import { DeploymentsService } from './deployments.service'
-import { QueuedDeploymentsService } from './queued-deployments.service'
-import { PipelineProcessingService } from './pipeline-processing.service'
-import { PipelineDeploymentService } from './pipeline-deployment.service'
+import { PipelineQueuesService } from './pipeline-queues.service'
+import { PipelinesService } from './pipelines.service'
 
 export {
   DeploymentsService,
-  QueuedDeploymentsService,
-  PipelineProcessingService,
-  PipelineDeploymentService
+  PipelineQueuesService,
+  PipelinesService
 }

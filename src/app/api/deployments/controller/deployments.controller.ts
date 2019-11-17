@@ -1,11 +1,27 @@
-import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common'
-import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post
+} from '@nestjs/common'
+import {
+  CreateDeploymentDto,
+  ReadDeploymentDto,
+  ReadUndeploymentDto
+} from '../dto'
 import { DeploymentsService } from '../services'
+import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
+import { CreateUndeploymentRequestUsecase } from '../use-cases'
 
 @Controller('deployments')
 export class DeploymentsController {
 
-  constructor(private readonly deploymentsService: DeploymentsService) {}
+  constructor(
+    private readonly deploymentsService: DeploymentsService,
+    private readonly createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase
+  ) {}
 
   @Post()
   public async createDeployment(
@@ -14,6 +30,15 @@ export class DeploymentsController {
   ): Promise<ReadDeploymentDto> {
 
     return await this.deploymentsService.createDeployment(createDeploymentDto, circleId)
+  }
+
+  @Post(':id/undeploy')
+  public async createUndeployment(
+    @Body() createUndeploymentDto: CreateUndeploymentDto,
+    @Param('id') deploymentId: string
+  ): Promise<ReadUndeploymentDto> {
+
+    return await this.createUndeploymentRequestUsecase.execute(createUndeploymentDto, deploymentId)
   }
 
   @Get()

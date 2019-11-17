@@ -3,6 +3,8 @@ import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
 import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
+import { CreateUndeploymentRequestUsecaseStub } from '../../stubs/use-cases'
 
 describe('DeploymentsController', () => {
 
@@ -19,6 +21,10 @@ describe('DeploymentsController', () => {
                 {
                     provide: DeploymentsService,
                     useClass: DeploymentsServiceStub
+                },
+                {
+                    provide: CreateUndeploymentRequestUsecase,
+                    useClass: CreateUndeploymentRequestUsecaseStub
                 }
             ]
         }).compile()

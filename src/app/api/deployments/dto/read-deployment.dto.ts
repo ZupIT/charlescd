@@ -13,7 +13,7 @@ export class ReadDeploymentDto {
 
   public readonly description: string
 
-  public readonly circles: ReadCircleDeploymentDto[]
+  public readonly circle: ReadCircleDeploymentDto
 
   public readonly status: string
 
@@ -29,7 +29,7 @@ export class ReadDeploymentDto {
     modulesDeployments: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
-    circles: ReadCircleDeploymentDto[],
+    circle: ReadCircleDeploymentDto,
     status: string,
     callbackUrl: string,
     defaultCircle: boolean,
@@ -40,7 +40,7 @@ export class ReadDeploymentDto {
     this.modulesDeployments = modulesDeployments
     this.authorId = authorId
     this.description = description
-    this.circles = circles
+    this.circle = circle
     this.status = status
     this.callbackUrl = callbackUrl
     this.defaultCircle = defaultCircle
