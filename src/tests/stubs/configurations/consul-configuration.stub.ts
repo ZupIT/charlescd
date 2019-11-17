@@ -14,7 +14,9 @@ export const ConsulConfigurationStub: IConsulKV = {
 
     mooveUrl: 'mooveurl.com',
 
-    darwinNotificationUrl: 'darwinnotificationurl.com',
+    darwinDeploymentCallbackUrl: 'darwin-deployment-callback.url.com',
+
+    darwinUndeploymentCallbackUrl: 'darwin-undeployment-callback.url.com',
 
     spinnakerUrl: 'spinnakerurl.com'
 }

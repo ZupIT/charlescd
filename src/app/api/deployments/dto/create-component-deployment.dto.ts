@@ -1,4 +1,4 @@
-import { ComponentDeploymentEntity } from '../entity/component-deployment.entity'
+import { ComponentDeploymentEntity } from '../entity'
 
 export class CreateComponentDeploymentDto {
 

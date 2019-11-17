@@ -1,4 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param
+} from '@nestjs/common'
 import { ReadModuleDto } from '../dto'
 import { ModulesService } from '../services'
 

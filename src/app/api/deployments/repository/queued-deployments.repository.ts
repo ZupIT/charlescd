@@ -1,6 +1,9 @@
-import { EntityRepository, Repository } from 'typeorm'
+import {
+  EntityRepository,
+  Repository
+} from 'typeorm'
 import { QueuedDeploymentEntity } from '../entity'
-import { QueuedDeploymentStatusEnum } from '../enums'
+import { QueuedPipelineStatusEnum } from '../enums'
 
 @EntityRepository(QueuedDeploymentEntity)
 export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEntity> {
@@ -9,7 +12,7 @@ export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEnti
     return this.createQueryBuilder('queued_deployment')
       .where(
         'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',
-        { componentId, status: QueuedDeploymentStatusEnum.QUEUED })
+        { componentId, status: QueuedPipelineStatusEnum.QUEUED })
       .orderBy('queued_deployment.id', 'ASC')
       .getMany()
   }
@@ -25,7 +28,7 @@ export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEnti
     return this.createQueryBuilder('queued_deployment')
       .where(
         'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',
-        { componentId, status: QueuedDeploymentStatusEnum.RUNNING })
+        { componentId, status: QueuedPipelineStatusEnum.RUNNING })
       .orderBy('queued_deployment.id', 'ASC')
       .getOne()
   }

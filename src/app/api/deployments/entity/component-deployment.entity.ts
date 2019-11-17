@@ -1,12 +1,11 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  PrimaryColumn,
-  CreateDateColumn
+  PrimaryColumn
 } from 'typeorm'
 import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'

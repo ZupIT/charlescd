@@ -1,30 +1,45 @@
 import { Injectable } from '@nestjs/common'
-import { CreateDeploymentDto, ReadDeploymentDto } from '../dto'
+import {
+  CreateDeploymentDto,
+  ReadDeploymentDto
+} from '../dto'
 import { DeploymentEntity } from '../entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedDeploymentsService } from './queued-deployments.service'
+import { PipelineQueuesService } from './pipeline-queues.service'
 
 @Injectable()
 export class DeploymentsService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly queuedDeploymentsService: QueuedDeploymentsService,
+    private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto, circleId: string): Promise<ReadDeploymentDto> {
-    this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
-    const deployment: DeploymentEntity =
-      await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
+    try {
+      this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
+      await this.verifyIfDeploymentExists(createDeploymentDto.deploymentId)
+      const deployment: DeploymentEntity =
+          await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
+      await this.pipelineQueuesService.queueDeploymentTasks(deployment)
+      const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
+      this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
+      return deploymentReadDto
+    } catch (error) {
+      return Promise.reject({ error })
+    }
+  }
 
-    await this.queuedDeploymentsService.queueDeploymentTasks(deployment)
-    const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
-    this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
-    return deploymentReadDto
+  private async verifyIfDeploymentExists(deploymentId: string): Promise<void> {
+    const deployment: DeploymentEntity =
+        await this.deploymentsRepository.findOne({ id: deploymentId })
+    if (deployment) {
+      throw new Error('Deployment already exists')
+    }
   }
 
   public async getDeployments(): Promise<ReadDeploymentDto[]> {

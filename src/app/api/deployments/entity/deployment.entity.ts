@@ -1,10 +1,17 @@
 import { ModuleDeploymentEntity } from './module-deployment.entity'
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn
+} from 'typeorm'
 import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 import { DeploymentStatusEnum } from '../enums'
-import * as uuidv4 from 'uuid/v4'
+import { ComponentDeploymentEntity } from './component-deployment.entity'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
@@ -42,37 +49,36 @@ export class DeploymentEntity extends BaseEntity {
 
   @Column({
     type: 'jsonb',
-    name: 'circles',
+    name: 'circle',
     transformer: {
-      from: circles => circles.map(
-        circle => plainToClass(CircleDeploymentEntity, circle)
-      ),
-      to: circles => circles
+      from: circle => plainToClass(CircleDeploymentEntity, circle),
+      to: circle => circle
     }
   })
-  public circles: CircleDeploymentEntity[]
+  public circle: CircleDeploymentEntity
 
   @CreateDateColumn({ name: 'created_at'})
   public createdAt: Date
 
   constructor(
+    deploymentId: string,
     valueFlowId: string,
     modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
     callbackUrl: string,
-    circles: CircleDeploymentEntity[],
+    circle: CircleDeploymentEntity,
     defaultCircle: boolean,
     circleId: string
   ) {
     super()
-    this.id = uuidv4()
+    this.id = deploymentId
     this.valueFlowId = valueFlowId
     this.modules = modules
     this.authorId = authorId
     this.description = description
     this.callbackUrl = callbackUrl
-    this.circles = circles
+    this.circle = circle
     this.defaultCircle = defaultCircle
     this.status = DeploymentStatusEnum.CREATED
     this.circleId = circleId
@@ -85,7 +91,7 @@ export class DeploymentEntity extends BaseEntity {
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circles.map(circle => circle.toReadDto()),
+      this.circle.toReadDto(),
       this.status,
       this.callbackUrl,
       this.defaultCircle,
@@ -99,5 +105,11 @@ export class DeploymentEntity extends BaseEntity {
 
   public hasFailed(): boolean {
     return this.status === DeploymentStatusEnum.FAILED
+  }
+
+  public getComponentDeployments(): ComponentDeploymentEntity[] {
+    return this.modules.reduce(
+      (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components], []
+    )
   }
 }

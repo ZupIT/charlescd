@@ -1,5 +1,8 @@
 import * as consul from 'consul'
-import { IConsulConnectionOptions, IConsulKV } from './interfaces'
+import {
+  IConsulConnectionOptions,
+  IConsulKV
+} from './interfaces'
 import { AppConstants } from '../../constants'
 
 export class ConsulService {

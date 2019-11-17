@@ -1,4 +1,7 @@
-import { EntityRepository, Repository } from 'typeorm'
+import {
+  EntityRepository,
+  Repository
+} from 'typeorm'
 import { ComponentDeploymentEntity } from '../entity'
 
 @EntityRepository(ComponentDeploymentEntity)

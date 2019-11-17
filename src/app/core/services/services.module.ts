@@ -1,29 +1,37 @@
 import { Module } from '@nestjs/common'
-import { DeploymentsStatusManagementService } from './deployments-status-management-service'
+import { StatusManagementService } from './deployments'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import {
-  ComponentDeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity
+    ComponentDeploymentEntity,
+    ComponentUndeploymentEntity,
+    DeploymentEntity,
+    ModuleDeploymentEntity,
+    ModuleUndeploymentEntity,
+    UndeploymentEntity
 } from '../../api/deployments/entity'
 import {
-  ComponentDeploymentsRepository
+    ComponentDeploymentsRepository,
+    ComponentUndeploymentsRepository
 } from '../../api/deployments/repository'
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      DeploymentEntity,
-      ModuleDeploymentEntity,
-      ComponentDeploymentEntity,
-      ComponentDeploymentsRepository
-    ])
-  ],
-  providers: [
-    DeploymentsStatusManagementService
-  ],
-  exports: [
-    DeploymentsStatusManagementService
-  ]
+    imports: [
+        TypeOrmModule.forFeature([
+            ComponentDeploymentEntity,
+            ComponentDeploymentsRepository,
+            DeploymentEntity,
+            ModuleDeploymentEntity,
+            ComponentUndeploymentEntity,
+            ComponentUndeploymentsRepository,
+            ModuleUndeploymentEntity,
+            UndeploymentEntity
+        ])
+    ],
+    providers: [
+        StatusManagementService
+    ],
+    exports: [
+        StatusManagementService
+    ]
 })
 export class ServicesModule {}

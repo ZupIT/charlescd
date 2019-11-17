@@ -1,4 +1,10 @@
-import { BaseEntity, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn
+} from 'typeorm'
 import { ReadModuleDto } from '../dto'
 import { ComponentEntity } from '../../components/entity'
 

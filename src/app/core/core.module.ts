@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { IntegrationsModule } from './integrations/integrations.module'
-import { ServicesModule } from './services/services.module'
+import { LogsModule } from './logs/logs.module'
 
 @Module({
   imports: [
     IntegrationsModule,
-    ServicesModule
+    LogsModule
   ]
 })
 export class CoreModule {}
