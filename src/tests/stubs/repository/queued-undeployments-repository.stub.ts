@@ -5,4 +5,8 @@ export class QueuedUndeploymentsRepositoryStub {
     public async findOne(): Promise<QueuedUndeploymentEntity> {
         return Promise.resolve({} as QueuedUndeploymentEntity)
     }
+
+    public async save(): Promise<QueuedUndeploymentEntity> {
+        return Promise.resolve({} as QueuedUndeploymentEntity)
+    }
 }

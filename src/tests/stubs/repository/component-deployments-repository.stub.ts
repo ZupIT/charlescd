@@ -9,4 +9,8 @@ export class ComponentDeploymentsRepositoryStub {
     public async update(): Promise<void> {
         return Promise.resolve()
     }
+
+    public async findOne(): Promise<ComponentDeploymentEntity> {
+        return Promise.resolve({} as ComponentDeploymentEntity)
+    }
 }
