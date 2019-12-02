@@ -1,5 +1,6 @@
 import { IPipelineCircle, IPipelineVersion } from '../../../../api/components/interfaces'
 import { ISpinnakerPipelineUri } from './spinnaker-pipeline-uri.interface'
+import { ISpinnakerGithubConfig } from './spinnaker-pipeline-github-account.interface'
 
 export interface ISpinnakerPipelineConfiguration {
 
@@ -28,4 +29,8 @@ export interface ISpinnakerPipelineConfiguration {
   circles: IPipelineCircle[]
 
   circleId: string
+
+  githubAccount: string
+
+  githubConfig: ISpinnakerGithubConfig
 }
