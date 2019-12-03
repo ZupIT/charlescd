@@ -91,11 +91,9 @@ export class SpinnakerService {
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ) {
 
-    const spinnakerBuilder = new TotalPipeline()
+    const spinnakerBuilder = new TotalPipeline(spinnakerPipelineConfiguration)
 
-    return spinnakerBuilder.buildPipeline(
-      spinnakerPipelineConfiguration
-    )
+    return spinnakerBuilder.buildPipeline()
   }
 
   private async waitForPipelineCreation(): Promise<void> {
