@@ -34,7 +34,6 @@ import { ModuleEntity } from '../../../app/api/modules/entity'
 describe('PipelinesService', () => {
 
     let pipelinesService: PipelinesService
-    let spinnakerService: SpinnakerService
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let componentsRepository: Repository<ComponentEntity>
     let modulesRepository: Repository<ModuleEntity>
@@ -67,7 +66,6 @@ describe('PipelinesService', () => {
         }).compile()
 
         pipelinesService = module.get<PipelinesService>(PipelinesService)
-        spinnakerService = module.get<SpinnakerService>(SpinnakerService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         componentsRepository = module.get<Repository<ComponentEntity>>('ComponentEntityRepository')
         modulesRepository = module.get<Repository<ModuleEntity>>('ModuleEntityRepository')
