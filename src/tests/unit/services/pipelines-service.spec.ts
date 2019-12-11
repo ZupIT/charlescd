@@ -223,19 +223,4 @@ describe('PipelinesService', () => {
         })
     })
 
-    describe('trigger spinnaker service', () => {
-      it('should correctly call spinnaker service', async () => {
-
-          spinnakerService.createDeployment(
-            pipelineOptionsWithCircle,
-            deploymentConfiguration,
-            componentDeployment.id,
-            '1',
-            'dummy-circle',
-            'dummy-callback'
-          )
-
-          expect(true).toBe(true)
-      })
-    })
 })
