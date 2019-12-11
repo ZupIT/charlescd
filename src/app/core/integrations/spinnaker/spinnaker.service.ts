@@ -100,7 +100,7 @@ export class SpinnakerService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve()
-      }, 10000)
+      }, 30000)
     })
   }
 
