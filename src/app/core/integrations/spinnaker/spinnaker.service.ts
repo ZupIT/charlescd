@@ -5,7 +5,7 @@ import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { DeploymentStatusEnum } from '../../../api/deployments/enums'
 import { ConsoleLoggerService } from '../../logs/console'
-import TotalPipeline from 'typescript-lib-spinnaker'
+import TotalPipeline from 'darwin-spinnaker-connector'
 import { IConsulKV } from '../consul/interfaces'
 import {StatusManagementService} from '../../services/deployments'
 
@@ -77,6 +77,12 @@ export class SpinnakerService {
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
+      githubAccount: this.consulConfiguration.spinnakerGithubAccount,
+      githubConfig: {
+        helmTemplateUrl: this.consulConfiguration.helmTemplateUrl,
+        helmPrefixUrl: this.consulConfiguration.helmPrefixUrl,
+        helmRepoBranch: this.consulConfiguration.helmRepoBranch
+      },
       circleId
     }
   }
@@ -85,18 +91,16 @@ export class SpinnakerService {
     spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ) {
 
-    const spinnakerBuilder = new TotalPipeline()
+    const spinnakerBuilder = new TotalPipeline(spinnakerPipelineConfiguration)
 
-    return spinnakerBuilder.buildPipeline(
-      spinnakerPipelineConfiguration
-    )
+    return spinnakerBuilder.buildPipeline()
   }
 
   private async waitForPipelineCreation(): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve()
-      }, 10000)
+      }, 30000)
     })
   }
 

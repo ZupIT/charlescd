@@ -167,6 +167,22 @@ describe('PipelinesService', () => {
             expect(component.pipelineOptions.pipelineVersions).toEqual([])
             expect(component.pipelineOptions.pipelineUnusedVersions).toEqual([ { versionUrl: 'dummy-url', version: 'dummy-img-tag' } ])
         })
+
+        it('should incorrectly remove circle and version from pipeline', async () => {
+            const responseError = new Error('message error')
+
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+              .mockImplementation(() => Promise.reject(responseError))
+
+            pipelinesService.triggerUndeployment(
+              'dummy-component-deployment-id',
+              123
+            )
+              .then(
+                () => fail(),
+                err => expect(err.error.error).toEqual(responseError)
+              )
+        })
     })
 
     describe('triggerDeployment', () => {
@@ -194,5 +210,23 @@ describe('PipelinesService', () => {
             expect(component.pipelineOptions.pipelineVersions).toEqual([ { versionUrl: 'dummy-img-url', version: 'dummy-img-tag' } ])
             expect(component.pipelineOptions.pipelineUnusedVersions).toEqual([])
         })
+
+        it('should incorrectly add circle and version to pipeline', async () => {
+            const responseError = new Error('message error')
+
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+              .mockImplementation(() => Promise.reject(responseError))
+
+            pipelinesService.triggerDeployment(
+              'dummy-component-deployment-id',
+              false,
+              123,
+            )
+              .then(
+                () => fail(),
+                err => expect(err.error.error).toEqual(responseError)
+              )
+        })
     })
+
 })

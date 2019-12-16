@@ -17,4 +17,13 @@ export interface IConsulKV {
   darwinUndeploymentCallbackUrl?: string
 
   spinnakerUrl?: string
+
+  spinnakerGithubAccount?: string
+
+  helmTemplateUrl?: string
+
+  helmPrefixUrl?: string
+
+  helmRepoBranch?: string
+
 }
