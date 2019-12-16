@@ -16,14 +16,14 @@ export interface IConsulKV {
 
   darwinUndeploymentCallbackUrl?: string
 
-  spinnakerUrl?: string,
+  spinnakerUrl?: string
 
-  spinnakerGithubAccount?: string,
+  spinnakerGithubAccount?: string
 
-  helmTemplateUrl?: string,
+  helmTemplateUrl?: string
 
-  helmPrefixUrl?: string,
+  helmPrefixUrl?: string
 
-  helmRepoBranch?: string,
+  helmRepoBranch?: string
 
 }
