@@ -30,7 +30,6 @@ import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
 import { ModuleEntity } from '../../../app/api/modules/entity'
-import {throwError} from "rxjs";
 
 describe('PipelinesService', () => {
 
