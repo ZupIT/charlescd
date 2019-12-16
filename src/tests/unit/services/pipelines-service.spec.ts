@@ -30,6 +30,7 @@ import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
 import { ModuleEntity } from '../../../app/api/modules/entity'
+import {throwError} from "rxjs";
 
 describe('PipelinesService', () => {
 
@@ -171,15 +172,19 @@ describe('PipelinesService', () => {
         })
 
         it('should incorrectly remove circle and version from pipeline', async () => {
+            const responseError = new Error('message error')
 
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-              .mockImplementation(() => Promise.reject())
+              .mockImplementation(() => Promise.reject(responseError))
 
-            expect(async () =>
-              await pipelinesService.triggerUndeployment(
+            pipelinesService.triggerUndeployment(
               'dummy-component-deployment-id',
               123
-            )).not.toThrow()
+            )
+              .then(
+                () => fail(),
+                err => expect(err.error.error).toEqual(responseError)
+              )
         })
     })
 
@@ -210,16 +215,20 @@ describe('PipelinesService', () => {
         })
 
         it('should incorrectly add circle and version to pipeline', async () => {
+            const responseError = new Error('message error')
 
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-              .mockImplementation(() => Promise.reject())
+              .mockImplementation(() => Promise.reject(responseError))
 
-            expect(async () =>
-              await pipelinesService.triggerDeployment(
-                'dummy-component-deployment-id',
-                false,
-                123
-              )).not.toThrow()
+            pipelinesService.triggerDeployment(
+              'dummy-component-deployment-id',
+              false,
+              123,
+            )
+              .then(
+                () => fail(),
+                err => expect(err.error.error).toEqual(responseError)
+              )
         })
     })
 
