@@ -172,16 +172,20 @@ describe('PipelinesService', () => {
             const responseError = new Error('message error')
 
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-              .mockImplementation(() => Promise.reject(responseError))
+                .mockImplementation(() => Promise.reject(responseError))
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(component))
+            jest.spyOn(componentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(component))
+            jest.spyOn(deploymentConfigurationService, 'getConfiguration')
+                .mockImplementation(() => Promise.resolve(deploymentConfiguration))
 
-            pipelinesService.triggerUndeployment(
+            component.pipelineOptions = pipelineOptionsWithCircle
+
+            await expect(pipelinesService.triggerUndeployment(
               'dummy-component-deployment-id',
               123
-            )
-              .then(
-                () => fail(),
-                err => expect(err.error.error).toEqual(responseError)
-              )
+            )).rejects.toBeTruthy()
         })
     })
 
@@ -215,17 +219,19 @@ describe('PipelinesService', () => {
             const responseError = new Error('message error')
 
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-              .mockImplementation(() => Promise.reject(responseError))
+                .mockImplementation(() => Promise.reject(responseError))
+            jest.spyOn(modulesRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(moduleEntity))
+            jest.spyOn(modulesRepository, 'save')
+                .mockImplementation(() => Promise.resolve(moduleEntity))
 
-            pipelinesService.triggerDeployment(
-              'dummy-component-deployment-id',
-              false,
-              123,
-            )
-              .then(
-                () => fail(),
-                err => expect(err.error.error).toEqual(responseError)
-              )
+            component.pipelineOptions = pipelineOptionsWithoutCircle
+
+            await expect(pipelinesService.triggerDeployment(
+                'dummy-component-deployment-id',
+                false,
+                123,
+            )).rejects.toBeTruthy()
         })
     })
 
