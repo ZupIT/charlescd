@@ -16,7 +16,7 @@ Not obligatory, but suggest a fix/reason for the bug.
 3.
 4.
 
-##Your Environment
+## Your Environment
 - Version used:
 - Browser Name and version:
 - Operating System and version (desktop or mobile):
