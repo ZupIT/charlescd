@@ -192,7 +192,7 @@ export class SpinnakerService {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
 
     await this.httpService.post(
-      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}/tasks`,
+      `${this.consulConfiguration.spinnakerUrl}/tasks`,
       createApplicationObject,
       {
         headers: {

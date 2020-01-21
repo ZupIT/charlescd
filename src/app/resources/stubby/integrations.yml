@@ -44,7 +44,7 @@
 
 - request:
     method: POST
-    url: ^/spinnaker/applications/.*/tasks
+    url: ^/spinnaker/tasks
 
   response:
     status: 200
