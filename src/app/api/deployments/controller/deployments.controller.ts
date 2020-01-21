@@ -4,16 +4,18 @@ import {
   Get,
   Headers,
   Param,
-  Post
+  Post,
+  UsePipes
 } from '@nestjs/common'
 import {
   CreateDeploymentDto,
+  CreateUndeploymentDto,
   ReadDeploymentDto,
   ReadUndeploymentDto
 } from '../dto'
 import { DeploymentsService } from '../services'
-import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
 import { CreateUndeploymentRequestUsecase } from '../use-cases'
+import { CreateDeploymentValidationPipe } from '../pipes'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -24,6 +26,7 @@ export class DeploymentsController {
   ) {}
 
   @Post()
+  @UsePipes(new CreateDeploymentValidationPipe())
   public async createDeployment(
     @Body() createDeploymentDto: CreateDeploymentDto,
     @Headers('x-circle-id') circleId: string

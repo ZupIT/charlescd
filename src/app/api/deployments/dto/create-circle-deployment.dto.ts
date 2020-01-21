@@ -1,4 +1,4 @@
-import { CircleDeploymentEntity } from '../entity/circle-deployment.entity'
+import { CircleDeploymentEntity } from '../entity'
 
 export class CreateCircleDeploymentDto {
 

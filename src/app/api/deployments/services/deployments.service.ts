@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable
+} from '@nestjs/common'
 import {
   CreateDeploymentDto,
   ReadDeploymentDto
@@ -30,7 +33,7 @@ export class DeploymentsService {
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -38,7 +41,7 @@ export class DeploymentsService {
     const deployment: DeploymentEntity =
         await this.deploymentsRepository.findOne({ id: deploymentId })
     if (deployment) {
-      throw new Error('Deployment already exists')
+      throw new BadRequestException('Deployment already exists')
     }
   }
 
