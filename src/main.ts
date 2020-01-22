@@ -1,6 +1,12 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
-import { DynamicModule, INestApplication, ValidationPipe } from '@nestjs/common'
+import {
+  DynamicModule,
+  INestApplication,
+  UnprocessableEntityException,
+  ValidationError,
+  ValidationPipe
+} from '@nestjs/common'
 import { AppConstants } from './app/core/constants'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
@@ -22,7 +28,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true
+      transform: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        return new UnprocessableEntityException(errors.map(error => error.constraints))
+      }
     })
   )
 
