@@ -4,8 +4,7 @@ import {
   Get,
   Headers,
   Param,
-  Post,
-  UsePipes
+  Post
 } from '@nestjs/common'
 import {
   CreateDeploymentDto,
