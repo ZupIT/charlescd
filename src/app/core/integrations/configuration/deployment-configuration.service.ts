@@ -7,6 +7,7 @@ import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MooveService } from '../moove'
 import { ComponentDeploymentsRepository } from '../../../api/deployments/repository'
+import { AppConstants } from '../../constants'
 
 @Injectable()
 export class DeploymentConfigurationService {
@@ -37,7 +38,7 @@ export class DeploymentConfigurationService {
     return {
       account: k8sConfiguration.account,
       pipelineName: componentDeploymentEntity.componentId,
-      applicationName: componentDeploymentEntity.moduleDeployment.deployment.valueFlowId,
+      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.valueFlowId}`,
       appName: componentDeploymentEntity.componentName,
       appNamespace: k8sConfiguration.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,
