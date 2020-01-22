@@ -8,7 +8,7 @@ export class CreateDeploymentDto {
 
   public readonly deploymentId: string
 
-  @Matches(/^[a-zA-Z][a-zA-Z0-9-]*/)
+  @Matches(/^[a-zA-Z0-9\-]*$/)
   @Length(1, 59)
   public readonly valueFlowId: string
 
