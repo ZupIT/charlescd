@@ -1,32 +1,36 @@
 import { Test } from '@nestjs/testing'
-import { DeploymentConfigurationService } from '../../../../src/app/core/integrations/configuration'
-import { MooveService } from '../../../../src/app/core/integrations/moove'
-import { HttpService, Module } from '@nestjs/common'
-import { ConsoleLoggerService } from '../../../../src/app/core/logs/console'
-import { ConsulConfigurationStub } from '../../../../src/tests/stubs/configurations'
-import { ComponentDeploymentsRepositoryStub } from '../../../../src/tests/stubs/repository'
-import { ComponentDeploymentsRepository } from '../../../../src/app/api/deployments/repository'
+import { DeploymentConfigurationService } from '../../../app/core/integrations/configuration'
+import { MooveService } from '../../../app/core/integrations/moove'
+import { ComponentDeploymentsRepositoryStub } from '../../stubs/repository'
+import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
-  DeploymentEntity,
-  ModuleDeploymentEntity,
   ComponentDeploymentEntity,
-  CircleDeploymentEntity
-} from '../../../../src/app/api/deployments/entity'
+  DeploymentEntity,
+  ModuleDeploymentEntity
+} from '../../../app/api/deployments/entity'
+import { MooveServiceStub } from '../../stubs/services'
 
 describe('Deployment configuration specs', () => {
   let componentDeploymentsRepository: ComponentDeploymentsRepository
   let deployment: DeploymentEntity
   let moduleDeploymentEntity: ModuleDeploymentEntity
   let componentsDeploymentEntity: ComponentDeploymentEntity
-  let circleEntity: CircleDeploymentEntity
+  let mooveService: MooveService
+  let deploymentConfigurationService: DeploymentConfigurationService
 
   beforeEach(async () => {
+
     const module = await Test.createTestingModule({
       providers: [
+        DeploymentConfigurationService,
         { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+        { provide: MooveService, useClass: MooveServiceStub }
       ]
     }).compile()
+
+    deploymentConfigurationService = module.get<DeploymentConfigurationService>(DeploymentConfigurationService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+    mooveService = module.get<MooveService>(MooveService)
 
     componentsDeploymentEntity = new ComponentDeploymentEntity(
       'component-id',
@@ -46,22 +50,16 @@ describe('Deployment configuration specs', () => {
       'author-id',
       'some description',
       'http://callback.url',
-      circleEntity,
+      null,
       true,
       'circle-id'
     )
     moduleDeploymentEntity.deployment = deployment
     componentsDeploymentEntity.moduleDeployment = moduleDeploymentEntity
-
   })
-  it('should correctly prefix the flow id', async () => {
-    const httpService: HttpService = new HttpService()
-    const consoleLoggerService: ConsoleLoggerService = new ConsoleLoggerService()
-    const mooveService: MooveService = new MooveService(httpService, consoleLoggerService, ConsulConfigurationStub)
 
-    const deploymentConfigurationService: DeploymentConfigurationService = new DeploymentConfigurationService(
-      mooveService, componentDeploymentsRepository
-    )
+  it('should correctly prefix the flow id', async () => {
+    const expectedApplicationName: string = 'app-value-flow-uid'
 
     jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
       .mockImplementation(() => Promise.resolve(componentsDeploymentEntity))
@@ -74,7 +72,7 @@ describe('Deployment configuration specs', () => {
         appName: 'component name',
         appNamespace: 'some-namespace',
         appPort: 8787,
-        applicationName: 'app-value-flow-uid',
+        applicationName: expectedApplicationName,
         healthCheckPath: 'http://health.check',
         pipelineName: 'component-id', uri: { uriName: 'context-path' }
       }
