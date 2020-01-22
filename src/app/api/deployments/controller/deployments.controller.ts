@@ -15,7 +15,6 @@ import {
 } from '../dto'
 import { DeploymentsService } from '../services'
 import { CreateUndeploymentRequestUsecase } from '../use-cases'
-import { CreateDeploymentValidationPipe } from '../pipes'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -26,7 +25,6 @@ export class DeploymentsController {
   ) {}
 
   @Post()
-  @UsePipes(new CreateDeploymentValidationPipe())
   public async createDeployment(
     @Body() createDeploymentDto: CreateDeploymentDto,
     @Headers('x-circle-id') circleId: string

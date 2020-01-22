@@ -45,14 +45,156 @@
 - request:
     method: POST
     url: ^/spinnaker/tasks
-
+    post: >
+      {
+          "deploymentId": "valid-deployment-id",
+          "valueFlowId": "valid-id",
+          "modules": [
+              {
+                  "moduleId": "moduleid",
+                  "k8sConfigurationId": "k8sconfigid",
+                  "components": [
+                      {
+                          "componentId": "componentId",
+                          "componentName": "componentname",
+                          "buildImageUrl": "imageurl.com",
+                          "buildImageTag": "tag1",
+                          "contextPath": "contextpath",
+                          "healthCheck": "healthCheck",
+                          "port": 8080
+                      }
+                  ]
+              }
+          ],
+          "authorId": "componentid",
+          "description": "",
+          "callbackUrl": "callbackurl.zup.com",
+          "circle": {
+              "headerValue": "abcde"
+          },
+          "defaultCircle": false
+      }
   response:
     status: 200
     headers:
       content-type: application/json
     body: >
-      {}
+      {
+          "id": "valid-deployment-id",
+          "valueFlowId": "valid-id",
+          "modulesDeployments": [
+              {
+                  "id": "18e2e9e7-b3ff-45c2-ae7d-c2903696ce4f",
+                  "moduleId": "moduleid",
+                  "k8sConfigurationId": "k8sconfigid",
+                  "componentsDeployments": [
+                      {
+                          "id": "2ba6c29b-29c8-479c-9aa3-e3da71464df9",
+                          "componentId": "componentId",
+                          "componentName": "componentname",
+                          "buildImageUrl": "imageurl.com",
+                          "buildImageTag": "tag1",
+                          "contextPath": "contextpath",
+                          "healthCheck": "healthCheck",
+                          "port": 8080,
+                          "status": "CREATED",
+                          "createdAt": "2020-01-22T03:32:55.709Z"
+                      }
+                  ],
+                  "status": "CREATED",
+                  "createdAt": "2020-01-22T03:32:55.709Z"
+              }
+          ],
+          "authorId": "componentid",
+          "description": "",
+          "circle": {
+              "headerValue": "abcde"
+          },
+          "status": "CREATED",
+          "callbackUrl": "callbackurl.zup.com",
+          "defaultCircle": false,
+          "createdAt": "2020-01-22T03:32:55.709Z"
+      }
 
+- request:
+    method: POST
+    url: ^/spinnaker/tasks
+    post: >
+      {
+          "deploymentId": "invalid-deployment-id",
+          "valueFlowId": "123-invalid-id",
+          "modules": [
+              {
+                  "moduleId": "moduleid",
+                  "k8sConfigurationId": "k8sconfigid",
+                  "components": [
+                      {
+                          "componentId": "componentId",
+                          "componentName": "componentname",
+                          "buildImageUrl": "imageurl.com",
+                          "buildImageTag": "tag1",
+                          "contextPath": "contextpath",
+                          "healthCheck": "healthCheck",
+                          "port": 8080
+                      }
+                  ]
+              }
+          ],
+          "authorId": "componentid",
+          "description": "",
+          "callbackUrl": "callbackurl.zup.com",
+          "circle": {
+              "headerValue": "abcde"
+          },
+          "defaultCircle": false
+      }
+  response:
+    status: 422
+    headers:
+      content-type: application/json
+    body: >
+      {
+          "statusCode": 400,
+          "error": "Bad Request",
+          "message": [
+              {
+                  "target": {
+                      "deploymentId": "invalid-deployment-id",
+                      "valueFlowId": "123-invalid-id",
+                      "modules": [
+                          {
+                              "moduleId": "moduleid",
+                              "k8sConfigurationId": "k8sconfigid",
+                              "components": [
+                                  {
+                                      "componentId": "componentId",
+                                      "componentName": "componentname",
+                                      "buildImageUrl": "imageurl.com",
+                                      "buildImageTag": "tag1",
+                                      "contextPath": "contextpath",
+                                      "healthCheck": "healthCheck",
+                                      "port": 8080
+                                  }
+                              ]
+                          }
+                      ],
+                      "authorId": "componentid",
+                      "description": "",
+                      "callbackUrl": "callbackurl.zup.com",
+                      "circle": {
+                          "headerValue": "abcde"
+                      },
+                      "defaultCircle": false
+                  },
+                  "value": "123-invalid-id",
+                  "property": "valueFlowId",
+                  "children": [],
+                  "constraints": {
+                      "matches": "valueFlowId must match /^[a-zA-Z][a-zA-Z0-9-]*/ regular expression"
+                  }
+              }
+          ]
+      }
 - request:
     method: GET
     url: ^/spinnaker/applications/.*/pipelineConfigs/.*
