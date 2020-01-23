@@ -1,3 +1,10 @@
-export class HttpServiceStub {
+import { Observable , of} from 'rxjs'
 
+export class HttpServiceStub {
+  public post() {
+    return of({})
+  }
+  public get() {
+    return of({})
+  }
 }
