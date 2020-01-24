@@ -47,7 +47,7 @@ describe('Spinnaker Service', () => {
 
     const result: AxiosResponse = {
       data: {
-        id: 'treta',
+        id: 'some-pipeline-id',
       },
       status: 200,
       statusText: 'OK',
