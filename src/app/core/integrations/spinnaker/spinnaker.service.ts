@@ -96,7 +96,7 @@ export class SpinnakerService {
     return spinnakerBuilder.buildPipeline()
   }
 
-  async waitForPipelineCreation(): Promise<void> {
+  public async waitForPipelineCreation(): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve()
