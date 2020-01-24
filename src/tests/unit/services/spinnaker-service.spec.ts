@@ -6,6 +6,7 @@ import { ConsulConfigurationStub } from '../../stubs/configurations'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { AppConstants } from '../../../app/core/constants'
+import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 
 describe('Spinnaker Service', () => {
@@ -27,7 +28,7 @@ describe('Spinnaker Service', () => {
     httpService = module.get<HttpService>(HttpService)
   })
 
-  it('should call spinnaker api with application name and module name', () => {
+  it('should call spinnaker api with application name and module name', async () => {
     const pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
     const deploymentConfiguration = {
       account: 'some-account',
@@ -43,12 +44,23 @@ describe('Spinnaker Service', () => {
     const deploymentId = 'some-deployment-id'
     const circleId = 'some-circle-id'
     const callbackUrl = 'some-callback-url'
-    spinnakerService.createDeployment(pipelineOptions, deploymentConfiguration, componentId, deploymentId, circleId, callbackUrl)
-    const httpSpy = jest.spyOn(httpService, 'post').mockImplementation((url, data, config) => {
-      return {
 
-      }
-    })
-    expect(httpSpy).toHaveBeenCalledWith({ some: 'args' })
-})
+    const result: AxiosResponse = {
+      data: {
+        id: 'treta',
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {},
+    }
+
+    jest.spyOn(httpService, 'get').mockImplementation(() => of(result))
+    jest.spyOn(spinnakerService, 'waitForPipelineCreation').mockImplementation(() => Promise.resolve())
+    const httpSpy = jest.spyOn(httpService, 'post').mockImplementation(() => of(result))
+    await spinnakerService.createDeployment(pipelineOptions, deploymentConfiguration, componentId, deploymentId, circleId, callbackUrl)
+
+    expect(httpSpy).nthCalledWith(2,
+      'spinnakerurl.com/pipelines/some-application-name/some-pipeline-name', {}, { headers: { 'Content-Type': 'application/json' } })
+  })
 })
