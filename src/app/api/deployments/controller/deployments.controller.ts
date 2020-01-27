@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common'
 import {
   CreateDeploymentDto,
+  CreateUndeploymentDto,
   ReadDeploymentDto,
   ReadUndeploymentDto
 } from '../dto'
 import { DeploymentsService } from '../services'
-import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
 import { CreateUndeploymentRequestUsecase } from '../use-cases'
 
 @Controller('deployments')
