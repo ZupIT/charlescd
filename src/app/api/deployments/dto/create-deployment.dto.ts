@@ -2,12 +2,14 @@ import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
 import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
 import { DeploymentEntity } from '../entity'
 import { Type } from 'class-transformer'
-import { ValidateNested } from 'class-validator'
+import { ValidateNested, Matches, Length } from 'class-validator'
 
 export class CreateDeploymentDto {
 
   public readonly deploymentId: string
 
+  @Matches(/^[a-zA-Z0-9\-]*$/)
+  @Length(1, 59)
   public readonly valueFlowId: string
 
   @ValidateNested({ each: true })
