@@ -52,6 +52,8 @@ export class PipelineQueuesService {
     finishedComponentDeploymentId: string
   ): Promise<void> {
 
+    let queuedDeployment: QueuedDeploymentEntity
+
     try {
       const finishedComponentDeployment: ComponentDeploymentEntity =
           await this.componentDeploymentsRepository.findOne({id: finishedComponentDeploymentId})
@@ -62,21 +64,21 @@ export class PipelineQueuesService {
 
       if (orderedDeployments.length) {
 
-        const nextQueuedDeployment: QueuedDeploymentEntity = orderedDeployments[0]
+        queuedDeployment = orderedDeployments[0]
 
         const componentDeployment: ComponentDeploymentEntity =
-            await this.componentDeploymentsRepository.getOneWithRelations(nextQueuedDeployment.componentDeploymentId)
+            await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
 
         await this.updateRunningQueuedDeployment(
             componentDeployment.componentId,
             componentDeployment.id,
             componentDeployment.moduleDeployment.deployment.defaultCircle,
-            nextQueuedDeployment.id
+            queuedDeployment.id
         )
       }
     } catch (error) {
-      // setQueuedDeploymentStatusAsFinished(nextQueuedDeployment)
-      // triggerNextQueuedDeployment
+      this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
+      this.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
       throw error
     }
   }
