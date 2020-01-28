@@ -43,6 +43,7 @@ export class QueuedDeploymentEntity extends BaseEntity {
     this.componentId = componentId
     this.componentDeploymentId = componentDeploymentId
     this.status = status
+    this.type = QueuedPipelineTypesEnum.QueuedDeploymentEntity
   }
 
   public toReadDto(): ReadQueuedDeploymentDto {

@@ -107,32 +107,35 @@ describe('Deployments service specs', () => {
         )
     })
 
-    it('should correctly handle deployments that already exist', async () => {
-        const saveSpy = jest.spyOn(deploymentsRepository, 'save')
-        jest.spyOn(deploymentsRepository, 'findOne')
-            .mockImplementation(() => Promise.resolve(deployment))
+    describe('createDeployment', () => {
 
-        await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
-            .rejects.toThrowError(BadRequestException)
+        it('should correctly handle deployments that already exist', async () => {
+            const saveSpy = jest.spyOn(deploymentsRepository, 'save')
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
 
-        expect(saveSpy).toHaveBeenCalledTimes(0)
-    })
+            await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
+                .rejects.toThrowError(BadRequestException)
 
-    it('should correctly set deployment status as failed when exception occurred', async () => {
-        jest.spyOn(deploymentsRepository, 'findOne')
-            .mockImplementation(() => Promise.resolve(undefined))
-        jest.spyOn(deploymentsRepository, 'save')
-            .mockImplementation(() => Promise.resolve(deployment))
-        jest.spyOn(pipelineQueuesService, 'queueDeploymentTasks')
-            .mockImplementation(() => { throw new Error() })
-        const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateDeploymentStatus')
-        const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+            expect(saveSpy).toHaveBeenCalledTimes(0)
+        })
 
-        await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
-            .rejects.toThrowError(Error)
-        expect(statusSpy)
-            .toHaveBeenCalledWith(deployment, DeploymentStatusEnum.FAILED)
-        expect(applicationSpy)
-            .toHaveBeenCalledWith(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+        it('should correctly set deployment status as failed when exception occurred', async () => {
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(undefined))
+            jest.spyOn(deploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(pipelineQueuesService, 'queueDeploymentTasks')
+                .mockImplementation(() => { throw new Error() })
+            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateDeploymentStatus')
+            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
+            await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
+                .rejects.toThrowError(Error)
+            expect(statusSpy)
+                .toHaveBeenCalledWith(deployment, DeploymentStatusEnum.FAILED)
+            expect(applicationSpy)
+                .toHaveBeenCalledWith(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+        })
     })
 })
