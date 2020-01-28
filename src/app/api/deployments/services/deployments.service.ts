@@ -13,7 +13,6 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 import { PipelineQueuesService } from './pipeline-queues.service'
 import { NotificationStatusEnum } from '../../notifications/enums'
 import { DeploymentStatusEnum } from '../enums'
-import { DeploymentsStatusManagementService } from '../../../../../dist/app/core/services/deployments-status-management-service'
 import { MooveService } from '../../../core/integrations/moove'
 import { StatusManagementService } from '../../../core/services/deployments'
 
