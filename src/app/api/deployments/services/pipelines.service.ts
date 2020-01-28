@@ -56,7 +56,7 @@ export class PipelinesService {
       await this.processUndeploymentPipeline(componentDeploymentId)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -67,7 +67,7 @@ export class PipelinesService {
       await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -140,14 +140,8 @@ export class PipelinesService {
       pipelineCallbackUrl: string
   ): Promise<void> {
 
-    try {
-      const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
-      await this.deployComponentPipeline(componentDeploymentEntity, deploymentId, pipelineCallbackUrl)
-    } catch (error) {
-      const { moduleDeployment: { deployment } } = componentDeploymentEntity
-      await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      throw error
-    }
+    const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
+    await this.deployComponentPipeline(componentDeploymentEntity, deploymentId, pipelineCallbackUrl)
   }
 
   private async triggerPipelineDeployment(

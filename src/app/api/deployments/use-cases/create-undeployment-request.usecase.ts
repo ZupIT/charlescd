@@ -40,7 +40,9 @@ export class CreateUndeploymentRequestUsecase {
       await this.scheduleUndeploymentComponents(undeployment)
       return undeployment.toReadDto()
     } catch (error) {
-      return Promise.reject({ error })
+      // setUndeploymentStatusAsFailed
+      // notifyApplication
+      throw error
     }
   }
 
@@ -56,7 +58,7 @@ export class CreateUndeploymentRequestUsecase {
       })
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment))
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -70,7 +72,7 @@ export class CreateUndeploymentRequestUsecase {
           )
       )
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -84,7 +86,7 @@ export class CreateUndeploymentRequestUsecase {
           await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
       await this.createUndeployment(componentUndeployment, status)
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -103,7 +105,7 @@ export class CreateUndeploymentRequestUsecase {
         await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedUndeploymentId)
       }
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 }

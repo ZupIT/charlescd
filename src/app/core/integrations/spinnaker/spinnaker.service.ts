@@ -162,6 +162,8 @@ export class SpinnakerService {
     this.consoleLoggerService.error(`ERROR:DEPLOY_SPINNAKER_PIPELINE ${deploymentId}`)
     await this.deploymentsStatusManagementService
       .deepUpdateDeploymentStatusByDeploymentId(deploymentId, DeploymentStatusEnum.FAILED)
+    // notifyApplication
+    // triggerNextComponentPipeline
   }
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {
