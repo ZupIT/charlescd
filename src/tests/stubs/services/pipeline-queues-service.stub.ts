@@ -22,4 +22,8 @@ export class PipelineQueuesServiceStub {
     public async triggerNextComponentPipeline(): Promise<void> {
         return Promise.resolve()
     }
+
+    public async queueDeploymentTasks(): Promise<void> {
+        return Promise.resolve()
+    }
 }
