@@ -106,7 +106,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
 
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
-            'dummy-valueflow-id',
+            'dummy-application-name',
             moduleDeployments,
             'dummy-author-id',
             'dummy-description',
