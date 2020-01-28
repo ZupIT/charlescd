@@ -28,6 +28,26 @@ export class CreateDeploymentDto {
   @Type(() => CreateCircleDeploymentDto)
   public readonly circle: CreateCircleDeploymentDto
 
+  constructor(
+      deploymentId: string,
+      valueFlowId: string,
+      modules: CreateModuleDeploymentDto[],
+      authorId: string,
+      description: string,
+      callbackUrl: string,
+      defaultCircle: boolean,
+      circle: CreateCircleDeploymentDto
+  ) {
+    this.deploymentId = deploymentId
+    this.valueFlowId = valueFlowId
+    this.modules = modules
+    this.authorId = authorId
+    this.description = description
+    this.callbackUrl = callbackUrl
+    this.defaultCircle = defaultCircle
+    this.circle = circle
+  }
+
   public toEntity(circleId: string): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
