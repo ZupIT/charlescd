@@ -33,6 +33,8 @@ export class DeploymentsService {
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
     } catch (error) {
+      // await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+      // notifyApplication
       throw error
     }
   }

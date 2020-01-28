@@ -52,13 +52,33 @@ export class PipelineQueuesService {
     finishedComponentDeploymentId: string
   ): Promise<void> {
 
-    const finishedComponentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.findOne({ id : finishedComponentDeploymentId })
-    const { componentId: finishedComponentId } = finishedComponentDeployment
+    try {
+      const finishedComponentDeployment: ComponentDeploymentEntity =
+          await this.componentDeploymentsRepository.findOne({id: finishedComponentDeploymentId})
+      const {componentId: finishedComponentId} = finishedComponentDeployment
 
-    const orderedDeployments: QueuedDeploymentEntity[] =
-      await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
-    await this.deployNextComponent(orderedDeployments)
+      const orderedDeployments: QueuedDeploymentEntity[] =
+          await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
+
+      if (orderedDeployments.length) {
+
+        const nextQueuedDeployment: QueuedDeploymentEntity = orderedDeployments[0]
+
+        const componentDeployment: ComponentDeploymentEntity =
+            await this.componentDeploymentsRepository.getOneWithRelations(nextQueuedDeployment.componentDeploymentId)
+
+        await this.updateRunningQueuedDeployment(
+            componentDeployment.componentId,
+            componentDeployment.id,
+            componentDeployment.moduleDeployment.deployment.defaultCircle,
+            nextQueuedDeployment.id
+        )
+      }
+    } catch (error) {
+      // setQueuedDeploymentStatusAsFinished(nextQueuedDeployment)
+      // triggerNextQueuedDeployment
+      throw error
+    }
   }
 
   public async getComponentDeploymentQueue(
@@ -130,10 +150,16 @@ export class PipelineQueuesService {
     defaultCircle: boolean
   ): Promise<void> {
 
-    this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-    const { id: queuedDeploymentId } = await this.enqueueDeploymentExecution(componentId, componentDeploymentId, status)
-    await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeploymentId)
-    this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
+    try {
+      this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
+      const { id: queuedDeploymentId } = await this.enqueueDeploymentExecution(componentId, componentDeploymentId, status)
+      await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeploymentId)
+      this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
+    } catch (error) {
+      // setQueuedDeploymentStatusAsFinished
+      // triggerNextComponentPipeline
+      throw error
+    }
   }
 
   private async updateQueuedDeploymentStatus(
@@ -227,23 +253,5 @@ export class PipelineQueuesService {
         componentDeployment => this.queueComponentDeploymentTask(componentDeployment, defaultCircle)
       )
     )
-  }
-
-  private async deployNextComponent(orderedDeployments: QueuedDeploymentEntity[]): Promise<void> {
-
-    if (orderedDeployments.length) {
-
-      const nextQueuedDeployment: QueuedDeploymentEntity = orderedDeployments[0]
-
-      const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(nextQueuedDeployment.componentDeploymentId)
-
-      await this.updateRunningQueuedDeployment(
-        componentDeployment.componentId,
-        componentDeployment.id,
-        componentDeployment.moduleDeployment.deployment.defaultCircle,
-        nextQueuedDeployment.id
-      )
-    }
   }
 }
