@@ -11,6 +11,11 @@ import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { PipelineQueuesService } from './pipeline-queues.service'
+import { NotificationStatusEnum } from '../../notifications/enums'
+import { DeploymentStatusEnum } from '../enums'
+import { DeploymentsStatusManagementService } from '../../../../../dist/app/core/services/deployments-status-management-service'
+import { MooveService } from '../../../core/integrations/moove'
+import { StatusManagementService } from '../../../core/services/deployments'
 
 @Injectable()
 export class DeploymentsService {
@@ -19,22 +24,27 @@ export class DeploymentsService {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    private readonly statusManagementService: StatusManagementService,
+    private readonly mooveService: MooveService
   ) {}
 
   public async createDeployment(createDeploymentDto: CreateDeploymentDto, circleId: string): Promise<ReadDeploymentDto> {
+    let deployment: DeploymentEntity
+
     try {
       this.consoleLoggerService.log(`START:CREATE_DEPLOYMENT`, createDeploymentDto)
       await this.verifyIfDeploymentExists(createDeploymentDto.deploymentId)
-      const deployment: DeploymentEntity =
-          await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
+      deployment = await this.deploymentsRepository.save(createDeploymentDto.toEntity(circleId))
       await this.pipelineQueuesService.queueDeploymentTasks(deployment)
       const deploymentReadDto: ReadDeploymentDto = deployment.toReadDto()
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
     } catch (error) {
-      // await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      // notifyApplication
+      if (deployment) {
+        await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+        await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+      }
       throw error
     }
   }
