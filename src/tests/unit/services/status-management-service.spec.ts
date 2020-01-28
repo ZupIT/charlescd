@@ -77,7 +77,7 @@ describe('PipelinesService', () => {
 
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
-            'dummy-valueflow-id',
+            'dummy-application-name',
             null,
             'dummy-author-id',
             'dummy-description',
@@ -138,7 +138,7 @@ describe('PipelinesService', () => {
 
         deploymentWithRelations = new DeploymentEntity(
             'dummy-deployment-id',
-            'dummy-valueflow-id',
+            'dummy-application-name',
             moduleDeploymentsList,
             'dummy-author-id',
             'dummy-description',
