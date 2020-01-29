@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
   QueuedPipelineTypesEnum
 } from '../enums'
@@ -19,6 +20,9 @@ import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ModuleEntity } from '../../modules/entity'
 import { QueuedUndeploymentEntity } from '../entity/queued-undeployment.entity'
+import { NotificationStatusEnum } from '../../notifications/enums'
+import { StatusManagementService } from '../../../core/services/deployments'
+import { MooveService } from '../../../core/integrations/moove'
 
 @Injectable()
 export class PipelineQueuesService {
@@ -35,7 +39,9 @@ export class PipelineQueuesService {
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
-    private readonly modulesRepository: Repository<ModuleEntity>
+    private readonly modulesRepository: Repository<ModuleEntity>,
+    private readonly statusManagementService: StatusManagementService,
+    private readonly mooveService: MooveService
   ) {}
 
   public async queueDeploymentTasks(deployment: DeploymentEntity): Promise<void> {
@@ -48,38 +54,37 @@ export class PipelineQueuesService {
     this.consoleLoggerService.log(`FINISH:QUEUE_DEPLOYMENTS`)
   }
 
-  public async triggerNextComponentPipeline(
-    finishedComponentDeploymentId: string
-  ): Promise<void> {
-
-    let queuedDeployment: QueuedDeploymentEntity
+  public async triggerNextComponentPipeline(finishedComponentDeploymentId: string): Promise<void> {
+    let nextQueuedDeployment: QueuedDeploymentEntity
+    let componentDeployment: ComponentDeploymentEntity
 
     try {
       const finishedComponentDeployment: ComponentDeploymentEntity =
           await this.componentDeploymentsRepository.findOne({id: finishedComponentDeploymentId})
-      const {componentId: finishedComponentId} = finishedComponentDeployment
-
+      const { componentId: finishedComponentId } = finishedComponentDeployment
       const orderedDeployments: QueuedDeploymentEntity[] =
           await this.queuedDeploymentsRepository.getAllByComponentIdQueuedAscending(finishedComponentId)
 
       if (orderedDeployments.length) {
-
-        queuedDeployment = orderedDeployments[0]
-
-        const componentDeployment: ComponentDeploymentEntity =
-            await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
-
+        nextQueuedDeployment = orderedDeployments[0]
+        componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(nextQueuedDeployment.componentDeploymentId)
         await this.updateRunningQueuedDeployment(
             componentDeployment.componentId,
             componentDeployment.id,
             componentDeployment.moduleDeployment.deployment.defaultCircle,
-            queuedDeployment.id
+            nextQueuedDeployment.id
         )
       }
     } catch (error) {
-      this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
-      this.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
-      throw error
+      if (nextQueuedDeployment) {
+        const deployment: DeploymentEntity = componentDeployment.moduleDeployment.deployment
+        await this.setQueuedDeploymentStatusFinished(nextQueuedDeployment.id)
+        if (deployment && !deployment.hasFailed()) {
+          await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+          await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+        }
+        await this.triggerNextComponentPipeline(nextQueuedDeployment.componentDeploymentId)
+      }
     }
   }
 
