@@ -40,7 +40,7 @@ export class DeploymentsService {
       this.consoleLoggerService.log(`FINISH:CREATE_DEPLOYMENT`, deploymentReadDto)
       return deploymentReadDto
     } catch (error) {
-      if (deployment) {
+      if (deployment && !deployment.hasFailed()) {
         await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
         await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
       }
