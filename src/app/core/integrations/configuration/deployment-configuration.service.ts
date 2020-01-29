@@ -38,7 +38,7 @@ export class DeploymentConfigurationService {
     return {
       account: k8sConfiguration.account,
       pipelineName: componentDeploymentEntity.componentId,
-      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.valueFlowId}`,
+      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
       appName: componentDeploymentEntity.componentName,
       appNamespace: k8sConfiguration.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,

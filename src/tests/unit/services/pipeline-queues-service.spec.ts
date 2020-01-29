@@ -89,7 +89,7 @@ describe('PipelineQueuesService', () => {
 
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
-            'dummy-valueflow-id',
+            'dummy-application-name',
             null,
             'dummy-author-id',
             'dummy-description',

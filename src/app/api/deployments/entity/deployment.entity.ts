@@ -19,8 +19,8 @@ export class DeploymentEntity extends BaseEntity {
   @PrimaryColumn({name: 'id'})
   public id: string
 
-  @Column({ name: 'value_flow_id' })
-  public valueFlowId: string
+  @Column({ name: 'application_name' })
+  public applicationName: string
 
   @OneToMany(
     type => ModuleDeploymentEntity,
@@ -62,7 +62,7 @@ export class DeploymentEntity extends BaseEntity {
 
   constructor(
     deploymentId: string,
-    valueFlowId: string,
+    applicationName: string,
     modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
@@ -73,7 +73,7 @@ export class DeploymentEntity extends BaseEntity {
   ) {
     super()
     this.id = deploymentId
-    this.valueFlowId = valueFlowId
+    this.applicationName = applicationName
     this.modules = modules
     this.authorId = authorId
     this.description = description
@@ -87,7 +87,7 @@ export class DeploymentEntity extends BaseEntity {
   public toReadDto(): ReadDeploymentDto {
     return new ReadDeploymentDto(
       this.id,
-      this.valueFlowId,
+      this.applicationName,
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
