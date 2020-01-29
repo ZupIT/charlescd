@@ -157,14 +157,16 @@ export class PipelineQueuesService {
     defaultCircle: boolean
   ): Promise<void> {
 
+    let queuedDeployment: QueuedDeploymentEntity
+
     try {
       this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
-      const { id: queuedDeploymentId } = await this.enqueueDeploymentExecution(componentId, componentDeploymentId, status)
-      await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeploymentId)
+      queuedDeployment = await this.enqueueDeploymentExecution(componentId, componentDeploymentId, status)
+      await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeployment.id)
       this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
     } catch (error) {
-      // setQueuedDeploymentStatusAsFinished
-      // triggerNextComponentPipeline
+      await this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
+      this.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
       throw error
     }
   }
