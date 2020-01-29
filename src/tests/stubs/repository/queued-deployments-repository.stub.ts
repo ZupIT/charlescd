@@ -17,4 +17,8 @@ export class QueuedDeploymentsRepositoryStub {
     public update(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
+
+    public getOneByComponentIdRunning(): Promise<QueuedDeploymentEntity> {
+        return Promise.resolve({} as QueuedDeploymentEntity)
+    }
 }
