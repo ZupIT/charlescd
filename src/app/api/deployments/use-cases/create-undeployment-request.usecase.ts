@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import {
   ComponentUndeploymentEntity,
   DeploymentEntity,
+  QueuedUndeploymentEntity,
   UndeploymentEntity
 } from '../entity'
 import { Repository } from 'typeorm'
@@ -105,16 +106,22 @@ export class CreateUndeploymentRequestUsecase {
       status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
+    let queuedUndeployment: QueuedUndeploymentEntity
+
     try {
       const { componentId, id: componentDeploymentId } = componentUndeployment.componentDeployment
       const { id: componentUndeploymentId } = componentUndeployment
-      const { id: queuedUndeploymentId } = await this.pipelineQueuesService.enqueueUndeploymentExecution(
+      queuedUndeployment = await this.pipelineQueuesService.enqueueUndeploymentExecution(
           componentId, componentDeploymentId, status, componentUndeploymentId
       )
       if (status === QueuedPipelineStatusEnum.RUNNING) {
-        await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedUndeploymentId)
+        await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedUndeployment.id)
       }
     } catch (error) {
+      if (status === QueuedPipelineStatusEnum.RUNNING) {
+        await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
+        this.pipelineQueuesService.triggerNextComponentPipeline(queuedUndeployment.componentUndeploymentId)
+      }
       throw error
     }
   }
