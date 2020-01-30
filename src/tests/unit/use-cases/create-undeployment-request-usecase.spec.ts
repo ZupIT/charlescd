@@ -11,11 +11,17 @@ import {
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
+    MooveServiceStub,
     PipelineQueuesServiceStub,
-    PipelinesServiceStub
+    PipelinesServiceStub,
+    StatusManagementServiceStub
 } from '../../stubs/services'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import {
+    DeploymentStatusEnum,
+    QueuedPipelineStatusEnum,
+    UndeploymentStatusEnum
+} from '../../../app/api/deployments/enums'
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
@@ -24,6 +30,10 @@ import {
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
+import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
+import { StatusManagementService } from '../../../app/core/services/deployments'
+import { MooveService } from '../../../app/core/integrations/moove'
+import { QueuedDeploymentStatusEnum } from '../../../../dist/app/api/deployments/enums/queued-deployment-status.enum'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
@@ -37,6 +47,9 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let componentDeployments: ComponentDeploymentEntity[]
     let pipelineQueuesService: PipelineQueuesService
     let queuedUndeploymentEntity: QueuedUndeploymentEntity
+    let statusManagementService: StatusManagementService
+    let mooveService: MooveService
+    let pipelinesService: PipelinesService
 
     beforeEach(async () => {
 
@@ -47,7 +60,9 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: PipelinesService, useClass: PipelinesServiceStub }
+                { provide: PipelinesService, useClass: PipelinesServiceStub },
+                { provide: StatusManagementService, useClass: StatusManagementServiceStub },
+                { provide: MooveService, useClass: MooveServiceStub },
             ]
         }).compile()
 
@@ -55,6 +70,10 @@ describe('CreateUndeploymentRequestUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
+        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
+        mooveService = module.get<MooveService>(MooveService)
+        pipelinesService = module.get<PipelinesService>(PipelinesService)
+
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
 
         componentDeployments = [
@@ -125,6 +144,31 @@ describe('CreateUndeploymentRequestUsecase', () => {
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
                 .toEqual(undeployment.toReadDto())
+        })
+
+        it('should correcly handle undeployment request failure', async () => {
+
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(undeploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(undeployment))
+            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
+                .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
+            jest.spyOn(pipelinesService, 'triggerUndeployment')
+                .mockImplementation(() => { throw new Error() })
+
+            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
+            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
+            await expect(createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+                .rejects.toThrowError(Error)
+            expect(statusSpy)
+                .toHaveBeenCalledWith(undeployment, UndeploymentStatusEnum.FAILED)
+            expect(applicationSpy)
+                .toHaveBeenCalledWith(
+                    undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
+                    undeployment.deployment.callbackUrl, undeployment.deployment.circleId
+                )
         })
     })
 })
