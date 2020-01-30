@@ -30,12 +30,19 @@ import { IDeploymentConfiguration } from '../../../app/core/integrations/configu
 import { Repository } from 'typeorm'
 import {
   CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
   DeploymentEntity,
-  QueuedDeploymentEntity
+  ModuleDeploymentEntity,
+  ModuleUndeploymentEntity,
+  QueuedDeploymentEntity,
+  QueuedUndeploymentEntity,
+  UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import {
   DeploymentStatusEnum,
-  QueuedPipelineStatusEnum
+  QueuedPipelineStatusEnum,
+  UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
 import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
 
@@ -54,6 +61,14 @@ describe('Spinnaker Service', () => {
   let pipelineQueuesService: PipelineQueuesService
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
+  let undeploymentComponentDeployments: ComponentDeploymentEntity[]
+  let undeploymentModuleDeployments: ModuleDeploymentEntity[]
+  let undeploymentDeployment: DeploymentEntity
+  let undeployment: UndeploymentEntity
+  let queuedUndeployments: QueuedUndeploymentEntity[]
+  let componentUndeploymentsRepository: ComponentUndeploymentsRepository
+  let componentUndeployment: ComponentUndeploymentEntity
+  let moduleUndeployment: ModuleUndeploymentEntity
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -78,6 +93,7 @@ describe('Spinnaker Service', () => {
     mooveService = module.get<MooveService>(MooveService)
     pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+    componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
 
     defaultAxiosGetResponse = {
       data: {
@@ -131,6 +147,80 @@ describe('Spinnaker Service', () => {
         'dummy-component-deployment-id3',
         QueuedPipelineStatusEnum.QUEUED,
     )
+
+    undeploymentComponentDeployments = [
+      new ComponentDeploymentEntity(
+          'dummy-id',
+          'dummy-name',
+          'dummy-img-url',
+          'dummy-img-tag',
+          'dummy-context-path',
+          'dummy-health-check',
+          1000
+      ),
+      new ComponentDeploymentEntity(
+          'dummy-id',
+          'dummy-name2',
+          'dummy-img-url2',
+          'dummy-img-tag2',
+          'dummy-context-path2',
+          'dummy-health-check2',
+          1001
+      )
+    ]
+
+    undeploymentModuleDeployments = [
+      new ModuleDeploymentEntity(
+          'dummy-id',
+          'dummy-id',
+          undeploymentComponentDeployments
+      )
+    ]
+
+    queuedUndeployments = [
+      new QueuedUndeploymentEntity(
+          'dummy-id',
+          undeploymentComponentDeployments[0].id,
+          QueuedPipelineStatusEnum.QUEUED,
+          'dummy-id-2'
+      ),
+      new QueuedUndeploymentEntity(
+          'dummy-id',
+          undeploymentComponentDeployments[1].id,
+          QueuedPipelineStatusEnum.QUEUED,
+          'dummy-id-3'
+      )
+    ]
+    queuedUndeployments[0].id = 200
+    queuedUndeployments[1].id = 201
+
+    undeploymentDeployment = new DeploymentEntity(
+        'dummy-deployment-id',
+        'dummy-application-name',
+        undeploymentModuleDeployments,
+        'dummy-author-id',
+        'dummy-description',
+        'dummy-callback-url',
+        null,
+        false,
+        'dummy-circle-id'
+    )
+
+    undeployment = new UndeploymentEntity(
+        'dummy-author-id',
+        undeploymentDeployment
+    )
+
+    moduleUndeployment = new ModuleUndeploymentEntity(
+        undeploymentModuleDeployments[0],
+        null
+    )
+    moduleUndeployment.undeployment = undeployment
+
+    componentUndeployment = new ComponentUndeploymentEntity(
+        undeploymentComponentDeployments[0]
+    )
+    componentUndeployment.moduleUndeployment = moduleUndeployment
   })
 
   describe('deploySpinnakerPipeline', () => {
@@ -191,6 +281,46 @@ describe('Spinnaker Service', () => {
           .toHaveBeenNthCalledWith(1, queuedDeployment.id)
       expect(triggerSpy)
           .toHaveBeenNthCalledWith(1, queuedDeployment.componentDeploymentId)
+    })
+
+    it('should handle spinnaker undeployment api call failure correctly', async () => {
+      jest.spyOn(httpService, 'post')
+          .mockImplementation(() => { throw new Error() })
+
+      jest.spyOn(spinnakerService, 'waitForPipelineCreation')
+          .mockImplementation(() => Promise.resolve())
+
+      jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+          .mockImplementation(() => Promise.resolve(componentUndeployment))
+
+      jest.spyOn(queuedDeploymentsRepository, 'findOne')
+          .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
+
+      const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
+      const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+      const finishedSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
+      const triggerSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+
+      await spinnakerService.deploySpinnakerPipeline(
+          'some-pipeline-name',
+          'some-application-name',
+          'deployment-id',
+          100
+      )
+
+      expect(statusSpy)
+          .toHaveBeenNthCalledWith(1, undeployment, UndeploymentStatusEnum.FAILED)
+      expect(applicationSpy).toHaveBeenNthCalledWith(
+          1,
+          undeployment.deployment.id,
+          NotificationStatusEnum.UNDEPLOY_FAILED,
+          undeployment.deployment.callbackUrl,
+          undeployment.deployment.circleId
+      )
+      expect(finishedSpy)
+          .toHaveBeenNthCalledWith(1, queuedUndeployments[0].id)
+      expect(triggerSpy)
+          .toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentDeploymentId)
     })
   })
 })
