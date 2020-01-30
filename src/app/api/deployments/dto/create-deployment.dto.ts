@@ -2,7 +2,12 @@ import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
 import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
 import { DeploymentEntity } from '../entity'
 import { Type } from 'class-transformer'
-import { ValidateNested, Matches, Length, IsNotEmpty } from 'class-validator'
+import {
+  IsNotEmpty,
+  Length,
+  Matches,
+  ValidateNested
+} from 'class-validator'
 
 export class CreateDeploymentDto {
   @IsNotEmpty()
@@ -33,7 +38,7 @@ export class CreateDeploymentDto {
 
   constructor(
       deploymentId: string,
-      valueFlowId: string,
+      applicationName: string,
       modules: CreateModuleDeploymentDto[],
       authorId: string,
       description: string,
@@ -42,7 +47,7 @@ export class CreateDeploymentDto {
       circle: CreateCircleDeploymentDto
   ) {
     this.deploymentId = deploymentId
-    this.valueFlowId = valueFlowId
+    this.applicationName = applicationName
     this.modules = modules
     this.authorId = authorId
     this.description = description
