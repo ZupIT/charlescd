@@ -36,17 +36,6 @@ export class StatusManagementService {
         private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
     ) {}
 
-    public async deepUpdateDeploymentStatusByDeploymentId(deploymentId: string, status: DeploymentStatusEnum) {
-      const deployment: DeploymentEntity =
-          await this.deploymentsRepository.findOne({
-              where: { id: deploymentId },
-              relations: ['modules']
-          })
-
-      await this.deploymentsRepository.update(deployment.id, { status })
-      return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
-    }
-
     public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
       await this.deploymentsRepository.update(deployment.id, { status })
       if (!deployment.modules) {
