@@ -1,4 +1,7 @@
-import { Module } from '@nestjs/common'
+import {
+  forwardRef,
+  Module
+} from '@nestjs/common'
 import { DeploymentsController } from './controller'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -27,7 +30,7 @@ import { ServicesModule } from '../../core/services/services.module'
 
 @Module({
   imports: [
-    IntegrationsModule,
+    forwardRef(() => IntegrationsModule),
     LogsModule,
     ServicesModule,
     TypeOrmModule.forFeature([
