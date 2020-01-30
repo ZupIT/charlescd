@@ -67,24 +67,37 @@ export class SpinnakerService {
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
 
-    this.deploySpinnakerPipeline(spinnakerPipelineConfiguration.pipelineName, spinnakerPipelineConfiguration.applicationName)
-      .catch(() => this.setDeploymentStatusAsFailed(deploymentId, queueId))
+    this.deploySpinnakerPipeline(
+        spinnakerPipelineConfiguration.pipelineName,
+        spinnakerPipelineConfiguration.applicationName,
+        deploymentId,
+        queueId
+    )
   }
 
-  private async deploySpinnakerPipeline(pipelineName: string, application: string): Promise<void> {
+  public async deploySpinnakerPipeline(
+      pipelineName: string,
+      application: string,
+      deploymentId: string,
+      queueId: number
+  ): Promise<void> {
 
-    await this.waitForPipelineCreation()
-    this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${application} `)
-    await this.httpService.post(
-      `${this.consulConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).toPromise()
-    this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
+    try {
+      await this.waitForPipelineCreation()
+      this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${application} `)
+      await this.httpService.post(
+          `${this.consulConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
+          {},
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+      ).toPromise()
+      this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
+    } catch (error) {
+      await this.setDeploymentStatusAsFailed(deploymentId, queueId)
+    }
   }
 
   private createPipelineConfigurationObject(
@@ -182,7 +195,7 @@ export class SpinnakerService {
   }
 
   private async setDeploymentStatusAsFailed(deploymentId: string, queueId: number): Promise<void> {
-    this.consoleLoggerService.error(`ERROR:DEPLOY_SPINNAKER_PIPELINE ${deploymentId}`)
+    this.consoleLoggerService.error(`ERROR:DEPLOY_SPINNAKER_PIPELINE ${deploymentId} ${queueId}`)
 
     const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({ id: deploymentId })
     if (deployment && !deployment.hasFailed()) {
