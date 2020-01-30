@@ -17,6 +17,7 @@ import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
 import {
   ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from './repository'
 import {
@@ -43,7 +44,8 @@ import { ServicesModule } from '../../core/services/services.module'
       ComponentDeploymentsRepository,
       QueuedDeploymentsRepository,
       QueuedUndeploymentEntity,
-      UndeploymentEntity
+      UndeploymentEntity,
+      ComponentUndeploymentsRepository
     ])
   ],
   controllers: [
