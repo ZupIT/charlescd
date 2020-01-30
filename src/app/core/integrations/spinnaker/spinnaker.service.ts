@@ -44,16 +44,16 @@ export class SpinnakerService {
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
 
-    this.deploySpinnakerPipeline(spinnakerPipelineConfiguration.pipelineName)
+    this.deploySpinnakerPipeline(spinnakerPipelineConfiguration.pipelineName, spinnakerPipelineConfiguration.applicationName)
       .catch(() => this.setDeploymentStatusAsFailed(deploymentId))
   }
 
-  private async deploySpinnakerPipeline(pipelineName: string): Promise<void> {
+  private async deploySpinnakerPipeline(pipelineName: string, application: string): Promise<void> {
 
     await this.waitForPipelineCreation()
-    this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
+    this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${application} `)
     await this.httpService.post(
-      `${this.consulConfiguration.spinnakerUrl}/webhooks/webhook/${pipelineName}`,
+      `${this.consulConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
       {},
       {
         headers: {
@@ -96,7 +96,7 @@ export class SpinnakerService {
     return spinnakerBuilder.buildPipeline()
   }
 
-  private async waitForPipelineCreation(): Promise<void> {
+  public async waitForPipelineCreation(): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve()
