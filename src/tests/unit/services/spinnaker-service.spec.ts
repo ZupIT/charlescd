@@ -15,8 +15,12 @@ import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { PipelineQueuesService } from '../../../app/api/deployments/services'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
+  ComponentUndeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../../../app/api/deployments/repository'
+import {
+  ComponentUndeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
@@ -63,6 +67,7 @@ describe('Spinnaker Service', () => {
         { provide: MooveService, useClass: MooveServiceStub },
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
         { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
+        { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
       ]
     }).compile()
 

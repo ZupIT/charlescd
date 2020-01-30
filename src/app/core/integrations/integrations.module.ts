@@ -15,6 +15,7 @@ import {
 } from '../../api/deployments/entity'
 import {
   ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../../api/deployments/repository'
 import { DatabasesService } from './databases'
@@ -32,7 +33,8 @@ import { DeploymentsModule } from '../../api/deployments/deployments.module'
       ComponentDeploymentsRepository,
       DeploymentEntity,
       ModuleDeploymentEntity,
-      QueuedDeploymentsRepository
+      QueuedDeploymentsRepository,
+      ComponentUndeploymentsRepository
     ])
   ],
   providers: [
