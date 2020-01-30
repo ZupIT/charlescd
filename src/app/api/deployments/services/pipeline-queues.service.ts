@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common'
 import {
   DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
-  QueuedPipelineTypesEnum
+  QueuedPipelineTypesEnum,
+  UndeploymentStatusEnum
 } from '../enums'
 import {
   ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
-  QueuedDeploymentEntity
+  QueuedDeploymentEntity,
+  QueuedUndeploymentEntity
 } from '../entity'
 import {
   ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../repository'
 import { PipelinesService } from './pipelines.service'
@@ -19,7 +23,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ModuleEntity } from '../../modules/entity'
-import { QueuedUndeploymentEntity } from '../entity/queued-undeployment.entity'
 import { NotificationStatusEnum } from '../../notifications/enums'
 import { StatusManagementService } from '../../../core/services/deployments'
 import { MooveService } from '../../../core/integrations/moove'
@@ -36,6 +39,8 @@ export class PipelineQueuesService {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(ComponentUndeploymentsRepository)
+    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(ModuleEntity)
@@ -77,11 +82,10 @@ export class PipelineQueuesService {
       }
     } catch (error) {
       if (nextQueuedDeployment) {
-        const deployment: DeploymentEntity = componentDeployment.moduleDeployment.deployment
-        await this.setQueuedDeploymentStatusFinished(nextQueuedDeployment.id)
-        if (deployment && !deployment.hasFailed()) {
-          await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-          await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+        if (nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity) {
+          await this.handleNextDeployment(nextQueuedDeployment, componentDeployment)
+        } else {
+          await this.handleNextUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
         }
         await this.triggerNextComponentPipeline(nextQueuedDeployment.componentDeploymentId)
       }
@@ -137,6 +141,30 @@ export class PipelineQueuesService {
     return await this.queuedUndeploymentsRepository.save(
         new QueuedUndeploymentEntity(componentId, componentDeploymentId, status, componentUndeploymentId)
     )
+  }
+
+  private async handleNextUndeployment(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
+      const componentUndeployment: ComponentUndeploymentEntity =
+          await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
+      const { moduleUndeployment: { undeployment } } = componentUndeployment
+
+      await this.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
+      if (undeployment && !undeployment.hasFailed()) {
+        await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
+        await this.mooveService.notifyDeploymentStatus(
+            undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
+            undeployment.deployment.callbackUrl, undeployment.deployment.circleId
+        )
+      }
+  }
+
+  private async handleNextDeployment(queuedDeployment: QueuedDeploymentEntity, componentDeployment: ComponentDeploymentEntity): Promise<void> {
+    const deployment: DeploymentEntity = componentDeployment.moduleDeployment.deployment
+    await this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
+    if (deployment && !deployment.hasFailed()) {
+      await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
+      await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+    }
   }
 
   private async createDefaultQueuedDeployment(
