@@ -128,13 +128,6 @@ describe('Spinnaker Service', () => {
     )
   })
 
-  describe('createDeployment', () => {
-
-    it('should call deploySpinnakerPipeline method', async () => {
-
-    })
-  })
-
   describe('deploySpinnakerPipeline', () => {
 
     it('should call spinnaker api with application name and module name', async () => {
