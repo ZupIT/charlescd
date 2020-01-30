@@ -36,15 +36,24 @@ export class StatusManagementService {
         private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
     ) {}
 
-    public async deepUpdateDeploymentStatusByDeploymentId(deploymentId: string, status: DeploymentStatusEnum) {
-      const deployment: DeploymentEntity =
-          await this.deploymentsRepository.findOne({
-              where: { id: deploymentId },
-              relations: ['modules']
-          })
+    public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
+        await this.undeploymentsRepository.update(undeployment.id, { status })
+        if (!undeployment.moduleUndeployments) {
+            undeployment.moduleUndeployments =
+                await this.moduleUndeploymentsRepository.find({
+                    where: { undeployment: { id: undeployment.id } },
+                    relations: ['componentUndeployments']
+                })
+        }
+        return Promise.all(undeployment.moduleUndeployments.map(m => this.deepUpdateModuleUndeploymentStatus(m, status)))
+    }
 
-      await this.deploymentsRepository.update(deployment.id, { status })
-      return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
+    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
+        await this.moduleUndeploymentsRepository.update(module.id, { status })
+        return Promise.all(
+            moduleUndeployment.componentUndeployments
+                .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
+        )
     }
 
     public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {

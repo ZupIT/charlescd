@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   Inject,
   Injectable
 } from '@nestjs/common'
@@ -31,6 +32,7 @@ export class PipelinesService {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
+    @Inject(forwardRef(() => SpinnakerService))
     private readonly spinnakerService: SpinnakerService,
     @InjectRepository(ModuleEntity)
     private readonly modulesRepository: Repository<ModuleEntity>,
@@ -48,26 +50,26 @@ export class PipelinesService {
 
   public async triggerUndeployment(
       componentDeploymentId: string,
-      queuedUndeploymentId: number
+      queueId: number
   ): Promise<void> {
 
     try {
-      const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeploymentId)
+      const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queueId)
       await this.processUndeploymentPipeline(componentDeploymentId)
-      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
+      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl, queueId)
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
-  public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean, queuedDeploymentId: number): Promise<void> {
+  public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean, queueId: number): Promise<void> {
 
     try {
-      const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeploymentId)
+      const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queueId)
       await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
-      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl)
+      await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl, queueId)
     } catch (error) {
-      return Promise.reject({ error })
+      throw error
     }
   }
 
@@ -113,7 +115,8 @@ export class PipelinesService {
   private async deployComponentPipeline(
     componentDeployment: ComponentDeploymentEntity,
     deploymentId: string,
-    pipelineCallbackUrl: string
+    pipelineCallbackUrl: string,
+    queueId: number
   ): Promise<void> {
 
     const componentEntity: ComponentEntity =
@@ -131,34 +134,31 @@ export class PipelinesService {
       componentDeployment.id,
       deploymentId,
       deploymentEntity.circleId,
-      pipelineCallbackUrl
+      pipelineCallbackUrl,
+      queueId
     )
   }
 
   public async deployComponent(
       componentDeploymentEntity: ComponentDeploymentEntity,
-      pipelineCallbackUrl: string
+      pipelineCallbackUrl: string,
+      queueId: number
   ): Promise<void> {
 
-    try {
-      const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
-      await this.deployComponentPipeline(componentDeploymentEntity, deploymentId, pipelineCallbackUrl)
-    } catch (error) {
-      const { moduleDeployment: { deployment } } = componentDeploymentEntity
-      await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      throw error
-    }
+    const { moduleDeployment: { deployment: { id: deploymentId } } } = componentDeploymentEntity
+    await this.deployComponentPipeline(componentDeploymentEntity, deploymentId, pipelineCallbackUrl, queueId)
   }
 
   private async triggerPipelineDeployment(
       componentDeploymentId: string,
-      pipelineCallbackUrl: string
+      pipelineCallbackUrl: string,
+      queueId: number
   ): Promise<void> {
 
     this.consoleLoggerService.log(`START:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    await this.deployComponent(componentDeploymentEntity, pipelineCallbackUrl)
+    await this.deployComponent(componentDeploymentEntity, pipelineCallbackUrl, queueId)
     this.consoleLoggerService.log(`FINISH:PROCESS_COMPONENT_DEPLOYMENT`, { componentDeploymentId })
   }
 

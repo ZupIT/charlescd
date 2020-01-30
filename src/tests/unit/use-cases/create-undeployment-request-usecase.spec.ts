@@ -11,11 +11,16 @@ import {
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
+    MooveServiceStub,
     PipelineQueuesServiceStub,
-    PipelinesServiceStub
+    PipelinesServiceStub,
+    StatusManagementServiceStub
 } from '../../stubs/services'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import {
+    QueuedPipelineStatusEnum,
+    UndeploymentStatusEnum
+} from '../../../app/api/deployments/enums'
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
@@ -24,6 +29,9 @@ import {
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
+import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
+import { StatusManagementService } from '../../../app/core/services/deployments'
+import { MooveService } from '../../../app/core/integrations/moove'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
@@ -36,7 +44,10 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
     let pipelineQueuesService: PipelineQueuesService
-    let queuedUndeploymentEntity: QueuedUndeploymentEntity
+    let queuedUndeployments: QueuedUndeploymentEntity[]
+    let statusManagementService: StatusManagementService
+    let mooveService: MooveService
+    let pipelinesService: PipelinesService
 
     beforeEach(async () => {
 
@@ -47,7 +58,9 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: PipelinesService, useClass: PipelinesServiceStub }
+                { provide: PipelinesService, useClass: PipelinesServiceStub },
+                { provide: StatusManagementService, useClass: StatusManagementServiceStub },
+                { provide: MooveService, useClass: MooveServiceStub },
             ]
         }).compile()
 
@@ -55,6 +68,10 @@ describe('CreateUndeploymentRequestUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
+        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
+        mooveService = module.get<MooveService>(MooveService)
+        pipelinesService = module.get<PipelinesService>(PipelinesService)
+
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
 
         componentDeployments = [
@@ -65,16 +82,16 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 'dummy-img-tag',
                 'dummy-context-path',
                 'dummy-health-check',
-                1234
+                1000
             ),
             new ComponentDeploymentEntity(
                 'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag',
-                'dummy-context-path',
-                'dummy-health-check',
-                1234
+                'dummy-name2',
+                'dummy-img-url2',
+                'dummy-img-tag2',
+                'dummy-context-path2',
+                'dummy-health-check2',
+                1001
             )
         ]
 
@@ -103,12 +120,20 @@ describe('CreateUndeploymentRequestUsecase', () => {
             deployment
         )
 
-        queuedUndeploymentEntity = new QueuedUndeploymentEntity(
-            'dummy-id',
-            componentDeployments[0].id,
-            QueuedPipelineStatusEnum.RUNNING,
-            'dummy-id-2'
-        )
+        queuedUndeployments = [
+            new QueuedUndeploymentEntity(
+                'dummy-id',
+                componentDeployments[0].id,
+                QueuedPipelineStatusEnum.RUNNING,
+                'dummy-id-2'
+            ),
+            new QueuedUndeploymentEntity(
+                'dummy-id',
+                componentDeployments[1].id,
+                QueuedPipelineStatusEnum.QUEUED,
+                'dummy-id-3'
+            )
+        ]
     })
 
     describe('execute', () => {
@@ -121,10 +146,64 @@ describe('CreateUndeploymentRequestUsecase', () => {
             jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
                 .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
             jest.spyOn(pipelineQueuesService, 'enqueueUndeploymentExecution')
-                .mockImplementation(() => Promise.resolve(queuedUndeploymentEntity))
+                .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
                 .toEqual(undeployment.toReadDto())
+        })
+
+        it('should correctly handle undeployment request failure', async () => {
+
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(undeploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(undeployment))
+            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
+                .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
+            jest.spyOn(pipelinesService, 'triggerUndeployment')
+                .mockImplementation(() => { throw new Error() })
+
+            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
+            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
+            await expect(createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+                .rejects.toThrowError(Error)
+            expect(statusSpy)
+                .toHaveBeenCalledWith(undeployment, UndeploymentStatusEnum.FAILED)
+            expect(applicationSpy)
+                .toHaveBeenCalledWith(
+                    undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
+                    undeployment.deployment.callbackUrl, undeployment.deployment.circleId
+                )
+        })
+
+        it('should correctly handle single component undeployment failure', async () => {
+
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementationOnce(() => Promise.resolve(deployment))
+
+            jest.spyOn(undeploymentsRepository, 'save')
+                .mockImplementationOnce(() => Promise.resolve(undeployment))
+
+            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
+                .mockImplementationOnce(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
+                .mockImplementationOnce(() => Promise.resolve(QueuedPipelineStatusEnum.QUEUED))
+
+            jest.spyOn(pipelineQueuesService, 'enqueueUndeploymentExecution')
+                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
+                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[1]))
+
+            jest.spyOn(pipelinesService, 'triggerUndeployment')
+                .mockImplementation(() => { throw new Error() })
+
+            const finishedSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
+            const queueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+
+            await expect(createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+                .rejects.toThrowError(Error)
+
+            expect(finishedSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].id)
+            expect(queueSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentUndeploymentId)
         })
     })
 })

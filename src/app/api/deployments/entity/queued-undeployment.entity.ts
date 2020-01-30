@@ -2,7 +2,10 @@ import {
     ChildEntity,
     Column
 } from 'typeorm'
-import { QueuedPipelineStatusEnum } from '../enums'
+import {
+    QueuedPipelineStatusEnum,
+    QueuedPipelineTypesEnum
+} from '../enums'
 import { ReadQueuedDeploymentDto } from '../dto'
 import { QueuedDeploymentEntity } from './queued-deployment.entity'
 
@@ -20,6 +23,7 @@ export class QueuedUndeploymentEntity extends QueuedDeploymentEntity {
     ) {
         super(componentId, componentDeploymentId, status)
         this.componentUndeploymentId = componentUndeploymentId
+        this.type = QueuedPipelineTypesEnum.QueuedUndeploymentEntity
     }
 
     public toReadDto(): ReadQueuedDeploymentDto {

@@ -9,4 +9,8 @@ export class QueuedUndeploymentsRepositoryStub {
     public async save(): Promise<QueuedUndeploymentEntity> {
         return Promise.resolve({} as QueuedUndeploymentEntity)
     }
+
+    public async update(): Promise<QueuedUndeploymentEntity> {
+        return Promise.resolve({} as QueuedUndeploymentEntity)
+    }
 }

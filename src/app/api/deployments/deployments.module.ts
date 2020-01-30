@@ -1,4 +1,7 @@
-import { Module } from '@nestjs/common'
+import {
+  forwardRef,
+  Module
+} from '@nestjs/common'
 import { DeploymentsController } from './controller'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -14,6 +17,7 @@ import { ComponentEntity } from '../components/entity'
 import { LogsModule } from '../../core/logs/logs.module'
 import {
   ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from './repository'
 import {
@@ -27,7 +31,7 @@ import { ServicesModule } from '../../core/services/services.module'
 
 @Module({
   imports: [
-    IntegrationsModule,
+    forwardRef(() => IntegrationsModule),
     LogsModule,
     ServicesModule,
     TypeOrmModule.forFeature([
@@ -40,7 +44,8 @@ import { ServicesModule } from '../../core/services/services.module'
       ComponentDeploymentsRepository,
       QueuedDeploymentsRepository,
       QueuedUndeploymentEntity,
-      UndeploymentEntity
+      UndeploymentEntity,
+      ComponentUndeploymentsRepository
     ])
   ],
   controllers: [

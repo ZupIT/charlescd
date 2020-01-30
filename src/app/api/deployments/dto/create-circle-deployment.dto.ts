@@ -6,6 +6,14 @@ export class CreateCircleDeploymentDto {
 
   public readonly removeCircle: boolean
 
+  constructor(
+      headerValue: string,
+      removeCircle: boolean
+  ) {
+    this.headerValue = headerValue
+    this.removeCircle = removeCircle
+  }
+
   public toEntity(): CircleDeploymentEntity {
     return new CircleDeploymentEntity(
       this.headerValue,
