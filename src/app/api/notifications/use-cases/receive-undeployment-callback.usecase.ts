@@ -71,7 +71,7 @@ export class ReceiveUndeploymentCallbackUsecase {
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
     const { componentDeploymentId, componentUndeploymentId } = queuedUndeployment
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
-    await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
     await this.notifyMooveIfDeploymentJustFailed(componentUndeploymentId)
     await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFailed(componentUndeploymentId)
     this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
@@ -102,7 +102,7 @@ export class ReceiveUndeploymentCallbackUsecase {
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
     const { componentDeploymentId, componentUndeploymentId } = queuedUndeployment
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
-    await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
     await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFinished(componentUndeploymentId)
     await this.notifyMooveIfUndeploymentFinished(componentUndeploymentId)
     this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_SUCCESS_WEBHOOK', { componentUndeploymentId })

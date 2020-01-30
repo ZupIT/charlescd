@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   HttpModule,
   Module
 } from '@nestjs/common'
@@ -12,20 +13,28 @@ import {
   DeploymentEntity,
   ModuleDeploymentEntity
 } from '../../api/deployments/entity'
-import { ComponentDeploymentsRepository } from '../../api/deployments/repository'
+import {
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../../api/deployments/repository'
 import { DatabasesService } from './databases'
 import { ServicesModule } from '../services/services.module'
+import { DeploymentsModule } from '../../api/deployments/deployments.module'
 
 @Module({
   imports: [
     HttpModule,
     LogsModule,
     ServicesModule,
+    forwardRef(() => DeploymentsModule),
     TypeOrmModule.forFeature([
       ComponentDeploymentEntity,
       ComponentDeploymentsRepository,
       DeploymentEntity,
-      ModuleDeploymentEntity
+      ModuleDeploymentEntity,
+      QueuedDeploymentsRepository,
+      ComponentUndeploymentsRepository
     ])
   ],
   providers: [

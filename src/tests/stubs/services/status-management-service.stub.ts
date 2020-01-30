@@ -19,4 +19,8 @@ export class StatusManagementServiceStub {
     public async setComponentDeploymentStatusAsFailed(): Promise<void> {
         return Promise.resolve()
     }
+
+    public async deepUpdateUndeploymentStatus(): Promise<void> {
+        return Promise.resolve()
+    }
 }
