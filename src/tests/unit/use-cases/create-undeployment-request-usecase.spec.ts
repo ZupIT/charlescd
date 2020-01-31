@@ -203,7 +203,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 .rejects.toThrowError(Error)
 
             expect(finishedSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].id)
-            expect(queueSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentUndeploymentId)
+            expect(queueSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentDeploymentId)
         })
     })
 })

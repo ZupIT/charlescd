@@ -77,6 +77,17 @@
     body: >
       {}
 
+- request:
+    method: POST
+    url: ^/spinnaker/pipelines/.*/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
 # CONSUL
 
 - request:
