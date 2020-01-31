@@ -49,7 +49,7 @@ export class StatusManagementService {
     }
 
     public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.moduleUndeploymentsRepository.update(module.id, { status })
+        await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status })
         return Promise.all(
             moduleUndeployment.componentUndeployments
                 .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))

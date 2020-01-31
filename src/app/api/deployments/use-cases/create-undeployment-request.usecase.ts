@@ -120,7 +120,7 @@ export class CreateUndeploymentRequestUsecase {
     } catch (error) {
       if (status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
-        this.pipelineQueuesService.triggerNextComponentPipeline(queuedUndeployment.componentUndeploymentId)
+        this.pipelineQueuesService.triggerNextComponentPipeline(queuedUndeployment.componentDeploymentId)
       }
       throw error
     }
