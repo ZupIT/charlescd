@@ -1,3 +1,4 @@
+import ISpinnakerContract from '../../types/contract'
 
 const baseDeleteDeployments = (
   {
@@ -5,10 +6,10 @@ const baseDeleteDeployments = (
     appName,
     appNamespace,
     unusedVersions
-  },
-  refId,
-  requisiteRefId,
-  previousStage
+  }: ISpinnakerContract,
+  refId: number,
+  requisiteRefId: string[],
+  previousStage: string | undefined | string[]
 ) => ({
   account,
   cloudProvider: 'kubernetes',
@@ -41,8 +42,7 @@ const baseDeleteDeployments = (
   refId: String(refId),
   requisiteStageRefIds: [String(requisiteRefId)],
   stageEnabled: {
-    // eslint-disable-next-line quotes
-    expression: "${ #stage('" + previousStage + "').status.toString() == 'SUCCEEDED'}",
+    expression: '${ #stage(\'' + previousStage + '\').status.toString() == \'SUCCEEDED\'}',
     type: 'expression'
   },
   type: 'deleteManifest'

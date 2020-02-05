@@ -1,4 +1,6 @@
-const baseDeployment = (manifestId, stageName, refId, reqRefId, previousStage, appName, account) => {
+const baseDeployment = (manifestId: string, stageName: string, refId: string,
+                        reqRefId: string[], previousStage: string | undefined | string[],
+                        appName: string, account: string) => {
   const deployment = {
     stageEnabled: {},
     account: account || 'default',
@@ -27,7 +29,6 @@ const baseDeployment = (manifestId, stageName, refId, reqRefId, previousStage, a
   }
   if (previousStage) {
     deployment.stageEnabled = {
-      // eslint-disable-next-line quotes
       expression: '${ #stage(\'' + previousStage + '\').status.toString() == \'SUCCEEDED\'}',
       type: 'expression'
     }

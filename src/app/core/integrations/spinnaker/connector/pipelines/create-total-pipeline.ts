@@ -8,21 +8,22 @@ import baseStageHelm from '../utils/base-stage-helm'
 import { createBakeStage, createPrimaryId } from '../utils/helpers/create-id-names'
 import baseDeployment from '../utils/manifests/base-deployment'
 import webhookBaseStage from '../utils/base-webhook'
+import ISpinnakerContract from '../types/contract'
 
 export default class TotalPipeline {
   refId: number
   previousStage: string
   previousStages: any[]
   deploymentsIds: any[]
-  contract: any
+  contract: ISpinnakerContract
   basePipeline: any
-  constructor(contrato) {
+  constructor(contract) {
     this.refId = 1
     this.previousStage = ''
     this.previousStages = []
     this.deploymentsIds = []
-    this.contract = contrato
-    this.basePipeline = basePipeline(contrato, this.contract.githubConfig, this.contract.githubAccount)
+    this.contract = contract
+    this.basePipeline = basePipeline(contract, this.contract.githubConfig, this.contract.githubAccount)
   }
 
   increaseRefId() {
