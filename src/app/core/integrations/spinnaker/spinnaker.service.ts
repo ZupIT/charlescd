@@ -17,7 +17,7 @@ import {
   UndeploymentStatusEnum
 } from '../../../api/deployments/enums'
 import { ConsoleLoggerService } from '../../logs/console'
-import TotalPipeline from 'darwin-spinnaker-connector'
+import TotalPipeline from './connector'
 import { IConsulKV } from '../consul/interfaces'
 import { StatusManagementService } from '../../services/deployments'
 import {

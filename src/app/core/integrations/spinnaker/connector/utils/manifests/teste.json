@@ -1,0 +1,40 @@
+{
+  "expectedArtifacts": [
+    {
+      "defaultArtifact": {
+        "customKind": true,
+        "id": "useless - deployment - darwin-circle-matcher-fix-without-moove"
+      },
+      "displayName": "deployment - darwin-circle-matcher-fix-without-moove",
+      "id": "deployment - darwin-circle-matcher-fix-without-moove",
+      "matchArtifact": {
+        "id": "useless - deployment - darwin-circle-matcher-fix-without-moove - match",
+        "name": "darwin-application",
+        "type": "embedded/base64"
+      },
+      "useDefaultArtifact": false,
+      "usePriorArtifact": false
+    }
+  ],
+  "inputArtifacts": [
+    {
+      "account": "github-account",
+      "id": "template - darwin-ui"
+    },
+    {
+      "account": "github-account",
+      "id": "value - darwin-ui"
+    }
+  ],
+  "name": "Bake - darwin-circle-matcher-fix-without-moove",
+  "outputName": "darwin-ui-darwin-circle-matcher-fix-without-moove",
+  "overrides": {
+    "image.tag": "realwavelab.azurecr.io/darwin-ui:darwin-circle-matcher-fix-without-moove"
+  },
+  "stageEnabled": {
+    "expression": "${ #stage(\"Deploy Service\")[\"status\"].toString() == \"SUCCEEDED\"}",
+    "type": "expression"
+  },
+  "templateRenderer": "HELM2",
+  "type": "bakeManifest"
+}
