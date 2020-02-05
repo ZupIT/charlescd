@@ -1,3 +1,3 @@
-const helmTypes = ['template', 'value']
-
-export default helmTypes
+const helmValues = ['template', 'value']
+export type HelmTypes  = 'template' | 'value' | 'deployment'
+export default helmValues

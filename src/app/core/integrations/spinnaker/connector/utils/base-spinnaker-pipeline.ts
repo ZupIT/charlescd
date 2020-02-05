@@ -1,11 +1,11 @@
-import helmTypes from './helpers/constants'
+import helmValues, { HelmTypes } from './helpers/constants'
 import buildExpectedArtifacts from './helpers/build-expected-artifacts'
 
 const baseSpinnaker = ({ appName, pipelineName, applicationName }, githubConfig, githubAccount) => ({
   appConfig: {},
   application: applicationName,
   name: pipelineName,
-  expectedArtifacts: helmTypes.map(helmType => buildExpectedArtifacts(githubConfig, githubAccount, appName, helmType)),
+  expectedArtifacts: helmValues.map(helmType => buildExpectedArtifacts(githubConfig, githubAccount, appName, helmType as HelmTypes)),
   keepWaitingPipelines: false,
   lastModifiedBy: 'anonymous',
   limitConcurrent: true,
