@@ -1,16 +1,30 @@
-import buildInputArtifact from './helpers/build-input-artifacts'
 import { createPrimaryId, createBakeStage } from './helpers/create-id-names'
-import helmTypes from './helpers/constants'
+import helmTypes, { HelmTypes } from './helpers/constants'
 import createProduceArtifact from './helpers/build-expected-artifact-produce'
 
-const baseStageHelm = ({ appNamespace, appName }, githubAccount, version, versionUrl, refId, reqRefId, previousStage) => {
+const buildInputArtifact = (githubAccount: string, idArtifact: string) => {
+  return {
+    account: githubAccount,
+    id: idArtifact
+  }
+}
+
+interface IAppConfig {
+  appNamespace: string
+  appName: string
+}
+
+const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
+                       githubAccount: string,
+                       version: string, versionUrl: string, refId: string,
+                       reqRefId: string[], previousStage: string | undefined | string[]) => {
   const baseHelm = {
     stageEnabled: {},
     completeOtherBranchesThenFail: false,
     continuePipeline: true,
     failPipeline: false,
     expectedArtifacts: [createProduceArtifact(version, appName)],
-    inputArtifacts: helmTypes.map(helmType => buildInputArtifact(githubAccount, createPrimaryId(helmType, appName))),
+    inputArtifacts: helmTypes.map(helmType => buildInputArtifact(githubAccount, createPrimaryId(helmType as HelmTypes, appName))),
     name: createBakeStage(version),
     namespace: appNamespace,
     outputName: `${appName}-${version}`,
@@ -26,7 +40,6 @@ const baseStageHelm = ({ appNamespace, appName }, githubAccount, version, versio
   }
   if (previousStage) {
     baseHelm.stageEnabled = {
-      // eslint-disable-next-line quotes
       expression: '${ #stage(\'' + previousStage + '\').status.toString() == \'SUCCEEDED\'}',
       type: 'expression'
     }

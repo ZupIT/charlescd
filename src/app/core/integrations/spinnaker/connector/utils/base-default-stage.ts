@@ -5,7 +5,7 @@ const buildMultiplesExpressions = (stages: string[]) => {
   return expressions.join(' && ')
 }
 
-const baseStage = (manifest: any, nameStage: any, account: any, refId: string, reqRefIds: string[],
+const baseStage = (manifest: string, nameStage: string, account: string, refId: string, reqRefIds: string[],
                    previousStages: string | undefined | string[]) => {
 
   const baseStageTemplate = {

@@ -1,10 +1,14 @@
 import { createPrimaryId } from './create-id-names'
-
+interface IGithubConfig {
+  helmTemplateUrl: string
+  helmPrefixUrl: string
+  helmRepoBranch: string
+}
 const buildExpectedArtifacts = (
-  githubConfig,
-  githubAccount,
-  appName,
-  helmType
+  githubConfig: IGithubConfig,
+  githubAccount: string,
+  appName: string,
+  helmType: 'template' | 'value'
 ) => {
   const { helmTemplateUrl, helmPrefixUrl, helmRepoBranch } = githubConfig
   const fileJudge = helmType === 'template'
