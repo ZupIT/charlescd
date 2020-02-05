@@ -1,3 +1,5 @@
+import { ISpinnakerBaseService } from './manifests/base-service'
+
 const buildSingleExpression = (stage: string) => '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'}'
 
 const buildMultiplesExpressions = (stages: string[]) => {
@@ -5,7 +7,7 @@ const buildMultiplesExpressions = (stages: string[]) => {
   return expressions.join(' && ')
 }
 
-const baseStage = (manifest: string, nameStage: string, account: string, refId: string, reqRefIds: string[],
+const baseStage = (manifest: ISpinnakerBaseService, nameStage: string, account: string, refId: string, reqRefIds: string[],
                    previousStages: string | undefined | string[]) => {
 
   const baseStageTemplate = {
