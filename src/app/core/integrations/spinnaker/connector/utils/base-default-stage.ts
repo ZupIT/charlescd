@@ -1,24 +1,12 @@
-const baseStage = (
-  manifest,
-  nameStage,
-  account,
-  refId,
-  reqRefIds,
-  previousStages
-) => {
-  const buildSingleExpression = (stage) => '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'}'
+const buildSingleExpression = (stage: string) => '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'}'
 
-  const buildMultiplesExpressions = (stages) => {
-    return stages.reduce((acc, stage, index) => {
-      console.log(stages.length)
-      if (stages.length === (index + 1)) {
-        acc += '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'}'
-        return acc
-      }
-      acc += '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'} && '
-      return acc
-    }, '')
-  }
+const buildMultiplesExpressions = (stages: string[]) => {
+  const expressions = stages.map((stage) => buildSingleExpression(stage))
+  return expressions.join(' && ')
+}
+
+const baseStage = (manifest: any, nameStage: any, account: any, refId: string, reqRefIds: string[],
+                   previousStages: string | undefined | string[]) => {
 
   const baseStageTemplate = {
     stageEnabled: {},
@@ -47,7 +35,6 @@ const baseStage = (
   }
   if (previousStages) {
     baseStageTemplate.stageEnabled = {
-      // eslint-disable-next-line quotes
       expression: typeof previousStages === 'object'
         ? buildMultiplesExpressions(previousStages)
         : buildSingleExpression(previousStages),
