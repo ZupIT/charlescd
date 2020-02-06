@@ -1,8 +1,8 @@
-import {Injectable} from '@nestjs/common'
-import {PipelineQueuesService} from '../../deployments/services'
-import {ReadQueuedDeploymentDto} from '../../deployments/dto'
-import {QueuedDeploymentEntity} from '../../deployments/entity'
-import {QueuedDeploymentsRepository} from '../../deployments/repository'
+import { Injectable } from '@nestjs/common'
+import { PipelineQueuesService } from '../../deployments/services'
+import { ReadQueuedDeploymentDto } from '../../deployments/dto'
+import { QueuedDeploymentEntity } from '../../deployments/entity'
+import { QueuedDeploymentsRepository } from '../../deployments/repository'
 
 @Injectable()
 export class ComponentQueueUseCase {
