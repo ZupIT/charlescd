@@ -1,5 +1,5 @@
 import { IPipelineCircle } from '../../../../../../api/components/interfaces'
-import ISpinnakerContract from '../../types/contract'
+import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 
 interface VirtualServiceParams {
   appName: string
@@ -86,7 +86,7 @@ const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams) => {
   }, [])
 }
 
-const createVirtualService = (contract: ISpinnakerContract) => {
+const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
   const newVirtualService = baseVirtualService(contract)
   const matchers = createHttpMatchers(contract)
   if (contract.hosts) {

@@ -1,5 +1,5 @@
 import { IPipelineVersion } from '../../../../../../api/components/interfaces'
-import ISpinnakerContract from '../../types/contract'
+import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 
 interface RulesAppConfig {
   appName: string
@@ -33,7 +33,7 @@ const createSubsets = ({ versions, appName }: SubsetParams) => {
   }))
 }
 
-const createDestinationRules = (contract: ISpinnakerContract) => {
+const createDestinationRules = (contract: ISpinnakerPipelineConfiguration) => {
   const newDestinationRule = baseDestinationRules(contract)
   if (contract.circles) {
     const subsetsToAdd = createSubsets(contract)

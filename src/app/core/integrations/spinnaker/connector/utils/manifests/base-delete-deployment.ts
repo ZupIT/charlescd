@@ -1,4 +1,4 @@
-import ISpinnakerContract from '../../types/contract'
+import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 
 const baseDeleteDeployments = (
   {
@@ -6,7 +6,7 @@ const baseDeleteDeployments = (
     appName,
     appNamespace,
     unusedVersions
-  }: ISpinnakerContract,
+  }: ISpinnakerPipelineConfiguration,
   refId: number,
   requisiteRefId: string[],
   previousStage: string | undefined | string[]

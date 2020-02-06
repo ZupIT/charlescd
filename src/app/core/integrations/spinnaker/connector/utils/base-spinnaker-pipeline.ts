@@ -1,5 +1,5 @@
 import helmValues, { HelmTypes } from './helpers/constants'
-import buildExpectedArtifacts, { IGithubConfig } from './helpers/build-expected-artifacts'
+import buildExpectedArtifacts, { IGithubConfig, IBuildArtifact } from './helpers/build-expected-artifacts'
 
 type PipelineName = string
 
@@ -20,7 +20,7 @@ export interface IBaseSpinnakerPipeline {
   appConfig: object
   application: string
   name: PipelineName
-  expectedArtifacts: any[]
+  expectedArtifacts: IBuildArtifact[]
   keepWaitingPipelines: boolean
   lastModifiedBy: string
   limitConcurrent: boolean
