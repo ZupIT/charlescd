@@ -1,11 +1,6 @@
-import { createPrimaryId } from './create-id-names'
+import { ISpinnakerGithubConfig } from '../../../interfaces/spinnaker-pipeline-github-account.interface'
 import { HelmTypes } from './constants'
-
-export interface IGithubConfig {
-  helmTemplateUrl: string
-  helmPrefixUrl: string
-  helmRepoBranch: string
-}
+import { createPrimaryId } from './create-id-names'
 
 export interface IBuildArtifact {
   defaultArtifact: {
@@ -29,7 +24,7 @@ export interface IBuildArtifact {
   usePriorArtifact: boolean
 }
 
-const buildExpectedArtifacts = (githubConfig: IGithubConfig, githubAccount: string,
+const buildExpectedArtifacts = (githubConfig: ISpinnakerGithubConfig, githubAccount: string,
                                 appName: string, helmType: HelmTypes): IBuildArtifact => {
   const { helmTemplateUrl, helmPrefixUrl, helmRepoBranch } = githubConfig
   const fileJudge = helmType === 'template'

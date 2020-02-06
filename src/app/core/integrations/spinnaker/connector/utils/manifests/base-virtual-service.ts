@@ -18,45 +18,53 @@ const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams) => 
   }
 })
 
-const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
-  match: [
-    {
-      headers: {
-        [circle.header.headerName]: {
-          exact: circle.header.headerValue
+const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string) => {
+  if (circle.header) {
+    return {
+      match: [
+        {
+          headers: {
+            [circle.header.headerName]: {
+              exact: circle.header.headerValue
+            }
+          }
         }
-      }
+      ],
+      route: [
+        {
+          destination: {
+            host: appName,
+            subset: circle.destination.version
+          }
+        }
+      ]
     }
-  ],
-  route: [
-    {
-      destination: {
-        host: appName,
-        subset: circle.destination.version
-      }
-    }
-  ]
-})
+  }
+}
 
-const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
-  match: [
-    {
-      headers: {
-        cookie: {
-          regex: `.*x-circle-id=${circle.header.headerValue}.*`
+const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string) => {
+  if (circle.header) {
+    return {
+      match: [
+        {
+          headers: {
+            cookie: {
+              regex: `.*x-circle-id=${circle.header.headerValue}.*`
+            }
+          }
         }
-      }
+      ],
+      route: [
+        {
+          destination: {
+            host: appName,
+            subset: circle.destination.version
+          }
+        }
+      ]
     }
-  ],
-  route: [
-    {
-      destination: {
-        host: appName,
-        subset: circle.destination.version
-      }
-    }
-  ]
-})
+  }
+}
 
 const createOpenSeaHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
   route: [
@@ -72,10 +80,10 @@ const createOpenSeaHttpMatcher = (circle: IPipelineCircle, appName: string) => (
 interface HttpMatchersParams {
   circles: IPipelineCircle[]
   appName: string
-  uri: { uriName: string}
+  uri: { uriName: string }
 }
 const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams) => {
-  return circles.reduce((acc: any, circle) => {
+  return circles.reduce((acc: any[], circle) => {
     if (circle.header) {
       acc.push(createRegexHttpMatcher(circle, appName))
       acc.push(createXCircleIdHttpMatcher(circle, appName))

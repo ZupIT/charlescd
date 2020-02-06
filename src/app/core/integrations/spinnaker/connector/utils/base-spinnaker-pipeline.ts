@@ -1,5 +1,6 @@
+import { ISpinnakerGithubConfig } from '../../interfaces/spinnaker-pipeline-github-account.interface'
+import buildExpectedArtifacts, { IBuildArtifact } from './helpers/build-expected-artifacts'
 import helmValues, { HelmTypes } from './helpers/constants'
-import buildExpectedArtifacts, { IGithubConfig, IBuildArtifact } from './helpers/build-expected-artifacts'
 
 type PipelineName = string
 
@@ -31,7 +32,7 @@ export interface IBaseSpinnakerPipeline {
 
 const baseSpinnaker = (
   { appName, pipelineName, applicationName }: AppConfig,
-  githubConfig: IGithubConfig, githubAccount: string): IBaseSpinnakerPipeline => ({
+  githubConfig: ISpinnakerGithubConfig, githubAccount: string): IBaseSpinnakerPipeline => ({
     appConfig: {},
     application: applicationName,
     name: pipelineName,

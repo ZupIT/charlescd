@@ -1,6 +1,6 @@
-import { createPrimaryId, createBakeStage } from './helpers/create-id-names'
-import helmTypes, { HelmTypes } from './helpers/constants'
 import createProduceArtifact from './helpers/build-expected-artifact-produce'
+import helmTypes, { HelmTypes } from './helpers/constants'
+import { createBakeStage, createPrimaryId } from './helpers/create-id-names'
 
 const buildInputArtifact = (githubAccount: string, idArtifact: string) => {
   return {
