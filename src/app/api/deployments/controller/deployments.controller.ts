@@ -4,7 +4,8 @@ import {
   Get,
   Headers,
   Param,
-  Post
+  Post,
+  UsePipes
 } from '@nestjs/common'
 import {
   CreateCircleDeploymentRequestDto,
@@ -20,6 +21,7 @@ import {
   CreateDefaultDeploymentRequestUsecase,
   CreateUndeploymentRequestUsecase
 } from '../use-cases'
+import { DeploymentUniquenessPipe } from '../pipes'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -31,6 +33,7 @@ export class DeploymentsController {
     private readonly createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
   ) {}
 
+  @UsePipes(DeploymentUniquenessPipe)
   @Post('/circle')
   public async createCircleDeployment(
       @Body() createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto,
@@ -40,6 +43,7 @@ export class DeploymentsController {
     return await this.createCircleDeploymentRequestUsecase.execute(createCircleDeploymentRequestDto, circleId)
   }
 
+  @UsePipes(DeploymentUniquenessPipe)
   @Post('/default')
   public async createDefaultDeployment(
       @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,

@@ -32,6 +32,7 @@ import {
   CreateUndeploymentRequestUsecase
 } from './use-cases'
 import { ServicesModule } from '../../core/services/services.module'
+import { DeploymentUniquenessPipe } from './pipes'
 
 @Module({
   imports: [
@@ -61,7 +62,8 @@ import { ServicesModule } from '../../core/services/services.module'
     PipelinesService,
     CreateUndeploymentRequestUsecase,
     CreateCircleDeploymentRequestUsecase,
-    CreateDefaultDeploymentRequestUsecase
+    CreateDefaultDeploymentRequestUsecase,
+    DeploymentUniquenessPipe
   ],
   exports: [
     DeploymentsService,
