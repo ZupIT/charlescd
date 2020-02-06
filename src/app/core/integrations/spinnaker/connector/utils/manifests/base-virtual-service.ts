@@ -1,7 +1,11 @@
-const baseVirtualService = ({
-  appName,
-  appNamespace
-}) => ({
+import { IPipelineCircle } from '../../../../../../api/components/interfaces'
+import ISpinnakerContract from '../../types/contract'
+
+interface VirtualServiceParams {
+  appName: string
+  appNamespace: string
+}
+const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams) => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'VirtualService',
   metadata: {
@@ -14,10 +18,7 @@ const baseVirtualService = ({
   }
 })
 
-const createXCircleIdHttpMatcher = (
-  circle,
-  appName
-) => ({
+const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
   match: [
     {
       headers: {
@@ -37,10 +38,7 @@ const createXCircleIdHttpMatcher = (
   ]
 })
 
-const createRegexHttpMatcher = (
-  circle,
-  appName
-) => ({
+const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
   match: [
     {
       headers: {
@@ -60,10 +58,7 @@ const createRegexHttpMatcher = (
   ]
 })
 
-const createOpenSeaHttpMatcher = (
-  circle,
-  appName
-) => ({
+const createOpenSeaHttpMatcher = (circle: IPipelineCircle, appName: string) => ({
   route: [
     {
       destination: {
@@ -74,12 +69,13 @@ const createOpenSeaHttpMatcher = (
   ]
 })
 
-const createHttpMatchers = ({
-  circles,
-  appName,
-  uri
-}) => {
-  return circles.reduce((acc, circle) => {
+interface HttpMatchersParams {
+  circles: IPipelineCircle[]
+  appName: string
+  uri: { uriName: string}
+}
+const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams) => {
+  return circles.reduce((acc: any, circle) => {
     if (circle.header) {
       acc.push(createRegexHttpMatcher(circle, appName))
       acc.push(createXCircleIdHttpMatcher(circle, appName))
@@ -90,9 +86,7 @@ const createHttpMatchers = ({
   }, [])
 }
 
-const createVirtualService = (
-  contract
-) => {
+const createVirtualService = (contract: ISpinnakerContract) => {
   const newVirtualService = baseVirtualService(contract)
   const matchers = createHttpMatchers(contract)
   if (contract.hosts) {

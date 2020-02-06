@@ -1,11 +1,4 @@
-const webhookBaseStage = (
-  uriWebhook,
-  refId,
-  requisiteRefId,
-  previousStage,
-  // previousStages,
-  xCircleId
-) => ({
+const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string) => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
@@ -15,7 +8,6 @@ const webhookBaseStage = (
   method: 'POST',
   name: 'Trigger webhook',
   payload: {
-    // eslint-disable-next-line quotes
     status: '${#stage( \'' + previousStage + '\' ).status.toString()}'
   },
   refId,

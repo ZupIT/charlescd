@@ -1,6 +1,6 @@
 import 'jest'
 import baseDeleteDeployments from '../../../../../app/core/integrations/spinnaker/connector/utils/manifests/base-delete-deployment'
-import expectedBaseDeleteDeployment from '../fixtures/manifests/expected-base-delete-deployment.spec'
+import expectedBaseDeleteDeployment from '../fixtures/manifests/expected-base-delete-deployment'
 it('builds base deployment delete manifest', () => {
 
   const githubConfig = {

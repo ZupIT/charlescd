@@ -1,7 +1,17 @@
-const baseDestinationRules = ({
-  appName,
-  appNamespace
-}) => ({
+import { IPipelineVersion } from '../../../../../../api/components/interfaces'
+import ISpinnakerContract from '../../types/contract'
+
+interface RulesAppConfig {
+  appName: string
+  appNamespace: string
+}
+
+interface SubsetParams {
+  versions: IPipelineVersion[]
+  appName: string
+}
+
+const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig) => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'DestinationRule',
   metadata: {
@@ -14,10 +24,7 @@ const baseDestinationRules = ({
   }
 })
 
-const createSubsets = ({
-  versions,
-  appName
-}) => {
+const createSubsets = ({ versions, appName }: SubsetParams) => {
   return versions.map(({ version }) => ({
     labels: {
       version: `${appName}-${version}`
@@ -26,9 +33,7 @@ const createSubsets = ({
   }))
 }
 
-const createDestinationRules = (
-  contract
-) => {
+const createDestinationRules = (contract: ISpinnakerContract) => {
   const newDestinationRule = baseDestinationRules(contract)
   if (contract.circles) {
     const subsetsToAdd = createSubsets(contract)
