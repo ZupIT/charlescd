@@ -1,10 +1,10 @@
 import 'jest'
 import TotalPipeline from '../../../../app/core/integrations/spinnaker/connector'
-import ISpinnakerContract from '../../../../app/core/integrations/spinnaker/connector/types/contract'
 import expectedTotalPipeline from './fixtures/expected-total-pipeline'
+import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/spinnaker/interfaces'
 
 it('compiles the pipeline', () => {
-  const contract: ISpinnakerContract = {
+  const contract: ISpinnakerPipelineConfiguration = {
     account: 'account',
     pipelineName: 'pipeline-name',
     applicationName: 'application-name',
