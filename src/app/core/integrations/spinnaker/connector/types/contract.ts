@@ -1,10 +1,8 @@
+import { IPipelineCircle } from '../../../../../api/components/interfaces'
+
 interface SpinnakerVersion {
   version: string
   versionUrl: string
-}
-
-interface SpinnakerCircle {
-  destination: { version: string }
 }
 
 interface SpinnakerGithubConfig {
@@ -25,8 +23,9 @@ export default interface ISpinnakerContract {
   webhookUri: string
   versions: SpinnakerVersion[]
   unusedVersions: SpinnakerVersion[]
-  circles: SpinnakerCircle[]
+  circles: IPipelineCircle[]
   githubAccount: string
   githubConfig: SpinnakerGithubConfig
   circleId: string
+  hosts?: string[]
 }

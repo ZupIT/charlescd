@@ -5,7 +5,30 @@ const expectedMultiple = {
   continuePipeline: true,
   failPipeline: false,
   manifests: [
-    'manifest'
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        labels: {
+          app: 'darwin-ui',
+          service: 'darwin-ui'
+        },
+        name: 'darwin-ui',
+        namespace: 'qa'
+      },
+      spec: {
+        ports: [
+          {
+            name: 'http',
+            port: 3000,
+            targetPort: 3000
+          }
+        ],
+        selector: {
+          app: 'darwin-ui'
+        }
+      }
+    }
   ],
   moniker: {
     app: 'account'

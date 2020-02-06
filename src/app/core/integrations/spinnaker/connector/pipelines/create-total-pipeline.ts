@@ -1,6 +1,6 @@
 import baseStage from '../utils/base-default-stage'
 import baseService from '../utils/manifests/base-service'
-import basePipeline from '../utils/base-spinnaker-pipeline'
+import basePipeline, { IBaseSpinnakerPipeline } from '../utils/base-spinnaker-pipeline'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import createVirtualService from '../utils/manifests/base-virtual-service'
 import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
@@ -13,11 +13,11 @@ import ISpinnakerContract from '../types/contract'
 export default class TotalPipeline {
   refId: number
   previousStage: string
-  previousStages: any[]
-  deploymentsIds: any[]
+  previousStages: string[]
+  deploymentsIds: string[]
   contract: ISpinnakerContract
-  basePipeline: any
-  constructor(contract) {
+  basePipeline: IBaseSpinnakerPipeline
+  constructor(contract: ISpinnakerContract) {
     this.refId = 1
     this.previousStage = ''
     this.previousStages = []
@@ -30,11 +30,11 @@ export default class TotalPipeline {
     this.refId += 1
   }
 
-  updatePreviousStage(stage) {
+  updatePreviousStage(stage: string) {
     this.previousStage = stage
   }
 
-  updatePreviousStages(stage) {
+  updatePreviousStages(stage: string) {
     this.previousStages.push(stage)
   }
 
@@ -62,7 +62,7 @@ export default class TotalPipeline {
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
-      this.updatePreviousStage(createBakeStage(version))
+      this.updatePreviousStage(createBakeStage(version.version))
       const deployment = baseDeployment(
         createPrimaryId('deployment', version.version),
         `Deploy ${version.version}`,

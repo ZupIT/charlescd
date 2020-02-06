@@ -18,7 +18,7 @@ export interface ISpinnakerBaseService {
   apiVersion: string
   kind: string
   metadata: ISpinnakerMetadata
-  spec: { ports: ISpinnakerPort[], selector: {app: AppName}}
+  spec: { hosts?: string[], subsets?: string[], ports?: ISpinnakerPort[], selector?: {app: AppName}}
 }
 
 const baseService = (appName: AppName, appNamespace: AppNamespace, appPort: AppPort): ISpinnakerBaseService => (

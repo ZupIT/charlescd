@@ -1,4 +1,4 @@
-const createProduceArtifact = (version, appName) => ({
+const createProduceArtifact = (version: string, appName: string) => ({
   defaultArtifact: {
     customKind: true,
     id: `useless - deployment - ${version}`
