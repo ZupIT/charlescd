@@ -1,5 +1,6 @@
 import { IPipelineVersion } from '../../../../../../api/components/interfaces'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
+import { ISpinnakerBaseService, ISubset } from './base-service'
 
 interface RulesAppConfig {
   appName: string
@@ -11,27 +12,7 @@ interface SubsetParams {
   appName: string
 }
 
-interface IDestinationRules {
-  apiVersion: string
-  kind: string
-  metadata: {
-    name: string
-    namespace: string
-  }
-  spec: {
-    host: string
-    subsets: ISubset[]
-  }
-}
-
-interface ISubset {
-  labels: {
-    version: string
-  }
-  name: string
-}
-
-const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig): IDestinationRules => ({
+const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig): ISpinnakerBaseService => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'DestinationRule',
   metadata: {
