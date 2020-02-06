@@ -7,25 +7,51 @@ import {
   Post
 } from '@nestjs/common'
 import {
-  CreateDeploymentDto,
+  CreateCircleDeploymentRequestDto,
+  CreateDefaultDeploymentRequestDto,
+  CreateDeploymentRequestDto,
   CreateUndeploymentDto,
   ReadDeploymentDto,
   ReadUndeploymentDto
 } from '../dto'
 import { DeploymentsService } from '../services'
-import { CreateUndeploymentRequestUsecase } from '../use-cases'
+import {
+  CreateCircleDeploymentRequestUsecase,
+  CreateDefaultDeploymentRequestUsecase,
+  CreateUndeploymentRequestUsecase
+} from '../use-cases'
 
 @Controller('deployments')
 export class DeploymentsController {
 
   constructor(
     private readonly deploymentsService: DeploymentsService,
-    private readonly createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase
+    private readonly createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase,
+    private readonly createCircleDeploymentRequestUsecase: CreateCircleDeploymentRequestUsecase,
+    private readonly createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
   ) {}
+
+  @Post('/circle')
+  public async createCircleDeployment(
+      @Body() createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto,
+      @Headers('x-circle-id') circleId: string
+  ): Promise<ReadDeploymentDto> {
+
+    return await this.createCircleDeploymentRequestUsecase.execute(createCircleDeploymentRequestDto, circleId)
+  }
+
+  @Post('/default')
+  public async createDefaultDeployment(
+      @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
+      @Headers('x-circle-id') circleId: string
+  ): Promise<ReadDeploymentDto> {
+
+    return await this.createDefaultDeploymentRequestUsecase.execute(createDefaultDeploymentRequestDto, circleId)
+  }
 
   @Post()
   public async createDeployment(
-    @Body() createDeploymentDto: CreateDeploymentDto,
+    @Body() createDeploymentDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') circleId: string
   ): Promise<ReadDeploymentDto> {
 

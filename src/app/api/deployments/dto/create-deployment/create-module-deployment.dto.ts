@@ -1,14 +1,21 @@
-import { ModuleDeploymentEntity } from '../entity/module-deployment.entity'
+import { ModuleDeploymentEntity } from '../../entity'
 import { CreateComponentDeploymentDto } from './create-component-deployment.dto'
-import { ValidateNested } from 'class-validator'
+import {
+  IsDefined,
+  IsNotEmpty,
+  ValidateNested
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class CreateModuleDeploymentDto {
 
+  @IsNotEmpty()
   public readonly moduleId: string
 
+  @IsNotEmpty()
   public readonly k8sConfigurationId: string
 
+  @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => CreateComponentDeploymentDto)
   public readonly components: CreateComponentDeploymentDto[]

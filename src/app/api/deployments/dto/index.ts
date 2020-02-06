@@ -1,7 +1,11 @@
-import { CreateDeploymentDto } from './create-deployment.dto'
-import { CreateCircleDeploymentDto } from './create-circle-deployment.dto'
-import { CreateComponentDeploymentDto } from './create-component-deployment.dto'
-import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
+import {
+  CreateCircleDeploymentDto,
+  CreateCircleDeploymentRequestDto,
+  CreateComponentDeploymentDto,
+  CreateDefaultDeploymentRequestDto,
+  CreateDeploymentRequestDto,
+  CreateModuleDeploymentDto
+} from './create-deployment'
 import { CreateUndeploymentDto } from './create-undeployment.dto'
 import { ReadDeploymentDto } from './read-deployment.dto'
 import { ReadCircleDeploymentDto } from './read-circle-deployment.dto'
@@ -13,7 +17,9 @@ import { ReadModuleUndeploymentDto } from './read-module-undeployment.dto'
 import { ReadComponentUndeploymentDto } from './read-component-undeployment.dto'
 
 export {
-  CreateDeploymentDto,
+  CreateDeploymentRequestDto,
+  CreateCircleDeploymentRequestDto,
+  CreateDefaultDeploymentRequestDto,
   CreateCircleDeploymentDto,
   CreateComponentDeploymentDto,
   CreateModuleDeploymentDto,

@@ -10,6 +10,7 @@ import {
   DeploymentEntity,
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
+  QueuedUndeploymentEntity,
   UndeploymentEntity
 } from './entity'
 import { ModuleEntity } from '../modules/entity'
@@ -25,8 +26,11 @@ import {
   PipelineQueuesService,
   PipelinesService,
 } from './services'
-import { CreateUndeploymentRequestUsecase } from './use-cases'
-import { QueuedUndeploymentEntity } from './entity/queued-undeployment.entity'
+import {
+  CreateCircleDeploymentRequestUsecase,
+  CreateDefaultDeploymentRequestUsecase,
+  CreateUndeploymentRequestUsecase
+} from './use-cases'
 import { ServicesModule } from '../../core/services/services.module'
 
 @Module({
@@ -55,7 +59,9 @@ import { ServicesModule } from '../../core/services/services.module'
     DeploymentsService,
     PipelineQueuesService,
     PipelinesService,
-    CreateUndeploymentRequestUsecase
+    CreateUndeploymentRequestUsecase,
+    CreateCircleDeploymentRequestUsecase,
+    CreateDefaultDeploymentRequestUsecase
   ],
   exports: [
     DeploymentsService,
