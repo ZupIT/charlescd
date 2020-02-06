@@ -18,7 +18,14 @@ export interface ISpinnakerBaseService {
   apiVersion: string
   kind: string
   metadata: ISpinnakerMetadata
-  spec: { hosts?: string[], subsets?: string[], ports?: ISpinnakerPort[], selector?: {app: AppName}}
+  spec: { host?: string, hosts?: string[], subsets?: ISubset[], ports?: ISpinnakerPort[], selector?: {app: AppName}}
+}
+
+export interface ISubset {
+  labels: {
+    version: string
+  }
+  name: string
 }
 
 const baseService = (appName: AppName, appNamespace: AppNamespace, appPort: AppPort): ISpinnakerBaseService => (
