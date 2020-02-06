@@ -50,7 +50,7 @@ export default class TotalPipeline {
 
   buildDeployments() {
     const preRefId = this.refId - 1
-    this.contract.versions.map(version => {
+    this.contract.versions.forEach(version => {
       const helmStage = baseStageHelm(
         this.contract,
         this.contract.githubAccount,
