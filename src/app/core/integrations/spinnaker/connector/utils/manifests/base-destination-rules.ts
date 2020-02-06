@@ -11,7 +11,27 @@ interface SubsetParams {
   appName: string
 }
 
-const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig) => ({
+interface IDestinationRules {
+  apiVersion: string
+  kind: string
+  metadata: {
+    name: string
+    namespace: string
+  }
+  spec: {
+    host: string
+    subsets: ISubset[]
+  }
+}
+
+interface ISubset {
+  labels: {
+    version: string
+  }
+  name: string
+}
+
+const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig): IDestinationRules => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'DestinationRule',
   metadata: {
@@ -24,7 +44,7 @@ const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig) => ({
   }
 })
 
-const createSubsets = ({ versions, appName }: SubsetParams) => {
+const createSubsets = ({ versions, appName }: SubsetParams): ISubset[] => {
   return versions.map(({ version }) => ({
     labels: {
       version: `${appName}-${version}`
