@@ -6,7 +6,7 @@ import { QueuedDeploymentsRepository } from '../../../app/api/deployments/reposi
 import { QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
 import { PipelineQueuesService } from '../../../app/api/deployments/services'
 import { PipelineQueuesServiceStub } from '../../stubs/services'
-import {BadRequestException, InternalServerErrorException} from '@nestjs/common'
+import { BadRequestException } from '@nestjs/common'
 
 describe('execute', () => {
 
