@@ -6,12 +6,14 @@ import { QueuedDeploymentsRepository } from '../../../app/api/deployments/reposi
 import { QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
 import { PipelineQueuesService } from '../../../app/api/deployments/services'
 import { PipelineQueuesServiceStub } from '../../stubs/services'
+import {BadRequestException, InternalServerErrorException} from '@nestjs/common'
 
 describe('execute', () => {
 
         let queuedDeploymentsRepository: QueuedDeploymentsRepository
         let componentQueueUsecase: ComponentQueueUseCase
         let queuedDeployments: QueuedDeploymentEntity[]
+
         beforeEach(async () => {
 
             queuedDeployments = [
@@ -37,8 +39,17 @@ describe('execute', () => {
                         useClass: QueuedDeploymentsRepositoryStub
                     }]
             }).compile()
+
             componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
             queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+        })
+
+        it('should return a exception when dont found any component', async () => {
+            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdAscending')
+                .mockImplementation(() => Promise.resolve(undefined))
+
+            await expect(componentQueueUsecase.execute('dummy-id'))
+                .rejects.toThrowError(BadRequestException)
         })
 
         it('should return a list of dto queued pipelines', async () => {
