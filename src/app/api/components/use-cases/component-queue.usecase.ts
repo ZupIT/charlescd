@@ -3,11 +3,14 @@ import { PipelineQueuesService } from '../../deployments/services'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
 import { QueuedDeploymentEntity } from '../../deployments/entity'
 import { QueuedDeploymentsRepository } from '../../deployments/repository'
+import {InjectRepository} from '@nestjs/typeorm'
 
 @Injectable()
 export class ComponentQueueUseCase {
-    constructor(private readonly pipelineQueuesService: PipelineQueuesService,
-                private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository
+    constructor(
+        private readonly pipelineQueuesService: PipelineQueuesService,
+        @InjectRepository(QueuedDeploymentsRepository)
+        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository
     ) {}
 
     public async execute(id: string): Promise<ReadQueuedDeploymentDto[]> {
@@ -20,7 +23,6 @@ export class ComponentQueueUseCase {
     public async getComponentDeploymentQueue(
         componentId: string
     ): Promise<QueuedDeploymentEntity[]> {
-
         return this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentId)
     }
 

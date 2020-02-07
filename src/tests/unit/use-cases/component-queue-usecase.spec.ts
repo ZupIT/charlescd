@@ -2,48 +2,51 @@ import { QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { ComponentQueueUseCase } from '../../../app/api/components/use-cases/component-queue.usecase'
 import { Test } from '@nestjs/testing'
-import { PipelineQueuesService, PipelinesService } from '../../../app/api/deployments/services'
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
-import { PipelineQueuesServiceStub, PipelinesServiceStub } from '../../stubs/services'
+import { PipelineQueuesService } from '../../../app/api/deployments/services'
+import { PipelineQueuesServiceStub } from '../../stubs/services'
 
 describe('execute', () => {
 
-    let pipelineQueuesService: PipelineQueuesService
-    let componentQueueUsecase: ComponentQueueUseCase
-    let queuedDeployments: QueuedDeploymentEntity[]
+        let queuedDeploymentsRepository: QueuedDeploymentsRepository
+        let componentQueueUsecase: ComponentQueueUseCase
+        let queuedDeployments: QueuedDeploymentEntity[]
+        beforeEach(async () => {
 
-    beforeEach(async () => {
-        queuedDeployments = [
-            new QueuedDeploymentEntity(
-                'dummy-id',
-                'dummy-deployment-id',
-                QueuedPipelineStatusEnum.QUEUED,
-            ),
-            new QueuedDeploymentEntity(
-                'dummy-id',
-                'dummy-other-deployment-id',
-                QueuedPipelineStatusEnum.QUEUED,
-            )
-        ]
+            queuedDeployments = [
+                new QueuedDeploymentEntity(
+                    'dummy-id',
+                    'dummy-deployment-id',
+                    QueuedPipelineStatusEnum.QUEUED,
+                ),
+                new QueuedDeploymentEntity(
+                    'dummy-id',
+                    'dummy-other-deployment-id',
+                    QueuedPipelineStatusEnum.QUEUED,
+                )
+            ]
 
-        const module = await Test.createTestingModule({
-            providers: [PipelineQueuesService, ComponentQueueUseCase,
-                { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
-                { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: PipelinesService, useClass: PipelinesServiceStub }]
-        }).compile()
+            const module = await Test.createTestingModule({
+                providers: [ComponentQueueUseCase, {
+                        provide: PipelineQueuesService,
+                        useClass: PipelineQueuesServiceStub,
+                    },
+                    {
+                        provide: QueuedDeploymentsRepository,
+                        useClass: QueuedDeploymentsRepositoryStub
+                    }]
+            }).compile()
+            componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
+            queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+        })
 
-        pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
-        componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
-    })
+        it('should return a list of dto queued pipelines', async () => {
+            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdAscending')
+                .mockImplementation(() => Promise.resolve(queuedDeployments))
 
-    it('should return a list of dto queued pipelines', async () => {
-
-        jest.spyOn(pipelineQueuesService, 'getComponentDeploymentQueue')
-            .mockImplementation((id: string) => Promise.resolve(queuedDeployments))
-
-        expect(await componentQueueUsecase.execute('dummy-id'))
-            .toEqual(queuedDeployments.map(queuedDeployment => queuedDeployment.toReadDto()))
-    })
-})
+            expect(await componentQueueUsecase.execute('dummy-id'))
+                .toEqual(queuedDeployments.map(queuedDeployment => queuedDeployment.toReadDto()))
+        })
+    }
+)
