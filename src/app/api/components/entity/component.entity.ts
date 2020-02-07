@@ -9,7 +9,15 @@ import {
 } from 'typeorm'
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
-import { IPipelineOptions } from '../interfaces'
+import {
+  IPipelineCircle,
+  IPipelineOptions
+} from '../interfaces'
+import {
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity
+} from '../../deployments/entity'
+import { AppConstants } from '../../../core/constants'
 
 @Entity('components')
 export class ComponentEntity extends BaseEntity {
@@ -37,12 +45,11 @@ export class ComponentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
-    componentId: string,
-    pipelineOptions: IPipelineOptions
+    componentId: string
   ) {
     super()
     this.id = componentId
-    this.pipelineOptions = pipelineOptions
+    this.pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
   }
 
   public async updatePipelineOptions(pipelineOptions: IPipelineOptions): Promise<void> {
@@ -55,5 +62,55 @@ export class ComponentEntity extends BaseEntity {
       this.pipelineOptions,
       this.createdAt
     )
+  }
+
+  public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
+    try {
+      this.removeCurrentCircleRule(circle)
+      this.addCircleRule(circle, componentDeployment)
+      this.setUnusedVersions()
+      this.addVersion(componentDeployment)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
+    this.pipelineOptions.pipelineCircles.filter(
+        pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
+    )
+  }
+
+  private addCircleRule(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
+    this.pipelineOptions.pipelineCircles.unshift({
+      header: {
+        headerName: AppConstants.DEFAULT_CIRCLE_HEADER_NAME,
+        headerValue: circle.headerValue
+      },
+      destination: {
+        version: componentDeployment.buildImageTag
+      }
+    })
+  }
+
+  private setUnusedVersions(): void {
+    this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
+        !!this.pipelineOptions.pipelineCircles.find(
+            pipelineCircle => pipelineCircle.destination.version === pipelineVersion.version
+        )
+    )
+    this.pipelineOptions.pipelineUnusedVersions = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
+        !this.pipelineOptions.pipelineVersions.includes(pipelineVersion)
+    )
+  }
+
+  private addVersion(componentDeployment: ComponentDeploymentEntity): void {
+    this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(
+        pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
+    )
+    this.pipelineOptions.pipelineVersions.push({
+      versionUrl: componentDeployment.buildImageUrl,
+      version: componentDeployment.buildImageTag
+    })
   }
 }
