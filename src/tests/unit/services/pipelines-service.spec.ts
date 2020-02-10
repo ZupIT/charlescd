@@ -61,7 +61,7 @@ describe('PipelinesService', () => {
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: DeploymentConfigurationService, useClass: DeploymentConfigurationServiceStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: AppConstants.CONSUL_PROVIDER, useValue: ConsulConfigurationStub }
+                { provide: AppConstants.Configuration, useValue: ConsulConfigurationStub }
             ]
         }).compile()
 

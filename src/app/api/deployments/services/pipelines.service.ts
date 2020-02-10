@@ -44,7 +44,7 @@ export class PipelinesService {
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @Inject(AppConstants.CONSUL_PROVIDER)
+    @Inject(AppConstants.Configuration)
     private readonly configService: IConsulKV
   ) {}
 
@@ -74,11 +74,11 @@ export class PipelinesService {
   }
 
   private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
-    return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
+    return `${this.configService.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
   }
 
   private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
-    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
+    return `${this.configService.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
   }
 
   private async processUndeploymentPipeline(componentDeploymentId: string): Promise<void> {

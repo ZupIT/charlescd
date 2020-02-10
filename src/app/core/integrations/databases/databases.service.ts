@@ -1,12 +1,12 @@
 import { ConnectionOptions } from 'typeorm'
 import { IPostgresCredentials } from './interfaces'
-import { IConsulKV } from '../consul/interfaces'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 
 const rootPath = __dirname.split('/app')[0]
 
 export class DatabasesService {
 
-  public static getPostgresConnectionOptions(consulConfiguration: IConsulKV): ConnectionOptions {
+  public static getPostgresConnectionOptions(consulConfiguration: IEnvConfiguration): ConnectionOptions {
 
     const postgresCredentials: IPostgresCredentials =
       DatabasesService.getPostgresCredentials(consulConfiguration)
@@ -22,7 +22,7 @@ export class DatabasesService {
     }
   }
 
-  private static getPostgresCredentials(consulConfiguration: IConsulKV): IPostgresCredentials {
+  private static getPostgresCredentials(consulConfiguration: IEnvConfiguration): IPostgresCredentials {
 
     const {
       postgresHost, postgresPort, postgresUser, postgresPass, postgresDbName

@@ -6,7 +6,7 @@ import {
 import { ConsoleLoggerService } from '../../logs/console'
 import { AppConstants } from '../../constants'
 import { IK8sConfiguration } from '../configuration/interfaces'
-import { IConsulKV } from '../consul/interfaces'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class MooveService {
@@ -14,8 +14,8 @@ export class MooveService {
     constructor(
       private readonly httpService: HttpService,
       private readonly consoleLoggerService: ConsoleLoggerService,
-      @Inject(AppConstants.CONSUL_PROVIDER)
-      private readonly consulConfiguration: IConsulKV
+      @Inject(AppConstants.Configuration)
+      private readonly consulConfiguration: IEnvConfiguration
     ) {}
 
     public async notifyDeploymentStatus(
