@@ -1,7 +1,6 @@
-import { IConsulKV } from '../../../app/core/integrations/consul/interfaces'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 
-export const ConsulConfigurationStub: IEnvConfiguration = {
+export const EnvConfigurationStub: IEnvConfiguration = {
 
     postgresHost: 'postgreshost.com',
 

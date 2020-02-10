@@ -25,7 +25,7 @@ import { IDeploymentConfiguration } from '../../../core/integrations/configurati
 import { DeploymentStatusEnum } from '../enums'
 import { StatusManagementService } from '../../../core/services/deployments/'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
-import { IConsulKV } from '../../../core/integrations/consul/interfaces'
+import IEnvConfiguration from '../../../core/integrations/configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class PipelinesService {
@@ -44,8 +44,8 @@ export class PipelinesService {
     private readonly deploymentConfigurationService: DeploymentConfigurationService,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @Inject(AppConstants.Configuration)
-    private readonly configService: IConsulKV
+    @Inject('ENV_CONFIGURATION')
+    private readonly configService: IEnvConfiguration
   ) {}
 
   public async triggerUndeployment(
