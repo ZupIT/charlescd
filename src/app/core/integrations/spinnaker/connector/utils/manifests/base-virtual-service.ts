@@ -114,7 +114,7 @@ const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICirc
   }
 }
 
-const createOpenSeaHttpMatcher = (circle: IPipelineCircle, appName: string): IOpenSeaMatcher => ({
+const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string): IOpenSeaMatcher => ({
   route: [
     {
       destination: {
@@ -135,19 +135,27 @@ type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IOpenSeaMatch
 const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams): HttpMatcherUnion[] => {
   return circles.reduce((acc: HttpMatcherUnion[], circle) => {
     if (circle.header) {
-      const regexMatcher = createRegexHttpMatcher(circle, appName)
-      if (regexMatcher) {
-        acc.push(regexMatcher)
-      }
-      const httpMatcher = createXCircleIdHttpMatcher(circle, appName)
-      if (httpMatcher) {
-        acc.push(httpMatcher)
-      }
+      pushRegexHttpMatcher(circle, appName, acc)
+      pushCircleIdHttpMatcher(circle, appName, acc)
       return acc
     }
-    acc.push(createOpenSeaHttpMatcher(circle, appName))
+    acc.push(createDefaultCircleHttpMatcher(circle, appName))
     return acc
   }, [])
+}
+
+const pushRegexHttpMatcher = (circle: IPipelineCircle, appName: string, matcherList: HttpMatcherUnion[]) => {
+  const regexMatcher = createRegexHttpMatcher(circle, appName)
+  if (regexMatcher) {
+    matcherList.push(regexMatcher)
+  }
+}
+
+const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, matcherList: HttpMatcherUnion[]) => {
+  const httpMatcher = createXCircleIdHttpMatcher(circle, appName)
+  if (httpMatcher) {
+    matcherList.push(httpMatcher)
+  }
 }
 
 const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
