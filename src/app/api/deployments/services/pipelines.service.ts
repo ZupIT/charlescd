@@ -45,7 +45,7 @@ export class PipelinesService {
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @Inject(AppConstants.CONSUL_PROVIDER)
-    private readonly consulConfiguration: IConsulKV
+    private readonly configService: IConsulKV
   ) {}
 
   public async triggerUndeployment(

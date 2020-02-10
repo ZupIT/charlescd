@@ -2,22 +2,24 @@ import { DynamicModule, Global, Module } from '@nestjs/common'
 import { CoreModule } from './core/core.module'
 import { ApiModule } from './api/api.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ConfigModule } from '@nestjs/config'
 import { DatabasesService } from './core/integrations/databases'
-import { IConsulKV } from './core/integrations/consul/interfaces'
-import { AppConstants } from './core/constants'
-import { ConsulService } from './core/integrations/consul'
+import configurations from './config/configurations'
 
 @Global()
-@Module({})
+@Module({
+  imports: [ConfigModule.forRoot({
+    load: [configurations],
+  })]
+})
 export class AppModule {
 
   public static async forRootAsync(): Promise<DynamicModule> {
 
-    const consulConfiguration: IConsulKV = await ConsulService.getAppConfiguration()
-    return AppModule.getModuleObject(consulConfiguration)
+    return AppModule.getModuleObject()
   }
 
-  private static getModuleObject(consulConfiguration: IConsulKV): DynamicModule {
+  private static getModuleObject(): DynamicModule {
 
     return {
       module: AppModule,
@@ -26,14 +28,12 @@ export class AppModule {
         ApiModule,
         TypeOrmModule.forRootAsync({
           useFactory: () => (
-            DatabasesService.getPostgresConnectionOptions(consulConfiguration)
+            DatabasesService.getPostgresConnectionOptions()
           )
         })
       ],
-      providers: [
-        { provide: AppConstants.CONSUL_PROVIDER, useValue: consulConfiguration }
-      ],
-      exports: [ AppConstants.CONSUL_PROVIDER ]
+      providers: [],
+      exports: [ ]
     }
   }
 }
