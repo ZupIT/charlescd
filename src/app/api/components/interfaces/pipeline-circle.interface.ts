@@ -16,3 +16,14 @@ export interface IPipelineCircle {
 
   destination: IPipelineCircleDestination
 }
+
+// export type IPipelineCircle = IPipelineSpecificCircle | IDefaultPipelineCircle
+
+// export interface IPipelineSpecificCircle {
+//   header: IPipelineCircleHeader
+//   destination: IPipelineCircleDestination
+// }
+
+// export interface IDefaultPipelineCircle {
+//   destination: IPipelineCircleDestination
+// }
