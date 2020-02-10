@@ -4,23 +4,20 @@ import { ApiModule } from './api/api.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { DatabasesService } from './core/integrations/databases'
-import configurations from './config/configurations'
+import { Configuration } from './config/configurations'
 import { AppConstants } from './core/constants'
+import IEnvConfiguration from './core/integrations/configuration/interfaces/env-configuration.interface'
 
 @Global()
-@Module({
-  imports: [ConfigModule.forRoot({
-    load: [configurations],
-  })]
-})
+@Module({})
 export class AppModule {
 
   public static async forRootAsync(): Promise<DynamicModule> {
 
-    return AppModule.getModuleObject()
+    return AppModule.getModuleObject(Configuration)
   }
 
-  private static getModuleObject(): DynamicModule {
+  private static getModuleObject(envConfiguration: IEnvConfiguration): DynamicModule {
 
     return {
       module: AppModule,
@@ -29,7 +26,7 @@ export class AppModule {
         ApiModule,
         TypeOrmModule.forRootAsync({
           useFactory: () => (
-            DatabasesService.getPostgresConnectionOptions()
+            DatabasesService.getPostgresConnectionOptions(envConfiguration)
           )
         })
       ],

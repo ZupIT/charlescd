@@ -7,7 +7,7 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { ConsulConfigurationStub } from '../../stubs/configurations'
+import { EnvConfigurationStub } from '../../stubs/configurations'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { AppConstants } from '../../../app/core/constants'
@@ -77,7 +77,7 @@ describe('Spinnaker Service', () => {
         { provide: HttpService, useClass: HttpServiceStub },
         { provide: StatusManagementService, useClass: StatusManagementServiceStub },
         { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-        { provide: AppConstants.CONSUL_PROVIDER, useValue: ConsulConfigurationStub },
+        { provide: 'ENV_CONFIGURATION', useValue: EnvConfigurationStub },
         { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
         { provide: MooveService, useClass: MooveServiceStub },
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },

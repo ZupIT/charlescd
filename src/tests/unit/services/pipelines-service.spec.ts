@@ -18,7 +18,7 @@ import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { DeploymentConfigurationService } from '../../../app/core/integrations/configuration'
 import { AppConstants } from '../../../app/core/constants'
-import { ConsulConfigurationStub } from '../../stubs/configurations'
+import { EnvConfigurationStub } from '../../stubs/configurations'
 import {
     CircleDeploymentEntity,
     ComponentDeploymentEntity,
@@ -61,7 +61,7 @@ describe('PipelinesService', () => {
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: DeploymentConfigurationService, useClass: DeploymentConfigurationServiceStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: AppConstants.Configuration, useValue: ConsulConfigurationStub }
+                { provide: 'ENV_CONFIGURATION', useValue: EnvConfigurationStub }
             ]
         }).compile()
 

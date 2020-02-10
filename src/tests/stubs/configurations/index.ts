@@ -1,5 +1,5 @@
-import { ConsulConfigurationStub } from './consul-configuration.stub'
+import { EnvConfigurationStub } from './env-configuration.stub'
 
 export {
-    ConsulConfigurationStub
+    EnvConfigurationStub
 }

@@ -15,7 +15,7 @@ export class MooveService {
       private readonly httpService: HttpService,
       private readonly consoleLoggerService: ConsoleLoggerService,
       @Inject(AppConstants.Configuration)
-      private readonly consulConfiguration: IEnvConfiguration
+      private readonly envConfiguration: IEnvConfiguration
     ) {}
 
     public async notifyDeploymentStatus(
@@ -43,7 +43,7 @@ export class MooveService {
       try {
         this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
         const k8sConfiguration = await this.httpService.get(
-          `${this.consulConfiguration.mooveUrl}/credentials/k8s/${k8sConfigurationId}`,
+          `${this.envConfiguration.mooveUrl}/credentials/k8s/${k8sConfigurationId}`,
           { headers: { 'x-organization': 'zup' } }
         ).toPromise()
         this.consoleLoggerService.log('FINISH:GET_K8S_CONFIG')

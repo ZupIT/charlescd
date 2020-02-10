@@ -6,10 +6,10 @@ const rootPath = __dirname.split('/app')[0]
 
 export class DatabasesService {
 
-  public static getPostgresConnectionOptions(consulConfiguration: IEnvConfiguration): ConnectionOptions {
+  public static getPostgresConnectionOptions(envConfiguration: IEnvConfiguration): ConnectionOptions {
 
     const postgresCredentials: IPostgresCredentials =
-      DatabasesService.getPostgresCredentials(consulConfiguration)
+      DatabasesService.getPostgresCredentials(envConfiguration)
 
     return {
       type: 'postgres',
@@ -22,11 +22,11 @@ export class DatabasesService {
     }
   }
 
-  private static getPostgresCredentials(consulConfiguration: IEnvConfiguration): IPostgresCredentials {
+  private static getPostgresCredentials(envConfiguration: IEnvConfiguration): IPostgresCredentials {
 
     const {
       postgresHost, postgresPort, postgresUser, postgresPass, postgresDbName
-    } = consulConfiguration
+    } = envConfiguration
 
     return {
       host: postgresHost,
