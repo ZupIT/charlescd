@@ -32,7 +32,7 @@ const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IB
   }
 })
 
-interface IOpenSeaMatcher {
+interface IDefaultCircleMatcher {
   route: [
     {
       destination: {
@@ -43,7 +43,7 @@ interface IOpenSeaMatcher {
   ]
 }
 
-interface ICircleHttpMatcher extends IOpenSeaMatcher {
+interface ICircleHttpMatcher extends IDefaultCircleMatcher {
   match: [
     {
       headers: {
@@ -78,7 +78,7 @@ const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string): I
   }
 }
 
-interface ICircleRegexMatcher extends IOpenSeaMatcher {
+interface ICircleRegexMatcher extends IDefaultCircleMatcher {
   match: [
     {
       headers: {
@@ -114,7 +114,7 @@ const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICirc
   }
 }
 
-const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string): IOpenSeaMatcher => ({
+const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string): IDefaultCircleMatcher => ({
   route: [
     {
       destination: {
@@ -131,7 +131,7 @@ interface HttpMatchersParams {
   uri: { uriName: string }
 }
 
-type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IOpenSeaMatcher
+type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
 const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams): HttpMatcherUnion[] => {
   return circles.reduce((acc: HttpMatcherUnion[], circle) => {
     if (circle.header) {
