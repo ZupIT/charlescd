@@ -1,14 +1,16 @@
 import { ConfigurationConstants } from '../core/constants/application/configuration.constants'
+import IEnvConfiguration from '../core/integrations/configuration/interfaces/env-configuration.interface'
 
-export default () => ({
-
+export const Configuration: IEnvConfiguration = {
   postgresHost: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
 
-  postgresPort: process.env.DATABASE_PORT || ConfigurationConstants.DATABASE_PORT,
+  postgresPort: Number(process.env.DATABASE_PORT) || ConfigurationConstants.DATABASE_PORT,
 
   postgresUser: process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
 
   postgresPass: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
+
+  postgresDbName: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
 
   mooveUrl: process.env.MOOVE_URL || ConfigurationConstants.MOOVE_URL,
 
@@ -27,5 +29,4 @@ export default () => ({
   helmPrefixUrl: process.env.HELM_PREFIX_URL || ConfigurationConstants.HELM_PREFIX_URL,
 
   helmRepoBranch: process.env.HELM_REPO_BRANCH || ConfigurationConstants.HELM_REPO_BRANCH
-
-})
+}
