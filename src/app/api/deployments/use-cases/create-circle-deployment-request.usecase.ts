@@ -59,8 +59,7 @@ export class CreateCircleDeploymentRequestUsecase {
 
         try {
             deployment = await this.persistDeploymentEntity(createCircleDeploymentRequestDto, circleId)
-            await this.persistModulesEntities(deployment)
-            await this.persistComponentsEntities(deployment)
+            await this.persistModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
             return deployment.toReadDto()
         } catch (error) {
@@ -86,47 +85,47 @@ export class CreateCircleDeploymentRequestUsecase {
         }
     }
 
-    private async persistModulesEntities(deployment: DeploymentEntity): Promise<void> {
+    private async persistModulesAndComponentEntities(deployment: DeploymentEntity): Promise<void> {
         try {
             await Promise.all(
                 deployment.modules
-                    .map(moduleDeployment => this.saveModuleEntity(moduleDeployment))
+                    .map(moduleDeployment => this.saveModuleEntities(moduleDeployment))
             )
         } catch (error) {
             throw new InternalServerErrorException('Could not save modules')
         }
     }
 
-    private async saveModuleEntity(moduleDeployment: ModuleDeploymentEntity): Promise<ModuleEntity> {
-        const moduleEntity: ModuleEntity =
-            await this.modulesRepository.findOne({ id: moduleDeployment.moduleId })
+    private async saveModuleEntities(moduleDeployment: ModuleDeploymentEntity): Promise<void> {
+        let moduleEntity: ModuleEntity
 
+        moduleEntity = await this.modulesRepository.findOne({ id: moduleDeployment.moduleId })
         if (!moduleEntity) {
-            return await this.modulesRepository.save(
+            moduleEntity = await this.modulesRepository.save(
                 new ModuleEntity(moduleDeployment.moduleId, [])
             )
         }
+        await this.persistComponentsEntities(moduleDeployment, moduleEntity)
     }
 
-    private async persistComponentsEntities(deployment: DeploymentEntity): Promise<void> {
+    private async persistComponentsEntities(moduleDeployment: ModuleDeploymentEntity, moduleEntity: ModuleEntity): Promise<void> {
         try {
-            const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
             await Promise.all(
-                componentDeployments
-                    .map(componentDeployment => this.saveComponentEntity(componentDeployment))
+                moduleDeployment.components
+                    .map(componentDeployment => this.saveComponentEntity(componentDeployment, moduleEntity))
             )
         } catch (error) {
             throw new InternalServerErrorException('Could not save components')
         }
     }
 
-    private async saveComponentEntity(componentDeployment: ComponentDeploymentEntity): Promise<ComponentEntity> {
+    private async saveComponentEntity(componentDeployment: ComponentDeploymentEntity, module: ModuleEntity): Promise<ComponentEntity> {
         const componentEntity: ComponentEntity =
             await this.componentsRepository.findOne({ id: componentDeployment.componentId })
 
         if (!componentEntity) {
             return await this.componentsRepository.save(
-                new ComponentEntity(componentDeployment.componentId)
+                new ComponentEntity(componentDeployment.componentId, module)
             )
         }
     }
@@ -173,12 +172,25 @@ export class CreateCircleDeploymentRequestUsecase {
         queuedDeployment: QueuedDeploymentEntity
     ): Promise<void> {
 
-        component.setPipelineCircle(deployment.circle, componentDeployment)
+        await this.setComponentPipelineCircle(component, componentDeployment, deployment)
         const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
         await this.pipelineDeploymentsService.triggerComponentDeployment(
             component, deployment, componentDeployment,
             pipelineCallbackUrl, queuedDeployment.id
         )
+    }
+
+    private async setComponentPipelineCircle(
+        component: ComponentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        deployment: DeploymentEntity
+    ): Promise<ComponentEntity> {
+        try {
+            component.setPipelineCircle(deployment.circle, componentDeployment)
+            return await this.componentsRepository.save(component)
+        } catch (error) {
+            throw new InternalServerErrorException('Could not update component pipeline')
+        }
     }
 
     private async setQueuedDeploymentStatus(queueId: number, status: QueuedPipelineStatusEnum): Promise<void> {

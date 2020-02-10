@@ -36,7 +36,7 @@ export class CreateDefaultDeploymentRequestDto extends CreateDeploymentRequestDt
             this.authorId,
             this.description,
             this.callbackUrl,
-            {} as CircleDeploymentEntity,
+            null,
             true,
             requestCircleId
         )

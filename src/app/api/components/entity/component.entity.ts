@@ -33,7 +33,7 @@ export class ComponentEntity extends BaseEntity {
     moduleEntity => moduleEntity.components
   )
   @JoinColumn({ name: 'module_id' })
-  public module: ModuleEntity[]
+  public module: ModuleEntity
 
   @Column({
     type: 'jsonb',
@@ -45,10 +45,12 @@ export class ComponentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
-    componentId: string
+    componentId: string,
+    module: ModuleEntity
   ) {
     super()
     this.id = componentId
+    this.module = module
     this.pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
   }
 
@@ -64,6 +66,17 @@ export class ComponentEntity extends BaseEntity {
     )
   }
 
+  public setPipelineDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
+    try {
+      this.removeCurrentDefaultCircle()
+      this.addDefaultCircle(componentDeployment)
+      this.setUnusedVersions()
+      this.addVersion(componentDeployment)
+    } catch (error) {
+      throw error
+    }
+  }
+
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
     try {
       this.removeCurrentCircleRule(circle)
@@ -73,6 +86,20 @@ export class ComponentEntity extends BaseEntity {
     } catch (error) {
       throw error
     }
+  }
+
+  private removeCurrentDefaultCircle(): void {
+    this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(pipelineCircle => {
+      return !!pipelineCircle.header
+    })
+  }
+
+  private addDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
+    this.pipelineOptions.pipelineCircles.push({
+      destination: {
+        version: componentDeployment.buildImageTag
+      }
+    })
   }
 
   private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
