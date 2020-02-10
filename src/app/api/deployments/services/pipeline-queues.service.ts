@@ -190,7 +190,7 @@ export class PipelineQueuesService {
     try {
       this.consoleLoggerService.log(`START:CREATE_RUNNING_DEPLOYMENT`, { componentId, componentDeploymentId, status })
       queuedDeployment = await this.enqueueDeploymentExecution(componentId, componentDeploymentId, status)
-      await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeployment.id)
+      await this.pipelinesService.triggerDeployment(componentDeploymentId, queuedDeployment.id)
       this.consoleLoggerService.log(`FINISH:CREATE_RUNNING_DEPLOYMENT`)
     } catch (error) {
       await this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
@@ -233,7 +233,7 @@ export class PipelineQueuesService {
         await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
 
     if (queuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity) {
-      await this.pipelinesService.triggerDeployment(componentDeploymentId, defaultCircle, queuedDeploymentId)
+      await this.pipelinesService.triggerDeployment(componentDeploymentId, queuedDeploymentId)
     } else if (queuedDeployment.type === QueuedPipelineTypesEnum.QueuedUndeploymentEntity) {
       await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedDeploymentId)
     }

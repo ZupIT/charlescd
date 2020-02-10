@@ -173,7 +173,7 @@ export class PipelinesService {
 
     return moduleEntity.addComponent(new ComponentEntity(
       componentDeployment.componentId,
-      pipelineOptions
+      moduleEntity
     ))
   }
 
