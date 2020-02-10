@@ -39,6 +39,8 @@ export default class TotalPipeline {
   }
 
   buildService() {
+    if (this.contract.versions.length === 0) { return }
+
     const stageName = 'Deploy Service'
     const { account, appName, appNamespace, appPort } = this.contract
     const serviceManifest = baseService(appName, appNamespace, appPort)
@@ -49,6 +51,8 @@ export default class TotalPipeline {
   }
 
   buildDeployments() {
+    if (this.contract.versions.length === 0) { return }
+
     const preRefId = this.refId - 1
     this.contract.versions.forEach(version => {
       const helmStage = baseStageHelm(
