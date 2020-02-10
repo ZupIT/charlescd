@@ -1,16 +1,16 @@
-import { QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { ComponentQueueUseCase } from '../../../app/api/components/use-cases/component-queue.usecase'
 import { Test } from '@nestjs/testing'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
-import { QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
-import { PipelineQueuesService } from '../../../app/api/deployments/services'
-import { PipelineQueuesServiceStub } from '../../stubs/services'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { ComponentDeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
 import { BadRequestException } from '@nestjs/common'
 
 describe('execute', () => {
 
         let queuedDeploymentsRepository: QueuedDeploymentsRepository
+        let componentDeploymentsRepository: ComponentDeploymentsRepository
+        let componentDeployment: ComponentDeploymentEntity
         let componentQueueUsecase: ComponentQueueUseCase
         let queuedDeployments: QueuedDeploymentEntity[]
 
@@ -29,10 +29,21 @@ describe('execute', () => {
                 )
             ]
 
+            componentDeployment = new ComponentDeploymentEntity(
+                'dummy-id',
+                'dummy-name',
+                'dummy-img-url',
+                'dummy-img-tag',
+                'dummy-context-path',
+                'dummy-health-check',
+                1234
+            )
+
             const module = await Test.createTestingModule({
-                providers: [ComponentQueueUseCase, {
-                        provide: PipelineQueuesService,
-                        useClass: PipelineQueuesServiceStub,
+                providers: [ComponentQueueUseCase,
+                    {
+                        provide: ComponentDeploymentsRepository,
+                        useClass: ComponentDeploymentsRepositoryStub
                     },
                     {
                         provide: QueuedDeploymentsRepository,
@@ -42,10 +53,11 @@ describe('execute', () => {
 
             componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
             queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+            componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository);
         })
 
         it('should return a exception when dont found any component', async () => {
-            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdAscending')
+            jest.spyOn(componentDeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undefined))
 
             await expect(componentQueueUsecase.execute('dummy-id'))
@@ -53,6 +65,8 @@ describe('execute', () => {
         })
 
         it('should return a list of dto queued pipelines', async () => {
+            jest.spyOn(componentDeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
             jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdAscending')
                 .mockImplementation(() => Promise.resolve(queuedDeployments))
 
