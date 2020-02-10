@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { DatabasesService } from './core/integrations/databases'
 import configurations from './config/configurations'
+import { AppConstants } from './core/constants'
 
 @Global()
 @Module({
@@ -32,8 +33,11 @@ export class AppModule {
           )
         })
       ],
-      providers: [],
-      exports: [ ]
+      providers: [{
+        provide: 'ENV_CONFIGURATION',
+        useValue: AppConstants.Configuration
+      }],
+      exports: [ 'ENV_CONFIGURATION']
     }
   }
 }
