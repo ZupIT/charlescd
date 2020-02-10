@@ -1,4 +1,5 @@
 import {
+    Inject,
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
@@ -25,8 +26,13 @@ import { StatusManagementService } from '../../../core/services/deployments'
 import { MooveService } from '../../../core/integrations/moove'
 import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
-import { PipelineQueuesService } from '../services'
+import {
+    PipelineDeploymentsService,
+    PipelineQueuesService
+} from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
+import { AppConstants } from '../../../core/constants'
+import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
@@ -43,7 +49,10 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly statusManagementService: StatusManagementService,
         private readonly mooveService: MooveService,
-        private readonly pipelineQueuesService: PipelineQueuesService
+        private readonly pipelineQueuesService: PipelineQueuesService,
+        private readonly pipelineDeploymentsService: PipelineDeploymentsService,
+        @Inject(AppConstants.CONSUL_PROVIDER)
+        private readonly consulConfiguration: IConsulKV
     ) {}
 
     public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
@@ -128,7 +137,7 @@ export class CreateCircleDeploymentRequestUsecase {
             const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
             await Promise.all(
                 componentDeployments.map(
-                    componentDeployment => this.enqueueComponentDeployment(componentDeployment, deployment.circle)
+                    componentDeployment => this.enqueueComponentDeployment(deployment, componentDeployment)
                 )
             )
         } catch (error) {
@@ -136,18 +145,49 @@ export class CreateCircleDeploymentRequestUsecase {
         }
     }
 
-    private async enqueueComponentDeployment(componentDeployment: ComponentDeploymentEntity, circle: CircleDeploymentEntity): Promise<void> {
-        try {
-            const queuedDeployment: QueuedDeploymentEntity = await this.persistQueuedDeployment(componentDeployment)
-            const componentEntity: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+    private async enqueueComponentDeployment(
+        deployment: DeploymentEntity,
+        componentDeployment: ComponentDeploymentEntity
+    ): Promise<void> {
 
+        let queuedDeployment: QueuedDeploymentEntity
+
+        try {
+            queuedDeployment = await this.persistQueuedDeployment(componentDeployment)
+            const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                componentEntity.setPipelineCircle(circle, componentDeployment)
-                // triggerDeployment
+                await this.triggerComponentDeployment(component, componentDeployment, deployment, queuedDeployment)
             }
         } catch (error) {
+            if (queuedDeployment && queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+                await this.setQueuedDeploymentStatus(queuedDeployment.id, QueuedPipelineStatusEnum.FINISHED)
+                this.pipelineQueuesService.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
+            }
             throw error
         }
+    }
+
+    private async triggerComponentDeployment(
+        component: ComponentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        deployment: DeploymentEntity,
+        queuedDeployment: QueuedDeploymentEntity
+    ): Promise<void> {
+
+        component.setPipelineCircle(deployment.circle, componentDeployment)
+        const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
+        await this.pipelineDeploymentsService.triggerComponentDeployment(
+            component, deployment, componentDeployment,
+            pipelineCallbackUrl, queuedDeployment.id
+        )
+    }
+
+    private async setQueuedDeploymentStatus(queueId: number, status: QueuedPipelineStatusEnum): Promise<void> {
+        await this.queuedDeploymentsRepository.update({ id: queueId }, { status })
+    }
+
+    private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
+        return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
     }
 
     private async persistQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {

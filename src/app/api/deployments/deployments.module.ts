@@ -23,6 +23,7 @@ import {
 } from './repository'
 import {
   DeploymentsService,
+  PipelineDeploymentsService,
   PipelineQueuesService,
   PipelinesService,
 } from './services'
@@ -60,6 +61,7 @@ import { DeploymentUniquenessPipe } from './pipes'
     DeploymentsService,
     PipelineQueuesService,
     PipelinesService,
+    PipelineDeploymentsService,
     CreateUndeploymentRequestUsecase,
     CreateCircleDeploymentRequestUsecase,
     CreateDefaultDeploymentRequestUsecase,
