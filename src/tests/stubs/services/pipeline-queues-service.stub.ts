@@ -1,6 +1,5 @@
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import {QueuedDeploymentEntity, QueuedUndeploymentEntity} from '../../../app/api/deployments/entity'
-import {ReadQueuedDeploymentDto} from '../../../app/api/deployments/dto'
+import { QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../app/api/deployments/entity'
 
 export class PipelineQueuesServiceStub {
 
@@ -27,7 +26,7 @@ export class PipelineQueuesServiceStub {
     public async queueDeploymentTasks(): Promise<void> {
         return Promise.resolve()
     }
-    public async getComponentDeploymentQueue(id: string ): Promise<QueuedDeploymentEntity[]> {
+    public async getComponentDeploymentQueue(id: string): Promise<QueuedDeploymentEntity[]> {
         return Promise.resolve([] as QueuedDeploymentEntity[])
     }
 

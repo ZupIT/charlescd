@@ -1,24 +1,25 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { PipelineQueuesService } from '../../deployments/services'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
-import { QueuedDeploymentEntity } from '../../deployments/entity'
-import { QueuedDeploymentsRepository } from '../../deployments/repository'
+import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../deployments/entity'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class ComponentQueueUseCase {
     constructor(
-        private readonly pipelineQueuesService: PipelineQueuesService,
         @InjectRepository(QueuedDeploymentsRepository)
-        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository
+        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(ComponentDeploymentsRepository)
+        private readonly componentDeploymentRepository: ComponentDeploymentsRepository
     ) {
     }
 
-    public async execute(id: string): Promise<ReadQueuedDeploymentDto[]> {
-        const queuedDeployments: QueuedDeploymentEntity[] = await this.queuedDeploymentsRepository.getAllByComponentIdAscending(id)
-        if ( !queuedDeployments ) {
-            throw new BadRequestException('No results found for this component')
+    public async execute(componentDeploymentId: string): Promise<ReadQueuedDeploymentDto[]> {
+        const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentRepository.findOne({id: componentDeploymentId })
+        if (!componentDeployment) {
+            throw new BadRequestException('Component not found')
         }
+        const queuedDeployments: QueuedDeploymentEntity[] = await this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentDeploymentId)
         return queuedDeployments.map(
             queuedDeployment => queuedDeployment.toReadDto()
         )
