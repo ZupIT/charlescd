@@ -62,11 +62,10 @@ export class PipelinesService {
     }
   }
 
-  public async triggerDeployment(componentDeploymentId: string, defaultCircle: boolean, queueId: number): Promise<void> {
+  public async triggerDeployment(componentDeploymentId: string, queueId: number): Promise<void> {
 
     try {
       const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queueId)
-      await this.processDeploymentPipeline(componentDeploymentId, defaultCircle)
       await this.triggerPipelineDeployment(componentDeploymentId, pipelineCallbackUrl, queueId)
     } catch (error) {
       throw error
