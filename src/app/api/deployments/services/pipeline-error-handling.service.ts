@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import {
     ComponentDeploymentEntity,
-    ComponentUndeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
     QueuedUndeploymentEntity,
