@@ -1,24 +1,15 @@
 import { IPipelineCircle } from '../../../../../../api/components/interfaces'
+import { ConfigurationConstants, DefaultCircleId } from '../../../../../constants/application/configuration.constants'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
-import { DefaultCircleId, ConfigurationConstants } from '../../../../../constants/application/configuration.constants'
-
-interface VirtualServiceParams {
-  appName: string
-  appNamespace: string
-}
-
-interface IBaseVirtualService {
-  apiVersion: string
-  kind: string
-  metadata: {
-    name: string
-    namespace: string
-  }
-  spec: {
-    hosts: string[]
-    http: HttpMatcherUnion[]
-  }
-}
+import {
+  HttpMatchersParams,
+  HttpMatcherUnion,
+  IBaseVirtualService,
+  ICircleHttpMatcher,
+  ICircleRegexMatcher,
+  IDefaultCircleMatcher,
+  VirtualServiceParams
+} from '../../interfaces'
 
 const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IBaseVirtualService => ({
   apiVersion: 'networking.istio.io/v1alpha3',
@@ -33,77 +24,6 @@ const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IB
   }
 })
 
-interface IDefaultCircleMatcher {
-  route: [
-    {
-      destination: {
-        host: string
-        subset: string
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': DefaultCircleId
-          }
-        }
-      }
-    }
-  ]
-}
-
-interface ICircleHttpMatcher {
-  match: [
-    {
-      headers: {
-        [key: string]: {
-          exact: string
-        }
-      }
-    }
-  ],
-  route: [
-    {
-      destination: {
-        host: string
-        subset: string
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': string
-          }
-        }
-      }
-    }
-  ]
-}
-
-interface ICircleRegexMatcher {
-  match: [
-    {
-      headers: {
-        cookie: {
-          regex: string
-        }
-      }
-    }
-  ],
-  route: [
-    {
-      destination: {
-        host: string
-        subset: string
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': string
-          }
-        }
-      }
-    }
-  ]
-}
 const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string): ICircleHttpMatcher | undefined => {
   if (circle.header) {
     return {
@@ -184,13 +104,6 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
   ]
 })
 
-interface HttpMatchersParams {
-  circles: IPipelineCircle[]
-  appName: string
-  uri: { uriName: string }
-}
-
-type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
 const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams): HttpMatcherUnion[] => {
   return circles.reduce((acc: HttpMatcherUnion[], circle) => {
     if (circle.header) {
