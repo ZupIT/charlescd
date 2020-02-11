@@ -53,15 +53,6 @@ export class DeploymentsController {
     return await this.createDefaultDeploymentRequestUsecase.execute(createDefaultDeploymentRequestDto, circleId)
   }
 
-  @Post()
-  public async createDeployment(
-    @Body() createDeploymentDto: CreateDeploymentRequestDto,
-    @Headers('x-circle-id') circleId: string
-  ): Promise<ReadDeploymentDto> {
-
-    return await this.deploymentsService.createDeployment(createDeploymentDto, circleId)
-  }
-
   @Post(':id/undeploy')
   public async createUndeployment(
     @Body() createUndeploymentDto: CreateUndeploymentDto,

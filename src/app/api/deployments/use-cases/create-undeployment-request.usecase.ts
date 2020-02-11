@@ -1,7 +1,15 @@
-import { Injectable } from '@nestjs/common'
-import { CreateUndeploymentDto } from '../dto/create-undeployment.dto'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException
+} from '@nestjs/common'
+import {
+  CreateUndeploymentDto,
+  ReadUndeploymentDto
+} from '../dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
+  ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
   DeploymentEntity,
   QueuedUndeploymentEntity,
@@ -12,15 +20,16 @@ import {
   QueuedPipelineStatusEnum,
   UndeploymentStatusEnum
 } from '../enums'
-import { QueuedDeploymentsRepository } from '../repository'
 import {
-  PipelineQueuesService,
-  PipelinesService
+  PipelineDeploymentsService,
+  PipelineQueuesService
 } from '../services'
-import { ReadUndeploymentDto } from '../dto'
 import { NotificationStatusEnum } from '../../notifications/enums'
 import { StatusManagementService } from '../../../core/services/deployments'
 import { MooveService } from '../../../core/integrations/moove'
+import { ComponentEntity } from '../../components/entity'
+import { AppConstants } from '../../../core/constants'
+import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -30,12 +39,16 @@ export class CreateUndeploymentRequestUsecase {
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(UndeploymentEntity)
     private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
-    @InjectRepository(QueuedDeploymentsRepository)
-    private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+    @InjectRepository(ComponentEntity)
+    private readonly componentsRepository: Repository<ComponentEntity>,
+    @InjectRepository(QueuedUndeploymentEntity)
+    private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     private readonly pipelineQueuesService: PipelineQueuesService,
-    private readonly pipelinesService: PipelinesService,
     private readonly statusManagementService: StatusManagementService,
-    private readonly mooveService: MooveService
+    private readonly mooveService: MooveService,
+    private readonly pipelineDeploymentsService: PipelineDeploymentsService,
+    @Inject(AppConstants.CONSUL_PROVIDER)
+    private readonly consulConfiguration: IConsulKV
   ) {}
 
   public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string): Promise<ReadUndeploymentDto> {
@@ -43,7 +56,7 @@ export class CreateUndeploymentRequestUsecase {
 
     try {
       undeployment = await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
-      await this.scheduleUndeploymentComponents(undeployment)
+      await this.scheduleComponentUndeployments(undeployment)
       return undeployment.toReadDto()
     } catch (error) {
       if (undeployment && !undeployment.hasFailed()) {
@@ -69,17 +82,16 @@ export class CreateUndeploymentRequestUsecase {
       })
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment))
     } catch (error) {
-      throw error
+      throw new InternalServerErrorException('Could not save undeployment')
     }
   }
 
-  private async scheduleUndeploymentComponents(undeployment: UndeploymentEntity): Promise<void> {
-
+  private async scheduleComponentUndeployments(undeployment: UndeploymentEntity): Promise<void> {
     try {
       const componentUndeployments: ComponentUndeploymentEntity[] = undeployment.getComponentUndeployments()
       await Promise.all(
           componentUndeployments.map(
-              componentUndeployment => this.scheduleComponent(componentUndeployment)
+              componentUndeployment => this.enqueueComponentUndeployment(undeployment, componentUndeployment)
           )
       )
     } catch (error) {
@@ -87,42 +99,79 @@ export class CreateUndeploymentRequestUsecase {
     }
   }
 
-  private async scheduleComponent(
+  private async enqueueComponentUndeployment(
+      undeployment: UndeploymentEntity,
       componentUndeployment: ComponentUndeploymentEntity
-  ): Promise<void> {
-
-    try {
-      const { componentId } = componentUndeployment.componentDeployment
-      const status: QueuedPipelineStatusEnum =
-          await this.pipelineQueuesService.getQueuedPipelineStatus(componentId)
-      await this.createUndeployment(componentUndeployment, status)
-    } catch (error) {
-      throw error
-    }
-  }
-
-  private async createUndeployment(
-      componentUndeployment: ComponentUndeploymentEntity,
-      status: QueuedPipelineStatusEnum
   ): Promise<void> {
 
     let queuedUndeployment: QueuedUndeploymentEntity
 
     try {
-      const { componentId, id: componentDeploymentId } = componentUndeployment.componentDeployment
-      const { id: componentUndeploymentId } = componentUndeployment
-      queuedUndeployment = await this.pipelineQueuesService.enqueueUndeploymentExecution(
-          componentId, componentDeploymentId, status, componentUndeploymentId
-      )
-      if (status === QueuedPipelineStatusEnum.RUNNING) {
-        await this.pipelinesService.triggerUndeployment(componentDeploymentId, queuedUndeployment.id)
+      queuedUndeployment = await this.persistQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
+      const component: ComponentEntity =
+          await this.componentsRepository.findOne({ id: componentUndeployment.componentDeployment.componentId })
+
+      if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+        await this.triggerComponentUndeployment(
+            component, componentUndeployment.componentDeployment,
+            undeployment.deployment, queuedUndeployment
+        )
       }
     } catch (error) {
-      if (status === QueuedPipelineStatusEnum.RUNNING) {
+      if (queuedUndeployment && queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
         this.pipelineQueuesService.triggerNextComponentPipeline(queuedUndeployment.componentDeploymentId)
       }
       throw error
     }
+  }
+
+  private async persistQueuedUndeployment(
+      componentDeployment: ComponentDeploymentEntity,
+      componentUndeployment: ComponentUndeploymentEntity
+  ): Promise<QueuedUndeploymentEntity> {
+
+    try {
+      const status: QueuedPipelineStatusEnum =
+          await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)
+
+      return await this.queuedUndeploymentsRepository.save(
+          new QueuedUndeploymentEntity(componentDeployment.componentId, componentDeployment.id, status, componentUndeployment.id)
+      )
+    } catch (error) {
+      throw new InternalServerErrorException('Could not save queued undeployment')
+    }
+  }
+
+  private async triggerComponentUndeployment(
+      component: ComponentEntity,
+      componentDeployment: ComponentDeploymentEntity,
+      deployment: DeploymentEntity,
+      queuedUndeployment: QueuedUndeploymentEntity
+  ): Promise<void> {
+
+    await this.unsetComponentPipelineCircle(component, deployment)
+    const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
+    await this.pipelineDeploymentsService.triggerComponentDeployment(
+        component, deployment, componentDeployment,
+        pipelineCallbackUrl, queuedUndeployment.id
+    )
+  }
+
+  private async unsetComponentPipelineCircle(
+      component: ComponentEntity,
+      deployment: DeploymentEntity
+  ): Promise<ComponentEntity> {
+
+    try {
+      component.unsetPipelineCircle(deployment.circle)
+      return await this.componentsRepository.save(component)
+    } catch (error) {
+      throw new InternalServerErrorException('Could not update component pipeline')
+    }
+  }
+
+  private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
+    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
   }
 }
