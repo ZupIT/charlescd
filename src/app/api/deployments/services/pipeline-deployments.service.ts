@@ -10,8 +10,7 @@ import {
     ComponentUndeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
-    QueuedUndeploymentEntity,
-    UndeploymentEntity
+    QueuedUndeploymentEntity
 } from '../entity'
 import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'

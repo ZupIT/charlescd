@@ -1,5 +1,4 @@
 import {
-    Inject,
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
@@ -25,8 +24,6 @@ import {
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
-import { AppConstants } from '../../../core/constants'
-import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
