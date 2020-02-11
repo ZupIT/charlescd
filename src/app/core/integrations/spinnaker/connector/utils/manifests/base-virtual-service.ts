@@ -1,5 +1,6 @@
 import { IPipelineCircle } from '../../../../../../api/components/interfaces'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
+import { DefaultCircleId, ConfigurationConstants } from '../../../../../constants/application/configuration.constants'
 
 interface VirtualServiceParams {
   appName: string
@@ -38,17 +39,66 @@ interface IDefaultCircleMatcher {
       destination: {
         host: string
         subset: string
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': DefaultCircleId
+          }
+        }
       }
     }
   ]
 }
 
-interface ICircleHttpMatcher extends IDefaultCircleMatcher {
+interface ICircleHttpMatcher {
   match: [
     {
       headers: {
         [key: string]: {
           exact: string
+        }
+      }
+    }
+  ],
+  route: [
+    {
+      destination: {
+        host: string
+        subset: string
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': string
+          }
+        }
+      }
+    }
+  ]
+}
+
+interface ICircleRegexMatcher {
+  match: [
+    {
+      headers: {
+        cookie: {
+          regex: string
+        }
+      }
+    }
+  ],
+  route: [
+    {
+      destination: {
+        host: string
+        subset: string
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': string
+          }
         }
       }
     }
@@ -71,23 +121,18 @@ const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string): I
           destination: {
             host: appName,
             subset: circle.destination.version
+          },
+          headers: {
+            request: {
+              set: {
+                'x-circle-source': circle.header.headerValue
+              }
+            }
           }
         }
       ]
     }
   }
-}
-
-interface ICircleRegexMatcher extends IDefaultCircleMatcher {
-  match: [
-    {
-      headers: {
-        cookie: {
-          regex: string
-        }
-      }
-    }
-  ]
 }
 
 const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICircleRegexMatcher | undefined => {
@@ -107,6 +152,13 @@ const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICirc
           destination: {
             host: appName,
             subset: circle.destination.version
+          },
+          headers: {
+            request: {
+              set: {
+                'x-circle-source': circle.header.headerValue
+              }
+            }
           }
         }
       ]
@@ -120,6 +172,13 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
       destination: {
         host: appName,
         subset: circle.destination.version
+      },
+      headers: {
+        request: {
+          set: {
+            'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId
+          }
+        }
       }
     }
   ]

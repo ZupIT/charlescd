@@ -1,3 +1,5 @@
+import { ConfigurationConstants, DefaultCircleId } from '../../../../../app/core/constants/application/configuration.constants'
+
 const expectedTotalPipeline = {
   appConfig: {},
   application: 'application-name',
@@ -253,7 +255,14 @@ const expectedTotalPipeline = {
                     destination: {
                       host: 'app-name',
                       subset: 'v3'
-                    }
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId,
+                        },
+                      },
+                    },
                   }
                 ]
               }

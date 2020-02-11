@@ -25,7 +25,14 @@ const expectedBaseVirtualService = {
             destination: {
               host: 'app-name',
               subset: 'v3'
-            }
+            },
+            headers: {
+              request: {
+                set: {
+                  'x-circle-source': 'header-value',
+                },
+              },
+            },
           }
         ]
       },
@@ -44,7 +51,14 @@ const expectedBaseVirtualService = {
             destination: {
               host: 'app-name',
               subset: 'v3'
-            }
+            },
+            headers: {
+              request: {
+                set: {
+                  'x-circle-source': 'header-value',
+                },
+              },
+            },
           }
         ]
       }
