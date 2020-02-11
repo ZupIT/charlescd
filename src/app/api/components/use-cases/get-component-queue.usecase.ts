@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { QueuedDeploymentEntity } from '../../deployments/entity'
 
 @Injectable()
-export class ComponentQueueUseCase {
+export class GetComponentQueueUseCase {
     constructor(
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,

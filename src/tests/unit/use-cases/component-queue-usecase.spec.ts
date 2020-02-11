@@ -1,6 +1,6 @@
 import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { ComponentQueueUseCase } from '../../../app/api/components/use-cases/component-queue.usecase'
+import { GetComponentQueueUseCase } from '../../../app/api/components/use-cases/get-component-queue.usecase'
 import { Test } from '@nestjs/testing'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { ComponentDeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
@@ -10,7 +10,7 @@ describe('execute', () => {
         let queuedDeploymentsRepository: QueuedDeploymentsRepository
         let componentDeploymentsRepository: ComponentDeploymentsRepository
         let componentDeployment: ComponentDeploymentEntity
-        let componentQueueUsecase: ComponentQueueUseCase
+        let getComponentQueueUseCase: GetComponentQueueUseCase
         let queuedDeployments: QueuedDeploymentEntity[]
 
         beforeEach(async () => {
@@ -39,7 +39,7 @@ describe('execute', () => {
             )
 
             const module = await Test.createTestingModule({
-                providers: [ComponentQueueUseCase,
+                providers: [GetComponentQueueUseCase,
                     {
                         provide: ComponentDeploymentsRepository,
                         useClass: ComponentDeploymentsRepositoryStub
@@ -50,7 +50,7 @@ describe('execute', () => {
                     }]
             }).compile()
 
-            componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
+            getComponentQueueUseCase = module.get<GetComponentQueueUseCase>(GetComponentQueueUseCase)
             queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
             componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository);
         })
@@ -61,7 +61,7 @@ describe('execute', () => {
             jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdAscending')
                 .mockImplementation(() => Promise.resolve(queuedDeployments))
 
-            expect(await componentQueueUsecase.execute('dummy-id'))
+            expect(await getComponentQueueUseCase.execute('dummy-id'))
                 .toEqual(queuedDeployments.map(queuedDeployment => queuedDeployment.toReadDto()))
         })
     }
