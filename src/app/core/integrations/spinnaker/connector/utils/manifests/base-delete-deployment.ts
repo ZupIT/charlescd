@@ -24,7 +24,9 @@ const baseDeleteDeployments = (
       {
         key: 'version',
         kind: 'EQUALS',
-        values: unusedVersions.map(unuserVersion => `${appName}-${unuserVersion.version}`)
+        values: unusedVersions.map(
+          unuserVersion => `${appName}-${unuserVersion.version}`
+        )
       }
     ]
   },
@@ -42,7 +44,8 @@ const baseDeleteDeployments = (
   refId: String(refId),
   requisiteStageRefIds: [String(requisiteRefId)],
   stageEnabled: {
-    expression: '${ #stage(\'' + previousStage + '\').status.toString() == \'SUCCEEDED\'}',
+    expression:
+      '${ #stage(\'' + previousStage + '\').status.toString() == \'SUCCEEDED\'}',
     type: 'expression'
   },
   type: 'deleteManifest'

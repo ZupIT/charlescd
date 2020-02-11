@@ -1,5 +1,6 @@
 import { IPipelineCircle } from '../../../../../api/components/interfaces'
 import { DefaultCircleId } from '../../../../constants/application/configuration.constants'
+import { HelmTypes } from '../utils/helpers/constants'
 
 export type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
 
@@ -97,4 +98,46 @@ export interface ICircleRegexMatcher {
       }
     }
   ]
+}
+
+interface ISpinnakerTrigger {
+  enabled: boolean
+  payloadConstraints: object
+  source: string
+  type: string
+}
+
+export interface IBuildArtifact {
+  defaultArtifact: {
+    artifactAccount: string
+    id: string
+    name: string
+    reference: string
+    type: string
+    version: string
+  },
+  displayName: HelmTypes
+  id: string
+  matchArtifact: {
+    artifactAccount: string
+    id: string
+    name: string
+    type: string
+  }
+
+  useDefaultArtifact: boolean
+  usePriorArtifact: boolean
+}
+
+export interface IBaseSpinnakerPipeline {
+  appConfig: object
+  application: string
+  name: string
+  expectedArtifacts: IBuildArtifact[]
+  keepWaitingPipelines: boolean
+  lastModifiedBy: string
+  limitConcurrent: boolean
+  stages: any[]
+  triggers: ISpinnakerTrigger[]
+  updateTs: string
 }

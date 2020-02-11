@@ -1,28 +1,7 @@
 import { ISpinnakerGithubConfig } from '../../../interfaces/spinnaker-pipeline-github-account.interface'
 import { HelmTypes } from './constants'
 import { createPrimaryId } from './create-id-names'
-
-export interface IBuildArtifact {
-  defaultArtifact: {
-    artifactAccount: string
-    id: string
-    name: string
-    reference: string
-    type: string
-    version: string
-  },
-  displayName: HelmTypes
-  id: string
-  matchArtifact: {
-    artifactAccount: string
-    id: string
-    name: string
-    type: string
-  }
-
-  useDefaultArtifact: boolean
-  usePriorArtifact: boolean
-}
+import { IBuildArtifact } from '../../interfaces'
 
 const buildExpectedArtifacts = (githubConfig: ISpinnakerGithubConfig, githubAccount: string,
                                 appName: string, helmType: HelmTypes): IBuildArtifact => {
