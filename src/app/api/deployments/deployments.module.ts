@@ -24,6 +24,7 @@ import {
 import {
   DeploymentsService,
   PipelineDeploymentsService,
+  PipelineErrorHandlingService,
   PipelineQueuesService
 } from './services'
 import {
@@ -60,6 +61,7 @@ import { DeploymentUniquenessPipe } from './pipes'
     DeploymentsService,
     PipelineQueuesService,
     PipelineDeploymentsService,
+    PipelineErrorHandlingService,
     CreateUndeploymentRequestUsecase,
     CreateCircleDeploymentRequestUsecase,
     CreateDefaultDeploymentRequestUsecase,

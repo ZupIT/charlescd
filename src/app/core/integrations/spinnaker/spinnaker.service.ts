@@ -1,5 +1,4 @@
 import {
-  forwardRef,
   HttpService,
   Inject,
   Injectable
@@ -11,11 +10,7 @@ import {
   ICreateSpinnakerApplication,
   ISpinnakerPipelineConfiguration
 } from './interfaces'
-import {
-  DeploymentStatusEnum,
-  QueuedPipelineTypesEnum,
-  UndeploymentStatusEnum
-} from '../../../api/deployments/enums'
+import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ConsoleLoggerService } from '../../logs/console'
 import TotalPipeline from 'darwin-spinnaker-connector'
 import { IConsulKV } from '../consul/interfaces'
@@ -29,9 +24,8 @@ import {
 } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { NotificationStatusEnum } from '../../../api/notifications/enums'
 import { MooveService } from '../moove'
-import { PipelineQueuesService } from '../../../api/deployments/services'
+import { PipelineErrorHandlingService } from '../../../api/deployments/services'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
@@ -43,21 +37,18 @@ export class SpinnakerService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly deploymentsStatusManagementService: StatusManagementService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     @Inject(AppConstants.CONSUL_PROVIDER)
     private readonly consulConfiguration: IConsulKV,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    private readonly mooveService: MooveService,
-    @Inject(forwardRef(() => PipelineQueuesService))
-    private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentUndeploymentsRepository)
     private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService
   ) { }
 
   public async createDeployment(
@@ -228,28 +219,19 @@ export class SpinnakerService {
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
 
-    if (deployment && !deployment.hasFailed()) {
-      await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
-    }
-    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeployment.id)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
+    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment)
   }
 
   private async handleQueuedUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
     const componentUndeployment: ComponentUndeploymentEntity =
         await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
+    const componentDeployment: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
     const { moduleUndeployment: { undeployment } } = componentUndeployment
 
-    if (undeployment && !undeployment.hasFailed()) {
-      await this.deploymentsStatusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
-      await this.mooveService.notifyDeploymentStatus(
-          undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
-          undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-      )
-    }
-    await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentUndeployment.componentDeployment)
+    await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
+    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedUndeployment)
   }
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {

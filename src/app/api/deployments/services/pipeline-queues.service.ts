@@ -3,15 +3,11 @@ import {
   Injectable
 } from '@nestjs/common'
 import {
-  DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
-  QueuedPipelineTypesEnum,
-  UndeploymentStatusEnum
+  QueuedPipelineTypesEnum
 } from '../enums'
 import {
   ComponentDeploymentEntity,
-  ComponentUndeploymentEntity,
-  DeploymentEntity,
   QueuedDeploymentEntity,
   QueuedUndeploymentEntity
 } from '../entity'
@@ -23,7 +19,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { NotificationStatusEnum } from '../../notifications/enums'
 import { StatusManagementService } from '../../../core/services/deployments'
 import { MooveService } from '../../../core/integrations/moove'
 import { ComponentEntity } from '../../components/entity'
@@ -76,10 +71,12 @@ export class PipelineQueuesService {
     try {
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
       component = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-      await this.triggerDeploymentPipeline(componentDeployment, component, queuedDeployment)
+      const { moduleDeployment: { deployment } } = componentDeployment
+
+      deployment.defaultCircle ?
+        await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment) :
+        await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
     } catch (error) {
-      await this.handleDeploymentFailure(queuedDeployment, componentDeployment)
-      await this.triggerNextComponentPipeline(componentDeployment)
       throw error
     }
   }
@@ -92,86 +89,15 @@ export class PipelineQueuesService {
     try {
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
       component = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-      await this.triggerUndeploymentPipeline(componentDeployment, component, queuedUndeployment)
-    } catch (error) {
-      await this.handleUndeploymentFailure(queuedUndeployment)
-      await this.triggerNextComponentPipeline(componentDeployment)
-      throw error
-    }
-  }
-
-  private async triggerDeploymentPipeline(
-      componentDeployment: ComponentDeploymentEntity,
-      component: ComponentEntity,
-      queuedDeployment: QueuedDeploymentEntity
-  ): Promise<void> {
-
-    const { moduleDeployment: { deployment } } = componentDeployment
-    await this.updateComponentDeploymentPipeline(componentDeployment, component)
-    const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-    await this.pipelineDeploymentsService.triggerComponentDeployment(
-        component, deployment, componentDeployment,
-        pipelineCallbackUrl, queuedDeployment.id
-    )
-  }
-
-  private async updateComponentDeploymentPipeline(
-      componentDeployment: ComponentDeploymentEntity,
-      component: ComponentEntity
-  ): Promise<void> {
-
-    try {
       const { moduleDeployment: { deployment } } = componentDeployment
-      deployment.defaultCircle ?
-          component.setPipelineDefaultCircle(componentDeployment) :
-          component.setPipelineCircle(deployment.circle, componentDeployment)
-      await this.componentsRepository.save(component)
+
+      await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, component, deployment, queuedUndeployment)
     } catch (error) {
       throw error
     }
   }
 
-  private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
-    return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
-  }
-
-  private async triggerUndeploymentPipeline(
-      componentDeployment: ComponentDeploymentEntity,
-      component: ComponentEntity,
-      queuedDeployment: QueuedDeploymentEntity
-  ): Promise<void> {
-
-    const { moduleDeployment: { deployment } } = componentDeployment
-    await this.updateComponentUndeploymentPipeline(componentDeployment, component)
-    const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedDeployment.id)
-    await this.pipelineDeploymentsService.triggerComponentDeployment(
-        component, deployment, componentDeployment,
-        pipelineCallbackUrl, queuedDeployment.id
-    )
-  }
-
-  private async updateComponentUndeploymentPipeline(
-      componentDeployment: ComponentDeploymentEntity,
-      component: ComponentEntity
-  ): Promise<void> {
-
-    try {
-      const { moduleDeployment: { deployment } } = componentDeployment
-      component.unsetPipelineCircle(deployment.circle)
-      await this.componentsRepository.save(component)
-    } catch (error) {
-      throw error
-    }
-  }
-
-  private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
-    return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
-  }
-
-  public async getComponentDeploymentQueue(
-    componentId: string
-  ): Promise<QueuedDeploymentEntity[]> {
-
+  public async getComponentDeploymentQueue(componentId: string): Promise<QueuedDeploymentEntity[]> {
     return this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentId)
   }
 
@@ -194,29 +120,5 @@ export class PipelineQueuesService {
     return runningDeployment ?
       QueuedPipelineStatusEnum.QUEUED :
       QueuedPipelineStatusEnum.RUNNING
-  }
-
-  private async handleUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
-      const componentUndeployment: ComponentUndeploymentEntity =
-          await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
-      const { moduleUndeployment: { undeployment } } = componentUndeployment
-
-      await this.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
-      if (undeployment && !undeployment.hasFailed()) {
-        await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
-        await this.mooveService.notifyDeploymentStatus(
-            undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
-            undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-        )
-      }
-  }
-
-  private async handleDeploymentFailure(queuedDeployment: QueuedDeploymentEntity, componentDeployment: ComponentDeploymentEntity): Promise<void> {
-    const deployment: DeploymentEntity = componentDeployment.moduleDeployment.deployment
-    await this.setQueuedDeploymentStatusFinished(queuedDeployment.id)
-    if (deployment && !deployment.hasFailed()) {
-      await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-      await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
-    }
   }
 }
