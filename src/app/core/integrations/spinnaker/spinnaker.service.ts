@@ -21,6 +21,7 @@ import TotalPipeline from 'darwin-spinnaker-connector'
 import { IConsulKV } from '../consul/interfaces'
 import { StatusManagementService } from '../../services/deployments'
 import {
+  ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
   DeploymentEntity,
   QueuedDeploymentEntity,
@@ -32,6 +33,7 @@ import { NotificationStatusEnum } from '../../../api/notifications/enums'
 import { MooveService } from '../moove'
 import { PipelineQueuesService } from '../../../api/deployments/services'
 import {
+  ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../../../api/deployments/repository'
@@ -53,7 +55,9 @@ export class SpinnakerService {
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentUndeploymentsRepository)
-    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository
+    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
   ) { }
 
   public async createDeployment(
@@ -221,13 +225,15 @@ export class SpinnakerService {
 
   private async handleQueuedDeploymentFailure(queuedDeployment: QueuedDeploymentEntity, deploymentId: string): Promise<void> {
     const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({ id: deploymentId })
+    const componentDeployment: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
 
     if (deployment && !deployment.hasFailed()) {
       await this.deploymentsStatusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
       await this.mooveService.notifyDeploymentStatus(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
     }
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeployment.id)
-    this.pipelineQueuesService.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
   }
 
   private async handleQueuedUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
@@ -243,7 +249,7 @@ export class SpinnakerService {
       )
     }
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeployment.id)
-    this.pipelineQueuesService.triggerNextComponentPipeline(queuedUndeployment.componentDeploymentId)
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentUndeployment.componentDeployment)
   }
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {

@@ -24,8 +24,7 @@ import {
 import {
   DeploymentsService,
   PipelineDeploymentsService,
-  PipelineQueuesService,
-  PipelinesService,
+  PipelineQueuesService
 } from './services'
 import {
   CreateCircleDeploymentRequestUsecase,
@@ -60,7 +59,6 @@ import { DeploymentUniquenessPipe } from './pipes'
   providers: [
     DeploymentsService,
     PipelineQueuesService,
-    PipelinesService,
     PipelineDeploymentsService,
     CreateUndeploymentRequestUsecase,
     CreateCircleDeploymentRequestUsecase,
@@ -69,8 +67,7 @@ import { DeploymentUniquenessPipe } from './pipes'
   ],
   exports: [
     DeploymentsService,
-    PipelineQueuesService,
-    PipelinesService
+    PipelineQueuesService
   ]
 })
 export class DeploymentsModule {}

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { FinishUndeploymentDto } from '../dto'
 import {
+  ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
   DeploymentEntity
 } from '../../deployments/entity'
@@ -9,7 +10,10 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
 import { PipelineQueuesService } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ComponentUndeploymentsRepository } from '../../deployments/repository'
+import {
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository
+} from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
 import { QueuedUndeploymentEntity } from '../../deployments/entity/queued-undeployment.entity'
@@ -26,6 +30,8 @@ export class ReceiveUndeploymentCallbackUsecase {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     @InjectRepository(ComponentUndeploymentsRepository)
     private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) {}
@@ -69,11 +75,13 @@ export class ReceiveUndeploymentCallbackUsecase {
     this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
     const queuedUndeployment: QueuedUndeploymentEntity =
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
-    const { componentDeploymentId, componentUndeploymentId } = queuedUndeployment
+    const componentDeployment: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
+
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
-    await this.notifyMooveIfDeploymentJustFailed(componentUndeploymentId)
-    await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFailed(componentUndeploymentId)
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+    await this.notifyMooveIfDeploymentJustFailed(queuedUndeployment.componentUndeploymentId)
+    await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFailed(queuedUndeployment.componentUndeploymentId)
     this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
   }
 
@@ -100,11 +108,13 @@ export class ReceiveUndeploymentCallbackUsecase {
     this.consoleLoggerService.log('START:UNDEPLOYMENT_SUCCESS_WEBHOOK', { queuedUndeploymentId })
     const queuedUndeployment: QueuedUndeploymentEntity =
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
-    const { componentDeploymentId, componentUndeploymentId } = queuedUndeployment
+    const componentDeployment: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
+
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeploymentId)
-    await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFinished(componentUndeploymentId)
-    await this.notifyMooveIfUndeploymentFinished(componentUndeploymentId)
-    this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_SUCCESS_WEBHOOK', { componentUndeploymentId })
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+    await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFinished(queuedUndeployment.componentUndeploymentId)
+    await this.notifyMooveIfUndeploymentFinished(queuedUndeployment.componentUndeploymentId)
+    this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_SUCCESS_WEBHOOK', { queuedUndeploymentId })
   }
 }

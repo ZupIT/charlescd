@@ -159,7 +159,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         } catch (error) {
             if (queuedDeployment && queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
                 await this.setQueuedDeploymentStatus(queuedDeployment.id, QueuedPipelineStatusEnum.FINISHED)
-                this.pipelineQueuesService.triggerNextComponentPipeline(queuedDeployment.componentDeploymentId)
+                this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
             }
             throw error
         }
