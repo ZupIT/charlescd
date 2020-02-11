@@ -5,17 +5,17 @@ import {
 } from '@nestjs/common'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
 import { ComponentsPipe } from '../pipe/components.pipe'
-import { ComponentQueueUseCase } from '../use-cases/component-queue.usecase'
+import { GetComponentQueueUseCase } from '../use-cases/get-component-queue.usecase'
 
 @Controller('components')
 export class ComponentsController {
 
-  constructor(private readonly componentQueueUseCase: ComponentQueueUseCase) {}
+  constructor(private readonly getComponentQueueUseCase: GetComponentQueueUseCase) {}
 
   @Get(':id/queue')
   @UsePipes(ComponentsPipe)
   public async getComponentDeploymentQueue(@Param('id') id: string): Promise<ReadQueuedDeploymentDto[]> {
-    return await this.componentQueueUseCase.execute(id)
+    return await this.getComponentQueueUseCase.execute(id)
   }
 
 }

@@ -4,7 +4,7 @@ import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { ComponentsController } from './controller'
 import { ComponentEntity } from './entity'
 import { DeploymentsModule } from '../deployments/deployments.module'
-import { ComponentQueueUseCase } from './use-cases/component-queue.usecase'
+import { GetComponentQueueUseCase } from './use-cases/get-component-queue.usecase'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../deployments/repository'
 
 @Module({
@@ -18,6 +18,6 @@ import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../
     ])
   ],
   controllers: [ComponentsController],
-  providers: [ComponentQueueUseCase]
+  providers: [GetComponentQueueUseCase]
 })
 export class ComponentsModule {}
