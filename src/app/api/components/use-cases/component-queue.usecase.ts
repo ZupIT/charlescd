@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../deployments/entity'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../deployments/repository'
 import { InjectRepository } from '@nestjs/typeorm'
+import { QueuedDeploymentEntity } from '../../deployments/entity'
 
 @Injectable()
 export class ComponentQueueUseCase {
@@ -15,11 +15,8 @@ export class ComponentQueueUseCase {
     }
 
     public async execute(componentDeploymentId: string): Promise<ReadQueuedDeploymentDto[]> {
-        const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentRepository.findOne({id: componentDeploymentId })
-        if (!componentDeployment) {
-            throw new BadRequestException('Component not found')
-        }
-        const queuedDeployments: QueuedDeploymentEntity[] = await this.queuedDeploymentsRepository.getAllByComponentIdAscending(componentDeploymentId)
+        const queuedDeployments: QueuedDeploymentEntity[]  = await this.queuedDeploymentsRepository
+            .getAllByComponentIdAscending(componentDeploymentId)
         return queuedDeployments.map(
             queuedDeployment => queuedDeployment.toReadDto()
         )

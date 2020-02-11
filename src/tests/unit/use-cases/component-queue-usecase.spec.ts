@@ -4,7 +4,6 @@ import { ComponentQueueUseCase } from '../../../app/api/components/use-cases/com
 import { Test } from '@nestjs/testing'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { ComponentDeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
-import { BadRequestException } from '@nestjs/common'
 
 describe('execute', () => {
 
@@ -54,14 +53,6 @@ describe('execute', () => {
             componentQueueUsecase = module.get<ComponentQueueUseCase>(ComponentQueueUseCase)
             queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
             componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository);
-        })
-
-        it('should return a exception when dont found any component', async () => {
-            jest.spyOn(componentDeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(undefined))
-
-            await expect(componentQueueUsecase.execute('dummy-id'))
-                .rejects.toThrowError(BadRequestException)
         })
 
         it('should return a list of dto queued pipelines', async () => {
