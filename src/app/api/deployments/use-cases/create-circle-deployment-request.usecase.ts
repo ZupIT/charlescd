@@ -16,17 +16,12 @@ import {
     ReadDeploymentDto
 } from '../dto'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import {
-    DeploymentStatusEnum,
-    QueuedPipelineStatusEnum
-} from '../enums'
-import { NotificationStatusEnum } from '../../notifications/enums'
-import { StatusManagementService } from '../../../core/services/deployments'
-import { MooveService } from '../../../core/integrations/moove'
+import { QueuedPipelineStatusEnum } from '../enums'
 import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
 import {
     PipelineDeploymentsService,
+    PipelineErrorHandlingService,
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
@@ -46,12 +41,9 @@ export class CreateCircleDeploymentRequestUsecase {
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
-        private readonly statusManagementService: StatusManagementService,
-        private readonly mooveService: MooveService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
-        @Inject(AppConstants.CONSUL_PROVIDER)
-        private readonly consulConfiguration: IConsulKV
+        private readonly pipelineErrorHandlingService: PipelineErrorHandlingService
     ) {}
 
     public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
@@ -63,12 +55,7 @@ export class CreateCircleDeploymentRequestUsecase {
             await this.scheduleComponentDeployments(deployment)
             return deployment.toReadDto()
         } catch (error) {
-            if (deployment && !deployment.hasFailed()) {
-                await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-                await this.mooveService.notifyDeploymentStatus(
-                    deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-                )
-            }
+            await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
             throw error
         }
     }
@@ -154,51 +141,11 @@ export class CreateCircleDeploymentRequestUsecase {
             queuedDeployment = await this.persistQueuedDeployment(componentDeployment)
             const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                await this.triggerComponentDeployment(component, componentDeployment, deployment, queuedDeployment)
+                await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
             }
         } catch (error) {
-            if (queuedDeployment && queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                await this.setQueuedDeploymentStatus(queuedDeployment.id, QueuedPipelineStatusEnum.FINISHED)
-                this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-            }
             throw error
         }
-    }
-
-    private async triggerComponentDeployment(
-        component: ComponentEntity,
-        componentDeployment: ComponentDeploymentEntity,
-        deployment: DeploymentEntity,
-        queuedDeployment: QueuedDeploymentEntity
-    ): Promise<void> {
-
-        await this.setComponentPipelineCircle(component, componentDeployment, deployment)
-        const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-        await this.pipelineDeploymentsService.triggerComponentDeployment(
-            component, deployment, componentDeployment,
-            pipelineCallbackUrl, queuedDeployment.id
-        )
-    }
-
-    private async setComponentPipelineCircle(
-        component: ComponentEntity,
-        componentDeployment: ComponentDeploymentEntity,
-        deployment: DeploymentEntity
-    ): Promise<ComponentEntity> {
-        try {
-            component.setPipelineCircle(deployment.circle, componentDeployment)
-            return await this.componentsRepository.save(component)
-        } catch (error) {
-            throw new InternalServerErrorException('Could not update component pipeline')
-        }
-    }
-
-    private async setQueuedDeploymentStatus(queueId: number, status: QueuedPipelineStatusEnum): Promise<void> {
-        await this.queuedDeploymentsRepository.update({ id: queueId }, { status })
-    }
-
-    private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
-        return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
     }
 
     private async persistQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
