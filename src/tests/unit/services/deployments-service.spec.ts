@@ -20,7 +20,8 @@ import {
 import { Repository } from 'typeorm'
 import {
     CreateCircleDeploymentDto,
-    CreateDeploymentDto
+    CreateCircleDeploymentRequestDto,
+    CreateDeploymentRequestDto
 } from '../../../app/api/deployments/dto'
 import { BadRequestException } from '@nestjs/common'
 import { StatusManagementService } from '../../../app/core/services/deployments'
@@ -35,7 +36,7 @@ describe('Deployments service specs', () => {
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
     let createCircleDeploymentDto: CreateCircleDeploymentDto
-    let createDeploymentDto: CreateDeploymentDto
+    let createDeploymentDto: CreateCircleDeploymentRequestDto
     let circle: CircleDeploymentEntity
     let deployment: DeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
@@ -65,14 +66,13 @@ describe('Deployments service specs', () => {
             false
         )
 
-        createDeploymentDto = new CreateDeploymentDto(
+        createDeploymentDto = new CreateCircleDeploymentRequestDto(
             'deployment-id',
             'application-name',
             [],
             'author-id',
             'description',
             'callback-url',
-            false,
             createCircleDeploymentDto
         )
 

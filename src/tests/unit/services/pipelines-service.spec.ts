@@ -203,7 +203,6 @@ describe('PipelinesService', () => {
 
             await pipelinesService.triggerDeployment(
                 'dummy-component-deployment-id',
-                false,
                 123
             )
 
@@ -229,7 +228,6 @@ describe('PipelinesService', () => {
 
             await expect(pipelinesService.triggerDeployment(
                 'dummy-component-deployment-id',
-                false,
                 123,
             )).rejects.toBeTruthy()
         })

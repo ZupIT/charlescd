@@ -88,6 +88,15 @@ export class ComponentEntity extends BaseEntity {
     }
   }
 
+  public unsetPipelineCircle(circle: CircleDeploymentEntity): void {
+    try {
+      this.removeCurrentCircleRule(circle)
+      this.setUnusedVersions()
+    } catch (error) {
+      throw error
+    }
+  }
+
   private removeCurrentDefaultCircle(): void {
     this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(pipelineCircle => {
       return !!pipelineCircle.header
