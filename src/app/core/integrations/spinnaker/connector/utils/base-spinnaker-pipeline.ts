@@ -1,33 +1,12 @@
 import { ISpinnakerGithubConfig } from '../../interfaces/spinnaker-pipeline-github-account.interface'
-import buildExpectedArtifacts, { IBuildArtifact } from './helpers/build-expected-artifacts'
+import buildExpectedArtifacts from './helpers/build-expected-artifacts'
 import helmValues, { HelmTypes } from './helpers/constants'
-
-type PipelineName = string
-
-interface ISpinnakerTrigger {
-  enabled: boolean
-  payloadConstraints: object
-  source: PipelineName
-  type: string
-}
+import { IBaseSpinnakerPipeline } from '../interfaces'
 
 interface AppConfig {
   appName: string
   pipelineName: string
   applicationName: string
-}
-
-export interface IBaseSpinnakerPipeline {
-  appConfig: object
-  application: string
-  name: PipelineName
-  expectedArtifacts: IBuildArtifact[]
-  keepWaitingPipelines: boolean
-  lastModifiedBy: string
-  limitConcurrent: boolean
-  stages: any[]
-  triggers: ISpinnakerTrigger[]
-  updateTs: string
 }
 
 const baseSpinnaker = (
