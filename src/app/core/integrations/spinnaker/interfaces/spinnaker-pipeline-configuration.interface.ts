@@ -33,4 +33,6 @@ export interface ISpinnakerPipelineConfiguration {
   githubAccount: string
 
   githubConfig: ISpinnakerGithubConfig
+
+  hosts?: string[]
 }
