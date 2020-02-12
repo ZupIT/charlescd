@@ -10,7 +10,6 @@ import {
 import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import {
-  IPipelineCircle,
   IPipelineOptions,
   IPipelineVersion
 } from '../interfaces'
@@ -53,10 +52,6 @@ export class ComponentEntity extends BaseEntity {
     this.id = componentId
     this.module = module
     this.pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
-  }
-
-  public async updatePipelineOptions(pipelineOptions: IPipelineOptions): Promise<void> {
-    this.pipelineOptions = pipelineOptions
   }
 
   public toReadDto(): ReadComponentDto {
