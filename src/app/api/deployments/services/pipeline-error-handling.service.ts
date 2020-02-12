@@ -55,7 +55,7 @@ export class PipelineErrorHandlingService {
     ): Promise<void> {
 
         const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-        await this.unsetComponentPipelineCircle(component, circle)
+        await this.removeComponentPipelineCircle(component, circle)
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }
@@ -80,13 +80,13 @@ export class PipelineErrorHandlingService {
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }
 
-    private async unsetComponentPipelineCircle(
+    private async removeComponentPipelineCircle(
         component: ComponentEntity,
         circle: CircleDeploymentEntity
     ): Promise<void> {
 
         try {
-            component.unsetPipelineCircle(circle)
+            component.removePipelineCircle(circle)
             await this.componentsRepository.save(component)
         } catch (error) {
             throw new InternalServerErrorException('Could not update component pipeline on component deployment failure')

@@ -93,6 +93,20 @@ export class ComponentEntity extends BaseEntity {
     }
   }
 
+  public removePipelineCircle(circle: CircleDeploymentEntity): void {
+    try {
+      this.removeCurrentCircleRule(circle)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
+    this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(
+        pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
+    )
+  }
+
   private removeCurrentDefaultCircle(): void {
     this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(pipelineCircle => {
       return !!pipelineCircle.header
@@ -105,12 +119,6 @@ export class ComponentEntity extends BaseEntity {
         version: componentDeployment.buildImageTag
       }
     })
-  }
-
-  private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
-    this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(
-        pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
-    )
   }
 
   private addCircleRule(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
