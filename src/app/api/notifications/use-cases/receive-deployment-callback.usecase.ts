@@ -61,9 +61,10 @@ export class ReceiveDeploymentCallbackUsecase {
     const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
+    const { moduleDeployment: { deployment } } = componentDeployment
 
-    await this.pipelineErrorHandlingService.handleDeploymentFailure(componentDeployment.moduleDeployment.deployment)
-    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment)
+    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
+    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
   }
 
