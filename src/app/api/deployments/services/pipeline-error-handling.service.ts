@@ -46,7 +46,7 @@ export class PipelineErrorHandlingService {
     ): Promise<void> {
 
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
-        await this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+        this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }
 
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity): Promise<void> {
