@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import {
+    Injectable,
+    InternalServerErrorException
+} from '@nestjs/common'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import {
+    CircleDeploymentEntity,
     ComponentDeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
@@ -17,6 +21,8 @@ import { MooveService } from '../../../core/integrations/moove'
 import { PipelineQueuesService } from './pipeline-queues.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { QueuedDeploymentsRepository } from '../repository'
+import { ComponentEntity } from '../../components/entity'
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class PipelineErrorHandlingService {
@@ -27,7 +33,9 @@ export class PipelineErrorHandlingService {
         private readonly mooveService: MooveService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         @InjectRepository(QueuedDeploymentsRepository)
-        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository
+        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(ComponentEntity)
+        private readonly componentsRepository: Repository<ComponentEntity>
     ) {}
 
     public async handleDeploymentFailure(deployment: DeploymentEntity): Promise<void> {
@@ -42,9 +50,12 @@ export class PipelineErrorHandlingService {
 
     public async handleComponentDeploymentFailure(
         componentDeployment: ComponentDeploymentEntity,
-        queuedDeployment: QueuedDeploymentEntity
+        queuedDeployment: QueuedDeploymentEntity,
+        circle: CircleDeploymentEntity
     ): Promise<void> {
 
+        const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+        await this.unsetComponentPipelineCircle(component, circle)
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }
@@ -57,6 +68,28 @@ export class PipelineErrorHandlingService {
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
             )
+        }
+    }
+
+    public async handleComponentUndeploymentFailure(
+        componentDeployment: ComponentDeploymentEntity,
+        queuedDeployment: QueuedDeploymentEntity
+    ): Promise<void> {
+
+        await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
+        this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+    }
+
+    private async unsetComponentPipelineCircle(
+        component: ComponentEntity,
+        circle: CircleDeploymentEntity
+    ): Promise<void> {
+
+        try {
+            component.unsetPipelineCircle(circle)
+            await this.componentsRepository.save(component)
+        } catch (error) {
+            throw new InternalServerErrorException('Could not update component pipeline on component deployment failure')
         }
     }
 }
