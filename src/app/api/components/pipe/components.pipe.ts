@@ -1,18 +1,19 @@
-import {ArgumentMetadata, BadRequestException, Injectable, PipeTransform} from '@nestjs/common'
-import {ComponentDeploymentEntity} from '../../deployments/entity'
-import {ComponentDeploymentsRepository} from '../../deployments/repository'
-import {InjectRepository} from '@nestjs/typeorm'
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { ComponentDeploymentsRepository } from '../../deployments/repository'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository }  from 'typeorm'
+import { ComponentEntity } from '../entity'
 
 @Injectable()
-export class ComponentsPipe implements PipeTransform {
+export class ComponentsExistencePipe implements PipeTransform {
     constructor(
         @InjectRepository(ComponentDeploymentsRepository)
-        private componentDeploymentsRepository: ComponentDeploymentsRepository) {
+        private componentRepository: Repository<ComponentEntity>) {
     }
 
     async transform(idComponent: any, metadata: ArgumentMetadata) {
-        const componentDeploymentEntity: ComponentDeploymentEntity = await this.componentDeploymentsRepository.findOne({id: idComponent})
-        if (!componentDeploymentEntity) {
+        const componentEntity: ComponentEntity = await this.componentRepository.findOne({id: idComponent})
+        if (!componentEntity) {
             throw new BadRequestException('Component not found')
         }
         return idComponent
