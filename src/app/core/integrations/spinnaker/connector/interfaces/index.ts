@@ -46,16 +46,7 @@ export interface IDefaultCircleMatcher {
   ]
 }
 
-export interface ICircleHttpMatcher {
-  match: [
-    {
-      headers: {
-        [key: string]: {
-          exact: string
-        }
-      }
-    }
-  ],
+interface ICircleRoute {
   route: [
     {
       destination: {
@@ -73,27 +64,24 @@ export interface ICircleHttpMatcher {
   ]
 }
 
-export interface ICircleRegexMatcher {
+export interface ICircleHttpMatcher extends ICircleRoute  {
+  match: [
+    {
+      headers: {
+        [key: string]: {
+          exact: string
+        }
+      }
+    }
+  ]
+}
+
+export interface ICircleRegexMatcher extends ICircleRoute {
   match: [
     {
       headers: {
         cookie: {
           regex: string
-        }
-      }
-    }
-  ],
-  route: [
-    {
-      destination: {
-        host: string
-        subset: string
-      },
-      headers: {
-        request: {
-          set: {
-            'x-circle-source': string
-          }
         }
       }
     }
