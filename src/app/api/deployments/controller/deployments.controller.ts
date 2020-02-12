@@ -10,7 +10,6 @@ import {
 import {
   CreateCircleDeploymentRequestDto,
   CreateDefaultDeploymentRequestDto,
-  CreateDeploymentRequestDto,
   CreateUndeploymentDto,
   ReadDeploymentDto,
   ReadUndeploymentDto
