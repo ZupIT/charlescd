@@ -11,7 +11,8 @@ import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import {
   IPipelineCircle,
-  IPipelineOptions
+  IPipelineOptions,
+  IPipelineVersion
 } from '../interfaces'
 import {
   CircleDeploymentEntity,
@@ -112,7 +113,7 @@ export class ComponentEntity extends BaseEntity {
   }
 
   private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
-    this.pipelineOptions.pipelineCircles.filter(
+    this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(
         pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
     )
   }
@@ -130,14 +131,16 @@ export class ComponentEntity extends BaseEntity {
   }
 
   private setUnusedVersions(): void {
-    this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
+    const currentVersions: IPipelineVersion[] = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
         !!this.pipelineOptions.pipelineCircles.find(
             pipelineCircle => pipelineCircle.destination.version === pipelineVersion.version
         )
     )
-    this.pipelineOptions.pipelineUnusedVersions = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
-        !this.pipelineOptions.pipelineVersions.includes(pipelineVersion)
-    )
+    const unusedVersions: IPipelineVersion[] =
+        this.pipelineOptions.pipelineVersions.filter(pipelineVersion => !currentVersions.includes(pipelineVersion))
+
+    this.pipelineOptions.pipelineVersions = currentVersions
+    this.pipelineOptions.pipelineUnusedVersions = unusedVersions
   }
 
   private addVersion(componentDeployment: ComponentDeploymentEntity): void {

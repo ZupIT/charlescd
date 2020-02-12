@@ -69,7 +69,8 @@ import { DeploymentUniquenessPipe } from './pipes'
   ],
   exports: [
     DeploymentsService,
-    PipelineQueuesService
+    PipelineQueuesService,
+    PipelineErrorHandlingService
   ]
 })
 export class DeploymentsModule {}

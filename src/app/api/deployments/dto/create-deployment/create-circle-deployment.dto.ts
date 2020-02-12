@@ -9,21 +9,15 @@ export class CreateCircleDeploymentDto {
   @IsNotEmpty()
   public readonly headerValue: string
 
-  @Allow()
-  public readonly removeCircle: boolean
-
   constructor(
-      headerValue: string,
-      removeCircle: boolean
+      headerValue: string
   ) {
     this.headerValue = headerValue
-    this.removeCircle = removeCircle
   }
 
   public toEntity(): CircleDeploymentEntity {
     return new CircleDeploymentEntity(
-      this.headerValue,
-      this.removeCircle
+      this.headerValue
     )
   }
 }
