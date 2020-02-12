@@ -1,5 +1,5 @@
 import { ISpinnakerPipelineConfiguration } from '../../interfaces'
-import { IBaseSpinnakerPipeline } from '../interfaces'
+import { BaseStagesUnion, IBaseSpinnakerPipeline, IBuildReturn, IBuildService, ICleanIds, IDeploymentReturn } from '../interfaces'
 import baseStage from '../utils/base-default-stage'
 import basePipeline from '../utils/base-spinnaker-pipeline'
 import baseStageHelm from '../utils/base-stage-helm'
@@ -27,19 +27,33 @@ export default class TotalPipeline {
     this.basePipeline = basePipeline(contract, this.contract.githubConfig, this.contract.githubAccount)
   }
 
-  increaseRefId() {
+    public buildPipeline(): IBaseSpinnakerPipeline {
+    this.buildService()
+    this.buildDeployments()
+    this.buildDestinationRules()
+    this.buildVirtualService()
+    this.buildDeleteDeployments()
+    this.buildWebhook()
+    this.cleanIds()
+    return this.basePipeline
+  }
+
+  private increaseRefId(): number {
     this.refId += 1
+    return this.refId
   }
 
-  updatePreviousStage(stage: string) {
+  private updatePreviousStage(stage: string): string {
     this.previousStage = stage
+    return this.previousStage
   }
 
-  updatePreviousStages(stage: string) {
+  private updatePreviousStages(stage: string): string[] {
     this.previousStages.push(stage)
+    return this.previousStages
   }
 
-  buildService() {
+  private buildService(): IBuildService {
     if (this.contract.versions.length === 0) { return }
 
     const stageName = 'Deploy Service'
@@ -49,9 +63,14 @@ export default class TotalPipeline {
     this.basePipeline.stages.push(serviceStage)
     this.increaseRefId()
     this.updatePreviousStage(stageName)
+    return {
+      stages: this.basePipeline.stages,
+      refId: this.refId,
+      previousStages: this.previousStages
+    }
   }
 
-  buildDeployments() {
+  private buildDeployments(): IDeploymentReturn {
     if (this.contract.versions.length === 0) { return }
 
     const preRefId = this.refId - 1
@@ -83,9 +102,17 @@ export default class TotalPipeline {
       this.updatePreviousStage(`Deploy ${version.version}`)
       this.updatePreviousStages(`Deploy ${version.version}`)
     })
+
+    return {
+      stages: this.basePipeline.stages,
+      deploymentsIds: this.deploymentsIds,
+      refId: this.refId,
+      previousStage: this.previousStage,
+      previousStages: this.previousStages
+    }
   }
 
-  buildDestinationRules() {
+  private buildDestinationRules(): IBuildReturn {
     const stageName = 'Deploy Destination Rules'
     const { account } = this.contract
     const destinationRules = createDestinationRules(this.contract)
@@ -100,9 +127,14 @@ export default class TotalPipeline {
     this.basePipeline.stages.push(destinationRulesStage)
     this.increaseRefId()
     this.updatePreviousStage(stageName)
+    return {
+      stages: this.basePipeline.stages,
+      refId: this.refId,
+      previousStage: this.previousStage
+    }
   }
 
-  buildVirtualService() {
+  private buildVirtualService(): IBuildReturn {
     const stageName = 'Deploy Virtual Service'
     const { account } = this.contract
     const virtualService = createVirtualService(this.contract)
@@ -117,9 +149,14 @@ export default class TotalPipeline {
     this.basePipeline.stages.push(virtualServiceStage)
     this.increaseRefId()
     this.updatePreviousStage(stageName)
+    return {
+      stages: this.basePipeline.stages,
+      refId: this.refId,
+      previousStage: this.previousStage
+    }
   }
 
-  buildDeleteDeployments() {
+  private buildDeleteDeployments(): IBuildReturn {
     if (this.contract.unusedVersions.length) {
       const stageName = 'Delete Deployments'
 
@@ -132,10 +169,15 @@ export default class TotalPipeline {
       this.basePipeline.stages.push(deleteDeployments)
       this.increaseRefId()
       this.updatePreviousStage(stageName)
+      return {
+        stages: this.basePipeline.stages,
+        refId: this.refId,
+        previousStage: this.previousStage
+      }
     }
   }
 
-  buildWebhook() {
+  private buildWebhook(): BaseStagesUnion {
     const webhookStage = webhookBaseStage(
       this.contract.webhookUri,
       String(this.refId),
@@ -144,22 +186,17 @@ export default class TotalPipeline {
       this.contract.circleId
     )
     this.basePipeline.stages.push(webhookStage)
+    return this.basePipeline.stages
   }
 
-  cleanIds() {
+  private cleanIds(): ICleanIds {
     this.refId = 1
     this.previousStage = ''
     this.deploymentsIds = []
-  }
-
-  buildPipeline() {
-    this.buildService()
-    this.buildDeployments()
-    this.buildDestinationRules()
-    this.buildVirtualService()
-    this.buildDeleteDeployments()
-    this.buildWebhook()
-    this.cleanIds()
-    return this.basePipeline
+    return {
+      refId: this.refId,
+      previousStage: this.previousStage,
+      deploymentsIds: this.deploymentsIds
+    }
   }
 }
