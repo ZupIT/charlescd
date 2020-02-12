@@ -18,13 +18,10 @@ export class CreateComponentDeploymentDto {
   @IsNotEmpty()
   public readonly buildImageTag: string
 
-  @IsNotEmpty()
   public readonly contextPath: string
 
-  @IsNotEmpty()
   public readonly healthCheck: string
 
-  @IsDefined()
   public readonly port: number
 
   public toEntity(): ComponentDeploymentEntity {

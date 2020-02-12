@@ -32,5 +32,5 @@ export interface ISpinnakerPipelineConfiguration {
 
   githubAccount: string
 
-  githubConfig: ISpinnakerGithubConfig
+  helmRepository: string
 }
