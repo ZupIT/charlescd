@@ -167,7 +167,7 @@ export class PipelineDeploymentsService {
 
             await this.spinnakerService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
-                deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId, componentEntity.module
+                deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
             )
         } catch (error) {
             throw error
