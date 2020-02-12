@@ -8,7 +8,10 @@ import {
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
-import { PipelineQueuesService } from '../../deployments/services'
+import {
+  PipelineErrorHandlingService,
+  PipelineQueuesService
+} from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
   ComponentDeploymentsRepository,
@@ -22,8 +25,9 @@ export class ReceiveDeploymentCallbackUsecase {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService,
     private readonly mooveService: MooveService,
-    private readonly deploymentsStatusManagementService: StatusManagementService,
+    private readonly statusManagementService: StatusManagementService,
     private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
@@ -49,21 +53,6 @@ export class ReceiveDeploymentCallbackUsecase {
     }
   }
 
-  private async notifyMooveIfDeploymentJustFailed(
-    componentDeploymentId: string
-  ): Promise<void> {
-
-    const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const { moduleDeployment: { deployment } } = componentDeployment
-
-    if (!deployment.hasFailed()) {
-      await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-      )
-    }
-  }
-
   private async handleDeploymentFailure(
     queuedDeploymentId: number
   ): Promise<void> {
@@ -71,12 +60,10 @@ export class ReceiveDeploymentCallbackUsecase {
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
     const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
+        await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
 
-    await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-    await this.notifyMooveIfDeploymentJustFailed(componentDeployment.id)
-    await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFailed(componentDeployment.id)
+    await this.pipelineErrorHandlingService.handleDeploymentFailure(componentDeployment.moduleDeployment.deployment)
+    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
   }
 
@@ -106,8 +93,9 @@ export class ReceiveDeploymentCallbackUsecase {
 
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-    await this.deploymentsStatusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
+    await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
     await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
+
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
 }
