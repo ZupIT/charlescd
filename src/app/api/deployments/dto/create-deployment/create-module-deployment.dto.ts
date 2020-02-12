@@ -15,6 +15,9 @@ export class CreateModuleDeploymentDto {
   @IsNotEmpty()
   public readonly k8sConfigurationId: string
 
+  @IsNotEmpty()
+  public readonly helmRepository: string
+
   @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => CreateComponentDeploymentDto)
@@ -24,6 +27,7 @@ export class CreateModuleDeploymentDto {
     return new ModuleDeploymentEntity(
       this.moduleId,
       this.k8sConfigurationId,
+      this.helmRepository,
       this.components.map(component => component.toEntity())
     )
   }

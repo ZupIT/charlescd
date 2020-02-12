@@ -19,6 +19,7 @@ import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
   DeploymentEntity,
+  ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   QueuedUndeploymentEntity
 } from '../../../api/deployments/entity'
@@ -66,9 +67,11 @@ export class SpinnakerService {
       { pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, deploymentId }
     )
 
+    const componentDeploymentEntity: ComponentDeploymentEntity =
+        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl
+        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
       )
 
     await this.processSpinnakerApplication(deploymentConfiguration)
@@ -113,7 +116,8 @@ export class SpinnakerService {
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
     circleId: string,
-    pipelineCallbackUrl: string
+    pipelineCallbackUrl: string,
+    moduleDeployment: ModuleDeploymentEntity
   ): ISpinnakerPipelineConfiguration {
 
     return {
@@ -123,11 +127,7 @@ export class SpinnakerService {
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
       githubAccount: this.consulConfiguration.spinnakerGithubAccount,
-      githubConfig: {
-        helmTemplateUrl: this.consulConfiguration.helmTemplateUrl,
-        helmPrefixUrl: this.consulConfiguration.helmPrefixUrl,
-        helmRepoBranch: this.consulConfiguration.helmRepoBranch
-      },
+      helmRepository: moduleDeployment.helmRepository,
       circleId
     }
   }
