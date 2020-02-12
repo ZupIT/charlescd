@@ -1,3 +1,4 @@
+import { IStageEnabled } from '../interfaces'
 import { ISpinnakerBaseService } from './manifests/base-service'
 
 const buildSingleExpression = (stage: string) => '${ #stage(\'' + stage + '\').status.toString() == \'SUCCEEDED\'}'
@@ -7,10 +8,36 @@ const buildMultiplesExpressions = (stages: string[]) => {
   return expressions.join(' && ')
 }
 
-const baseStage = (manifest: ISpinnakerBaseService, nameStage: string, account: string, refId: string, reqRefIds: string[],
-                   previousStages: string | undefined | string[]) => {
+export interface IBaseStage {
+  stageEnabled: IStageEnabled | {}
+  account: string | 'default'
+  cloudProvider: 'kubernetes'
+  completeOtherBranchesThenFail: false
+  continuePipeline: true
+  failPipeline: false
+  manifests: ISpinnakerBaseService[]
+  moniker: {
+    app: string
+  }
+  name: string
+  skipExpressionEvaluation: false
+  source: 'text'
+  trafficManagement: {
+    enabled: false
+    options: {
+      enableTraffic: false
+      services: []
+    }
+  }
+  type: 'deployManifest'
+  refId: string
+  requisiteStageRefIds: string[]
+}
 
-  const baseStageTemplate = {
+const baseStage = (manifest: ISpinnakerBaseService, nameStage: string, account: string, refId: string, reqRefIds: string[],
+                   previousStages: string | undefined | string[]): IBaseStage => {
+
+  const baseStageTemplate: IBaseStage = {
     stageEnabled: {},
     account: account || 'default',
     cloudProvider: 'kubernetes',

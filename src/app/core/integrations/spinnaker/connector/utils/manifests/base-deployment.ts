@@ -1,7 +1,36 @@
+import { IStageEnabled } from '../../interfaces'
+
+export interface IBaseDeployment {
+  stageEnabled: IStageEnabled | {}
+  account: string
+  cloudProvider: 'kubernetes'
+  moniker: {
+    app: string
+  }
+  manifestArtifactAccount: 'embedded-artifact'
+  completeOtherBranchesThenFail: false
+  continuePipeline: true
+  failPipeline: false
+  manifestArtifactId: string
+  name: string
+  skipExpressionEvaluation: false
+  source: 'artifact'
+  trafficManagement: {
+    enabled: false
+    options: {
+      enableTraffic: false
+      services: []
+    }
+  },
+  type: 'deployManifest'
+  refId: string
+  requisiteStageRefIds: string[]
+}
+
 const baseDeployment = (manifestId: string, stageName: string, refId: string,
                         reqRefId: string[], previousStage: string | undefined | string[],
-                        appName: string, account: string) => {
-  const deployment = {
+                        appName: string, account: string): IBaseDeployment => {
+  const deployment: IBaseDeployment = {
     stageEnabled: {},
     account: account || 'default',
     cloudProvider: 'kubernetes',

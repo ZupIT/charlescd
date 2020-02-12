@@ -1,6 +1,11 @@
 import { IPipelineCircle } from '../../../../../api/components/interfaces'
 import { DefaultCircleId } from '../../../../constants/application/configuration.constants'
 import { HelmTypes } from '../utils/helpers/constants'
+import { IBaseStage } from '../utils/base-default-stage'
+import { IBaseHelmStage } from '../utils/base-stage-helm'
+import { IBaseDeployment } from '../utils/manifests/base-deployment'
+import { IBaseDelete } from '../utils/manifests/base-delete-deployment'
+import { IBaseWebhook } from '../utils/base-webhook'
 
 export type HttpMatcherUnion = ICircleRegexMatcher | ICircleHttpMatcher | IDefaultCircleMatcher
 
@@ -64,7 +69,7 @@ interface ICircleRoute {
   ]
 }
 
-export interface ICircleHttpMatcher extends ICircleRoute  {
+export interface ICircleHttpMatcher extends ICircleRoute {
   match: [
     {
       headers: {
@@ -117,6 +122,12 @@ export interface IBuildArtifact {
   usePriorArtifact: boolean
 }
 
+export interface IStageEnabled {
+  expression: string | string[]
+}
+
+export type BaseStagesUnion = Array<IBaseStage | IBaseHelmStage | IBaseDeployment | IBaseDelete | IBaseWebhook>
+
 export interface IBaseSpinnakerPipeline {
   appConfig: object
   application: string
@@ -125,7 +136,33 @@ export interface IBaseSpinnakerPipeline {
   keepWaitingPipelines: boolean
   lastModifiedBy: string
   limitConcurrent: boolean
-  stages: any[]
+  stages: BaseStagesUnion
   triggers: ISpinnakerTrigger[]
   updateTs: string
+}
+
+export interface IBuildService {
+  stages: BaseStagesUnion
+  refId: number
+  previousStages: string[]
+}
+
+export interface IBuildReturn {
+  stages: BaseStagesUnion
+  refId: number
+  previousStage: string
+}
+
+export interface IDeploymentReturn {
+  stages: BaseStagesUnion
+  deploymentsIds: string[]
+  refId: number
+  previousStage: string
+  previousStages: string[]
+}
+
+export interface ICleanIds {
+  refId: number
+  previousStage: string
+  deploymentsIds: string[]
 }

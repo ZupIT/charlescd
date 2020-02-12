@@ -1,8 +1,14 @@
-import createProduceArtifact from './helpers/build-expected-artifact-produce'
+import { IStageEnabled } from '../interfaces'
+import createProduceArtifact, { ICreateProduceArtifact } from './helpers/build-expected-artifact-produce'
 import helmTypes, { HelmTypes } from './helpers/constants'
 import { createBakeStage, createPrimaryId } from './helpers/create-id-names'
 
-const buildInputArtifact = (githubAccount: string, idArtifact: string) => {
+interface IInputArtifact {
+  account: string
+  id: string
+}
+
+const buildInputArtifact = (githubAccount: string, idArtifact: string): IInputArtifact => {
   return {
     account: githubAccount,
     id: idArtifact
@@ -14,11 +20,31 @@ interface IAppConfig {
   appName: string
 }
 
+export interface IBaseHelmStage {
+  stageEnabled: IStageEnabled | {}
+  completeOtherBranchesThenFail: false
+  continuePipeline: true
+  failPipeline: false
+  expectedArtifacts: ICreateProduceArtifact[]
+  inputArtifacts: IInputArtifact[]
+  name: string
+  namespace: string
+  outputName: string
+  overrides: {
+    'image.tag': string
+    name: string
+  }
+  templateRenderer: 'HELM2'
+  type: 'bakeManifest'
+  refId: string
+  requisiteStageRefIds: string[]
+}
+
 const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
                        githubAccount: string,
                        version: string, versionUrl: string, refId: string,
-                       reqRefId: string[], previousStage: string | undefined | string[]) => {
-  const baseHelm = {
+                       reqRefId: string[], previousStage: string | undefined | string[]): IBaseHelmStage => {
+  const baseHelm: IBaseHelmStage = {
     stageEnabled: {},
     completeOtherBranchesThenFail: false,
     continuePipeline: true,
