@@ -123,11 +123,7 @@ export class SpinnakerService {
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
       githubAccount: this.consulConfiguration.spinnakerGithubAccount,
-      githubConfig: {
-        helmTemplateUrl: this.consulConfiguration.helmTemplateUrl,
-        helmPrefixUrl: this.consulConfiguration.helmPrefixUrl,
-        helmRepoBranch: this.consulConfiguration.helmRepoBranch
-      },
+      helmRepository: pipelineCallbackUrl,
       circleId
     }
   }
