@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   HttpService,
   Inject,
   Injectable
@@ -14,7 +15,6 @@ import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ConsoleLoggerService } from '../../logs/console'
 import TotalPipeline from 'darwin-spinnaker-connector'
 import { IConsulKV } from '../consul/interfaces'
-import { StatusManagementService } from '../../services/deployments'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
@@ -24,7 +24,6 @@ import {
 } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { MooveService } from '../moove'
 import { PipelineErrorHandlingService } from '../../../api/deployments/services'
 import {
   ComponentDeploymentsRepository,
@@ -48,8 +47,9 @@ export class SpinnakerService {
     private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @Inject(forwardRef(() => PipelineErrorHandlingService))
     private readonly pipelineErrorHandlingService: PipelineErrorHandlingService
-  ) { }
+  ) {}
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,

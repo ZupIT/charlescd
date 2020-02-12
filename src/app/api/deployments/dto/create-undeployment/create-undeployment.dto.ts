@@ -1,7 +1,7 @@
 import {
   DeploymentEntity,
   UndeploymentEntity
-} from '../entity'
+} from '../../entity'
 import { Allow } from 'class-validator'
 
 export class CreateUndeploymentDto {

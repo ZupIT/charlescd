@@ -1,4 +1,4 @@
-import { UndeploymentStatusEnum } from '../enums'
+import { UndeploymentStatusEnum } from '../../enums'
 import { ReadModuleUndeploymentDto } from './read-module-undeployment.dto'
 
 export class ReadUndeploymentDto {

@@ -4,7 +4,6 @@ import {
     ComponentDeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
-    QueuedUndeploymentEntity,
     UndeploymentEntity
 } from '../entity'
 import {
@@ -18,7 +17,6 @@ import { MooveService } from '../../../core/integrations/moove'
 import { PipelineQueuesService } from './pipeline-queues.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { QueuedDeploymentsRepository } from '../repository'
-import { Repository } from 'typeorm'
 
 @Injectable()
 export class PipelineErrorHandlingService {
@@ -29,9 +27,7 @@ export class PipelineErrorHandlingService {
         private readonly mooveService: MooveService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         @InjectRepository(QueuedDeploymentsRepository)
-        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-        @InjectRepository(QueuedUndeploymentEntity)
-        private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
+        private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository
     ) {}
 
     public async handleDeploymentFailure(deployment: DeploymentEntity): Promise<void> {

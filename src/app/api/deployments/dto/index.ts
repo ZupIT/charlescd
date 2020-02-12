@@ -6,15 +6,19 @@ import {
   CreateDeploymentRequestDto,
   CreateModuleDeploymentDto
 } from './create-deployment'
-import { CreateUndeploymentDto } from './create-undeployment.dto'
-import { ReadDeploymentDto } from './read-deployment.dto'
-import { ReadCircleDeploymentDto } from './read-circle-deployment.dto'
-import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
-import { ReadModuleDeploymentDto } from './read-module-deployment.dto'
-import { ReadQueuedDeploymentDto } from './read-queued-deployment.dto'
-import { ReadUndeploymentDto } from './read-undeployment.dto'
-import { ReadModuleUndeploymentDto } from './read-module-undeployment.dto'
-import { ReadComponentUndeploymentDto } from './read-component-undeployment.dto'
+import {
+  ReadCircleDeploymentDto,
+  ReadComponentDeploymentDto,
+  ReadDeploymentDto,
+  ReadModuleDeploymentDto
+} from './read-deployment'
+import { CreateUndeploymentDto } from './create-undeployment'
+import { ReadQueuedDeploymentDto } from './read-queued-deployment'
+import {
+  ReadComponentUndeploymentDto,
+  ReadModuleUndeploymentDto,
+  ReadUndeploymentDto
+} from './read-undeployment'
 
 export {
   CreateDeploymentRequestDto,

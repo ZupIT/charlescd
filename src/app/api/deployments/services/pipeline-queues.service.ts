@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   Inject,
-  Injectable
+  Injectable,
+  InternalServerErrorException
 } from '@nestjs/common'
 import {
   QueuedPipelineStatusEnum,
@@ -13,18 +15,13 @@ import {
 } from '../entity'
 import {
   ComponentDeploymentsRepository,
-  ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../repository'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { StatusManagementService } from '../../../core/services/deployments'
-import { MooveService } from '../../../core/integrations/moove'
 import { ComponentEntity } from '../../components/entity'
 import { PipelineDeploymentsService } from './'
-import { AppConstants } from '../../../core/constants'
-import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 
 @Injectable()
 export class PipelineQueuesService {
@@ -37,14 +34,9 @@ export class PipelineQueuesService {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @InjectRepository(ComponentUndeploymentsRepository)
-    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
-    @Inject(AppConstants.CONSUL_PROVIDER)
-    private readonly consulConfiguration: IConsulKV,
-    private readonly statusManagementService: StatusManagementService,
-    private readonly mooveService: MooveService,
+    @Inject(forwardRef(() => PipelineDeploymentsService))
     private readonly pipelineDeploymentsService: PipelineDeploymentsService
   ) {}
 
@@ -57,6 +49,7 @@ export class PipelineQueuesService {
         nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
             await this.triggerQueuedDeployment(nextQueuedDeployment) :
             await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
+        await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
       }
     } catch (error) {
       throw error
@@ -94,6 +87,16 @@ export class PipelineQueuesService {
       await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, component, deployment, queuedUndeployment)
     } catch (error) {
       throw error
+    }
+  }
+
+  private async setQueuedDeploymentStatus(queuedDeployment: QueuedDeploymentEntity, status: QueuedPipelineStatusEnum): Promise<void> {
+    try {
+      await this.queuedDeploymentsRepository.update(
+          { id: queuedDeployment.id }, { status }
+      )
+    } catch (error) {
+      throw new InternalServerErrorException('Could not update queued deployment status')
     }
   }
 
