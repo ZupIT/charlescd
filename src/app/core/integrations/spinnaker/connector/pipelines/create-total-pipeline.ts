@@ -139,12 +139,10 @@ export default class TotalPipeline {
   private buildVirtualService(): IBuildReturn {
     const stageName = 'Deploy Virtual Service'
     const { account } = this.contract
-    let virtualService: IBaseVirtualService | IEmptyVirtualService
-    if (this.contract.versions.length === 0) {
-      virtualService = createEmptyVirtualService(this.contract)
-    } else {
-      virtualService = createVirtualService(this.contract)
-    }
+    const virtualService: IBaseVirtualService | IEmptyVirtualService =
+      this.contract.versions.length === 0
+        ? createEmptyVirtualService(this.contract)
+        : createVirtualService(this.contract)
     const virtualServiceStage = baseStage(
       virtualService,
       stageName,
