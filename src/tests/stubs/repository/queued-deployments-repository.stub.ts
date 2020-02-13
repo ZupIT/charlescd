@@ -13,7 +13,9 @@ export class QueuedDeploymentsRepositoryStub {
     public getAllByComponentIdQueuedAscending(): Promise<QueuedDeploymentEntity[]> {
         return Promise.resolve([] as QueuedDeploymentEntity[])
     }
-
+    public getAllByComponentIdAscending(id: string): Promise<QueuedDeploymentEntity[]> {
+        return Promise.resolve([] as QueuedDeploymentEntity[])
+    }
     public update(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
