@@ -12,8 +12,6 @@ import {
     CreateCircleDeploymentRequestUsecaseStub,
     CreateUndeploymentRequestUsecaseStub
 } from '../../stubs/use-cases'
-import { DeploymentUniquenessPipe } from '../../../app/api/deployments/pipes'
-import { DeploymentUniquenessPipeStub } from '../../stubs/pipes/deployment-uniqueness-pipe.stub'
 import { DeploymentsRepositoryStub } from '../../stubs/repository'
 
 describe('DeploymentsController', () => {
