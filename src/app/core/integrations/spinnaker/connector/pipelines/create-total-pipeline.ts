@@ -24,7 +24,7 @@ export default class TotalPipeline {
     this.previousStages = []
     this.deploymentsIds = []
     this.contract = contract
-    this.basePipeline = basePipeline(contract, this.contract.githubConfig, this.contract.githubAccount)
+    this.basePipeline = basePipeline(contract, this.contract.helmRepository, this.contract.githubAccount)
   }
 
     public buildPipeline(): IBaseSpinnakerPipeline {
