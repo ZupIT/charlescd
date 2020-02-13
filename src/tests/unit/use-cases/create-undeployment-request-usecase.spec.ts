@@ -2,18 +2,22 @@ import { Test } from '@nestjs/testing'
 import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
-    PipelineQueuesService,
-    PipelinesService
+    PipelineDeploymentsService,
+    PipelineErrorHandlingService,
+    PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
+    ComponentsRepositoryStub,
     DeploymentsRepositoryStub,
     QueuedDeploymentsRepositoryStub,
+    QueuedUndeploymentsRepositoryStub,
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     MooveServiceStub,
+    PipelineDeploymentsServiceStub,
+    PipelineErrorHandlingServiceStub,
     PipelineQueuesServiceStub,
-    PipelinesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
@@ -47,7 +51,6 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let queuedUndeployments: QueuedUndeploymentEntity[]
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
-    let pipelinesService: PipelinesService
 
     beforeEach(async () => {
 
@@ -58,9 +61,12 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: PipelinesService, useClass: PipelinesServiceStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
+                { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
+                { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
+                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
+                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub },
             ]
         }).compile()
 
@@ -70,7 +76,6 @@ describe('CreateUndeploymentRequestUsecase', () => {
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         mooveService = module.get<MooveService>(MooveService)
-        pipelinesService = module.get<PipelinesService>(PipelinesService)
 
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
 
@@ -99,6 +104,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
             new ModuleDeploymentEntity(
                 'dummy-id',
                 'dummy-id',
+                'helm-repository',
                 componentDeployments
             )
         ]
@@ -145,65 +151,9 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 .mockImplementation( () => Promise.resolve(undeployment))
             jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
                 .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
-            jest.spyOn(pipelineQueuesService, 'enqueueUndeploymentExecution')
-                .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
                 .toEqual(undeployment.toReadDto())
-        })
-
-        it('should correctly handle undeployment request failure', async () => {
-
-            jest.spyOn(deploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(undeploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(undeployment))
-            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
-                .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
-            jest.spyOn(pipelinesService, 'triggerUndeployment')
-                .mockImplementation(() => { throw new Error() })
-
-            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
-            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-
-            await expect(createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
-                .rejects.toThrowError(Error)
-            expect(statusSpy)
-                .toHaveBeenCalledWith(undeployment, UndeploymentStatusEnum.FAILED)
-            expect(applicationSpy)
-                .toHaveBeenCalledWith(
-                    undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
-                    undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-                )
-        })
-
-        it('should correctly handle single component undeployment failure', async () => {
-
-            jest.spyOn(deploymentsRepository, 'findOne')
-                .mockImplementationOnce(() => Promise.resolve(deployment))
-
-            jest.spyOn(undeploymentsRepository, 'save')
-                .mockImplementationOnce(() => Promise.resolve(undeployment))
-
-            jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
-                .mockImplementationOnce(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
-                .mockImplementationOnce(() => Promise.resolve(QueuedPipelineStatusEnum.QUEUED))
-
-            jest.spyOn(pipelineQueuesService, 'enqueueUndeploymentExecution')
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[1]))
-
-            jest.spyOn(pipelinesService, 'triggerUndeployment')
-                .mockImplementation(() => { throw new Error() })
-
-            const finishedSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
-            const queueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-
-            await expect(createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
-                .rejects.toThrowError(Error)
-
-            expect(finishedSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].id)
-            expect(queueSpy).toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentDeploymentId)
         })
     })
 })
