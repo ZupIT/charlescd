@@ -42,7 +42,7 @@ it('creates empty virtual service when there is no versions', () => {
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' }, header: { headerValue: 'header-value', headerName: 'header-name' } }],
     githubAccount: 'github-acc',
-    githubConfig: { helmPrefixUrl: 'helm-prefix', helmRepoBranch: 'master', helmTemplateUrl: 'helm-template.url' },
+    helmRepository: 'helmRepository',
     circleId: 'circle-id'
   }
   const virtualService = createEmptyVirtualService(contract)
