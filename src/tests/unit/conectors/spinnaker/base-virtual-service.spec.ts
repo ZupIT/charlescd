@@ -18,7 +18,7 @@ it('creates the virtual service when there is no header on the circle', () => {
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' }, header: {headerValue: 'header-value', headerName: 'header-name'} }],
     githubAccount: 'github-acc',
-    githubConfig: { helmPrefixUrl: 'helm-prefix', helmRepoBranch: 'master', helmTemplateUrl: 'helm-template.url' },
+    helmRepository: 'helm-repository',
     circleId: 'circle-id'
   }
   const virtualService = createVirtualService(contract)
