@@ -7,11 +7,11 @@ import { ComponentEntity } from '../entity'
 @Injectable()
 export class ComponentsExistencePipe implements PipeTransform {
     constructor(
-        @InjectRepository(ComponentDeploymentsRepository)
+        @InjectRepository(ComponentEntity)
         private componentRepository: Repository<ComponentEntity>) {
     }
 
-    async transform(idComponent: any, metadata: ArgumentMetadata) {
+    async transform(idComponent: string, metadata: ArgumentMetadata) {
         const componentEntity: ComponentEntity = await this.componentRepository.findOne({id: idComponent})
         if (!componentEntity) {
             throw new BadRequestException('Component not found')
