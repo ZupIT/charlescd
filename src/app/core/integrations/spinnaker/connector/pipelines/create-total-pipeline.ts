@@ -1,15 +1,17 @@
-import {ISpinnakerPipelineConfiguration} from '../../interfaces'
-import {BaseStagesUnion, IBaseSpinnakerPipeline, IBuildReturn, IBuildService, ICleanIds, IDeploymentReturn} from '../interfaces'
+import { ISpinnakerPipelineConfiguration } from '../../interfaces'
+import {
+  BaseStagesUnion, IBaseSpinnakerPipeline, IBaseVirtualService, IBuildReturn, IBuildService, ICleanIds, IDeploymentReturn, IEmptyVirtualService
+} from '../interfaces'
 import baseStage from '../utils/base-default-stage'
 import basePipeline from '../utils/base-spinnaker-pipeline'
 import baseStageHelm from '../utils/base-stage-helm'
 import webhookBaseStage from '../utils/base-webhook'
-import {createBakeStage, createPrimaryId} from '../utils/helpers/create-id-names'
+import { createBakeStage, createPrimaryId } from '../utils/helpers/create-id-names'
 import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import baseService from '../utils/manifests/base-service'
-import createVirtualService from '../utils/manifests/base-virtual-service'
+import createVirtualService, { createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 
 export default class TotalPipeline {
   refId: number
@@ -27,7 +29,7 @@ export default class TotalPipeline {
     this.basePipeline = basePipeline(contract, this.contract.helmRepository, this.contract.githubAccount)
   }
 
-    public buildPipeline(): IBaseSpinnakerPipeline {
+  public buildPipeline(): IBaseSpinnakerPipeline {
     this.buildService()
     this.buildDeployments()
     this.buildDestinationRules()
@@ -137,7 +139,10 @@ export default class TotalPipeline {
   private buildVirtualService(): IBuildReturn {
     const stageName = 'Deploy Virtual Service'
     const { account } = this.contract
-    const virtualService = createVirtualService(this.contract)
+    const virtualService: IBaseVirtualService | IEmptyVirtualService =
+      this.contract.versions.length === 0
+        ? createEmptyVirtualService(this.contract)
+        : createVirtualService(this.contract)
     const virtualServiceStage = baseStage(
       virtualService,
       stageName,

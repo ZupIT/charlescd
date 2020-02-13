@@ -8,7 +8,8 @@ import {
   ICircleHttpMatcher,
   ICircleRegexMatcher,
   IDefaultCircleMatcher,
-  VirtualServiceParams
+  VirtualServiceParams,
+  IEmptyVirtualService
 } from '../../interfaces'
 
 const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IBaseVirtualService => ({
@@ -21,6 +22,40 @@ const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IB
   spec: {
     hosts: [appName],
     http: []
+  }
+})
+
+const baseEmptyVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IEmptyVirtualService => ({
+  apiVersion: 'networking.istio.io/v1alpha3',
+  kind: 'VirtualService',
+  metadata: {
+    name: appName,
+    namespace: appNamespace
+  },
+  spec: {
+    hosts: [
+      'unreachable-app-name'
+    ],
+    http: [
+      {
+        match: [
+          {
+            headers: {
+              'unreachable-cookie-name': {
+                exact: 'unreachable-cookie - value'
+              }
+            }
+          }
+        ],
+        route: [
+          {
+            destination: {
+              host: 'unreachable-app-name'
+            }
+          }
+        ]
+      }
+    ]
   }
 })
 
@@ -137,6 +172,11 @@ const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
     newVirtualService.spec.hosts = contract.hosts
   }
   newVirtualService.spec.http = matchers
+  return newVirtualService
+}
+
+export const createEmptyVirtualService = (contract: ISpinnakerPipelineConfiguration): IEmptyVirtualService => {
+  const newVirtualService: IEmptyVirtualService = baseEmptyVirtualService(contract)
   return newVirtualService
 }
 
