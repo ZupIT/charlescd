@@ -4,6 +4,7 @@ import {
   ConsoleLoggerServiceStub,
   HttpServiceStub,
   MooveServiceStub,
+  PipelineErrorHandlingServiceStub,
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
@@ -14,12 +15,17 @@ import { AppConstants } from '../../../app/core/constants'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { PipelineQueuesService } from '../../../app/api/deployments/services'
 import {
+  PipelineErrorHandlingService,
+  PipelineQueuesService
+} from '../../../app/api/deployments/services'
+import {
+  ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import {
+  ComponentDeploymentsRepositoryStub,
   ComponentUndeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
@@ -39,12 +45,7 @@ import {
   QueuedUndeploymentEntity,
   UndeploymentEntity
 } from '../../../app/api/deployments/entity'
-import {
-  DeploymentStatusEnum,
-  QueuedPipelineStatusEnum,
-  UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
@@ -69,6 +70,7 @@ describe('Spinnaker Service', () => {
   let componentUndeploymentsRepository: ComponentUndeploymentsRepository
   let componentUndeployment: ComponentUndeploymentEntity
   let moduleUndeployment: ModuleUndeploymentEntity
+  let pipelineErrorHandlingService: PipelineErrorHandlingService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -83,6 +85,8 @@ describe('Spinnaker Service', () => {
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
         { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
         { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
+        { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+        { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub }
       ]
     }).compile()
 
@@ -94,6 +98,7 @@ describe('Spinnaker Service', () => {
     pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
+    pipelineErrorHandlingService = module.get<PipelineErrorHandlingService>(PipelineErrorHandlingService)
 
     defaultAxiosGetResponse = {
       data: {
@@ -128,7 +133,7 @@ describe('Spinnaker Service', () => {
       appPort: 8989
     }
 
-    circle = new CircleDeploymentEntity('dummy-circle', false)
+    circle = new CircleDeploymentEntity('dummy-circle')
 
     deployment = new DeploymentEntity(
         'dummy-deployment-id',
@@ -173,6 +178,7 @@ describe('Spinnaker Service', () => {
       new ModuleDeploymentEntity(
           'dummy-id',
           'dummy-id',
+          'helm-repository',
           undeploymentComponentDeployments
       )
     ]
@@ -261,10 +267,8 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedDeployment))
 
-      const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateDeploymentStatus')
-      const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-      const finishedSpy = jest.spyOn(pipelineQueuesService, 'setQueuedDeploymentStatusFinished')
-      const triggerSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+      const deploymentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleDeploymentFailure')
+      const componentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleComponentDeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
@@ -273,14 +277,8 @@ describe('Spinnaker Service', () => {
           100
       )
 
-      expect(statusSpy)
-          .toHaveBeenNthCalledWith(1, deployment, DeploymentStatusEnum.FAILED)
-      expect(applicationSpy)
-          .toHaveBeenNthCalledWith(1, deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
-      expect(finishedSpy)
-          .toHaveBeenNthCalledWith(1, queuedDeployment.id)
-      expect(triggerSpy)
-          .toHaveBeenNthCalledWith(1, queuedDeployment.componentDeploymentId)
+      expect(deploymentErrorSpy).toHaveBeenCalled()
+      expect(componentErrorSpy).toHaveBeenCalled()
     })
 
     it('should handle spinnaker undeployment api call failure correctly', async () => {
@@ -296,10 +294,8 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
-      const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
-      const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-      const finishedSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
-      const triggerSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+      const undeploymentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleUndeploymentFailure')
+      const componentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleComponentUndeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
@@ -308,19 +304,8 @@ describe('Spinnaker Service', () => {
           100
       )
 
-      expect(statusSpy)
-          .toHaveBeenNthCalledWith(1, undeployment, UndeploymentStatusEnum.FAILED)
-      expect(applicationSpy).toHaveBeenNthCalledWith(
-          1,
-          undeployment.deployment.id,
-          NotificationStatusEnum.UNDEPLOY_FAILED,
-          undeployment.deployment.callbackUrl,
-          undeployment.deployment.circleId
-      )
-      expect(finishedSpy)
-          .toHaveBeenNthCalledWith(1, queuedUndeployments[0].id)
-      expect(triggerSpy)
-          .toHaveBeenNthCalledWith(1, queuedUndeployments[0].componentDeploymentId)
+      expect(undeploymentErrorSpy).toHaveBeenCalled()
+      expect(componentErrorSpy).toHaveBeenCalled()
     })
   })
 })
