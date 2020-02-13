@@ -20,14 +20,10 @@ import {
 import { Repository } from 'typeorm'
 import {
     CreateCircleDeploymentDto,
-    CreateCircleDeploymentRequestDto,
-    CreateDeploymentRequestDto
+    CreateCircleDeploymentRequestDto
 } from '../../../app/api/deployments/dto'
-import { BadRequestException } from '@nestjs/common'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
 
 describe('Deployments service specs', () => {
     let deploymentsService: DeploymentsService
@@ -62,8 +58,7 @@ describe('Deployments service specs', () => {
         mooveService = module.get<MooveService>(MooveService)
 
         createCircleDeploymentDto = new CreateCircleDeploymentDto(
-            'header-value',
-            false
+            'header-value'
         )
 
         createDeploymentDto = new CreateCircleDeploymentRequestDto(
@@ -76,7 +71,7 @@ describe('Deployments service specs', () => {
             createCircleDeploymentDto
         )
 
-        circle = new CircleDeploymentEntity('header-value', false)
+        circle = new CircleDeploymentEntity('header-value')
 
         componentDeployment = new ComponentDeploymentEntity(
             'dummy-id',
@@ -91,6 +86,7 @@ describe('Deployments service specs', () => {
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             [componentDeployment]
         )
 
@@ -107,35 +103,14 @@ describe('Deployments service specs', () => {
         )
     })
 
-    describe('createDeployment', () => {
+    describe('getDeployments', () => {
 
-        it('should correctly handle deployments that already exist', async () => {
-            const saveSpy = jest.spyOn(deploymentsRepository, 'save')
-            jest.spyOn(deploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(deployment))
+        it('should correctly return deployments as dtos', async () => {
 
-            await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
-                .rejects.toThrowError(BadRequestException)
+            jest.spyOn(deploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve([deployment]))
 
-            expect(saveSpy).toHaveBeenCalledTimes(0)
-        })
-
-        it('should correctly set deployment status as failed when exception occurred', async () => {
-            jest.spyOn(deploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(undefined))
-            jest.spyOn(deploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(pipelineQueuesService, 'queueDeploymentTasks')
-                .mockImplementation(() => { throw new Error() })
-            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateDeploymentStatus')
-            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-
-            await expect(deploymentsService.createDeployment(createDeploymentDto, 'incoming-circle-id'))
-                .rejects.toThrowError(Error)
-            expect(statusSpy)
-                .toHaveBeenCalledWith(deployment, DeploymentStatusEnum.FAILED)
-            expect(applicationSpy)
-                .toHaveBeenCalledWith(deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
+            expect(await deploymentsService.getDeployments()).toStrictEqual([deployment.toReadDto()])
         })
     })
 })
