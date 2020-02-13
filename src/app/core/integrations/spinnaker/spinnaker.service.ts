@@ -219,8 +219,8 @@ export class SpinnakerService {
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
 
-    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
     await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
   }
 
   private async handleQueuedUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
@@ -230,8 +230,8 @@ export class SpinnakerService {
         await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
     const { moduleUndeployment: { undeployment } } = componentUndeployment
 
-    await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
     await this.pipelineErrorHandlingService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+    await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
   }
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {

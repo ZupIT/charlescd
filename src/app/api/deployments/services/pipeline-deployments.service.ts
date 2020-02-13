@@ -58,8 +58,8 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT')
-            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
     }
@@ -82,8 +82,8 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
-            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
     }
@@ -108,8 +108,8 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
             const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
-            await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+            await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
             throw error
         }
     }
