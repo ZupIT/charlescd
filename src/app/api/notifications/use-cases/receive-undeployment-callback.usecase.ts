@@ -3,13 +3,14 @@ import { FinishUndeploymentDto } from '../dto'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
-  DeploymentEntity
+  DeploymentEntity,
+  QueuedUndeploymentEntity
 } from '../../deployments/entity'
 import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
 import {
-  PipelineErrorHandlingService,
+  PipelineErrorHandlerService,
   PipelineQueuesService
 } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -19,7 +20,6 @@ import {
 } from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
-import { QueuedUndeploymentEntity } from '../../deployments/entity/queued-undeployment.entity'
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {
@@ -28,7 +28,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
     private readonly deploymentsStatusManagementService: StatusManagementService,
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService,
+    private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
     private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedUndeploymentEntity)
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
@@ -68,8 +68,8 @@ export class ReceiveUndeploymentCallbackUsecase {
     const componentUndeployment: ComponentUndeploymentEntity =
         await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
-    await this.pipelineErrorHandlingService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
-    await this.pipelineErrorHandlingService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+    await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
+    await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
 
     this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
   }

@@ -12,13 +12,13 @@ import {
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
     PipelineDeploymentsService,
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
     ConsoleLoggerServiceStub,
     PipelineDeploymentsServiceStub,
-    PipelineErrorHandlingServiceStub,
+    PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub
 } from '../../stubs/services'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
@@ -60,7 +60,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
-                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub },
+                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
             ]
         }).compile()
 
