@@ -47,11 +47,14 @@ export class CreateCircleDeploymentRequestUsecase {
         let deployment: DeploymentEntity
 
         try {
+            this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
             deployment = await this.persistDeploymentEntity(createCircleDeploymentRequestDto, circleId)
             await this.persistModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
+            this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT')
             await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
             throw error
         }

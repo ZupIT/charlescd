@@ -22,6 +22,7 @@ import {
   PipelineQueuesService
 } from '../services'
 import { ComponentEntity } from '../../components/entity'
+import { ConsoleLoggerService } from '../../../core/logs/console'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -38,16 +39,20 @@ export class CreateUndeploymentRequestUsecase {
     private readonly pipelineQueuesService: PipelineQueuesService,
     private readonly pipelineDeploymentsService: PipelineDeploymentsService,
     private readonly pipelineErrorHandlingService: PipelineErrorHandlingService,
+    private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
   public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string): Promise<ReadUndeploymentDto> {
     let undeployment: UndeploymentEntity
 
     try {
+      this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
       undeployment = await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
       await this.scheduleComponentUndeployments(undeployment)
+      this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
     } catch (error) {
+      this.consoleLoggerService.log('ERROR:CREATE_UNDEPLOYMENT')
       this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
       throw error
     }
