@@ -13,4 +13,8 @@ export class DeploymentsRepositoryStub {
     public async save(): Promise<DeploymentEntity> {
         return Promise.resolve({} as DeploymentEntity)
     }
+
+    public async find(): Promise<DeploymentEntity> {
+        return Promise.resolve({} as DeploymentEntity)
+    }
 }
