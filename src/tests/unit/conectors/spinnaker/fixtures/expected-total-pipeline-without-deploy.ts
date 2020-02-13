@@ -111,23 +111,24 @@ const expectedPipelineWithoutDeployments = {
           },
           spec: {
             hosts: [
-              'app-name'
+              'unreachable-app-name'
             ],
             http: [
               {
+                match: [
+                  {
+                    headers: {
+                      'unreachable-cookie-name': {
+                        exact: 'unreachable-cookie - value'
+                      }
+                    }
+                  }
+                ],
                 route: [
                   {
                     destination: {
-                      host: 'app-name',
-                      subset: 'v3'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId,
-                        },
-                      },
-                    },
+                      host: 'unreachable-app-name'
+                    }
                   }
                 ]
               }
