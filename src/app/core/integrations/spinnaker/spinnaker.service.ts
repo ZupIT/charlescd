@@ -1,6 +1,5 @@
 import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import TotalPipeline from 'darwin-spinnaker-connector'
 import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../api/components/interfaces'
 import { ComponentUndeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../api/deployments/entity'
@@ -14,6 +13,7 @@ import { StatusManagementService } from '../../services/deployments'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 import { MooveService } from '../moove'
+import TotalPipeline from './connector'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 
 @Injectable()

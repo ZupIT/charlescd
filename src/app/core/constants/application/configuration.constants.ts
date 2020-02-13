@@ -28,5 +28,9 @@ export const ConfigurationConstants = {
 
   HELM_PREFIX_URL: 'https://api.github.com/repos/zupit/darwin-k8s-chart-values/contents/',
 
-  HELM_REPO_BRANCH: 'darwin-helm'
+  HELM_REPO_BRANCH: 'darwin-helm',
+
+  DEFAULT_CIRCLE_ID: 'f5d23a57-5607-4306-9993-477e1598cc2a'
 }
+
+export type DefaultCircleId = 'f5d23a57-5607-4306-9993-477e1598cc2a'
