@@ -7,6 +7,8 @@ import { PipelinesServiceStub } from './pipelines-service.stub'
 import { SpinnakerServiceStub } from './spinnaker-service.stub'
 import { DeploymentConfigurationServiceStub } from './deployment-configuration-service.stub'
 import { MooveServiceStub } from './moove-service.stub'
+import { PipelineDeploymentsServiceStub } from './pipeline-deployments-service.stub'
+import { PipelineErrorHandlingServiceStub } from './pipeline-error-handling-service.stub'
 
 export {
     DeploymentsServiceStub,
@@ -17,5 +19,7 @@ export {
     PipelinesServiceStub,
     SpinnakerServiceStub,
     DeploymentConfigurationServiceStub,
-    MooveServiceStub
+    MooveServiceStub,
+    PipelineDeploymentsServiceStub,
+    PipelineErrorHandlingServiceStub
 }
