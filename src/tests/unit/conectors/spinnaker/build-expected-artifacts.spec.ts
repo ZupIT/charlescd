@@ -1,15 +1,20 @@
 import 'jest'
 import buildExpectedArtifacts from '../../../../app/core/integrations/spinnaker/connector/utils/helpers/build-expected-artifacts'
-import expectedArtifact from './fixtures/expected-artifacts'
+import expectedArtifactTemplate from './fixtures/expected-artifacts-template'
+import expectedArtifactValue from './fixtures/expected-artifacts-value'
 
-it('builds the correct object', () => {
-  const githubConfig = {
-    helmTemplateUrl: 'helm.template.url',
-    helmPrefixUrl: 'helm-prefix',
-    helmRepoBranch: 'branch-name'
-  }
+it('builds the correct template object', () => {
+
   expect(
-    buildExpectedArtifacts(githubConfig, 'github-account', 'app-name', 'template')
-  ).toEqual(expectedArtifact)
+    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/' , 'github-account', 'app-name', 'template')
+  ).toEqual(expectedArtifactTemplate)
+
+})
+
+it('builds the correct values object', () => {
+
+  expect(
+    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/' , 'github-account', 'app-name', 'value')
+  ).toEqual(expectedArtifactValue)
 
 })

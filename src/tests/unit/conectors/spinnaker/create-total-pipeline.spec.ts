@@ -19,7 +19,7 @@ it('compiles the pipeline', () => {
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
-    helmRepository: 'helm-repository',
+    helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id'
   }
 
@@ -42,7 +42,7 @@ it('compiles the pipeline with only undeployment', () => {
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
-    helmRepository: 'helm-repository',
+    helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id'
   }
   const totalPipeline = new TotalPipeline(contract)

@@ -3,12 +3,11 @@ import { HelmTypes } from './constants'
 import { createPrimaryId } from './create-id-names'
 import { IBuildArtifact } from '../../interfaces'
 
-const buildExpectedArtifacts = (githubConfig: ISpinnakerGithubConfig, githubAccount: string,
+const buildExpectedArtifacts = (helmRepository: string, githubAccount: string,
                                 appName: string, helmType: HelmTypes): IBuildArtifact => {
-  const { helmTemplateUrl, helmPrefixUrl, helmRepoBranch } = githubConfig
   const fileJudge = helmType === 'template'
-    ? helmTemplateUrl
-    : `${helmPrefixUrl}${appName}.yaml`
+    ? `${helmRepository}${appName}/${appName}-darwin.tgz`
+    : `${helmRepository}${appName}/${appName}.yaml`
   return {
     defaultArtifact: {
       artifactAccount: githubAccount,
@@ -16,7 +15,7 @@ const buildExpectedArtifacts = (githubConfig: ISpinnakerGithubConfig, githubAcco
       name: `${helmType}-${appName}`,
       reference: fileJudge,
       type: 'github/file',
-      version: helmRepoBranch || 'master'
+      version: 'master'
     },
     displayName: helmType,
     id: createPrimaryId(helmType, appName),

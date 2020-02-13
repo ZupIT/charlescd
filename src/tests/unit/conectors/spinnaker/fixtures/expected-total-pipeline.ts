@@ -9,7 +9,7 @@ const expectedTotalPipeline = {
         artifactAccount: 'github-acc',
         id: 'template-app-name-default-artifact',
         name: 'template-app-name',
-        reference: 'helm-template.url',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name-darwin.tgz',
         type: 'github/file',
         version: 'master'
       },
@@ -29,7 +29,7 @@ const expectedTotalPipeline = {
         artifactAccount: 'github-acc',
         id: 'value-app-name-default-artifact',
         name: 'value-app-name',
-        reference: 'helm-prefixapp-name.yaml',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name.yaml',
         type: 'github/file',
         version: 'master'
       },
