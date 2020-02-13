@@ -175,8 +175,8 @@ const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
   return newVirtualService
 }
 
-export const createEmptyVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
-  const newVirtualService = baseEmptyVirtualService(contract)
+export const createEmptyVirtualService = (contract: ISpinnakerPipelineConfiguration): IEmptyVirtualService => {
+  const newVirtualService: IEmptyVirtualService = baseEmptyVirtualService(contract)
   return newVirtualService
 }
 
