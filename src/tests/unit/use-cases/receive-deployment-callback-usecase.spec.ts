@@ -4,12 +4,16 @@ import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     ConsoleLoggerServiceStub,
     MooveServiceStub,
+    PipelineErrorHandlingServiceStub,
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-import { PipelineQueuesService } from '../../../app/api/deployments/services'
+import {
+    PipelineErrorHandlingService,
+    PipelineQueuesService
+} from '../../../app/api/deployments/services'
 import {
     ComponentDeploymentsRepositoryStub,
     DeploymentsRepositoryStub,
@@ -53,6 +57,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub }
             ]
         }).compile()
 
@@ -85,6 +90,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             null
         )
         moduleDeployment.deployment = deployment
@@ -113,22 +119,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             await receiveDeploymentCallbackUsecase.execute(
                 1234,
                 successfulFinishDeploymentDto
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith(1234)
-        })
-
-        it('should update failed callback queued entry status to FINISHED', async () => {
-
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(queuedDeployment))
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-
-            const queueSpy = jest.spyOn(pipelineQueuesService, 'setQueuedDeploymentStatusFinished')
-            await receiveDeploymentCallbackUsecase.execute(
-                1234,
-                failedFinishDeploymentDto
             )
 
             expect(queueSpy).toHaveBeenCalledWith(1234)
