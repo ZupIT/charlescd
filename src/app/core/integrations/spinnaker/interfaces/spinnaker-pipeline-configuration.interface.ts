@@ -35,4 +35,6 @@ export interface ISpinnakerPipelineConfiguration {
   githubAccount: string
 
   helmRepository: string
+
+  hosts?: string[]
 }
