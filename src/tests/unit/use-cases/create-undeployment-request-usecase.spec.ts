@@ -21,10 +21,7 @@ import {
     StatusManagementServiceStub
 } from '../../stubs/services'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
-import {
-    QueuedPipelineStatusEnum,
-    UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
@@ -33,7 +30,6 @@ import {
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
 
