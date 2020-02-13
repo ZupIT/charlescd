@@ -1,8 +1,5 @@
 import { CircleDeploymentEntity } from '../../entity'
-import {
-  Allow,
-  IsNotEmpty
-} from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 
 export class CreateCircleDeploymentDto {
 

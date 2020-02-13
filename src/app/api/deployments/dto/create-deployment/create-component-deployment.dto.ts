@@ -1,6 +1,6 @@
 import { ComponentDeploymentEntity } from '../../entity'
 import {
-  IsDefined,
+  Allow,
   IsNotEmpty
 } from 'class-validator'
 
@@ -18,10 +18,13 @@ export class CreateComponentDeploymentDto {
   @IsNotEmpty()
   public readonly buildImageTag: string
 
+  @Allow()
   public readonly contextPath: string
 
+  @Allow()
   public readonly healthCheck: string
 
+  @Allow()
   public readonly port: number
 
   public toEntity(): ComponentDeploymentEntity {
