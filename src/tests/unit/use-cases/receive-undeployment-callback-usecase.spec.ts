@@ -4,18 +4,26 @@ import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     ConsoleLoggerServiceStub,
     MooveServiceStub,
+    PipelineErrorHandlingServiceStub,
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-import { PipelineQueuesService } from '../../../app/api/deployments/services'
 import {
+    PipelineErrorHandlingService,
+    PipelineQueuesService
+} from '../../../app/api/deployments/services'
+import {
+    ComponentDeploymentsRepositoryStub,
     ComponentUndeploymentsRepositoryStub,
     DeploymentsRepositoryStub,
     QueuedUndeploymentsRepositoryStub
 } from '../../stubs/repository'
-import { ComponentUndeploymentsRepository } from '../../../app/api/deployments/repository'
+import {
+    ComponentDeploymentsRepository,
+    ComponentUndeploymentsRepository
+} from '../../../app/api/deployments/repository'
 import { FinishUndeploymentDto } from '../../../app/api/notifications/dto'
 import {
     ComponentDeploymentEntity,
@@ -57,6 +65,8 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
                 { provide: 'QueuedUndeploymentEntityRepository', useClass: QueuedUndeploymentsRepositoryStub },
                 { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub },
+                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
             ]
         }).compile()
 
@@ -100,6 +110,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             new ModuleDeploymentEntity(
                 'dummy-id',
                 'dummy-id',
+                'helm-repository',
                 componentDeployments
             )
         ]
@@ -145,22 +156,6 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             await receiveUndeploymentCallbackUsecase.execute(
                 1234,
                 successfulFinishUndeploymentDto
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith(1234)
-        })
-
-        it('should update failed callback queued entry status to FINISHED', async () => {
-
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(queuedUndeployment))
-            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentUndeployment))
-
-            const queueSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
-            await receiveUndeploymentCallbackUsecase.execute(
-                1234,
-                failedFinishUndeploymentDto
             )
 
             expect(queueSpy).toHaveBeenCalledWith(1234)
