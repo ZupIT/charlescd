@@ -3,7 +3,7 @@ import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/u
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
     PipelineDeploymentsService,
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
@@ -17,7 +17,7 @@ import {
     ConsoleLoggerServiceStub,
     MooveServiceStub,
     PipelineDeploymentsServiceStub,
-    PipelineErrorHandlingServiceStub,
+    PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
@@ -65,7 +65,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
                 { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
-                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub },
+                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
             ]
         }).compile()
 

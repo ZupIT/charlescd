@@ -18,7 +18,7 @@ import { Repository } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../enums'
 import {
   PipelineDeploymentsService,
-  PipelineErrorHandlingService,
+  PipelineErrorHandlerService,
   PipelineQueuesService
 } from '../services'
 import { ComponentEntity } from '../../components/entity'
@@ -38,7 +38,7 @@ export class CreateUndeploymentRequestUsecase {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     private readonly pipelineQueuesService: PipelineQueuesService,
     private readonly pipelineDeploymentsService: PipelineDeploymentsService,
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService,
+    private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
@@ -47,18 +47,18 @@ export class CreateUndeploymentRequestUsecase {
 
     try {
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
-      undeployment = await this.persistUndeploymentRequest(createUndeploymentDto, deploymentId)
+      undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId)
       await this.scheduleComponentUndeployments(undeployment)
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
     } catch (error) {
       this.consoleLoggerService.log('ERROR:CREATE_UNDEPLOYMENT')
-      this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
+      this.pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
       throw error
     }
   }
 
-  private async persistUndeploymentRequest(
+  private async saveUndeploymentRequest(
       createUndeploymentDto: CreateUndeploymentDto,
       deploymentId: string
   ): Promise<UndeploymentEntity> {
@@ -95,7 +95,7 @@ export class CreateUndeploymentRequestUsecase {
     let queuedUndeployment: QueuedUndeploymentEntity
 
     try {
-      queuedUndeployment = await this.persistQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
+      queuedUndeployment = await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
       const component: ComponentEntity =
           await this.componentsRepository.findOne({ id: componentUndeployment.componentDeployment.componentId })
 
@@ -110,7 +110,7 @@ export class CreateUndeploymentRequestUsecase {
     }
   }
 
-  private async persistQueuedUndeployment(
+  private async saveQueuedUndeployment(
       componentDeployment: ComponentDeploymentEntity,
       componentUndeployment: ComponentUndeploymentEntity
   ): Promise<QueuedUndeploymentEntity> {

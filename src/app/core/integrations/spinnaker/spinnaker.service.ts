@@ -25,7 +25,7 @@ import {
 } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { PipelineErrorHandlingService } from '../../../api/deployments/services'
+import { PipelineErrorHandlerService } from '../../../api/deployments/services'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
@@ -48,8 +48,8 @@ export class SpinnakerService {
     private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @Inject(forwardRef(() => PipelineErrorHandlingService))
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService
+    @Inject(forwardRef(() => PipelineErrorHandlerService))
+    private readonly pipelineErrorHandlingService: PipelineErrorHandlerService
   ) {}
 
   public async createDeployment(

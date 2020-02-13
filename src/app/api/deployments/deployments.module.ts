@@ -24,7 +24,7 @@ import {
 import {
   DeploymentsService,
   PipelineDeploymentsService,
-  PipelineErrorHandlingService,
+  PipelineErrorHandlerService,
   PipelineQueuesService
 } from './services'
 import {
@@ -61,7 +61,7 @@ import { DeploymentUniquenessPipe } from './pipes'
     DeploymentsService,
     PipelineQueuesService,
     PipelineDeploymentsService,
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     CreateUndeploymentRequestUsecase,
     CreateCircleDeploymentRequestUsecase,
     CreateDefaultDeploymentRequestUsecase,
@@ -70,7 +70,7 @@ import { DeploymentUniquenessPipe } from './pipes'
   exports: [
     DeploymentsService,
     PipelineQueuesService,
-    PipelineErrorHandlingService
+    PipelineErrorHandlerService
   ]
 })
 export class DeploymentsModule {}

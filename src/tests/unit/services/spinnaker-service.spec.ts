@@ -4,7 +4,7 @@ import {
   ConsoleLoggerServiceStub,
   HttpServiceStub,
   MooveServiceStub,
-  PipelineErrorHandlingServiceStub,
+  PipelineErrorHandlerServiceStub,
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
@@ -16,7 +16,7 @@ import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { MooveService } from '../../../app/core/integrations/moove'
 import {
-  PipelineErrorHandlingService,
+  PipelineErrorHandlerService,
   PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
@@ -70,7 +70,7 @@ describe('Spinnaker Service', () => {
   let componentUndeploymentsRepository: ComponentUndeploymentsRepository
   let componentUndeployment: ComponentUndeploymentEntity
   let moduleUndeployment: ModuleUndeploymentEntity
-  let pipelineErrorHandlingService: PipelineErrorHandlingService
+  let pipelineErrorHandlerService: PipelineErrorHandlerService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -86,7 +86,7 @@ describe('Spinnaker Service', () => {
         { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
         { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
         { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub }
+        { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub }
       ]
     }).compile()
 
@@ -98,7 +98,7 @@ describe('Spinnaker Service', () => {
     pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-    pipelineErrorHandlingService = module.get<PipelineErrorHandlingService>(PipelineErrorHandlingService)
+    pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
 
     defaultAxiosGetResponse = {
       data: {
@@ -267,8 +267,8 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedDeployment))
 
-      const deploymentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleDeploymentFailure')
-      const componentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleComponentDeploymentFailure')
+      const deploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleDeploymentFailure')
+      const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentDeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
@@ -294,8 +294,8 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
-      const undeploymentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleUndeploymentFailure')
-      const componentErrorSpy = jest.spyOn(pipelineErrorHandlingService, 'handleComponentUndeploymentFailure')
+      const undeploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
+      const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
