@@ -48,13 +48,16 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
+            this.consoleLoggerService.log('START:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineCircle(componentDeployment, deployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
             await this.triggerComponentDeployment(
                 component, deployment, componentDeployment,
                 pipelineCallbackUrl, queuedDeployment.id
             )
+            this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT')
             await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
             await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             throw error
@@ -69,13 +72,16 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
+            this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineDefaultCircle(componentDeployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
             await this.triggerComponentDeployment(
                 component, deployment, componentDeployment,
                 pipelineCallbackUrl, queuedDeployment.id
             )
+            this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
             await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
             await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             throw error
@@ -90,13 +96,16 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
+            this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
             await this.unsetComponentPipelineCircle(deployment, component)
             const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
             await this.triggerComponentDeployment(
                 component, deployment, componentDeployment,
                 pipelineCallbackUrl, queuedUndeployment.id
             )
+            this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
             const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlingService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)

@@ -47,11 +47,14 @@ export class CreateDefaultDeploymentRequestUsecase {
         let deployment: DeploymentEntity
 
         try {
+            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
             deployment = await this.persistDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
             await this.persistModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
+            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT')
             this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
             throw error
         }
