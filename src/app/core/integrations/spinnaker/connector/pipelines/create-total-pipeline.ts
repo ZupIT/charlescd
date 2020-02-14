@@ -10,8 +10,7 @@ import { createBakeStage, createPrimaryId } from '../utils/helpers/create-id-nam
 import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
-import baseService from '../utils/manifests/base-service'
-import createVirtualService, { createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
+import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 
 export default class TotalPipeline {
   refId: number
@@ -30,7 +29,6 @@ export default class TotalPipeline {
   }
 
   public buildPipeline(): IBaseSpinnakerPipeline {
-    this.buildService()
     this.buildDeployments()
     this.buildDestinationRules()
     this.buildVirtualService()
@@ -55,27 +53,11 @@ export default class TotalPipeline {
     return this.previousStages
   }
 
-  private buildService(): IBuildService {
-    if (this.contract.versions.length === 0) { return }
-
-    const stageName = 'Deploy Service'
-    const { account, appName, appNamespace, appPort } = this.contract
-    const serviceManifest = baseService(appName, appNamespace, appPort)
-    const serviceStage = baseStage(serviceManifest, stageName, account, String(this.refId), [], undefined)
-    this.basePipeline.stages.push(serviceStage)
-    this.increaseRefId()
-    this.updatePreviousStage(stageName)
-    return {
-      stages: this.basePipeline.stages,
-      refId: this.refId,
-      previousStages: this.previousStages
-    }
-  }
-
   private buildDeployments(): IDeploymentReturn {
     if (this.contract.versions.length === 0) { return }
 
     const preRefId = this.refId - 1
+
     this.contract.versions.forEach(version => {
       const helmStage = baseStageHelm(
         this.contract,
@@ -83,8 +65,8 @@ export default class TotalPipeline {
         version.version,
         version.versionUrl,
         String(this.refId),
-        [String(preRefId)],
-        'Deploy Service'
+        [],
+        undefined
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()

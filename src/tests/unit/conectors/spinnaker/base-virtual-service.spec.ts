@@ -1,5 +1,8 @@
 import 'jest'
-import createVirtualService, { createEmptyVirtualService } from '../../../../app/core/integrations/spinnaker/connector/utils/manifests/base-virtual-service'
+import {
+  createVirtualService,
+  createEmptyVirtualService
+} from '../../../../app/core/integrations/spinnaker/connector/utils/manifests/base-virtual-service'
 import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/spinnaker/interfaces'
 import expectedBaseVirtualService from './fixtures/expected-base-virtual-service'
 import expectedEmptyVirtualService from './fixtures/expected-empty-virtual-service'
