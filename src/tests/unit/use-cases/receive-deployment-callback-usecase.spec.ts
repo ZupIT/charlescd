@@ -4,14 +4,14 @@ import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     ConsoleLoggerServiceStub,
     MooveServiceStub,
-    PipelineErrorHandlingServiceStub,
+    PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
@@ -57,7 +57,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub }
+                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub }
             ]
         }).compile()
 

@@ -1,4 +1,4 @@
-export class PipelineErrorHandlingServiceStub {
+export class PipelineErrorHandlerServiceStub {
 
     public async handleDeploymentFailure(): Promise<void> {
         return Promise.resolve()

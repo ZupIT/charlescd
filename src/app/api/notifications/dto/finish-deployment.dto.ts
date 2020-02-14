@@ -1,7 +1,9 @@
 import { NotificationStatusEnum } from '../enums'
+import { Allow } from 'class-validator'
 
 export class FinishDeploymentDto {
 
+  @Allow()
   public readonly status: string
 
   constructor(

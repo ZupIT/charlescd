@@ -20,7 +20,7 @@ import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
 import {
     PipelineDeploymentsService,
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
@@ -40,24 +40,27 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
-        private readonly pipelineErrorHandlingService: PipelineErrorHandlingService
+        private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
     ) {}
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
         let deployment: DeploymentEntity
 
         try {
-            deployment = await this.persistDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
-            await this.persistModulesAndComponentEntities(deployment)
+            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
+            deployment = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
+            await this.saveModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
+            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
-            this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
+            this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT')
+            this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
     }
 
-    private async persistDeploymentEntity(
+    private async saveDeploymentEntity(
         createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
         circleId: string
     ): Promise<DeploymentEntity> {
@@ -69,7 +72,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         }
     }
 
-    private async persistModulesAndComponentEntities(deployment: DeploymentEntity): Promise<void> {
+    private async saveModulesAndComponentEntities(deployment: DeploymentEntity): Promise<void> {
         try {
             await Promise.all(
                 deployment.modules
@@ -89,10 +92,10 @@ export class CreateDefaultDeploymentRequestUsecase {
                 new ModuleEntity(moduleDeployment.moduleId, [])
             )
         }
-        await this.persistComponentsEntities(moduleDeployment, moduleEntity)
+        await this.saveComponentsEntities(moduleDeployment, moduleEntity)
     }
 
-    private async persistComponentsEntities(moduleDeployment: ModuleDeploymentEntity, moduleEntity: ModuleEntity): Promise<void> {
+    private async saveComponentsEntities(moduleDeployment: ModuleDeploymentEntity, moduleEntity: ModuleEntity): Promise<void> {
         try {
             await Promise.all(
                 moduleDeployment.components
@@ -135,7 +138,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         let queuedDeployment: QueuedDeploymentEntity
 
         try {
-            queuedDeployment = await this.persistQueuedDeployment(componentDeployment)
+            queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
             const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
                 await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
@@ -145,7 +148,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         }
     }
 
-    private async persistQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
+    private async saveQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
         try {
             const status: QueuedPipelineStatusEnum =
                 await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)

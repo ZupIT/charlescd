@@ -9,7 +9,7 @@ import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { MooveService } from '../../../core/integrations/moove'
 import {
-  PipelineErrorHandlingService,
+  PipelineErrorHandlerService,
   PipelineQueuesService
 } from '../../deployments/services'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -25,7 +25,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlingService,
+    private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
     private readonly mooveService: MooveService,
     private readonly statusManagementService: StatusManagementService,
     private readonly pipelineQueuesService: PipelineQueuesService,
@@ -63,8 +63,8 @@ export class ReceiveDeploymentCallbackUsecase {
         await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
     const { moduleDeployment: { deployment } } = componentDeployment
 
-    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
-    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+    await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+    await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
   }
 
