@@ -79,7 +79,7 @@ export class PipelineDeploymentsService {
                 component, deployment, componentDeployment,
                 pipelineCallbackUrl, queuedDeployment.id
             )
-            this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
+            this.consoleLoggerService.log('FINISH:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
@@ -103,7 +103,7 @@ export class PipelineDeploymentsService {
                 component, deployment, componentDeployment,
                 pipelineCallbackUrl, queuedUndeployment.id
             )
-            this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
+            this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
             const componentUndeployment: ComponentUndeploymentEntity =
