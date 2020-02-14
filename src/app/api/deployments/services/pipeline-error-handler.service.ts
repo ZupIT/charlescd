@@ -25,7 +25,7 @@ import { ComponentEntity } from '../../components/entity'
 import { Repository } from 'typeorm'
 
 @Injectable()
-export class PipelineErrorHandlingService {
+export class PipelineErrorHandlerService {
 
     constructor(
         private readonly consoleLoggerService: ConsoleLoggerService,

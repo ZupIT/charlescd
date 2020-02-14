@@ -3,7 +3,7 @@ import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/u
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
     PipelineDeploymentsService,
-    PipelineErrorHandlingService,
+    PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
@@ -14,9 +14,10 @@ import {
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
+    ConsoleLoggerServiceStub,
     MooveServiceStub,
     PipelineDeploymentsServiceStub,
-    PipelineErrorHandlingServiceStub,
+    PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
@@ -32,6 +33,7 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
+import { ConsoleLoggerService } from '../../../app/core/logs/console'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
@@ -58,11 +60,12 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
+                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
                 { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
                 { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
-                { provide: PipelineErrorHandlingService, useClass: PipelineErrorHandlingServiceStub },
+                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
             ]
         }).compile()
 
