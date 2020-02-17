@@ -1,7 +1,7 @@
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
 import { ComponentDeploymentsRepository } from '../../deployments/repository'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository }  from 'typeorm'
+import { Repository } from 'typeorm'
 import { ComponentEntity } from '../entity'
 
 @Injectable()

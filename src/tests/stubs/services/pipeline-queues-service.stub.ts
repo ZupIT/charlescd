@@ -30,5 +30,4 @@ export class PipelineQueuesServiceStub {
         return Promise.resolve([] as QueuedDeploymentEntity[])
     }
 
-
 }

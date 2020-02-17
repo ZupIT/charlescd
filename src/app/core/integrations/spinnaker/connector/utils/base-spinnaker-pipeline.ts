@@ -11,11 +11,11 @@ interface AppConfig {
 
 const baseSpinnaker = (
   { appName, pipelineName, applicationName }: AppConfig,
-  githubConfig: ISpinnakerGithubConfig, githubAccount: string): IBaseSpinnakerPipeline => ({
+  helmRepository: string, githubAccount: string): IBaseSpinnakerPipeline => ({
     appConfig: {},
     application: applicationName,
     name: pipelineName,
-    expectedArtifacts: helmValues.map(helmType => buildExpectedArtifacts(githubConfig, githubAccount, appName, helmType as HelmTypes)),
+    expectedArtifacts: helmValues.map(helmType => buildExpectedArtifacts(helmRepository, githubAccount, appName, helmType as HelmTypes)),
     keepWaitingPipelines: false,
     lastModifiedBy: 'anonymous',
     limitConcurrent: true,

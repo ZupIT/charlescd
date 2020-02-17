@@ -1,23 +1,20 @@
-import { CircleDeploymentEntity } from '../entity'
+import { CircleDeploymentEntity } from '../../entity'
+import { IsNotEmpty } from 'class-validator'
 
 export class CreateCircleDeploymentDto {
 
+  @IsNotEmpty()
   public readonly headerValue: string
 
-  public readonly removeCircle: boolean
-
   constructor(
-      headerValue: string,
-      removeCircle: boolean
+      headerValue: string
   ) {
     this.headerValue = headerValue
-    this.removeCircle = removeCircle
   }
 
   public toEntity(): CircleDeploymentEntity {
     return new CircleDeploymentEntity(
-      this.headerValue,
-      this.removeCircle
+      this.headerValue
     )
   }
 }
