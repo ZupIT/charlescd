@@ -1,23 +1,20 @@
 {
 	"info": {
-		"_postman_id": "9036f0b4-9b96-407f-a140-49f4f2faa166",
+		"_postman_id": "b0922807-de6e-402e-b5e4-843b63edfb7d",
 		"name": "Darwin Deploy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"_postman_id": "1c99bcd9-0314-4412-b2e8-69c69e6ce9d3",
 			"name": "Deployments",
 			"item": [
 				{
-					"_postman_id": "c89dcf47-dea6-402b-aeed-88ebeb9ada64",
 					"name": "Create Routed Deployment",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
-								"type": "text/javascript",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -25,21 +22,22 @@
 									"postman.setGlobalVariable(\"componentDeploymentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"id\"]);",
 									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
 									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
-								"type": "text/javascript",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -53,24 +51,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"some-deployment-id\",\n\t\"applicationName\": \"some-application-name\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/deployments",
+							"raw": "http://localhost:3000/deployments/circle",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"deployments"
+								"deployments",
+								"circle"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"_postman_id": "f2aa1c46-2ca8-4534-ba9f-167ab8187062",
 					"name": "Create Default Deployment",
 					"event": [
 						{
@@ -130,7 +128,6 @@
 					"response": []
 				},
 				{
-					"_postman_id": "12728390-16b7-41bf-ab5e-4bf5909d6679",
 					"name": "Create Deployment without circle",
 					"event": [
 						{
@@ -190,15 +187,10 @@
 					"response": []
 				},
 				{
-					"_postman_id": "2e86fc34-ff5f-4c0b-b278-4ee2d25bf5a6",
 					"name": "Get Deployments",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:3000/deployments",
 							"protocol": "http",
@@ -214,15 +206,10 @@
 					"response": []
 				},
 				{
-					"_postman_id": "3a75df41-eaa4-4f96-a3b6-aabedf4c2f39",
 					"name": "Get Deployment by Id",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/{{deploymentId}}",
 							"protocol": "http",
@@ -238,22 +225,17 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
-			"_postman_id": "d8e6d66b-0a85-41de-81fb-70f921c92184",
 			"name": "Components",
 			"item": [
 				{
-					"_postman_id": "14259826-2705-4c64-aea9-9a8cd84f999e",
 					"name": "Get Component Queue by Id",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:3000/components/{{componentId}}/queue",
 							"protocol": "http",
@@ -270,22 +252,17 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
-			"_postman_id": "016dfaee-c45d-461a-816b-43ddaf0363ca",
 			"name": "Modules",
 			"item": [
 				{
-					"_postman_id": "0188a6ec-674a-4707-a19b-88dfbd053427",
 					"name": "Get Modules",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:3000/modules",
 							"protocol": "http",
@@ -301,15 +278,10 @@
 					"response": []
 				},
 				{
-					"_postman_id": "ff8028b1-d87a-440d-b92d-31b5c84deb08",
 					"name": "Get Module by Id",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://localhost:3000/modules/{{moduleId}}",
 							"protocol": "http",
@@ -325,14 +297,13 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
-			"_postman_id": "7192b00b-2725-4881-9688-a1dfaf880d6a",
 			"name": "Notifications",
 			"item": [
 				{
-					"_postman_id": "dcc44d90-5889-4e04-8869-4f071eb89884",
 					"name": "Notify Deployment",
 					"request": {
 						"method": "POST",
@@ -366,7 +337,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
