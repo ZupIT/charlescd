@@ -75,7 +75,6 @@
 							"listen": "test",
 							"script": {
 								"id": "2be80835-9e66-4f72-80e5-ed9dd5396149",
-								"type": "text/javascript",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -83,21 +82,22 @@
 									"postman.setGlobalVariable(\"componentDeploymentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"id\"]);",
 									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
 									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"id": "921ac85e-b7d6-46b3-912d-e219bd89d770",
-								"type": "text/javascript",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -111,17 +111,18 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [],\n    \"defaultCircle\": true\n}"
+							"raw": "{\n\t\"deploymentId\": \"some-deployment-id\",\n\t\"applicationName\": \"some-application-name\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/deployments",
+							"raw": "http://localhost:3000/deployments/default",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"deployments"
+								"deployments",
+								"default"
 							]
 						}
 					},
