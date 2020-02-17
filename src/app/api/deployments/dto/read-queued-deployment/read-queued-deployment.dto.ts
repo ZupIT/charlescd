@@ -1,4 +1,4 @@
-import { QueuedPipelineStatusEnum } from '../enums'
+import { QueuedPipelineStatusEnum } from '../../enums'
 
 export class ReadQueuedDeploymentDto {
 

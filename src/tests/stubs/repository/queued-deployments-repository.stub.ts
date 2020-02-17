@@ -16,11 +16,16 @@ export class QueuedDeploymentsRepositoryStub {
     public getAllByComponentIdAscending(id: string): Promise<QueuedDeploymentEntity[]> {
         return Promise.resolve([] as QueuedDeploymentEntity[])
     }
+
     public update(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
 
     public getOneByComponentIdRunning(): Promise<QueuedDeploymentEntity> {
+        return Promise.resolve({} as QueuedDeploymentEntity)
+    }
+
+    public getNextQueuedDeployment(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
 }

@@ -52,7 +52,7 @@ describe('execute', () => {
 
             getComponentQueueUseCase = module.get<GetComponentQueueUseCase>(GetComponentQueueUseCase)
             queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
-            componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository);
+            componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         })
 
         it('should return a list of dto queued pipelines', async () => {

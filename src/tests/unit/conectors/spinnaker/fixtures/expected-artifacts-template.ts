@@ -1,11 +1,11 @@
-const expectedArtifact = {
+const expectedArtifactTemplate = {
   defaultArtifact: {
     artifactAccount: 'github-account',
     id: 'template-app-name-default-artifact',
     name: 'template-app-name',
-    reference: 'helm.template.url',
+    reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name-darwin.tgz',
     type: 'github/file',
-    version: 'branch-name'
+    version: 'master'
   },
   displayName: 'template',
   id: 'template - app-name',
@@ -19,4 +19,4 @@ const expectedArtifact = {
   usePriorArtifact: false
 }
 
-export default expectedArtifact
+export default expectedArtifactTemplate
