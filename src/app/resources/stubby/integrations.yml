@@ -88,6 +88,13 @@
     body: >
       {}
 
+# NOTIFICATION
+
+- request:
+    method: POST
+    url: ^/deploy/notifications/deployment
+  response: 201
+
 # CONSUL
 
 - request:
