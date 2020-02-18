@@ -58,7 +58,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/circle",
@@ -126,7 +126,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -193,7 +193,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"callbackurl.zup.com\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -285,6 +285,25 @@
 			"item": [
 				{
 					"name": "Get Component Queue by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0902a943-c2c9-4f07-bc52-9fb184ae3fab",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"componentQueueId\", response[0][\"id\"]);",
+									"",
+									"",
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -357,6 +376,20 @@
 			"item": [
 				{
 					"name": "Notify Deployment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "60e0ee88-2dd6-4a04-9f01-f1e5255bad4d",
+								"exec": [
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -370,19 +403,20 @@
 							"raw": "{\n\t\"status\": \"SUCCEEDED\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/notifications?componentDeploymentId={{componentDeploymentId}}",
+							"raw": "http://localhost:3000/notifications/deployment?queuedDeploymentId={{componentQueueId}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"notifications"
+								"notifications",
+								"deployment"
 							],
 							"query": [
 								{
-									"key": "componentDeploymentId",
-									"value": "{{componentDeploymentId}}"
+									"key": "queuedDeploymentId",
+									"value": "{{componentQueueId}}"
 								}
 							]
 						}
