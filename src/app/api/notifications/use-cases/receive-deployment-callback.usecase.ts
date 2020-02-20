@@ -99,7 +99,7 @@ export class ReceiveDeploymentCallbackUsecase {
     }
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
-  public async isUniqueRunningPipeline(queuedComponentId: string){
+  public async isUniqueRunningPipeline(queuedComponentId: string) {
     const runningDeployment: QueuedDeploymentEntity =
         await this.queuedDeploymentsRepository.getRunningComponent()
     const repeatedComponent: QueuedDeploymentEntity =
