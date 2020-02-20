@@ -41,4 +41,11 @@ export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEnti
       .orderBy('queued_deployment.id', 'ASC')
       .getOne()
   }
+  public async getRunningComponent(): Promise<QueuedDeploymentEntity> {
+    return this.createQueryBuilder('queued_deployment')
+        .where(
+            'queued_deployment.status = :status',
+            {  status: QueuedPipelineStatusEnum.RUNNING })
+        .getOne()
+  }
 }
