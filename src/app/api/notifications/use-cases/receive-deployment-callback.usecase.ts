@@ -91,11 +91,14 @@ export class ReceiveDeploymentCallbackUsecase {
     const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
-
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-    await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
-    await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
+    const runningDeployment: QueuedDeploymentEntity =
+        await this.queuedDeploymentsRepository.getOneByComponentIdRunning(componentDeployment.componentId)
+    if (!runningDeployment ) {
+      this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+      await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
+      await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
+    }
 
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
