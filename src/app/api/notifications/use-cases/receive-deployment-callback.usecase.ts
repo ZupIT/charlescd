@@ -92,14 +92,18 @@ export class ReceiveDeploymentCallbackUsecase {
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
-    const runningDeployment: QueuedDeploymentEntity =
-        await this.queuedDeploymentsRepository.getOneByComponentIdRunning(componentDeployment.componentId)
-    if (!runningDeployment ) {
+    if (this.isUniqueRunningPipeline(componentDeployment.componentId)) {
       this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
       await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
       await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
     }
-
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
+  }
+  public async isUniqueRunningPipeline(queuedComponentId: string){
+    const runningDeployment: QueuedDeploymentEntity =
+        await this.queuedDeploymentsRepository.getRunningComponent()
+    const repeatedComponent: QueuedDeploymentEntity =
+        await this.queuedDeploymentsRepository.findOne(queuedComponentId)
+    return !runningDeployment && !repeatedComponent.hasFinished();
   }
 }

@@ -5,7 +5,7 @@ export class QueuedDeploymentsRepositoryStub {
     public async findOne(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
-    public async getRunningDeployment(): Promise<QueuedDeploymentEntity> {
+    public async getRunningComponent(): Promise<QueuedDeploymentEntity> {
         return Promise.resolve({} as QueuedDeploymentEntity)
     }
     public async save(): Promise<QueuedDeploymentEntity> {
