@@ -133,11 +133,27 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         it('should not execute pipeline   when are others pipelines running', async () => {
 
             jest.spyOn(queuedDeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(queuedDeploymentFinished))
+                .mockImplementation(() => Promise.resolve(queuedDeployment))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
             jest.spyOn(queuedDeploymentsRepository, 'getRunningComponent')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
+            const queueSpy = jest.spyOn(statusManagementService, 'setComponentDeploymentStatusAsFinished')
+            await receiveDeploymentCallbackUsecase.execute(
+                1234,
+                successfulFinishDeploymentDto
+            )
+            expect(queueSpy).not.toHaveBeenCalledWith(1234)
+        })
+
+        it('should not execute pipeline when this pipeline have already been finished before' , async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(queuedDeploymentFinished))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            jest.spyOn(queuedDeploymentsRepository, 'getRunningComponent')
+                .mockImplementation(() => Promise.resolve(undefined))
             const queueSpy = jest.spyOn(statusManagementService, 'setComponentDeploymentStatusAsFinished')
             await receiveDeploymentCallbackUsecase.execute(
                 1234,
