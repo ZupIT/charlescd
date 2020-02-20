@@ -65,7 +65,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-
         successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
         failedFinishDeploymentDto = new FinishDeploymentDto('FAILED')
 
@@ -112,6 +111,8 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
             jest.spyOn(queuedDeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(queuedDeploymentsRepository, 'getOneByComponentIdRunning')
+                .mockImplementation(() => Promise.resolve(undefined))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
 
@@ -122,6 +123,22 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             )
 
             expect(queueSpy).toHaveBeenCalledWith(1234)
+        })
+        it('should not execute pipeline   when are others pipelines running', async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            jest.spyOn(queuedDeploymentsRepository, 'getOneByComponentIdRunning')
+                .mockImplementation(() => Promise.resolve(queuedDeployment))
+            const queueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+            await receiveDeploymentCallbackUsecase.execute(
+                1234,
+                successfulFinishDeploymentDto
+            )
+
+            expect(queueSpy).not.toHaveBeenCalledWith(1234)
         })
     })
 })
