@@ -100,5 +100,4 @@ export class ReceiveDeploymentCallbackUsecase {
     await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
-
 }

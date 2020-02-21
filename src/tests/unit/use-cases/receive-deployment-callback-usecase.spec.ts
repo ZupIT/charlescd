@@ -117,7 +117,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
             jest.spyOn(queuedDeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
-
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
 
