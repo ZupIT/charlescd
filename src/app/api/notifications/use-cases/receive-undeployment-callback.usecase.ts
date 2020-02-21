@@ -3,7 +3,7 @@ import { FinishUndeploymentDto } from '../dto'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
-  DeploymentEntity,
+  DeploymentEntity, QueuedDeploymentEntity,
   QueuedUndeploymentEntity
 } from '../../deployments/entity'
 import { NotificationStatusEnum } from '../enums'
@@ -47,10 +47,14 @@ export class ReceiveUndeploymentCallbackUsecase {
 
     try {
       this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishUndeploymentDto)
-      finishUndeploymentDto.isSuccessful() ?
-        await this.handleSuccessfulUndeployment(queuedUndeploymentId) :
-        await this.handleDeploymentFailure(queuedUndeploymentId)
-      this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
+      const queuedUndeploymentEntity: QueuedDeploymentEntity =
+          await this.queuedUndeploymentsRepository.findOne({id : queuedUndeploymentId})
+      if (!queuedUndeploymentEntity.hasFinished()) {
+        finishUndeploymentDto.isSuccessful() ?
+            await this.handleSuccessfulUndeployment(queuedUndeploymentId) :
+            await this.handleDeploymentFailure(queuedUndeploymentId)
+        this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
+      }
     } catch (error) {
       return Promise.reject({ error })
     }
