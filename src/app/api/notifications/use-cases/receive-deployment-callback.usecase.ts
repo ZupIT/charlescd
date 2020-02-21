@@ -44,10 +44,14 @@ export class ReceiveDeploymentCallbackUsecase {
 
     try {
       this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-      finishDeploymentDto.isSuccessful() ?
-        await this.handleDeploymentSuccess(queuedDeploymentId) :
-        await this.handleDeploymentFailure(queuedDeploymentId)
-      this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+      const queuedDeploymentEntity: QueuedDeploymentEntity =
+          await this.queuedDeploymentsRepository.findOne({id : queuedDeploymentId})
+      if (!queuedDeploymentEntity.hasFinished()) {
+        finishDeploymentDto.isSuccessful() ?
+            await this.handleDeploymentSuccess(queuedDeploymentId) :
+            await this.handleDeploymentFailure(queuedDeploymentId)
+        this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
+      }
     } catch (error) {
       return Promise.reject({ error })
     }
@@ -86,24 +90,15 @@ export class ReceiveDeploymentCallbackUsecase {
   private async handleDeploymentSuccess(
     queuedDeploymentId: number
   ): Promise<void> {
-
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
     const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
-    if (this.isUniqueRunningPipeline(componentDeployment.componentId)) {
-      this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-      await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
-      await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
-    }
+    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+    await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
+    await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
-  public async isUniqueRunningPipeline(queuedComponentId: string) {
-    const runningDeployment: QueuedDeploymentEntity =
-        await this.queuedDeploymentsRepository.getRunningComponent()
-    const repeatedComponent: QueuedDeploymentEntity =
-        await this.queuedDeploymentsRepository.findOne(queuedComponentId)
-    return !runningDeployment && !repeatedComponent.hasFinished();
-  }
+
 }

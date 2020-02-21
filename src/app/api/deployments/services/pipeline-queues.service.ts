@@ -44,7 +44,9 @@ export class PipelineQueuesService {
     try {
         const nextQueuedDeployment: QueuedDeploymentEntity =
             await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
-        if (nextQueuedDeployment) {
+        const runningDeployment: QueuedDeploymentEntity =
+          await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
+        if (nextQueuedDeployment && !runningDeployment) {
           nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
               await this.triggerQueuedDeployment(nextQueuedDeployment) :
               await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
@@ -54,7 +56,6 @@ export class PipelineQueuesService {
       throw error
     }
   }
-
 
   private async triggerQueuedDeployment(queuedDeployment: QueuedDeploymentEntity): Promise<void> {
 
