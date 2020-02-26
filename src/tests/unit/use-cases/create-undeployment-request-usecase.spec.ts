@@ -145,7 +145,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 .toEqual(undeployment.toReadDto())
         })
 
-        it.only('should handle duplicated module undeployment', async () => {
+        it('should handle duplicated module undeployment', async () => {
 
             jest.spyOn(deploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(deployment))
