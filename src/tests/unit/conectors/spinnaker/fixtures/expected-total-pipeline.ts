@@ -9,7 +9,7 @@ const expectedTotalPipeline = {
         artifactAccount: 'github-acc',
         id: 'template-app-name-default-artifact',
         name: 'template-app-name',
-        reference: 'helm-template.url',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name-darwin.tgz',
         type: 'github/file',
         version: 'master'
       },
@@ -29,7 +29,7 @@ const expectedTotalPipeline = {
         artifactAccount: 'github-acc',
         id: 'value-app-name-default-artifact',
         name: 'value-app-name',
-        reference: 'helm-prefixapp-name.yaml',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name.yaml',
         type: 'github/file',
         version: 'master'
       },
@@ -50,56 +50,6 @@ const expectedTotalPipeline = {
   limitConcurrent: true,
   name: 'pipeline-name',
   stages: [
-    {
-      account: 'account',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'v1',
-          kind: 'Service',
-          metadata: {
-            labels: {
-              app: 'app-name',
-              service: 'app-name'
-            },
-            name: 'app-name',
-            namespace: 'app-namespace'
-          },
-          spec: {
-            ports: [
-              {
-                name: 'http',
-                port: 12345,
-                targetPort: 12345
-              }
-            ],
-            selector: {
-              app: 'app-name'
-            }
-          }
-        }
-      ],
-      moniker: {
-        app: 'account'
-      },
-      name: 'Deploy Service',
-      refId: '1',
-      requisiteStageRefIds: [],
-      skipExpressionEvaluation: false,
-      source: 'text',
-      stageEnabled: {},
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest'
-    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -138,14 +88,9 @@ const expectedTotalPipeline = {
         'image.tag': '/v1',
         'name': 'v1'
       },
-      refId: '2',
-      requisiteStageRefIds: [
-        '1'
-      ],
-      stageEnabled: {
-        expression: '${ #stage(\'Deploy Service\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
+      refId: '1',
+      requisiteStageRefIds: [],
+      stageEnabled: {},
       templateRenderer: 'HELM2',
       type: 'bakeManifest'
     },
@@ -161,9 +106,9 @@ const expectedTotalPipeline = {
         app: 'app-name'
       },
       name: 'Deploy v1',
-      refId: '3',
+      refId: '2',
       requisiteStageRefIds: [
-        '2'
+        '1'
       ],
       skipExpressionEvaluation: false,
       source: 'artifact',
@@ -211,9 +156,9 @@ const expectedTotalPipeline = {
         app: 'account'
       },
       name: 'Deploy Destination Rules',
-      refId: '4',
+      refId: '3',
       requisiteStageRefIds: [
-        '3'
+        '2'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
@@ -274,9 +219,9 @@ const expectedTotalPipeline = {
         app: 'account'
       },
       name: 'Deploy Virtual Service',
-      refId: '5',
+      refId: '4',
       requisiteStageRefIds: [
-        '4'
+        '3'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
@@ -328,9 +273,9 @@ const expectedTotalPipeline = {
         cascading: true,
         gracePeriodSeconds: null
       },
-      refId: '6',
+      refId: '5',
       requisiteStageRefIds: [
-        '5'
+        '4'
       ],
       stageEnabled: {
         expression: '${ #stage(\'Deploy Virtual Service\').status.toString() == \'SUCCEEDED\'}',
@@ -350,9 +295,9 @@ const expectedTotalPipeline = {
       payload: {
         status: '${#stage( \'Delete Deployments\' ).status.toString()}'
       },
-      refId: '7',
+      refId: '6',
       requisiteStageRefIds: [
-        '6'
+        '5'
       ],
       statusUrlResolution: 'getMethod',
       type: 'webhook',

@@ -1,17 +1,18 @@
 import { Test } from '@nestjs/testing'
 import {
-    PipelineQueuesService,
-    PipelinesService
+    PipelineDeploymentsService,
+    PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     ConsoleLoggerServiceStub,
     MooveServiceStub,
-    PipelinesServiceStub,
+    PipelineDeploymentsServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
 import {
     ComponentDeploymentsRepositoryStub,
+    ComponentsRepositoryStub,
     ComponentUndeploymentsRepositoryStub,
     DeploymentsRepositoryStub,
     ModulesRepositoryStub,
@@ -23,11 +24,7 @@ import {
     ComponentUndeploymentsRepository,
     QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
-import {
-    DeploymentStatusEnum,
-    QueuedPipelineStatusEnum,
-    UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
     CircleDeploymentEntity,
     ComponentDeploymentEntity,
@@ -42,7 +39,8 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
+import { ComponentEntity } from '../../../app/api/components/entity'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('PipelineQueuesService', () => {
 
@@ -57,7 +55,6 @@ describe('PipelineQueuesService', () => {
     let deployment: DeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
-    let pipelinesService: PipelinesService
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
     let deploymentWithRelations: DeploymentEntity
@@ -72,6 +69,9 @@ describe('PipelineQueuesService', () => {
     let componentUndeploymentsRepository: ComponentUndeploymentsRepository
     let componentUndeployment: ComponentUndeploymentEntity
     let moduleUndeployment: ModuleUndeploymentEntity
+    let componentsRepository: Repository<ComponentEntity>
+    let componentEntity: ComponentEntity
+    let moduleEntity: ModuleEntity
 
     beforeEach(async () => {
 
@@ -79,7 +79,6 @@ describe('PipelineQueuesService', () => {
             providers: [
                 PipelineQueuesService,
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: PipelinesService, useClass: PipelinesServiceStub },
                 { provide: QueuedDeploymentsRepository, useClass:  QueuedDeploymentsRepositoryStub},
                 { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
                 { provide: ComponentDeploymentsRepository, useClass:  ComponentDeploymentsRepositoryStub },
@@ -88,6 +87,8 @@ describe('PipelineQueuesService', () => {
                 { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
+                { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
+                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub }
             ]
         }).compile()
 
@@ -95,10 +96,10 @@ describe('PipelineQueuesService', () => {
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         queuedUndeploymentsRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
-        pipelinesService = module.get<PipelinesService>(PipelinesService)
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         mooveService = module.get<MooveService>(MooveService)
         componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
+        componentsRepository = module.get<Repository<ComponentEntity>>('ComponentEntityRepository')
 
         queuedUndeployment = new QueuedUndeploymentEntity(
             'dummy-component-id',
@@ -135,7 +136,7 @@ describe('PipelineQueuesService', () => {
         nextQueuedDeployments[1].id = 111
         nextQueuedDeployments[2].id = 112
 
-        circle = new CircleDeploymentEntity('dummy-circle', false)
+        circle = new CircleDeploymentEntity('dummy-circle')
 
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
@@ -152,6 +153,7 @@ describe('PipelineQueuesService', () => {
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             null
         )
         moduleDeployment.deployment = deployment
@@ -182,6 +184,7 @@ describe('PipelineQueuesService', () => {
         moduleDeploymentWithRelations = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             componentDeploymentsList
         )
 
@@ -226,6 +229,7 @@ describe('PipelineQueuesService', () => {
             new ModuleDeploymentEntity(
                 'dummy-id',
                 'dummy-id',
+                'helm-repository',
                 undeploymentComponentDeployments
             )
         ]
@@ -274,181 +278,37 @@ describe('PipelineQueuesService', () => {
             undeploymentComponentDeployments[0]
         )
         componentUndeployment.moduleUndeployment = moduleUndeployment
-    })
 
-    describe('enqueueUndeploymentExecution', () => {
-        it('should save a new queued undeployment with the correct params', async () => {
+        moduleEntity = new ModuleEntity(
+            'module-id',
+            null
+        )
 
-            const queueSpy = jest.spyOn(queuedUndeploymentsRepository, 'save')
-
-            await pipelineQueuesService.enqueueUndeploymentExecution(
-                queuedUndeployment.componentId,
-                queuedUndeployment.componentDeploymentId,
-                queuedUndeployment.status,
-                queuedUndeployment.componentUndeploymentId
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith(queuedUndeployment)
-        })
-    })
-
-    describe('enqueueDeploymentExecution', () => {
-        it('should save a new queued deployment with the correct params', async () => {
-
-            const queueSpy = jest.spyOn(queuedDeploymentsRepository, 'save')
-
-            await pipelineQueuesService.enqueueDeploymentExecution(
-                queuedDeployment.componentId,
-                queuedDeployment.componentDeploymentId,
-                queuedDeployment.status
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith(queuedDeployment)
-        })
+        componentEntity = new ComponentEntity(
+            'component-id',
+            moduleEntity
+        )
     })
 
     describe('triggerNextComponentPipeline', () => {
 
         it('should update next queued pipeline status to RUNNING', async () => {
 
-            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdQueuedAscending')
-                .mockImplementation(() => Promise.resolve(nextQueuedDeployments))
+            jest.spyOn(queuedDeploymentsRepository, 'getNextQueuedDeployment')
+                .mockImplementation(() => Promise.resolve(nextQueuedDeployments[0]))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementationOnce(() => Promise.resolve(componentEntity))
 
             const queueSpy = jest.spyOn(queuedDeploymentsRepository, 'update')
 
             await pipelineQueuesService.triggerNextComponentPipeline(
-                'dummy-component-deployment-id'
+                componentDeployment
             )
 
             expect(queueSpy)
                 .toHaveBeenCalledWith({ id: nextQueuedDeployments[0].id }, { status: QueuedPipelineStatusEnum.RUNNING })
-        })
-
-        it('deploy: should set status to finished, notify application and trigger next component deployment on exception', async () => {
-
-            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdQueuedAscending')
-                .mockImplementationOnce(() => Promise.resolve(nextQueuedDeployments))
-                .mockImplementationOnce(() => Promise.resolve(nextQueuedDeployments.slice(1)))
-
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
-                .mockImplementationOnce(() => Promise.resolve(nextQueuedDeployments[0]))
-                .mockImplementationOnce(() => Promise.resolve(nextQueuedDeployments[1]))
-
-            jest.spyOn(pipelinesService, 'triggerDeployment')
-                .mockImplementationOnce(() => { throw new Error() })
-                .mockImplementationOnce(() => Promise.resolve())
-
-            const updateSpy = jest.spyOn(queuedDeploymentsRepository, 'update')
-            const triggerPipelineSpy = jest.spyOn(pipelinesService, 'triggerDeployment')
-            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateDeploymentStatus')
-            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-
-            await pipelineQueuesService.triggerNextComponentPipeline('dummy-component-deployment-id')
-
-            expect(updateSpy)
-                .toHaveBeenNthCalledWith(1, { id: nextQueuedDeployments[0].id }, { status: QueuedPipelineStatusEnum.FINISHED })
-            expect(triggerPipelineSpy).toHaveBeenLastCalledWith(
-                componentDeployment.id,
-                componentDeployment.moduleDeployment.deployment.defaultCircle,
-                nextQueuedDeployments[1].id
-            )
-            expect(statusSpy)
-                .toHaveBeenNthCalledWith(1, deployment, DeploymentStatusEnum.FAILED)
-            expect(applicationSpy)
-                .toHaveBeenNthCalledWith(1, deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId)
-        })
-
-        it('undeploy: should set status to finished, notify application and trigger next component deployment on exception', async () => {
-
-            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdQueuedAscending')
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments))
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments.slice(1)))
-
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[1]))
-
-            jest.spyOn(pipelinesService, 'triggerUndeployment')
-                .mockImplementationOnce(() => { throw new Error() })
-                .mockImplementationOnce(() => Promise.resolve())
-
-            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentUndeployment))
-
-            const updateSpy = jest.spyOn(queuedUndeploymentsRepository, 'update')
-            const triggerPipelineSpy = jest.spyOn(pipelinesService, 'triggerUndeployment')
-            const statusSpy = jest.spyOn(statusManagementService, 'deepUpdateUndeploymentStatus')
-            const applicationSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-
-            await pipelineQueuesService.triggerNextComponentPipeline('dummy-component-deployment-id')
-
-            expect(updateSpy)
-                .toHaveBeenNthCalledWith(1, { id: queuedUndeployments[0].id }, { status: QueuedPipelineStatusEnum.FINISHED })
-            expect(triggerPipelineSpy).toHaveBeenLastCalledWith(
-                componentDeployment.id,
-                queuedUndeployments[1].id
-            )
-            expect(statusSpy)
-                .toHaveBeenNthCalledWith(1, undeployment, UndeploymentStatusEnum.FAILED)
-            expect(applicationSpy).toHaveBeenNthCalledWith(
-                1,
-                undeployment.deployment.id,
-                NotificationStatusEnum.UNDEPLOY_FAILED,
-                undeployment.deployment.callbackUrl,
-                undeployment.deployment.circleId
-            )
-        })
-
-        it('should trigger pipeline of the first queued deployment', async () => {
-
-            jest.spyOn(queuedDeploymentsRepository, 'getAllByComponentIdQueuedAscending')
-                .mockImplementation(() => Promise.resolve(nextQueuedDeployments))
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(nextQueuedDeployments[0]))
-            const findSpy = jest.spyOn(queuedDeploymentsRepository, 'findOne')
-            const triggerPipelineSpy = jest.spyOn(pipelinesService, 'triggerDeployment')
-
-            await pipelineQueuesService.triggerNextComponentPipeline('dummy-component-deployment-id')
-
-            expect(findSpy).toHaveBeenCalledWith({ id : nextQueuedDeployments[0].id })
-            expect(triggerPipelineSpy).toHaveBeenCalledWith(
-                componentDeployment.id,
-                componentDeployment.moduleDeployment.deployment.defaultCircle,
-                nextQueuedDeployments[0].id
-            )
-        })
-    })
-
-    describe('queueDeploymentTasks', () => {
-        it('should set queued deployment status to finished and trigger next deployment inside queue', async () => {
-
-            jest.spyOn(queuedDeploymentsRepository, 'getOneByComponentIdRunning')
-                .mockImplementationOnce(() => Promise.resolve(undefined))
-            jest.spyOn(queuedDeploymentsRepository, 'save')
-                .mockImplementationOnce(() => Promise.resolve(nextQueuedDeployments[0]))
-            jest.spyOn(pipelinesService, 'triggerDeployment')
-                .mockImplementationOnce(() => { throw new Error() })
-            jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-                .mockImplementation(() => Promise.resolve())
-
-            const updateSpy = jest.spyOn(queuedDeploymentsRepository, 'update')
-            const queueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-
-            await expect(pipelineQueuesService.queueDeploymentTasks(deploymentWithRelations))
-                .rejects.toThrowError(Error)
-            expect(updateSpy)
-                .toHaveBeenNthCalledWith(1, { id: nextQueuedDeployments[0].id }, { status: QueuedPipelineStatusEnum.FINISHED })
-            expect(queueSpy).toHaveBeenCalledTimes(1)
         })
     })
 })
