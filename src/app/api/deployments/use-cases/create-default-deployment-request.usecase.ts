@@ -41,7 +41,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
-    ) {}
+    ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
         let deployment: DeploymentEntity
@@ -149,15 +149,27 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async saveQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
+        const status: QueuedPipelineStatusEnum = QueuedPipelineStatusEnum.RUNNING
         try {
-            const status: QueuedPipelineStatusEnum =
-                await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)
-
             return await this.queuedDeploymentsRepository.save(
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, status)
             )
         } catch (error) {
-            throw new InternalServerErrorException('Could not save queued deployment')
+            return this.handleUniqueRunningConstraint(error, componentDeployment)
         }
+    }
+
+    private handleUniqueRunningConstraint(
+        error: any,
+        componentDeployment: ComponentDeploymentEntity,
+    ): Promise<QueuedDeploymentEntity> {
+
+        if (error.constraint === 'queued_deployments_status_running_uniq') {
+            return this.queuedDeploymentsRepository.save(
+                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
+            )
+        }
+        throw new InternalServerErrorException('Could not save queued deployment')
+
     }
 }
