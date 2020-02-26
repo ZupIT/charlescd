@@ -15,12 +15,4 @@ export class ComponentDeploymentsRepository extends Repository<ComponentDeployme
       relations: ['moduleDeployment', 'moduleDeployment.deployment']
     })
   }
-  public async getOneWithStatusFinished(
-      idComponent: string
-  ): Promise<ComponentDeploymentEntity> {
-    return this.findOne({
-      where: { componentId: idComponent, status: 'FINISHED'},
-      relations: ['moduleDeployment', 'moduleDeployment.deployment']
-    })
-  }
 }
