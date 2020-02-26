@@ -10,7 +10,7 @@ const expectedPipelineWithoutDeployments = {
         artifactAccount: 'github-acc',
         id: 'template-app-name-default-artifact',
         name: 'template-app-name',
-        reference: 'helm-template.url',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name-darwin.tgz',
         type: 'github/file',
         version: 'master'
       },
@@ -30,7 +30,7 @@ const expectedPipelineWithoutDeployments = {
         artifactAccount: 'github-acc',
         id: 'value-app-name-default-artifact',
         name: 'value-app-name',
-        reference: 'helm-prefixapp-name.yaml',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name.yaml',
         type: 'github/file',
         version: 'master'
       },
@@ -111,23 +111,24 @@ const expectedPipelineWithoutDeployments = {
           },
           spec: {
             hosts: [
-              'app-name'
+              'unreachable-app-name'
             ],
             http: [
               {
+                match: [
+                  {
+                    headers: {
+                      'unreachable-cookie-name': {
+                        exact: 'unreachable-cookie - value'
+                      }
+                    }
+                  }
+                ],
                 route: [
                   {
                     destination: {
-                      host: 'app-name',
-                      subset: 'v3'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId,
-                        },
-                      },
-                    },
+                      host: 'unreachable-app-name'
+                    }
                   }
                 ]
               }

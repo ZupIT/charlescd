@@ -3,18 +3,21 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { ComponentsController } from './controller'
 import { ComponentEntity } from './entity'
-import { ComponentsService } from './services'
 import { DeploymentsModule } from '../deployments/deployments.module'
+import { GetComponentQueueUseCase } from './use-cases/get-component-queue.usecase'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../deployments/repository'
 
 @Module({
   imports: [
     IntegrationsModule,
     DeploymentsModule,
     TypeOrmModule.forFeature([
-      ComponentEntity
+      ComponentEntity,
+      ComponentDeploymentsRepository,
+      QueuedDeploymentsRepository
     ])
   ],
   controllers: [ComponentsController],
-  providers: [ComponentsService]
+  providers: [GetComponentQueueUseCase]
 })
 export class ComponentsModule {}

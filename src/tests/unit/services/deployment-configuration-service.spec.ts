@@ -42,7 +42,13 @@ describe('Deployment configuration specs', () => {
       8787
     )
 
-    moduleDeploymentEntity = new ModuleDeploymentEntity('module-id', 'konfig-id', [componentsDeploymentEntity])
+    moduleDeploymentEntity = new ModuleDeploymentEntity(
+        'module-id',
+        'config-id',
+        'helm-repository',
+        [componentsDeploymentEntity]
+    )
+
     deployment = new DeploymentEntity(
       'deployment-id',
       'value-flow-uid',

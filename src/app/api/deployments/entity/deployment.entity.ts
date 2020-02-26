@@ -91,7 +91,7 @@ export class DeploymentEntity extends BaseEntity {
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circle.toReadDto(),
+      this.circle ? this.circle.toReadDto() : null,
       this.status,
       this.callbackUrl,
       this.defaultCircle,

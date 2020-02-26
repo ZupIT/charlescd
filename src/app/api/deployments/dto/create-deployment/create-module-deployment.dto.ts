@@ -1,14 +1,24 @@
-import { ModuleDeploymentEntity } from '../entity/module-deployment.entity'
+import { ModuleDeploymentEntity } from '../../entity'
 import { CreateComponentDeploymentDto } from './create-component-deployment.dto'
-import { ValidateNested } from 'class-validator'
+import {
+  IsDefined,
+  IsNotEmpty,
+  ValidateNested
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class CreateModuleDeploymentDto {
 
+  @IsNotEmpty()
   public readonly moduleId: string
 
+  @IsNotEmpty()
   public readonly k8sConfigurationId: string
 
+  @IsNotEmpty()
+  public readonly helmRepository: string
+
+  @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => CreateComponentDeploymentDto)
   public readonly components: CreateComponentDeploymentDto[]
@@ -17,6 +27,7 @@ export class CreateModuleDeploymentDto {
     return new ModuleDeploymentEntity(
       this.moduleId,
       this.k8sConfigurationId,
+      this.helmRepository,
       this.components.map(component => component.toEntity())
     )
   }

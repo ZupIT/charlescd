@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-import { PipelinesService } from '../../../app/api/deployments/services'
 import {
     ComponentDeploymentsRepositoryStub,
     ComponentUndeploymentsRepositoryStub,
@@ -73,7 +72,7 @@ describe('PipelinesService', () => {
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
         moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
 
-        circle = new CircleDeploymentEntity('dummy-circle', false)
+        circle = new CircleDeploymentEntity('dummy-circle')
 
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
@@ -90,6 +89,7 @@ describe('PipelinesService', () => {
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             null
         )
         moduleDeployment.deployment = deployment
@@ -129,6 +129,7 @@ describe('PipelinesService', () => {
         moduleDeploymentWithRelations = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
+            'helm-repository',
             componentDeploymentsList
         )
 

@@ -29,8 +29,9 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      whitelist: true,
       exceptionFactory: (errors: ValidationError[]) => {
-        return new UnprocessableEntityException(errors.map(error => error.constraints))
+        return new UnprocessableEntityException(errors)
       }
     })
   )

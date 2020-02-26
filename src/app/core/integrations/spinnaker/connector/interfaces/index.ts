@@ -33,6 +33,38 @@ export interface IBaseVirtualService {
   }
 }
 
+export interface IEmptyVirtualService {
+  apiVersion: string
+  kind: string
+  metadata: {
+    name: string
+    namespace: string
+  }
+  spec: {
+    hosts: ['unreachable-app-name']
+    http: [
+      {
+        match: [
+          {
+            headers: {
+              'unreachable-cookie-name': {
+                'exact': 'unreachable-cookie - value'
+              }
+            }
+          }
+        ],
+        route: [
+          {
+            destination: {
+              host: 'unreachable-app-name'
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
 export interface IDefaultCircleMatcher {
   route: [
     {

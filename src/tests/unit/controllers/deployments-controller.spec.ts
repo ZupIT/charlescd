@@ -3,8 +3,16 @@ import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
 import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
-import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
-import { CreateUndeploymentRequestUsecaseStub } from '../../stubs/use-cases'
+import {
+    CreateCircleDeploymentRequestUsecase,
+    CreateDefaultDeploymentRequestUsecase,
+    CreateUndeploymentRequestUsecase
+} from '../../../app/api/deployments/use-cases'
+import {
+    CreateCircleDeploymentRequestUsecaseStub,
+    CreateUndeploymentRequestUsecaseStub
+} from '../../stubs/use-cases'
+import { DeploymentsRepositoryStub } from '../../stubs/repository'
 
 describe('DeploymentsController', () => {
 
@@ -25,7 +33,19 @@ describe('DeploymentsController', () => {
                 {
                     provide: CreateUndeploymentRequestUsecase,
                     useClass: CreateUndeploymentRequestUsecaseStub
-                }
+                },
+                {
+                    provide: CreateCircleDeploymentRequestUsecase,
+                    useClass: CreateCircleDeploymentRequestUsecaseStub
+                },
+                {
+                    provide: CreateDefaultDeploymentRequestUsecase,
+                    useClass: CreateCircleDeploymentRequestUsecaseStub
+                },
+                {
+                    provide: 'DeploymentEntityRepository',
+                    useClass: DeploymentsRepositoryStub
+                },
             ]
         }).compile()
 

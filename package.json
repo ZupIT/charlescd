@@ -1,6 +1,6 @@
 {
   "name": "darwin-deploy",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "author": "",
   "license": "MIT",
@@ -64,7 +64,7 @@
     "collectCoverageFrom": [
       "app/**/*.ts",
       "!app/**/resources/**",
-      "!app/**/{index.ts,*.{module,enum,interface,constants}.ts}"
+      "!app/**/{index.ts,*.{module,enum,interface,constants,dto}.ts}"
     ],
     "moduleFileExtensions": [
       "js",
