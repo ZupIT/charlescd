@@ -154,12 +154,20 @@ export class CreateCircleDeploymentRequestUsecase {
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.RUNNING)
             )
         } catch (error) {
-            if (error.constraint === 'queued_deployments_status_running_uniq') {
-                return this.queuedDeploymentsRepository.save(
-                    new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
-                )
-            }
-            throw new InternalServerErrorException('Could not save queued deployment')
+            return this.handleUniqueRunningConstraint(error, componentDeployment)
         }
+    }
+
+    private handleUniqueRunningConstraint(
+        error: any,
+        componentDeployment: ComponentDeploymentEntity,
+    ): Promise<QueuedDeploymentEntity> {
+
+        if (error.constraint === 'queued_deployments_status_running_uniq') {
+            return this.queuedDeploymentsRepository.save(
+                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
+            )
+        }
+        throw new InternalServerErrorException('Could not save queued deployment')
     }
 }

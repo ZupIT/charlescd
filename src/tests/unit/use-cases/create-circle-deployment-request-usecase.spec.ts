@@ -30,7 +30,7 @@ import {
     CreateCircleDeploymentDto,
     CreateCircleDeploymentRequestDto
 } from '../../../app/api/deployments/dto/create-deployment'
-import { Repository } from 'typeorm'
+import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('CreateCircleDeploymentRequestUsecase', () => {
@@ -138,6 +138,20 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
 
             expect(await createCircleDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
                 .toEqual(deployment.toReadDto())
+        })
+
+        it('should handle duplicated module deployment', async () => {
+            jest.spyOn(deploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(deployment))
+
+            jest.spyOn(queuedDeploymentsRepository, 'save')
+                .mockImplementationOnce(
+                    () => { throw new QueryFailedError('query', [], { constraint: 'queued_deployments_status_running_uniq' }) }
+                ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+
+            expect(
+                await createCircleDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id')
+            ).toEqual(deployment.toReadDto())
         })
     })
 })
