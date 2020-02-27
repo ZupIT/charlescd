@@ -23,6 +23,7 @@ import {
 } from '../services'
 import { ComponentEntity } from '../../components/entity'
 import { ConsoleLoggerService } from '../../../core/logs/console'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -40,7 +41,7 @@ export class CreateUndeploymentRequestUsecase {
     private readonly pipelineDeploymentsService: PipelineDeploymentsService,
     private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) {}
+  ) { }
 
   public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string): Promise<ReadUndeploymentDto> {
     let undeployment: UndeploymentEntity
@@ -59,8 +60,8 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async saveUndeploymentRequest(
-      createUndeploymentDto: CreateUndeploymentDto,
-      deploymentId: string
+    createUndeploymentDto: CreateUndeploymentDto,
+    deploymentId: string
   ): Promise<UndeploymentEntity> {
 
     try {
@@ -78,9 +79,9 @@ export class CreateUndeploymentRequestUsecase {
     try {
       const componentUndeployments: ComponentUndeploymentEntity[] = undeployment.getComponentUndeployments()
       await Promise.all(
-          componentUndeployments.map(
-              componentUndeployment => this.enqueueComponentUndeployment(undeployment, componentUndeployment)
-          )
+        componentUndeployments.map(
+          componentUndeployment => this.enqueueComponentUndeployment(undeployment, componentUndeployment)
+        )
       )
     } catch (error) {
       throw error
@@ -88,8 +89,8 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async enqueueComponentUndeployment(
-      undeployment: UndeploymentEntity,
-      componentUndeployment: ComponentUndeploymentEntity
+    undeployment: UndeploymentEntity,
+    componentUndeployment: ComponentUndeploymentEntity
   ): Promise<void> {
 
     let queuedUndeployment: QueuedUndeploymentEntity
@@ -97,12 +98,12 @@ export class CreateUndeploymentRequestUsecase {
     try {
       queuedUndeployment = await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
       const component: ComponentEntity =
-          await this.componentsRepository.findOne({ id: componentUndeployment.componentDeployment.componentId })
+        await this.componentsRepository.findOne({ id: componentUndeployment.componentDeployment.componentId })
 
       if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelineDeploymentsService.triggerUndeployment(
-            componentUndeployment.componentDeployment, component,
-            undeployment.deployment, queuedUndeployment
+          componentUndeployment.componentDeployment, component,
+          undeployment.deployment, queuedUndeployment
         )
       }
     } catch (error) {
@@ -111,19 +112,35 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async saveQueuedUndeployment(
-      componentDeployment: ComponentDeploymentEntity,
-      componentUndeployment: ComponentUndeploymentEntity
+    componentDeployment: ComponentDeploymentEntity,
+    componentUndeployment: ComponentUndeploymentEntity
   ): Promise<QueuedUndeploymentEntity> {
 
+    const status: QueuedPipelineStatusEnum = QueuedPipelineStatusEnum.RUNNING
     try {
-      const status: QueuedPipelineStatusEnum =
-          await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)
-
       return await this.queuedUndeploymentsRepository.save(
-          new QueuedUndeploymentEntity(componentDeployment.componentId, componentDeployment.id, status, componentUndeployment.id)
+        new QueuedUndeploymentEntity(componentDeployment.componentId, componentDeployment.id, status, componentUndeployment.id)
       )
     } catch (error) {
-      throw new InternalServerErrorException('Could not save queued undeployment')
+      return this.handleUniqueRunningConstraint(error, componentDeployment, componentUndeployment)
     }
   }
+
+  private handleUniqueRunningConstraint(
+    error: any,
+    componentDeployment: ComponentDeploymentEntity,
+    componentUndeployment: ComponentUndeploymentEntity
+  ): Promise<QueuedUndeploymentEntity> {
+
+    if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
+      return this.queuedUndeploymentsRepository.save(
+        new QueuedUndeploymentEntity(
+          componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED, componentUndeployment.id
+        )
+      )
+    }
+
+    throw new InternalServerErrorException('Could not save queued undeployment')
+  }
+
 }
