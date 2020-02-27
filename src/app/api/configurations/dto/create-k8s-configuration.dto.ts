@@ -2,19 +2,26 @@ import {
     K8sConfigurationDataEntity,
     K8sConfigurationEntity
 } from '../entity'
+import { Allow } from 'class-validator'
 
 export class CreateK8sConfigurationDto {
 
+    @Allow()
     public readonly name: string
 
+    @Allow()
     public readonly account: string
 
+    @Allow()
     public readonly namespace: string
 
+    @Allow()
     public readonly authorId: string
 
+    @Allow()
     public readonly applicationId: string
 
+    @Allow()
     public readonly moduleId: string
 
     constructor(

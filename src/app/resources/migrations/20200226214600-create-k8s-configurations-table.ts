@@ -1,8 +1,7 @@
 import {
     MigrationInterface,
     QueryRunner,
-    Table,
-    TableForeignKey
+    Table
 } from 'typeorm'
 
 export class CreateK8sConfigurationsTable20200226214600 implements MigrationInterface {

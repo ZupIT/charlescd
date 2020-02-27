@@ -1,15 +1,13 @@
 import {
     Column,
-    CreateDateColumn,
     Entity,
     PrimaryColumn
 } from 'typeorm'
 import { ReadK8sConfigurationDto } from '../dto'
 import * as uuidv4 from 'uuid/v4'
-import { plainToClass } from 'class-transformer'
 import { K8sConfigurationDataEntity } from './'
 
-@Entity()
+@Entity('k8s_configurations')
 export class K8sConfigurationEntity {
 
     @PrimaryColumn({ name: 'id' })
@@ -18,14 +16,7 @@ export class K8sConfigurationEntity {
     @Column({ name: 'name' })
     public name: string
 
-    @Column({
-        type: 'text',
-        name: 'configuration_data',
-        transformer: {
-            from: configurationData => plainToClass(K8sConfigurationDataEntity, configurationData),
-            to: configurationData => configurationData
-        }
-    })
+    @Column({ type: 'text', name: 'configuration_data' })
     public configurationData: K8sConfigurationDataEntity
 
     @Column({ name: 'user_id' })
@@ -34,7 +25,7 @@ export class K8sConfigurationEntity {
     @Column({ name: 'application_id' })
     public applicationId: string
 
-    @CreateDateColumn({ name: 'created_at'})
+    @Column({ name: 'created_at'})
     public createdAt: Date
 
     @Column({ name: 'module_id' })
