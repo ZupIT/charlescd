@@ -22,6 +22,7 @@ import {
     PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
+import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
@@ -153,7 +154,9 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 .mockImplementation(() => Promise.resolve(undeployment))
 
             jest.spyOn(queuedUndeploymentRepository, 'save')
-                .mockImplementationOnce(() => { throw new QueryFailedError('query', [], { constraint: 'queued_deployments_status_running_uniq' }) })
+                .mockImplementationOnce(
+                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+                )
                 .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))

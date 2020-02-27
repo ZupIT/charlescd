@@ -35,6 +35,7 @@ import {
 } from '../../../app/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
@@ -149,7 +150,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(queuedDeploymentsRepository, 'save')
                 .mockImplementationOnce(
-                    () => { throw new QueryFailedError('query', [], { constraint: 'queued_deployments_status_running_uniq' }) }
+                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
                 ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
 
             expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))

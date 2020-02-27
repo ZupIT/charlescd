@@ -1,29 +1,15 @@
-import {
-    Injectable,
-    InternalServerErrorException
-} from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    QueuedDeploymentEntity
-} from '../entity'
 import { Repository } from 'typeorm'
-import {
-    CreateDefaultDeploymentRequestDto,
-    ReadDeploymentDto
-} from '../dto'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedPipelineStatusEnum } from '../enums'
-import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
-import {
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../services'
+import { ModuleEntity } from '../../modules/entity'
+import { CreateDefaultDeploymentRequestDto, ReadDeploymentDto } from '../dto'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import { QueuedPipelineStatusEnum } from '../enums'
 import { QueuedDeploymentsRepository } from '../repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../services'
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -164,7 +150,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         componentDeployment: ComponentDeploymentEntity,
     ): Promise<QueuedDeploymentEntity> {
 
-        if (error.constraint === 'queued_deployments_status_running_uniq') {
+        if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
             return this.queuedDeploymentsRepository.save(
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
             )

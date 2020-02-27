@@ -23,6 +23,7 @@ import {
 } from '../services'
 import { ComponentEntity } from '../../components/entity'
 import { ConsoleLoggerService } from '../../../core/logs/console'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -131,7 +132,7 @@ export class CreateUndeploymentRequestUsecase {
     componentUndeployment: ComponentUndeploymentEntity
   ): Promise<QueuedUndeploymentEntity> {
 
-    if (error.constraint === 'queued_deployments_status_running_uniq') {
+    if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
       return this.queuedUndeploymentsRepository.save(
         new QueuedUndeploymentEntity(
           componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED, componentUndeployment.id
