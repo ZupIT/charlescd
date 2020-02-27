@@ -24,6 +24,7 @@ import {
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
@@ -163,7 +164,7 @@ export class CreateCircleDeploymentRequestUsecase {
         componentDeployment: ComponentDeploymentEntity,
     ): Promise<QueuedDeploymentEntity> {
 
-        if (error.constraint === 'queued_deployments_status_running_uniq') {
+        if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
             return this.queuedDeploymentsRepository.save(
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
             )
