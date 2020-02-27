@@ -7,4 +7,8 @@ export class PipelineDeploymentsServiceStub {
     public async triggerDefaultDeployment(): Promise<void> {
         return Promise.resolve()
     }
+
+    public async triggerUndeployment(): Promise<void> {
+        return Promise.resolve()
+    }
 }

@@ -1,39 +1,28 @@
 import { Test } from '@nestjs/testing'
-import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
+import { QueryFailedError, Repository } from 'typeorm'
+import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
+import {
+    ComponentDeploymentEntity, DeploymentEntity,
+    ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+} from '../../../app/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
+import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
+import { MooveService } from '../../../app/core/integrations/moove'
+import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../../../app/api/deployments/services'
-import {
-    ComponentsRepositoryStub,
-    DeploymentsRepositoryStub,
-    QueuedDeploymentsRepositoryStub,
-    QueuedUndeploymentsRepositoryStub,
+    ComponentsRepositoryStub, DeploymentsRepositoryStub,
+    QueuedDeploymentsRepositoryStub, QueuedUndeploymentsRepositoryStub,
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
-    ConsoleLoggerServiceStub,
-    MooveServiceStub,
-    PipelineDeploymentsServiceStub,
-    PipelineErrorHandlerServiceStub,
-    PipelineQueuesServiceStub,
-    StatusManagementServiceStub
+    ConsoleLoggerServiceStub, MooveServiceStub,
+    PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub,
+    PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
-import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    QueuedUndeploymentEntity,
-    UndeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { Repository } from 'typeorm'
-import { StatusManagementService } from '../../../app/core/services/deployments'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
@@ -49,6 +38,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let queuedUndeployments: QueuedUndeploymentEntity[]
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
+    let queuedUndeploymentRepository: Repository<QueuedUndeploymentEntity>
 
     beforeEach(async () => {
 
@@ -62,8 +52,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
-                { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
-                { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
+                { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
+                { provide: 'QueuedUndeploymentEntityRepository', useClass: QueuedUndeploymentsRepositoryStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
             ]
@@ -74,6 +64,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
+        queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
         mooveService = module.get<MooveService>(MooveService)
 
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
@@ -147,9 +138,26 @@ describe('CreateUndeploymentRequestUsecase', () => {
             jest.spyOn(deploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
-                .mockImplementation( () => Promise.resolve(undeployment))
+                .mockImplementation(() => Promise.resolve(undeployment))
             jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
                 .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
+
+            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+                .toEqual(undeployment.toReadDto())
+        })
+
+        it('should handle duplicated module undeployment', async () => {
+
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(undeploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(undeployment))
+
+            jest.spyOn(queuedUndeploymentRepository, 'save')
+                .mockImplementationOnce(
+                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+                )
+                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
             expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
                 .toEqual(undeployment.toReadDto())
