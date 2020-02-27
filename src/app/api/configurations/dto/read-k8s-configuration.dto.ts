@@ -10,17 +10,21 @@ export class ReadK8sConfigurationDto {
 
     public readonly createdAt: Date
 
+    public readonly moduleId: string
+
     constructor(
         id: string,
         name: string,
         authorId: string,
         applicationId: string,
-        createdAt: Date
+        createdAt: Date,
+        moduleId: string
     ) {
         this.id = id
         this.name = name
         this.authorId = authorId
         this.applicationId = applicationId
         this.createdAt = createdAt
+        this.moduleId = moduleId
     }
 }

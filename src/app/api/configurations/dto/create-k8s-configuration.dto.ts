@@ -15,18 +15,22 @@ export class CreateK8sConfigurationDto {
 
     public readonly applicationId: string
 
+    public readonly moduleId: string
+
     constructor(
         name: string,
         account: string,
         namespace: string,
         authorId: string,
-        applicationId: string
+        applicationId: string,
+        moduleId: string
     ) {
         this.name = name
         this.account = account
         this.namespace = namespace
         this.authorId = authorId
         this.applicationId = applicationId
+        this.moduleId = moduleId
     }
 
     public toEntity(): K8sConfigurationEntity {
@@ -34,7 +38,8 @@ export class CreateK8sConfigurationDto {
             this.name,
             this.createK8sConfigurationData(),
             this.authorId,
-            this.applicationId
+            this.applicationId,
+            this.moduleId
         )
     }
 

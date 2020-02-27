@@ -37,17 +37,22 @@ export class K8sConfigurationEntity {
     @CreateDateColumn({ name: 'created_at'})
     public createdAt: Date
 
+    @Column({ name: 'module_id' })
+    public moduleId: string
+
     constructor(
         name: string,
         configurationData: K8sConfigurationDataEntity,
         authorId: string,
-        applicationId: string
+        applicationId: string,
+        moduleId: string
     ) {
         this.id = uuidv4()
         this.name = name
         this.configurationData = configurationData
         this.authorId = authorId
         this.applicationId = applicationId
+        this.moduleId = moduleId
     }
 
     public toReadDto(): ReadK8sConfigurationDto {
@@ -56,7 +61,8 @@ export class K8sConfigurationEntity {
             this.name,
             this.authorId,
             this.applicationId,
-            this.createdAt
+            this.createdAt,
+            this.moduleId
         )
     }
 }
