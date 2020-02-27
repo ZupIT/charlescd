@@ -1,29 +1,15 @@
-import {
-    Injectable,
-    InternalServerErrorException
-} from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    QueuedDeploymentEntity
-} from '../entity'
 import { Repository } from 'typeorm'
-import {
-    CreateDefaultDeploymentRequestDto,
-    ReadDeploymentDto
-} from '../dto'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedPipelineStatusEnum } from '../enums'
-import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
-import {
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../services'
+import { ModuleEntity } from '../../modules/entity'
+import { CreateDefaultDeploymentRequestDto, ReadDeploymentDto } from '../dto'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import { QueuedPipelineStatusEnum } from '../enums'
 import { QueuedDeploymentsRepository } from '../repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../services'
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -41,7 +27,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
-    ) {}
+    ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
         let deployment: DeploymentEntity
@@ -149,15 +135,27 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async saveQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
+        const status: QueuedPipelineStatusEnum = QueuedPipelineStatusEnum.RUNNING
         try {
-            const status: QueuedPipelineStatusEnum =
-                await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)
-
             return await this.queuedDeploymentsRepository.save(
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, status)
             )
         } catch (error) {
-            throw new InternalServerErrorException('Could not save queued deployment')
+            return this.handleUniqueRunningConstraint(error, componentDeployment)
         }
+    }
+
+    private handleUniqueRunningConstraint(
+        error: any,
+        componentDeployment: ComponentDeploymentEntity,
+    ): Promise<QueuedDeploymentEntity> {
+
+        if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
+            return this.queuedDeploymentsRepository.save(
+                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
+            )
+        }
+        throw new InternalServerErrorException('Could not save queued deployment')
+
     }
 }

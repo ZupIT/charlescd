@@ -33,8 +33,9 @@ import {
     CreateCircleDeploymentDto,
     CreateCircleDeploymentRequestDto
 } from '../../../app/api/deployments/dto/create-deployment'
-import { Repository } from 'typeorm'
+import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
@@ -138,6 +139,19 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(queuedDeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
+
+            expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
+                .toEqual(deployment.toReadDto())
+        })
+
+        it('should handle duplicated module default deployment', async () => {
+
+            jest.spyOn(deploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(deployment))
+            jest.spyOn(queuedDeploymentsRepository, 'save')
+                .mockImplementationOnce(
+                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+                ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
 
             expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
                 .toEqual(deployment.toReadDto())
