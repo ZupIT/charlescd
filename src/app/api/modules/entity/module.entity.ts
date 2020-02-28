@@ -42,19 +42,12 @@ export class ModuleEntity extends BaseEntity {
     this.components = components
   }
 
-  public async addComponent(component: ComponentEntity): Promise<void> {
-    this.components = [...this.components, component]
-  }
-
-  public getComponentById(componentId: string): ComponentEntity {
-    return this.components.find(component => component.id === componentId)
-  }
-
   public toReadDto(): ReadModuleDto {
     return new ReadModuleDto(
       this.id,
       this.components.map(component => component.toReadDto()),
-      this.createdAt
+      this.createdAt,
+      this.k8sConfigurationId
     )
   }
 }

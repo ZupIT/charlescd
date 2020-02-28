@@ -278,12 +278,12 @@ describe('PipelineQueuesService', () => {
 
         moduleEntity = new ModuleEntity(
             'module-id',
-            null
+            null,
+            []
         )
 
         componentEntity = new ComponentEntity(
-            'component-id',
-            moduleEntity
+            'component-id'
         )
     })
 
