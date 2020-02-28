@@ -140,7 +140,8 @@ export class CreateCircleDeploymentRequestUsecase {
 
         try {
             queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+            const component: ComponentEntity =
+                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
                 await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
             }

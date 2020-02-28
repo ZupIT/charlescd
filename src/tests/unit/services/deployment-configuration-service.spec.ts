@@ -69,10 +69,8 @@ describe('Deployment configuration specs', () => {
 
     jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
       .mockImplementation(() => Promise.resolve(componentsDeploymentEntity))
-    jest.spyOn(mooveService, 'getK8sConfiguration')
-      .mockImplementation(() => Promise.resolve({ namespace: 'some-namespace', account: 'some-account' }))
 
-    expect(await deploymentConfigurationService.getConfiguration('some-id')).toEqual(
+    expect(await deploymentConfigurationService.getConfiguration('some-id', 'module-id')).toEqual(
       {
         account: 'some-account',
         appName: 'component name',

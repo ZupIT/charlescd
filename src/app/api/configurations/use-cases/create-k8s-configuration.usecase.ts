@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { K8sConfigurationsRepository } from '../repository'
 import { K8sConfigurationEntity } from '../entity'
-import { AppConstants } from '../../../core/constants'
 
 @Injectable()
 export class CreateK8sConfigurationUsecase {
@@ -25,7 +24,7 @@ export class CreateK8sConfigurationUsecase {
 
         try {
             const k8sConfiguration: K8sConfigurationEntity =
-                await this.k8sConfigurationsRepository.saveEncrypted(createK8sConfigurationDto.toEntity(), AppConstants.ENCRYPTION_KEY)
+                await this.k8sConfigurationsRepository.saveEncrypted(createK8sConfigurationDto.toEntity())
             return k8sConfiguration.toReadDto()
         } catch (error) {
             throw new InternalServerErrorException(error)

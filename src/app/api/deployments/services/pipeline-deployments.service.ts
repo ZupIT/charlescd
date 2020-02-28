@@ -172,7 +172,7 @@ export class PipelineDeploymentsService {
 
         try {
             const deploymentConfiguration: IDeploymentConfiguration =
-                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
+                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id, componentEntity.module.id)
 
             await this.spinnakerService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
