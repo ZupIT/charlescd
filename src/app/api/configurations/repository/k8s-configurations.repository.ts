@@ -32,7 +32,28 @@ export class K8sConfigurationsRepository extends Repository<K8sConfigurationEnti
         return plainToClass(K8sConfigurationEntity, queryResult.generatedMaps[0])
     }
 
-    public async findDecrypted(id: string): Promise<K8sConfigurationEntity> {
-        return await this.manager.query('')
+    public async findAll(): Promise<K8sConfigurationEntity[]> {
+
+        const queryResult: object[] = await this.createQueryBuilder('k8s_configurations')
+            .select('id, name')
+            .addSelect('user_id', 'authorId')
+            .addSelect('application_id', 'applicationId')
+            .addSelect('module_id', 'moduleId')
+            .addSelect('created_at', 'createdAt')
+            .getRawMany()
+
+        return queryResult.map(configuration => plainToClass(K8sConfigurationEntity, configuration))
+    }
+
+    public async findDecrypted(id: string, encriptionKey: string): Promise<K8sConfigurationEntity> {
+        // const queryResult: object[] = await this.createQueryBuilder('k8s_configurations')
+        //     .select('id, name')
+        //     .addSelect('user_id', 'authorId')
+        //     .addSelect('application_id', 'applicationId')
+        //     .addSelect('module_id', 'moduleId')
+        //     .addSelect('created_at', 'createdAt')
+        //     .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${encriptionKey}')`, 'configurationData')
+        //     .getRawMany()
+        return Promise.resolve({} as K8sConfigurationEntity)
     }
 }

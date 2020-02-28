@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigurationsController } from './controller'
-import { CreateK8sConfigurationUsecase } from './use-cases'
+import {
+    CreateK8sConfigurationUsecase,
+    GetK8sConfigurationsUsecase
+} from './use-cases'
 import { K8sConfigurationsRepository } from './repository'
 
 @Module({
@@ -14,7 +17,8 @@ import { K8sConfigurationsRepository } from './repository'
         ConfigurationsController
     ],
     providers: [
-        CreateK8sConfigurationUsecase
+        CreateK8sConfigurationUsecase,
+        GetK8sConfigurationsUsecase
     ]
 })
 export class ConfigurationsModule {}
