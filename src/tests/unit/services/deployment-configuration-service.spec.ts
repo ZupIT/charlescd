@@ -44,7 +44,6 @@ describe('Deployment configuration specs', () => {
 
     moduleDeploymentEntity = new ModuleDeploymentEntity(
         'module-id',
-        'config-id',
         'helm-repository',
         [componentsDeploymentEntity]
     )
