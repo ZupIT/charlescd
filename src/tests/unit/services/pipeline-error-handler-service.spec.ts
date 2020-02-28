@@ -12,15 +12,27 @@ import {
     StatusManagementServiceStub
 } from '../../stubs/services'
 import {ConsoleLoggerService} from '../../../app/core/logs/console'
-import {ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity,} from '../../../app/api/deployments/entity'
+import {
+    CircleDeploymentEntity,
+    ComponentDeploymentEntity,
+    DeploymentEntity,
+    ModuleDeploymentEntity,
+    QueuedDeploymentEntity,
+    UndeploymentEntity
+} from '../../../app/api/deployments/entity'
 
 import {Repository} from 'typeorm'
 import {StatusManagementService} from '../../../app/core/services/deployments'
 import {MooveService} from '../../../app/core/integrations/moove'
 import {QueuedDeploymentsRepository} from '../../../app/api/deployments/repository';
 import {ComponentEntity} from '../../../app/api/components/entity';
-import {DeploymentStatusEnum} from '../../../app/api/deployments/enums';
+import {
+    DeploymentStatusEnum,
+    QueuedPipelineStatusEnum,
+    UndeploymentStatusEnum
+} from '../../../app/api/deployments/enums';
 import {ModuleEntity} from '../../../app/api/modules/entity';
+import {IPipelineOptions} from '../../../app/api/components/interfaces';
 
 describe('Deployments service specs', () => {
     let pipelineErrorHandlerService: PipelineErrorHandlerService
@@ -29,13 +41,20 @@ describe('Deployments service specs', () => {
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
     let deployment: DeploymentEntity
+    let undeploymentDeployment: DeploymentEntity
+    let undeployment: UndeploymentEntity
+    let undeploymentFailed: UndeploymentEntity
     let deploymentFailed: DeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
     let componentEntity: ComponentEntity
+    let componentEntityUpdated: ComponentEntity
     let moduleEntity: ModuleEntity
     let queuedDeploymentsRepository: QueuedDeploymentsRepository
     let componentsRepository: Repository<ComponentEntity>
+    let queuedDeployment: QueuedDeploymentEntity
+    let circle: CircleDeploymentEntity
+    let pipelineOptions: IPipelineOptions
 
     beforeEach(async () => {
 
@@ -77,6 +96,28 @@ describe('Deployments service specs', () => {
             'helm-repository',
             [componentDeployment]
         )
+        undeploymentDeployment = new DeploymentEntity(
+            'dummy-deployment-id',
+            'dummy-application-name',
+            [moduleDeployment],
+            'dummy-author-id',
+            'dummy-description',
+            'dummy-callback-url',
+            null,
+            false,
+            'dummy-circle-id'
+        )
+        undeployment = new UndeploymentEntity(
+            'dummy-author-id',
+            undeploymentDeployment
+        )
+        undeploymentFailed = new UndeploymentEntity(
+            'dummy-author-id',
+            undeploymentDeployment
+        )
+        undeploymentFailed.status = UndeploymentStatusEnum.FAILED
+
+        circle = new CircleDeploymentEntity('dummy-circle')
 
         deployment = new DeploymentEntity(
             'deployment-id',
@@ -85,11 +126,10 @@ describe('Deployments service specs', () => {
             'author-id',
             'description',
             'callback-url',
-            null,
-            true,
+            circle,
+            false,
             'incoming-circle-id'
         )
-
         deploymentFailed = new DeploymentEntity(
             'deployment-id',
             'application-name',
@@ -102,16 +142,42 @@ describe('Deployments service specs', () => {
             'incoming-circle-id'
         )
         deploymentFailed.status = DeploymentStatusEnum.FAILED
+        componentEntity = new ComponentEntity(
+            'component-id',
+            moduleEntity
+        )
+
 
         moduleEntity = new ModuleEntity(
             'module-id',
             [componentEntity]
         )
-
+        componentDeployment = new ComponentDeploymentEntity(
+            'dummy-id',
+            'dummy-name',
+            'dummy-img-url',
+            'dummy-img-tag',
+            'dummy-context-path',
+            'dummy-health-check',
+            1234
+        )
+        queuedDeployment = new QueuedDeploymentEntity(
+            'dummy-component-id',
+            'dummy-component-deployment-id',
+            QueuedPipelineStatusEnum.RUNNING
+        )
         componentEntity = new ComponentEntity(
             'component-id',
             moduleEntity
         )
+        componentEntityUpdated = new ComponentEntity(
+            'component-id',
+            moduleEntity
+        )
+
+        pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
+        componentEntity.pipelineOptions =  pipelineOptions
+
     })
 
     describe('handleDeploymentFailure', () => {
@@ -134,11 +200,18 @@ describe('Deployments service specs', () => {
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
     })
-    describe('handleComponentDeploymentFailure', () => {
-        it('should  execute nothing when are no deployment', async () => {
-            jest.spyOn(componentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(componentEntity))
+    describe('handleUndeploymentFailure', () => {
+        it('should  execute undeployment failure', async () => {
+            const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+            await pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
+            expect(mooveServiceSpy).toHaveBeenCalled()
 
-            const queueSpy = jest.spyOn(queuedDeploymentsRepository, 'update')
+        })
+        it('should not execute undeployment failure with status failed', async () => {
+            const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+            await pipelineErrorHandlerService.handleUndeploymentFailure(undeploymentFailed)
+            expect(mooveServiceSpy).not.toHaveBeenCalled()
+
+        })
     })
 })
