@@ -1,8 +1,14 @@
 import {
     ModuleEntity
 } from '../entity'
-import { Allow } from 'class-validator'
+import {
+    Allow,
+    IsDefined,
+    ValidateNested
+} from 'class-validator'
 import { CreateComponentDto } from './'
+import { Type } from 'class-transformer'
+import { CreateCircleDeploymentDto } from '../../deployments/dto/create-deployment'
 
 export class CreateModuleDto {
 
@@ -13,6 +19,8 @@ export class CreateModuleDto {
     public readonly k8sConfigurationId: string
 
     @Allow()
+    @ValidateNested({ each: true })
+    @Type(() => CreateComponentDto)
     public readonly components: CreateComponentDto[]
 
     constructor(

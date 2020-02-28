@@ -18,7 +18,7 @@ export class ModuleEntity extends BaseEntity {
   })
   public id: string
 
-  @Column({ name: 'k8s_config_id'})
+  @Column({ name: 'k8s_configuration_id'})
   public k8sConfigurationId: string
 
   @OneToMany(
