@@ -33,10 +33,12 @@ export class ModuleEntity extends BaseEntity {
 
   constructor(
     moduleId: string,
+    k8sConfigurationId: string,
     components: ComponentEntity[]
   ) {
     super()
     this.id = moduleId
+    this.k8sConfigurationId = k8sConfigurationId
     this.components = components
   }
 

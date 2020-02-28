@@ -1,15 +1,29 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import {
+    Injectable,
+    InternalServerErrorException
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
-import { CreateDefaultDeploymentRequestDto, ReadDeploymentDto } from '../dto'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import {
+    CreateDefaultDeploymentRequestDto,
+    ReadDeploymentDto
+} from '../dto'
+import {
+    ComponentDeploymentEntity,
+    DeploymentEntity,
+    QueuedDeploymentEntity
+} from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 import { QueuedDeploymentsRepository } from '../repository'
-import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../services'
+import {
+    PipelineDeploymentsService,
+    PipelineErrorHandlerService,
+    PipelineQueuesService
+} from '../services'
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -35,7 +49,6 @@ export class CreateDefaultDeploymentRequestUsecase {
         try {
             this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
             deployment = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
-            await this.saveModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
             this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
@@ -55,51 +68,6 @@ export class CreateDefaultDeploymentRequestUsecase {
             return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
             throw new InternalServerErrorException('Could not save deployment')
-        }
-    }
-
-    private async saveModulesAndComponentEntities(deployment: DeploymentEntity): Promise<void> {
-        try {
-            await Promise.all(
-                deployment.modules
-                    .map(moduleDeployment => this.saveModuleEntities(moduleDeployment))
-            )
-        } catch (error) {
-            throw new InternalServerErrorException('Could not save modules')
-        }
-    }
-
-    private async saveModuleEntities(moduleDeployment: ModuleDeploymentEntity): Promise<void> {
-        let moduleEntity: ModuleEntity
-
-        moduleEntity = await this.modulesRepository.findOne({ id: moduleDeployment.moduleId })
-        if (!moduleEntity) {
-            moduleEntity = await this.modulesRepository.save(
-                new ModuleEntity(moduleDeployment.moduleId, [])
-            )
-        }
-        await this.saveComponentsEntities(moduleDeployment, moduleEntity)
-    }
-
-    private async saveComponentsEntities(moduleDeployment: ModuleDeploymentEntity, moduleEntity: ModuleEntity): Promise<void> {
-        try {
-            await Promise.all(
-                moduleDeployment.components
-                    .map(componentDeployment => this.saveComponentEntity(componentDeployment, moduleEntity))
-            )
-        } catch (error) {
-            throw new InternalServerErrorException('Could not save components')
-        }
-    }
-
-    private async saveComponentEntity(componentDeployment: ComponentDeploymentEntity, module: ModuleEntity): Promise<ComponentEntity> {
-        const componentEntity: ComponentEntity =
-            await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-
-        if (!componentEntity) {
-            return await this.componentsRepository.save(
-                new ComponentEntity(componentDeployment.componentId, module)
-            )
         }
     }
 
@@ -157,6 +125,5 @@ export class CreateDefaultDeploymentRequestUsecase {
             )
         }
         throw new InternalServerErrorException('Could not save queued deployment')
-
     }
 }
