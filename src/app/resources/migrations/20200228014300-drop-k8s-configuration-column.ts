@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class DropK8sConfigColumn20200228014300 implements MigrationInterface {
+export class DropK8sConfigurationColumn20200228014300 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner) {
         await queryRunner.dropColumn(
