@@ -24,10 +24,11 @@ export class ConfigurationsController {
 
     @Post('k8s')
     public async createK8sConfiguration(
-        @Body() createK8sConfigurationDto: CreateK8sConfigurationDto
+        @Body() createK8sConfigurationDto: CreateK8sConfigurationDto,
+        @Headers('x-application-id') applicationId: string
     ): Promise<ReadK8sConfigurationDto> {
 
-        return await this.createK8sConfigurationUseCase.execute(createK8sConfigurationDto)
+        return await this.createK8sConfigurationUseCase.execute(createK8sConfigurationDto, applicationId)
     }
 
     @Get('k8s')
