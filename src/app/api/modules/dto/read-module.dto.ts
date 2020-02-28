@@ -13,10 +13,12 @@ export class ReadModuleDto {
   constructor(
     id: string,
     components: ReadComponentDto[],
-    createdAt: Date
+    createdAt: Date,
+    k8sConfigurationId: string
   ) {
     this.id = id
     this.components = components
     this.createdAt = createdAt
+    this.k8sConfigurationId = k8sConfigurationId
   }
 }
