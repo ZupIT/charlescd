@@ -150,11 +150,11 @@ export class SpinnakerService {
   }
 
   private async createSpinnakerPipeline(
-    spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration
+    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
   ): Promise<void> {
 
     try {
-      const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
+      const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguration)
       await this.httpService.post(
         `${this.consulConfiguration.spinnakerUrl}/pipelines`,
         pipeline,
