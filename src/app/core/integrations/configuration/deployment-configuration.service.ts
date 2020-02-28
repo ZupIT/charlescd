@@ -15,7 +15,6 @@ import { K8sConfigurationDataEntity } from '../../../api/configurations/entity'
 export class DeploymentConfigurationService {
 
   constructor(
-    private readonly mooveService: MooveService,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(K8sConfigurationsRepository)
