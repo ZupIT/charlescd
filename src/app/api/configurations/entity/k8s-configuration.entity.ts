@@ -1,4 +1,5 @@
 import {
+    BaseEntity,
     Column,
     Entity,
     PrimaryColumn
@@ -8,7 +9,7 @@ import * as uuidv4 from 'uuid/v4'
 import { K8sConfigurationDataEntity } from './'
 
 @Entity('k8s_configurations')
-export class K8sConfigurationEntity {
+export class K8sConfigurationEntity extends BaseEntity {
 
     @PrimaryColumn({ name: 'id' })
     public id: string
@@ -34,6 +35,7 @@ export class K8sConfigurationEntity {
         authorId: string,
         applicationId: string
     ) {
+        super()
         this.id = uuidv4()
         this.name = name
         this.configurationData = configurationData

@@ -8,6 +8,8 @@ export class ReadModuleDto {
 
   public readonly createdAt: Date
 
+  public readonly k8sConfigurationId: string
+
   constructor(
     id: string,
     components: ReadComponentDto[],
