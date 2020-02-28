@@ -22,7 +22,8 @@ export class K8sConfigurationsRepository extends Repository<K8sConfigurationEnti
             .values({
                 id: k8sConfiguration.id,
                 name: k8sConfiguration.name,
-                configurationData: () => `PGP_SYM_ENCRYPT('${JSON.stringify(k8sConfiguration.configurationData)}', '${AppConstants.ENCRYPTION_KEY}')`,
+                configurationData: () =>
+                    `PGP_SYM_ENCRYPT('${JSON.stringify(k8sConfiguration.configurationData)}', '${AppConstants.ENCRYPTION_KEY}')`,
                 authorId: k8sConfiguration.authorId,
                 applicationId: k8sConfiguration.applicationId,
                 moduleId: k8sConfiguration.moduleId,
@@ -47,6 +48,7 @@ export class K8sConfigurationsRepository extends Repository<K8sConfigurationEnti
     }
 
     public async findDecryptedDataByModuleId(moduleId: string): Promise<K8sConfigurationDataEntity> {
+
         const queryResult: { configurationData: string } = await this.createQueryBuilder('k8s_configurations')
             .select(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}')`, 'configurationData')
             .where('k8s_configurations.module_id = :moduleId', { moduleId })
