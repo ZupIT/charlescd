@@ -32,8 +32,9 @@ export class PipelineQueuesService {
     try {
       const nextQueuedDeployment: QueuedDeploymentEntity =
         await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
-
-      if (nextQueuedDeployment) {
+      const runningDeployment: QueuedDeploymentEntity =
+        await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
+      if (nextQueuedDeployment && !runningDeployment) {
         nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
           await this.triggerQueuedDeployment(nextQueuedDeployment) :
           await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
@@ -71,7 +72,7 @@ export class PipelineQueuesService {
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
       component = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
       const { moduleDeployment: { deployment } } = componentDeployment
-      const undeployment = await this.undeploymentsRepository.findOne({ where: {deployment_id: deployment.id}})
+      const undeployment = await this.undeploymentsRepository.findOne({ where: { deployment_id: deployment.id } })
       await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
     } catch (error) {
       throw error
