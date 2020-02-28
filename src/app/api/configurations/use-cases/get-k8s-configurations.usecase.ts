@@ -15,11 +15,11 @@ export class GetK8sConfigurationsUsecase {
         private readonly k8sConfigurationsRepository: K8sConfigurationsRepository
     ) {}
 
-    public async execute(): Promise<ReadK8sConfigurationDto[]> {
+    public async execute(applicationId: string): Promise<ReadK8sConfigurationDto[]> {
 
         try {
             const k8sConfigurations: K8sConfigurationEntity[] =
-                await this.k8sConfigurationsRepository.findAll()
+                await this.k8sConfigurationsRepository.findAllByApplicationId(applicationId)
             return k8sConfigurations.map(configuration => configuration.toReadDto())
         } catch (error) {
             throw new InternalServerErrorException(error)
