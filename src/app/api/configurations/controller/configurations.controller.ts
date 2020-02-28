@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    Headers,
     Post
 } from '@nestjs/common'
 import {
@@ -30,7 +31,10 @@ export class ConfigurationsController {
     }
 
     @Get('k8s')
-    public async getK8sConfigurations(): Promise<ReadK8sConfigurationDto[]> {
-        return await this.getK8sConfigurationsUseCase.execute()
+    public async getK8sConfigurations(
+        @Headers('x-application-id') applicationId: string
+    ): Promise<ReadK8sConfigurationDto[]> {
+
+        return await this.getK8sConfigurationsUseCase.execute(applicationId)
     }
 }

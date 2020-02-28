@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  Column,
   CreateDateColumn,
   Entity,
   OneToMany,
@@ -16,6 +17,9 @@ export class ModuleEntity extends BaseEntity {
     type: 'uuid'
   })
   public id: string
+
+  @Column({ name: 'k8s_config_id'})
+  public k8sConfigurationId: string
 
   @OneToMany(
     type => ComponentEntity,
