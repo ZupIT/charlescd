@@ -15,7 +15,7 @@ export class K8sConfigurationsRepository extends Repository<K8sConfigurationEnti
 
     public async saveEncrypted(
         k8sConfiguration: K8sConfigurationEntity
-    ): Promise<any> {
+    ): Promise<K8sConfigurationEntity> {
 
         const queryResult: InsertResult = await this.createQueryBuilder('k8s_configurations')
             .insert()
