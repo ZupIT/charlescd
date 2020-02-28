@@ -89,7 +89,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
-            'dummy-id',
             'helm-repository',
             null
         )

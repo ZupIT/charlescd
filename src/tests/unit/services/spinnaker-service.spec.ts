@@ -177,7 +177,6 @@ describe('Spinnaker Service', () => {
     undeploymentModuleDeployments = [
       new ModuleDeploymentEntity(
           'dummy-id',
-          'dummy-id',
           'helm-repository',
           undeploymentComponentDeployments
       )
