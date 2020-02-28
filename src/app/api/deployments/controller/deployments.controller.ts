@@ -55,10 +55,11 @@ export class DeploymentsController {
   @Post(':id/undeploy')
   public async createUndeployment(
     @Body() createUndeploymentDto: CreateUndeploymentDto,
-    @Param('id') deploymentId: string
+    @Param('id') deploymentId: string,
+    @Headers('x-circle-id') circleId: string
   ): Promise<ReadUndeploymentDto> {
 
-    return await this.createUndeploymentRequestUsecase.execute(createUndeploymentDto, deploymentId)
+    return await this.createUndeploymentRequestUsecase.execute(createUndeploymentDto, deploymentId, circleId)
   }
 
   @Get()

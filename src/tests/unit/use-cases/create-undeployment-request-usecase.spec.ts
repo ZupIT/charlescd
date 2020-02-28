@@ -113,7 +113,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            deployment
+            deployment,
+            'dummy-circle-id'
         )
 
         queuedUndeployments = [
@@ -142,7 +143,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
             jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
                 .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
 
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
                 .toEqual(undeployment.toReadDto())
         })
 
@@ -159,7 +160,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 )
                 .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
                 .toEqual(undeployment.toReadDto())
         })
     })
