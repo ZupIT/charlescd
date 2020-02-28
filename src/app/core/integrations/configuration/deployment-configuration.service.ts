@@ -24,18 +24,18 @@ export class DeploymentConfigurationService {
 
   public async getConfiguration(
     componentDeploymentId: string,
-    moduleId: string
+    k8sConfigurationId: string
   ): Promise<IDeploymentConfiguration> {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const k8sConfigurationData: K8sConfigurationDataEntity =
-      await this.k8sConfigurationsRepository.findDecryptedDataByModuleId(moduleId)
+      await this.k8sConfigurationsRepository.findDecrypted(k8sConfigurationId)
 
     if (k8sConfigurationData) {
       return this.getConfigurationObject(k8sConfigurationData, componentDeploymentEntity)
     } else {
-      throw new BadRequestException(`Module ${moduleId} has no k8s configuration`)
+      throw new BadRequestException(`Invalid k8s configuration id: ${k8sConfigurationId}`)
     }
   }
 
