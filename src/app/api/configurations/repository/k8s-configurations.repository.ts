@@ -25,33 +25,32 @@ export class K8sConfigurationsRepository extends Repository<K8sConfigurationEnti
                 configurationData: () =>
                     `PGP_SYM_ENCRYPT('${JSON.stringify(k8sConfiguration.configurationData)}', '${AppConstants.ENCRYPTION_KEY}')`,
                 authorId: k8sConfiguration.authorId,
-                applicationId: k8sConfiguration.applicationId,
-                moduleId: k8sConfiguration.moduleId,
+                applicationId: k8sConfiguration.applicationId
             })
-            .returning('id, name, user_id, application_id, module_id, created_at')
+            .returning('id, name, user_id, application_id, created_at')
             .execute()
 
         return plainToClass(K8sConfigurationEntity, queryResult.generatedMaps[0])
     }
 
-    public async findAll(): Promise<K8sConfigurationEntity[]> {
+    public async findAllByApplicationId(applicationId: string): Promise<K8sConfigurationEntity[]> {
 
         const queryResult: object[] = await this.createQueryBuilder('k8s_configurations')
             .select('id, name')
             .addSelect('user_id', 'authorId')
             .addSelect('application_id', 'applicationId')
-            .addSelect('module_id', 'moduleId')
             .addSelect('created_at', 'createdAt')
+            .where('k8s_configurations.application_id = :applicationId', { applicationId })
             .getRawMany()
 
         return queryResult.map(configuration => plainToClass(K8sConfigurationEntity, configuration))
     }
 
-    public async findDecryptedDataByModuleId(moduleId: string): Promise<K8sConfigurationDataEntity> {
+    public async findDecrypted(id: string): Promise<K8sConfigurationDataEntity> {
 
         const queryResult: { configurationData: string } = await this.createQueryBuilder('k8s_configurations')
             .select(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}')`, 'configurationData')
-            .where('k8s_configurations.module_id = :moduleId', { moduleId })
+            .where('k8s_configurations.id = :id', { id })
             .getRawOne()
 
         return queryResult ? plainToClass(K8sConfigurationDataEntity, JSON.parse(queryResult.configurationData)) : undefined
