@@ -46,7 +46,7 @@ export class ReceiveDeploymentCallbackUsecase {
       this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
       const queuedDeploymentEntity: QueuedDeploymentEntity =
           await this.queuedDeploymentsRepository.findOne({id : queuedDeploymentId})
-      if (!queuedDeploymentEntity.hasFinished()) {
+      if (queuedDeploymentEntity.isRunning()) {
         finishDeploymentDto.isSuccessful() ?
             await this.handleDeploymentSuccess(queuedDeploymentId) :
             await this.handleDeploymentFailure(queuedDeploymentId)
