@@ -97,8 +97,9 @@ export class CreateUndeploymentRequestUsecase {
 
     try {
       queuedUndeployment = await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
-      const component: ComponentEntity =
-        await this.componentsRepository.findOne({ id: componentUndeployment.componentDeployment.componentId })
+      const component: ComponentEntity = await this.componentsRepository.findOne(
+          { id: componentUndeployment.componentDeployment.componentId }, { relations: ['module'] }
+      )
 
       if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelineDeploymentsService.triggerUndeployment(

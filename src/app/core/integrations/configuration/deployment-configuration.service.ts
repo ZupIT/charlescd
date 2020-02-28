@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common'
 import {
-  IDeploymentConfiguration,
-  IK8sConfiguration
-} from './interfaces'
+  BadRequestException,
+  Injectable
+} from '@nestjs/common'
+import { IDeploymentConfiguration } from './interfaces'
 import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MooveService } from '../moove'
 import { ComponentDeploymentsRepository } from '../../../api/deployments/repository'
 import { AppConstants } from '../../constants'
+import { K8sConfigurationsRepository } from '../../../api/configurations/repository'
+import { K8sConfigurationDataEntity } from '../../../api/configurations/entity'
 
 @Injectable()
 export class DeploymentConfigurationService {
@@ -15,32 +17,39 @@ export class DeploymentConfigurationService {
   constructor(
     private readonly mooveService: MooveService,
     @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(K8sConfigurationsRepository)
+    private readonly k8sConfigurationsRepository: K8sConfigurationsRepository
   ) {}
 
   public async getConfiguration(
-    componentDeploymentId: string
+    componentDeploymentId: string,
+    moduleId: string
   ): Promise<IDeploymentConfiguration> {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const k8sConfiguration: IK8sConfiguration =
-      await this.mooveService.getK8sConfiguration(componentDeploymentEntity.moduleDeployment.k8sConfigurationId)
+    const k8sConfigurationData: K8sConfigurationDataEntity =
+      await this.k8sConfigurationsRepository.findDecryptedDataByModuleId(moduleId)
 
-    return this.getConfigurationObject(k8sConfiguration, componentDeploymentEntity)
+    if (k8sConfigurationData) {
+      return this.getConfigurationObject(k8sConfigurationData, componentDeploymentEntity)
+    } else {
+      throw new BadRequestException(`Module ${moduleId} has no k8s configuration`)
+    }
   }
 
   private getConfigurationObject(
-    k8sConfiguration: IK8sConfiguration,
+    k8sConfigurationData: K8sConfigurationDataEntity,
     componentDeploymentEntity: ComponentDeploymentEntity
   ): IDeploymentConfiguration {
 
     return {
-      account: k8sConfiguration.account,
+      account: k8sConfigurationData.account,
       pipelineName: componentDeploymentEntity.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
       appName: componentDeploymentEntity.componentName,
-      appNamespace: k8sConfiguration.namespace,
+      appNamespace: k8sConfigurationData.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,
       uri: {
         uriName: componentDeploymentEntity.contextPath
