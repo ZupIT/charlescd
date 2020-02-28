@@ -55,4 +55,8 @@ export class QueuedDeploymentEntity extends BaseEntity {
       this.createdAt
     )
   }
+
+  public isRunning(): boolean {
+    return this.status === QueuedPipelineStatusEnum.RUNNING
+  }
 }
