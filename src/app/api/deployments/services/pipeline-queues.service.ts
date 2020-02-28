@@ -42,15 +42,16 @@ export class PipelineQueuesService {
 
   public async triggerNextComponentPipeline(finishedComponentDeployment: ComponentDeploymentEntity): Promise<void> {
     try {
-      const nextQueuedDeployment: QueuedDeploymentEntity =
-          await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
-
-      if (nextQueuedDeployment) {
-        nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
-            await this.triggerQueuedDeployment(nextQueuedDeployment) :
-            await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
-        await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
-      }
+        const nextQueuedDeployment: QueuedDeploymentEntity =
+            await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
+        const runningDeployment: QueuedDeploymentEntity =
+          await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
+        if (nextQueuedDeployment && !runningDeployment) {
+          nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
+              await this.triggerQueuedDeployment(nextQueuedDeployment) :
+              await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
+          await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
+        }
     } catch (error) {
       throw error
     }
