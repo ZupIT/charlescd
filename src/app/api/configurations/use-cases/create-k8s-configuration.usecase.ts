@@ -19,12 +19,13 @@ export class CreateK8sConfigurationUsecase {
     ) {}
 
     public async execute(
-        createK8sConfigurationDto: CreateK8sConfigurationDto
+        createK8sConfigurationDto: CreateK8sConfigurationDto,
+        applicationId: string
     ): Promise<ReadK8sConfigurationDto> {
 
         try {
             const k8sConfiguration: K8sConfigurationEntity =
-                await this.k8sConfigurationsRepository.saveEncrypted(createK8sConfigurationDto.toEntity())
+                await this.k8sConfigurationsRepository.saveEncrypted(createK8sConfigurationDto.toEntity(applicationId))
             return k8sConfiguration.toReadDto()
         } catch (error) {
             throw new InternalServerErrorException(error)
