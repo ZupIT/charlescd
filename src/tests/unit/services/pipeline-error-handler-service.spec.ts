@@ -33,9 +33,8 @@ import {
 } from '../../../app/api/deployments/enums';
 import { ModuleEntity } from '../../../app/api/modules/entity';
 import { IPipelineOptions } from '../../../app/api/components/interfaces';
-import { IPipelineCircle } from '../../../app/api/components/interfaces';
 
-describe('Deployments service specs', () => {
+describe('Pipeline Error Handler Service specs', () => {
     let pipelineErrorHandlerService: PipelineErrorHandlerService
     let pipelineQueuesService: PipelineQueuesService
     let deploymentsRepository: Repository<DeploymentEntity>
@@ -58,6 +57,7 @@ describe('Deployments service specs', () => {
     let queuedDeployment: QueuedDeploymentEntity
     let circle: CircleDeploymentEntity
     let pipelineOptions: IPipelineOptions
+    let pipelineOptionsUpdated: IPipelineOptions
 
     beforeEach(async () => {
 
@@ -101,7 +101,9 @@ describe('Deployments service specs', () => {
             'helm-repository',
             [componentDeployment]
         )
+
         moduleDeployments = [moduleDeployment]
+
         undeploymentDeployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
@@ -113,10 +115,12 @@ describe('Deployments service specs', () => {
             false,
             'dummy-circle-id'
         )
+
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
             undeploymentDeployment
         )
+
         undeploymentFailed = new UndeploymentEntity(
             'dummy-author-id',
             undeploymentDeployment
@@ -136,6 +140,7 @@ describe('Deployments service specs', () => {
             false,
             'incoming-circle-id'
         )
+
         deploymentFailed = new DeploymentEntity(
             'deployment-id',
             'application-name',
@@ -148,16 +153,36 @@ describe('Deployments service specs', () => {
             'incoming-circle-id'
         )
         deploymentFailed.status = DeploymentStatusEnum.FAILED
+
         componentEntity = new ComponentEntity(
             'component-id',
             moduleEntity
         )
 
+        componentEntityUpdated = new ComponentEntity(
+            'component-id',
+            moduleEntity
+        )
+        const pipelineCircle = {
+            header :
+                {
+                    headerName: 'dummy-header',
+                    headerValue: 'dummy-circle'
+                },
+            destination : {
+                version : 'dummy-version'
+            },
+        }
+        pipelineOptions = { pipelineCircles: [pipelineCircle], pipelineVersions: [], pipelineUnusedVersions: [] }
+        pipelineOptionsUpdated = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
+        componentEntity.pipelineOptions =  pipelineOptions
+        componentEntityUpdated.pipelineOptions =  pipelineOptionsUpdated
 
         moduleEntity = new ModuleEntity(
             'module-id',
             [componentEntity]
         )
+
         componentDeployment = new ComponentDeploymentEntity(
             'dummy-id',
             'dummy-name',
@@ -167,43 +192,38 @@ describe('Deployments service specs', () => {
             'dummy-health-check',
             1234
         )
+
         queuedDeployment = new QueuedDeploymentEntity(
             'dummy-component-id',
             'dummy-component-deployment-id',
             QueuedPipelineStatusEnum.RUNNING
         )
-        componentEntity = new ComponentEntity(
-            'component-id',
-            moduleEntity
-        )
-        componentEntityUpdated = new ComponentEntity(
-            'component-id',
-            moduleEntity
-        )
-
-        pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
-        componentEntity.pipelineOptions =  pipelineOptions
 
     })
     describe('handleComponentDeploymentFailure', () => {
-        it('should  handle component deployment failure', async () => {
+
+        it('should  remove circle when component deployment fails', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
-            const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+
             await pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle);
-            expect(pipelineQueueSpy).toHaveBeenCalled()
+            expect(componentEntity).toEqual(componentEntityUpdated)
         })
     })
+
     describe('handleComponentUnDeploymentFailure', () => {
+
         it('should  handle component undeployment failure', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-            await pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle);
+            await pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedDeployment, circle);
             expect(pipelineQueueSpy).toHaveBeenCalled()
         })
     })
+
     describe('handleDeploymentFailure', () => {
+
         it('should  handle deployment failure', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
@@ -224,6 +244,7 @@ describe('Deployments service specs', () => {
             await pipelineErrorHandlerService.handleDeploymentFailure(deploymentFailed)
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
+
         it('should  execute nothing when are no deployment', async () => {
 
             jest.spyOn(moduleDeploymentsRepository, 'find')
@@ -236,6 +257,7 @@ describe('Deployments service specs', () => {
         })
     })
     describe('handleUndeploymentFailure', () => {
+
         it('should  execute undeployment failure', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
@@ -246,6 +268,7 @@ describe('Deployments service specs', () => {
             expect(mooveServiceSpy).toHaveBeenCalled()
 
         })
+
         it('should not execute handle undeployment failure with status failed', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
@@ -256,7 +279,8 @@ describe('Deployments service specs', () => {
             expect(mooveServiceSpy).not.toHaveBeenCalled()
 
         })
-        it('should not execute handele undeployment failure with no deployment', async () => {
+
+        it('should not execute handle undeployment failure with no deployment', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
             jest.spyOn(deploymentsRepository, 'findOne')
