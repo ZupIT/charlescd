@@ -217,7 +217,7 @@ describe('Pipeline Error Handler Service specs', () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-            await pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedDeployment, circle);
+            await pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedDeployment);
             expect(pipelineQueueSpy).toHaveBeenCalled()
         })
     })
