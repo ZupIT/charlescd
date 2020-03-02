@@ -1,8 +1,8 @@
-import {Test} from '@nestjs/testing'
-import {PipelineErrorHandlerService, PipelineQueuesService} from '../../../app/api/deployments/services'
+import { Test } from '@nestjs/testing'
+import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import {
     ComponentsRepositoryStub,
-    DeploymentsRepositoryStub,
+    DeploymentsRepositoryStub, ModuleDeploymentsRepositoryStub,
     QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
@@ -11,7 +11,7 @@ import {
     PipelineQueuesServiceStub,
     StatusManagementServiceStub
 } from '../../stubs/services'
-import {ConsoleLoggerService} from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     CircleDeploymentEntity,
     ComponentDeploymentEntity,
@@ -21,23 +21,25 @@ import {
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 
-import {Repository} from 'typeorm'
-import {StatusManagementService} from '../../../app/core/services/deployments'
-import {MooveService} from '../../../app/core/integrations/moove'
-import {QueuedDeploymentsRepository} from '../../../app/api/deployments/repository';
-import {ComponentEntity} from '../../../app/api/components/entity';
+import { Repository } from 'typeorm'
+import { StatusManagementService } from '../../../app/core/services/deployments'
+import { MooveService } from '../../../app/core/integrations/moove'
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository';
+import { ComponentEntity } from '../../../app/api/components/entity';
 import {
     DeploymentStatusEnum,
     QueuedPipelineStatusEnum,
     UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums';
-import {ModuleEntity} from '../../../app/api/modules/entity';
-import {IPipelineOptions} from '../../../app/api/components/interfaces';
+import { ModuleEntity } from '../../../app/api/modules/entity';
+import { IPipelineOptions } from '../../../app/api/components/interfaces';
+import { IPipelineCircle } from '../../../app/api/components/interfaces';
 
 describe('Deployments service specs', () => {
     let pipelineErrorHandlerService: PipelineErrorHandlerService
     let pipelineQueuesService: PipelineQueuesService
     let deploymentsRepository: Repository<DeploymentEntity>
+    let moduleDeploymentsRepository: Repository<ModuleDeploymentEntity>
     let statusManagementService: StatusManagementService
     let mooveService: MooveService
     let deployment: DeploymentEntity
@@ -47,6 +49,7 @@ describe('Deployments service specs', () => {
     let deploymentFailed: DeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
+    let moduleDeployments: ModuleDeploymentEntity[]
     let componentEntity: ComponentEntity
     let componentEntityUpdated: ComponentEntity
     let moduleEntity: ModuleEntity
@@ -64,6 +67,7 @@ describe('Deployments service specs', () => {
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+                { provide: 'ModuleDeploymentsRepository', useClass: ModuleDeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
@@ -74,6 +78,7 @@ describe('Deployments service specs', () => {
 
         pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
+        moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentsRepository')
         componentsRepository = module.get<Repository<ComponentEntity>>('ComponentEntityRepository')
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
@@ -96,6 +101,7 @@ describe('Deployments service specs', () => {
             'helm-repository',
             [componentDeployment]
         )
+        moduleDeployments = [moduleDeployment]
         undeploymentDeployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
@@ -179,22 +185,51 @@ describe('Deployments service specs', () => {
         componentEntity.pipelineOptions =  pipelineOptions
 
     })
-
+    describe('handleComponentDeploymentFailure', () => {
+        it('should  handle component deployment failure', async () => {
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(componentEntity))
+            const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+            await pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle);
+            expect(pipelineQueueSpy).toHaveBeenCalled()
+        })
+    })
+    describe('handleComponentUnDeploymentFailure', () => {
+        it('should  handle component undeployment failure', async () => {
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(componentEntity))
+            const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
+            await pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle);
+            expect(pipelineQueueSpy).toHaveBeenCalled()
+        })
+    })
     describe('handleDeploymentFailure', () => {
-        it('should execute handle deployment failure', async () => {
+        it('should  handle deployment failure', async () => {
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+
             const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
             await pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             expect(mooveServiceSpy).toHaveBeenCalled()
         })
 
         it('should  execute nothing when deployment has status failed', async () => {
-
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
             const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
             await pipelineErrorHandlerService.handleDeploymentFailure(deploymentFailed)
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
         it('should  execute nothing when are no deployment', async () => {
 
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
             const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
             await pipelineErrorHandlerService.handleDeploymentFailure(undefined)
             expect(mooveServiceSpy).not.toHaveBeenCalled()
@@ -202,16 +237,35 @@ describe('Deployments service specs', () => {
     })
     describe('handleUndeploymentFailure', () => {
         it('should  execute undeployment failure', async () => {
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
             const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
             await pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
             expect(mooveServiceSpy).toHaveBeenCalled()
 
         })
-        it('should not execute undeployment failure with status failed', async () => {
+        it('should not execute handle undeployment failure with status failed', async () => {
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
             const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
             await pipelineErrorHandlerService.handleUndeploymentFailure(undeploymentFailed)
             expect(mooveServiceSpy).not.toHaveBeenCalled()
 
         })
+        it('should not execute handele undeployment failure with no deployment', async () => {
+            jest.spyOn(moduleDeploymentsRepository, 'find')
+                .mockImplementation(() => Promise.resolve(moduleDeployments))
+            jest.spyOn(deploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(deployment))
+            const mooveServiceSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+            await pipelineErrorHandlerService.handleUndeploymentFailure(undefined)
+            expect(mooveServiceSpy).not.toHaveBeenCalled()
+
+        })
+
     })
 })
