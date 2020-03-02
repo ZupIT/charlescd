@@ -6,7 +6,7 @@ export class AddCircleIdColumnToUndeployments20200227180000 implements Migration
         await queryRunner.addColumn('undeployments', new TableColumn({
             name: 'circle_id',
             type: 'varchar',
-            isNullable: false
+            isNullable: true
         }))
     }
 
