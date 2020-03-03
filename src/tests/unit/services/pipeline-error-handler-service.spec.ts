@@ -119,12 +119,14 @@ describe('Pipeline Error Handler Service specs', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            undeploymentDeployment
+            undeploymentDeployment,
+            'dummy-circle-id'
         )
 
         undeploymentFailed = new UndeploymentEntity(
             'dummy-author-id',
-            undeploymentDeployment
+            undeploymentDeployment,
+            'dummy-circle-id'
         )
         undeploymentFailed.status = UndeploymentStatusEnum.FAILED
 
