@@ -137,7 +137,8 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            deployment
+            deployment,
+            'dummy-circle-id'
         )
 
         moduleUndeployment = new ModuleUndeploymentEntity(

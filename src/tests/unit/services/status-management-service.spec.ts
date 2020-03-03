@@ -151,7 +151,8 @@ describe('PipelinesService', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            deploymentWithRelations
+            deploymentWithRelations,
+            'dummy-circle-id'
         )
 
         moduleUndeployment = new ModuleUndeploymentEntity(
