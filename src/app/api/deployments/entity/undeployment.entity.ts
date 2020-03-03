@@ -43,9 +43,13 @@ export class UndeploymentEntity extends BaseEntity {
   @Column({ name: 'status'} )
   public status: UndeploymentStatusEnum
 
+  @Column({name: 'circle_id', nullable: false})
+  public circleId: string
+
   constructor(
     authorId: string,
-    deployment: DeploymentEntity
+    deployment: DeploymentEntity,
+    circleId: string
   ) {
     super()
     this.id = uuidv4()
@@ -53,6 +57,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
     this.moduleUndeployments = deployment ? this.createModuleUndeploymentsArray(deployment) : null
+    this.circleId = circleId
   }
 
   public toReadDto(): ReadUndeploymentDto {
@@ -62,6 +67,7 @@ export class UndeploymentEntity extends BaseEntity {
       this.createdAt,
       this.deployment.id,
       this.status,
+      this.circleId,
       this.moduleUndeployments.map(module => module.toReadDto())
     )
   }

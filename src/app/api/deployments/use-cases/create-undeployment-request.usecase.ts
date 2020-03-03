@@ -43,12 +43,12 @@ export class CreateUndeploymentRequestUsecase {
     private readonly consoleLoggerService: ConsoleLoggerService
   ) { }
 
-  public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string): Promise<ReadUndeploymentDto> {
+  public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string, circleId: string): Promise<ReadUndeploymentDto> {
     let undeployment: UndeploymentEntity
 
     try {
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
-      undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId)
+      undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
       await this.scheduleComponentUndeployments(undeployment)
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
@@ -60,8 +60,9 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async saveUndeploymentRequest(
-    createUndeploymentDto: CreateUndeploymentDto,
-    deploymentId: string
+      createUndeploymentDto: CreateUndeploymentDto,
+      deploymentId: string,
+      circleId: string
   ): Promise<UndeploymentEntity> {
 
     try {
@@ -69,7 +70,7 @@ export class CreateUndeploymentRequestUsecase {
         where: { id: deploymentId },
         relations: ['modules', 'modules.components']
       })
-      return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment))
+      return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment, circleId))
     } catch (error) {
       throw new InternalServerErrorException('Could not save undeployment')
     }
@@ -102,8 +103,8 @@ export class CreateUndeploymentRequestUsecase {
 
       if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
         await this.pipelineDeploymentsService.triggerUndeployment(
-          componentUndeployment.componentDeployment, component,
-          undeployment.deployment, queuedUndeployment
+            componentUndeployment.componentDeployment, undeployment, component,
+            undeployment.deployment, queuedUndeployment
         )
       }
     } catch (error) {
