@@ -17,7 +17,8 @@ import {
     DeploymentsRepositoryStub,
     ModulesRepositoryStub,
     QueuedDeploymentsRepositoryStub,
-    QueuedUndeploymentsRepositoryStub
+    QueuedUndeploymentsRepositoryStub,
+    UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     ComponentDeploymentsRepository,
@@ -88,6 +89,7 @@ describe('PipelineQueuesService', () => {
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
                 { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
+                { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub }
             ]
         }).compile()
@@ -248,7 +250,8 @@ describe('PipelineQueuesService', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            undeploymentDeployment
+            undeploymentDeployment,
+            'dummy-circle-id'
         )
 
         queuedUndeployments = [

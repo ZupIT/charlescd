@@ -15,10 +15,11 @@ export class CreateUndeploymentDto {
     this.authorId = authorId
   }
 
-  public toEntity(deployment: DeploymentEntity): UndeploymentEntity {
+  public toEntity(deployment: DeploymentEntity, circleId: string): UndeploymentEntity {
     return new UndeploymentEntity(
       this.authorId,
-      deployment
+      deployment,
+      circleId
     )
   }
 }
