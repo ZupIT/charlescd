@@ -39,12 +39,13 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     let successfulFinishDeploymentDto: FinishDeploymentDto
     let failedFinishDeploymentDto: FinishDeploymentDto
     let queuedDeployment: QueuedDeploymentEntity
+    let queuedDeploymentFinished: QueuedDeploymentEntity
     let deployment: DeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let pipelineQueuesService: PipelineQueuesService
-
+    let statusManagementService: StatusManagementService
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
@@ -65,14 +66,18 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-
+        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
         failedFinishDeploymentDto = new FinishDeploymentDto('FAILED')
-
         queuedDeployment = new QueuedDeploymentEntity(
             'dummy-component-id',
             'dummy-component-deployment-id',
             QueuedPipelineStatusEnum.RUNNING
+        )
+        queuedDeploymentFinished = new QueuedDeploymentEntity(
+            'dummy-component-id',
+            'dummy-component-deployment-id',
+            QueuedPipelineStatusEnum.FINISHED
         )
 
         deployment = new DeploymentEntity(
@@ -121,6 +126,20 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             )
 
             expect(queueSpy).toHaveBeenCalledWith(1234)
+        })
+
+        it('should not execute a finished deployment', async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(queuedDeploymentFinished))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            const queueSpy = jest.spyOn(pipelineQueuesService, 'setQueuedDeploymentStatusFinished')
+            await receiveDeploymentCallbackUsecase.execute(
+                1234,
+                successfulFinishDeploymentDto
+            )
+            expect(queueSpy).not.toHaveBeenCalledWith(1234)
         })
     })
 })

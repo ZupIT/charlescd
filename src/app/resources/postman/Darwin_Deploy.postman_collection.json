@@ -54,6 +54,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{x-circle-id}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -70,6 +75,76 @@
 							"path": [
 								"deployments",
 								"circle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Undeployment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"undeploymentId\", response[\"id\"]);",
+									"",
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
+									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
+									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());",
+									"postman.setGlobalVariable('deploymentID', uuid.v4());",
+									"postman.setGlobalVariable('applicationName', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{x-circle-id}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/deployments/{{deploymentId}}/undeploy",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"deployments",
+								"{{deploymentId}}",
+								"undeploy"
 							]
 						}
 					},
@@ -331,6 +406,20 @@
 			"item": [
 				{
 					"name": "Get Modules",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3606e801-a529-4d94-96a5-51276a1e098b",
+								"exec": [
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -350,6 +439,20 @@
 				},
 				{
 					"name": "Get Module by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ead74670-2a6d-48fb-85d1-7a3a23fe86c5",
+								"exec": [
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],

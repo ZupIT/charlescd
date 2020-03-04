@@ -17,7 +17,8 @@ import {
     DeploymentsRepositoryStub,
     ModulesRepositoryStub,
     QueuedDeploymentsRepositoryStub,
-    QueuedUndeploymentsRepositoryStub
+    QueuedUndeploymentsRepositoryStub,
+    UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     ComponentDeploymentsRepository,
@@ -88,6 +89,7 @@ describe('PipelineQueuesService', () => {
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
                 { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
+                { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub }
             ]
         }).compile()
@@ -245,7 +247,8 @@ describe('PipelineQueuesService', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            undeploymentDeployment
+            undeploymentDeployment,
+            'dummy-circle-id'
         )
 
         queuedUndeployments = [
@@ -290,7 +293,8 @@ describe('PipelineQueuesService', () => {
     describe('triggerNextComponentPipeline', () => {
 
         it('should update next queued pipeline status to RUNNING', async () => {
-
+            jest.spyOn(queuedDeploymentsRepository, 'getOneByComponentIdRunning')
+                .mockImplementation(() => Promise.resolve(undefined))
             jest.spyOn(queuedDeploymentsRepository, 'getNextQueuedDeployment')
                 .mockImplementation(() => Promise.resolve(nextQueuedDeployments[0]))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
@@ -305,6 +309,27 @@ describe('PipelineQueuesService', () => {
             )
 
             expect(queueSpy)
+                .toHaveBeenCalledWith({ id: nextQueuedDeployments[0].id }, { status: QueuedPipelineStatusEnum.RUNNING })
+        })
+
+        it('should not run queued pipeline if have another already running', async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'getNextQueuedDeployment')
+                .mockImplementation(() => Promise.resolve(nextQueuedDeployments[0]))
+            jest.spyOn(queuedDeploymentsRepository, 'getOneByComponentIdRunning')
+                .mockImplementation(() => Promise.resolve(queuedUndeployment))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementationOnce(() => Promise.resolve(componentEntity))
+
+            const queueSpy = jest.spyOn(queuedDeploymentsRepository, 'update')
+
+            await pipelineQueuesService.triggerNextComponentPipeline(
+                componentDeployment
+            )
+
+            expect(queueSpy).not
                 .toHaveBeenCalledWith({ id: nextQueuedDeployments[0].id }, { status: QueuedPipelineStatusEnum.RUNNING })
         })
     })
