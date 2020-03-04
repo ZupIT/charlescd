@@ -24,6 +24,7 @@ import {
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
+import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
@@ -41,7 +42,7 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
-    ) {}
+    ) { }
 
     public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
         let deployment: DeploymentEntity
@@ -150,14 +151,24 @@ export class CreateCircleDeploymentRequestUsecase {
 
     private async saveQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
         try {
-            const status: QueuedPipelineStatusEnum =
-                await this.pipelineQueuesService.getQueuedPipelineStatus(componentDeployment.componentId)
-
             return await this.queuedDeploymentsRepository.save(
-                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, status)
+                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.RUNNING)
             )
         } catch (error) {
-            throw new InternalServerErrorException('Could not save queued deployment')
+            return this.handleUniqueRunningConstraint(error, componentDeployment)
         }
+    }
+
+    private handleUniqueRunningConstraint(
+        error: any,
+        componentDeployment: ComponentDeploymentEntity,
+    ): Promise<QueuedDeploymentEntity> {
+
+        if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
+            return this.queuedDeploymentsRepository.save(
+                new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
+            )
+        }
+        throw new InternalServerErrorException('Could not save queued deployment')
     }
 }
