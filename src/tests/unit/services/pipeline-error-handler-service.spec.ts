@@ -263,7 +263,7 @@ describe('Pipeline Error Handler Service specs', () => {
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
 
-        it('should  execute nothing when there is no deployment', async () => {
+        it('should execute nothing when there is no deployment', async () => {
 
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
