@@ -231,7 +231,7 @@ describe('Pipeline Error Handler Service specs', () => {
 
     describe('handleComponentUnDeploymentFailure', () => {
 
-        it('should  update status for failed undeployment', async () => {
+        it('should  update status to finished for queued undeployment', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
