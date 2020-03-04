@@ -46,6 +46,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
     let successfulFinishUndeploymentDto: FinishUndeploymentDto
     let failedFinishUndeploymentDto: FinishUndeploymentDto
     let queuedUndeployment: QueuedUndeploymentEntity
+    let queuedUndeploymentFinished: QueuedUndeploymentEntity
     let undeployment: UndeploymentEntity
     let moduleUndeployment: ModuleUndeploymentEntity
     let componentUndeployment: ComponentUndeploymentEntity
@@ -82,6 +83,13 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             'dummy-component-id',
             'dummy-component-deployment-id',
             QueuedPipelineStatusEnum.RUNNING,
+            'dummy-component-undeployment-id'
+        )
+
+        queuedUndeploymentFinished = new QueuedUndeploymentEntity(
+            'dummy-component-id',
+            'dummy-component-deployment-id',
+            QueuedPipelineStatusEnum.FINISHED,
             'dummy-component-undeployment-id'
         )
 
@@ -129,7 +137,8 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
-            deployment
+            deployment,
+            'dummy-circle-id'
         )
 
         moduleUndeployment = new ModuleUndeploymentEntity(
@@ -159,6 +168,20 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             )
 
             expect(queueSpy).toHaveBeenCalledWith(1234)
+        })
+
+        it('should not execute a finished undeployment', async () => {
+            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(queuedUndeploymentFinished))
+            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentUndeployment))
+            const queueSpy = jest.spyOn(pipelineQueuesService, 'setQueuedUndeploymentStatusFinished')
+            await receiveUndeploymentCallbackUsecase.execute(
+                1234,
+                successfulFinishUndeploymentDto
+            )
+            expect(queueSpy).not.toHaveBeenCalledWith(1234)
+
         })
     })
 })

@@ -214,7 +214,8 @@ describe('Spinnaker Service', () => {
 
     undeployment = new UndeploymentEntity(
         'dummy-author-id',
-        undeploymentDeployment
+      undeploymentDeployment,
+        'dummy-circle-id'
     )
 
     moduleUndeployment = new ModuleUndeploymentEntity(

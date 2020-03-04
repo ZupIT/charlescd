@@ -1,37 +1,17 @@
 import { Test } from '@nestjs/testing'
-import { CreateCircleDeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
-import {
-    ComponentsRepositoryStub,
-    DeploymentsRepositoryStub,
-    ModulesRepositoryStub,
-    QueuedDeploymentsRepositoryStub
-} from '../../stubs/repository'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
-import {
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../../../app/api/deployments/services'
-import {
-    ConsoleLoggerServiceStub,
-    PipelineDeploymentsServiceStub,
-    PipelineErrorHandlerServiceStub,
-    PipelineQueuesServiceStub
-} from '../../stubs/services'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    QueuedDeploymentEntity,
-    UndeploymentEntity
-} from '../../../app/api/deployments/entity'
-import {
-    CreateCircleDeploymentDto,
-    CreateCircleDeploymentRequestDto
-} from '../../../app/api/deployments/dto/create-deployment'
-import { Repository } from 'typeorm'
+import { QueryFailedError, Repository } from 'typeorm'
+import { CreateCircleDeploymentDto, CreateCircleDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
+import { CreateCircleDeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
+import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
+import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ComponentsRepositoryStub, DeploymentsRepositoryStub, ModulesRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
+import {
+    ConsoleLoggerServiceStub, PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub
+} from '../../stubs/services'
 
 describe('CreateCircleDeploymentRequestUsecase', () => {
 
@@ -138,6 +118,20 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
 
             expect(await createCircleDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
                 .toEqual(deployment.toReadDto())
+        })
+
+        it('should handle duplicated module deployment', async () => {
+            jest.spyOn(deploymentsRepository, 'save')
+                .mockImplementation(() => Promise.resolve(deployment))
+
+            jest.spyOn(queuedDeploymentsRepository, 'save')
+                .mockImplementationOnce(
+                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+                ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+
+            expect(
+                await createCircleDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id')
+            ).toEqual(deployment.toReadDto())
         })
     })
 })
