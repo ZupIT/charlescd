@@ -213,7 +213,7 @@ describe('Pipeline Error Handler Service specs', () => {
             expect(componentEntity).toEqual(componentEntityUpdated)
         })
 
-        it('should  remove circle when failed to remove pipeline circle', async () => {
+        it('should  trow a internal server exception when fails to save updated component in database', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             jest.spyOn(componentsRepository, 'save')
