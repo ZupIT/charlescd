@@ -10,7 +10,8 @@ import {
     ComponentUndeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
-    QueuedUndeploymentEntity
+    QueuedUndeploymentEntity,
+    UndeploymentEntity
 } from '../entity'
 import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
@@ -90,6 +91,7 @@ export class PipelineDeploymentsService {
 
     public async triggerUndeployment(
         componentDeployment: ComponentDeploymentEntity,
+        undeployment: UndeploymentEntity,
         component: ComponentEntity,
         deployment: DeploymentEntity,
         queuedUndeployment: QueuedUndeploymentEntity
@@ -99,8 +101,8 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
             await this.unsetComponentPipelineCircle(deployment, component)
             const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
-            await this.triggerComponentDeployment(
-                component, deployment, componentDeployment,
+            await this.triggerComponentUnDeployment(
+                component, deployment, undeployment, componentDeployment,
                 pipelineCallbackUrl, queuedUndeployment.id
             )
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
@@ -177,6 +179,28 @@ export class PipelineDeploymentsService {
             await this.spinnakerService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
                 deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
+            )
+        } catch (error) {
+            throw error
+        }
+    }
+
+    private async triggerComponentUnDeployment(
+        componentEntity: ComponentEntity,
+        deploymentEntity: DeploymentEntity,
+        undeploymentEntity: UndeploymentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        pipelineCallbackUrl: string,
+        queueId: number
+    ): Promise<void> {
+
+        try {
+            const deploymentConfiguration: IDeploymentConfiguration =
+                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
+
+            await this.spinnakerService.createDeployment(
+                componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
+                deploymentEntity.id, undeploymentEntity.circleId, pipelineCallbackUrl, queueId
             )
         } catch (error) {
             throw error
