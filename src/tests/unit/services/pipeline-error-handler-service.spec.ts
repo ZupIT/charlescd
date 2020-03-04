@@ -33,7 +33,7 @@ import {
 } from '../../../app/api/deployments/enums';
 import { ModuleEntity } from '../../../app/api/modules/entity';
 import { IPipelineOptions } from '../../../app/api/components/interfaces';
-import {InternalServerErrorException} from '@nestjs/common';
+import {BadRequestException, InternalServerErrorException} from '@nestjs/common';
 
 describe('Pipeline Error Handler Service specs', () => {
     let pipelineErrorHandlerService: PipelineErrorHandlerService
@@ -212,6 +212,21 @@ describe('Pipeline Error Handler Service specs', () => {
                 .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)
             expect(componentEntity).toEqual(componentEntityUpdated)
         })
+
+        it('should  remove circle when failed to remove pipeline circle', async () => {
+            jest.spyOn(componentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(componentEntity))
+            jest.spyOn(componentsRepository, 'save')
+                .mockImplementation(() => { throw new Error() })
+            try {
+            await pipelineErrorHandlerService
+                .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)
+            } catch (error) {
+                expect(error).toBeInstanceOf(InternalServerErrorException)
+            }
+
+        })
+
     })
 
     describe('handleComponentUnDeploymentFailure', () => {
