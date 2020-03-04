@@ -216,8 +216,8 @@ describe('Pipeline Error Handler Service specs', () => {
         it('should  trow a internal server exception when fails to save updated component in database', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
-            jest.spyOn(componentsRepository, 'save')
-                .mockImplementation(() => { throw new Error() })
+            jest.spyOn(componentEntity, 'removePipelineCircle')
+                .mockImplementation(() => { throw Error()})
             try {
             await pipelineErrorHandlerService
                 .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)
