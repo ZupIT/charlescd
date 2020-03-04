@@ -277,7 +277,7 @@ describe('Pipeline Error Handler Service specs', () => {
 
     describe('handleUndeploymentFailure', () => {
 
-        it('should  update status and notify moove', async () => {
+        it('should update status and notify moove', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
             jest.spyOn(deploymentsRepository, 'findOne')
