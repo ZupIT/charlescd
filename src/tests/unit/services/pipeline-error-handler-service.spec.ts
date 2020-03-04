@@ -33,9 +33,10 @@ import {
 } from '../../../app/api/deployments/enums';
 import { ModuleEntity } from '../../../app/api/modules/entity';
 import { IPipelineOptions } from '../../../app/api/components/interfaces';
-import {BadRequestException, InternalServerErrorException} from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('Pipeline Error Handler Service specs', () => {
+
     let pipelineErrorHandlerService: PipelineErrorHandlerService
     let pipelineQueuesService: PipelineQueuesService
     let deploymentsRepository: Repository<DeploymentEntity>
@@ -203,6 +204,7 @@ describe('Pipeline Error Handler Service specs', () => {
         )
 
     })
+
     describe('handleComponentDeploymentFailure', () => {
 
         it('should  remove circle when component deployment fails', async () => {
@@ -213,17 +215,15 @@ describe('Pipeline Error Handler Service specs', () => {
             expect(componentEntity).toEqual(componentEntityUpdated)
         })
 
-        it('should  trow a internal server exception when fails to save updated component in database', async () => {
+        it('should throw a internal server exception when fails to save updated component in database', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             jest.spyOn(componentEntity, 'removePipelineCircle')
                 .mockImplementation(() => { throw Error()})
-            try {
-            await pipelineErrorHandlerService
-                .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)
-            } catch (error) {
-                expect(error).toBeInstanceOf(InternalServerErrorException)
-            }
+            await expect(
+                 pipelineErrorHandlerService
+                    .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)).rejects.toThrow()
+
 
         })
 
@@ -231,7 +231,7 @@ describe('Pipeline Error Handler Service specs', () => {
 
     describe('handleComponentUnDeploymentFailure', () => {
 
-        it('should  handle component undeployment failure', async () => {
+        it('should  update status for failed undeployment', async () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
@@ -242,7 +242,7 @@ describe('Pipeline Error Handler Service specs', () => {
 
     describe('handleDeploymentFailure', () => {
 
-        it('should  update status and notify moove', async () => {
+        it('should update status and notify moove', async () => {
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
             jest.spyOn(deploymentsRepository, 'findOne')
@@ -263,7 +263,7 @@ describe('Pipeline Error Handler Service specs', () => {
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
 
-        it('should  execute nothing when are no deployment', async () => {
+        it('should  execute nothing when there is no deployment', async () => {
 
             jest.spyOn(moduleDeploymentsRepository, 'find')
                 .mockImplementation(() => Promise.resolve(moduleDeployments))
@@ -274,6 +274,7 @@ describe('Pipeline Error Handler Service specs', () => {
             expect(mooveServiceSpy).not.toHaveBeenCalled()
         })
     })
+
     describe('handleUndeploymentFailure', () => {
 
         it('should  update status and notify moove', async () => {
