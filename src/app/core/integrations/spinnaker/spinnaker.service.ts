@@ -7,6 +7,7 @@ import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../api/deployments/repository'
 import { PipelineErrorHandlerService } from '../../../api/deployments/services'
 import { AppConstants } from '../../constants'
+import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
@@ -19,7 +20,7 @@ export class SpinnakerService {
   constructor(
     private readonly httpService: HttpService,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject('ENV_CONFIGURATION')
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private readonly envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,

@@ -23,6 +23,7 @@ import { Repository } from 'typeorm'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { ComponentUndeploymentsRepository } from '../repository'
 import IEnvConfiguration from '../../../core/integrations/configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -33,7 +34,7 @@ export class PipelineDeploymentsService {
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
         @Inject(forwardRef(() => SpinnakerService))
         private readonly spinnakerService: SpinnakerService,
-        @Inject('ENV_CONFIGURATION')
+        @Inject(IoCTokensConstants.ENV_CONFIGURATION)
         private readonly envConfiguration: IEnvConfiguration,
         @InjectRepository(ComponentEntity)
         private readonly componentsRepository: Repository<ComponentEntity>,
