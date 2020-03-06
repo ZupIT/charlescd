@@ -6,6 +6,7 @@ import { AppConstants } from './core/constants'
 import { CoreModule } from './core/core.module'
 import IEnvConfiguration from './core/integrations/configuration/interfaces/env-configuration.interface'
 import { DatabasesService } from './core/integrations/databases'
+import { IoCTokensConstants } from './core/constants/ioc'
 
 @Global()
 @Module({})
@@ -30,10 +31,10 @@ export class AppModule {
         })
       ],
       providers: [{
-        provide: 'ENV_CONFIGURATION',
+        provide: IoCTokensConstants.ENV_CONFIGURATION,
         useValue: AppConstants.Configuration
       }],
-      exports: [ 'ENV_CONFIGURATION']
+      exports: [ IoCTokensConstants.ENV_CONFIGURATION]
     }
   }
 }

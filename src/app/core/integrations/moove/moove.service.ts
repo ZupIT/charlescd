@@ -2,6 +2,7 @@ import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import { IK8sConfiguration } from '../configuration/interfaces'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../constants/ioc'
 
 @Injectable()
 export class MooveService {
@@ -9,7 +10,7 @@ export class MooveService {
     constructor(
       private readonly httpService: HttpService,
       private readonly consoleLoggerService: ConsoleLoggerService,
-      @Inject('ENV_CONFIGURATION')
+      @Inject(IoCTokensConstants.ENV_CONFIGURATION)
       private readonly envConfiguration: IEnvConfiguration
     ) {}
 
