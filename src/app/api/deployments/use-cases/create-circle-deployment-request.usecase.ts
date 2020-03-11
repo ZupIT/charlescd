@@ -53,7 +53,7 @@ export class CreateCircleDeploymentRequestUsecase {
             this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
