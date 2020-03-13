@@ -23,7 +23,7 @@ import {
     PipelineQueuesService
 } from '../services'
 import { QueuedDeploymentsRepository } from '../repository'
-import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
+import { QueuedDeploymentsConstraints } from '../../../core/integrations/databases/constraints'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {

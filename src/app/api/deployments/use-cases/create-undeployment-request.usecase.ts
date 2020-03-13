@@ -23,7 +23,7 @@ import {
 } from '../services'
 import { ComponentEntity } from '../../components/entity'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
+import { QueuedDeploymentsConstraints } from '../../../core/integrations/databases/constraints'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {

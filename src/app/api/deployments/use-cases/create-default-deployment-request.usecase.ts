@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentsConstraints } from '../../../core/database_constraints/queued_deployments.constraints'
+import { QueuedDeploymentsConstraints } from '../../../core/integrations/databases/constraints'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
