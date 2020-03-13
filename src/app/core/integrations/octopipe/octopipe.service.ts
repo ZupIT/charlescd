@@ -4,7 +4,7 @@ import {
   Inject,
   Injectable
 } from '@nestjs/common'
-import { IPipelineOptions } from '../../../api/components/interfaces'
+import { IPipelineOptions, IPipelineCircle } from '../../../api/components/interfaces'
 import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
@@ -30,29 +30,6 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { ISpinnakerPipelineConfiguration } from '../spinnaker/interfaces'
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
-
-//   {
-//   "versions": [
-//       {
-//         "version": "darwin-ui-legacy-darwin-v-1-7-3",
-//         "versionUrl": "realwavelab.azurecr.io/darwin-ui-legacy:darwin-v-1-7-3"
-//     }
-//   ],
-//   "unused_versions": [],
-//   "istio": {
-//     "virtualService": {},
-//     "destinationRules": {}
-//   },
-//   "appName": "darwin-ui-legacy",
-//   "appNamespace": "octopipe2",
-//   "webHookUrl": "",
-//   "github": {
-//     "username": "maycommit",
-//     "password": "May@9271",
-//     "token": ""
-//   },
-//   "helmUrl": "https://api.github.com/repos/zupit/darwin-k8s-chart-values/contents/"
-// }
 
 interface IOctopipeVersion {
   version: string
@@ -115,13 +92,22 @@ export class OctopipeService {
         pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
       )
 
-    const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
-      this.createSpinnakerConfiguration(
-        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
-      )
     // decidir rota, fazer post com payload da configuration
-    payload.istio.virtualService = this.buildVirtualServices(spinnakerPipelineConfiguration)
-    payload.istio.destinationRules = this.buildDestinationRules(spinnakerPipelineConfiguration)
+    // payload.istio.virtualService = this.buildVirtualServices(spinnakerPipelineConfiguration)
+    payload.istio.virtualService = this.buildVirtualServices(
+      deploymentConfiguration.appName,
+      deploymentConfiguration.appNamespace,
+      pipelineCirclesOptions.pipelineCircles,
+      pipelineCallbackUrl,
+      [deploymentConfiguration.appName],
+      pipelineCirclesOptions.pipelineVersions
+    )
+    payload.istio.destinationRules = createDestinationRules(
+      deploymentConfiguration.appName,
+      deploymentConfiguration.appNamespace,
+      pipelineCirclesOptions.pipelineCircles,
+      pipelineCirclesOptions.pipelineVersions
+    )
     this.deploy(payload, deploymentId, queueId)
   }
 
@@ -168,26 +154,6 @@ export class OctopipeService {
     }
   }
 
-  private createSpinnakerConfiguration( // remover mistura de interfaces, só pra fazer a POC mesmo
-    pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration,
-    circleId: string,
-    pipelineCallbackUrl: string,
-    moduleDeployment: ModuleDeploymentEntity
-  ): ISpinnakerPipelineConfiguration {
-
-    return {
-      ...deploymentConfiguration,
-      webhookUri: pipelineCallbackUrl,
-      versions: pipelineCirclesOptions.pipelineVersions,
-      unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
-      circles: pipelineCirclesOptions.pipelineCircles,
-      githubAccount: this.consulConfiguration.spinnakerGithubAccount,
-      helmRepository: moduleDeployment.helmRepository,
-      circleId
-    }
-  }
-
   private async handleDeploymentFailure(deploymentId: string, queueId: number): Promise<void> {
     this.consoleLoggerService.error(`ERROR:DEPLOY_OCTOPIPE_PIPELINE ${deploymentId} ${queueId}`)
     const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queueId })
@@ -219,30 +185,13 @@ export class OctopipeService {
     await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
   }
 
-  private buildVirtualServices(contract: ISpinnakerPipelineConfiguration) {
+  private buildVirtualServices(
+    appName: string, appNamespace: string, circles: IPipelineCircle[], uri: string, hosts: string[], versions: IOctopipeVersion[]
+  ) {
     const virtualService: IBaseVirtualService | IEmptyVirtualService =
-      contract.versions.length === 0
-        ? createEmptyVirtualService(contract.appName, contract.appNamespace)
-        : createVirtualService(contract)
+      versions.length === 0
+        ? createEmptyVirtualService(appName, appNamespace)
+        : createVirtualService(appName, appNamespace, circles, uri, hosts)
     return virtualService
   }
-
-  private buildDestinationRules(contract: ISpinnakerPipelineConfiguration) {
-    return createDestinationRules(contract)
-  }
-
-  // private getCreateSpinnakerApplicationObject(applicationName: string): ICreateSpinnakerApplication {
-  //   return {
-  //     job: [{
-  //       type: AppConstants.SPINNAKER_CREATE_APPLICATION_JOB_TYPE,
-  //       application: {
-  //         cloudProviders: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD,
-  //         instancePort: AppConstants.SPINNAKER_CREATE_APPLICATION_PORT,
-  //         name: applicationName,
-  //         email: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL
-  //       }
-  //     }],
-  //     application: applicationName
-  //   }
-  // }
 }
