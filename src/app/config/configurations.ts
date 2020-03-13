@@ -2,6 +2,7 @@ import { ConfigurationConstants } from '../core/constants/application/configurat
 import IEnvConfiguration from '../core/integrations/configuration/interfaces/env-configuration.interface'
 
 export const Configuration: IEnvConfiguration = {
+
   postgresHost: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
 
   postgresPort: Number(process.env.DATABASE_PORT) || ConfigurationConstants.DATABASE_PORT,
