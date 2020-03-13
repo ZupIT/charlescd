@@ -154,7 +154,6 @@ describe('PipelineQueuesService', () => {
 
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
-            'dummy-id',
             'helm-repository',
             null
         )
@@ -184,7 +183,6 @@ describe('PipelineQueuesService', () => {
         ]
 
         moduleDeploymentWithRelations = new ModuleDeploymentEntity(
-            'dummy-id',
             'dummy-id',
             'helm-repository',
             componentDeploymentsList
@@ -229,7 +227,6 @@ describe('PipelineQueuesService', () => {
 
         undeploymentModuleDeployments = [
             new ModuleDeploymentEntity(
-                'dummy-id',
                 'dummy-id',
                 'helm-repository',
                 undeploymentComponentDeployments
@@ -284,12 +281,12 @@ describe('PipelineQueuesService', () => {
 
         moduleEntity = new ModuleEntity(
             'module-id',
-            null
+            null,
+            []
         )
 
         componentEntity = new ComponentEntity(
-            'component-id',
-            moduleEntity
+            'component-id'
         )
     })
 

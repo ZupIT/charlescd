@@ -117,7 +117,6 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         moduleDeployments = [
             new ModuleDeploymentEntity(
                 'dummy-id',
-                'dummy-id',
                 'helm-repository',
                 componentDeployments
             )
