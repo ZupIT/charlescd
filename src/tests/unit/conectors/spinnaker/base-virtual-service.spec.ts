@@ -48,7 +48,7 @@ it('creates empty virtual service when there is no versions', () => {
     helmRepository: 'helmRepository',
     circleId: 'circle-id'
   }
-  const virtualService = createEmptyVirtualService(contract)
+  const virtualService = createEmptyVirtualService(contract.appName, contract.appNamespace)
 
   expect(virtualService).toEqual(expectedEmptyVirtualService)
 
