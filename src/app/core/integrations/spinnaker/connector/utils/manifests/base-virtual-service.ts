@@ -163,11 +163,11 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
-  const newVirtualService = baseVirtualService(contract.appName, contract.appNamespace)
-  const matchers = createHttpMatchers(contract.circles, contract.appName, contract.uri.uriName)
-  if (contract.hosts) {
-    newVirtualService.spec.hosts = contract.hosts
+export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], uri: string, hosts: string[]) => {
+  const newVirtualService = baseVirtualService(appName, appNamespace)
+  const matchers = createHttpMatchers(circles, appName, uri)
+  if (hosts) {
+    newVirtualService.spec.hosts = hosts
   }
   newVirtualService.spec.http = matchers
   return newVirtualService

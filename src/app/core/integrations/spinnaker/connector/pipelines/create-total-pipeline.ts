@@ -99,7 +99,7 @@ export default class TotalPipeline {
   private buildDestinationRules(): IBuildReturn {
     const stageName = 'Deploy Destination Rules'
     const { account } = this.contract
-    const destinationRules = createDestinationRules(this.extractDestinationRulesParams())
+    const destinationRules = createDestinationRules(this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.versions)
     const destinationRulesStage = baseStage(
       destinationRules,
       stageName,
@@ -118,22 +118,15 @@ export default class TotalPipeline {
     }
   }
 
-  private extractDestinationRulesParams(): IDestinationRuleParams {
-    return {
-      appName: this.contract.appName,
-      appNamespace: this.contract.appNamespace,
-      circles: this.contract.circles,
-      versions: this.contract.versions
-    }
-  }
-
   private buildVirtualService(): IBuildReturn {
     const stageName = 'Deploy Virtual Service'
     const { account } = this.contract
     const virtualService: IBaseVirtualService | IEmptyVirtualService =
       this.contract.versions.length === 0
         ? createEmptyVirtualService(this.contract.appName, this.contract.appNamespace)
-        : createVirtualService(this.contract)
+        : createVirtualService(
+          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.uri.uriName, this.contract.hosts
+        )
     const virtualServiceStage = baseStage(
       virtualService,
       stageName,
