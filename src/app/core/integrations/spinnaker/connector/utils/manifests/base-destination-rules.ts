@@ -1,18 +1,27 @@
-import { IPipelineVersion } from '../../../../../../api/components/interfaces'
-import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
-import { ISpinnakerBaseService, ISubset } from './base-service'
+import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
+import { ISubset } from './base-service'
 
-interface RulesAppConfig {
+interface IDestinationRule {
+  apiVersion: string
+  kind: 'DestinationRule'
+  metadata: {
+    name: string
+    namespace: string
+  }
+  spec: {
+    host: string
+    subsets: ISubset[]
+  }
+}
+
+export interface IDestinationRuleParams {
+  circles: IPipelineCircle[]
   appName: string
   appNamespace: string
+  versions: IDeploymentVersion[]
 }
 
-interface SubsetParams {
-  versions: IPipelineVersion[]
-  appName: string
-}
-
-const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig): ISpinnakerBaseService => ({
+const baseDestinationRules = (appName: string, appNamespace: string): IDestinationRule => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'DestinationRule',
   metadata: {
@@ -25,7 +34,7 @@ const baseDestinationRules = ({ appName, appNamespace }: RulesAppConfig): ISpinn
   }
 })
 
-const createSubsets = ({ versions, appName }: SubsetParams): ISubset[] => {
+const createSubsets = (versions: IDeploymentVersion[], appName: string): ISubset[] => {
   return versions.map(({ version }) => ({
     labels: {
       version: `${appName}-${version}`
@@ -34,10 +43,10 @@ const createSubsets = ({ versions, appName }: SubsetParams): ISubset[] => {
   }))
 }
 
-const createDestinationRules = (contract: ISpinnakerPipelineConfiguration) => {
-  const newDestinationRule = baseDestinationRules(contract)
+const createDestinationRules = (contract: IDestinationRuleParams) => {
+  const newDestinationRule = baseDestinationRules(contract.appName, contract.appNamespace)
   if (contract.circles) {
-    const subsetsToAdd = createSubsets(contract)
+    const subsetsToAdd = createSubsets(contract.versions, contract.appName)
     newDestinationRule.spec.subsets = subsetsToAdd
   }
   return newDestinationRule
