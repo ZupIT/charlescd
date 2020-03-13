@@ -1,22 +1,26 @@
 import { Test } from '@nestjs/testing'
 import { DeploymentConfigurationService } from '../../../app/core/integrations/configuration'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { ComponentDeploymentsRepositoryStub } from '../../stubs/repository'
+import {
+  ComponentDeploymentsRepositoryStub,
+  K8sConfigurationsRepositoryStub
+} from '../../stubs/repository'
 import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity
 } from '../../../app/api/deployments/entity'
-import { MooveServiceStub } from '../../stubs/services'
+import { K8sConfigurationsRepository } from '../../../app/api/configurations/repository'
+import { K8sConfigurationDataEntity } from '../../../app/api/configurations/entity'
 
 describe('Deployment configuration specs', () => {
   let componentDeploymentsRepository: ComponentDeploymentsRepository
   let deployment: DeploymentEntity
   let moduleDeploymentEntity: ModuleDeploymentEntity
   let componentsDeploymentEntity: ComponentDeploymentEntity
-  let mooveService: MooveService
   let deploymentConfigurationService: DeploymentConfigurationService
+  let k8sConfigurationsRepository: K8sConfigurationsRepository
+  let k8sConfigurationData: K8sConfigurationDataEntity
 
   beforeEach(async () => {
 
@@ -24,13 +28,13 @@ describe('Deployment configuration specs', () => {
       providers: [
         DeploymentConfigurationService,
         { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: MooveService, useClass: MooveServiceStub }
+        { provide: K8sConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
       ]
     }).compile()
 
     deploymentConfigurationService = module.get<DeploymentConfigurationService>(DeploymentConfigurationService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    mooveService = module.get<MooveService>(MooveService)
+    k8sConfigurationsRepository = module.get<K8sConfigurationsRepository>(K8sConfigurationsRepository)
 
     componentsDeploymentEntity = new ComponentDeploymentEntity(
       'component-id',
@@ -44,7 +48,6 @@ describe('Deployment configuration specs', () => {
 
     moduleDeploymentEntity = new ModuleDeploymentEntity(
         'module-id',
-        'config-id',
         'helm-repository',
         [componentsDeploymentEntity]
     )
@@ -62,6 +65,11 @@ describe('Deployment configuration specs', () => {
     )
     moduleDeploymentEntity.deployment = deployment
     componentsDeploymentEntity.moduleDeployment = moduleDeploymentEntity
+
+    k8sConfigurationData = new K8sConfigurationDataEntity(
+        'some-account',
+        'some-namespace'
+    )
   })
 
   it('should correctly prefix the flow id', async () => {
@@ -69,10 +77,10 @@ describe('Deployment configuration specs', () => {
 
     jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
       .mockImplementation(() => Promise.resolve(componentsDeploymentEntity))
-    jest.spyOn(mooveService, 'getK8sConfiguration')
-      .mockImplementation(() => Promise.resolve({ namespace: 'some-namespace', account: 'some-account' }))
+    jest.spyOn(k8sConfigurationsRepository, 'findDecrypted')
+      .mockImplementation(() => Promise.resolve(k8sConfigurationData))
 
-    expect(await deploymentConfigurationService.getConfiguration('some-id')).toEqual(
+    expect(await deploymentConfigurationService.getConfiguration('some-id', 'module-id')).toEqual(
       {
         account: 'some-account',
         appName: 'component name',

@@ -12,7 +12,11 @@ import {
     CreateCircleDeploymentRequestUsecaseStub,
     CreateUndeploymentRequestUsecaseStub
 } from '../../stubs/use-cases'
-import { DeploymentsRepositoryStub } from '../../stubs/repository'
+import {
+    ComponentsRepositoryStub,
+    DeploymentsRepositoryStub,
+    ModulesRepositoryStub
+} from '../../stubs/repository'
 
 describe('DeploymentsController', () => {
 
@@ -46,6 +50,14 @@ describe('DeploymentsController', () => {
                     provide: 'DeploymentEntityRepository',
                     useClass: DeploymentsRepositoryStub
                 },
+                {
+                    provide: 'ModuleEntityRepository',
+                    useClass: ModulesRepositoryStub
+                },
+                {
+                    provide: 'ComponentEntityRepository',
+                    useClass: ComponentsRepositoryStub
+                }
             ]
         }).compile()
 

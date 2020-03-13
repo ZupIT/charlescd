@@ -4,6 +4,7 @@ import { ModulesService } from './services'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ModuleEntity } from './entity'
+import { CreateModuleUsecase } from './use-cases'
 
 @Module({
   imports: [
@@ -12,7 +13,12 @@ import { ModuleEntity } from './entity'
       ModuleEntity
     ])
   ],
-  controllers: [ModulesController],
-  providers: [ModulesService]
+  controllers: [
+      ModulesController
+  ],
+  providers: [
+      ModulesService,
+      CreateModuleUsecase
+  ]
 })
 export class ModulesModule {}
