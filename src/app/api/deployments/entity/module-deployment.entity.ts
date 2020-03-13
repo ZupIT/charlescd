@@ -30,9 +30,6 @@ export class ModuleDeploymentEntity extends BaseEntity {
   @Column({ name: 'module_id' })
   public moduleId: string
 
-  @Column({ name: 'k8s_configuration_id' })
-  public k8sConfigurationId: string
-
   @Column({ name: 'helm_repository' })
   public readonly helmRepository: string
 
@@ -51,14 +48,12 @@ export class ModuleDeploymentEntity extends BaseEntity {
 
   constructor(
     moduleId: string,
-    k8sConfigurationId: string,
     helmRepository: string,
     components: ComponentDeploymentEntity[]
   ) {
     super()
     this.id = uuidv4()
     this.moduleId = moduleId
-    this.k8sConfigurationId = k8sConfigurationId
     this.helmRepository = helmRepository
     this.components = components
     this.status = DeploymentStatusEnum.CREATED
@@ -68,7 +63,6 @@ export class ModuleDeploymentEntity extends BaseEntity {
     return new ReadModuleDeploymentDto(
       this.id,
       this.moduleId,
-      this.k8sConfigurationId,
       this.helmRepository,
       this.components.map(component => component.toReadDto()),
       this.status,

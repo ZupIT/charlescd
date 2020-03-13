@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  Column,
   CreateDateColumn,
   Entity,
   OneToMany,
@@ -17,6 +18,9 @@ export class ModuleEntity extends BaseEntity {
   })
   public id: string
 
+  @Column({ name: 'k8s_configuration_id'})
+  public k8sConfigurationId: string
+
   @OneToMany(
     type => ComponentEntity,
     componentEntity => componentEntity.module,
@@ -29,26 +33,21 @@ export class ModuleEntity extends BaseEntity {
 
   constructor(
     moduleId: string,
+    k8sConfigurationId: string,
     components: ComponentEntity[]
   ) {
     super()
     this.id = moduleId
+    this.k8sConfigurationId = k8sConfigurationId
     this.components = components
-  }
-
-  public async addComponent(component: ComponentEntity): Promise<void> {
-    this.components = [...this.components, component]
-  }
-
-  public getComponentById(componentId: string): ComponentEntity {
-    return this.components.find(component => component.id === componentId)
   }
 
   public toReadDto(): ReadModuleDto {
     return new ReadModuleDto(
       this.id,
       this.components.map(component => component.toReadDto()),
-      this.createdAt
+      this.createdAt,
+      this.k8sConfigurationId
     )
   }
 }

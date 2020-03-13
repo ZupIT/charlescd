@@ -4,6 +4,7 @@ import { ModulesModule } from './modules/modules.module'
 import { HealthcheckModule } from './healthcheck/healthcheck.module'
 import { NotificationsModule } from './notifications/notitications.module'
 import { ComponentsModule } from './components/components.module'
+import { ConfigurationsModule } from './configurations/configurations.module'
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { ComponentsModule } from './components/components.module'
     ModulesModule,
     HealthcheckModule,
     NotificationsModule,
-    ComponentsModule
+    ComponentsModule,
+    ConfigurationsModule
   ]
 })
 export class ApiModule {}

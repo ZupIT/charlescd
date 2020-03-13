@@ -1,6 +1,5 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
-import { IK8sConfiguration } from '../configuration/interfaces'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 import { IoCTokensConstants } from '../../constants/ioc'
 
@@ -31,21 +30,6 @@ export class MooveService {
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
         this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
-        throw error
-      }
-    }
-
-    public async getK8sConfiguration(k8sConfigurationId: string): Promise<IK8sConfiguration> {
-      try {
-        this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
-        const k8sConfiguration = await this.httpService.get(
-          `${this.envConfiguration.mooveUrl}/credentials/k8s/${k8sConfigurationId}`,
-          { headers: { 'x-organization': 'zup' } }
-        ).toPromise()
-        this.consoleLoggerService.log('FINISH:GET_K8S_CONFIG')
-        return k8sConfiguration.data.value
-      } catch (error) {
-        this.consoleLoggerService.error('ERROR:GET_K8S_CONFIG', error)
         throw error
       }
     }

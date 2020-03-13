@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
-    ModuleDeploymentEntity,
     QueuedDeploymentEntity
 } from '../entity'
 import { Repository } from 'typeorm'
@@ -50,12 +49,11 @@ export class CreateCircleDeploymentRequestUsecase {
         try {
             this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
             deployment = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
-            await this.saveModulesAndComponentEntities(deployment)
             await this.scheduleComponentDeployments(deployment)
             this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
@@ -70,51 +68,6 @@ export class CreateCircleDeploymentRequestUsecase {
             return await this.deploymentsRepository.save(createCircleDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
             throw new InternalServerErrorException('Could not save deployment')
-        }
-    }
-
-    private async saveModulesAndComponentEntities(deployment: DeploymentEntity): Promise<void> {
-        try {
-            await Promise.all(
-                deployment.modules
-                    .map(moduleDeployment => this.saveModuleEntities(moduleDeployment))
-            )
-        } catch (error) {
-            throw new InternalServerErrorException('Could not save modules')
-        }
-    }
-
-    private async saveModuleEntities(moduleDeployment: ModuleDeploymentEntity): Promise<void> {
-        let moduleEntity: ModuleEntity
-
-        moduleEntity = await this.modulesRepository.findOne({ id: moduleDeployment.moduleId })
-        if (!moduleEntity) {
-            moduleEntity = await this.modulesRepository.save(
-                new ModuleEntity(moduleDeployment.moduleId, [])
-            )
-        }
-        await this.saveComponentsEntities(moduleDeployment, moduleEntity)
-    }
-
-    private async saveComponentsEntities(moduleDeployment: ModuleDeploymentEntity, moduleEntity: ModuleEntity): Promise<void> {
-        try {
-            await Promise.all(
-                moduleDeployment.components
-                    .map(componentDeployment => this.saveComponentEntity(componentDeployment, moduleEntity))
-            )
-        } catch (error) {
-            throw new InternalServerErrorException('Could not save components')
-        }
-    }
-
-    private async saveComponentEntity(componentDeployment: ComponentDeploymentEntity, module: ModuleEntity): Promise<ComponentEntity> {
-        const componentEntity: ComponentEntity =
-            await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-
-        if (!componentEntity) {
-            return await this.componentsRepository.save(
-                new ComponentEntity(componentDeployment.componentId, module)
-            )
         }
     }
 
@@ -140,7 +93,8 @@ export class CreateCircleDeploymentRequestUsecase {
 
         try {
             queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+            const component: ComponentEntity =
+                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
                 await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
             }
