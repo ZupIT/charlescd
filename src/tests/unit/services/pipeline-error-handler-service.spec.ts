@@ -1,8 +1,12 @@
 import { Test } from '@nestjs/testing'
-import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
+import {
+    PipelineErrorHandlerService,
+    PipelineQueuesService
+} from '../../../app/api/deployments/services'
 import {
     ComponentsRepositoryStub,
-    DeploymentsRepositoryStub, ModuleDeploymentsRepositoryStub,
+    DeploymentsRepositoryStub,
+    ModuleDeploymentsRepositoryStub,
     QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
@@ -24,16 +28,15 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository';
-import { ComponentEntity } from '../../../app/api/components/entity';
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { ComponentEntity } from '../../../app/api/components/entity'
 import {
     DeploymentStatusEnum,
     QueuedPipelineStatusEnum,
     UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums';
-import { ModuleEntity } from '../../../app/api/modules/entity';
-import { IPipelineOptions } from '../../../app/api/components/interfaces';
-import { InternalServerErrorException } from '@nestjs/common';
+} from '../../../app/api/deployments/enums'
+import { ModuleEntity } from '../../../app/api/modules/entity'
+import { IPipelineOptions } from '../../../app/api/components/interfaces'
 
 describe('Pipeline Error Handler Service specs', () => {
 
@@ -77,7 +80,6 @@ describe('Pipeline Error Handler Service specs', () => {
             ]
         }).compile()
 
-
         pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentsRepository')
@@ -100,7 +102,6 @@ describe('Pipeline Error Handler Service specs', () => {
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
-            'helm-repository',
             [componentDeployment]
         )
 
@@ -159,13 +160,11 @@ describe('Pipeline Error Handler Service specs', () => {
         deploymentFailed.status = DeploymentStatusEnum.FAILED
 
         componentEntity = new ComponentEntity(
-            'component-id',
-            moduleEntity
+            'component-id'
         )
 
         componentEntityUpdated = new ComponentEntity(
-            'component-id',
-            moduleEntity
+            'component-id'
         )
         const pipelineCircle = {
             header :
@@ -184,6 +183,7 @@ describe('Pipeline Error Handler Service specs', () => {
 
         moduleEntity = new ModuleEntity(
             'module-id',
+            'k8s-id',
             [componentEntity]
         )
 
@@ -223,10 +223,7 @@ describe('Pipeline Error Handler Service specs', () => {
             await expect(
                  pipelineErrorHandlerService
                     .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)).rejects.toThrow()
-
-
         })
-
     })
 
     describe('handleComponentUnDeploymentFailure', () => {

@@ -13,9 +13,6 @@ export class CreateModuleDeploymentDto {
   public readonly moduleId: string
 
   @IsNotEmpty()
-  public readonly k8sConfigurationId: string
-
-  @IsNotEmpty()
   public readonly helmRepository: string
 
   @IsDefined()
@@ -26,7 +23,6 @@ export class CreateModuleDeploymentDto {
   public toEntity(): ModuleDeploymentEntity {
     return new ModuleDeploymentEntity(
       this.moduleId,
-      this.k8sConfigurationId,
       this.helmRepository,
       this.components.map(component => component.toEntity())
     )

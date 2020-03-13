@@ -52,7 +52,7 @@ export class PipelineQueuesService {
 
     try {
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
-      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
       const { moduleDeployment: { deployment } } = componentDeployment
 
       deployment.defaultCircle ?
@@ -70,7 +70,7 @@ export class PipelineQueuesService {
 
     try {
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
-      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
       const { moduleDeployment: { deployment } } = componentDeployment
       const undeployment = await this.undeploymentsRepository.findOne({ where: { deployment_id: deployment.id } })
       await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
