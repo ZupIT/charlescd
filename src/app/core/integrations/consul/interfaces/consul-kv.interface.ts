@@ -18,6 +18,8 @@ export interface IConsulKV {
 
   spinnakerUrl?: string
 
+  octopipeUrl?: string
+
   spinnakerGithubAccount?: string
 
   helmTemplateUrl?: string
