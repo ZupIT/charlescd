@@ -80,7 +80,6 @@ export class OctopipeService {
     deploymentConfiguration: IDeploymentConfiguration,
     componentDeploymentId: string,
     deploymentId: string,
-    circleId: string,
     pipelineCallbackUrl: string,
     queueId: number
   ): Promise<void> {
@@ -89,25 +88,9 @@ export class OctopipeService {
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const payload: IOctopipeConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
+        pipelineCirclesOptions, deploymentConfiguration, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
       )
 
-    // decidir rota, fazer post com payload da configuration
-    // payload.istio.virtualService = this.buildVirtualServices(spinnakerPipelineConfiguration)
-    payload.istio.virtualService = this.buildVirtualServices(
-      deploymentConfiguration.appName,
-      deploymentConfiguration.appNamespace,
-      pipelineCirclesOptions.pipelineCircles,
-      pipelineCallbackUrl,
-      [deploymentConfiguration.appName],
-      pipelineCirclesOptions.pipelineVersions
-    )
-    payload.istio.destinationRules = createDestinationRules(
-      deploymentConfiguration.appName,
-      deploymentConfiguration.appNamespace,
-      pipelineCirclesOptions.pipelineCircles,
-      pipelineCirclesOptions.pipelineVersions
-    )
     this.deploy(payload, deploymentId, queueId)
   }
 
@@ -134,24 +117,40 @@ export class OctopipeService {
     }
   }
 
-  private createPipelineConfigurationObject(
+  public createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IDeploymentConfiguration,
-    circleId: string,
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity
   ): IOctopipeConfiguration {
 
-    return {
+    const payload = {
       appName: deploymentConfiguration.appName,
       appNamespace: deploymentConfiguration.appNamespace,
-      github: { username: 'aaa', password: 'bbb' },
+      github: { username: 'aaa', password: 'bbb' }, // TODO get credentials from configuration, not implemented yet
       helmUrl: moduleDeployment.helmRepository,
-      istio: { virtualService: {}, destinationRules: {} }, // buscar do compiler de virtualservice
+      istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       versions: pipelineCirclesOptions.pipelineVersions,
       webHookUrl: pipelineCallbackUrl
     }
+
+    payload.istio.virtualService = this.buildVirtualServices(
+      deploymentConfiguration.appName,
+      deploymentConfiguration.appNamespace,
+      pipelineCirclesOptions.pipelineCircles,
+      pipelineCallbackUrl,
+      [deploymentConfiguration.appName],
+      pipelineCirclesOptions.pipelineVersions
+    )
+    payload.istio.destinationRules = createDestinationRules(
+      deploymentConfiguration.appName,
+      deploymentConfiguration.appNamespace,
+      pipelineCirclesOptions.pipelineCircles,
+      pipelineCirclesOptions.pipelineVersions
+    )
+
+    return payload
   }
 
   private async handleDeploymentFailure(deploymentId: string, queueId: number): Promise<void> {
