@@ -3,7 +3,7 @@ import {
     CdConfigurationEntity
 } from '../../../app/api/configurations/entity'
 
-export class K8sConfigurationsRepositoryStub {
+export class CdConfigurationsRepositoryStub {
 
     public findDecrypted(): Promise<CdConfigurationDataEntity> {
         return Promise.resolve({} as CdConfigurationDataEntity)

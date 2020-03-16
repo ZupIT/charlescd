@@ -1,6 +1,6 @@
 import { ReadCdConfigurationDto } from '../../../app/api/configurations/dto'
 
-export class GetK8sConfigurationUsecaseStub {
+export class GetCdConfigurationUsecaseStub {
 
     public execute(): Promise<ReadCdConfigurationDto[]> {
         return Promise.resolve([] as ReadCdConfigurationDto[])

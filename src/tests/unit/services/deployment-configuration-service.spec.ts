@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { DeploymentConfigurationService } from '../../../app/core/integrations/configuration'
 import {
   ComponentDeploymentsRepositoryStub,
-  K8sConfigurationsRepositoryStub
+  CdConfigurationsRepositoryStub
 } from '../../stubs/repository'
 import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
@@ -19,8 +19,8 @@ describe('Deployment configuration specs', () => {
   let moduleDeploymentEntity: ModuleDeploymentEntity
   let componentsDeploymentEntity: ComponentDeploymentEntity
   let deploymentConfigurationService: DeploymentConfigurationService
-  let k8sConfigurationsRepository: CdConfigurationsRepository
-  let k8sConfigurationData: CdConfigurationDataEntity
+  let cdConfigurationsRepository: CdConfigurationsRepository
+  let cdConfigurationData: CdConfigurationDataEntity
 
   beforeEach(async () => {
 
@@ -28,13 +28,13 @@ describe('Deployment configuration specs', () => {
       providers: [
         DeploymentConfigurationService,
         { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: CdConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
+        { provide: CdConfigurationsRepository, useClass: CdConfigurationsRepositoryStub }
       ]
     }).compile()
 
     deploymentConfigurationService = module.get<DeploymentConfigurationService>(DeploymentConfigurationService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    k8sConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
+    cdConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
 
     componentsDeploymentEntity = new ComponentDeploymentEntity(
       'component-id',
@@ -66,7 +66,7 @@ describe('Deployment configuration specs', () => {
     moduleDeploymentEntity.deployment = deployment
     componentsDeploymentEntity.moduleDeployment = moduleDeploymentEntity
 
-    k8sConfigurationData = new CdConfigurationDataEntity(
+    cdConfigurationData = new CdConfigurationDataEntity(
         'some-account',
         'some-namespace'
     )
@@ -77,8 +77,8 @@ describe('Deployment configuration specs', () => {
 
     jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
       .mockImplementation(() => Promise.resolve(componentsDeploymentEntity))
-    jest.spyOn(k8sConfigurationsRepository, 'findDecrypted')
-      .mockImplementation(() => Promise.resolve(k8sConfigurationData))
+    jest.spyOn(cdConfigurationsRepository, 'findDecrypted')
+      .mockImplementation(() => Promise.resolve(cdConfigurationData))
 
     expect(await deploymentConfigurationService.getConfiguration('some-id', 'module-id')).toEqual(
       {
