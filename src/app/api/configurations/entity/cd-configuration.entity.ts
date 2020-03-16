@@ -4,12 +4,12 @@ import {
     Entity,
     PrimaryColumn
 } from 'typeorm'
-import { ReadK8sConfigurationDto } from '../dto'
+import { ReadCdConfigurationDto } from '../dto'
 import * as uuidv4 from 'uuid/v4'
-import { K8sConfigurationDataEntity } from './'
+import { CdConfigurationDataEntity } from './'
 
-@Entity('k8s_configurations')
-export class K8sConfigurationEntity extends BaseEntity {
+@Entity('cd_configurations')
+export class CdConfigurationEntity extends BaseEntity {
 
     @PrimaryColumn({ name: 'id' })
     public id: string
@@ -18,7 +18,7 @@ export class K8sConfigurationEntity extends BaseEntity {
     public name: string
 
     @Column({ type: 'text', name: 'configuration_data' })
-    public configurationData: K8sConfigurationDataEntity
+    public configurationData: CdConfigurationDataEntity
 
     @Column({ name: 'user_id' })
     public authorId: string
@@ -31,7 +31,7 @@ export class K8sConfigurationEntity extends BaseEntity {
 
     constructor(
         name: string,
-        configurationData: K8sConfigurationDataEntity,
+        configurationData: CdConfigurationDataEntity,
         authorId: string,
         applicationId: string
     ) {
@@ -43,8 +43,8 @@ export class K8sConfigurationEntity extends BaseEntity {
         this.applicationId = applicationId
     }
 
-    public toReadDto(): ReadK8sConfigurationDto {
-        return new ReadK8sConfigurationDto(
+    public toReadDto(): ReadCdConfigurationDto {
+        return new ReadCdConfigurationDto(
             this.id,
             this.name,
             this.authorId,

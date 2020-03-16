@@ -1,4 +1,4 @@
-export class ReadK8sConfigurationDto {
+export class ReadCdConfigurationDto {
 
     public readonly id: string
 

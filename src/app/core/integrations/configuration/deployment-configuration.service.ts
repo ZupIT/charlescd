@@ -8,8 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { MooveService } from '../moove'
 import { ComponentDeploymentsRepository } from '../../../api/deployments/repository'
 import { AppConstants } from '../../constants'
-import { K8sConfigurationsRepository } from '../../../api/configurations/repository'
-import { K8sConfigurationDataEntity } from '../../../api/configurations/entity'
+import { CdConfigurationsRepository } from '../../../api/configurations/repository'
+import { CdConfigurationDataEntity } from '../../../api/configurations/entity'
 
 @Injectable()
 export class DeploymentConfigurationService {
@@ -17,8 +17,8 @@ export class DeploymentConfigurationService {
   constructor(
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @InjectRepository(K8sConfigurationsRepository)
-    private readonly k8sConfigurationsRepository: K8sConfigurationsRepository
+    @InjectRepository(CdConfigurationsRepository)
+    private readonly k8sConfigurationsRepository: CdConfigurationsRepository
   ) {}
 
   public async getConfiguration(
@@ -28,7 +28,7 @@ export class DeploymentConfigurationService {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const k8sConfigurationData: K8sConfigurationDataEntity =
+    const k8sConfigurationData: CdConfigurationDataEntity =
       await this.k8sConfigurationsRepository.findDecrypted(k8sConfigurationId)
 
     if (k8sConfigurationData) {
@@ -39,7 +39,7 @@ export class DeploymentConfigurationService {
   }
 
   private getConfigurationObject(
-    k8sConfigurationData: K8sConfigurationDataEntity,
+    k8sConfigurationData: CdConfigurationDataEntity,
     componentDeploymentEntity: ComponentDeploymentEntity
   ): IDeploymentConfiguration {
 

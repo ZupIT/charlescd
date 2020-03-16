@@ -10,8 +10,8 @@ import {
   DeploymentEntity,
   ModuleDeploymentEntity
 } from '../../../app/api/deployments/entity'
-import { K8sConfigurationsRepository } from '../../../app/api/configurations/repository'
-import { K8sConfigurationDataEntity } from '../../../app/api/configurations/entity'
+import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
+import { CdConfigurationDataEntity } from '../../../app/api/configurations/entity'
 
 describe('Deployment configuration specs', () => {
   let componentDeploymentsRepository: ComponentDeploymentsRepository
@@ -19,8 +19,8 @@ describe('Deployment configuration specs', () => {
   let moduleDeploymentEntity: ModuleDeploymentEntity
   let componentsDeploymentEntity: ComponentDeploymentEntity
   let deploymentConfigurationService: DeploymentConfigurationService
-  let k8sConfigurationsRepository: K8sConfigurationsRepository
-  let k8sConfigurationData: K8sConfigurationDataEntity
+  let k8sConfigurationsRepository: CdConfigurationsRepository
+  let k8sConfigurationData: CdConfigurationDataEntity
 
   beforeEach(async () => {
 
@@ -28,13 +28,13 @@ describe('Deployment configuration specs', () => {
       providers: [
         DeploymentConfigurationService,
         { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: K8sConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
+        { provide: CdConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
       ]
     }).compile()
 
     deploymentConfigurationService = module.get<DeploymentConfigurationService>(DeploymentConfigurationService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    k8sConfigurationsRepository = module.get<K8sConfigurationsRepository>(K8sConfigurationsRepository)
+    k8sConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
 
     componentsDeploymentEntity = new ComponentDeploymentEntity(
       'component-id',
@@ -66,7 +66,7 @@ describe('Deployment configuration specs', () => {
     moduleDeploymentEntity.deployment = deployment
     componentsDeploymentEntity.moduleDeployment = moduleDeploymentEntity
 
-    k8sConfigurationData = new K8sConfigurationDataEntity(
+    k8sConfigurationData = new CdConfigurationDataEntity(
         'some-account',
         'some-namespace'
     )

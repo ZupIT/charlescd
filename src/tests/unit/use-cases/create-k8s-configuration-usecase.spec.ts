@@ -1,40 +1,40 @@
 import { Test } from '@nestjs/testing'
 import { K8sConfigurationsRepositoryStub } from '../../stubs/repository'
 import { CreateK8sConfigurationUsecase } from '../../../app/api/configurations/use-cases'
-import { K8sConfigurationsRepository } from '../../../app/api/configurations/repository'
+import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
 import {
-    K8sConfigurationDataEntity,
-    K8sConfigurationEntity
+    CdConfigurationDataEntity,
+    CdConfigurationEntity
 } from '../../../app/api/configurations/entity'
-import { CreateK8sConfigurationDto } from '../../../app/api/configurations/dto'
+import { CreateCdConfigurationDto } from '../../../app/api/configurations/dto'
 
 describe('CreateK8sConfigurationUsecase', () => {
 
     let createK8sConfigurationUsecase: CreateK8sConfigurationUsecase
-    let k8sConfigurationsRepository: K8sConfigurationsRepository
-    let k8sConfiguration: K8sConfigurationEntity
-    let createK8sConfigurationDto: CreateK8sConfigurationDto
+    let k8sConfigurationsRepository: CdConfigurationsRepository
+    let k8sConfiguration: CdConfigurationEntity
+    let createK8sConfigurationDto: CreateCdConfigurationDto
 
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
             providers: [
                 CreateK8sConfigurationUsecase,
-                { provide: K8sConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
+                { provide: CdConfigurationsRepository, useClass: K8sConfigurationsRepositoryStub }
             ]
         }).compile()
 
         createK8sConfigurationUsecase = module.get<CreateK8sConfigurationUsecase>(CreateK8sConfigurationUsecase)
-        k8sConfigurationsRepository = module.get<K8sConfigurationsRepository>(K8sConfigurationsRepository)
+        k8sConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
 
-        createK8sConfigurationDto = new CreateK8sConfigurationDto(
+        createK8sConfigurationDto = new CreateCdConfigurationDto(
             'name',
             'account',
             'namespace',
             'authorId'
         )
 
-        k8sConfiguration = new K8sConfigurationEntity(
+        k8sConfiguration = new CdConfigurationEntity(
             'name',
             undefined,
             'authorId',

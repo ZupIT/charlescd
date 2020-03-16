@@ -9,15 +9,15 @@ import {
     GetK8sConfigurationsUsecase
 } from '../../../app/api/configurations/use-cases'
 import {
-    CreateK8sConfigurationDto,
-    ReadK8sConfigurationDto
+    CreateCdConfigurationDto,
+    ReadCdConfigurationDto
 } from '../../../app/api/configurations/dto'
 
 describe('ConfigurationsController', () => {
 
     let configurationsController: ConfigurationsController
     let createK8sConfigurationUsecase: CreateK8sConfigurationUsecase
-    let createK8sConfigurationDto: CreateK8sConfigurationDto
+    let createK8sConfigurationDto: CreateCdConfigurationDto
     let getK8sConfigurationUsecase: GetK8sConfigurationsUsecase
 
     beforeEach(async () => {
@@ -42,7 +42,7 @@ describe('ConfigurationsController', () => {
         createK8sConfigurationUsecase = module.get<CreateK8sConfigurationUsecase>(CreateK8sConfigurationUsecase)
         getK8sConfigurationUsecase = module.get<GetK8sConfigurationsUsecase>(GetK8sConfigurationsUsecase)
 
-        createK8sConfigurationDto = new CreateK8sConfigurationDto(
+        createK8sConfigurationDto = new CreateCdConfigurationDto(
             'name',
             'account',
             'namespace',
@@ -55,7 +55,7 @@ describe('ConfigurationsController', () => {
         it('should return the same readK8sConfigurationDto that the usecase', async () => {
 
             const creationDate: Date = new Date()
-            const readK8sConfigurationDto: ReadK8sConfigurationDto = new ReadK8sConfigurationDto(
+            const readK8sConfigurationDto: ReadCdConfigurationDto = new ReadCdConfigurationDto(
                 'id',
                 createK8sConfigurationDto.name,
                 createK8sConfigurationDto.authorId,
@@ -77,14 +77,14 @@ describe('ConfigurationsController', () => {
         it('should return the same readK8sConfigurationDto array that the usecase', async () => {
 
             const creationDate: Date = new Date()
-            const readK8sConfigurationDto: ReadK8sConfigurationDto = new ReadK8sConfigurationDto(
+            const readK8sConfigurationDto: ReadCdConfigurationDto = new ReadCdConfigurationDto(
                 'id',
                 createK8sConfigurationDto.name,
                 createK8sConfigurationDto.authorId,
                 'applicationId',
                 creationDate
             )
-            const readK8sConfigurationDtoArray: ReadK8sConfigurationDto[] = [readK8sConfigurationDto, readK8sConfigurationDto]
+            const readK8sConfigurationDtoArray: ReadCdConfigurationDto[] = [readK8sConfigurationDto, readK8sConfigurationDto]
 
             jest.spyOn(getK8sConfigurationUsecase, 'execute')
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDtoArray))
