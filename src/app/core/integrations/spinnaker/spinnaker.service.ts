@@ -1,36 +1,18 @@
-import {
-  forwardRef,
-  HttpService,
-  Inject,
-  Injectable
-} from '@nestjs/common'
-import { IPipelineOptions } from '../../../api/components/interfaces'
-import { AppConstants } from '../../constants'
-import { IDeploymentConfiguration } from '../configuration/interfaces'
-import {
-  ICreateSpinnakerApplication,
-  ISpinnakerPipelineConfiguration
-} from './interfaces'
-import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
-import { ConsoleLoggerService } from '../../logs/console'
-import TotalPipeline from './connector'
-import { IConsulKV } from '../consul/interfaces'
-import {
-  ComponentDeploymentEntity,
-  ComponentUndeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity,
-  QueuedDeploymentEntity,
-  QueuedUndeploymentEntity
-} from '../../../api/deployments/entity'
+import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { IPipelineOptions } from '../../../api/components/interfaces'
+import { ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../api/deployments/entity'
+import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
+import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../api/deployments/repository'
 import { PipelineErrorHandlerService } from '../../../api/deployments/services'
-import {
-  ComponentDeploymentsRepository,
-  ComponentUndeploymentsRepository,
-  QueuedDeploymentsRepository
-} from '../../../api/deployments/repository'
+import { AppConstants } from '../../constants'
+import { IoCTokensConstants } from '../../constants/ioc'
+import { ConsoleLoggerService } from '../../logs/console'
+import { IDeploymentConfiguration } from '../configuration/interfaces'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import TotalPipeline from './connector'
+import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 
 @Injectable()
 export class SpinnakerService {
@@ -38,8 +20,8 @@ export class SpinnakerService {
   constructor(
     private readonly httpService: HttpService,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(AppConstants.CONSUL_PROVIDER)
-    private readonly consulConfiguration: IConsulKV,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(QueuedDeploymentsRepository)
@@ -98,7 +80,7 @@ export class SpinnakerService {
       await this.waitForPipelineCreation()
       this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${application} `)
       await this.httpService.post(
-          `${this.consulConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
+          `${this.envConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
           {},
           {
             headers: {
@@ -126,7 +108,7 @@ export class SpinnakerService {
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
-      githubAccount: this.consulConfiguration.spinnakerGithubAccount,
+      githubAccount: this.envConfiguration.spinnakerGithubAccount,
       helmRepository: moduleDeployment.helmRepository,
       circleId
     }
@@ -156,7 +138,7 @@ export class SpinnakerService {
     try {
       const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguration)
       await this.httpService.post(
-        `${this.consulConfiguration.spinnakerUrl}/pipelines`,
+        `${this.envConfiguration.spinnakerUrl}/pipelines`,
         pipeline,
         {
           headers: {
@@ -191,7 +173,7 @@ export class SpinnakerService {
       this.createUpdatePipelineObject(pipelineId, spinnakerPipelineConfiguraton, pipeline)
 
     await this.httpService.post(
-      `${this.consulConfiguration.spinnakerUrl}/pipelines`,
+      `${this.envConfiguration.spinnakerUrl}/pipelines`,
       updatePipelineObject,
       {
         headers: {
@@ -236,7 +218,7 @@ export class SpinnakerService {
 
   private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {
     const { data: { id } } = await this.httpService.get(
-      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
+      `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
     ).toPromise()
     return id
   }
@@ -262,7 +244,7 @@ export class SpinnakerService {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
 
     await this.httpService.post(
-      `${this.consulConfiguration.spinnakerUrl}/tasks`,
+      `${this.envConfiguration.spinnakerUrl}/tasks`,
       createApplicationObject,
       {
         headers: {
@@ -275,7 +257,7 @@ export class SpinnakerService {
 
   private async checkSpinnakerApplicationExistence(applicationName: string): Promise<void> {
     await this.httpService.get(
-      `${this.consulConfiguration.spinnakerUrl}/applications/${applicationName}`,
+      `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}`,
       {
         headers: {
           'Content-Type': 'application/json',

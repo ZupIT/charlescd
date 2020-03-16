@@ -8,7 +8,7 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { ConsulConfigurationStub } from '../../stubs/configurations'
+import { EnvConfigurationStub } from '../../stubs/configurations'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { AppConstants } from '../../../app/core/constants'
@@ -46,6 +46,7 @@ import {
   UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
@@ -79,7 +80,7 @@ describe('Spinnaker Service', () => {
         { provide: HttpService, useClass: HttpServiceStub },
         { provide: StatusManagementService, useClass: StatusManagementServiceStub },
         { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-        { provide: AppConstants.CONSUL_PROVIDER, useValue: ConsulConfigurationStub },
+        { provide: IoCTokensConstants.ENV_CONFIGURATION, useValue: EnvConfigurationStub },
         { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
         { provide: MooveService, useClass: MooveServiceStub },
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
