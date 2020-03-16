@@ -8,7 +8,7 @@ import { QueuedUndeploymentsRepositoryStub } from './queued-undeployments-reposi
 import { ComponentUndeploymentsRepositoryStub } from './component-undeployments-repository.stub'
 import { ModuleDeploymentsRepositoryStub } from './module-deployments-repository.stub'
 import { ModuleUndeploymentsRepositoryStub } from './module-undeployments-repository.stub'
-import { K8sConfigurationsRepositoryStub } from './k8s-configurations-repository.stub'
+import { CdConfigurationsRepositoryStub } from './cd-configurations-repository.stub'
 
 export {
     DeploymentsRepositoryStub,
@@ -21,5 +21,5 @@ export {
     ComponentUndeploymentsRepositoryStub,
     ModuleDeploymentsRepositoryStub,
     ModuleUndeploymentsRepositoryStub,
-    K8sConfigurationsRepositoryStub
+    CdConfigurationsRepositoryStub
 }

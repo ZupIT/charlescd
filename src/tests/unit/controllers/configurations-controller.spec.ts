@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing'
 import {
-    CreateK8sConfigurationUsecaseStub,
-    GetK8sConfigurationUsecaseStub
+    CreateCdConfigurationUsecaseStub,
+    GetCdConfigurationUsecaseStub
 } from '../../stubs/use-cases'
 import { ConfigurationsController } from '../../../app/api/configurations/controller'
 import {
-    CreateK8sConfigurationUsecase,
-    GetK8sConfigurationsUsecase
+    CreateCdConfigurationUsecase,
+    GetCdConfigurationsUsecase
 } from '../../../app/api/configurations/use-cases'
 import {
     CreateCdConfigurationDto,
@@ -16,9 +16,9 @@ import {
 describe('ConfigurationsController', () => {
 
     let configurationsController: ConfigurationsController
-    let createK8sConfigurationUsecase: CreateK8sConfigurationUsecase
+    let createK8sConfigurationUsecase: CreateCdConfigurationUsecase
     let createK8sConfigurationDto: CreateCdConfigurationDto
-    let getK8sConfigurationUsecase: GetK8sConfigurationsUsecase
+    let getK8sConfigurationUsecase: GetCdConfigurationsUsecase
 
     beforeEach(async () => {
 
@@ -28,19 +28,19 @@ describe('ConfigurationsController', () => {
             ],
             providers: [
                 {
-                    provide: CreateK8sConfigurationUsecase,
-                    useClass: CreateK8sConfigurationUsecaseStub
+                    provide: CreateCdConfigurationUsecase,
+                    useClass: CreateCdConfigurationUsecaseStub
                 },
                 {
-                    provide: GetK8sConfigurationsUsecase,
-                    useClass: GetK8sConfigurationUsecaseStub
+                    provide: GetCdConfigurationsUsecase,
+                    useClass: GetCdConfigurationUsecaseStub
                 }
             ]
         }).compile()
 
         configurationsController = module.get<ConfigurationsController>(ConfigurationsController)
-        createK8sConfigurationUsecase = module.get<CreateK8sConfigurationUsecase>(CreateK8sConfigurationUsecase)
-        getK8sConfigurationUsecase = module.get<GetK8sConfigurationsUsecase>(GetK8sConfigurationsUsecase)
+        createK8sConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
+        getK8sConfigurationUsecase = module.get<GetCdConfigurationsUsecase>(GetCdConfigurationsUsecase)
 
         createK8sConfigurationDto = new CreateCdConfigurationDto(
             'name',
@@ -67,7 +67,7 @@ describe('ConfigurationsController', () => {
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDto))
 
             expect(
-                await configurationsController.createK8sConfiguration(createK8sConfigurationDto, 'applicationId')
+                await configurationsController.createCdConfiguration(createK8sConfigurationDto, 'applicationId')
             ).toBe(readK8sConfigurationDto)
         })
     })
@@ -90,7 +90,7 @@ describe('ConfigurationsController', () => {
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDtoArray))
 
             expect(
-                await configurationsController.getK8sConfigurations('applicationId')
+                await configurationsController.getCdConfigurations('applicationId')
             ).toBe(readK8sConfigurationDtoArray)
         })
     })
