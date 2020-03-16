@@ -1,14 +1,10 @@
-import {
-    ModuleEntity
-} from '../entity'
+import { ModuleEntity } from '../entity'
 import {
     Allow,
-    IsDefined,
     ValidateNested
 } from 'class-validator'
 import { CreateComponentDto } from './'
 import { Type } from 'class-transformer'
-import { CreateCircleDeploymentDto } from '../../deployments/dto/create-deployment'
 
 export class CreateModuleDto {
 
@@ -16,7 +12,7 @@ export class CreateModuleDto {
     public readonly id: string
 
     @Allow()
-    public readonly k8sConfigurationId: string
+    public readonly cdConfigurationId: string
 
     @Allow()
     @ValidateNested({ each: true })
@@ -25,18 +21,18 @@ export class CreateModuleDto {
 
     constructor(
         id: string,
-        k8sConfigurationId: string,
+        cdConfigurationId: string,
         components: CreateComponentDto[]
     ) {
         this.id = id
-        this.k8sConfigurationId = k8sConfigurationId
+        this.cdConfigurationId = cdConfigurationId
         this.components = components
     }
 
     public toEntity(): ModuleEntity {
         return new ModuleEntity(
             this.id,
-            this.k8sConfigurationId,
+            this.cdConfigurationId,
             this.components.map(component => component.toEntity())
         )
     }
