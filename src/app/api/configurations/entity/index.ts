@@ -1,7 +1,7 @@
-import { K8sConfigurationEntity } from './k8s-configuration.entity'
-import { K8sConfigurationDataEntity } from './k8s-configuration-data.entity'
+import { CdConfigurationEntity } from './cd-configuration.entity'
+import { CdConfigurationDataEntity } from './cd-configuration-data.entity'
 
 export {
-    K8sConfigurationEntity,
-    K8sConfigurationDataEntity
+    CdConfigurationEntity,
+    CdConfigurationDataEntity
 }

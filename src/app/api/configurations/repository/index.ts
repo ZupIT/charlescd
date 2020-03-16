@@ -1,5 +1,5 @@
-import { K8sConfigurationsRepository } from './k8s-configurations.repository'
+import { CdConfigurationsRepository } from './cd-configurations.repository'
 
 export {
-    K8sConfigurationsRepository
+    CdConfigurationsRepository
 }

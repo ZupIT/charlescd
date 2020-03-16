@@ -1,4 +1,4 @@
-export class K8sConfigurationDataEntity {
+export class CdConfigurationDataEntity {
 
     public account: string
 

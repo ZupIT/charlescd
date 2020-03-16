@@ -1,7 +1,7 @@
-import { CreateK8sConfigurationDto } from './create-k8s-configuration.dto'
-import { ReadK8sConfigurationDto } from './read-k8s-configuration.dto'
+import { CreateCdConfigurationDto } from './create-cd-configuration.dto'
+import { ReadCdConfigurationDto } from './read-cd-configuration.dto'
 
 export {
-    CreateK8sConfigurationDto,
-    ReadK8sConfigurationDto
+    CreateCdConfigurationDto,
+    ReadCdConfigurationDto
 }

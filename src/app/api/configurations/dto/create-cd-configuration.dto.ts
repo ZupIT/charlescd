@@ -1,10 +1,10 @@
 import {
-    K8sConfigurationDataEntity,
-    K8sConfigurationEntity
+    CdConfigurationDataEntity,
+    CdConfigurationEntity
 } from '../entity'
 import { Allow } from 'class-validator'
 
-export class CreateK8sConfigurationDto {
+export class CreateCdConfigurationDto {
 
     @Allow()
     public readonly name: string
@@ -30,17 +30,17 @@ export class CreateK8sConfigurationDto {
         this.authorId = authorId
     }
 
-    public toEntity(applicationId: string): K8sConfigurationEntity {
-        return new K8sConfigurationEntity(
+    public toEntity(applicationId: string): CdConfigurationEntity {
+        return new CdConfigurationEntity(
             this.name,
-            this.createK8sConfigurationData(),
+            this.createCdConfigurationData(),
             this.authorId,
             applicationId
         )
     }
 
-    private createK8sConfigurationData(): K8sConfigurationDataEntity {
-        return new K8sConfigurationDataEntity(
+    private createCdConfigurationData(): CdConfigurationDataEntity {
+        return new CdConfigurationDataEntity(
             this.account,
             this.namespace
         )
