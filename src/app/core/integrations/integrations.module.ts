@@ -4,6 +4,7 @@ import {
   Module
 } from '@nestjs/common'
 import { SpinnakerService } from './spinnaker'
+import { OctopipeService } from './octopipe'
 import { DeploymentConfigurationService } from './configuration'
 import { MooveService } from './moove'
 import { LogsModule } from '../logs/logs.module'
@@ -39,12 +40,14 @@ import { DeploymentsModule } from '../../api/deployments/deployments.module'
   ],
   providers: [
     SpinnakerService,
+    OctopipeService,
     DeploymentConfigurationService,
     MooveService,
     DatabasesService
   ],
   exports: [
     SpinnakerService,
+    OctopipeService,
     DeploymentConfigurationService,
     MooveService,
     DatabasesService

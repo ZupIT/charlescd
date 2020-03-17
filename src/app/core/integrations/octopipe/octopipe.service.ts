@@ -112,6 +112,7 @@ export class OctopipeService {
       ).toPromise()
       this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
     } catch (error) {
+      this.consoleLoggerService.error(error)
       await this.handleDeploymentFailure(deploymentId, queueId)
     }
   }
