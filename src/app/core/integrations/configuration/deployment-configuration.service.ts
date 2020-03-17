@@ -5,11 +5,13 @@ import {
 import { IDeploymentConfiguration } from './interfaces'
 import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { MooveService } from '../moove'
 import { ComponentDeploymentsRepository } from '../../../api/deployments/repository'
 import { AppConstants } from '../../constants'
 import { CdConfigurationsRepository } from '../../../api/configurations/repository'
-import { CdConfigurationDataEntity } from '../../../api/configurations/entity'
+import {
+  ICdConfigurationData,
+  ISpinnakerConfigurationData
+} from '../../../api/configurations/interfaces'
 
 @Injectable()
 export class DeploymentConfigurationService {
@@ -18,7 +20,7 @@ export class DeploymentConfigurationService {
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(CdConfigurationsRepository)
-    private readonly k8sConfigurationsRepository: CdConfigurationsRepository
+    private readonly cdConfigurationsRepository: CdConfigurationsRepository
   ) {}
 
   public async getConfiguration(
@@ -28,27 +30,27 @@ export class DeploymentConfigurationService {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const k8sConfigurationData: CdConfigurationDataEntity =
-      await this.k8sConfigurationsRepository.findDecrypted(k8sConfigurationId)
+    const cdConfigurationData =
+      await this.cdConfigurationsRepository.findDecrypted(k8sConfigurationId)
 
-    if (k8sConfigurationData) {
-      return this.getConfigurationObject(k8sConfigurationData, componentDeploymentEntity)
+    if (cdConfigurationData) {
+      return this.getConfigurationObject(cdConfigurationData, componentDeploymentEntity)
     } else {
       throw new BadRequestException(`Invalid k8s configuration id: ${k8sConfigurationId}`)
     }
   }
 
   private getConfigurationObject(
-    k8sConfigurationData: CdConfigurationDataEntity,
+    cdConfigurationData,
     componentDeploymentEntity: ComponentDeploymentEntity
   ): IDeploymentConfiguration {
 
     return {
-      account: k8sConfigurationData.account,
+      account: cdConfigurationData.account,
       pipelineName: componentDeploymentEntity.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
       appName: componentDeploymentEntity.componentName,
-      appNamespace: k8sConfigurationData.namespace,
+      appNamespace: cdConfigurationData.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,
       uri: {
         uriName: componentDeploymentEntity.contextPath

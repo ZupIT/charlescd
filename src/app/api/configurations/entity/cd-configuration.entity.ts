@@ -42,8 +42,9 @@ export class CdConfigurationEntity extends BaseEntity {
     ) {
         super()
         this.id = uuidv4()
-        this.name = name
+        this.type = type
         this.configurationData = configurationData
+        this.name = name
         this.authorId = authorId
         this.applicationId = applicationId
     }

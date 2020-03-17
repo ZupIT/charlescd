@@ -4,13 +4,14 @@ import { CreateCdConfigurationUsecase } from '../../../app/api/configurations/us
 import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
 import { CdConfigurationEntity } from '../../../app/api/configurations/entity'
 import { CreateCdConfigurationDto } from '../../../app/api/configurations/dto'
+import { CdTypeEnum } from '../../../app/api/configurations/enums'
 
 describe('CreateCdConfigurationUsecase', () => {
 
     let createCdConfigurationUsecase: CreateCdConfigurationUsecase
     let cdConfigurationsRepository: CdConfigurationsRepository
     let cdConfiguration: CdConfigurationEntity
-    let createK8sConfigurationDto: CreateCdConfigurationDto
+    let createCdConfigurationDto: CreateCdConfigurationDto
 
     beforeEach(async () => {
 
@@ -24,18 +25,19 @@ describe('CreateCdConfigurationUsecase', () => {
         createCdConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
         cdConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
 
-        createK8sConfigurationDto = new CreateCdConfigurationDto(
-            'name',
-            'account',
-            'namespace',
+        createCdConfigurationDto = new CreateCdConfigurationDto(
+            CdTypeEnum.SPINNAKER,
+            { account: 'my-account', namespace: 'my-namespace' },
+            'config-name',
             'authorId'
         )
 
         cdConfiguration = new CdConfigurationEntity(
-            'name',
-            undefined,
+            CdTypeEnum.SPINNAKER,
+            { account: 'my-account', namespace: 'my-namespace' },
+            'config-name',
             'authorId',
-            'applicationId',
+            'applicationId'
         )
     })
 
@@ -45,8 +47,8 @@ describe('CreateCdConfigurationUsecase', () => {
             jest.spyOn(cdConfigurationsRepository, 'saveEncrypted')
                 .mockImplementation(() => Promise.resolve(cdConfiguration))
 
-            expect(await createCdConfigurationUsecase.execute(createK8sConfigurationDto, 'applicationId'))
-                .toEqual(cdConfiguration)
+            expect(await createCdConfigurationUsecase.execute(createCdConfigurationDto, 'applicationId'))
+                .toEqual(cdConfiguration.toReadDto())
         })
     })
 })

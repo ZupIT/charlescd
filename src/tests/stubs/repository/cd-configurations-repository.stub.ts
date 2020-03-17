@@ -1,12 +1,12 @@
 import {
-    CdConfigurationDataEntity,
     CdConfigurationEntity
 } from '../../../app/api/configurations/entity'
+import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
 
 export class CdConfigurationsRepositoryStub {
 
-    public findDecrypted(): Promise<CdConfigurationDataEntity> {
-        return Promise.resolve({} as CdConfigurationDataEntity)
+    public findDecrypted(): Promise<ICdConfigurationData> {
+        return Promise.resolve({} as ICdConfigurationData)
     }
 
     public save(): Promise<CdConfigurationEntity> {

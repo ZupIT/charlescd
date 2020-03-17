@@ -21,9 +21,10 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .insert()
             .values({
                 id: cdConfig.id,
-                name: cdConfig.name,
+                type: cdConfig.type,
                 configurationData: () =>
                     `PGP_SYM_ENCRYPT('${JSON.stringify(cdConfig.configurationData)}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`,
+                name: cdConfig.name,
                 authorId: cdConfig.authorId,
                 applicationId: cdConfig.applicationId
             })
@@ -36,7 +37,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
     public async findAllByApplicationId(applicationId: string): Promise<CdConfigurationEntity[]> {
 
         const queryResult: object[] = await this.createQueryBuilder('cd_configurations')
-            .select('id, name')
+            .select('id, type, name')
             .addSelect('user_id', 'authorId')
             .addSelect('application_id', 'applicationId')
             .addSelect('created_at', 'createdAt')
