@@ -6,7 +6,8 @@ import {
 } from 'typeorm'
 import { ReadCdConfigurationDto } from '../dto'
 import * as uuidv4 from 'uuid/v4'
-import { CdConfigurationDataEntity } from './'
+import { ICdConfigurationData } from '../interfaces'
+import { CdTypeEnum } from '../enums'
 
 @Entity('cd_configurations')
 export class CdConfigurationEntity extends BaseEntity {
@@ -14,11 +15,14 @@ export class CdConfigurationEntity extends BaseEntity {
     @PrimaryColumn({ name: 'id' })
     public id: string
 
-    @Column({ name: 'name' })
-    public name: string
+    @Column({ name: 'type' })
+    public type: string
 
     @Column({ type: 'text', name: 'configuration_data' })
-    public configurationData: CdConfigurationDataEntity
+    public configurationData: ICdConfigurationData
+
+    @Column({ name: 'name' })
+    public name: string
 
     @Column({ name: 'user_id' })
     public authorId: string
@@ -30,8 +34,9 @@ export class CdConfigurationEntity extends BaseEntity {
     public createdAt: Date
 
     constructor(
+        type: CdTypeEnum,
+        configurationData: ICdConfigurationData,
         name: string,
-        configurationData: CdConfigurationDataEntity,
         authorId: string,
         applicationId: string
     ) {
