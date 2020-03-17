@@ -13,13 +13,14 @@ import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-import { ConsulConfigurationStub } from '../../stubs/configurations'
 import {
   ComponentDeploymentsRepositoryStub, ComponentUndeploymentsRepositoryStub, DeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
   ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
+import { IoCTokensConstants } from '../../../app/core/constants/ioc'
+import { EnvConfigurationStub } from '../../stubs/configurations'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -41,7 +42,7 @@ describe('Spinnaker Service', () => {
         { provide: HttpService, useClass: HttpServiceStub },
         { provide: StatusManagementService, useClass: StatusManagementServiceStub },
         { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-        { provide: AppConstants.CONSUL_PROVIDER, useValue: ConsulConfigurationStub },
+        { provide: IoCTokensConstants.ENV_CONFIGURATION, useValue: EnvConfigurationStub },
         { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
         { provide: MooveService, useClass: MooveServiceStub },
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
@@ -96,7 +97,6 @@ describe('Spinnaker Service', () => {
         1001
       )
       const moduleDeployment = new ModuleDeploymentEntity(
-        'dummy-id',
         'dummy-id',
         'helm-repository',
         [componentDeployment]

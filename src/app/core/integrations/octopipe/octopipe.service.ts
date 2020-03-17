@@ -9,7 +9,6 @@ import { AppConstants } from '../../constants'
 import { IDeploymentConfiguration } from '../configuration/interfaces'
 import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ConsoleLoggerService } from '../../logs/console'
-import { IConsulKV } from '../consul/interfaces'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
@@ -29,6 +28,8 @@ import {
 import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connector/interfaces'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
+import { IoCTokensConstants } from '../../constants/ioc'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 
 interface IOctopipeVersion {
   version: string
@@ -60,8 +61,8 @@ export class OctopipeService {
   constructor(
     private readonly httpService: HttpService,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(AppConstants.CONSUL_PROVIDER)
-    private readonly consulConfiguration: IConsulKV,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(QueuedDeploymentsRepository)
@@ -102,7 +103,7 @@ export class OctopipeService {
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       await this.httpService.post(
-        `${this.consulConfiguration.octopipeUrl}`,
+        `${this.envConfiguration.octopipeUrl}`,
         payload,
         {
           headers: {
