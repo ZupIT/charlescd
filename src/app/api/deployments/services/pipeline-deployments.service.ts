@@ -17,6 +17,7 @@ import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
+import { OctopipeService } from '../../../core/integrations/octopipe'
 import { AppConstants } from '../../../core/constants'
 import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -39,6 +40,7 @@ export class PipelineDeploymentsService {
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(ComponentUndeploymentsRepository)
         private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
+        private readonly octopipeService: OctopipeService
     ) {}
 
     public async triggerCircleDeployment(
@@ -176,9 +178,9 @@ export class PipelineDeploymentsService {
             const deploymentConfiguration: IDeploymentConfiguration =
                 await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
 
-            await this.spinnakerService.createDeployment(
+            await this.octopipeService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
-                deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
+                deploymentEntity.id, pipelineCallbackUrl, queueId
             )
         } catch (error) {
             throw error
@@ -198,9 +200,9 @@ export class PipelineDeploymentsService {
             const deploymentConfiguration: IDeploymentConfiguration =
                 await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
 
-            await this.spinnakerService.createDeployment(
+            await this.octopipeService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
-                deploymentEntity.id, undeploymentEntity.circleId, pipelineCallbackUrl, queueId
+                deploymentEntity.id, pipelineCallbackUrl, queueId
             )
         } catch (error) {
             throw error
