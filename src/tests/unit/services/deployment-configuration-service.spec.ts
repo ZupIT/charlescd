@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing'
 import { DeploymentConfigurationService } from '../../../app/core/integrations/configuration'
 import {
-  ComponentDeploymentsRepositoryStub,
-  CdConfigurationsRepositoryStub
+  CdConfigurationsRepositoryStub,
+  ComponentDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
 import {
@@ -11,7 +11,7 @@ import {
   ModuleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
-import { CdConfigurationDataEntity } from '../../../app/api/configurations/entity'
+import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
 
 describe('Deployment configuration specs', () => {
   let componentDeploymentsRepository: ComponentDeploymentsRepository
@@ -20,7 +20,7 @@ describe('Deployment configuration specs', () => {
   let componentsDeploymentEntity: ComponentDeploymentEntity
   let deploymentConfigurationService: DeploymentConfigurationService
   let cdConfigurationsRepository: CdConfigurationsRepository
-  let cdConfigurationData: CdConfigurationDataEntity
+  let cdConfigurationData: ICdConfigurationData
 
   beforeEach(async () => {
 
@@ -66,10 +66,10 @@ describe('Deployment configuration specs', () => {
     moduleDeploymentEntity.deployment = deployment
     componentsDeploymentEntity.moduleDeployment = moduleDeploymentEntity
 
-    cdConfigurationData = new CdConfigurationDataEntity(
-        'some-account',
-        'some-namespace'
-    )
+    cdConfigurationData = {
+        account: 'some-account',
+        namespace: 'some-namespace'
+    }
   })
 
   it('should correctly prefix the flow id', async () => {
