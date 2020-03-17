@@ -29,5 +29,7 @@ export const Configuration: IEnvConfiguration = {
 
   helmPrefixUrl: process.env.HELM_PREFIX_URL || ConfigurationConstants.HELM_PREFIX_URL,
 
-  helmRepoBranch: process.env.HELM_REPO_BRANCH || ConfigurationConstants.HELM_REPO_BRANCH
+  helmRepoBranch: process.env.HELM_REPO_BRANCH || ConfigurationConstants.HELM_REPO_BRANCH,
+
+  octopipeUrl: process.env.OCTOPIPE_URL || ConfigurationConstants.OCTOPIPE_URL
 }
