@@ -9,6 +9,7 @@ import { DeploymentConfigurationServiceStub } from './deployment-configuration-s
 import { MooveServiceStub } from './moove-service.stub'
 import { PipelineDeploymentsServiceStub } from './pipeline-deployments-service.stub'
 import { PipelineErrorHandlerServiceStub } from './pipeline-error-handler-service.stub'
+import { ModulesServiceStub } from './modules-service.stub'
 
 export {
     DeploymentsServiceStub,
@@ -21,5 +22,6 @@ export {
     DeploymentConfigurationServiceStub,
     MooveServiceStub,
     PipelineDeploymentsServiceStub,
-    PipelineErrorHandlerServiceStub
+    PipelineErrorHandlerServiceStub,
+    ModulesServiceStub
 }

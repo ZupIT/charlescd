@@ -22,6 +22,7 @@ import {
 import { DatabasesService } from './databases'
 import { ServicesModule } from '../services/services.module'
 import { DeploymentsModule } from '../../api/deployments/deployments.module'
+import { K8sConfigurationsRepository } from '../../api/configurations/repository'
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { DeploymentsModule } from '../../api/deployments/deployments.module'
       DeploymentEntity,
       ModuleDeploymentEntity,
       QueuedDeploymentsRepository,
-      ComponentUndeploymentsRepository
+      ComponentUndeploymentsRepository,
+      K8sConfigurationsRepository
     ])
   ],
   providers: [

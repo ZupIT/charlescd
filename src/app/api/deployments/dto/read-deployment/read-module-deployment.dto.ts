@@ -6,8 +6,6 @@ export class ReadModuleDeploymentDto {
 
   public readonly moduleId: string
 
-  public readonly k8sConfigurationId: string
-
   public readonly helmRepository: string
 
   public readonly componentsDeployments: ReadComponentDeploymentDto[]
@@ -19,7 +17,6 @@ export class ReadModuleDeploymentDto {
   constructor(
     id: string,
     moduleId: string,
-    k8sConfigurationId: string,
     helmRepository: string,
     componentsDeployments: ReadComponentDeploymentDto[],
     status: string,
@@ -27,7 +24,6 @@ export class ReadModuleDeploymentDto {
   ) {
     this.id = id
     this.moduleId = moduleId
-    this.k8sConfigurationId = k8sConfigurationId
     this.helmRepository = helmRepository
     this.componentsDeployments = componentsDeployments
     this.status = status

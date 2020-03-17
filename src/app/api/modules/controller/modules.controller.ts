@@ -1,15 +1,32 @@
 import {
+  Body,
   Controller,
   Get,
-  Param
+  Param,
+  Post
 } from '@nestjs/common'
-import { ReadModuleDto } from '../dto'
+import {
+  CreateModuleDto,
+  ReadModuleDto
+} from '../dto'
 import { ModulesService } from '../services'
+import { CreateModuleUsecase } from '../use-cases'
 
 @Controller('modules')
 export class ModulesController {
 
-  constructor(private readonly modulesService: ModulesService) {}
+  constructor(
+      private readonly modulesService: ModulesService,
+      private readonly createModuleUsecase: CreateModuleUsecase
+    ) {}
+
+  @Post()
+  public async createModule(
+      @Body() createModuleDto: CreateModuleDto
+  ): Promise<ReadModuleDto> {
+
+    return await this.createModuleUsecase.execute(createModuleDto)
+  }
 
   @Get()
   public async getModules(): Promise<ReadModuleDto[]> {

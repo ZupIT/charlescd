@@ -1,12 +1,7 @@
-import {
-    HttpService,
-    Inject,
-    Injectable
-} from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
-import { AppConstants } from '../../constants'
-import { IK8sConfiguration } from '../configuration/interfaces'
-import { IConsulKV } from '../consul/interfaces'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../constants/ioc'
 
 @Injectable()
 export class MooveService {
@@ -14,8 +9,8 @@ export class MooveService {
     constructor(
       private readonly httpService: HttpService,
       private readonly consoleLoggerService: ConsoleLoggerService,
-      @Inject(AppConstants.CONSUL_PROVIDER)
-      private readonly consulConfiguration: IConsulKV
+      @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+      private readonly envConfiguration: IEnvConfiguration
     ) {}
 
     public async notifyDeploymentStatus(
@@ -35,21 +30,6 @@ export class MooveService {
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
         this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
-        throw error
-      }
-    }
-
-    public async getK8sConfiguration(k8sConfigurationId: string): Promise<IK8sConfiguration> {
-      try {
-        this.consoleLoggerService.log('START:GET_K8S_CONFIG', { k8sConfigurationId })
-        const k8sConfiguration = await this.httpService.get(
-          `${this.consulConfiguration.mooveUrl}/credentials/k8s/${k8sConfigurationId}`,
-          { headers: { 'x-organization': 'zup' } }
-        ).toPromise()
-        this.consoleLoggerService.log('FINISH:GET_K8S_CONFIG')
-        return k8sConfiguration.data.value
-      } catch (error) {
-        this.consoleLoggerService.error('ERROR:GET_K8S_CONFIG', error)
         throw error
       }
     }

@@ -1,31 +1,17 @@
-export interface IConsulKV {
-
+export default interface IEnvConfiguration {
   postgresHost?: string
-
   postgresPort?: number
-
   postgresUser?: string
-
   postgresPass?: string
-
   postgresDbName?: string
-
   mooveUrl?: string
-
-  darwinDeploymentCallbackUrl?: string
-
+  darwinNotificationUrl?: string
   darwinUndeploymentCallbackUrl?: string
-
+  darwinDeploymentCallbackUrl?: string
   spinnakerUrl?: string
-
   octopipeUrl?: string
-
   spinnakerGithubAccount?: string
-
   helmTemplateUrl?: string
-
   helmPrefixUrl?: string
-
   helmRepoBranch?: string
-
 }
