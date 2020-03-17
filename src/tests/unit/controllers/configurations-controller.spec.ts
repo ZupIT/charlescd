@@ -12,12 +12,13 @@ import {
     CreateCdConfigurationDto,
     ReadCdConfigurationDto
 } from '../../../app/api/configurations/dto'
+import { CdTypeEnum } from '../../../app/api/configurations/enums'
 
 describe('ConfigurationsController', () => {
 
     let configurationsController: ConfigurationsController
     let createK8sConfigurationUsecase: CreateCdConfigurationUsecase
-    let createK8sConfigurationDto: CreateCdConfigurationDto
+    let createCdConfigurationDto: CreateCdConfigurationDto
     let getK8sConfigurationUsecase: GetCdConfigurationsUsecase
 
     beforeEach(async () => {
@@ -42,10 +43,10 @@ describe('ConfigurationsController', () => {
         createK8sConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
         getK8sConfigurationUsecase = module.get<GetCdConfigurationsUsecase>(GetCdConfigurationsUsecase)
 
-        createK8sConfigurationDto = new CreateCdConfigurationDto(
-            'name',
-            'account',
-            'namespace',
+        createCdConfigurationDto = new CreateCdConfigurationDto(
+            CdTypeEnum.SPINNAKER,
+            { account: 'my-account', namespace: 'my-namespace' },
+            'config-name',
             'authorId'
         )
     })
@@ -57,8 +58,8 @@ describe('ConfigurationsController', () => {
             const creationDate: Date = new Date()
             const readK8sConfigurationDto: ReadCdConfigurationDto = new ReadCdConfigurationDto(
                 'id',
-                createK8sConfigurationDto.name,
-                createK8sConfigurationDto.authorId,
+                createCdConfigurationDto.name,
+                createCdConfigurationDto.authorId,
                 'applicationId',
                 creationDate
             )
@@ -67,7 +68,7 @@ describe('ConfigurationsController', () => {
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDto))
 
             expect(
-                await configurationsController.createCdConfiguration(createK8sConfigurationDto, 'applicationId')
+                await configurationsController.createCdConfiguration(createCdConfigurationDto, 'applicationId')
             ).toBe(readK8sConfigurationDto)
         })
     })
@@ -79,8 +80,8 @@ describe('ConfigurationsController', () => {
             const creationDate: Date = new Date()
             const readK8sConfigurationDto: ReadCdConfigurationDto = new ReadCdConfigurationDto(
                 'id',
-                createK8sConfigurationDto.name,
-                createK8sConfigurationDto.authorId,
+                createCdConfigurationDto.name,
+                createCdConfigurationDto.authorId,
                 'applicationId',
                 creationDate
             )
