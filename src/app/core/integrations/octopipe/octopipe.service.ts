@@ -28,7 +28,6 @@ import {
 } from '../../../api/deployments/repository'
 import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connector/interfaces'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
-import { ISpinnakerPipelineConfiguration } from '../spinnaker/interfaces'
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 
 interface IOctopipeVersion {
