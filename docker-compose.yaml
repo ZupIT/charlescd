@@ -1,0 +1,12 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:9.6-alpine
+    ports:
+    - 5432:5432
+    environment:
+    - POSTGRES_DB=octopipe
+    - POSTGRES_USER=octopipe
+    - POSTGRES_PASSWORD=octopipe
+    - MAX_CONNECTIONS=300
