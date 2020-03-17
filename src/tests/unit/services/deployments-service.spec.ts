@@ -85,7 +85,6 @@ describe('Deployments service specs', () => {
 
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
-            'dummy-id',
             'helm-repository',
             [componentDeployment]
         )

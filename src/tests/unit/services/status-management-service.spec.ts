@@ -88,7 +88,6 @@ describe('PipelinesService', () => {
 
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
-            'dummy-id',
             'helm-repository',
             null
         )
@@ -127,7 +126,6 @@ describe('PipelinesService', () => {
         ]
 
         moduleDeploymentWithRelations = new ModuleDeploymentEntity(
-            'dummy-id',
             'dummy-id',
             'helm-repository',
             componentDeploymentsList

@@ -19,11 +19,12 @@ import { DeploymentConfigurationService } from '../../../core/integrations/confi
 import { SpinnakerService } from '../../../core/integrations/spinnaker'
 import { OctopipeService } from '../../../core/integrations/octopipe'
 import { AppConstants } from '../../../core/constants'
-import { IConsulKV } from '../../../core/integrations/consul/interfaces'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { ComponentUndeploymentsRepository } from '../repository'
+import IEnvConfiguration from '../../../core/integrations/configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../../core/constants/ioc'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -34,8 +35,8 @@ export class PipelineDeploymentsService {
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
         @Inject(forwardRef(() => SpinnakerService))
         private readonly spinnakerService: SpinnakerService,
-        @Inject(AppConstants.CONSUL_PROVIDER)
-        private readonly consulConfiguration: IConsulKV,
+        @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+        private readonly envConfiguration: IEnvConfiguration,
         @InjectRepository(ComponentEntity)
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(ComponentUndeploymentsRepository)
@@ -159,11 +160,11 @@ export class PipelineDeploymentsService {
     }
 
     private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
-        return `${this.consulConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
+        return `${this.envConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
     }
 
     private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
-        return `${this.consulConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
+        return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
     }
 
     private async triggerComponentDeployment(
@@ -176,7 +177,7 @@ export class PipelineDeploymentsService {
 
         try {
             const deploymentConfiguration: IDeploymentConfiguration =
-                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
+                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id, componentEntity.module.k8sConfigurationId)
 
             await this.octopipeService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
@@ -198,7 +199,7 @@ export class PipelineDeploymentsService {
 
         try {
             const deploymentConfiguration: IDeploymentConfiguration =
-                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id)
+                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id, componentEntity.module.k8sConfigurationId)
 
             await this.octopipeService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,

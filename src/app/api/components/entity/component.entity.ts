@@ -45,12 +45,10 @@ export class ComponentEntity extends BaseEntity {
   public createdAt: Date
 
   constructor(
-    componentId: string,
-    module: ModuleEntity
+    componentId: string
   ) {
     super()
     this.id = componentId
-    this.module = module
     this.pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
   }
 
