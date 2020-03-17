@@ -1,11 +1,7 @@
-import {
-    HttpService,
-    Inject,
-    Injectable
-} from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
-import { AppConstants } from '../../constants'
-import { IConsulKV } from '../consul/interfaces'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../constants/ioc'
 
 @Injectable()
 export class MooveService {
@@ -13,8 +9,8 @@ export class MooveService {
     constructor(
       private readonly httpService: HttpService,
       private readonly consoleLoggerService: ConsoleLoggerService,
-      @Inject(AppConstants.CONSUL_PROVIDER)
-      private readonly consulConfiguration: IConsulKV
+      @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+      private readonly envConfiguration: IEnvConfiguration
     ) {}
 
     public async notifyDeploymentStatus(
