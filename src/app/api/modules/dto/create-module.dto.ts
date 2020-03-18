@@ -1,6 +1,7 @@
 import { ModuleEntity } from '../entity'
 import {
-    Allow,
+    IsDefined,
+    IsNotEmpty,
     ValidateNested
 } from 'class-validator'
 import { CreateComponentDto } from './'
@@ -8,13 +9,13 @@ import { Type } from 'class-transformer'
 
 export class CreateModuleDto {
 
-    @Allow()
+    @IsNotEmpty()
     public readonly id: string
 
-    @Allow()
+    @IsNotEmpty()
     public readonly cdConfigurationId: string
 
-    @Allow()
+    @IsDefined()
     @ValidateNested({ each: true })
     @Type(() => CreateComponentDto)
     public readonly components: CreateComponentDto[]
