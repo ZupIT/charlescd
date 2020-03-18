@@ -74,7 +74,11 @@ export class OctopipeService {
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const payload: IOctopipeConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, configurationData as IOctopipeConfigurationData , pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
+        pipelineCirclesOptions,
+        configurationData as IOctopipeConfigurationData,
+        pipelineCallbackUrl,
+        componentDeploymentEntity.moduleDeployment,
+        componentDeploymentEntity.componentName
       )
 
     this.deploy(payload, deploymentId, queueId)
@@ -108,11 +112,12 @@ export class OctopipeService {
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IOctopipeConfigurationData,
     pipelineCallbackUrl: string,
-    moduleDeployment: ModuleDeploymentEntity
+    moduleDeployment: ModuleDeploymentEntity,
+    appName: string
   ): IOctopipeConfiguration {
 
     const payload = {
-      appName: deploymentConfiguration.appName,
+      appName,
       appNamespace: deploymentConfiguration.namespace,
       github: {
         username: deploymentConfiguration.gitUsername,
@@ -126,15 +131,15 @@ export class OctopipeService {
     }
 
     payload.istio.virtualService = this.buildVirtualServices(
-      deploymentConfiguration.appName,
+      appName,
       deploymentConfiguration.namespace,
       pipelineCirclesOptions.pipelineCircles,
       pipelineCallbackUrl,
-      [deploymentConfiguration.appName],
+      [appName],
       pipelineCirclesOptions.pipelineVersions
     )
     payload.istio.destinationRules = createDestinationRules(
-      deploymentConfiguration.appName,
+      appName,
       deploymentConfiguration.namespace,
       pipelineCirclesOptions.pipelineCircles,
       pipelineCirclesOptions.pipelineVersions

@@ -5,6 +5,4 @@ export interface IOctopipeConfigurationData {
     gitPassword: string
 
     namespace: string
-
-    appName: string
 }
