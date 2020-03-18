@@ -111,7 +111,6 @@ describe('Spinnaker Service', () => {
         account: 'some-account',
         pipelineName: 'some-pipeline-name',
         applicationName: 'some-application-name',
-        appName: 'some-app-name',
         namespace: 'some-app-namespace',
         healthCheckPath: '/health',
         uri: { uriName: 'https://some.uri' },
@@ -120,7 +119,13 @@ describe('Spinnaker Service', () => {
         gitPassword: 'git-password'
       }
       const payload =
-        octopipeService.createPipelineConfigurationObject(pipelineOptions, deploymentConfiguration, 'dummy-callback-url', moduleDeployment)
+        octopipeService.createPipelineConfigurationObject(
+          pipelineOptions,
+          deploymentConfiguration,
+          'dummy-callback-url',
+          moduleDeployment,
+          'some-app-name'
+        )
 
       const expectedPayload = {
         appName: 'some-app-name',
