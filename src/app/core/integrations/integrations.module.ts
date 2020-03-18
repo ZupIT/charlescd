@@ -4,7 +4,6 @@ import {
   Module
 } from '@nestjs/common'
 import { SpinnakerService } from './cd/spinnaker'
-import { DeploymentConfigurationService } from './configuration'
 import { MooveService } from './moove'
 import { LogsModule } from '../logs/logs.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -42,13 +41,11 @@ import { CdStrategyFactory } from './cd'
   ],
   providers: [
     SpinnakerService,
-    DeploymentConfigurationService,
     MooveService,
     DatabasesService,
     CdStrategyFactory
   ],
   exports: [
-    DeploymentConfigurationService,
     MooveService,
     DatabasesService,
     CdStrategyFactory

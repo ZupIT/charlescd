@@ -1,10 +1,26 @@
-import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  HttpService,
+  Inject,
+  Injectable
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../../api/components/interfaces'
-import { ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../../api/deployments/entity'
+import {
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity,
+  QueuedUndeploymentEntity
+} from '../../../../api/deployments/entity'
 import { QueuedPipelineTypesEnum } from '../../../../api/deployments/enums'
-import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../../api/deployments/repository'
+import {
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../../../../api/deployments/repository'
 import { PipelineErrorHandlerService } from '../../../../api/deployments/services'
 import { AppConstants } from '../../../constants'
 import { IoCTokensConstants } from '../../../constants/ioc'
@@ -12,7 +28,14 @@ import { ConsoleLoggerService } from '../../../logs/console'
 import { IDeploymentConfiguration } from '../../configuration/interfaces'
 import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 import TotalPipeline from './connector'
-import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
+import {
+  ICreateSpinnakerApplication,
+  ISpinnakerPipelineConfiguration
+} from './interfaces'
+import {
+  ICdConfigurationData,
+  ISpinnakerConfigurationData
+} from '../../../../api/configurations/interfaces'
 
 @Injectable()
 export class SpinnakerService {
@@ -36,7 +59,7 @@ export class SpinnakerService {
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration,
+    configurationData: ICdConfigurationData,
     componentDeploymentId: string,
     deploymentId: string,
     circleId: string,
@@ -46,11 +69,15 @@ export class SpinnakerService {
 
     this.consoleLoggerService.log(
       'START:CREATE_SPINNAKER_PIPELINE',
-      { pipelineCirclesOptions, deploymentConfiguration, componentDeploymentId, deploymentId }
+      { pipelineCirclesOptions, configurationData, componentDeploymentId, deploymentId }
     )
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+    const deploymentConfiguration: IDeploymentConfiguration =
+        this.getConfigurationObject(configurationData as ISpinnakerConfigurationData, componentDeploymentEntity)
+
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
@@ -91,6 +118,25 @@ export class SpinnakerService {
       this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
     } catch (error) {
       await this.handleDeploymentFailure(deploymentId, queueId)
+    }
+  }
+
+  private getConfigurationObject(
+      cdConfigurationData: ISpinnakerConfigurationData,
+      componentDeploymentEntity: ComponentDeploymentEntity
+  ): IDeploymentConfiguration {
+
+    return {
+      account: cdConfigurationData.account,
+      appNamespace: cdConfigurationData.namespace,
+      pipelineName: componentDeploymentEntity.componentId,
+      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
+      appName: componentDeploymentEntity.componentName,
+      healthCheckPath: componentDeploymentEntity.healthCheck,
+      uri: {
+        uriName: componentDeploymentEntity.contextPath
+      },
+      appPort: componentDeploymentEntity.port
     }
   }
 
