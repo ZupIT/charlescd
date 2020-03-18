@@ -30,7 +30,6 @@ export class PipelineDeploymentsService {
     constructor(
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
-        @Inject(forwardRef(() => CdStrategyFactory))
         private readonly cdStrategyFactory: CdStrategyFactory,
         @Inject(IoCTokensConstants.ENV_CONFIGURATION)
         private readonly envConfiguration: IEnvConfiguration,
