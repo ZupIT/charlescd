@@ -9,7 +9,7 @@
 			"name": "Configurations",
 			"item": [
 				{
-					"name": "Create cd configuration",
+					"name": "Create octopipe cd configuration",
 					"event": [
 						{
 							"listen": "test",
@@ -51,6 +51,69 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitUsername\": \"git-user\",\n\t\t\"gitPassword\": \"git-password\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create spinnaker cd configuration Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"type": "text",
+								"value": "{{applicationId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
