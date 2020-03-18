@@ -2,17 +2,15 @@ import { IPipelineCircle } from '../../../../../../../api/components/interfaces'
 import { ConfigurationConstants, DefaultCircleId } from '../../../../../../constants/application/configuration.constants'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 import {
-  HttpMatchersParams,
   HttpMatcherUnion,
   IBaseVirtualService,
   ICircleHttpMatcher,
   ICircleRegexMatcher,
   IDefaultCircleMatcher,
-  VirtualServiceParams,
   IEmptyVirtualService
 } from '../../interfaces'
 
-const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IBaseVirtualService => ({
+const baseVirtualService = (appName: string, appNamespace: string): IBaseVirtualService => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'VirtualService',
   metadata: {
@@ -25,7 +23,7 @@ const baseVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IB
   }
 })
 
-const baseEmptyVirtualService = ({ appName, appNamespace }: VirtualServiceParams): IEmptyVirtualService => ({
+const baseEmptyVirtualService = (appName: string, appNamespace: string): IEmptyVirtualService => ({
   apiVersion: 'networking.istio.io/v1alpha3',
   kind: 'VirtualService',
   metadata: {
@@ -139,7 +137,7 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
   ]
 })
 
-const createHttpMatchers = ({ circles, appName, uri }: HttpMatchersParams): HttpMatcherUnion[] => {
+const createHttpMatchers = (circles: IPipelineCircle[], appName: string, uri: string): HttpMatcherUnion[] => {
   return circles.reduce((acc: HttpMatcherUnion[], circle) => {
     if (circle.header) {
       pushRegexHttpMatcher(circle, appName, acc)
@@ -165,17 +163,17 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (contract: ISpinnakerPipelineConfiguration) => {
-  const newVirtualService = baseVirtualService(contract)
-  const matchers = createHttpMatchers(contract)
-  if (contract.hosts) {
-    newVirtualService.spec.hosts = contract.hosts
+export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], uri: string, hosts: string[]) => {
+  const newVirtualService = baseVirtualService(appName, appNamespace)
+  const matchers = createHttpMatchers(circles, appName, uri)
+  if (hosts) {
+    newVirtualService.spec.hosts = hosts
   }
   newVirtualService.spec.http = matchers
   return newVirtualService
 }
 
-export const createEmptyVirtualService = (contract: ISpinnakerPipelineConfiguration): IEmptyVirtualService => {
-  const newVirtualService: IEmptyVirtualService = baseEmptyVirtualService(contract)
+export const createEmptyVirtualService = (appName: string, appNamespace: string): IEmptyVirtualService => {
+  const newVirtualService: IEmptyVirtualService = baseEmptyVirtualService(appName, appNamespace)
   return newVirtualService
 }

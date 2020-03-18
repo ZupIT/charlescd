@@ -1,7 +1,4 @@
-import {
-  IPipelineCircle,
-  IPipelineVersion
-} from '../../../../../api/components/interfaces'
+import { IDeploymentVersion, IPipelineCircle } from '../../../../../api/components/interfaces'
 import { ISpinnakerPipelineUri } from './spinnaker-pipeline-uri.interface'
 
 export interface ISpinnakerPipelineConfiguration {
@@ -24,9 +21,9 @@ export interface ISpinnakerPipelineConfiguration {
 
   appPort: number,
 
-  versions: IPipelineVersion[],
+  versions: IDeploymentVersion[],
 
-  unusedVersions: IPipelineVersion[],
+  unusedVersions: IDeploymentVersion[],
 
   circles: IPipelineCircle[]
 
