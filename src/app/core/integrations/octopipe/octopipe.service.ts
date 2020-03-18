@@ -114,7 +114,10 @@ export class OctopipeService {
     const payload = {
       appName: deploymentConfiguration.appName,
       appNamespace: deploymentConfiguration.namespace,
-      github: { username: 'aaa', password: 'bbb' }, // TODO get credentials from configuration, not implemented yet
+      github: {
+        username: deploymentConfiguration.gitUsername,
+        password: deploymentConfiguration.gitPassword
+      },
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
