@@ -1,7 +1,7 @@
 import 'jest'
-import TotalPipeline from '../../../../app/core/integrations/spinnaker/connector'
+import TotalPipeline from '../../../../app/core/integrations/cd/spinnaker/connector'
 import expectedTotalPipeline from './fixtures/expected-total-pipeline'
-import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/spinnaker/interfaces'
+import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 
 it('compiles the pipeline', () => {

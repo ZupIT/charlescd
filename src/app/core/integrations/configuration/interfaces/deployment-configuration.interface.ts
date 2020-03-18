@@ -1,4 +1,4 @@
-import { ISpinnakerPipelineUri } from '../../spinnaker/interfaces/spinnaker-pipeline-uri.interface'
+import { ISpinnakerPipelineUri } from '../../cd/spinnaker/interfaces/spinnaker-pipeline-uri.interface'
 
 export interface IDeploymentConfiguration {
 

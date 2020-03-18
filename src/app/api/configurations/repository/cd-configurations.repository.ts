@@ -3,12 +3,9 @@ import {
     InsertResult,
     Repository
 } from 'typeorm'
-import {
-    CdConfigurationEntity,
-} from '../entity'
+import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
-import { ICdConfigurationData } from '../interfaces'
 
 @EntityRepository(CdConfigurationEntity)
 export class CdConfigurationsRepository extends Repository<CdConfigurationEntity> {
@@ -47,13 +44,17 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         return queryResult.map(configuration => plainToClass(CdConfigurationEntity, configuration))
     }
 
-    public async findDecrypted(id: string): Promise<ICdConfigurationData> {
+    public async findDecrypted(id: string): Promise<CdConfigurationEntity> {
 
-        const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
-            .select(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
+        const queryResult: object = await this.createQueryBuilder('cd_configurations')
+            .select('id, type, name')
+            .addSelect('user_id', 'authorId')
+            .addSelect('application_id', 'applicationId')
+            .addSelect('created_at', 'createdAt')
+            .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
             .where('cd_configurations.id = :id', { id })
             .getRawOne()
 
-        return queryResult ? JSON.parse(queryResult.configurationData) : undefined
+        return queryResult ? plainToClass(CdConfigurationEntity, queryResult) : undefined
     }
 }

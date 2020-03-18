@@ -1,5 +1,5 @@
-import { IPipelineCircle } from '../../../../../api/components/interfaces'
-import { DefaultCircleId } from '../../../../constants/application/configuration.constants'
+import { IPipelineCircle } from '../../../../../../api/components/interfaces'
+import { DefaultCircleId } from '../../../../../constants/application/configuration.constants'
 import { HelmTypes } from '../utils/helpers/constants'
 import { IBaseStage } from '../utils/base-default-stage'
 import { IBaseHelmStage } from '../utils/base-stage-helm'

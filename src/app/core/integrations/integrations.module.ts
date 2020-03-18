@@ -3,7 +3,7 @@ import {
   HttpModule,
   Module
 } from '@nestjs/common'
-import { SpinnakerService } from './spinnaker'
+import { SpinnakerService } from './cd/spinnaker'
 import { DeploymentConfigurationService } from './configuration'
 import { MooveService } from './moove'
 import { LogsModule } from '../logs/logs.module'
@@ -22,6 +22,7 @@ import { DatabasesService } from './databases'
 import { ServicesModule } from '../services/services.module'
 import { DeploymentsModule } from '../../api/deployments/deployments.module'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
+import { CdStrategyFactory } from './cd'
 
 @Module({
   imports: [
@@ -43,13 +44,14 @@ import { CdConfigurationsRepository } from '../../api/configurations/repository'
     SpinnakerService,
     DeploymentConfigurationService,
     MooveService,
-    DatabasesService
+    DatabasesService,
+    CdStrategyFactory
   ],
   exports: [
-    SpinnakerService,
     DeploymentConfigurationService,
     MooveService,
-    DatabasesService
+    DatabasesService,
+    CdStrategyFactory
   ]
 })
 export class IntegrationsModule {}

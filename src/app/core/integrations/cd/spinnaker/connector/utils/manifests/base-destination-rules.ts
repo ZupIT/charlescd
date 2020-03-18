@@ -1,4 +1,4 @@
-import { IPipelineVersion } from '../../../../../../api/components/interfaces'
+import { IPipelineVersion } from '../../../../../../../api/components/interfaces'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 import { ISpinnakerBaseService, ISubset } from './base-service'
 

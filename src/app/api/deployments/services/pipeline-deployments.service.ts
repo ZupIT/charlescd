@@ -16,14 +16,16 @@ import {
 import { ComponentEntity } from '../../components/entity'
 import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
 import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
-import { SpinnakerService } from '../../../core/integrations/spinnaker'
-import { AppConstants } from '../../../core/constants'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { ComponentUndeploymentsRepository } from '../repository'
 import IEnvConfiguration from '../../../core/integrations/configuration/interfaces/env-configuration.interface'
 import { IoCTokensConstants } from '../../../core/constants/ioc'
+import { CdStrategyFactory } from '../../../core/integrations/cd'
+import { CdConfigurationsRepository } from '../../configurations/repository'
+import { ICdConfigurationData } from '../../configurations/interfaces'
+import { CdConfigurationEntity } from '../../configurations/entity'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -32,14 +34,16 @@ export class PipelineDeploymentsService {
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly deploymentConfigurationService: DeploymentConfigurationService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
-        @Inject(forwardRef(() => SpinnakerService))
-        private readonly spinnakerService: SpinnakerService,
+        @Inject(forwardRef(() => CdStrategyFactory))
+        private readonly cdStrategyFactory: CdStrategyFactory,
         @Inject(IoCTokensConstants.ENV_CONFIGURATION)
         private readonly envConfiguration: IEnvConfiguration,
         @InjectRepository(ComponentEntity)
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(ComponentUndeploymentsRepository)
         private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
+        @InjectRepository(CdConfigurationsRepository)
+        private readonly cdConfigurationsRepository: CdConfigurationsRepository
     ) {}
 
     public async triggerCircleDeployment(
@@ -174,10 +178,11 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
-            const deploymentConfiguration: IDeploymentConfiguration =
-                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id, componentEntity.module.cdConfigurationId)
+            const cdConfiguration: CdConfigurationEntity =
+                await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
+            const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-            await this.spinnakerService.createDeployment(
+            await cdService.createDeployment(
                 componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
                 deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
             )
