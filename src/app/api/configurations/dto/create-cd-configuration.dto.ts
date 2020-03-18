@@ -1,20 +1,23 @@
 import { CdConfigurationEntity } from '../entity'
-import { Allow } from 'class-validator'
+import {
+    IsDefined,
+    IsNotEmpty
+} from 'class-validator'
 import { CdTypeEnum } from '../enums'
 import { ICdConfigurationData } from '../interfaces'
 
 export class CreateCdConfigurationDto {
 
-    @Allow()
+    @IsNotEmpty()
     public readonly type: CdTypeEnum
 
-    @Allow()
+    @IsDefined()
     public readonly configurationData: ICdConfigurationData
 
-    @Allow()
+    @IsNotEmpty()
     public readonly name: string
 
-    @Allow()
+    @IsNotEmpty()
     public readonly authorId: string
 
     constructor(

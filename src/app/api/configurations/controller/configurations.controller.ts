@@ -3,7 +3,8 @@ import {
     Controller,
     Get,
     Headers,
-    Post
+    Post,
+    UsePipes
 } from '@nestjs/common'
 import {
     CreateCdConfigurationDto,
@@ -13,6 +14,7 @@ import {
     CreateCdConfigurationUsecase,
     GetCdConfigurationsUsecase
 } from '../use-cases'
+import { ValidConfigurationDataPipe } from '../pipes'
 
 @Controller('configurations')
 export class ConfigurationsController {
@@ -22,6 +24,7 @@ export class ConfigurationsController {
         private readonly getCdConfigurationsUseCase: GetCdConfigurationsUsecase
     ) {}
 
+    @UsePipes(ValidConfigurationDataPipe)
     @Post('cd')
     public async createCdConfiguration(
         @Body() createCdConfigurationDto: CreateCdConfigurationDto,
