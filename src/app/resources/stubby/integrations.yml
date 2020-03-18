@@ -88,6 +88,19 @@
     body: >
       {}
 
+# OCTOPIPE
+
+- request:
+    method: POST
+    url: ^/octopipe
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
 # NOTIFICATION
 
 - request:
@@ -117,7 +130,8 @@
             "mooveUrl": "http://localhost:8883/moove",
             "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/deployment",
             "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/undeployment",
-            "spinnakerUrl": "http://localhost:8883/spinnaker"
+            "spinnakerUrl": "http://localhost:8883/spinnaker",
+            "octopipeUrl": "http://localhost:8883/octopipe"
           }
         }
       ]
