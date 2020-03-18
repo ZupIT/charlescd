@@ -22,6 +22,7 @@ import { ServicesModule } from '../services/services.module'
 import { DeploymentsModule } from '../../api/deployments/deployments.module'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { CdStrategyFactory } from './cd'
+import { OctopipeService } from './octopipe'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CdStrategyFactory } from './cd'
   ],
   providers: [
     SpinnakerService,
+    OctopipeService,
     MooveService,
     DatabasesService,
     CdStrategyFactory
