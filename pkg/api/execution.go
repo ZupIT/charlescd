@@ -19,7 +19,9 @@ func (api *Api) NewExeuctionApi(executionMain execution.UseCases) {
 }
 
 func (executionAPI *ExecutionAPI) findAll(context *gin.Context) {
+	executions, _ := executionAPI.executionMain.FindAll()
 
+	context.JSON(200, executions)
 }
 
 func (executionAPI *ExecutionAPI) findByID(context *gin.Context) {

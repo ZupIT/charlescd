@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: octopipe-db
+spec:
+  serviceName: "octopipe-db"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: octopipe-db
+  template:
+    metadata:
+      labels:
+        app: octopipe-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        envFrom:
+          - configMapRef:
+              name: postgres-config-demo
+        ports:
+        - containerPort: 5432
+          name: postgredb
+        volumeMounts:
+        - name: postgredb
+          mountPath: /var/lib/postgresql/data
+          subPath: postgres
+  volumeClaimTemplates:
+  - metadata:
+      name: postgredb
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: gp2
+      resources:
+        requests:
+          storage: 3Gi

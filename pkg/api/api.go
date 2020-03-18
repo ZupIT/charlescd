@@ -17,7 +17,12 @@ func NewApi() *Api {
 	router := gin.Default()
 
 	v1 := router.Group(v1Path)
+	v1.GET("/health", health)
 	return &Api{router, v1}
+}
+
+func health(context *gin.Context) {
+	context.JSON(200, "is alive")
 }
 
 func (api *Api) Start() {

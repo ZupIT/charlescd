@@ -13,6 +13,16 @@ type ExecutionManager struct {
 }
 
 type UseCases interface {
+	FindAll() (*[]ExecutionListItem, error)
+	FindByID(id string) (*Execution, error)
+	Create(execution *Execution) (*Execution, error)
+	CreateComponent(component *DeployedComponent) (*DeployedComponent, error)
+	CreateManifest(manifest *DeployedComponentManifest) (*DeployedComponentManifest, error)
+	CreateIstioComponent(component *IstioComponent) (*IstioComponent, error)
+	UpdateStatus(executionID string, status string) error
+	UpdateManifestStatus(id uuid.UUID, componentID uuid.UUID, status string) error
+	UpdateIstioComponentStatus(id uuid.UUID, executionID uuid.UUID, status string) error
+	FinishExecution(executionID string) error
 }
 
 const (
@@ -27,6 +37,7 @@ type Execution struct {
 	Name               string              `json:"name"`
 	Namespace          string              `json:"namespace"`
 	DeployedComponents []DeployedComponent `json:"deployedComponents"`
+	IstioComponents    []IstioComponent    `json:"istioComponents"`
 	Author             string              `json:"author"`
 	StartTime          time.Time           `json:"startTime"`
 	FinishTime         time.Time           `json:"finishTime"`
@@ -51,17 +62,12 @@ func NewExecutionManager(db *gorm.DB) *ExecutionManager {
 
 func (executionManager *ExecutionManager) FindAll() (*[]ExecutionListItem, error) {
 	executions := &[]ExecutionListItem{}
+	err := executionManager.DB.Table("executions").Select(
+		[]string{"id", "namespace", "status", "start_time", "finish_time"},
+	).Find(&executions)
 
-	res := executionManager.DB.Table("executions").Select([]string{
-		"id",
-		"name",
-		"namespace",
-		"status",
-		"start_time",
-		"finish_time",
-	}).Find(&executions)
-	if res.Error != nil {
-		return nil, res.Error
+	if err != nil {
+		return nil, err.Error
 	}
 
 	return executions, nil

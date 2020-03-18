@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"fmt"
+	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
 	"strings"
@@ -19,7 +20,7 @@ type Deployer struct {
 
 type UseCases interface {
 	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error)
-	Deploy(manifest map[string]interface{}, forceUpdate bool, waitingGroup *sync.WaitGroup) error
+	Deploy(manifest map[string]interface{}, forceUpdate bool, executionLog func(string), waitingGroup *sync.WaitGroup) error
 }
 
 func NewDeployer(k8sDynamicClient dynamic.Interface) *Deployer {
@@ -51,7 +52,9 @@ func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, c
 	return encodedManifests, nil
 }
 
-func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bool, waitingGroup *sync.WaitGroup) error {
+func (deployer *Deployer) Deploy(
+	manifest map[string]interface{}, forceUpdate bool, executionLog func(string), waitingGroup *sync.WaitGroup,
+) error {
 	defer waitingGroup.Done()
 	var err error
 
@@ -67,16 +70,19 @@ func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bo
 			unstruct.SetResourceVersion(item.GetResourceVersion())
 			_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Update(unstruct, metav1.UpdateOptions{})
 		} else {
+			executionLog(execution.ManifestExist)
 			utils.CustomLog("error", "Deploy", err.Error())
 			return nil
 		}
 	}
 
 	if err != nil {
+		executionLog(execution.ManifestExist)
 		utils.CustomLog("error", "Deploy", err.Error())
 		return err
 	}
 
+	executionLog(execution.ManifestDeployed)
 	return nil
 }
 
