@@ -7,8 +7,10 @@ import (
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/mozart"
+	"os"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"k8s.io/client-go/dynamic"
 )
 
 func main() {
@@ -18,7 +20,13 @@ func main() {
 		return
 	}
 
-	dynamicK8sClient, err := connection.NewDynamicK8sClient()
+	var dynamicK8sClient dynamic.Interface
+	if os.Getenv("KUBECONFIG") == connection.KubeconfigInCluster {
+		dynamicK8sClient, err = connection.NewDynamicK8sClientInCluster()
+	} else {
+		dynamicK8sClient, err = connection.NewDynamicK8sClientOutCluster()
+	}
+
 	if err != nil {
 		log.Fatal(err)
 		return

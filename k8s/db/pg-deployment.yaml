@@ -18,7 +18,7 @@ spec:
         image: postgres:latest
         envFrom:
           - configMapRef:
-              name: postgres-config-demo
+              name: postgres-config-octopipe
         ports:
         - containerPort: 5432
           name: postgredb
@@ -31,7 +31,7 @@ spec:
       name: postgredb
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: gp2
+      storageClassName: standard
       resources:
         requests:
           storage: 3Gi
