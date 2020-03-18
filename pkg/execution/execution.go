@@ -16,11 +16,14 @@ type UseCases interface {
 	FindAll() (*[]ExecutionListItem, error)
 	FindByID(id string) (*Execution, error)
 	Create(execution *Execution) (*Execution, error)
-	CreateComponent(component *DeployedComponent) (*DeployedComponent, error)
-	CreateManifest(manifest *DeployedComponentManifest) (*DeployedComponentManifest, error)
+	CreateDeployedComponent(component *DeployedComponent) (*DeployedComponent, error)
+	CreateUndeployedComponent(component *UndeployedComponent) (*UndeployedComponent, error)
+	CreateDeployedManifest(manifest *DeployedComponentManifest) (*DeployedComponentManifest, error)
+	CreateUndeployedManifest(manifest *UndeployedComponentManifest) (*UndeployedComponentManifest, error)
 	CreateIstioComponent(component *IstioComponent) (*IstioComponent, error)
 	UpdateStatus(executionID string, status string) error
-	UpdateManifestStatus(id uuid.UUID, componentID uuid.UUID, status string) error
+	UpdateDeployedManifestStatus(id uuid.UUID, componentID uuid.UUID, status string) error
+	UpdateUndeployedManifestStatus(id uuid.UUID, componentID uuid.UUID, status string) error
 	UpdateIstioComponentStatus(id uuid.UUID, executionID uuid.UUID, status string) error
 	FinishExecution(executionID string) error
 }

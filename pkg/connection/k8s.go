@@ -41,6 +41,7 @@ func NewDynamicK8sClientInCluster() (dynamic.Interface, error) {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	// creates the clientset
 	client, err := dynamic.NewForConfig(config)
 	if err != nil {

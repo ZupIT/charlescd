@@ -14,8 +14,27 @@ type DeployedComponent struct {
 	Manifests   []DeployedComponentManifest `json:"manifests"`
 }
 
-func (executionManager *ExecutionManager) CreateComponent(component *DeployedComponent) (*DeployedComponent, error) {
+type UndeployedComponent struct {
+	utils.BaseModel
+	ExecutionID uuid.UUID                   `json:"-"`
+	Name        string                      `json:"name"`
+	ImageURL    string                      `json:"imageURL"`
+	Manifests   []DeployedComponentManifest `json:"manifests"`
+}
+
+func (executionManager *ExecutionManager) CreateDeployedComponent(component *DeployedComponent) (*DeployedComponent, error) {
 	row := new(DeployedComponent)
+	res := executionManager.DB.Create(&component).Scan(&row)
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return row, nil
+}
+
+func (executionManager *ExecutionManager) CreateUndeployedComponent(component *UndeployedComponent) (*UndeployedComponent, error) {
+	row := new(UndeployedComponent)
 	res := executionManager.DB.Create(&component).Scan(&row)
 
 	if res.Error != nil {

@@ -2,6 +2,7 @@ package mozart
 
 import (
 	"encoding/json"
+	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
@@ -19,26 +20,42 @@ type Mozart struct {
 }
 
 type UseCases interface {
-	Start(pipeline *pipeline.Pipeline)
+	Start(pipeline *pipeline.Pipeline) (*execution.Execution, error)
 }
 
 func NewMozart(deployer deployer.UseCases, executionMain execution.UseCases) *Mozart {
 	return &Mozart{deployer, executionMain, nil}
 }
 
-func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) {
-	mozart.createExecutionLog(pipeline)
-	mozart.deployComponentsToCluster(pipeline)
-	mozart.deployIstioComponentsToCluster(pipeline)
-	mozart.finishExecutionLog()
+func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
+	newExecution, err := mozart.createExecutionLog(pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	go func() {
+		mozart.deployComponentsToCluster(pipeline)
+		mozart.undeployComponentsFromCluster(pipeline)
+		mozart.deployIstioComponentsToCluster(pipeline)
+		mozart.finishExecutionLog()
+	}()
+
+	return newExecution, nil
 }
 
-func (mozart *Mozart) triggerWebhook() {
+func (mozart *Mozart) triggerWebhook(webhook string) func() {
+	return func() {
+		_, err := http.Get(webhook)
+		if err != nil {
+			utils.CustomLog("error", "triggerWebhook", err.Error())
+			return
+		}
+	}
 }
 
 func (mozart *Mozart) deployComponentsToCluster(pipeline *pipeline.Pipeline) {
 	for _, component := range pipeline.Versions {
-		executionComponent := mozart.createExecutionComponentLog(component)
+		executionComponent := mozart.createDeployedComponentLog(component)
 		mozart.deployComponentManifestsToCluster(pipeline, executionComponent, component)
 	}
 }
@@ -55,9 +72,35 @@ func (mozart *Mozart) deployComponentManifestsToCluster(
 
 	for manifestKey, manifest := range manifests {
 		wg.Add(1)
-		executionManifest := mozart.createExecutionManifestLog(executionComponent.ID, manifestKey, manifest)
-		updateExecutionManifest := mozart.updateExecutionManifestLog(executionManifest.ID, executionComponent.ID)
-		go mozart.deployer.Deploy(manifest.(map[string]interface{}), false, updateExecutionManifest, &wg)
+		deployedManifest := mozart.createDeployedManifestLog(executionComponent.ID, manifestKey, manifest)
+		updateDeployedManifest := mozart.updateDeployedManifestLog(deployedManifest.ID, executionComponent.ID)
+		go mozart.deployer.Deploy(manifest.(map[string]interface{}), false, updateDeployedManifest, &wg)
+	}
+
+	wg.Wait()
+}
+
+func (mozart *Mozart) undeployComponentsFromCluster(pipeline *pipeline.Pipeline) {
+	for _, component := range pipeline.UnusedVersions {
+		mozart.undeployComponentManifestsFromCluster(pipeline, nil, component)
+	}
+}
+
+func (mozart *Mozart) undeployComponentManifestsFromCluster(
+	pipeline *pipeline.Pipeline, executionComponent *execution.DeployedComponent, component *pipeline.Version,
+) {
+	var wg sync.WaitGroup
+	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, component)
+	if err != nil {
+		utils.CustomLog("error", "deployComponentManifestsToCluster", err.Error())
+		return
+	}
+
+	for manifestKey, manifest := range manifests {
+		wg.Add(1)
+		undeployedManifest := mozart.createDeployedManifestLog(executionComponent.ID, manifestKey, manifest)
+		updateUndeployedManifest := mozart.updateDeployedManifestLog(undeployedManifest.ID, executionComponent.ID)
+		go mozart.deployer.Undeploy(manifest.(map[string]interface{}), updateUndeployedManifest, &wg)
 	}
 
 	wg.Wait()
@@ -76,7 +119,7 @@ func (mozart *Mozart) deployIstioComponentsToCluster(pipeline *pipeline.Pipeline
 	wg.Wait()
 }
 
-func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) {
+func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
 	newExecution := &execution.Execution{
 		Name:      pipeline.Name,
 		Namespace: pipeline.Namespace,
@@ -86,7 +129,9 @@ func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) {
 		HelmURL:   pipeline.HelmRepository,
 	}
 
-	mozart.currentExecution, _ = mozart.executionMain.Create(newExecution)
+	currentExecution, err := mozart.executionMain.Create(newExecution)
+	mozart.currentExecution = currentExecution
+	return currentExecution, err
 }
 
 func (mozart *Mozart) updateExecutionLog(status string) {
@@ -99,15 +144,26 @@ func (mozart *Mozart) finishExecutionLog() {
 	mozart.executionMain.FinishExecution(id)
 }
 
-func (mozart *Mozart) createExecutionComponentLog(component *pipeline.Version) *execution.DeployedComponent {
+func (mozart *Mozart) createDeployedComponentLog(component *pipeline.Version) *execution.DeployedComponent {
 	newComponent := &execution.DeployedComponent{
 		ExecutionID: mozart.currentExecution.ID,
 		Name:        component.Version,
 		ImageURL:    component.VersionURL,
 	}
-	deployedComponent, _ := mozart.executionMain.CreateComponent(newComponent)
+	deployedComponent, _ := mozart.executionMain.CreateDeployedComponent(newComponent)
 
 	return deployedComponent
+}
+
+func (mozart *Mozart) createUndeployedComponentLog(component *pipeline.Version) *execution.UndeployedComponent {
+	newComponent := &execution.UndeployedComponent{
+		ExecutionID: mozart.currentExecution.ID,
+		Name:        component.Version,
+		ImageURL:    component.VersionURL,
+	}
+	undeployedComponent, _ := mozart.executionMain.CreateUndeployedComponent(newComponent)
+
+	return undeployedComponent
 }
 
 func (mozart *Mozart) createExecutionIstioComponentLog(executionID uuid.UUID, manifestKey string, manifest interface{}) *execution.IstioComponent {
@@ -123,7 +179,7 @@ func (mozart *Mozart) createExecutionIstioComponentLog(executionID uuid.UUID, ma
 	return executionIstioComponent
 }
 
-func (mozart *Mozart) createExecutionManifestLog(executionComponentID uuid.UUID, manifestKey string, manifest interface{}) *execution.DeployedComponentManifest {
+func (mozart *Mozart) createDeployedManifestLog(executionComponentID uuid.UUID, manifestKey string, manifest interface{}) *execution.DeployedComponentManifest {
 	manifestBytes, _ := json.Marshal(&manifest)
 
 	newManifest := &execution.DeployedComponentManifest{
@@ -132,13 +188,32 @@ func (mozart *Mozart) createExecutionManifestLog(executionComponentID uuid.UUID,
 		Manifest:            string(manifestBytes),
 	}
 
-	executionManifest, _ := mozart.executionMain.CreateManifest(newManifest)
+	executionManifest, _ := mozart.executionMain.CreateDeployedManifest(newManifest)
 	return executionManifest
 }
 
-func (mozart *Mozart) updateExecutionManifestLog(id uuid.UUID, executionComponentID uuid.UUID) func(string) {
+func (mozart *Mozart) createUndeployedManifestLog(executionComponentID uuid.UUID, manifestKey string, manifest interface{}) *execution.UndeployedComponentManifest {
+	manifestBytes, _ := json.Marshal(&manifest)
+
+	newManifest := &execution.UndeployedComponentManifest{
+		DeployedComponentID: executionComponentID,
+		Name:                manifestKey,
+		Manifest:            string(manifestBytes),
+	}
+
+	executionManifest, _ := mozart.executionMain.CreateUndeployedManifest(newManifest)
+	return executionManifest
+}
+
+func (mozart *Mozart) updateDeployedManifestLog(id uuid.UUID, executionComponentID uuid.UUID) func(string) {
 	return func(status string) {
-		mozart.executionMain.UpdateManifestStatus(id, executionComponentID, status)
+		mozart.executionMain.UpdateDeployedManifestStatus(id, executionComponentID, status)
+	}
+}
+
+func (mozart *Mozart) updateUndeployedManifestLog(id uuid.UUID, executionComponentID uuid.UUID) func(string) {
+	return func(status string) {
+		mozart.executionMain.UpdateUndeployedManifestStatus(id, executionComponentID, status)
 	}
 }
 

@@ -16,7 +16,7 @@ const Execution = React.lazy(() => import('../Execution'))
 const Main = () => {
   return (
     <div className="main">
-      <BrowserRouter timout>
+      <BrowserRouter basename="/octopipe">
           <Navbar className="main__navbar">
             <Container>
               <NavbarBrand>Octopipe</NavbarBrand>

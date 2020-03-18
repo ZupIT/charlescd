@@ -21,6 +21,7 @@ type Deployer struct {
 type UseCases interface {
 	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error)
 	Deploy(manifest map[string]interface{}, forceUpdate bool, executionLog func(string), waitingGroup *sync.WaitGroup) error
+	Undeploy(manifest map[string]interface{}, executionLog func(string), waitingGroup *sync.WaitGroup) error
 }
 
 func NewDeployer(k8sDynamicClient dynamic.Interface) *Deployer {
@@ -83,6 +84,31 @@ func (deployer *Deployer) Deploy(
 	}
 
 	executionLog(execution.ManifestDeployed)
+	return nil
+}
+
+func (deployer *Deployer) Undeploy(
+	manifest map[string]interface{}, executionLog func(string), waitingGroup *sync.WaitGroup,
+) error {
+	defer waitingGroup.Done()
+
+	unstruct := &unstructured.Unstructured{
+		Object: manifest,
+	}
+	schema := deployer.getResourceSchema(unstruct)
+
+	deletePolicy := metav1.DeletePropagationForeground
+	deleteOptions := &metav1.DeleteOptions{
+		PropagationPolicy: &deletePolicy,
+	}
+	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
+	if err != nil {
+		executionLog(execution.ManifestFailed)
+		utils.CustomLog("error", "Undeploy", err.Error())
+		return err
+	}
+
+	executionLog(execution.ManifestUndeployed)
 	return nil
 }
 
