@@ -16,7 +16,7 @@ export class CdConfigurationEntity extends BaseEntity {
     public id: string
 
     @Column({ name: 'type' })
-    public type: string
+    public type: CdTypeEnum
 
     @Column({ type: 'text', name: 'configuration_data' })
     public configurationData: ICdConfigurationData

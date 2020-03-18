@@ -1,5 +1,5 @@
-import { IPipelineCircle } from '../../../../../../api/components/interfaces'
-import { ConfigurationConstants, DefaultCircleId } from '../../../../../constants/application/configuration.constants'
+import { IPipelineCircle } from '../../../../../../../api/components/interfaces'
+import { ConfigurationConstants, DefaultCircleId } from '../../../../../../constants/application/configuration.constants'
 import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 import {
   HttpMatchersParams,

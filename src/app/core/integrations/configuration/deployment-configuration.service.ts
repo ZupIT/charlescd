@@ -47,10 +47,10 @@ export class DeploymentConfigurationService {
 
     return {
       account: cdConfigurationData.account,
+      appNamespace: cdConfigurationData.namespace,
       pipelineName: componentDeploymentEntity.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
       appName: componentDeploymentEntity.componentName,
-      appNamespace: cdConfigurationData.namespace,
       healthCheckPath: componentDeploymentEntity.healthCheck,
       uri: {
         uriName: componentDeploymentEntity.contextPath
