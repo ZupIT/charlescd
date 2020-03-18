@@ -14,8 +14,6 @@ import {
     UndeploymentEntity
 } from '../entity'
 import { ComponentEntity } from '../../components/entity'
-import { IDeploymentConfiguration } from '../../../core/integrations/configuration/interfaces'
-import { DeploymentConfigurationService } from '../../../core/integrations/configuration'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
@@ -24,7 +22,6 @@ import IEnvConfiguration from '../../../core/integrations/configuration/interfac
 import { IoCTokensConstants } from '../../../core/constants/ioc'
 import { CdStrategyFactory } from '../../../core/integrations/cd'
 import { CdConfigurationsRepository } from '../../configurations/repository'
-import { ICdConfigurationData } from '../../configurations/interfaces'
 import { CdConfigurationEntity } from '../../configurations/entity'
 
 @Injectable()
@@ -32,7 +29,6 @@ export class PipelineDeploymentsService {
 
     constructor(
         private readonly consoleLoggerService: ConsoleLoggerService,
-        private readonly deploymentConfigurationService: DeploymentConfigurationService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
         @Inject(forwardRef(() => CdStrategyFactory))
         private readonly cdStrategyFactory: CdStrategyFactory,
@@ -177,18 +173,15 @@ export class PipelineDeploymentsService {
         queueId: number
     ): Promise<void> {
 
-        try {
-            const cdConfiguration: CdConfigurationEntity =
-                await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
-            const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
+        const cdConfiguration: CdConfigurationEntity =
+            await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
-            await cdService.createDeployment(
-                componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
-                deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
-            )
-        } catch (error) {
-            throw error
-        }
+        const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
+
+        await cdService.createDeployment(
+            componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
+            deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
+        )
     }
 
     private async triggerComponentUnDeployment(
@@ -201,11 +194,13 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
-            const deploymentConfiguration: IDeploymentConfiguration =
-                await this.deploymentConfigurationService.getConfiguration(componentDeployment.id, componentEntity.module.cdConfigurationId)
+            const cdConfiguration: CdConfigurationEntity =
+                await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
-            await this.spinnakerService.createDeployment(
-                componentEntity.pipelineOptions, deploymentConfiguration, componentDeployment.id,
+            const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
+
+            await cdService.createDeployment(
+                componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
                 deploymentEntity.id, undeploymentEntity.circleId, pipelineCallbackUrl, queueId
             )
         } catch (error) {
