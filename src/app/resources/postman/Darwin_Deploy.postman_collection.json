@@ -9,7 +9,7 @@
 			"name": "Configurations",
 			"item": [
 				{
-					"name": "Create k8s configuration",
+					"name": "Create cd configuration",
 					"event": [
 						{
 							"listen": "test",
@@ -18,7 +18,7 @@
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
-									"postman.setGlobalVariable(\"k8sConfigurationId\", response[\"id\"]);",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
 									""
 								],
 								"type": "text/javascript"
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\"\n}",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitUsername\": \"git-user\",\n\t\t\"gitPassword\": \"git-password\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -58,14 +58,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/configurations/k8s",
+							"raw": "localhost:3000/configurations/cd",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
 								"configurations",
-								"k8s"
+								"cd"
 							]
 						}
 					},
@@ -88,7 +88,8 @@
 									"var uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable('moduleId', uuid.v4());",
-									"postman.setGlobalVariable('componentId', uuid.v4());"
+									"postman.setGlobalVariable('componentId', uuid.v4());",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -99,7 +100,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": \"{{moduleId}}\",\n    \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n    \"components\": [\n    \t{\n    \t\t\"id\": \"{{componentId}}\"\n    \t}\n    ]\n}",
+							"raw": "{\n\t\"id\": \"{{moduleId}}\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"components\": [\n    \t{\n    \t\t\"id\": \"{{componentId}}\"\n    \t}\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -212,7 +213,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/circle",
@@ -276,7 +277,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -340,7 +341,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
