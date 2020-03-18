@@ -8,8 +8,13 @@ import {
   ValidationPipe
 } from '@nestjs/common'
 import { AppConstants } from './app/core/constants'
+import { registerSchema } from 'class-validator'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
+import {
+  OctopipeConfigurationDataSchema,
+  SpinnakerConfigurationDataSchema
+} from './app/core/validations/schemas'
 
 async function bootstrap() {
 
@@ -19,6 +24,9 @@ async function bootstrap() {
       AppConstants.DEFAULT_CIRCLE_HEADER_NAME
     ]
   })
+
+  registerSchema(SpinnakerConfigurationDataSchema)
+  registerSchema(OctopipeConfigurationDataSchema)
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)
