@@ -20,6 +20,8 @@ export default interface IEnvConfiguration {
 
   spinnakerUrl?: string
 
+  octopipeUrl?: string
+
   spinnakerGithubAccount?: string
 
   helmTemplateUrl?: string
