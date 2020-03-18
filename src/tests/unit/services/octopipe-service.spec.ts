@@ -112,10 +112,12 @@ describe('Spinnaker Service', () => {
         pipelineName: 'some-pipeline-name',
         applicationName: 'some-application-name',
         appName: 'some-app-name',
-        appNamespace: 'some-app-namespace',
+        namespace: 'some-app-namespace',
         healthCheckPath: '/health',
         uri: { uriName: 'https://some.uri' },
-        appPort: 8989
+        appPort: 8989,
+        gitUsername: 'git-user',
+        gitPassword: 'git-password'
       }
       const payload =
         octopipeService.createPipelineConfigurationObject(pipelineOptions, deploymentConfiguration, 'dummy-callback-url', moduleDeployment)
@@ -124,8 +126,8 @@ describe('Spinnaker Service', () => {
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
         github: {
-          username: 'aaa',
-          password: 'bbb'
+          username: 'git-user',
+          password: 'git-password'
         },
         helmUrl: 'helm-repository',
         istio: {
