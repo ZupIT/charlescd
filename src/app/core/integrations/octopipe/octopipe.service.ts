@@ -2,6 +2,7 @@ import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { IPipelineCircle, IPipelineOptions } from '../../../api/components/interfaces'
+import { ICdConfigurationData, IOctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity
 } from '../../../api/deployments/entity'
@@ -13,7 +14,6 @@ import { ConsoleLoggerService } from '../../logs/console'
 import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
-import { IDeploymentConfiguration } from '../configuration/interfaces'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 
 interface IOctopipeVersion {
@@ -62,9 +62,10 @@ export class OctopipeService {
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration,
+    configurationData: ICdConfigurationData,
     componentDeploymentId: string,
     deploymentId: string,
+    circleId: string,
     pipelineCallbackUrl: string,
     queueId: number
   ): Promise<void> {
@@ -73,7 +74,7 @@ export class OctopipeService {
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const payload: IOctopipeConfiguration =
       this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
+        pipelineCirclesOptions, configurationData as IOctopipeConfigurationData , pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
       )
 
     this.deploy(payload, deploymentId, queueId)
@@ -105,14 +106,14 @@ export class OctopipeService {
 
   public createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration,
+    deploymentConfiguration: IOctopipeConfigurationData,
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity
   ): IOctopipeConfiguration {
 
     const payload = {
       appName: deploymentConfiguration.appName,
-      appNamespace: deploymentConfiguration.appNamespace,
+      appNamespace: deploymentConfiguration.namespace,
       github: { username: 'aaa', password: 'bbb' }, // TODO get credentials from configuration, not implemented yet
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
@@ -123,7 +124,7 @@ export class OctopipeService {
 
     payload.istio.virtualService = this.buildVirtualServices(
       deploymentConfiguration.appName,
-      deploymentConfiguration.appNamespace,
+      deploymentConfiguration.namespace,
       pipelineCirclesOptions.pipelineCircles,
       pipelineCallbackUrl,
       [deploymentConfiguration.appName],
@@ -131,7 +132,7 @@ export class OctopipeService {
     )
     payload.istio.destinationRules = createDestinationRules(
       deploymentConfiguration.appName,
-      deploymentConfiguration.appNamespace,
+      deploymentConfiguration.namespace,
       pipelineCirclesOptions.pipelineCircles,
       pipelineCirclesOptions.pipelineVersions
     )
