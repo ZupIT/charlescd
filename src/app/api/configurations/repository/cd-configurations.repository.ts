@@ -25,7 +25,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
                 authorId: cdConfig.authorId,
                 applicationId: cdConfig.applicationId
             })
-            .returning('id, name, user_id, application_id, created_at')
+            .returning('id, type, name, user_id, application_id, created_at')
             .execute()
 
         return plainToClass(CdConfigurationEntity, queryResult.generatedMaps[0])
@@ -46,7 +46,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
 
     public async findDecrypted(id: string): Promise<CdConfigurationEntity> {
 
-        const queryResult: object = await this.createQueryBuilder('cd_configurations')
+        const queryResult = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
             .addSelect('application_id', 'applicationId')
@@ -54,6 +54,10 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
             .where('cd_configurations.id = :id', { id })
             .getRawOne()
+
+        if (queryResult && queryResult.configurationData) {
+            queryResult.configurationData = JSON.parse(queryResult.configurationData)
+        }
 
         return queryResult ? plainToClass(CdConfigurationEntity, queryResult) : undefined
     }
