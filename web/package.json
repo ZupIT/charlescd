@@ -12,6 +12,8 @@
     "@testing-library/user-event": "^7.1.2",
     "ace-builds": "^1.4.8",
     "bootstrap": "^4.4.1",
+    "classnames": "^2.2.6",
+    "json2yaml": "^1.1.0",
     "moment": "^2.24.0",
     "react": "experimental",
     "react-ace": "^8.0.0",

@@ -62,12 +62,12 @@ func NewExecutionManager(db *gorm.DB) *ExecutionManager {
 
 func (executionManager *ExecutionManager) FindAll() (*[]ExecutionListItem, error) {
 	executions := &[]ExecutionListItem{}
-	err := executionManager.DB.Table("executions").Select(
-		[]string{"id", "namespace", "status", "start_time", "finish_time"},
+	res := executionManager.DB.Table("executions").Select(
+		[]string{"id", "name", "namespace", "status", "start_time", "finish_time"},
 	).Find(&executions)
 
-	if err != nil {
-		return nil, err.Error
+	if res.Error != nil {
+		return nil, res.Error
 	}
 
 	return executions, nil
