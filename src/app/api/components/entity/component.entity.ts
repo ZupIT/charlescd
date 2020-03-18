@@ -11,7 +11,7 @@ import { ReadComponentDto } from '../dto'
 import { ModuleEntity } from '../../modules/entity'
 import {
   IPipelineOptions,
-  IPipelineVersion
+  IDeploymentVersion
 } from '../interfaces'
 import {
   CircleDeploymentEntity,
@@ -132,12 +132,12 @@ export class ComponentEntity extends BaseEntity {
   }
 
   private setUnusedVersions(): void {
-    const currentVersions: IPipelineVersion[] = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
+    const currentVersions: IDeploymentVersion[] = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
         !!this.pipelineOptions.pipelineCircles.find(
             pipelineCircle => pipelineCircle.destination.version === pipelineVersion.version
         )
     )
-    const unusedVersions: IPipelineVersion[] =
+    const unusedVersions: IDeploymentVersion[] =
         this.pipelineOptions.pipelineVersions.filter(pipelineVersion => !currentVersions.includes(pipelineVersion))
 
     this.pipelineOptions.pipelineVersions = currentVersions

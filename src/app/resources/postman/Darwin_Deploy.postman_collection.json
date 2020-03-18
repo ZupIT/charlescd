@@ -1,10 +1,167 @@
 {
 	"info": {
-		"_postman_id": "b0922807-de6e-402e-b5e4-843b63edfb7d",
+		"_postman_id": "d9433fae-8cf7-4f75-ac2f-fb6097835b2e",
 		"name": "Darwin Deploy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Configurations",
+			"item": [
+				{
+					"name": "Create k8s configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"k8sConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"value": "{{applicationId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/k8s",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"k8s"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "Create module",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "159bd805-716b-451e-ab37-04fb69a2b5c5",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('moduleId', uuid.v4());",
+									"postman.setGlobalVariable('componentId', uuid.v4());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"{{moduleId}}\",\n    \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n    \"components\": [\n    \t{\n    \t\t\"id\": \"{{componentId}}\"\n    \t}\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Modules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/{{moduleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"{{moduleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
 		{
 			"name": "Deployments",
 			"item": [
@@ -37,9 +194,6 @@
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('deploymentID', uuid.v4());",
 									"postman.setGlobalVariable('applicationName', uuid.v4());",
 									""
@@ -54,16 +208,11 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "x-circle-id",
-								"value": "{{x-circle-id}}",
-								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/circle",
@@ -75,76 +224,6 @@
 							"path": [
 								"deployments",
 								"circle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Undeployment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
-								"exec": [
-									"const response = JSON.parse(responseBody);",
-									"",
-									"postman.setGlobalVariable(\"undeploymentId\", response[\"id\"]);",
-									"",
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(201)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
-								"exec": [
-									"var uuid = require('uuid');",
-									"",
-									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('deploymentID', uuid.v4());",
-									"postman.setGlobalVariable('applicationName', uuid.v4());",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "x-circle-id",
-								"value": "{{x-circle-id}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"some-k8s-config-id\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/deployments/{{deploymentId}}/undeploy",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"deployments",
-								"{{deploymentId}}",
-								"undeploy"
 							]
 						}
 					},
@@ -179,12 +258,8 @@
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('deploymentID', uuid.v4());",
 									"postman.setGlobalVariable('applicationName', uuid.v4());",
-									"postman.setGlobalVariable('k8sConfigurationId', uuid.v4());",
 									""
 								],
 								"type": "text/javascript"
@@ -201,7 +276,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -247,12 +322,9 @@
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('moduleRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('componentRequestUUID', uuid.v4());",
-									"postman.setGlobalVariable('authorRequestUUID', uuid.v4());",
 									"postman.setGlobalVariable('deploymentID', uuid.v4());",
 									"postman.setGlobalVariable('applicationName', uuid.v4());",
-									"postman.setGlobalVariable('k8sConfigurationId', uuid.v4());"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -268,7 +340,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleRequestUUID}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentRequestUUID}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorRequestUUID}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"k8sConfigurationId\": \"{{k8sConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -393,79 +465,6 @@
 								"components",
 								"{{componentId}}",
 								"queue"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Modules",
-			"item": [
-				{
-					"name": "Get Modules",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "3606e801-a529-4d94-96a5-51276a1e098b",
-								"exec": [
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(200)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/modules",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"modules"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Module by Id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "ead74670-2a6d-48fb-85d1-7a3a23fe86c5",
-								"exec": [
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(200)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/modules/{{moduleId}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"modules",
-								"{{moduleId}}"
 							]
 						}
 					},

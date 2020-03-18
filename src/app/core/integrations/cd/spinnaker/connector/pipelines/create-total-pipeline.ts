@@ -9,7 +9,7 @@ import webhookBaseStage from '../utils/base-webhook'
 import { createBakeStage, createPrimaryId } from '../utils/helpers/create-id-names'
 import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
-import createDestinationRules from '../utils/manifests/base-destination-rules'
+import createDestinationRules, { IDestinationRuleParams } from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 
 export default class TotalPipeline {
@@ -99,7 +99,7 @@ export default class TotalPipeline {
   private buildDestinationRules(): IBuildReturn {
     const stageName = 'Deploy Destination Rules'
     const { account } = this.contract
-    const destinationRules = createDestinationRules(this.contract)
+    const destinationRules = createDestinationRules(this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.versions)
     const destinationRulesStage = baseStage(
       destinationRules,
       stageName,
@@ -123,8 +123,10 @@ export default class TotalPipeline {
     const { account } = this.contract
     const virtualService: IBaseVirtualService | IEmptyVirtualService =
       this.contract.versions.length === 0
-        ? createEmptyVirtualService(this.contract)
-        : createVirtualService(this.contract)
+        ? createEmptyVirtualService(this.contract.appName, this.contract.appNamespace)
+        : createVirtualService(
+          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.uri.uriName, this.contract.hosts
+        )
     const virtualServiceStage = baseStage(
       virtualService,
       stageName,
