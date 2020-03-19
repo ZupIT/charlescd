@@ -90,7 +90,10 @@ func (d *Deployer) getHelmChartAndValues(pipeline *pipeline.Pipeline, component 
 
 func (d *Deployer) encodeStringManifest(manifest string) (map[string]interface{}, error) {
 	decode := scheme.Codecs.UniversalDeserializer().Decode
-	obj, _, _ := decode([]byte(manifest), nil, nil)
+	obj, _, err := decode([]byte(manifest), nil, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	if obj == nil {
 		return nil, errors.New("Codec universal deserializer nil")

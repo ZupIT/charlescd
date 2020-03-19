@@ -1,22 +1,38 @@
 package mozart
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/sync/errgroup"
+)
+
+const (
+	SUCCEEDED       = "SUCCEEDED"
+	FAILED          = "FAILED"
+	FAILED_CONTINUE = "FAILED_CONTINUE"
+	SKIPPED         = "SKIPPED"
+	TERMINAL        = "TERMINAL"
+	UNDEPLOYED      = "UNDEPLOYED"
+	UNDEPLOY_FAILED = "UNDEPLOY_FAILED"
 )
 
 type Mozart struct {
 	deployer         deployer.UseCases
 	executionMain    execution.UseCases
 	currentExecution *execution.Execution
+	done             chan bool
+	errc             chan error
+	quit             chan bool
 }
 
 type UseCases interface {
@@ -24,7 +40,7 @@ type UseCases interface {
 }
 
 func NewMozart(deployer deployer.UseCases, executionMain execution.UseCases) *Mozart {
-	return &Mozart{deployer, executionMain, nil}
+	return &Mozart{deployer, executionMain, nil, make(chan bool), make(chan error), make(chan bool)}
 }
 
 func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
@@ -35,88 +51,159 @@ func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, 
 
 	go func() {
 		mozart.deployComponentsToCluster(pipeline)
+
 		mozart.undeployComponentsFromCluster(pipeline)
-		mozart.deployIstioComponentsToCluster(pipeline)
+		mozart.deployIstioComponentsToCluster(pipeline, context.Background())
 		mozart.finishExecutionLog()
+		mozart.done <- true
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-mozart.errc:
+				log.Println("ERROR")
+				mozart.triggerWebhook(pipeline.Webhook, FAILED)
+				return
+			case <-mozart.done:
+				log.Println("FINISHED")
+				mozart.triggerWebhook(pipeline.Webhook, SUCCEEDED)
+				return
+			}
+		}
 	}()
 
 	return newExecution, nil
 }
 
-func (mozart *Mozart) triggerWebhook(webhook string) func() {
-	return func() {
-		_, err := http.Get(webhook)
-		if err != nil {
-			utils.CustomLog("error", "triggerWebhook", err.Error())
-			return
-		}
+func (mozart *Mozart) triggerWebhook(webhook string, status string) error {
+	data, err := json.Marshal(map[string]string{
+		"status": status,
+	})
+	if err != nil {
+		return err
 	}
+
+	_, err = http.Post(webhook, "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		utils.CustomLog("error", "triggerWebhook", err.Error())
+		return err
+	}
+
+	return nil
 }
 
 func (mozart *Mozart) deployComponentsToCluster(pipeline *pipeline.Pipeline) {
 	for _, component := range pipeline.Versions {
-		executionComponent := mozart.createDeployedComponentLog(component)
-		mozart.deployComponentManifestsToCluster(pipeline, executionComponent, component)
+		deployedComponent := mozart.createDeployedComponentLog(component)
+		err := mozart.deployComponentManifestsToCluster(pipeline, deployedComponent, component, context.Background())
+		if err != nil {
+			mozart.errc <- err
+			break
+		}
 	}
 }
 
 func (mozart *Mozart) deployComponentManifestsToCluster(
-	pipeline *pipeline.Pipeline, executionComponent *execution.DeployedComponent, component *pipeline.Version,
-) {
-	var wg sync.WaitGroup
+	pipeline *pipeline.Pipeline, deployedComponent *execution.DeployedComponent, component *pipeline.Version, ctx context.Context,
+) error {
+
 	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, component)
 	if err != nil {
 		utils.CustomLog("error", "deployComponentManifestsToCluster", err.Error())
-		return
+		return err
 	}
 
+	errs, ctx := errgroup.WithContext(ctx)
 	for manifestKey, manifest := range manifests {
-		wg.Add(1)
-		deployedManifest := mozart.createDeployedManifestLog(executionComponent.ID, manifestKey, manifest)
-		updateDeployedManifest := mozart.updateDeployedManifestLog(deployedManifest.ID, executionComponent.ID)
-		go mozart.deployer.Deploy(manifest.(map[string]interface{}), false, updateDeployedManifest, &wg)
+		deployedManifest := mozart.createDeployedManifestLog(deployedComponent.ID, manifestKey, manifest)
+		updateDeployedManifest := mozart.updateDeployedManifestLog(deployedManifest.ID, deployedComponent.ID)
+		func(manifest interface{}) {
+			errs.Go(func() error {
+				updateDeployedManifest(execution.ManifestDeploying)
+				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false)
+				if err != nil {
+					updateDeployedManifest(execution.ManifestFailed)
+					return err
+				}
+
+				updateDeployedManifest(execution.ManifestDeployed)
+				return nil
+			})
+		}(manifest)
+
 	}
 
-	wg.Wait()
+	return errs.Wait()
 }
 
 func (mozart *Mozart) undeployComponentsFromCluster(pipeline *pipeline.Pipeline) {
 	for _, component := range pipeline.UnusedVersions {
-		mozart.undeployComponentManifestsFromCluster(pipeline, nil, component)
+		undeployedComponent := mozart.createUndeployedComponentLog(component)
+		err := mozart.undeployComponentManifestsFromCluster(pipeline, undeployedComponent, component, context.Background())
+		if err != nil {
+			mozart.errc <- err
+			break
+		}
 	}
 }
 
 func (mozart *Mozart) undeployComponentManifestsFromCluster(
-	pipeline *pipeline.Pipeline, executionComponent *execution.DeployedComponent, component *pipeline.Version,
-) {
-	var wg sync.WaitGroup
+	pipeline *pipeline.Pipeline, undeployedComponent *execution.UndeployedComponent, component *pipeline.Version, ctx context.Context,
+) error {
 	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, component)
 	if err != nil {
 		utils.CustomLog("error", "deployComponentManifestsToCluster", err.Error())
-		return
+		return err
 	}
 
+	errs, ctx := errgroup.WithContext(ctx)
 	for manifestKey, manifest := range manifests {
-		wg.Add(1)
-		undeployedManifest := mozart.createDeployedManifestLog(executionComponent.ID, manifestKey, manifest)
-		updateUndeployedManifest := mozart.updateDeployedManifestLog(undeployedManifest.ID, executionComponent.ID)
-		go mozart.deployer.Undeploy(manifest.(map[string]interface{}), updateUndeployedManifest, &wg)
+		undeployedManifest := mozart.createUndeployedManifestLog(undeployedComponent.ID, manifestKey, manifest)
+		updateUndeployedManifest := mozart.updateUndeployedManifestLog(undeployedManifest.ID, undeployedComponent.ID)
+		func(manifest interface{}) {
+			errs.Go(func() error {
+				updateUndeployedManifest(execution.ManifestUndeploying)
+				err := mozart.deployer.Undeploy(manifest.(map[string]interface{}))
+				if err != nil {
+					updateUndeployedManifest(execution.ManifestFailed)
+					log.Fatalln(err)
+					return err
+				}
+
+				updateUndeployedManifest(execution.ManifestUndeployed)
+				return nil
+			})
+		}(manifest)
 	}
 
-	wg.Wait()
+	return errs.Wait()
 }
 
-func (mozart *Mozart) deployIstioComponentsToCluster(pipeline *pipeline.Pipeline) {
-	var wg sync.WaitGroup
-
+func (mozart *Mozart) deployIstioComponentsToCluster(pipeline *pipeline.Pipeline, ctx context.Context) {
+	errs, ctx := errgroup.WithContext(ctx)
 	for istioManifestKey, istioManifest := range pipeline.Istio {
-		wg.Add(1)
 		executioIstioComponent := mozart.createExecutionIstioComponentLog(mozart.currentExecution.ID, istioManifestKey, istioManifest)
 		updateExecutionIstioComponent := mozart.updateExecutionIstionComponentLog(executioIstioComponent.ID)
-		go mozart.deployer.Deploy(istioManifest.(map[string]interface{}), true, updateExecutionIstioComponent, &wg)
+		func(manifest interface{}) {
+			errs.Go(func() error {
+				updateExecutionIstioComponent(execution.ManifestDeploying)
+				err := mozart.deployer.Deploy(istioManifest.(map[string]interface{}), true)
+				if err != nil {
+					updateExecutionIstioComponent(execution.ManifestFailed)
+					log.Fatalln(err)
+					return err
+				}
+
+				updateExecutionIstioComponent(execution.ManifestDeployed)
+				return nil
+			})
+		}(istioManifest)
 	}
 
-	wg.Wait()
+	if errs.Wait() != nil {
+		mozart.errc <- errs.Wait()
+	}
 }
 
 func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
@@ -196,9 +283,9 @@ func (mozart *Mozart) createUndeployedManifestLog(executionComponentID uuid.UUID
 	manifestBytes, _ := json.Marshal(&manifest)
 
 	newManifest := &execution.UndeployedComponentManifest{
-		DeployedComponentID: executionComponentID,
-		Name:                manifestKey,
-		Manifest:            string(manifestBytes),
+		UndeployedComponentID: executionComponentID,
+		Name:                  manifestKey,
+		Manifest:              string(manifestBytes),
 	}
 
 	executionManifest, _ := mozart.executionMain.CreateUndeployedManifest(newManifest)

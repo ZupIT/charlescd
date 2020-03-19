@@ -79,7 +79,11 @@ func (executionManager *ExecutionManager) FindAll() (*[]ExecutionListItem, error
 func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error) {
 	execution := &Execution{}
 
-	res := executionManager.DB.Preload("DeployedComponents").Preload("DeployedComponents.Manifests").First(&execution, "id = ?", id)
+	res := executionManager.DB.Preload("DeployedComponents").Preload(
+		"DeployedComponents.Manifests",
+	).Preload("UndeployedComponents").Preload(
+		"UndeployedComponents.Manifests",
+	).Preload("IstioComponents").First(&execution, "id = ?", id)
 	if res.Error != nil {
 		return nil, res.Error
 	}

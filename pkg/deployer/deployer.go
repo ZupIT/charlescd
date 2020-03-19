@@ -2,11 +2,9 @@ package deployer
 
 import (
 	"fmt"
-	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
 	"strings"
-	"sync"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -20,8 +18,8 @@ type Deployer struct {
 
 type UseCases interface {
 	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error)
-	Deploy(manifest map[string]interface{}, forceUpdate bool, executionLog func(string), waitingGroup *sync.WaitGroup) error
-	Undeploy(manifest map[string]interface{}, executionLog func(string), waitingGroup *sync.WaitGroup) error
+	Deploy(manifest map[string]interface{}, forceUpdate bool) error
+	Undeploy(manifest map[string]interface{}) error
 }
 
 func NewDeployer(k8sDynamicClient dynamic.Interface) *Deployer {
@@ -53,10 +51,7 @@ func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, c
 	return encodedManifests, nil
 }
 
-func (deployer *Deployer) Deploy(
-	manifest map[string]interface{}, forceUpdate bool, executionLog func(string), waitingGroup *sync.WaitGroup,
-) error {
-	defer waitingGroup.Done()
+func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bool) error {
 	var err error
 
 	unstruct := &unstructured.Unstructured{
@@ -71,26 +66,20 @@ func (deployer *Deployer) Deploy(
 			unstruct.SetResourceVersion(item.GetResourceVersion())
 			_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Update(unstruct, metav1.UpdateOptions{})
 		} else {
-			executionLog(execution.ManifestExist)
 			utils.CustomLog("error", "Deploy", err.Error())
-			return nil
+			return err
 		}
 	}
 
 	if err != nil {
-		executionLog(execution.ManifestExist)
 		utils.CustomLog("error", "Deploy", err.Error())
 		return err
 	}
 
-	executionLog(execution.ManifestDeployed)
 	return nil
 }
 
-func (deployer *Deployer) Undeploy(
-	manifest map[string]interface{}, executionLog func(string), waitingGroup *sync.WaitGroup,
-) error {
-	defer waitingGroup.Done()
+func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 
 	unstruct := &unstructured.Unstructured{
 		Object: manifest,
@@ -102,13 +91,16 @@ func (deployer *Deployer) Undeploy(
 		PropagationPolicy: &deletePolicy,
 	}
 	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
+	if err != nil && strings.Contains(err.Error(), "not found") {
+		utils.CustomLog("error", "Undeploy", err.Error())
+		return nil
+	}
+
 	if err != nil {
-		executionLog(execution.ManifestFailed)
 		utils.CustomLog("error", "Undeploy", err.Error())
 		return err
 	}
 
-	executionLog(execution.ManifestUndeployed)
 	return nil
 }
 

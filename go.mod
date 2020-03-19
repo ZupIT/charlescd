@@ -22,6 +22,7 @@ require (
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
+	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
 	golang.org/x/time v0.0.0-20170424234030-8be79e1e0910 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect

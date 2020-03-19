@@ -7,12 +7,14 @@ import (
 )
 
 const (
+	ManifestCreated     = "CREATED"
 	ManifestDeploying   = "DEPLOYING"
 	ManifestDeployed    = "DEPLOYED"
 	ManifestUndeploying = "UNDEPLOYING"
 	ManifestUndeployed  = "UNDEPLOYED"
 	ManifestFailed      = "FAILED"
 	ManifestExist       = "IS_DEPLOYED"
+	ManifestNotFound    = "NOT_FOUND"
 )
 
 type DeployedComponentManifest struct {
@@ -25,15 +27,15 @@ type DeployedComponentManifest struct {
 
 type UndeployedComponentManifest struct {
 	utils.BaseModel
-	DeployedComponentID uuid.UUID `json:"-"`
-	Name                string    `json:"name"`
-	Manifest            string    `json:"manifest"`
-	Status              string    `json:"status"`
+	UndeployedComponentID uuid.UUID `json:"-"`
+	Name                  string    `json:"name"`
+	Manifest              string    `json:"manifest"`
+	Status                string    `json:"status"`
 }
 
 func (executionManager *ExecutionManager) CreateDeployedManifest(manifest *DeployedComponentManifest) (*DeployedComponentManifest, error) {
 	row := new(DeployedComponentManifest)
-	manifest.Status = ManifestDeploying
+	manifest.Status = ManifestCreated
 	res := executionManager.DB.Create(&manifest).Scan(&row)
 
 	if res.Error != nil {
@@ -57,7 +59,7 @@ func (executionManager *ExecutionManager) UpdateDeployedManifestStatus(id uuid.U
 
 func (executionManager *ExecutionManager) CreateUndeployedManifest(manifest *UndeployedComponentManifest) (*UndeployedComponentManifest, error) {
 	row := new(UndeployedComponentManifest)
-	manifest.Status = ManifestUndeploying
+	manifest.Status = ManifestCreated
 	res := executionManager.DB.Create(&manifest).Scan(&row)
 
 	if res.Error != nil {
