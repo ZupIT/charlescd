@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing'
 import { AxiosResponse } from 'axios'
 import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import {
   ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
@@ -21,6 +21,9 @@ import {
 } from '../../stubs/services'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { EnvConfigurationStub } from '../../stubs/configurations'
+import { IOctopipeConfiguration } from '../../../app/core/integrations/octopipe/octopipe.service'
+import { of } from 'rxjs'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -233,6 +236,42 @@ describe('Spinnaker Service', () => {
         webHookUrl: 'dummy-callback-url'
       }
       expect(payload).toEqual(expectedPayload)
+    })
+
+    it('posts to octopipe server', async () => {
+      const payload = {} as IOctopipeConfiguration
+      jest.spyOn(httpService, 'post').mockImplementation(
+        () => of({
+          data: {
+            id: 'some-pipeline-id'
+          },
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        })
+      )
+      expect(
+        await octopipeService.deploy(payload, 'deployment-id', 444)
+      ).toEqual({ config: {}, data: { id: 'some-pipeline-id' }, headers: {}, status: 200, statusText: 'OK' })
+    })
+
+    it('should handle on octopipe failure', async () => {
+      const payload = {} as IOctopipeConfiguration
+      jest.spyOn(httpService, 'post').mockImplementation(
+        () => { throw new Error('bad request') }
+      )
+
+      jest.spyOn(queuedDeploymentsRepository, 'findOne').mockImplementation(
+        () => Promise.resolve(new QueuedDeploymentEntity(
+          'dummy-component-id',
+          'dummy-component-deployment-id3',
+          QueuedPipelineStatusEnum.QUEUED,
+        ))
+      )
+      expect(
+        await octopipeService.deploy(payload, 'deployment-id', 444)
+      ).toEqual({ error: 'bad request' })
     })
   })
 })
