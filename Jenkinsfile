@@ -16,29 +16,29 @@ node {
     packageJSON = readJSON file: 'package.json'
     sh "echo sonar.projectVersion=${packageJSON.version} >> sonar-project.properties"
 
-    // stage('SonarQube analysis') {
-    //   nodejs(nodeJSInstallationName: 'NodeJSAuto', configId: '') {
+    stage('SonarQube analysis') {
+      nodejs(nodeJSInstallationName: 'NodeJSAuto', configId: '') {
 
-    //     script {
-    //       def scannerHome = tool 'Sonar Zup';
-    //       withSonarQubeEnv('Sonar Zup') {
-    //         sh "${scannerHome}/bin/sonar-scanner"
-    //       }
-    //     }
+        script {
+          def scannerHome = tool 'Sonar Zup';
+          withSonarQubeEnv('Sonar Zup') {
+            sh "${scannerHome}/bin/sonar-scanner"
+          }
+        }
 
-    //   }
-    // }
+      }
+    }
 
     sleep 5
 
-    // stage("Quality Gate") {
-    //     timeout(time: 1, unit: 'HOURS') {
-    //        def qg = waitForQualityGate()
-    //        if (qg.status != 'OK') {
-    //            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-    //        }
-    //    }
-    // }
+    stage("Quality Gate") {
+        timeout(time: 1, unit: 'HOURS') {
+           def qg = waitForQualityGate()
+           if (qg.status != 'OK') {
+               error "Pipeline aborted due to quality gate failure: ${qg.status}"
+           }
+       }
+    }
 
     buildDockerContainer {
       dockerRepositoryName = projectName
