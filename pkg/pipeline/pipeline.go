@@ -10,13 +10,18 @@ type GithubAccount struct {
 	Password string `json:"password"`
 }
 
+type Istio struct {
+	VirtualService   map[string]interface{} `json:"virtualService"`
+	DestinationRules map[string]interface{} `json:"destinationRules"`
+}
+
 type Pipeline struct {
-	Name           string                 `json:"appName"`
-	Namespace      string                 `json:"appNamespace""`
-	Versions       []*Version             `json:"versions"`
-	UnusedVersions []*Version             `json:"unused_versions"`
-	Webhook        string                 `json:"webhookUrl"`
-	HelmRepository string                 `json:"helmUrl"`
-	GithubAccount  GithubAccount          `json:"github"`
-	Istio          map[string]interface{} `json:"istio"`
+	Name           string        `json:"appName"`
+	Namespace      string        `json:"appNamespace""`
+	Versions       []*Version    `json:"versions"`
+	UnusedVersions []*Version    `json:"unusedVersions"`
+	Webhook        string        `json:"webhookUrl"`
+	HelmRepository string        `json:"helmUrl"`
+	GithubAccount  GithubAccount `json:"github"`
+	Istio          Istio         `json:"istio"`
 }

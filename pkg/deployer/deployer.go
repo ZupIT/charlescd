@@ -6,6 +6,7 @@ import (
 	"octopipe/pkg/utils"
 	"strings"
 
+	"github.com/imdario/mergo"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -18,7 +19,7 @@ type Deployer struct {
 
 type UseCases interface {
 	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error)
-	Deploy(manifest map[string]interface{}, forceUpdate bool) error
+	Deploy(manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource) error
 	Undeploy(manifest map[string]interface{}) error
 }
 
@@ -51,23 +52,29 @@ func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, c
 	return encodedManifests, nil
 }
 
-func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bool) error {
+func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource) error {
 	var err error
 
 	unstruct := &unstructured.Unstructured{
 		Object: manifest,
 	}
-	schema := deployer.getResourceSchema(unstruct)
+	var schema schema.GroupVersionResource
+	if resourceSchema != nil {
+		schema = *resourceSchema
+	} else {
+		schema = *deployer.getResourceSchema(unstruct)
+	}
 
 	_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil && strings.Contains(err.Error(), "already exists") {
 		if forceUpdate {
-			item, _ := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
-			unstruct.SetResourceVersion(item.GetResourceVersion())
-			_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Update(unstruct, metav1.UpdateOptions{})
+			var res *unstructured.Unstructured
+			res, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
+			mergo.Merge(&res.Object, unstruct.Object, mergo.WithOverride)
+			_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Update(res, metav1.UpdateOptions{})
 		} else {
-			utils.CustomLog("error", "Deploy", err.Error())
-			return err
+			utils.CustomLog("info", "Deploy", err.Error())
+			return nil
 		}
 	}
 
@@ -84,7 +91,7 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	unstruct := &unstructured.Unstructured{
 		Object: manifest,
 	}
-	schema := deployer.getResourceSchema(unstruct)
+	schema := *deployer.getResourceSchema(unstruct)
 
 	deletePolicy := metav1.DeletePropagationForeground
 	deleteOptions := &metav1.DeleteOptions{
@@ -92,7 +99,7 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	}
 	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
 	if err != nil && strings.Contains(err.Error(), "not found") {
-		utils.CustomLog("error", "Undeploy", err.Error())
+		utils.CustomLog("info", "Undeploy", err.Error())
 		return nil
 	}
 
@@ -104,9 +111,9 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	return nil
 }
 
-func (deployer *Deployer) getResourceSchema(k8sObject *unstructured.Unstructured) schema.GroupVersionResource {
+func (deployer *Deployer) getResourceSchema(k8sObject *unstructured.Unstructured) *schema.GroupVersionResource {
 	group := k8sObject.GroupVersionKind().Group
 	version := k8sObject.GroupVersionKind().Version
 	resource := fmt.Sprintf("%ss", strings.ToLower(k8sObject.GroupVersionKind().Kind))
-	return schema.GroupVersionResource{Group: group, Version: version, Resource: resource}
+	return &schema.GroupVersionResource{Group: group, Version: version, Resource: resource}
 }

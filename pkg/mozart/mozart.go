@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/execution"
@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 const (
@@ -53,7 +54,7 @@ func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, 
 		mozart.deployComponentsToCluster(pipeline)
 
 		mozart.undeployComponentsFromCluster(pipeline)
-		mozart.deployIstioComponentsToCluster(pipeline, context.Background())
+		mozart.deployIstioComponents(pipeline)
 		mozart.finishExecutionLog()
 		mozart.done <- true
 	}()
@@ -62,11 +63,11 @@ func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, 
 		for {
 			select {
 			case <-mozart.errc:
-				log.Println("ERROR")
+				utils.CustomLog("info", "Start", "Trigger error webhook...")
 				mozart.triggerWebhook(pipeline.Webhook, FAILED)
 				return
 			case <-mozart.done:
-				log.Println("FINISHED")
+				utils.CustomLog("info", "Start", "Trigger success webhook...")
 				mozart.triggerWebhook(pipeline.Webhook, SUCCEEDED)
 				return
 			}
@@ -121,7 +122,7 @@ func (mozart *Mozart) deployComponentManifestsToCluster(
 		func(manifest interface{}) {
 			errs.Go(func() error {
 				updateDeployedManifest(execution.ManifestDeploying)
-				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false)
+				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
 				if err != nil {
 					updateDeployedManifest(execution.ManifestFailed)
 					return err
@@ -167,7 +168,7 @@ func (mozart *Mozart) undeployComponentManifestsFromCluster(
 				err := mozart.deployer.Undeploy(manifest.(map[string]interface{}))
 				if err != nil {
 					updateUndeployedManifest(execution.ManifestFailed)
-					log.Fatalln(err)
+					utils.CustomLog("error", "undeployComponentManifestsFromCluster", err.Error())
 					return err
 				}
 
@@ -180,30 +181,59 @@ func (mozart *Mozart) undeployComponentManifestsFromCluster(
 	return errs.Wait()
 }
 
-func (mozart *Mozart) deployIstioComponentsToCluster(pipeline *pipeline.Pipeline, ctx context.Context) {
+func (mozart *Mozart) deployIstioComponents(pipeline *pipeline.Pipeline) {
+	var err error
+
+	virtualServiceSchema := schema.GroupVersionResource{
+		Group:    "networking.istio.io",
+		Version:  "v1alpha3",
+		Resource: "virtualservices",
+	}
+
+	destinationRules := schema.GroupVersionResource{
+		Group:    "networking.istio.io",
+		Version:  "v1alpha3",
+		Resource: "destinationrules",
+	}
+
+	if pipeline.Istio.VirtualService != nil {
+		utils.CustomLog("info", "deployIstioComponents", fmt.Sprintf("virtualService: %s", execution.ManifestDeploying))
+		err = mozart.deployIstioComponentToCluster(context.Background(), "virtualService", pipeline.Istio.VirtualService, virtualServiceSchema)
+	}
+
+	if pipeline.Istio.DestinationRules != nil {
+		utils.CustomLog("info", "deployIstioComponents", fmt.Sprintf("destinationRules: %s", execution.ManifestDeploying))
+		err = mozart.deployIstioComponentToCluster(context.Background(), "destinationRules", pipeline.Istio.DestinationRules, destinationRules)
+	}
+
+	if err != nil {
+		mozart.errc <- err
+	}
+}
+
+func (mozart *Mozart) deployIstioComponentToCluster(
+	ctx context.Context, componentName string, manifest map[string]interface{}, resource schema.GroupVersionResource,
+) error {
 	errs, ctx := errgroup.WithContext(ctx)
-	for istioManifestKey, istioManifest := range pipeline.Istio {
-		executioIstioComponent := mozart.createExecutionIstioComponentLog(mozart.currentExecution.ID, istioManifestKey, istioManifest)
-		updateExecutionIstioComponent := mozart.updateExecutionIstionComponentLog(executioIstioComponent.ID)
-		func(manifest interface{}) {
-			errs.Go(func() error {
-				updateExecutionIstioComponent(execution.ManifestDeploying)
-				err := mozart.deployer.Deploy(istioManifest.(map[string]interface{}), true)
-				if err != nil {
-					updateExecutionIstioComponent(execution.ManifestFailed)
-					log.Fatalln(err)
-					return err
-				}
+	executioIstioComponent := mozart.createExecutionIstioComponentLog(mozart.currentExecution.ID, componentName, manifest)
+	updateExecutionIstioComponent := mozart.updateExecutionIstionComponentLog(executioIstioComponent.ID)
+	func(manifest map[string]interface{}) {
+		errs.Go(func() error {
+			updateExecutionIstioComponent(execution.ManifestDeploying)
+			err := mozart.deployer.Deploy(manifest, true, &resource)
+			if err != nil {
+				updateExecutionIstioComponent(execution.ManifestFailed)
+				utils.CustomLog("error", "deployIstioComponentToCluster", err.Error())
+				return err
+			}
 
-				updateExecutionIstioComponent(execution.ManifestDeployed)
-				return nil
-			})
-		}(istioManifest)
-	}
+			updateExecutionIstioComponent(execution.ManifestDeployed)
+			utils.CustomLog("info", "deployIstioComponentToCluster", fmt.Sprintf("%s: %s", componentName, execution.ManifestDeployed))
+			return nil
+		})
+	}(manifest)
 
-	if errs.Wait() != nil {
-		mozart.errc <- errs.Wait()
-	}
+	return errs.Wait()
 }
 
 func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) (*execution.Execution, error) {

@@ -1,8 +1,8 @@
 package connection
 
 import (
-	"log"
 	"octopipe/pkg/execution"
+	"octopipe/pkg/utils"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -35,7 +35,7 @@ func NewDatabaseConnection() (*gorm.DB, error) {
 	db.Model(&execution.UndeployedComponentManifest{}).AddForeignKey("undeployed_component_id", "undeployed_components(id)", "RESTRICT", "RESTRICT")
 	db.Model(&execution.IstioComponent{}).AddForeignKey("execution_id", "executions(id)", "RESTRICT", "RESTRICT")
 
-	log.Println("Successfully connected!")
+	utils.CustomLog("info", "NewDatabaseConnection", "Database connection success!!!")
 
 	return db, nil
 }

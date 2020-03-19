@@ -4,7 +4,7 @@ metadata:
   name: octopipe-db
 spec:
   serviceName: "octopipe-db"
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: octopipe-db
@@ -21,17 +21,28 @@ spec:
               name: postgres-config-octopipe
         ports:
         - containerPort: 5432
-          name: postgredb
+          name: tcp-postgresql
+          protocol: TCP
         volumeMounts:
-        - name: postgredb
-          mountPath: /var/lib/postgresql/data
-          subPath: postgres
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /bitnami/postgresql
+          name: data
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: dshm
   volumeClaimTemplates:
   - metadata:
-      name: postgredb
+      creationTimestamp: null
+      name: data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: standard
+      accessModes:
+      - ReadWriteOnce
       resources:
         requests:
-          storage: 3Gi
+          storage: 2Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
