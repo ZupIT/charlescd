@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     proxy.createProxyMiddleware({
-      target: 'https://darwin-api.continuousplatform.com/octopipe',
+      target: 'http://localhost:8080',
       changeOrigin: true,
       pathRewrite: { '^/api': '' }
     })

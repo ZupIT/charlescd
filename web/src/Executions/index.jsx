@@ -1,17 +1,27 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { Table, Navbar, Container, Input, Card } from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './style.css'
-import { useRouteData, useNavigate } from 'react-suspense-router'
 import { getDuration, formatStartTime, getStatusColor } from './helper'
+import { useHistory } from 'react-router-dom'
+
+const basePath = process.env.REACT_APP_API_URI;
 
 const Executions = () => {
-  const { result } = useRouteData()
-  const history = useNavigate()
+  const [executions, setExecutions] = useState([])
+  const history = useHistory()
+
+  useEffect(() => {
+    const getExecutions = () => fetch(`${basePath}/api/v1/executions`)
+      .then(res => res.json())
+      .then(res => setExecutions(res))
+
+    getExecutions()
+  }, [])
 
   const handleClick = useCallback((id) => {
-    history(`/${id}`)
-  })
+    history.push(`/${id}`)
+  }, [])
 
   const renderStatus = (status) => (
     <Card className="execution__status" inverse color={getStatusColor(status)}>
@@ -43,7 +53,7 @@ const Executions = () => {
             </tr>
           </thead>
           <tbody>
-            {result?.map(item => (
+            {executions?.map(item => (
               <tr key={item?.id} onClick={() => handleClick(item?.id)}>
                 <td>{renderStatus(item?.status)}</td>
                 <td>{item?.name}</td>

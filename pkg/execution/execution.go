@@ -37,17 +37,18 @@ const (
 
 type Execution struct {
 	utils.BaseModel
-	Name               string              `json:"name"`
-	Namespace          string              `json:"namespace"`
-	DeployedComponents []DeployedComponent `json:"deployedComponents"`
-	IstioComponents    []IstioComponent    `json:"istioComponents"`
-	Author             string              `json:"author"`
-	StartTime          time.Time           `json:"startTime"`
-	FinishTime         time.Time           `json:"finishTime"`
-	Webhook            string              `json:"webhook"`
-	Status             string              `json:"status"`
-	HelmURL            string              `json:"helmUrl"`
-	Error              string              `json:"error"`
+	Name                 string                `json:"name"`
+	Namespace            string                `json:"namespace"`
+	DeployedComponents   []DeployedComponent   `json:"deployedComponents"`
+	UndeployedComponents []UndeployedComponent `json:"undeployedComponents"`
+	IstioComponents      []IstioComponent      `json:"istioComponents"`
+	Author               string                `json:"author"`
+	StartTime            time.Time             `json:"startTime"`
+	FinishTime           time.Time             `json:"finishTime"`
+	Webhook              string                `json:"webhook"`
+	Status               string                `json:"status"`
+	HelmURL              string                `json:"helmUrl"`
+	Error                string                `json:"error"`
 }
 
 type ExecutionListItem struct {

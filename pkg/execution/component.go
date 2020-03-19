@@ -16,10 +16,10 @@ type DeployedComponent struct {
 
 type UndeployedComponent struct {
 	utils.BaseModel
-	ExecutionID uuid.UUID                   `json:"-"`
-	Name        string                      `json:"name"`
-	ImageURL    string                      `json:"imageURL"`
-	Manifests   []DeployedComponentManifest `json:"manifests"`
+	ExecutionID uuid.UUID                     `json:"-"`
+	Name        string                        `json:"name"`
+	ImageURL    string                        `json:"imageURL"`
+	Manifests   []UndeployedComponentManifest `json:"manifests"`
 }
 
 func (executionManager *ExecutionManager) CreateDeployedComponent(component *DeployedComponent) (*DeployedComponent, error) {

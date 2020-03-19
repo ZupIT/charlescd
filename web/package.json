@@ -15,11 +15,11 @@
     "classnames": "^2.2.6",
     "json2yaml": "^1.1.0",
     "moment": "^2.24.0",
-    "react": "experimental",
+    "react": "^16.13.1",
     "react-ace": "^8.0.0",
-    "react-dom": "experimental",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "react-suspense-router": "latest",
     "reactstrap": "^8.4.1"
   },
   "scripts": {

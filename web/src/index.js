@@ -4,4 +4,4 @@ import Main from './Main'
 import './library'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Main />);
+ReactDOM.render(<Main />, document.getElementById('root'))
