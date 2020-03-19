@@ -15,6 +15,7 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/conne
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { AxiosResponse } from 'axios'
 
 interface IOctopipeVersion {
   version: string
@@ -88,11 +89,11 @@ export class OctopipeService {
     payload: IOctopipeConfiguration,
     deploymentId: string,
     queueId: number
-  ): Promise<void> {
+  ): Promise<AxiosResponse<any> | {error: any}> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
-      await this.httpService.post(
+      const octopipeResponse = await this.httpService.post(
         `${this.envConfiguration.octopipeUrl}`,
         payload,
         {
@@ -102,9 +103,11 @@ export class OctopipeService {
         },
       ).toPromise()
       this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
+      return octopipeResponse
     } catch (error) {
       this.consoleLoggerService.error(error)
       await this.handleDeploymentFailure(deploymentId, queueId)
+      return { error: error.message }
     }
   }
 
