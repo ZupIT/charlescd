@@ -1,29 +1,28 @@
 import { HttpService } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AxiosResponse } from 'axios'
+import { of } from 'rxjs'
 import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
   ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
-import { AppConstants } from '../../../app/core/constants'
+import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
+import { IOctopipeConfiguration } from '../../../app/core/integrations/octopipe/octopipe.service'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
+import { EnvConfigurationStub } from '../../stubs/configurations'
 import {
   ComponentDeploymentsRepositoryStub, ComponentUndeploymentsRepositoryStub, DeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
   ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
-import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { EnvConfigurationStub } from '../../stubs/configurations'
-import { IOctopipeConfiguration } from '../../../app/core/integrations/octopipe/octopipe.service'
-import { of } from 'rxjs'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -36,6 +35,7 @@ describe('Spinnaker Service', () => {
   let pipelineQueuesService: PipelineQueuesService
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentUndeploymentsRepository: ComponentUndeploymentsRepository
+  let componentDeploymentsRepository: ComponentDeploymentsRepository
   let pipelineErrorHandlerService: PipelineErrorHandlerService
 
   beforeEach(async () => {
@@ -64,6 +64,7 @@ describe('Spinnaker Service', () => {
     pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
+    componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
     pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
 
     defaultAxiosGetResponse = {
@@ -256,7 +257,7 @@ describe('Spinnaker Service', () => {
       ).toEqual({ config: {}, data: { id: 'some-pipeline-id' }, headers: {}, status: 200, statusText: 'OK' })
     })
 
-    it('should handle on octopipe failure', async () => {
+    it('should handle on octopipe deployment failure', async () => {
       const payload = {} as IOctopipeConfiguration
       jest.spyOn(httpService, 'post').mockImplementation(
         () => { throw new Error('bad request') }
