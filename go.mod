@@ -30,5 +30,4 @@ require (
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 	k8s.io/helm v2.16.1+incompatible
-	sigs.k8s.io/yaml v1.1.0
 )

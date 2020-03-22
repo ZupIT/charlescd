@@ -136,11 +136,6 @@ func (deployer *Deployer) watchK8sDeployStatus(schema schema.GroupVersionResourc
 	}
 
 	if found {
-		go func() {
-			second, _ := strconv.ParseInt(os.Getenv("TIMEOUT_RESOURCE_VERIFICATION"), 10, 64)
-			time.Sleep(time.Duration(second) * time.Second)
-			timeoutDone <- true
-		}()
 		for {
 			time.Sleep(timeResourceVerification * time.Second)
 			select {
@@ -151,14 +146,20 @@ func (deployer *Deployer) watchK8sDeployStatus(schema schema.GroupVersionResourc
 				utils.CustomLog("info", "isResourceOk", "Resource verification")
 				ok := deployer.isResourceOk(conditions)
 				if ok {
-					break
+					return nil
+				} else {
+					go func() {
+						second, _ := strconv.ParseInt(os.Getenv("TIMEOUT_RESOURCE_VERIFICATION"), 10, 64)
+						time.Sleep(time.Duration(second) * time.Second)
+						timeoutDone <- true
+					}()
 				}
 			}
 		}
 	}
 
 	if err != nil {
-		utils.CustomLog("error", "watchK8sDeployStatus", "NestedSlice not found")
+		utils.CustomLog("error", "watchK8sDeployStatus", err.Error())
 		return nil
 	}
 

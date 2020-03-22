@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -18,27 +17,25 @@ const (
 
 type K8sConnection struct {
 	DynamicClientset dynamic.Interface
-	DefaultClientset *kubernetes.Clientset
 }
 
 func NewK8sConnection(kubeconfigEnv string) (*K8sConnection, error) {
 	var dynamicClientset dynamic.Interface
-	var defaultClientset *kubernetes.Clientset
 	var err error
 	if kubeconfigEnv == kubeconfigInCluster {
-		dynamicClientset, defaultClientset, err = newDynamicK8sClientInCluster()
+		dynamicClientset, err = newDynamicK8sClientInCluster()
 	} else {
-		dynamicClientset, defaultClientset, err = newDynamicK8sClientOutCluster()
+		dynamicClientset, err = newDynamicK8sClientOutCluster()
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &K8sConnection{dynamicClientset, defaultClientset}, nil
+	return &K8sConnection{dynamicClientset}, nil
 }
 
-func newDynamicK8sClientOutCluster() (dynamic.Interface, *kubernetes.Clientset, error) {
+func newDynamicK8sClientOutCluster() (dynamic.Interface, error) {
 	var kubeconfig *string
 	if home := os.Getenv("HOME"); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -48,23 +45,18 @@ func newDynamicK8sClientOutCluster() (dynamic.Interface, *kubernetes.Clientset, 
 
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	dynamicClient, err := dynamic.NewForConfig(config)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return dynamicClient, clientset, nil
+	return dynamicClient, nil
 }
 
-func newDynamicK8sClientInCluster() (dynamic.Interface, *kubernetes.Clientset, error) {
+func newDynamicK8sClientInCluster() (dynamic.Interface, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
@@ -75,10 +67,5 @@ func newDynamicK8sClientInCluster() (dynamic.Interface, *kubernetes.Clientset, e
 		panic(err.Error())
 	}
 
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return dynamicClient, clientset, nil
+	return dynamicClient, nil
 }
