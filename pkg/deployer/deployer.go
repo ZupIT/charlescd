@@ -87,6 +87,11 @@ func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bo
 		}
 	}
 
+	if err != nil {
+		utils.CustomLog("error", "Deploy", err.Error())
+		return err
+	}
+
 	err = deployer.watchK8sDeployStatus(schema, unstruct)
 	if err != nil {
 		utils.CustomLog("error", "Deploy", err.Error())
