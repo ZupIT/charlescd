@@ -21,6 +21,7 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/thoas/go-funk v0.6.0 // indirect
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
 	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
 	golang.org/x/time v0.0.0-20170424234030-8be79e1e0910 // indirect
@@ -29,4 +30,5 @@ require (
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 	k8s.io/helm v2.16.1+incompatible
+	sigs.k8s.io/yaml v1.1.0
 )

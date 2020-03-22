@@ -1,20 +1,29 @@
 package deployer
 
 import (
+	"errors"
 	"fmt"
+	"octopipe/pkg/connection"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/imdario/mergo"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
+)
+
+const (
+	timeResourceVerification = 1
 )
 
 type Deployer struct {
-	k8sDynamicClient dynamic.Interface
+	k8sConnection *connection.K8sConnection
 }
 
 type UseCases interface {
@@ -23,8 +32,8 @@ type UseCases interface {
 	Undeploy(manifest map[string]interface{}) error
 }
 
-func NewDeployer(k8sDynamicClient dynamic.Interface) *Deployer {
-	return &Deployer{k8sDynamicClient}
+func NewDeployer(k8sConnection *connection.K8sConnection) *Deployer {
+	return &Deployer{k8sConnection}
 }
 
 func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error) {
@@ -65,19 +74,20 @@ func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bo
 		schema = *deployer.getResourceSchema(unstruct)
 	}
 
-	_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
-	if err != nil && strings.Contains(err.Error(), "already exists") {
+	_, err = deployer.k8sConnection.DynamicClientset.Resource(schema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	if err != nil && k8sErrors.IsAlreadyExists(err) {
 		if forceUpdate {
 			var res *unstructured.Unstructured
-			res, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
+			res, err = deployer.k8sConnection.DynamicClientset.Resource(schema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
 			mergo.Merge(&res.Object, unstruct.Object, mergo.WithOverride)
-			_, err = deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Update(res, metav1.UpdateOptions{})
+			_, err = deployer.k8sConnection.DynamicClientset.Resource(schema).Namespace(unstruct.GetNamespace()).Update(res, metav1.UpdateOptions{})
 		} else {
 			utils.CustomLog("info", "Deploy", err.Error())
 			return nil
 		}
 	}
 
+	err = deployer.watchK8sDeployStatus(schema, unstruct)
 	if err != nil {
 		utils.CustomLog("error", "Deploy", err.Error())
 		return err
@@ -97,8 +107,8 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	deleteOptions := &metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	}
-	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
-	if err != nil && strings.Contains(err.Error(), "not found") {
+	err := deployer.k8sConnection.DynamicClientset.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
+	if err != nil && k8sErrors.IsNotFound(err) {
 		utils.CustomLog("info", "Undeploy", err.Error())
 		return nil
 	}
@@ -109,6 +119,67 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	}
 
 	return nil
+}
+
+func (deployer *Deployer) watchK8sDeployStatus(schema schema.GroupVersionResource, resource *unstructured.Unstructured) error {
+	timeoutDone := make(chan bool)
+	res, err := deployer.k8sConnection.DynamicClientset.Resource(schema).Namespace(resource.GetNamespace()).Get(resource.GetName(), metav1.GetOptions{})
+	if err != nil {
+		utils.CustomLog("error", "watchK8sDeployStatus", err.Error())
+		return err
+	}
+
+	conditions, found, err := unstructured.NestedSlice(res.Object, "status", "conditions")
+	if err != nil {
+		utils.CustomLog("error", "watchK8sDeployStatus", err.Error())
+		return err
+	}
+
+	if found {
+		go func() {
+			second, _ := strconv.ParseInt(os.Getenv("TIMEOUT_RESOURCE_VERIFICATION"), 10, 64)
+			time.Sleep(time.Duration(second) * time.Second)
+			timeoutDone <- true
+		}()
+		for {
+			time.Sleep(timeResourceVerification * time.Second)
+			select {
+			case <-timeoutDone:
+				err = errors.New("Time resource verification exceeded")
+				return err
+			default:
+				utils.CustomLog("info", "isResourceOk", "Resource verification")
+				ok := deployer.isResourceOk(conditions)
+				if ok {
+					break
+				}
+			}
+		}
+	}
+
+	if err != nil {
+		utils.CustomLog("error", "watchK8sDeployStatus", "NestedSlice not found")
+		return nil
+	}
+
+	return nil
+}
+
+func (deployer *Deployer) isResourceOk(conditions []interface{}) bool {
+	failedStatus := []interface{}{}
+
+	for _, condition := range conditions {
+		status, _, _ := unstructured.NestedString(condition.(map[string]interface{}), "status")
+		if status == "False" {
+			failedStatus = append(failedStatus, condition)
+		}
+	}
+
+	if len(failedStatus) <= 0 {
+		return true
+	}
+
+	return false
 }
 
 func (deployer *Deployer) getResourceSchema(k8sObject *unstructured.Unstructured) *schema.GroupVersionResource {

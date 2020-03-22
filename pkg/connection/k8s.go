@@ -6,16 +6,39 @@ import (
 	"path/filepath"
 
 	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 const (
-	KubeconfigInCluster  = "IN_CLUSTER"
-	KubeconfigOutCluster = "OUT_CLUSTER"
+	kubeconfigInCluster  = "IN_CLUSTER"
+	kubeconfigOutCluster = "OUT_CLUSTER"
 )
 
-func NewDynamicK8sClientOutCluster() (dynamic.Interface, error) {
+type K8sConnection struct {
+	DynamicClientset dynamic.Interface
+	DefaultClientset *kubernetes.Clientset
+}
+
+func NewK8sConnection(kubeconfigEnv string) (*K8sConnection, error) {
+	var dynamicClientset dynamic.Interface
+	var defaultClientset *kubernetes.Clientset
+	var err error
+	if kubeconfigEnv == kubeconfigInCluster {
+		dynamicClientset, defaultClientset, err = newDynamicK8sClientInCluster()
+	} else {
+		dynamicClientset, defaultClientset, err = newDynamicK8sClientOutCluster()
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &K8sConnection{dynamicClientset, defaultClientset}, nil
+}
+
+func newDynamicK8sClientOutCluster() (dynamic.Interface, *kubernetes.Clientset, error) {
 	var kubeconfig *string
 	if home := os.Getenv("HOME"); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -25,28 +48,37 @@ func NewDynamicK8sClientOutCluster() (dynamic.Interface, error) {
 
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	client, err := dynamic.NewForConfig(config)
+	dynamicClient, err := dynamic.NewForConfig(config)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return client, nil
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return dynamicClient, clientset, nil
 }
 
-func NewDynamicK8sClientInCluster() (dynamic.Interface, error) {
+func newDynamicK8sClientInCluster() (dynamic.Interface, *kubernetes.Clientset, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// creates the clientset
-	client, err := dynamic.NewForConfig(config)
+	dynamicClient, err := dynamic.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	return client, nil
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return dynamicClient, clientset, nil
 }
