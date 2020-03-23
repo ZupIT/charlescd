@@ -129,7 +129,7 @@ export class OctopipeService {
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
-      versions: pipelineCirclesOptions.pipelineVersions,
+      versions: this.concatAppNameAndVersion(pipelineCirclesOptions.pipelineVersions, appName),
       webHookUrl: pipelineCallbackUrl
     }
 
@@ -149,6 +149,12 @@ export class OctopipeService {
     )
 
     return payload
+  }
+
+  private concatAppNameAndVersion(versions: IOctopipeVersion[], appName: string) {
+    return versions.map(version => {
+      return Object.assign({}, version, {version: `${appName}-${version.version}`})
+    })
   }
 
   private async handleDeploymentFailure(deploymentId: string, queueId: number): Promise<void> {
