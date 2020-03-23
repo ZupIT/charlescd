@@ -230,7 +230,7 @@ describe('Spinnaker Service', () => {
         unusedVersions: [],
         versions: [
           {
-            version: 'v1',
+            version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123'
           }
         ],
