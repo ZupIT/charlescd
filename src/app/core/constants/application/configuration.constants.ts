@@ -32,7 +32,9 @@ export const ConfigurationConstants = {
 
   DEFAULT_CIRCLE_ID: 'f5d23a57-5607-4306-9993-477e1598cc2a',
 
-  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+
+  OCTOPIPE_URL: 'http://localhost:8883/octopipe'
 }
 
 export type DefaultCircleId = 'f5d23a57-5607-4306-9993-477e1598cc2a'

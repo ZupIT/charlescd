@@ -8,17 +8,17 @@ export class ReadModuleDto {
 
   public readonly createdAt: Date
 
-  public readonly k8sConfigurationId: string
+  public readonly cdConfigurationId: string
 
   constructor(
     id: string,
     components: ReadComponentDto[],
     createdAt: Date,
-    k8sConfigurationId: string
+    cdConfigurationId: string
   ) {
     this.id = id
     this.components = components
     this.createdAt = createdAt
-    this.k8sConfigurationId = k8sConfigurationId
+    this.cdConfigurationId = cdConfigurationId
   }
 }

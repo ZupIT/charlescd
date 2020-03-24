@@ -64,7 +64,7 @@
     "collectCoverageFrom": [
       "app/**/*.ts",
       "!app/**/resources/**",
-      "!app/**/{index.ts,*.{module,enum,interface,constants,dto}.ts}"
+      "!app/**/{index.ts,*.{module,enum,interface,constants,dto,repository,schema}.ts}"
     ],
     "moduleFileExtensions": [
       "js",

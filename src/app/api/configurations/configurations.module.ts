@@ -2,23 +2,23 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigurationsController } from './controller'
 import {
-    CreateK8sConfigurationUsecase,
-    GetK8sConfigurationsUsecase
+    CreateCdConfigurationUsecase,
+    GetCdConfigurationsUsecase
 } from './use-cases'
-import { K8sConfigurationsRepository } from './repository'
+import { CdConfigurationsRepository } from './repository'
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            K8sConfigurationsRepository
+            CdConfigurationsRepository
         ])
     ],
     controllers: [
         ConfigurationsController
     ],
     providers: [
-        CreateK8sConfigurationUsecase,
-        GetK8sConfigurationsUsecase
+        CreateCdConfigurationUsecase,
+        GetCdConfigurationsUsecase
     ]
 })
 export class ConfigurationsModule {}

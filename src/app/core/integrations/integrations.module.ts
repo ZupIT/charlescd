@@ -3,8 +3,7 @@ import {
   HttpModule,
   Module
 } from '@nestjs/common'
-import { SpinnakerService } from './spinnaker'
-import { DeploymentConfigurationService } from './configuration'
+import { SpinnakerService } from './cd/spinnaker'
 import { MooveService } from './moove'
 import { LogsModule } from '../logs/logs.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -21,7 +20,9 @@ import {
 import { DatabasesService } from './databases'
 import { ServicesModule } from '../services/services.module'
 import { DeploymentsModule } from '../../api/deployments/deployments.module'
-import { K8sConfigurationsRepository } from '../../api/configurations/repository'
+import { CdConfigurationsRepository } from '../../api/configurations/repository'
+import { CdStrategyFactory } from './cd'
+import { OctopipeService } from './octopipe'
 
 @Module({
   imports: [
@@ -36,20 +37,20 @@ import { K8sConfigurationsRepository } from '../../api/configurations/repository
       ModuleDeploymentEntity,
       QueuedDeploymentsRepository,
       ComponentUndeploymentsRepository,
-      K8sConfigurationsRepository
+      CdConfigurationsRepository
     ])
   ],
   providers: [
     SpinnakerService,
-    DeploymentConfigurationService,
+    OctopipeService,
     MooveService,
-    DatabasesService
+    DatabasesService,
+    CdStrategyFactory
   ],
   exports: [
-    SpinnakerService,
-    DeploymentConfigurationService,
     MooveService,
-    DatabasesService
+    DatabasesService,
+    CdStrategyFactory
   ]
 })
 export class IntegrationsModule {}

@@ -1,4 +1,4 @@
-export interface IPipelineVersion {
+export interface IDeploymentVersion {
 
   versionUrl: string,
 

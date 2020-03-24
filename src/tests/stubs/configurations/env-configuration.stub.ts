@@ -18,5 +18,7 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
     darwinUndeploymentCallbackUrl: 'darwin-undeployment-callback.url.com',
 
-    spinnakerUrl: 'spinnakerurl.com'
+    spinnakerUrl: 'spinnakerurl.com',
+
+    octopipeUrl: 'octopipe.com'
 }
