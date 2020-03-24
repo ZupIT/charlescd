@@ -22,7 +22,7 @@ import {
     PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
-import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
+import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 

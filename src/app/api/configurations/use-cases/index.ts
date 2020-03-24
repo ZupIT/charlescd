@@ -1,7 +1,7 @@
-import { CreateK8sConfigurationUsecase } from './create-k8s-configuration.usecase'
-import { GetK8sConfigurationsUsecase } from './get-k8s-configurations.usecase'
+import { CreateCdConfigurationUsecase } from './create-cd-configuration.usecase'
+import { GetCdConfigurationsUsecase } from './get-cd-configurations.usecase'
 
 export {
-    CreateK8sConfigurationUsecase,
-    GetK8sConfigurationsUsecase
+    CreateCdConfigurationUsecase,
+    GetCdConfigurationsUsecase
 }

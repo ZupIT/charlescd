@@ -18,8 +18,8 @@ export class ModuleEntity extends BaseEntity {
   })
   public id: string
 
-  @Column({ name: 'k8s_configuration_id'})
-  public k8sConfigurationId: string
+  @Column({ name: 'cd_configuration_id'})
+  public cdConfigurationId: string
 
   @OneToMany(
     type => ComponentEntity,
@@ -33,12 +33,12 @@ export class ModuleEntity extends BaseEntity {
 
   constructor(
     moduleId: string,
-    k8sConfigurationId: string,
+    cdConfigurationId: string,
     components: ComponentEntity[]
   ) {
     super()
     this.id = moduleId
-    this.k8sConfigurationId = k8sConfigurationId
+    this.cdConfigurationId = cdConfigurationId
     this.components = components
   }
 
@@ -47,7 +47,7 @@ export class ModuleEntity extends BaseEntity {
       this.id,
       this.components.map(component => component.toReadDto()),
       this.createdAt,
-      this.k8sConfigurationId
+      this.cdConfigurationId
     )
   }
 }

@@ -3,39 +3,42 @@ import {
     Controller,
     Get,
     Headers,
-    Post
+    Post,
+    UsePipes
 } from '@nestjs/common'
 import {
-    CreateK8sConfigurationDto,
-    ReadK8sConfigurationDto
+    CreateCdConfigurationDto,
+    ReadCdConfigurationDto
 } from '../dto'
 import {
-    CreateK8sConfigurationUsecase,
-    GetK8sConfigurationsUsecase
+    CreateCdConfigurationUsecase,
+    GetCdConfigurationsUsecase
 } from '../use-cases'
+import { ValidConfigurationDataPipe } from '../pipes'
 
 @Controller('configurations')
 export class ConfigurationsController {
 
     constructor(
-        private readonly createK8sConfigurationUseCase: CreateK8sConfigurationUsecase,
-        private readonly getK8sConfigurationsUseCase: GetK8sConfigurationsUsecase
+        private readonly createCdConfigurationUseCase: CreateCdConfigurationUsecase,
+        private readonly getCdConfigurationsUseCase: GetCdConfigurationsUsecase
     ) {}
 
-    @Post('k8s')
-    public async createK8sConfiguration(
-        @Body() createK8sConfigurationDto: CreateK8sConfigurationDto,
+    @UsePipes(ValidConfigurationDataPipe)
+    @Post('cd')
+    public async createCdConfiguration(
+        @Body() createCdConfigurationDto: CreateCdConfigurationDto,
         @Headers('x-application-id') applicationId: string
-    ): Promise<ReadK8sConfigurationDto> {
+    ): Promise<ReadCdConfigurationDto> {
 
-        return await this.createK8sConfigurationUseCase.execute(createK8sConfigurationDto, applicationId)
+        return await this.createCdConfigurationUseCase.execute(createCdConfigurationDto, applicationId)
     }
 
-    @Get('k8s')
-    public async getK8sConfigurations(
+    @Get('cd')
+    public async getCdConfigurations(
         @Headers('x-application-id') applicationId: string
-    ): Promise<ReadK8sConfigurationDto[]> {
+    ): Promise<ReadCdConfigurationDto[]> {
 
-        return await this.getK8sConfigurationsUseCase.execute(applicationId)
+        return await this.getCdConfigurationsUseCase.execute(applicationId)
     }
 }

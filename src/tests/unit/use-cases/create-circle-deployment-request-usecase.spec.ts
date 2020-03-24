@@ -6,7 +6,7 @@ import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import { CreateCircleDeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
-import { QueuedDeploymentsConstraints } from '../../../app/core/database_constraints/queued_deployments.constraints'
+import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { ComponentsRepositoryStub, DeploymentsRepositoryStub, ModulesRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
 import {

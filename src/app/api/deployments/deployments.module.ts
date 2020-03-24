@@ -34,6 +34,7 @@ import {
 } from './use-cases'
 import { ServicesModule } from '../../core/services/services.module'
 import { DeploymentUniquenessPipe } from './pipes'
+import { CdConfigurationsRepository } from '../configurations/repository'
 
 @Module({
   imports: [
@@ -51,7 +52,8 @@ import { DeploymentUniquenessPipe } from './pipes'
       QueuedDeploymentsRepository,
       QueuedUndeploymentEntity,
       UndeploymentEntity,
-      ComponentUndeploymentsRepository
+      ComponentUndeploymentsRepository,
+      CdConfigurationsRepository
     ])
   ],
   controllers: [

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { SpinnakerService } from '../../../app/core/integrations/spinnaker'
+import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
 import {
   ConsoleLoggerServiceStub,
   HttpServiceStub,
