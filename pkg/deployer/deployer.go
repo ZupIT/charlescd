@@ -13,6 +13,10 @@ import (
 	"k8s.io/client-go/dynamic"
 )
 
+const (
+	deploymentKind = "Deployment"
+)
+
 type Deployer struct {
 	k8sDynamicClient dynamic.Interface
 }
@@ -91,12 +95,18 @@ func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
 	unstruct := &unstructured.Unstructured{
 		Object: manifest,
 	}
+
+	if unstruct.GetKind() != deploymentKind {
+		return nil
+	}
+
 	schema := *deployer.getResourceSchema(unstruct)
 
 	deletePolicy := metav1.DeletePropagationForeground
 	deleteOptions := &metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	}
+
 	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
 	if err != nil && strings.Contains(err.Error(), "not found") {
 		utils.CustomLog("info", "Undeploy", err.Error())
