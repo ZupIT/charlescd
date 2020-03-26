@@ -21,8 +21,8 @@ cover:
 				$(GOTOOL) cover -html=cover.out -o cover.html
 				open cover.html
 publish-octopipe:
-				docker build -t realwavelab.azurecr.io/octopipe:darwin -f cmd/octopipe/Dockerfile .
-				docker push realwavelab.azurecr.io/octopipe:darwin
+				docker build -t realwavelab.azurecr.io/octopipe:v-0-1-0 -f cmd/octopipe/Dockerfile .
+				docker push realwavelab.azurecr.io/octopipe:v-0-1-0
 publish-ui:
 				cd web && yarn build
 				docker build -t realwavelab.azurecr.io/octopipe-ui:darwin -f web/Dockerfile .

@@ -1,5 +1,12 @@
 package pipeline
 
+const (
+	StatusRunning       = "RUNNING"
+	StatusSucceeded     = "SUCCEEDED"
+	StatusWebhookFailed = "WEBHOOK_FAILED"
+	StatusFailed        = "FAILED"
+)
+
 type Version struct {
 	Version    string `json:"version"`
 	VersionURL string `json:"versionUrl"`

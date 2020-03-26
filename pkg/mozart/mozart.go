@@ -4,338 +4,262 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
-	"time"
 
-	"github.com/google/uuid"
-	"golang.org/x/sync/errgroup"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"golang.org/x/sync/errgroup"
 )
 
-const (
-	SUCCEEDED       = "SUCCEEDED"
-	FAILED          = "FAILED"
-	FAILED_CONTINUE = "FAILED_CONTINUE"
-	SKIPPED         = "SKIPPED"
-	TERMINAL        = "TERMINAL"
-	UNDEPLOYED      = "UNDEPLOYED"
-	UNDEPLOY_FAILED = "UNDEPLOY_FAILED"
-)
+type MozartSteps struct {
+	doneManageVersions        chan error
+	doneManageIstioComponents chan error
+}
 
 type Mozart struct {
-	deployer         deployer.UseCases
-	executionMain    execution.UseCases
-	currentExecution *execution.Execution
-	done             chan bool
-	errc             chan error
-	quit             chan bool
+	deployer           deployer.UseCases
+	executionMain      execution.UseCases
+	currentExecutionID *primitive.ObjectID
+	steps              *MozartSteps
 }
 
 type UseCases interface {
-	Start(pipeline *pipeline.Pipeline) (*execution.Execution, error)
+	Start(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error)
 }
 
 func NewMozart(deployer deployer.UseCases, executionMain execution.UseCases) *Mozart {
-	return &Mozart{deployer, executionMain, nil, make(chan bool), make(chan error), make(chan bool)}
+	steps := &MozartSteps{make(chan error), make(chan error)}
+	return &Mozart{deployer, executionMain, nil, steps}
 }
 
-func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
-	newExecution, err := mozart.createExecutionLog(pipeline)
+func (mozart *Mozart) Start(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error) {
+	var err error
+
+	mozart.currentExecutionID, err = mozart.executionMain.Create(pipeline)
 	if err != nil {
 		return nil, err
 	}
+	mozart.firstPipelineStep(pipeline)
+	mozart.stepsManager(pipeline)
 
-	go func() {
-		mozart.deployComponentsToCluster(pipeline)
+	return mozart.currentExecutionID, nil
+}
 
-		mozart.undeployComponentsFromCluster(pipeline)
-		mozart.deployIstioComponents(pipeline)
-		mozart.finishExecutionLog()
-		mozart.done <- true
-	}()
-
+func (mozart *Mozart) stepsManager(pipeline *pipeline.Pipeline) {
 	go func() {
 		for {
 			select {
-			case <-mozart.errc:
-				utils.CustomLog("info", "Start", "Trigger error webhook...")
-				mozart.triggerWebhook(pipeline.Webhook, FAILED)
-				return
-			case <-mozart.done:
-				utils.CustomLog("info", "Start", "Trigger success webhook...")
-				mozart.triggerWebhook(pipeline.Webhook, SUCCEEDED)
+			case err := <-mozart.steps.doneManageVersions:
+				if err != nil {
+					mozart.finishPipeline(pipeline, execution.ExecutionFailed)
+					return
+				} else {
+					mozart.startManageIstioComponents(pipeline)
+
+				}
+			case err := <-mozart.steps.doneManageIstioComponents:
+				if err != nil {
+					mozart.finishPipeline(pipeline, execution.ExecutionFailed)
+					return
+				} else {
+					mozart.finishPipeline(pipeline, execution.ExecutionFinished)
+				}
 				return
 			}
 		}
 	}()
-
-	return newExecution, nil
 }
 
-func (mozart *Mozart) triggerWebhook(webhook string, status string) error {
-	data, err := json.Marshal(map[string]string{
-		"status": status,
-	})
-	if err != nil {
-		return err
-	}
-
-	_, err = http.Post(webhook, "application/json", bytes.NewBuffer(data))
-	if err != nil {
-		utils.CustomLog("error", "triggerWebhook", err.Error())
-		return err
-	}
-
-	return nil
+func (mozart *Mozart) firstPipelineStep(pipeline *pipeline.Pipeline) {
+	mozart.startManageVersions(pipeline)
 }
 
-func (mozart *Mozart) deployComponentsToCluster(pipeline *pipeline.Pipeline) {
-	for _, component := range pipeline.Versions {
-		deployedComponent := mozart.createDeployedComponentLog(component)
-		err := mozart.deployComponentManifestsToCluster(pipeline, deployedComponent, component, context.Background())
-		if err != nil {
-			mozart.errc <- err
-			break
-		}
-	}
+func (mozart *Mozart) startManageVersions(pipeline *pipeline.Pipeline) {
+	go mozart.manageVersions(pipeline)
 }
 
-func (mozart *Mozart) deployComponentManifestsToCluster(
-	pipeline *pipeline.Pipeline, deployedComponent *execution.DeployedComponent, component *pipeline.Version, ctx context.Context,
-) error {
-
-	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, component)
-	if err != nil {
-		utils.CustomLog("error", "deployComponentManifestsToCluster", err.Error())
-		return err
-	}
-
-	errs, ctx := errgroup.WithContext(ctx)
-	for manifestKey, manifest := range manifests {
-		deployedManifest := mozart.createDeployedManifestLog(deployedComponent.ID, manifestKey, manifest)
-		updateDeployedManifest := mozart.updateDeployedManifestLog(deployedManifest.ID, deployedComponent.ID)
-		func(manifest interface{}) {
-			errs.Go(func() error {
-				updateDeployedManifest(execution.ManifestDeploying)
-				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
-				if err != nil {
-					updateDeployedManifest(execution.ManifestFailed)
-					return err
-				}
-
-				updateDeployedManifest(execution.ManifestDeployed)
-				return nil
-			})
-		}(manifest)
-
-	}
-
-	return errs.Wait()
+func (mozart *Mozart) startManageIstioComponents(pipeline *pipeline.Pipeline) {
+	go mozart.manageIstioComponents(pipeline)
 }
 
-func (mozart *Mozart) undeployComponentsFromCluster(pipeline *pipeline.Pipeline) {
-	for _, component := range pipeline.UnusedVersions {
-		undeployedComponent := mozart.createUndeployedComponentLog(component)
-		err := mozart.undeployComponentManifestsFromCluster(pipeline, undeployedComponent, component, context.Background())
-		if err != nil {
-			mozart.errc <- err
-			break
-		}
-	}
-}
-
-func (mozart *Mozart) undeployComponentManifestsFromCluster(
-	pipeline *pipeline.Pipeline, undeployedComponent *execution.UndeployedComponent, component *pipeline.Version, ctx context.Context,
-) error {
-	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, component)
-	if err != nil {
-		utils.CustomLog("error", "deployComponentManifestsToCluster", err.Error())
-		return err
-	}
-
-	errs, ctx := errgroup.WithContext(ctx)
-	for manifestKey, manifest := range manifests {
-		undeployedManifest := mozart.createUndeployedManifestLog(undeployedComponent.ID, manifestKey, manifest)
-		updateUndeployedManifest := mozart.updateUndeployedManifestLog(undeployedManifest.ID, undeployedComponent.ID)
-		func(manifest interface{}) {
-			errs.Go(func() error {
-				updateUndeployedManifest(execution.ManifestUndeploying)
-				err := mozart.deployer.Undeploy(manifest.(map[string]interface{}))
-				if err != nil {
-					updateUndeployedManifest(execution.ManifestFailed)
-					utils.CustomLog("error", "undeployComponentManifestsFromCluster", err.Error())
-					return err
-				}
-
-				updateUndeployedManifest(execution.ManifestUndeployed)
-				return nil
-			})
-		}(manifest)
-	}
-
-	return errs.Wait()
-}
-
-func (mozart *Mozart) deployIstioComponents(pipeline *pipeline.Pipeline) {
+func (mozart *Mozart) manageVersions(pipeline *pipeline.Pipeline) {
 	var err error
 
+	err = mozart.manageDeployVersions(pipeline)
+	err = mozart.manageUndeployVersions(pipeline, context.Background())
+
+	if err != nil {
+		mozart.steps.doneManageVersions <- err
+		return
+	}
+
+	mozart.steps.doneManageVersions <- nil
+}
+
+func (mozart *Mozart) manageIstioComponents(pipeline *pipeline.Pipeline) {
+	var err error
+	utils.CustomLog("info", "manageIstioComponents", "START ISTIO DEPLOY...")
+	err = mozart.deployVirtualService(pipeline, context.Background())
+	err = mozart.deployDestinationRules(pipeline, context.Background())
+	if err != nil {
+		mozart.steps.doneManageIstioComponents <- err
+		return
+	}
+
+	mozart.steps.doneManageIstioComponents <- nil
+}
+
+func (mozart *Mozart) deployVirtualService(pipeline *pipeline.Pipeline, ctx context.Context) error {
+	forceUpdate := true
 	virtualServiceSchema := schema.GroupVersionResource{
 		Group:    "networking.istio.io",
 		Version:  "v1alpha3",
 		Resource: "virtualservices",
 	}
 
-	destinationRules := schema.GroupVersionResource{
+	if pipeline.Istio.VirtualService == nil {
+		return nil
+	}
+	utils.CustomLog("info", "deployVirtualService", "DEPLOY: VIRTUAL SERVICE")
+	mozart.executionMain.CreateIstioComponent(
+		mozart.currentExecutionID, "virtualService", pipeline.Istio.VirtualService,
+	)
+	errs, ctx := errgroup.WithContext(ctx)
+	errs.Go(func() error {
+		err := mozart.deployer.Deploy(pipeline.Istio.VirtualService, forceUpdate, &virtualServiceSchema)
+		if err != nil {
+			mozart.steps.doneManageIstioComponents <- err
+			return err
+		}
+		return nil
+	})
+	return errs.Wait()
+}
+
+func (mozart *Mozart) deployDestinationRules(pipeline *pipeline.Pipeline, ctx context.Context) error {
+	forceUpdate := true
+	destinationRulesSchema := schema.GroupVersionResource{
 		Group:    "networking.istio.io",
 		Version:  "v1alpha3",
 		Resource: "destinationrules",
 	}
 
-	if pipeline.Istio.VirtualService != nil {
-		utils.CustomLog("info", "deployIstioComponents", fmt.Sprintf("virtualService: %s", execution.ManifestDeploying))
-		err = mozart.deployIstioComponentToCluster(context.Background(), "virtualService", pipeline.Istio.VirtualService, virtualServiceSchema)
+	if pipeline.Istio.DestinationRules == nil {
+		return nil
 	}
-
-	if pipeline.Istio.DestinationRules != nil {
-		utils.CustomLog("info", "deployIstioComponents", fmt.Sprintf("destinationRules: %s", execution.ManifestDeploying))
-		err = mozart.deployIstioComponentToCluster(context.Background(), "destinationRules", pipeline.Istio.DestinationRules, destinationRules)
-	}
-
-	if err != nil {
-		mozart.errc <- err
-	}
-}
-
-func (mozart *Mozart) deployIstioComponentToCluster(
-	ctx context.Context, componentName string, manifest map[string]interface{}, resource schema.GroupVersionResource,
-) error {
+	utils.CustomLog("info", "deployDestinationRules", "DEPLOY: DESTINATION RULES")
+	mozart.executionMain.CreateIstioComponent(
+		mozart.currentExecutionID, "destinationRules", pipeline.Istio.DestinationRules,
+	)
 	errs, ctx := errgroup.WithContext(ctx)
-	executioIstioComponent := mozart.createExecutionIstioComponentLog(mozart.currentExecution.ID, componentName, manifest)
-	updateExecutionIstioComponent := mozart.updateExecutionIstionComponentLog(executioIstioComponent.ID)
-	func(manifest map[string]interface{}) {
-		errs.Go(func() error {
-			updateExecutionIstioComponent(execution.ManifestDeploying)
-			err := mozart.deployer.Deploy(manifest, true, &resource)
-			if err != nil {
-				updateExecutionIstioComponent(execution.ManifestFailed)
-				utils.CustomLog("error", "deployIstioComponentToCluster", err.Error())
-				return err
-			}
-
-			updateExecutionIstioComponent(execution.ManifestDeployed)
-			utils.CustomLog("info", "deployIstioComponentToCluster", fmt.Sprintf("%s: %s", componentName, execution.ManifestDeployed))
-			return nil
-		})
-	}(manifest)
+	errs.Go(func() error {
+		err := mozart.deployer.Deploy(pipeline.Istio.DestinationRules, forceUpdate, &destinationRulesSchema)
+		if err != nil {
+			mozart.steps.doneManageIstioComponents <- err
+			return err
+		}
+		return nil
+	})
 
 	return errs.Wait()
 }
 
-func (mozart *Mozart) createExecutionLog(pipeline *pipeline.Pipeline) (*execution.Execution, error) {
-	newExecution := &execution.Execution{
-		Name:      pipeline.Name,
-		Namespace: pipeline.Namespace,
-		Author:    pipeline.GithubAccount.Username,
-		StartTime: time.Now(),
-		Webhook:   pipeline.Webhook,
-		HelmURL:   pipeline.HelmRepository,
+func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string) {
+	data, err := json.Marshal(map[string]string{
+		"status": status,
+	})
+	if err != nil {
+		return
 	}
 
-	currentExecution, err := mozart.executionMain.Create(newExecution)
-	mozart.currentExecution = currentExecution
-	return currentExecution, err
-}
-
-func (mozart *Mozart) updateExecutionLog(status string) {
-	id := mozart.currentExecution.ID.String()
-	mozart.executionMain.UpdateStatus(id, status)
-}
-
-func (mozart *Mozart) finishExecutionLog() {
-	id := mozart.currentExecution.ID.String()
-	mozart.executionMain.FinishExecution(id)
-}
-
-func (mozart *Mozart) createDeployedComponentLog(component *pipeline.Version) *execution.DeployedComponent {
-	newComponent := &execution.DeployedComponent{
-		ExecutionID: mozart.currentExecution.ID,
-		Name:        component.Version,
-		ImageURL:    component.VersionURL,
-	}
-	deployedComponent, _ := mozart.executionMain.CreateDeployedComponent(newComponent)
-
-	return deployedComponent
-}
-
-func (mozart *Mozart) createUndeployedComponentLog(component *pipeline.Version) *execution.UndeployedComponent {
-	newComponent := &execution.UndeployedComponent{
-		ExecutionID: mozart.currentExecution.ID,
-		Name:        component.Version,
-		ImageURL:    component.VersionURL,
-	}
-	undeployedComponent, _ := mozart.executionMain.CreateUndeployedComponent(newComponent)
-
-	return undeployedComponent
-}
-
-func (mozart *Mozart) createExecutionIstioComponentLog(executionID uuid.UUID, manifestKey string, manifest interface{}) *execution.IstioComponent {
-	manifestBytes, _ := json.Marshal(&manifest)
-
-	newManifest := &execution.IstioComponent{
-		ExecutionID: mozart.currentExecution.ID,
-		Name:        manifestKey,
-		Manifest:    string(manifestBytes),
+	_, err = http.Post(pipeline.Webhook, "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		mozart.executionMain.FinishExecution(mozart.currentExecutionID, execution.ExecutionWebhookFailed)
+		utils.CustomLog("error", "triggerWebhook", err.Error())
+		return
 	}
 
-	executionIstioComponent, _ := mozart.executionMain.CreateIstioComponent(newManifest)
-	return executionIstioComponent
+	mozart.executionMain.FinishExecution(mozart.currentExecutionID, status)
 }
 
-func (mozart *Mozart) createDeployedManifestLog(executionComponentID uuid.UUID, manifestKey string, manifest interface{}) *execution.DeployedComponentManifest {
-	manifestBytes, _ := json.Marshal(&manifest)
+func (mozart *Mozart) triggerWebhook() {
 
-	newManifest := &execution.DeployedComponentManifest{
-		DeployedComponentID: executionComponentID,
-		Name:                manifestKey,
-		Manifest:            string(manifestBytes),
-	}
-
-	executionManifest, _ := mozart.executionMain.CreateDeployedManifest(newManifest)
-	return executionManifest
 }
 
-func (mozart *Mozart) createUndeployedManifestLog(executionComponentID uuid.UUID, manifestKey string, manifest interface{}) *execution.UndeployedComponentManifest {
-	manifestBytes, _ := json.Marshal(&manifest)
-
-	newManifest := &execution.UndeployedComponentManifest{
-		UndeployedComponentID: executionComponentID,
-		Name:                  manifestKey,
-		Manifest:              string(manifestBytes),
+func (mozart *Mozart) manageDeployVersions(pipeline *pipeline.Pipeline) error {
+	utils.CustomLog("info", "manageDeployVersions", "START VERSIONS DEPLOY...")
+	for _, version := range pipeline.Versions {
+		err := mozart.deployVersion(pipeline, version, context.Background())
+		if err != nil {
+			mozart.steps.doneManageVersions <- err
+			return err
+		}
 	}
 
-	executionManifest, _ := mozart.executionMain.CreateUndeployedManifest(newManifest)
-	return executionManifest
+	return nil
 }
 
-func (mozart *Mozart) updateDeployedManifestLog(id uuid.UUID, executionComponentID uuid.UUID) func(string) {
-	return func(status string) {
-		mozart.executionMain.UpdateDeployedManifestStatus(id, executionComponentID, status)
+func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeline.Version, ctx context.Context) error {
+	errs, ctx := errgroup.WithContext(ctx)
+
+	manifests, err := mozart.deployer.GetManifestsByHelmChart(pipeline, version)
+	if err != nil {
+		utils.CustomLog("error", "deployVersion", err.Error())
+		return err
 	}
+
+	utils.CustomLog("info", "deployVersion", "DEPLOY VERSION: "+version.Version)
+	executionVersionID, _ := mozart.executionMain.CreateVersion(mozart.currentExecutionID, version)
+	for key, manifest := range manifests {
+		func(key string, manifest interface{}) {
+			errs.Go(func() error {
+				executionManifestID, _ := mozart.executionMain.CreateVersionManifest(
+					mozart.currentExecutionID, executionVersionID, key, manifest,
+				)
+				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
+				if err != nil {
+					mozart.executionMain.UpdateManifestStatus(
+						mozart.currentExecutionID, executionVersionID, executionManifestID, execution.ExecutionFailed,
+					)
+					return err
+				}
+
+				mozart.executionMain.UpdateManifestStatus(
+					mozart.currentExecutionID, executionVersionID, executionManifestID, execution.ManifestDeployed,
+				)
+				return nil
+			})
+		}(key, manifest)
+	}
+
+	return errs.Wait()
 }
 
-func (mozart *Mozart) updateUndeployedManifestLog(id uuid.UUID, executionComponentID uuid.UUID) func(string) {
-	return func(status string) {
-		mozart.executionMain.UpdateUndeployedManifestStatus(id, executionComponentID, status)
-	}
-}
+func (mozart *Mozart) manageUndeployVersions(pipeline *pipeline.Pipeline, ctx context.Context) error {
+	utils.CustomLog("info", "manageUndeployVersions", "START VERSIONS UNDEPLOY...")
 
-func (mozart *Mozart) updateExecutionIstionComponentLog(id uuid.UUID) func(string) {
-	return func(status string) {
-		mozart.executionMain.UpdateIstioComponentStatus(id, mozart.currentExecution.ID, status)
+	errs, ctx := errgroup.WithContext(ctx)
+	for _, version := range pipeline.UnusedVersions {
+		func(name string, namespace string) {
+			utils.CustomLog("info", "manageUndeployVersions", "UNDEPLOY VERSION: "+name)
+			errs.Go(func() error {
+				err := mozart.deployer.Undeploy(version.Version, pipeline.Namespace)
+				if err != nil {
+					return err
+				}
+
+				mozart.executionMain.CreateUnusedVersion(mozart.currentExecutionID, name)
+
+				return nil
+			})
+		}(version.Version, pipeline.Namespace)
 	}
+
+	return errs.Wait()
 }

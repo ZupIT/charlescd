@@ -9,10 +9,16 @@ import (
 	"octopipe/pkg/mozart"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+
 	db, err := connection.NewDatabaseConnection()
 	if err != nil {
 		log.Fatal(err)
