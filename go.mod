@@ -3,7 +3,6 @@ module octopipe
 go 1.13
 
 require (
-	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
@@ -21,8 +20,9 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	go.mongodb.org/mongo-driver v1.3.1
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
-	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/time v0.0.0-20170424234030-8be79e1e0910 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect

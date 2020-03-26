@@ -1,41 +1,39 @@
 package connection
 
 import (
-	"octopipe/pkg/execution"
-	"octopipe/pkg/utils"
+	"context"
+	"fmt"
 	"os"
 
-	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewDatabaseConnection() (*gorm.DB, error) {
-	err := godotenv.Load(".env")
+func NewClient() (*mongo.Client, error) {
+	connectionString := fmt.Sprintf(os.Getenv("DB_URL"))
+	clientOptions := options.Client().ApplyURI(connectionString)
+
+	client, err := mongo.NewClient(clientOptions)
+
 	if err != nil {
 		return nil, err
 	}
 
-	db, err := gorm.Open("postgres", os.Getenv("DB_URL"))
+	err = client.Connect(context.Background())
+
 	if err != nil {
 		return nil, err
 	}
 
-	db.AutoMigrate(
-		&execution.Execution{},
-		&execution.DeployedComponent{},
-		&execution.DeployedComponentManifest{},
-		&execution.UndeployedComponent{},
-		&execution.UndeployedComponentManifest{},
-		&execution.IstioComponent{},
-	)
+	return client, nil
+}
 
-	db.Model(&execution.DeployedComponent{}).AddForeignKey("execution_id", "executions(id)", "RESTRICT", "RESTRICT")
-	db.Model(&execution.DeployedComponentManifest{}).AddForeignKey("deployed_component_id", "deployed_components(id)", "RESTRICT", "RESTRICT")
-	db.Model(&execution.UndeployedComponent{}).AddForeignKey("execution_id", "executions(id)", "RESTRICT", "RESTRICT")
-	db.Model(&execution.UndeployedComponentManifest{}).AddForeignKey("undeployed_component_id", "undeployed_components(id)", "RESTRICT", "RESTRICT")
-	db.Model(&execution.IstioComponent{}).AddForeignKey("execution_id", "executions(id)", "RESTRICT", "RESTRICT")
+func NewDatabaseConnection() (*mongo.Database, error) {
+	client, err := NewClient()
+	if err != nil {
+		return nil, err
+	}
+	database := os.Getenv("DB_NAME")
 
-	utils.CustomLog("info", "NewDatabaseConnection", "Database connection success!!!")
-
-	return db, nil
+	return client.Database(database), nil
 }
