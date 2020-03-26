@@ -254,6 +254,8 @@ func (mozart *Mozart) manageUndeployVersions(pipeline *pipeline.Pipeline, ctx co
 					return err
 				}
 
+				mozart.executionMain.CreateUnusedVersion(mozart.currentExecutionID, name)
+
 				return nil
 			})
 		}(version.Version, pipeline.Namespace)
