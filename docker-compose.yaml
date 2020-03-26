@@ -1,12 +1,11 @@
-version: '3'
+version: "3"
 services:
-
-  postgres:
-    image: postgres:9.6-alpine
-    ports:
-    - 5432:5432
+  mongo:
+    image: mongo
     environment:
-    - POSTGRES_DB=octopipe
-    - POSTGRES_USER=octopipe
-    - POSTGRES_PASSWORD=octopipe
-    - MAX_CONNECTIONS=300
+      MONGO_INITDB_ROOT_USERNAME: octopipe
+      MONGO_INITDB_ROOT_PASSWORD: octopipe
+    ports:
+      - "27017:27017"
+    volumes:
+      - "./data/mongo:/var/lib/mongo/data"
