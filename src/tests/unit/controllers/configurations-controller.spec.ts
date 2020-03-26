@@ -45,7 +45,7 @@ describe('ConfigurationsController', () => {
 
         createCdConfigurationDto = new CreateCdConfigurationDto(
             CdTypeEnum.SPINNAKER,
-            { account: 'my-account', namespace: 'my-namespace' },
+            { k8s: { account: 'my-account' }, git: {account: 'git-account'}, url: 'www.spinnaker.url', namespace: 'my-namespace' },
             'config-name',
             'authorId'
         )
