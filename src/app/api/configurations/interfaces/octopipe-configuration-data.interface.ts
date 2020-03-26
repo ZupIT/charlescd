@@ -1,8 +1,15 @@
 export interface IOctopipeConfigurationData {
 
-    gitUsername: string
+    git: {
+        provider: 'github' | 'gitlab',
+        token: string
+    }
 
-    gitPassword: string
+    k8s: {
+        config: any
+    }
 
     namespace: string
+
+    url: string
 }
