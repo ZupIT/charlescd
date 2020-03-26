@@ -12,7 +12,6 @@ import (
 	"github.com/joho/godotenv"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"k8s.io/client-go/dynamic"
 )
 
 func main() {
@@ -26,20 +25,14 @@ func main() {
 		return
 	}
 
-	var dynamicK8sClient dynamic.Interface
-	if os.Getenv("KUBECONFIG") == connection.KubeconfigInCluster {
-		dynamicK8sClient, err = connection.NewDynamicK8sClientInCluster()
-	} else {
-		dynamicK8sClient, err = connection.NewDynamicK8sClientOutCluster()
-	}
-
+	k8sConnection, err := connection.NewK8sConnection(os.Getenv("KUBECONFIG"))
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
 	executionMain := execution.NewExecutionManager(db)
-	deployer := deployer.NewDeployer(dynamicK8sClient)
+	deployer := deployer.NewDeployer(k8sConnection)
 	mozart := mozart.NewMozart(deployer, executionMain)
 
 	api := api.NewApi()
