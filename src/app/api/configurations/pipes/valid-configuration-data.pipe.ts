@@ -19,12 +19,12 @@ export class ValidConfigurationDataPipe implements PipeTransform {
         if (createCdConfigurationDto.type === CdTypeEnum.SPINNAKER) {
             const errors: ValidationError[] = await validate('spinnakerConfigurationDataSchema', createCdConfigurationDto.configurationData)
             if (errors.length) {
-                throw new BadRequestException('Invalid configuration object for type SPINNAKER')
+                throw new BadRequestException(errors)
             }
         } else if (createCdConfigurationDto.type === CdTypeEnum.OCTOPIPE) {
             const errors: ValidationError[] = await validate('octopipeConfigurationDataSchema', createCdConfigurationDto.configurationData)
             if (errors.length) {
-                throw new BadRequestException('Invalid configuration object for type OCTOPIPE')
+                throw new BadRequestException(errors)
             }
         } else {
             throw new BadRequestException('Invalid configuration object type')
