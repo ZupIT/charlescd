@@ -22,18 +22,18 @@ type Deployer struct {
 }
 
 type UseCases interface {
-	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error)
+	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, version *pipeline.Version) (map[string]interface{}, error)
 	Deploy(manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource) error
-	Undeploy(manifest map[string]interface{}) error
+	Undeploy(name string, namespace string) error
 }
 
 func NewDeployer(k8sDynamicClient dynamic.Interface) *Deployer {
 	return &Deployer{k8sDynamicClient}
 }
 
-func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, component *pipeline.Version) (map[string]interface{}, error) {
+func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, version *pipeline.Version) (map[string]interface{}, error) {
 	encodedManifests := map[string]interface{}{}
-	chart, values, err := deployer.getHelmChartAndValues(pipeline, component)
+	chart, values, err := deployer.getHelmChartAndValues(pipeline, version)
 	if err != nil {
 		return nil, err
 	}
@@ -90,24 +90,20 @@ func (deployer *Deployer) Deploy(manifest map[string]interface{}, forceUpdate bo
 	return nil
 }
 
-func (deployer *Deployer) Undeploy(manifest map[string]interface{}) error {
+func (deployer *Deployer) Undeploy(name string, namespace string) error {
 
-	unstruct := &unstructured.Unstructured{
-		Object: manifest,
+	deploymentResource := schema.GroupVersionResource{
+		Group: "apps",
+		Version: "v1beta2",
+		Resource: "deployments",
 	}
-
-	if unstruct.GetKind() != deploymentKind {
-		return nil
-	}
-
-	schema := *deployer.getResourceSchema(unstruct)
 
 	deletePolicy := metav1.DeletePropagationForeground
 	deleteOptions := &metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	}
 
-	err := deployer.k8sDynamicClient.Resource(schema).Namespace(unstruct.GetNamespace()).Delete(unstruct.GetName(), deleteOptions)
+	err := deployer.k8sDynamicClient.Resource(deploymentResource).Namespace(namespace).Delete(name, deleteOptions)
 	if err != nil && strings.Contains(err.Error(), "not found") {
 		utils.CustomLog("info", "Undeploy", err.Error())
 		return nil
