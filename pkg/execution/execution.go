@@ -7,6 +7,8 @@ import (
 	"octopipe/pkg/pipeline"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -242,10 +244,18 @@ func (executionManager *ExecutionManager) UpdateManifestStatus(
 
 	updateData := bson.M{
 		"$set": bson.M{
-			"deployedversions.$.manifests.$.status": status,
+			"deployedversions.$[outer].manifests.$[inner].status": status,
 		},
 	}
-	_, _ = col.UpdateOne(context.TODO(), query, updateData)
+
+	filterArray := []interface{}{
+		map[string]*primitive.ObjectID{"outer._id": versionID},
+		map[string]*primitive.ObjectID{"inner._id": manifestID},
+	}
+
+	options := options.UpdateOptions{ArrayFilters: &options.ArrayFilters{Filters: filterArray}}
+
+	_, _ = col.UpdateOne(context.TODO(), query, updateData, &options)
 }
 
 func (executionManager *ExecutionManager) CreateIstioComponent(
@@ -265,7 +275,7 @@ func (executionManager *ExecutionManager) CreateIstioComponent(
 
 	updateData := bson.M{
 		"$push": bson.M{
-			"deployedversions": newManifest,
+			"istiocomponents": newManifest,
 		},
 	}
 	_, err := col.UpdateOne(context.TODO(), query, updateData)
