@@ -22,7 +22,7 @@ func (api *PipelineApi) startPipeline(ctx *gin.Context) {
 	var pipeline *pipeline.Pipeline
 	ctx.Bind(&pipeline)
 
-	execution, _ := api.mozart.Start(pipeline)
+	executionID, _ := api.mozart.Start(pipeline)
 
-	ctx.JSON(200, map[string]string{"executionID": execution.ID.String()})
+	ctx.JSON(200, map[string]string{"executionID": executionID.String()})
 }
