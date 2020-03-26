@@ -33,6 +33,7 @@ type UseCases interface {
 	CreateIstioComponent(
 		executionID *primitive.ObjectID, name string, manifest interface{},
 	) (*primitive.ObjectID, error)
+	CreateUnusedVersion(executionID *primitive.ObjectID, name string)
 	UpdateExecutionStatus(executionID *primitive.ObjectID, status string)
 	UpdateManifestStatus(
 		executionID *primitive.ObjectID, versionID *primitive.ObjectID, manifestID *primitive.ObjectID, status string,
@@ -285,6 +286,20 @@ func (executionManager *ExecutionManager) CreateIstioComponent(
 	}
 
 	return &newID, nil
+}
+
+func (executionManager *ExecutionManager) CreateUnusedVersion(executionID *primitive.ObjectID, name string) {
+	col := executionManager.DB.Collection(collection)
+
+	query := bson.M{"_id": executionID}
+
+	updateData := bson.M{
+		"$push": bson.M{
+			"undeployedversions": name,
+		},
+	}
+
+	col.UpdateOne(context.TODO(), query, updateData)
 }
 
 func (executionManager *ExecutionManager) FinishExecution(executionID *primitive.ObjectID, status string) {
