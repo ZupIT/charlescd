@@ -1,4 +1,4 @@
-import { GitProviders } from './git-providers.type'
+import { GitProviders } from '../../configuration/interfaces/git-providers.type'
 
 export interface IOctopipeVersion {
   version: string

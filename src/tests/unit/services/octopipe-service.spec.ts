@@ -12,6 +12,7 @@ import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app
 import { GitProviders } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
+import { IOctopipePayload } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
@@ -20,7 +21,6 @@ import {
 import {
   ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
-import { IOctopipePayload } from '../../../app/core/integrations/configuration/interfaces/octopipe-payload.interface'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -77,7 +77,7 @@ describe('Spinnaker Service', () => {
         url: 'www.octopipe.com',
         gitProvider: GitProviders.GITHUB,
         gitToken: 'some-github-token',
-        k8sConfig: { some: 'config'}
+        k8sConfig: 'kube-config-yaml'
       }
 
       const payload: IOctopipePayload =
