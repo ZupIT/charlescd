@@ -10,39 +10,11 @@ import {
 import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../api/deployments/repository'
 import { PipelineErrorHandlerService } from '../../../api/deployments/services'
-import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
 import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
-import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
-import { GitProvider } from '../configuration/interfaces/git-providers'
-
-interface IOctopipeVersion {
-  version: string
-  versionUrl: string
-}
-
-export interface IOctopipeConfiguration {
-  hosts?: string[],
-  versions: IOctopipeVersion[],
-  unusedVersions: IOctopipeVersion[],
-  istio: {
-    virtualService: {},
-    destinationRules: {}
-  },
-  appName: string,
-  appNamespace: string
-  webHookUrl: string,
-  git: {
-    provider: GitProvider,
-    token: string
-  },
-  helmUrl: string,
-  k8s: {
-    config: any
-  }
-}
+import { IOctopipePayload, IOctopipeVersion } from '../configuration/interfaces/octopipe-payload.interface'
 
 @Injectable()
 export class OctopipeService {
@@ -74,7 +46,7 @@ export class OctopipeService {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const payload: IOctopipeConfiguration =
+    const payload: IOctopipePayload =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions,
         configurationData as IOctopipeConfigurationData,
@@ -87,7 +59,7 @@ export class OctopipeService {
   }
 
   public async deploy(
-    payload: IOctopipeConfiguration,
+    payload: IOctopipePayload,
     deploymentId: string,
     queueId: number,
     configurationData: IOctopipeConfigurationData
@@ -119,7 +91,7 @@ export class OctopipeService {
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity,
     appName: string
-  ): IOctopipeConfiguration {
+  ): IOctopipePayload {
 
     const payload = {
       appName,
