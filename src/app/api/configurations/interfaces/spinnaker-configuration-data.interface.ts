@@ -1,12 +1,8 @@
 export interface ISpinnakerConfigurationData {
 
-    git: {
-        account: string
-    }
+    gitAccount: string
 
-    k8s: {
-        account: string
-    }
+    account: string
 
     namespace: string
 

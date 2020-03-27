@@ -125,11 +125,11 @@ export class OctopipeService {
       appName,
       appNamespace: deploymentConfiguration.namespace,
       git: {
-        provider: deploymentConfiguration.git.provider,
-        token: deploymentConfiguration.git.token
+        provider: deploymentConfiguration.gitProvider,
+        token: deploymentConfiguration.gitToken
       },
       k8s: {
-        config: deploymentConfiguration.k8s.config
+        config: deploymentConfiguration.k8sConfig
       },
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },

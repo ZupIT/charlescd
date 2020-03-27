@@ -128,7 +128,7 @@ export class SpinnakerService {
   ): IDeploymentConfiguration {
 
     return {
-      account: cdConfigurationData.k8s.account,
+      account: cdConfigurationData.account,
       appNamespace: cdConfigurationData.namespace,
       pipelineName: componentDeploymentEntity.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
@@ -156,7 +156,7 @@ export class SpinnakerService {
       versions: pipelineCirclesOptions.pipelineVersions,
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       circles: pipelineCirclesOptions.pipelineCircles,
-      githubAccount: configurationData.git.account,
+      githubAccount: configurationData.gitAccount,
       helmRepository: moduleDeployment.helmRepository,
       circleId
     }
