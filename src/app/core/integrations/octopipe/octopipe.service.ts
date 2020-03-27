@@ -14,7 +14,8 @@ import { ConsoleLoggerService } from '../../logs/console'
 import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
-import { IOctopipePayload, IOctopipeVersion } from '../configuration/interfaces/octopipe-payload.interface'
+import { IOctopipePayload, IOctopipeVersion } from './interfaces/octopipe-payload.interface'
+import { IOctopipeResponse } from './interfaces/octopipe-response.interface'
 
 @Injectable()
 export class OctopipeService {
@@ -63,7 +64,7 @@ export class OctopipeService {
     deploymentId: string,
     queueId: number,
     configurationData: IOctopipeConfigurationData
-  ): Promise<AxiosResponse<any> | { error: any }> {
+  ): Promise<AxiosResponse<IOctopipeResponse> | { error: any }> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)

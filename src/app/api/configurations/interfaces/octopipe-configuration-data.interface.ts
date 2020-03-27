@@ -6,7 +6,7 @@ export interface IOctopipeConfigurationData {
 
     gitToken: string
 
-    k8sConfig: any
+    k8sConfig: string
 
     namespace: string
 
