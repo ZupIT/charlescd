@@ -11,8 +11,8 @@ export const OctopipeConfigurationDataSchema: ValidationSchema = {
         gitProvider: [
             {
                 type: 'isIn',
-                constraints: [['github', 'gitlab']],
-                message: '$value is not valid. Supported providers are github and gitlab'
+                constraints: [['GITHUB', 'GITLAB']],
+                message: '$value is not valid. Supported providers are GITHUB and GITLAB'
             },
             {
                 type: 'isNotEmpty'

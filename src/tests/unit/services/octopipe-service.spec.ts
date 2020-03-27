@@ -9,10 +9,9 @@ import {
   ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
-import { GitProvider } from '../../../app/core/integrations/configuration/interfaces/git-providers'
+import { GitProviders } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
-import { IOctopipeConfiguration } from '../../../app/core/integrations/octopipe/octopipe.service'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
@@ -21,6 +20,7 @@ import {
 import {
   ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
+import { IOctopipePayload } from '../../../app/core/integrations/configuration/interfaces/octopipe-payload.interface'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -75,12 +75,12 @@ describe('Spinnaker Service', () => {
       const deploymentConfiguration: IOctopipeConfigurationData = {
         namespace: 'some-app-namespace',
         url: 'www.octopipe.com',
-        gitProvider: 'github',
+        gitProvider: GitProviders.GITHUB,
         gitToken: 'some-github-token',
         k8sConfig: { some: 'config'}
       }
 
-      const payload: IOctopipeConfiguration =
+      const payload: IOctopipePayload =
         octopipeService.createPipelineConfigurationObject(
           pipelineOptions,
           deploymentConfiguration,
@@ -89,17 +89,15 @@ describe('Spinnaker Service', () => {
           'some-app-name'
         )
 
-      const expectedPayload: IOctopipeConfiguration = {
+      const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
         git: {
-          provider: 'github',
+          provider: GitProviders.GITHUB,
           token: 'some-github-token',
         },
         k8s: {
-          config: {
-            some: 'config'
-          }
+          config: 'kube-config-yaml'
         },
         helmUrl: 'helm-repository',
         istio: {
@@ -203,7 +201,7 @@ describe('Spinnaker Service', () => {
     })
 
     it('posts to octopipe server', async () => {
-      const payload = {} as IOctopipeConfiguration
+      const payload = {} as IOctopipePayload
       const configuration = { url: 'www.octopipe.com' } as IOctopipeConfigurationData
       jest.spyOn(httpService, 'post').mockImplementation(
         () => of({
@@ -222,7 +220,7 @@ describe('Spinnaker Service', () => {
     })
 
     it('should handle on octopipe deployment failure', async () => {
-      const payload = {} as IOctopipeConfiguration
+      const payload = {} as IOctopipePayload
       const configuration = { url: 'www.octopipe.com' } as IOctopipeConfigurationData
       jest.spyOn(httpService, 'post').mockImplementation(
         () => { throw new Error('bad request') }

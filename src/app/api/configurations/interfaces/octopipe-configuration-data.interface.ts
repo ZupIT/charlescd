@@ -1,6 +1,8 @@
+import { GitProviders } from '../../../core/integrations/configuration/interfaces/git-providers.type'
+
 export interface IOctopipeConfigurationData {
 
-    gitProvider: 'github' | 'gitlab'
+    gitProvider: GitProviders
 
     gitToken: string
 
