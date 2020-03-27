@@ -75,15 +75,9 @@ describe('Spinnaker Service', () => {
       const deploymentConfiguration: IOctopipeConfigurationData = {
         namespace: 'some-app-namespace',
         url: 'www.octopipe.com',
-        git: {
-          provider: 'github' as GitProvider,
-          token: 'some-github-token'
-        },
-        k8s: {
-          config: {
-            some: 'config'
-          }
-        }
+        gitProvider: 'github',
+        gitToken: 'some-github-token',
+        k8sConfig: { some: 'config'}
       }
 
       const payload: IOctopipeConfiguration =

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d9433fae-8cf7-4f75-ac2f-fb6097835b2e",
+		"_postman_id": "99f23536-c82a-42b6-a36f-b6f2dd9a4c6b",
 		"name": "Darwin Deploy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitUsername\": \"git-user\",\n\t\t\"gitPassword\": \"git-password\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"github\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\",\n\t\t\"url\": \"www.octopipe.com\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -113,7 +113,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"gitAccount\": \"gitaccount\",\n\t\t\"url\": \"www.spinnaker.com\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -483,6 +483,48 @@
 							"path": [
 								"deployments",
 								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Undeploymentt",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53e645b7-a035-47fb-9e99-a14e479ab5e4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"{{authorId}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/deployments/{{deploymentId}}/undeploy",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"deployments",
+								"{{deploymentId}}",
+								"undeploy"
 							]
 						}
 					},
