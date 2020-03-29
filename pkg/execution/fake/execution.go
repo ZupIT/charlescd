@@ -1,7 +1,8 @@
-package execution
+package fake
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 )
 
@@ -11,11 +12,11 @@ func NewExecutionFake() *ExecutionManagerFake {
 	return &ExecutionManagerFake{}
 }
 
-func (executionManagr *ExecutionManagerFake) FindAll() (*[]ExecutionListItem, error) {
+func (executionManagr *ExecutionManagerFake) FindAll() (*[]execution.ExecutionListItem, error) {
 	return nil, nil
 }
 
-func (executionManagr *ExecutionManagerFake) FindByID(id string) (*Execution, error) {
+func (executionManagr *ExecutionManagerFake) FindByID(id string) (*execution.Execution, error) {
 	return nil, nil
 }
 

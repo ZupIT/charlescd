@@ -1,9 +1,8 @@
 package mozart
 
 import (
-	"octopipe/pkg/connection/fake"
-	"octopipe/pkg/deployer"
-	"octopipe/pkg/execution"
+	deployerFake "octopipe/pkg/deployer/fake"
+	executionFake "octopipe/pkg/execution/fake"
 	"octopipe/pkg/pipeline"
 	"testing"
 )
@@ -39,9 +38,9 @@ var fakePipeline = &pipeline.Pipeline{
 }
 
 func TestStart(t *testing.T) {
-	executionFake := execution.NewExecutionFake()
-	deployerManager := deployer.NewDeployer(fake.NewK8sFakeClient())
-	mozart := NewMozart(deployerManager, executionFake)
+	executionManagerFake := executionFake.NewExecutionFake()
+	deployerManagerfake := deployerFake.NewDeployerManagerFake()
+	mozart := NewMozart(deployerManagerfake, executionManagerFake)
 
 	mozart.Start(fakePipeline)
 }
