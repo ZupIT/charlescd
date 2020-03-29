@@ -42,7 +42,6 @@ type UseCases interface {
 }
 
 const (
-	ExecutionWaiting       = "WAITING"
 	ExecutionRunning       = "RUNNING"
 	ExecutionFailed        = "FAILED"
 	ExecutionWebhookFailed = "WEBHOOK_FAILED"
@@ -53,11 +52,6 @@ const (
 	ManifestCreated     = "CREATED"
 	ManifestDeploying   = "DEPLOYING"
 	ManifestDeployed    = "DEPLOYED"
-	ManifestUndeploying = "UNDEPLOYING"
-	ManifestUndeployed  = "UNDEPLOYED"
-	ManifestFailed      = "FAILED"
-	ManifestExist       = "IS_DEPLOYED"
-	ManifestNotFound    = "NOT_FOUND"
 )
 
 const collection = "executions"
