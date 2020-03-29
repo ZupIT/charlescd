@@ -2,16 +2,14 @@ package deployer
 
 import (
 	"encoding/json"
-	"octopipe/pkg/connection"
+	"octopipe/pkg/connection/fake"
 	"strings"
 	"testing"
 
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic/fake"
 )
 
 var fakeDeploymentManifest = `{"apiVersion":"apps/v1beta2","kind":"Deployment","metadata":{"creationTimestamp":null,"labels":{"app":"darwin-deploy","version":"darwin-deploy"},"name":"darwin-deploy-01","namespace":"octopipe"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"darwin-deploy","version":"darwin-deploy"}},"strategy":{},"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"},"creationTimestamp":null,"labels":{"app":"darwin-deploy","version":"darwin-deploy"}},"spec":{"containers":[{"env":[{"name":"CONSUL_HOST","value":"consul-server"},{"name":"DATABASE_HOST","value":"darwin-database.gcp.zup.com.br"},{"name":"DATABASE_PORT","value":"5432"},{"name":"DATABASE_USER","value":"darwindeploy"},{"name":"DATABASE_PASS","value":"acelera"},{"name":"DATABASE_NAME","value":"darwindeploy"},{"name":"MOOVE_URL","value":"http://darwin-application:8080"},{"name":"DARWIN_NOTIFICATION_URL","value":"http://darwin-deploy.qa.svc.cluster.local:3000/notifications"},{"name":"DARWIN_UNDEPLOYMENT_CALLBACK","value":"http://darwin-deploy.qa.svc.cluster.local:3000/notifications/undeployment"},{"name":"DARWIN_DEPLOYMENT_CALLBACK","value":"http://darwin-deploy.qa.svc.cluster.local:3000/notifications/deployment"},{"name":"SPINNAKER_URL","value":"https://darwin-spinnaker-gate.continuousplatform.com"},{"name":"SPINNAKER_GITHUB_ACCOUNT","value":"github-artifact"},{"name":"ENCRYPTION_KEY","valueFrom":{"secretKeyRef":{"key":"encryption-key","name":"deploy-aes256-key"}}}],"image":"realwavelab.azurecr.io/darwin-deploy:darwin-pluggable-cd-v-2","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/healthcheck","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"name":"darwin-deploy","readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/healthcheck","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":20,"successThreshold":1,"timeoutSeconds":1},"resources":{"limits":{"cpu":"1","memory":"1536Mi"},"requests":{"cpu":"128m","memory":"128Mi"}}}],"imagePullSecrets":[{"name":"realwavelab-registry"}],"serviceAccountName":"vault-auth"}}},"status":{}}`
@@ -25,41 +23,22 @@ var resourceFakeSchema = schema.GroupVersionResource{
 	Resource: "deployments",
 }
 
-func toMapStructure(manifestString string) map[string]interface{} {
-	var newMap map[string]interface{}
-	_ = json.Unmarshal([]byte(manifestString), &newMap)
-
-	return newMap
-}
-
-func newFakeClient() *connection.K8sConnection {
-	runtimeScheme := runtime.NewScheme()
-
-	k8sConnection := &connection.K8sConnection{
-		DynamicClientset: fake.NewSimpleDynamicClient(runtimeScheme),
-	}
-
-	return k8sConnection
-}
-
 func TestWatchK8sDeployStatusSuccess(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 
-	res, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
+	res, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
 	unstructured.SetNestedMap(res.Object, toMapStructure(fakeDeploymentStatusSuccess), "status")
-	_, err = k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
+	_, err = deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
 
 	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
 	if err != nil {
@@ -69,23 +48,21 @@ func TestWatchK8sDeployStatusSuccess(t *testing.T) {
 }
 
 func TestWatchK8sDeployTimeout(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
 
-	res, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
+	res, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Get(unstruct.GetName(), metav1.GetOptions{})
 	unstructured.SetNestedMap(res.Object, toMapStructure(fakeDeploymentStatusError), "status")
-	_, err = k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
+	_, err = deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
 
 	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
 	if err != nil && !strings.Contains(err.Error(), "Time resource verification exceeded") {
@@ -95,15 +72,13 @@ func TestWatchK8sDeployTimeout(t *testing.T) {
 }
 
 func TestWatchK8sDeployNoDeploymentResource(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeServiceManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -117,13 +92,11 @@ func TestWatchK8sDeployNoDeploymentResource(t *testing.T) {
 }
 
 func TestWatchK8sDeployResourceNotFound(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 	err := deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
 	if err != nil && !k8sErrors.IsNotFound(err) {
 		t.Fatalf(err.Error())
@@ -132,8 +105,7 @@ func TestWatchK8sDeployResourceNotFound(t *testing.T) {
 }
 
 func TestDeploySimpleWithResource(t *testing.T) {
-	k8sConnection := newFakeClient()
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
 	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, &resourceFakeSchema)
 	if err != nil {
@@ -143,9 +115,7 @@ func TestDeploySimpleWithResource(t *testing.T) {
 }
 
 func TestDeploySimpleNoResource(t *testing.T) {
-	k8sConnection := newFakeClient()
-
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, nil)
 	if err != nil {
 		t.Fatalf("fail to deploy manifest")
@@ -154,15 +124,13 @@ func TestDeploySimpleNoResource(t *testing.T) {
 }
 
 func TestDeployWithResourceExisted(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error to insert resource fort test")
 		return
@@ -176,15 +144,13 @@ func TestDeployWithResourceExisted(t *testing.T) {
 }
 
 func TestDeployWithResourceExistedForceUpdate(t *testing.T) {
-	k8sConnection := newFakeClient()
-
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error to insert resource fort test")
 		return
@@ -202,21 +168,19 @@ func TestIsResourceOK(t *testing.T) {
 }
 
 func TestUndeployResourceFound(t *testing.T) {
-	k8sConnection := newFakeClient()
-
-	deployer := NewDeployer(k8sConnection)
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
 	unstruct := &unstructured.Unstructured{
 		Object: toMapStructure(fakeDeploymentManifest),
 	}
 
-	_, err := k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
+	_, err := deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(unstruct.GetNamespace()).Create(unstruct, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatalf("error to insert resource fort test")
 		return
 	}
 
-	err = deployer.Undeploy(toMapStructure(fakeDeploymentManifest))
+	err = deployer.Undeploy(unstruct.GetName(), unstruct.GetNamespace())
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -224,13 +188,18 @@ func TestUndeployResourceFound(t *testing.T) {
 }
 
 func TestUndeployResourceNotFound(t *testing.T) {
-	k8sConnection := newFakeClient()
+	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	deployer := NewDeployer(k8sConnection)
-
-	err := deployer.Undeploy(toMapStructure(fakeDeploymentManifest))
+	err := deployer.Undeploy("", "")
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
 	}
+}
+
+func toMapStructure(manifestString string) map[string]interface{} {
+	var newMap map[string]interface{}
+	_ = json.Unmarshal([]byte(manifestString), &newMap)
+
+	return newMap
 }
