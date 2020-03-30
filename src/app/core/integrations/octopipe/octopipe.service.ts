@@ -1,19 +1,31 @@
-import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { IPipelineCircle, IPipelineOptions } from '../../../api/components/interfaces'
-import { ICdConfigurationData, IOctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import {
-  ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity
+  HttpService,
+  Inject,
+  Injectable
+} from '@nestjs/common'
+import {
+  IPipelineCircle,
+  IPipelineOptions
+} from '../../../api/components/interfaces'
+import {
+  ICdConfigurationData,
+  IOctopipeConfigurationData
+} from '../../../api/configurations/interfaces'
+import {
+  ComponentDeploymentEntity,
+  ModuleDeploymentEntity
 } from '../../../api/deployments/entity'
-import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
-import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../api/deployments/repository'
-import { PipelineErrorHandlerService } from '../../../api/deployments/services'
 import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
-import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
+import {
+  IBaseVirtualService,
+  IEmptyVirtualService
+} from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
-import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
+import {
+  createEmptyVirtualService,
+  createVirtualService
+} from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 import { AxiosResponse } from 'axios'
 
@@ -48,47 +60,31 @@ export class OctopipeService {
     private readonly httpService: HttpService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-    private readonly envConfiguration: IEnvConfiguration,
-    @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(QueuedDeploymentsRepository)
-    private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    @InjectRepository(ComponentUndeploymentsRepository)
-    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
-    @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @Inject(forwardRef(() => PipelineErrorHandlerService))
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlerService
+    private readonly envConfiguration: IEnvConfiguration
   ) { }
 
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
     configurationData: ICdConfigurationData,
-    componentDeploymentId: string,
-    deploymentId: string,
+    componentDeployment: ComponentDeploymentEntity,
     circleId: string,
-    pipelineCallbackUrl: string,
-    queueId: number
+    pipelineCallbackUrl: string
   ): Promise<void> {
 
-    const componentDeploymentEntity: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
     const payload: IOctopipeConfiguration =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions,
         configurationData as IOctopipeConfigurationData,
         pipelineCallbackUrl,
-        componentDeploymentEntity.moduleDeployment,
-        componentDeploymentEntity.componentName
+        componentDeployment.moduleDeployment,
+        componentDeployment.componentName
       )
 
-    this.deploy(payload, deploymentId, queueId)
+    await this.deploy(payload)
   }
 
   public async deploy(
-    payload: IOctopipeConfiguration,
-    deploymentId: string,
-    queueId: number
+    payload: IOctopipeConfiguration
   ): Promise<AxiosResponse<any> | {error: any}> {
 
     try {
@@ -106,8 +102,7 @@ export class OctopipeService {
       return octopipeResponse
     } catch (error) {
       this.consoleLoggerService.error(error)
-      await this.handleDeploymentFailure(deploymentId, queueId)
-      return { error: error.message }
+      throw error
     }
   }
 
@@ -155,37 +150,6 @@ export class OctopipeService {
     return versions.map(version => {
       return Object.assign({}, version, {version: `${appName}-${version.version}`})
     })
-  }
-
-  private async handleDeploymentFailure(deploymentId: string, queueId: number): Promise<void> {
-    this.consoleLoggerService.error(`ERROR:DEPLOY_OCTOPIPE_PIPELINE ${deploymentId} ${queueId}`)
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queueId })
-
-    if (queuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity) {
-      await this.handleQueuedDeploymentFailure(queuedDeployment, deploymentId)
-    } else {
-      await this.handleQueuedUndeploymentFailure(queuedDeployment as QueuedUndeploymentEntity)
-    }
-  }
-
-  private async handleQueuedDeploymentFailure(queuedDeployment: QueuedDeploymentEntity, deploymentId: string): Promise<void> {
-    const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({ id: deploymentId })
-    const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
-
-    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
-    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
-  }
-
-  private async handleQueuedUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
-    const componentUndeployment: ComponentUndeploymentEntity =
-      await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
-    const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
-    const { moduleUndeployment: { undeployment } } = componentUndeployment
-
-    await this.pipelineErrorHandlingService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
-    await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
   }
 
   private buildVirtualServices(
