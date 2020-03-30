@@ -112,7 +112,7 @@ export class SpinnakerService {
 
   private getDeployRetryPipe(error, attempts: number) {
     return of(error).pipe(
-        tap(() => this.consoleLoggerService.log(`Attempt #${attempts + 1}. Retrying spinnaker deployment: ${error}`)),
+        tap(() => this.consoleLoggerService.log(`Attempt #${attempts + 1}. Retrying deployment: ${error}`)),
         delay(this.MILLISECONDS_RETRY_DELAY)
     )
   }
