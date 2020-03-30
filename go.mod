@@ -27,6 +27,8 @@ require (
 	golang.org/x/time v0.0.0-20170424234030-8be79e1e0910 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1
+	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 	k8s.io/helm v2.16.1+incompatible
