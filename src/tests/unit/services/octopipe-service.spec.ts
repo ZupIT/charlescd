@@ -253,7 +253,7 @@ describe('Spinnaker Service', () => {
         })
       )
       expect(
-        await octopipeService.deploy(payload, 'deployment-id', 444)
+        await octopipeService.deploy(payload)
       ).toEqual({ config: {}, data: { id: 'some-pipeline-id' }, headers: {}, status: 200, statusText: 'OK' })
     })
 
@@ -271,7 +271,7 @@ describe('Spinnaker Service', () => {
         ))
       )
       expect(
-        await octopipeService.deploy(payload, 'deployment-id', 444)
+        await octopipeService.deploy(payload)
       ).toEqual({ error: 'bad request' })
     })
   })

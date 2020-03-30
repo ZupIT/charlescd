@@ -52,10 +52,7 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineCircle(componentDeployment, deployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-            await this.triggerComponentDeployment(
-                component, deployment, componentDeployment,
-                pipelineCallbackUrl, queuedDeployment.id
-            )
+            await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT')
@@ -76,10 +73,7 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineDefaultCircle(componentDeployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-            await this.triggerComponentDeployment(
-                component, deployment, componentDeployment,
-                pipelineCallbackUrl, queuedDeployment.id
-            )
+            await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
@@ -101,10 +95,7 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
             await this.unsetComponentPipelineCircle(deployment, component)
             const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
-            await this.triggerComponentUnDeployment(
-                component, deployment, undeployment, componentDeployment,
-                pipelineCallbackUrl, queuedUndeployment.id
-            )
+            await this.triggerComponentUnDeployment(component, undeployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
@@ -168,8 +159,7 @@ export class PipelineDeploymentsService {
         componentEntity: ComponentEntity,
         deploymentEntity: DeploymentEntity,
         componentDeployment: ComponentDeploymentEntity,
-        pipelineCallbackUrl: string,
-        queueId: number
+        pipelineCallbackUrl: string
     ): Promise<void> {
 
         const cdConfiguration: CdConfigurationEntity =
@@ -178,18 +168,16 @@ export class PipelineDeploymentsService {
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
         await cdService.createDeployment(
-            componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
-            deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
+            componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment,
+            deploymentEntity.circleId, pipelineCallbackUrl
         )
     }
 
     private async triggerComponentUnDeployment(
         componentEntity: ComponentEntity,
-        deploymentEntity: DeploymentEntity,
         undeploymentEntity: UndeploymentEntity,
         componentDeployment: ComponentDeploymentEntity,
-        pipelineCallbackUrl: string,
-        queueId: number
+        pipelineCallbackUrl: string
     ): Promise<void> {
 
         try {
@@ -199,8 +187,8 @@ export class PipelineDeploymentsService {
             const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
             await cdService.createDeployment(
-                componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
-                deploymentEntity.id, undeploymentEntity.circleId, pipelineCallbackUrl, queueId
+                componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment,
+                undeploymentEntity.circleId, pipelineCallbackUrl
             )
         } catch (error) {
             throw error

@@ -11,7 +11,6 @@ import {
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import { AppConstants } from '../../../app/core/constants'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { MooveService } from '../../../app/core/integrations/moove'
@@ -235,16 +234,12 @@ describe('Spinnaker Service', () => {
     it('should call spinnaker api with application name and module name', async () => {
       jest.spyOn(httpService, 'post')
           .mockImplementation(() => of(defaultAxiosPostResponse))
-      jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
 
       const httpPostSpy = jest.spyOn(httpService, 'post')
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+          'some-application-name'
       )
 
       expect(httpPostSpy).nthCalledWith(
@@ -259,9 +254,6 @@ describe('Spinnaker Service', () => {
       jest.spyOn(httpService, 'post')
           .mockImplementation(() => { throw new Error() })
 
-      jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
-
       jest.spyOn(deploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(deployment))
 
@@ -273,9 +265,7 @@ describe('Spinnaker Service', () => {
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+          'some-application-name'
       )
 
       expect(deploymentErrorSpy).toHaveBeenCalled()
@@ -285,9 +275,6 @@ describe('Spinnaker Service', () => {
     it('should handle spinnaker undeployment api call failure correctly', async () => {
       jest.spyOn(httpService, 'post')
           .mockImplementation(() => { throw new Error() })
-
-      jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
 
       jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
           .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -300,9 +287,7 @@ describe('Spinnaker Service', () => {
 
       await spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+          'some-application-name'
       )
 
       expect(undeploymentErrorSpy).toHaveBeenCalled()
