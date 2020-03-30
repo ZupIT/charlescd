@@ -1,8 +1,17 @@
 package mozart
 
 import (
+	"context"
+	"log"
+	"octopipe/pkg/connection/fake"
+	deployerFake "octopipe/pkg/deployer/fake"
+	executionFake "octopipe/pkg/execution/fake"
 	"octopipe/pkg/pipeline"
 	"testing"
+
+	"gopkg.in/go-playground/assert.v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 var fakeVersions = []*pipeline.Version{
@@ -35,8 +44,31 @@ var fakePipeline = &pipeline.Pipeline{
 	Istio:          *fakeIstioComponents,
 }
 
-func TestStart(t *testing.T) {
-	mozart := NewMozart(nil, nil)
+func TestDeployVersions(t *testing.T) {
+	executionManagerFake := executionFake.NewExecutionFake()
+	k8sFakeClientset := fake.NewK8sFakeClient()
+	deployerManagerFake := deployerFake.NewDeployerManagerFake(k8sFakeClientset)
+	mozart := NewMozart(deployerManagerFake, executionManagerFake)
 
-	mozart.Start(fakePipeline)
+	resource := schema.GroupVersionResource{
+		Group:    "apps",
+		Version:  "v1beta2",
+		Resource: "deployments",
+	}
+
+	err := mozart.deployVersion(fakePipeline, fakeVersions[0], context.Background())
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+
+	deployedRes, _ := k8sFakeClientset.DynamicClientset.Resource(resource).Namespace(
+		fakePipeline.Namespace,
+	).Get(fakeVersions[0].Version, metav1.GetOptions{})
+
+	assert.Equal(t, deployedRes.GetName(), fakeVersions[0].Version)
+}
+
+func Test(t *testing.T) {
+
 }
