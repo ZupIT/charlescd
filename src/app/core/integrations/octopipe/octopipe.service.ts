@@ -57,7 +57,8 @@ export class OctopipeService {
         configurationData as IOctopipeConfigurationData,
         pipelineCallbackUrl,
         componentDeploymentEntity.moduleDeployment,
-        componentDeploymentEntity.componentName
+        componentDeploymentEntity.componentName,
+        circleId
       )
 
     this.deploy(payload, deploymentId, queueId)
@@ -94,7 +95,8 @@ export class OctopipeService {
     deploymentConfiguration: IOctopipeConfigurationData,
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity,
-    appName: string
+    appName: string,
+    circleId: string
   ): IOctopipePayload {
 
     const payload = {
@@ -111,7 +113,8 @@ export class OctopipeService {
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       versions: this.concatAppNameAndVersion(pipelineCirclesOptions.pipelineVersions, appName),
-      webHookUrl: pipelineCallbackUrl
+      webHookUrl: pipelineCallbackUrl,
+      circleId
     }
 
     payload.istio.virtualService = this.buildVirtualServices(

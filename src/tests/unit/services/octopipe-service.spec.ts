@@ -88,7 +88,8 @@ describe('Spinnaker Service', () => {
           deploymentConfiguration,
           'dummy-callback-url',
           moduleDeployment,
-          'some-app-name'
+          'some-app-name',
+          'circle-id'
         )
 
       const expectedPayload: IOctopipePayload = {
@@ -197,7 +198,8 @@ describe('Spinnaker Service', () => {
             versionUrl: 'version.url/tag:123'
           }
         ],
-        webHookUrl: 'dummy-callback-url'
+        webHookUrl: 'dummy-callback-url',
+        circleId: 'circle-id'
       }
       expect(payload).toEqual(expectedPayload)
     })

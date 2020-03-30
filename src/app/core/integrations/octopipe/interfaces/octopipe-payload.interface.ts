@@ -23,5 +23,6 @@ export interface IOctopipePayload {
   helmUrl: string,
   k8s: {
     config: string
-  }
+  },
+  circleId: string
 }
