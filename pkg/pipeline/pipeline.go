@@ -31,5 +31,5 @@ type Pipeline struct {
 	HelmRepository string        `json:"helmUrl"`
 	GithubAccount  GithubAccount `json:"github"`
 	Istio          Istio         `json:"istio"`
-	Kubeconfig     string        `json:"kubeconfig"`
+	Kubeconfig     *string       `json:"kubeconfig"`
 }
