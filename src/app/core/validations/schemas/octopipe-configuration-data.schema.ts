@@ -18,7 +18,7 @@ export const OctopipeConfigurationDataSchema: ValidationSchema = {
                 type: 'isNotEmpty'
             }
         ],
-        url: [{
+        k8sConfig: [{
             type: 'isNotEmpty'
         }],
 

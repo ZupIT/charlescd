@@ -16,6 +16,8 @@ import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/ba
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
 import { IOctopipePayload, IOctopipeVersion } from './interfaces/octopipe-payload.interface'
 import { IOctopipeResponse } from './interfaces/octopipe-response.interface'
+import { IoCTokensConstants } from '../../constants/ioc'
+import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class OctopipeService {
@@ -23,6 +25,8 @@ export class OctopipeService {
   constructor(
     private readonly httpService: HttpService,
     private readonly consoleLoggerService: ConsoleLoggerService,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(QueuedDeploymentsRepository)
@@ -56,20 +60,19 @@ export class OctopipeService {
         componentDeploymentEntity.componentName
       )
 
-    this.deploy(payload, deploymentId, queueId, configurationData as IOctopipeConfigurationData)
+    this.deploy(payload, deploymentId, queueId)
   }
 
   public async deploy(
     payload: IOctopipePayload,
     deploymentId: string,
-    queueId: number,
-    configurationData: IOctopipeConfigurationData
+    queueId: number
   ): Promise<AxiosResponse<IOctopipeResponse> | { error: any }> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       const octopipeResponse = await this.httpService.post(
-        `${configurationData.url}/api/v1/pipeline`,
+        `${this.envConfiguration.octopipeUrl}/api/v1/pipeline`,
         payload,
         {
           headers: {

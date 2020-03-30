@@ -9,6 +9,4 @@ export interface IOctopipeConfigurationData {
     k8sConfig: string
 
     namespace: string
-
-    url: string
 }

@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"github\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\",\n\t\t\"url\": \"www.octopipe.com\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\",\n\t\t\"k8sConfig\": \"yaml config\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -113,13 +113,38 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"gitAccount\": \"gitaccount\",\n\t\t\"url\": \"www.spinnaker.com\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"gitAccount\": \"gitaccount\",\n\t\t\"url\": \"http://localhost:8883/spinnaker\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get configurations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-application-id",
+								"value": "{{applicationId}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/configurations/cd",
 							"host": [

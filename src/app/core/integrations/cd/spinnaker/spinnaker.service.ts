@@ -69,7 +69,7 @@ export class SpinnakerService {
       'START:CREATE_SPINNAKER_PIPELINE',
       { pipelineCirclesOptions, configurationData, componentDeploymentId, deploymentId }
     )
-
+    const spinnakerConfiguration = configurationData as ISpinnakerConfigurationData
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
@@ -79,11 +79,10 @@ export class SpinnakerService {
     const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions, deploymentConfiguration,
-        circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment, configurationData as ISpinnakerConfigurationData
-      )
+        circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment, spinnakerConfiguration)
 
-    await this.processSpinnakerApplication(deploymentConfiguration, configurationData.url)
-    await this.processSpinnakerPipeline(spinnakerPipelineConfiguration, deploymentConfiguration, configurationData.url)
+    await this.processSpinnakerApplication(deploymentConfiguration, spinnakerConfiguration.url)
+    await this.processSpinnakerPipeline(spinnakerPipelineConfiguration, deploymentConfiguration, spinnakerConfiguration.url)
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
 
@@ -92,7 +91,7 @@ export class SpinnakerService {
       spinnakerPipelineConfiguration.applicationName,
       deploymentId,
       queueId,
-      configurationData.url
+      spinnakerConfiguration.url
     )
   }
 
