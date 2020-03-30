@@ -222,6 +222,7 @@ func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeli
 				executionManifestID, _ := mozart.executionMain.CreateVersionManifest(
 					mozart.currentExecutionID, executionVersionID, key, manifest,
 				)
+
 				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
 				if err != nil {
 					mozart.executionMain.UpdateManifestStatus(
