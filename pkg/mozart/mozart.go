@@ -132,7 +132,7 @@ func (mozart *Mozart) deployVirtualService(pipeline *pipeline.Pipeline, ctx cont
 	)
 	errs, ctx := errgroup.WithContext(ctx)
 	errs.Go(func() error {
-		err := mozart.deployer.Deploy(pipeline.Istio.VirtualService, forceUpdate, &virtualServiceSchema)
+		err := mozart.deployer.Deploy(pipeline.Istio.VirtualService, forceUpdate, &virtualServiceSchema, pipeline.Kubeconfig)
 		if err != nil {
 			mozart.steps.doneManageIstioComponents <- err
 			return err
@@ -159,7 +159,7 @@ func (mozart *Mozart) deployDestinationRules(pipeline *pipeline.Pipeline, ctx co
 	)
 	errs, ctx := errgroup.WithContext(ctx)
 	errs.Go(func() error {
-		err := mozart.deployer.Deploy(pipeline.Istio.DestinationRules, forceUpdate, &destinationRulesSchema)
+		err := mozart.deployer.Deploy(pipeline.Istio.DestinationRules, forceUpdate, &destinationRulesSchema, pipeline.Kubeconfig)
 		if err != nil {
 			mozart.steps.doneManageIstioComponents <- err
 			return err
@@ -223,7 +223,7 @@ func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeli
 					mozart.currentExecutionID, executionVersionID, key, manifest,
 				)
 
-				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
+				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil, pipeline.Kubeconfig)
 				if err != nil {
 					mozart.executionMain.UpdateManifestStatus(
 						mozart.currentExecutionID, executionVersionID, executionManifestID, execution.ExecutionFailed,
@@ -250,7 +250,7 @@ func (mozart *Mozart) manageUndeployVersions(pipeline *pipeline.Pipeline, ctx co
 		func(name string, namespace string) {
 			utils.CustomLog("info", "manageUndeployVersions", "UNDEPLOY VERSION: "+name)
 			errs.Go(func() error {
-				err := mozart.deployer.Undeploy(version.Version, pipeline.Namespace)
+				err := mozart.deployer.Undeploy(version.Version, pipeline.Namespace, pipeline.Kubeconfig)
 				if err != nil {
 					return err
 				}
