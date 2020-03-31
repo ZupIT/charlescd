@@ -1,8 +1,8 @@
-import { GitProviders } from '../../../core/integrations/configuration/interfaces/git-providers.type'
+import { GitProvidersEnum } from '../../../core/integrations/configuration/interfaces/git-providers.type'
 
 export interface IOctopipeConfigurationData {
 
-    gitProvider: GitProviders
+    gitProvider: GitProvidersEnum
 
     gitToken: string
 
