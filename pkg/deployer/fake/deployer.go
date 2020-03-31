@@ -82,9 +82,8 @@ func (deployerManager *DeployerManagerFake) GetManifestsByHelmChart(
 }
 
 func (deployerManager *DeployerManagerFake) Deploy(
-	manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource,
+	manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource, config *string,
 ) error {
-	// deployer := deployer.NewDeployer(deployerManager.fakeK8sConnection)
 
 	resource := schema.GroupVersionResource{
 		Group:    "apps",
@@ -103,10 +102,10 @@ func (deployerManager *DeployerManagerFake) Deploy(
 	return nil
 }
 
-func (deployerManager *DeployerManagerFake) Undeploy(name string, namespace string) error {
+func (deployerManager *DeployerManagerFake) Undeploy(name string, namespace string, config *string) error {
 	deployer := deployer.NewDeployer(fake.NewK8sFakeClient())
 
-	err := deployer.Undeploy(name, namespace)
+	err := deployer.Undeploy(name, namespace, config)
 	if err != nil {
 		return err
 	}
