@@ -178,7 +178,7 @@ func (deployer *Deployer) watchK8sDeployStatus(
 				err = errors.New("Time resource verification exceeded")
 				return err
 			default:
-				utils.CustomLog("info", "isResourceOk", "Resource verification")
+				utils.CustomLog("info", "watchK8sDeployStatus", "RESOURCE VERIFICATION:"+res.GetName())
 				ok := deployer.isResourceOk(conditions)
 				if ok {
 					return nil

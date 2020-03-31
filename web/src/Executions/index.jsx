@@ -21,10 +21,10 @@ const Executions = () => {
 
   const handleClick = useCallback((id) => {
     history.push(`/${id}`)
-  }, [])
+  }, [history])
 
   const renderStatus = (status) => (
-    <Card className="execution__status" inverse color={getStatusColor(status)}>
+    <Card className={`execution__status ${status.toLowerCase()}`} color={getStatusColor(status)}>
       {status}
     </Card>
   )

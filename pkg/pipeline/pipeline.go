@@ -13,8 +13,7 @@ type Version struct {
 }
 
 type GithubAccount struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Token string `json:"token"`
 }
 
 type Istio struct {
@@ -31,5 +30,6 @@ type Pipeline struct {
 	HelmRepository string        `json:"helmUrl"`
 	GithubAccount  GithubAccount `json:"github"`
 	Istio          Istio         `json:"istio"`
+	CircleID       string        `json:"circleId"`
 	Kubeconfig     *string       `json:"kubeconfig"`
 }

@@ -39,3 +39,13 @@
   font-size: 12px;
   width: 80%;
 }
+
+.execution__status.running {
+  background-color: black;
+  animation: fade 1s infinite;
+}
+
+@keyframes fade {
+  0% {opacity: 0} 
+  100%{opacity: 1}
+}
