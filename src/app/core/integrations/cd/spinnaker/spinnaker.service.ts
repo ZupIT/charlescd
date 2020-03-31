@@ -37,8 +37,8 @@ import {
 @Injectable()
 export class SpinnakerService {
 
-  private MAXIMUM_RETRY_ATTEMPTS = 5
-  private MILLISECONDS_RETRY_DELAY = 1000
+  private readonly MAXIMUM_RETRY_ATTEMPTS = 5
+  private readonly MILLISECONDS_RETRY_DELAY = 1000
 
   constructor(
     private readonly httpService: HttpService,
@@ -112,7 +112,7 @@ export class SpinnakerService {
 
   private getDeployRetryPipe(error, attempts: number) {
     return of(error).pipe(
-        tap(() => this.consoleLoggerService.log(`Attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+        tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
         delay(this.MILLISECONDS_RETRY_DELAY)
     )
   }

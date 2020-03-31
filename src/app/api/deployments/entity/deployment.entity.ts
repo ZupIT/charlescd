@@ -107,9 +107,9 @@ export class DeploymentEntity extends BaseEntity {
     return this.status === DeploymentStatusEnum.FAILED
   }
 
-  public getComponentDeployments(): ComponentDeploymentEntity[] {
+  public getComponentDeploymentsIds(): string[] {
     return this.modules.reduce(
-      (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components], []
+      (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components.map(component => component.id)], []
     )
   }
 }
