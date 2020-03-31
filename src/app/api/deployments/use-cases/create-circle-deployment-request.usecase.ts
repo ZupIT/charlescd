@@ -22,7 +22,10 @@ import {
     PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../services'
-import { QueuedDeploymentsRepository } from '../repository'
+import {
+    ComponentDeploymentsRepository,
+    QueuedDeploymentsRepository
+} from '../repository'
 import { QueuedDeploymentsConstraints } from '../../../core/integrations/databases/constraints'
 
 @Injectable()
@@ -37,6 +40,8 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(ComponentDeploymentsRepository)
+        private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
@@ -72,11 +77,12 @@ export class CreateCircleDeploymentRequestUsecase {
     }
 
     private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
+
         try {
-            const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
+            const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
             await Promise.all(
-                componentDeployments.map(
-                    componentDeployment => this.enqueueComponentDeployment(deployment, componentDeployment)
+                componentDeploymentsIds.map(
+                    componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
                 )
             )
         } catch (error) {
@@ -86,15 +92,16 @@ export class CreateCircleDeploymentRequestUsecase {
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
-        componentDeployment: ComponentDeploymentEntity
+        componentDeploymentId: string
     ): Promise<void> {
 
-        let queuedDeployment: QueuedDeploymentEntity
-
         try {
-            queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
+            const componentDeployment: ComponentDeploymentEntity =
+                await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+            const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
             const component: ComponentEntity =
                 await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
+
             if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
                 await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
             }
