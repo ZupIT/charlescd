@@ -270,9 +270,7 @@ describe('Spinnaker Service', () => {
           QueuedPipelineStatusEnum.QUEUED,
         ))
       )
-      expect(
-        await octopipeService.deploy(payload)
-      ).toEqual({ error: 'bad request' })
+      await expect(octopipeService.deploy(payload)).rejects.toThrow()
     })
   })
 })

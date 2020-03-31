@@ -3,12 +3,21 @@ import { QueryFailedError, Repository } from 'typeorm'
 import { CreateCircleDeploymentDto, CreateCircleDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import {
+    ComponentDeploymentsRepository,
+    QueuedDeploymentsRepository
+} from '../../../app/api/deployments/repository'
 import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import { CreateCircleDeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
 import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import { ComponentsRepositoryStub, DeploymentsRepositoryStub, ModulesRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
+import {
+    ComponentDeploymentsRepositoryStub,
+    ComponentsRepositoryStub,
+    DeploymentsRepositoryStub,
+    ModulesRepositoryStub,
+    QueuedDeploymentsRepositoryStub
+} from '../../stubs/repository'
 import {
     ConsoleLoggerServiceStub, PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub
 } from '../../stubs/services'
@@ -18,6 +27,7 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
     let createCircleDeploymentRequestUsecase: CreateCircleDeploymentRequestUsecase
     let deploymentsRepository: Repository<DeploymentEntity>
     let deployment: DeploymentEntity
+    let componentDeploymentsRepository: ComponentDeploymentsRepository
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
     let createCircleDeploymentDto: CreateCircleDeploymentDto
@@ -33,6 +43,7 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
                 { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
                 { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
+                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
@@ -44,6 +55,7 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
         createCircleDeploymentRequestUsecase = module.get<CreateCircleDeploymentRequestUsecase>(CreateCircleDeploymentRequestUsecase)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+        componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
 
         componentDeployments = [
             new ComponentDeploymentEntity(

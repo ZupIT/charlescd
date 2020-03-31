@@ -29,7 +29,10 @@ import {
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
-import { HttpService } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpService
+} from '@nestjs/common'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
 import { Repository } from 'typeorm'
@@ -260,16 +263,10 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedDeployment))
 
-      const deploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleDeploymentFailure')
-      const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentDeploymentFailure')
-
-      await spinnakerService.deploySpinnakerPipeline(
+      await expect(spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
           'some-application-name'
-      )
-
-      expect(deploymentErrorSpy).toHaveBeenCalled()
-      expect(componentErrorSpy).toHaveBeenCalled()
+      )).rejects.toThrow()
     })
 
     it('should handle spinnaker undeployment api call failure correctly', async () => {
@@ -282,16 +279,10 @@ describe('Spinnaker Service', () => {
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
           .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
-      const undeploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
-      const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
-
-      await spinnakerService.deploySpinnakerPipeline(
+      await expect(spinnakerService.deploySpinnakerPipeline(
           'some-pipeline-name',
           'some-application-name'
-      )
-
-      expect(undeploymentErrorSpy).toHaveBeenCalled()
-      expect(componentErrorSpy).toHaveBeenCalled()
+      )).rejects.toThrow()
     })
   })
 })
