@@ -1,4 +1,4 @@
-import { GitProviders } from '../../configuration/interfaces/git-providers.type'
+import { GitProvidersEnum } from '../../configuration/interfaces/git-providers.type'
 
 export interface IOctopipeVersion {
   version: string
@@ -17,7 +17,7 @@ export interface IOctopipePayload {
   appNamespace: string
   webHookUrl: string,
   git: {
-    provider: GitProviders,
+    provider: GitProvidersEnum,
     token: string
   },
   helmUrl: string,

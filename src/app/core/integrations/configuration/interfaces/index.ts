@@ -1,7 +1,7 @@
 import { IDeploymentConfiguration } from './deployment-configuration.interface'
-import { GitProviders } from './git-providers.type'
+import { GitProvidersEnum } from './git-providers.type'
 
 export {
   IDeploymentConfiguration,
-  GitProviders
+  GitProvidersEnum
 }
