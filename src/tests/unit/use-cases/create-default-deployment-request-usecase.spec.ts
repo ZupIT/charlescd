@@ -4,12 +4,16 @@ import {
     CreateDefaultDeploymentRequestUsecase
 } from '../../../app/api/deployments/use-cases'
 import {
+    ComponentDeploymentsRepositoryStub,
     ComponentsRepositoryStub,
     DeploymentsRepositoryStub,
     ModulesRepositoryStub,
     QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import {
+    ComponentDeploymentsRepository,
+    QueuedDeploymentsRepository
+} from '../../../app/api/deployments/repository'
 import {
     PipelineDeploymentsService,
     PipelineErrorHandlerService,
@@ -41,6 +45,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
 
     let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
     let deploymentsRepository: Repository<DeploymentEntity>
+    let componentDeploymentsRepository: ComponentDeploymentsRepository
     let deployment: DeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
@@ -57,6 +62,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
                 { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
                 { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
+                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
@@ -68,6 +74,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
         createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+        componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
 
         componentDeployments = [
             new ComponentDeploymentEntity(
