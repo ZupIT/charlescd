@@ -31,7 +31,7 @@ func (executionAPI *ExecutionAPI) findAll(context *gin.Context) {
 }
 
 func (executionAPI *ExecutionAPI) findByID(context *gin.Context) {
-	id := context.Params.ByName("id")
+	id := context.Param("id")
 
 	execution, err := executionAPI.executionMain.FindByID(id)
 	if err != nil {
