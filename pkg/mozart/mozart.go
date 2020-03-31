@@ -171,6 +171,7 @@ func (mozart *Mozart) deployDestinationRules(pipeline *pipeline.Pipeline, ctx co
 }
 
 func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string) {
+	client := http.Client{}
 	data, err := json.Marshal(map[string]string{
 		"status": status,
 	})
@@ -178,7 +179,13 @@ func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string)
 		return
 	}
 
-	_, err = http.Post(pipeline.Webhook, "application/json", bytes.NewBuffer(data))
+	request, err := http.NewRequest("POST", pipeline.Webhook, bytes.NewBuffer(data))
+	if err != nil {
+		return
+	}
+	request.Header.Add("x-circle-id", pipeline.CircleID)
+
+	_, err = client.Do(request)
 	if err != nil {
 		mozart.executionMain.FinishExecution(mozart.currentExecutionID, execution.ExecutionWebhookFailed)
 		utils.CustomLog("error", "triggerWebhook", err.Error())
@@ -186,10 +193,6 @@ func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string)
 	}
 
 	mozart.executionMain.FinishExecution(mozart.currentExecutionID, status)
-}
-
-func (mozart *Mozart) triggerWebhook() {
-
 }
 
 func (mozart *Mozart) manageDeployVersions(currentPipeline *pipeline.Pipeline, ctx context.Context) error {
