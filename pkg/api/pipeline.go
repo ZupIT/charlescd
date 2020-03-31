@@ -24,5 +24,5 @@ func (api *PipelineApi) startPipeline(ctx *gin.Context) {
 
 	executionID, _ := api.mozart.Start(pipeline)
 
-	ctx.JSON(200, map[string]string{"executionID": executionID.String()})
+	ctx.JSON(200, map[string]string{"executionID": executionID.Hex()})
 }
