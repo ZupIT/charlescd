@@ -40,7 +40,7 @@ func TestWatchK8sDeployStatusSuccess(t *testing.T) {
 	unstructured.SetNestedMap(res.Object, toMapStructure(fakeDeploymentStatusSuccess), "status")
 	_, err = deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
 
-	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
+	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct, nil)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -64,7 +64,7 @@ func TestWatchK8sDeployTimeout(t *testing.T) {
 	unstructured.SetNestedMap(res.Object, toMapStructure(fakeDeploymentStatusError), "status")
 	_, err = deployer.k8sConnection.DynamicClientset.Resource(resourceFakeSchema).Namespace(res.GetNamespace()).Update(res, metav1.UpdateOptions{})
 
-	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
+	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct, nil)
 	if err != nil && !strings.Contains(err.Error(), "Time resource verification exceeded") {
 		t.Fatalf(err.Error())
 		return
@@ -84,7 +84,7 @@ func TestWatchK8sDeployNoDeploymentResource(t *testing.T) {
 		return
 	}
 
-	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
+	err = deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct, nil)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -97,7 +97,7 @@ func TestWatchK8sDeployResourceNotFound(t *testing.T) {
 	}
 
 	deployer := NewDeployer(fake.NewK8sFakeClient())
-	err := deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct)
+	err := deployer.watchK8sDeployStatus(resourceFakeSchema, unstruct, nil)
 	if err != nil && !k8sErrors.IsNotFound(err) {
 		t.Fatalf(err.Error())
 		return
@@ -107,7 +107,7 @@ func TestWatchK8sDeployResourceNotFound(t *testing.T) {
 func TestDeploySimpleWithResource(t *testing.T) {
 	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, &resourceFakeSchema)
+	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, &resourceFakeSchema, nil)
 	if err != nil {
 		t.Fatalf("fail to deploy manifest")
 		return
@@ -116,7 +116,7 @@ func TestDeploySimpleWithResource(t *testing.T) {
 
 func TestDeploySimpleNoResource(t *testing.T) {
 	deployer := NewDeployer(fake.NewK8sFakeClient())
-	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, nil)
+	err := deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, nil, nil)
 	if err != nil {
 		t.Fatalf("fail to deploy manifest")
 		return
@@ -136,7 +136,7 @@ func TestDeployWithResourceExisted(t *testing.T) {
 		return
 	}
 
-	err = deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, &resourceFakeSchema)
+	err = deployer.Deploy(toMapStructure(fakeDeploymentManifest), false, &resourceFakeSchema, nil)
 	if err != nil {
 		t.Fatalf("fail to deploy manifest")
 		return
@@ -156,7 +156,7 @@ func TestDeployWithResourceExistedForceUpdate(t *testing.T) {
 		return
 	}
 
-	err = deployer.Deploy(toMapStructure(fakeDeploymentManifest), true, &resourceFakeSchema)
+	err = deployer.Deploy(toMapStructure(fakeDeploymentManifest), true, &resourceFakeSchema, nil)
 	if err != nil {
 		t.Fatalf("fail to deploy manifest")
 		return
@@ -180,7 +180,7 @@ func TestUndeployResourceFound(t *testing.T) {
 		return
 	}
 
-	err = deployer.Undeploy(unstruct.GetName(), unstruct.GetNamespace())
+	err = deployer.Undeploy(unstruct.GetName(), unstruct.GetNamespace(), nil)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
@@ -190,7 +190,7 @@ func TestUndeployResourceFound(t *testing.T) {
 func TestUndeployResourceNotFound(t *testing.T) {
 	deployer := NewDeployer(fake.NewK8sFakeClient())
 
-	err := deployer.Undeploy("", "")
+	err := deployer.Undeploy("", "", nil)
 	if err != nil {
 		t.Fatalf(err.Error())
 		return
