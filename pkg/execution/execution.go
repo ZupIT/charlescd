@@ -101,7 +101,11 @@ func NewExecutionManager(db *mongo.Database) *ExecutionManager {
 
 func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
 	executions := []Execution{}
-	cur, err := executionManager.DB.Collection(collection).Find(context.TODO(), map[string]string{}, &options.FindOptions{})
+	sort := map[string]int{"starttime": -1}
+	opts := &options.FindOptions{
+		Sort: sort,
+	}
+	cur, err := executionManager.DB.Collection(collection).Find(context.TODO(), map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +146,6 @@ func (executionManager *ExecutionManager) Create(pipeline *pipeline.Pipeline) (*
 	newExecution := &Execution{
 		Name:               pipeline.Name,
 		Namespace:          pipeline.Namespace,
-		Author:             pipeline.GithubAccount.Username,
 		StartTime:          time.Now(),
 		DeployedVersions:   []ExecutionVersion{},
 		UndeployedVersions: []string{},

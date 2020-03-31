@@ -3,5 +3,5 @@ export const getManifestStatusColor = (status) => ({
   'DEPLOYING': 'info',
   'DEPLOYED': 'success',
   'IS_DEPLOYED': 'secondary',
-  'FAILED': 'error'
+  'FAILED': 'danger'
 }[status || 'FAILED'])
