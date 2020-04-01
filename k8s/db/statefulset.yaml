@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: octopipe-db
+  name: octopipe-mongo
 spec:
-  serviceName: "octopipe-db"
+  serviceName: "octopipe-mongo"
   replicas: 1
   selector:
     matchLabels:
-      app: octopipe-db
+      app: octopipe-mongo
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
       labels:
-        app: octopipe-db
+        app: octopipe-mongo
     spec:
       containers:
-      - name: postgres
-        image: postgres:latest
+      - name: mongo
+        image: mongo:latest
         envFrom:
           - configMapRef:
-              name: postgres-config-octopipe
+              name: octopipe-mongo-config
         ports:
-        - containerPort: 5432
-          name: tcp-postgresql
-          protocol: TCP
+        - containerPort: 27017
         volumeMounts:
         - mountPath: /dev/shm
           name: dshm
-        - mountPath: /bitnami/postgresql
+        - mountPath: /bitnami/mongodb
           name: data
       volumes:
       - emptyDir:

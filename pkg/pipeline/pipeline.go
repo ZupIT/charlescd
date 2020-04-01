@@ -12,8 +12,9 @@ type Version struct {
 	VersionURL string `json:"versionUrl"`
 }
 
-type GithubAccount struct {
-	Token string `json:"token"`
+type GitAccount struct {
+	Provider string `json:"provider"`
+	Token    string `json:"token"`
 }
 
 type Istio struct {
@@ -22,14 +23,14 @@ type Istio struct {
 }
 
 type Pipeline struct {
-	Name           string        `json:"appName"`
-	Namespace      string        `json:"appNamespace""`
-	Versions       []*Version    `json:"versions"`
-	UnusedVersions []*Version    `json:"unusedVersions"`
-	Webhook        string        `json:"webhookUrl"`
-	HelmRepository string        `json:"helmUrl"`
-	GithubAccount  GithubAccount `json:"github"`
-	Istio          Istio         `json:"istio"`
-	CircleID       string        `json:"circleId"`
-	Kubeconfig     *string       `json:"kubeconfig"`
+	Name           string     `json:"appName"`
+	Namespace      string     `json:"appNamespace""`
+	Versions       []*Version `json:"versions"`
+	UnusedVersions []*Version `json:"unusedVersions"`
+	Webhook        string     `json:"webhookUrl"`
+	HelmRepository string     `json:"helmUrl"`
+	GitAccount     GitAccount `json:"git"`
+	Istio          Istio      `json:"istio"`
+	CircleID       string     `json:"circleId"`
+	Kubeconfig     *string    `json:"kubeconfig"`
 }
