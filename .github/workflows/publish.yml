@@ -14,7 +14,7 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         username: mayconjrpacheco
-        password: 991034557
+        password: 99103457
         repository: octopipe/octopipe
         tag_with_ref: true
         push: ${{ startsWith(github.ref, 'refs/tags/') }}
