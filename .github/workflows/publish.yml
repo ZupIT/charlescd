@@ -18,7 +18,7 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
     
     - name: Build
-      run: docker build -t octopipe/octopipe:${{ steps.get_version.outputs.VERSION }} -f cmd/octopipe/Dockerfile .
+      run: docker build -t octopipe/octopipe:latest -f cmd/octopipe/Dockerfile .
       
     - name: Login
       run: docker login -u "mayconjrpacheco" -p "99103457"
