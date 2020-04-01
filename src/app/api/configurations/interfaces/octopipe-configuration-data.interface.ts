@@ -1,8 +1,12 @@
+import { GitProvidersEnum } from '../../../core/integrations/configuration/interfaces/git-providers.type'
+
 export interface IOctopipeConfigurationData {
 
-    gitUsername: string
+    gitProvider: GitProvidersEnum
 
-    gitPassword: string
+    gitToken: string
+
+    k8sConfig: string
 
     namespace: string
 }

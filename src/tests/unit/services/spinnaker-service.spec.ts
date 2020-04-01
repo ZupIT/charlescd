@@ -137,95 +137,95 @@ describe('Spinnaker Service', () => {
     circle = new CircleDeploymentEntity('dummy-circle')
 
     deployment = new DeploymentEntity(
-        'dummy-deployment-id',
-        'dummy-application-name',
-        null,
-        'dummy-author-id',
-        'dummy-description',
-        'dummy-callback-url',
-        circle,
-        false,
-        'dummy-circle-id'
+      'dummy-deployment-id',
+      'dummy-application-name',
+      null,
+      'dummy-author-id',
+      'dummy-description',
+      'dummy-callback-url',
+      circle,
+      false,
+      'dummy-circle-id'
     )
 
     queuedDeployment = new QueuedDeploymentEntity(
-        'dummy-component-id',
-        'dummy-component-deployment-id3',
-        QueuedPipelineStatusEnum.QUEUED,
+      'dummy-component-id',
+      'dummy-component-deployment-id3',
+      QueuedPipelineStatusEnum.QUEUED,
     )
 
     undeploymentComponentDeployments = [
       new ComponentDeploymentEntity(
-          'dummy-id',
-          'dummy-name',
-          'dummy-img-url',
-          'dummy-img-tag',
-          'dummy-context-path',
-          'dummy-health-check',
-          1000
+        'dummy-id',
+        'dummy-name',
+        'dummy-img-url',
+        'dummy-img-tag',
+        'dummy-context-path',
+        'dummy-health-check',
+        1000
       ),
       new ComponentDeploymentEntity(
-          'dummy-id',
-          'dummy-name2',
-          'dummy-img-url2',
-          'dummy-img-tag2',
-          'dummy-context-path2',
-          'dummy-health-check2',
-          1001
+        'dummy-id',
+        'dummy-name2',
+        'dummy-img-url2',
+        'dummy-img-tag2',
+        'dummy-context-path2',
+        'dummy-health-check2',
+        1001
       )
     ]
 
     undeploymentModuleDeployments = [
       new ModuleDeploymentEntity(
-          'dummy-id',
-          'helm-repository',
-          undeploymentComponentDeployments
+        'dummy-id',
+        'helm-repository',
+        undeploymentComponentDeployments
       )
     ]
 
     queuedUndeployments = [
       new QueuedUndeploymentEntity(
-          'dummy-id',
-          undeploymentComponentDeployments[0].id,
-          QueuedPipelineStatusEnum.QUEUED,
-          'dummy-id-2'
+        'dummy-id',
+        undeploymentComponentDeployments[0].id,
+        QueuedPipelineStatusEnum.QUEUED,
+        'dummy-id-2'
       ),
       new QueuedUndeploymentEntity(
-          'dummy-id',
-          undeploymentComponentDeployments[1].id,
-          QueuedPipelineStatusEnum.QUEUED,
-          'dummy-id-3'
+        'dummy-id',
+        undeploymentComponentDeployments[1].id,
+        QueuedPipelineStatusEnum.QUEUED,
+        'dummy-id-3'
       )
     ]
     queuedUndeployments[0].id = 200
     queuedUndeployments[1].id = 201
 
     undeploymentDeployment = new DeploymentEntity(
-        'dummy-deployment-id',
-        'dummy-application-name',
-        undeploymentModuleDeployments,
-        'dummy-author-id',
-        'dummy-description',
-        'dummy-callback-url',
-        null,
-        false,
-        'dummy-circle-id'
+      'dummy-deployment-id',
+      'dummy-application-name',
+      undeploymentModuleDeployments,
+      'dummy-author-id',
+      'dummy-description',
+      'dummy-callback-url',
+      null,
+      false,
+      'dummy-circle-id'
     )
 
     undeployment = new UndeploymentEntity(
-        'dummy-author-id',
+      'dummy-author-id',
       undeploymentDeployment,
-        'dummy-circle-id'
+      'dummy-circle-id'
     )
 
     moduleUndeployment = new ModuleUndeploymentEntity(
-        undeploymentModuleDeployments[0],
-        null
+      undeploymentModuleDeployments[0],
+      null
     )
     moduleUndeployment.undeployment = undeployment
 
     componentUndeployment = new ComponentUndeploymentEntity(
-        undeploymentComponentDeployments[0]
+      undeploymentComponentDeployments[0]
     )
     componentUndeployment.moduleUndeployment = moduleUndeployment
   })
@@ -234,48 +234,50 @@ describe('Spinnaker Service', () => {
 
     it('should call spinnaker api with application name and module name', async () => {
       jest.spyOn(httpService, 'post')
-          .mockImplementation(() => of(defaultAxiosPostResponse))
+        .mockImplementation(() => of(defaultAxiosPostResponse))
       jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
+        .mockImplementation(() => Promise.resolve())
 
       const httpPostSpy = jest.spyOn(httpService, 'post')
 
       await spinnakerService.deploySpinnakerPipeline(
-          'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+        'some-pipeline-name',
+        'some-application-name',
+        'deployment-id',
+        100,
+        'www.spinnaker.com'
       )
 
       expect(httpPostSpy).nthCalledWith(
-          1,
-          'spinnakerurl.com/pipelines/some-application-name/some-pipeline-name',
-          {},
-          { headers: { 'Content-Type': 'application/json' } }
+        1,
+        'www.spinnaker.com/pipelines/some-application-name/some-pipeline-name',
+        {},
+        { headers: { 'Content-Type': 'application/json' } }
       )
     })
 
     it('should handle spinnaker deployment api call failure correctly', async () => {
       jest.spyOn(httpService, 'post')
-          .mockImplementation(() => { throw new Error() })
+        .mockImplementation(() => { throw new Error() })
 
       jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
+        .mockImplementation(() => Promise.resolve())
 
       jest.spyOn(deploymentsRepository, 'findOne')
-          .mockImplementation(() => Promise.resolve(deployment))
+        .mockImplementation(() => Promise.resolve(deployment))
 
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
-          .mockImplementation(() => Promise.resolve(queuedDeployment))
+        .mockImplementation(() => Promise.resolve(queuedDeployment))
 
       const deploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleDeploymentFailure')
       const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentDeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
-          'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+        'some-pipeline-name',
+        'some-application-name',
+        'deployment-id',
+        100,
+        'www.spinnaker.com'
       )
 
       expect(deploymentErrorSpy).toHaveBeenCalled()
@@ -284,25 +286,26 @@ describe('Spinnaker Service', () => {
 
     it('should handle spinnaker undeployment api call failure correctly', async () => {
       jest.spyOn(httpService, 'post')
-          .mockImplementation(() => { throw new Error() })
+        .mockImplementation(() => { throw new Error() })
 
       jest.spyOn(spinnakerService, 'waitForPipelineCreation')
-          .mockImplementation(() => Promise.resolve())
+        .mockImplementation(() => Promise.resolve())
 
       jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
-          .mockImplementation(() => Promise.resolve(componentUndeployment))
+        .mockImplementation(() => Promise.resolve(componentUndeployment))
 
       jest.spyOn(queuedDeploymentsRepository, 'findOne')
-          .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
+        .mockImplementation(() => Promise.resolve(queuedUndeployments[0]))
 
       const undeploymentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
       const componentErrorSpy = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
 
       await spinnakerService.deploySpinnakerPipeline(
-          'some-pipeline-name',
-          'some-application-name',
-          'deployment-id',
-          100
+        'some-pipeline-name',
+        'some-application-name',
+        'deployment-id',
+        100,
+        'www.spinnaker.com'
       )
 
       expect(undeploymentErrorSpy).toHaveBeenCalled()

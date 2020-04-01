@@ -1,19 +1,19 @@
 import { HttpService } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
-import { Repository } from 'typeorm'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
+import { IOctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
+import { ComponentDeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
   ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
+import { GitProviders } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
-import { IOctopipeConfiguration } from '../../../app/core/integrations/octopipe/octopipe.service'
+import { IOctopipePayload } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { EnvConfigurationStub } from '../../stubs/configurations'
@@ -27,16 +27,7 @@ import {
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
   let httpService: HttpService
-  let defaultAxiosGetResponse: AxiosResponse
-  let defaultAxiosPostResponse: AxiosResponse
-  let deploymentsRepository: Repository<DeploymentEntity>
-  let statusManagementService: StatusManagementService
-  let mooveService: MooveService
-  let pipelineQueuesService: PipelineQueuesService
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
-  let componentUndeploymentsRepository: ComponentUndeploymentsRepository
-  let componentDeploymentsRepository: ComponentDeploymentsRepository
-  let pipelineErrorHandlerService: PipelineErrorHandlerService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -58,34 +49,7 @@ describe('Spinnaker Service', () => {
 
     octopipeService = module.get<OctopipeService>(OctopipeService)
     httpService = module.get<HttpService>(HttpService)
-    deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-    statusManagementService = module.get<StatusManagementService>(StatusManagementService)
-    mooveService = module.get<MooveService>(MooveService)
-    pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
-    componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-    componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
-
-    defaultAxiosGetResponse = {
-      data: {
-        id: 'some-pipeline-id',
-      },
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
-
-    defaultAxiosPostResponse = {
-      data: {
-        id: 'some-pipeline-id',
-      },
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
   })
 
   describe('deploySpinnakerPipeline', () => {
@@ -111,32 +75,32 @@ describe('Spinnaker Service', () => {
         pipelineUnusedVersions: []
       }
 
-      const deploymentConfiguration = {
-        account: 'some-account',
-        pipelineName: 'some-pipeline-name',
-        applicationName: 'some-application-name',
+      const deploymentConfiguration: IOctopipeConfigurationData = {
         namespace: 'some-app-namespace',
-        healthCheckPath: '/health',
-        uri: { uriName: 'https://some.uri' },
-        appPort: 8989,
-        gitUsername: 'git-user',
-        gitPassword: 'git-password'
+        gitProvider: GitProviders.GITHUB,
+        gitToken: 'some-github-token',
+        k8sConfig: 'kube-config-yaml'
       }
-      const payload =
+
+      const payload: IOctopipePayload =
         octopipeService.createPipelineConfigurationObject(
           pipelineOptions,
           deploymentConfiguration,
           'dummy-callback-url',
           moduleDeployment,
-          'some-app-name'
+          'some-app-name',
+          'circle-id'
         )
 
-      const expectedPayload = {
+      const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
-        github: {
-          username: 'git-user',
-          password: 'git-password'
+        git: {
+          provider: GitProviders.GITHUB,
+          token: 'some-github-token',
+        },
+        k8s: {
+          config: 'kube-config-yaml'
         },
         helmUrl: 'helm-repository',
         istio: {
@@ -234,13 +198,14 @@ describe('Spinnaker Service', () => {
             versionUrl: 'version.url/tag:123'
           }
         ],
-        webHookUrl: 'dummy-callback-url'
+        webHookUrl: 'dummy-callback-url',
+        circleId: 'circle-id'
       }
       expect(payload).toEqual(expectedPayload)
     })
 
     it('posts to octopipe server', async () => {
-      const payload = {} as IOctopipeConfiguration
+      const payload = {} as IOctopipePayload
       jest.spyOn(httpService, 'post').mockImplementation(
         () => of({
           data: {
@@ -258,7 +223,7 @@ describe('Spinnaker Service', () => {
     })
 
     it('should handle on octopipe deployment failure', async () => {
-      const payload = {} as IOctopipeConfiguration
+      const payload = {} as IOctopipePayload
       jest.spyOn(httpService, 'post').mockImplementation(
         () => { throw new Error('bad request') }
       )

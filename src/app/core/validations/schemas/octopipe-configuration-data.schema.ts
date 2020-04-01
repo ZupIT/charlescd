@@ -5,12 +5,23 @@ export const OctopipeConfigurationDataSchema: ValidationSchema = {
     name: 'octopipeConfigurationDataSchema',
 
     properties: {
-        gitUsername: [{
+        gitToken: [{
             type: 'isNotEmpty'
         }],
-        gitPassword: [{
+        gitProvider: [
+            {
+                type: 'isIn',
+                constraints: [['GITHUB', 'GITLAB']],
+                message: '$value is not valid. Supported providers are GITHUB and GITLAB'
+            },
+            {
+                type: 'isNotEmpty'
+            }
+        ],
+        k8sConfig: [{
             type: 'isNotEmpty'
         }],
+
         namespace: [{
             type: 'isNotEmpty'
         }]
