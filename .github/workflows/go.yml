@@ -22,7 +22,7 @@ jobs:
         run: |
           go get -v -t -d ./...
       - name: Test
-        run: go test -coverprofile cover.out ./...
+        run: go test -v -covermode=count ./...
 
   cover:
      name: Cover
@@ -39,7 +39,7 @@ jobs:
         run: |
           go get -v -t -d ./...
       - name: Cover
-        run: go tool cover -func=cover.out
+        run: go test -v -covermode=count -coverprofile=coverage.out
 
   build:
     name: Build
