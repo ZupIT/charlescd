@@ -47,11 +47,11 @@ const Execution = () => {
                 <div><FontAwesomeIcon icon="user" /> {execution?.author}</div>
                 <div>
                   <FontAwesomeIcon icon="calendar-day" /> {moment.utc(execution?.startTime).format("DD/MM/YYYY")}{'  '}
-                  <FontAwesomeIcon icon="clock" /> {moment.utc(execution?.startTime).format("HH:mm")}
+                  <FontAwesomeIcon icon="clock" /> {moment.utc(execution?.startTime).format("HH:mm:ss")}
                 </div>
                 <div>
                   <FontAwesomeIcon icon="calendar-day" /> {moment.utc(execution?.finishTime).format("DD/MM/YYYY")}{'  '}
-                  <FontAwesomeIcon icon="clock" /> {moment.utc(execution?.finishTime).format("HH:mm")}
+                  <FontAwesomeIcon icon="clock" /> {moment.utc(execution?.finishTime).format("HH:mm:ss")}
                 </div>
                 <div>
                   <FontAwesomeIcon icon="clock" /> {getDuration(execution?.startTime, execution?.finishTime)}
@@ -71,7 +71,7 @@ const Execution = () => {
                 className={classnames({ active: activeTab === '1' })}
                 onClick={() => { toggle('1'); }}
               >
-                Deployed <Badge pill>{execution?.deployedComponents ? execution?.deployedComponents.length : 0}</Badge>
+                Deployed <Badge pill>{execution?.deployedVersions ? execution?.deployedVersions.length : 0}</Badge>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -79,7 +79,7 @@ const Execution = () => {
                 className={classnames({ active: activeTab === '2' })}
                 onClick={() => { toggle('2'); }}
               >
-                Undeployed <Badge pill>{execution?.undeployedComponents ? execution?.undeployedComponents?.length : 0}</Badge>
+                Undeployed <Badge pill>{execution?.undeployedVersions ? execution?.undeployedVersions?.length : 0}</Badge>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -93,12 +93,12 @@ const Execution = () => {
           </Nav>
           <TabContent activeTab={activeTab}>
             <TabPane tabId="1">
-              {execution?.deployedComponents?.map(component => (
+              {execution?.deployedVersions?.map(version => (
                 <Card>
-                  <CardHeader>{component?.name}</CardHeader>
+                  <CardHeader>{version?.name}</CardHeader>
                   <CardBody>
                     <ListGroup className="execution__content__manifests">
-                      {component?.manifests?.map(manifest => (
+                      {version?.manifests?.map(manifest => (
                         <>
                           <ListGroupItem className="execution__content__manifest" id={`coll-${manifest?.id}`}>
                             <Row>
@@ -133,7 +133,11 @@ const Execution = () => {
               
             </TabPane>
             <TabPane tabId="2">
-              
+              <ListGroup>
+                {execution?.undeployedVersions?.map(version => (
+                  <ListGroupItem>{version}</ListGroupItem>
+                ))}
+              </ListGroup>
             </TabPane>
             <TabPane tabId="3">
               {execution?.istioComponents?.map(component => (

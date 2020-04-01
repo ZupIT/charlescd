@@ -111,16 +111,13 @@ func (d *Deployer) encodeStringManifest(manifest string) (map[string]interface{}
 func (d *Deployer) getContentFile(filename string, pipeline *pipeline.Pipeline) (string, error) {
 	client := &http.Client{}
 	helmRepository := pipeline.HelmRepository
-	githubAccount := pipeline.GithubAccount
-	authValue := fmt.Sprintf("%s:%s", githubAccount.Username, githubAccount.Password)
-	authValueEncoded := base64.StdEncoding.EncodeToString([]byte(authValue))
 	helmEndpoint := fmt.Sprintf(helmRepository+"%s/%s", pipeline.Name, filename)
 
 	getHelmContentReq, err := http.NewRequest("GET", helmEndpoint, nil)
 	if err != nil {
 		return "", err
 	}
-	getHelmContentReq.Header.Add("Authorization", "Basic "+authValueEncoded)
+	getHelmContentReq.Header.Add("Authorization", "token "+pipeline.GithubAccount.Token)
 
 	response, err := client.Do(getHelmContentReq)
 	if err != nil {

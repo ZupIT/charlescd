@@ -21,7 +21,7 @@ type ExecutionManager struct {
 }
 
 type UseCases interface {
-	FindAll() (*[]ExecutionListItem, error)
+	FindAll() (*[]Execution, error)
 	FindByID(id string) (*Execution, error)
 	Create(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error)
 	CreateVersion(
@@ -49,9 +49,9 @@ const (
 )
 
 const (
-	ManifestCreated     = "CREATED"
-	ManifestDeploying   = "DEPLOYING"
-	ManifestDeployed    = "DEPLOYED"
+	ManifestCreated   = "CREATED"
+	ManifestDeploying = "DEPLOYING"
+	ManifestDeployed  = "DEPLOYED"
 )
 
 const collection = "executions"
@@ -99,15 +99,19 @@ func NewExecutionManager(db *mongo.Database) *ExecutionManager {
 	return &ExecutionManager{db}
 }
 
-func (executionManager *ExecutionManager) FindAll() (*[]ExecutionListItem, error) {
-	executions := []ExecutionListItem{}
-	cur, err := executionManager.DB.Collection(collection).Find(context.TODO(), nil, nil)
+func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
+	executions := []Execution{}
+	sort := map[string]int{"starttime": -1}
+	opts := &options.FindOptions{
+		Sort: sort,
+	}
+	cur, err := executionManager.DB.Collection(collection).Find(context.TODO(), map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
 
 	for cur.Next(context.TODO()) {
-		var execution ExecutionListItem
+		var execution Execution
 		err := cur.Decode(&execution)
 
 		if err != nil {
@@ -123,9 +127,17 @@ func (executionManager *ExecutionManager) FindAll() (*[]ExecutionListItem, error
 
 func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error) {
 	execution := Execution{}
-	col := executionManager.DB.Collection(collection)
-	doc := col.FindOne(context.TODO(), bson.M{"ID": id})
-	doc.Decode(&execution)
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": objectID}
+	collection := executionManager.DB.Collection(collection)
+	err = collection.FindOne(context.TODO(), filter).Decode(&execution)
+	if err != nil {
+		return nil, err
+	}
 
 	return &execution, nil
 }
@@ -134,7 +146,6 @@ func (executionManager *ExecutionManager) Create(pipeline *pipeline.Pipeline) (*
 	newExecution := &Execution{
 		Name:               pipeline.Name,
 		Namespace:          pipeline.Namespace,
-		Author:             pipeline.GithubAccount.Username,
 		StartTime:          time.Now(),
 		DeployedVersions:   []ExecutionVersion{},
 		UndeployedVersions: []string{},
