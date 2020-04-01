@@ -117,7 +117,7 @@ func (d *Deployer) getContentFile(filename string, pipeline *pipeline.Pipeline) 
 	if err != nil {
 		return "", err
 	}
-	getHelmContentReq.Header.Add("Authorization", "token "+pipeline.GithubAccount.Token)
+	getHelmContentReq.Header.Add("Authorization", "token "+pipeline.GitAccount.Token)
 
 	response, err := client.Do(getHelmContentReq)
 	if err != nil {

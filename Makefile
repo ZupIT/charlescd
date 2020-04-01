@@ -28,5 +28,5 @@ publish-octopipe:
 				docker push realwavelab.azurecr.io/octopipe:v-0-1-0
 publish-ui:
 				cd web && yarn build
-				docker build -t realwavelab.azurecr.io/octopipe-ui:darwin -f web/Dockerfile .
-				docker push realwavelab.azurecr.io/octopipe-ui:darwin
+				docker build -t realwavelab.azurecr.io/octopipe-ui:latest -f web/Dockerfile .
+				docker push realwavelab.azurecr.io/octopipe-ui:latest
