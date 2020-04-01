@@ -18,5 +18,4 @@ jobs:
         repository: octopipe/octopipe
         tag_with_ref: true
         push: ${{ startsWith(github.ref, 'refs/tags/') }}
-        dockerfile: cmd/octopipe
-        path: .
+        dockerfile: /github/workspace/cmd/octopipe
