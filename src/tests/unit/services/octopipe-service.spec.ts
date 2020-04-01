@@ -10,7 +10,7 @@ import {
 } from '../../../app/api/deployments/repository'
 import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { GitProviders } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
+import { GitProvidersEnum } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { OctopipeService } from '../../../app/core/integrations/octopipe'
 import { IOctopipePayload } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
@@ -77,7 +77,7 @@ describe('Spinnaker Service', () => {
 
       const deploymentConfiguration: IOctopipeConfigurationData = {
         namespace: 'some-app-namespace',
-        gitProvider: GitProviders.GITHUB,
+        gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
         k8sConfig: 'kube-config-yaml'
       }
@@ -96,7 +96,7 @@ describe('Spinnaker Service', () => {
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
         git: {
-          provider: GitProviders.GITHUB,
+          provider: GitProvidersEnum.GITHUB,
           token: 'some-github-token',
         },
         k8s: {
