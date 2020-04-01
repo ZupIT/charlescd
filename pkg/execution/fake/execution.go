@@ -1,18 +1,19 @@
 package fake
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ExecutionManagerFake struct {}
+type ExecutionManagerFake struct{}
 
 func NewExecutionFake() *ExecutionManagerFake {
 	return &ExecutionManagerFake{}
 }
 
-func (executionManagr *ExecutionManagerFake) FindAll() (*[]execution.ExecutionListItem, error) {
+func (executionManagr *ExecutionManagerFake) FindAll() (*[]execution.Execution, error) {
 	return nil, nil
 }
 
@@ -59,6 +60,3 @@ func (executionManagr *ExecutionManagerFake) UpdateManifestStatus(
 func (executionManagr *ExecutionManagerFake) FinishExecution(executionID *primitive.ObjectID, status string) {
 	return
 }
-
-
-

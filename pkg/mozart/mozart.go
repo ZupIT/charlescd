@@ -91,7 +91,7 @@ func (mozart *Mozart) startManageIstioComponents(pipeline *pipeline.Pipeline) {
 func (mozart *Mozart) manageVersions(pipeline *pipeline.Pipeline) {
 	var err error
 
-	err = mozart.manageDeployVersions(pipeline)
+	err = mozart.manageDeployVersions(pipeline, context.Background())
 	err = mozart.manageUndeployVersions(pipeline, context.Background())
 
 	if err != nil {
@@ -132,7 +132,7 @@ func (mozart *Mozart) deployVirtualService(pipeline *pipeline.Pipeline, ctx cont
 	)
 	errs, ctx := errgroup.WithContext(ctx)
 	errs.Go(func() error {
-		err := mozart.deployer.Deploy(pipeline.Istio.VirtualService, forceUpdate, &virtualServiceSchema)
+		err := mozart.deployer.Deploy(pipeline.Istio.VirtualService, forceUpdate, &virtualServiceSchema, pipeline.Kubeconfig)
 		if err != nil {
 			mozart.steps.doneManageIstioComponents <- err
 			return err
@@ -159,7 +159,7 @@ func (mozart *Mozart) deployDestinationRules(pipeline *pipeline.Pipeline, ctx co
 	)
 	errs, ctx := errgroup.WithContext(ctx)
 	errs.Go(func() error {
-		err := mozart.deployer.Deploy(pipeline.Istio.DestinationRules, forceUpdate, &destinationRulesSchema)
+		err := mozart.deployer.Deploy(pipeline.Istio.DestinationRules, forceUpdate, &destinationRulesSchema, pipeline.Kubeconfig)
 		if err != nil {
 			mozart.steps.doneManageIstioComponents <- err
 			return err
@@ -171,6 +171,7 @@ func (mozart *Mozart) deployDestinationRules(pipeline *pipeline.Pipeline, ctx co
 }
 
 func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string) {
+	client := http.Client{}
 	data, err := json.Marshal(map[string]string{
 		"status": status,
 	})
@@ -178,7 +179,13 @@ func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string)
 		return
 	}
 
-	_, err = http.Post(pipeline.Webhook, "application/json", bytes.NewBuffer(data))
+	request, err := http.NewRequest("POST", pipeline.Webhook, bytes.NewBuffer(data))
+	if err != nil {
+		return
+	}
+	request.Header.Add("x-circle-id", pipeline.CircleID)
+
+	_, err = client.Do(request)
 	if err != nil {
 		mozart.executionMain.FinishExecution(mozart.currentExecutionID, execution.ExecutionWebhookFailed)
 		utils.CustomLog("error", "triggerWebhook", err.Error())
@@ -188,21 +195,26 @@ func (mozart *Mozart) finishPipeline(pipeline *pipeline.Pipeline, status string)
 	mozart.executionMain.FinishExecution(mozart.currentExecutionID, status)
 }
 
-func (mozart *Mozart) triggerWebhook() {
-
-}
-
-func (mozart *Mozart) manageDeployVersions(pipeline *pipeline.Pipeline) error {
+func (mozart *Mozart) manageDeployVersions(currentPipeline *pipeline.Pipeline, ctx context.Context) error {
 	utils.CustomLog("info", "manageDeployVersions", "START VERSIONS DEPLOY...")
-	for _, version := range pipeline.Versions {
-		err := mozart.deployVersion(pipeline, version, context.Background())
-		if err != nil {
-			mozart.steps.doneManageVersions <- err
-			return err
-		}
+	errs, ctx := errgroup.WithContext(ctx)
+
+	for _, version := range currentPipeline.Versions {
+		func(version *pipeline.Version) {
+			errs.Go(func() error {
+				err := mozart.deployVersion(currentPipeline, version, context.Background())
+				if err != nil {
+					utils.CustomLog("error", "manageDeployVersions", err.Error())
+					mozart.steps.doneManageVersions <- err
+					return err
+				}
+
+				return nil
+			})
+		}(version)
 	}
 
-	return nil
+	return errs.Wait()
 }
 
 func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeline.Version, ctx context.Context) error {
@@ -223,8 +235,9 @@ func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeli
 					mozart.currentExecutionID, executionVersionID, key, manifest,
 				)
 
-				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil)
+				err := mozart.deployer.Deploy(manifest.(map[string]interface{}), false, nil, pipeline.Kubeconfig)
 				if err != nil {
+					utils.CustomLog("info", "deployVersion", "DEPLOY VERSION ERROR: "+version.Version)
 					mozart.executionMain.UpdateManifestStatus(
 						mozart.currentExecutionID, executionVersionID, executionManifestID, execution.ExecutionFailed,
 					)
@@ -234,6 +247,8 @@ func (mozart *Mozart) deployVersion(pipeline *pipeline.Pipeline, version *pipeli
 				mozart.executionMain.UpdateManifestStatus(
 					mozart.currentExecutionID, executionVersionID, executionManifestID, execution.ManifestDeployed,
 				)
+
+				utils.CustomLog("info", "deployVersion", "DEPLOY VERSION FINISH: "+version.Version)
 				return nil
 			})
 		}(key, manifest)
@@ -250,13 +265,15 @@ func (mozart *Mozart) manageUndeployVersions(pipeline *pipeline.Pipeline, ctx co
 		func(name string, namespace string) {
 			utils.CustomLog("info", "manageUndeployVersions", "UNDEPLOY VERSION: "+name)
 			errs.Go(func() error {
-				err := mozart.deployer.Undeploy(version.Version, pipeline.Namespace)
+				err := mozart.deployer.Undeploy(version.Version, pipeline.Namespace, pipeline.Kubeconfig)
 				if err != nil {
+					utils.CustomLog("info", "manageUndeployVersions", "UNDEPLOY VERSION ERROR: "+name)
 					return err
 				}
 
 				mozart.executionMain.CreateUnusedVersion(mozart.currentExecutionID, name)
 
+				utils.CustomLog("info", "manageUndeployVersions", "UNDEPLOY VERSION FINISH: "+name)
 				return nil
 			})
 		}(version.Version, pipeline.Namespace)

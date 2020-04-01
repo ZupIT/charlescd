@@ -9,15 +9,13 @@ export const getDuration = (startTime, finishTime) => {
 }
 
 export const formatStartTime = (startTime) => {
-  return moment.utc(startTime).format('DD/MM/YYYY HH:mm')
+  return moment(startTime).format('DD/MM/YYYY HH:mm')
 }
 
 export const getStatusColor = (status) => ({
   'WAITING': 'secondary',
-  'DEPLOYING': 'info',
-  'DEPLOYED': 'info',
-  'ADD_TO_CIRCLE': 'info',
-  'REMOVE_FROM_CIRCLE': 'info',
+  'RUNNING': 'info',
   'FINISHED': 'success',
-  'FAILED': 'error'
+  'FAILED': 'danger',
+  'WEBHOOK_FAILED': 'danger',
 }[status || 'FAILED'])
