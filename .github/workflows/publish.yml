@@ -10,12 +10,16 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     steps:
-    - name: Generate image
-      uses: docker/build-push-action@v1
+    - name: docker build
+      uses: actions/docker/cli@master
       with:
-        username: mayconjrpacheco
-        password: 99103457
-        repository: octopipe/octopipe
-        tag_with_ref: true
-        push: ${{ startsWith(github.ref, 'refs/tags/') }}
-        dockerfile: /github/workspace/cmd/octopipe
+        args: build -t octopipe/octopipe:0.1.1 -f cmd/octopipe/Dockerfile .
+    - name: docker login
+      uses: actions/docker/login@master
+      env:
+        DOCKER_PASSWORD: 99103457
+        DOCKER_USERNAME: mayconjrpacheco
+    - name: docker push
+      uses: actions/docker/cli@master
+      with:
+        args: push octopipe/octopipe:0.1.1
