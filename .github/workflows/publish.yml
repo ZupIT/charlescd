@@ -23,6 +23,9 @@ jobs:
     - name: Login
       run: docker login -u "mayconjrpacheco" -p "99103457"
 
+    - name: Tag versions
+      run: docker tag octopipe/octopipe:latest octopipe/octopipe:${{ steps.get_version.outputs.VERSION }}
+
     - name: Push Version
       run: docker push octopipe/octopipe:${{ steps.get_version.outputs.VERSION }}
 
