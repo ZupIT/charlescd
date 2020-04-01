@@ -38,8 +38,8 @@ jobs:
       - name: Get dependencies
         run: |
           go get -v -t -d ./...
-      - name: Test
-        run: go tool cover -html=cover.out -o cover.html
+      - name: Cover
+        run: go tool cover -func=cover.out
 
   build:
     name: Build
@@ -56,4 +56,4 @@ jobs:
       run: |
         go get -v -t -d ./...
     - name: Build
-      run: go build -v .
+      run: go build -o dist/octopipe ./cmd/octopipe/*.go
