@@ -39,7 +39,7 @@ jobs:
         run: |
           go get -v -t -d ./...
       - name: Cover
-        run: go test -v -covermode=count -coverprofile=coverage.out
+        run: go test -v -covermode=count -coverprofile=coverage.out ./...
 
   build:
     name: Build
