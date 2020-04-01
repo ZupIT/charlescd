@@ -73,7 +73,7 @@ export class OctopipeService {
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       const octopipeResponse = await this.httpService.post(
-        `${this.envConfiguration.octopipeUrl}/api/v1/pipeline`,
+        `${this.envConfiguration.octopipeUrl}/api/v1/pipelines`,
         payload,
         {
           headers: {
