@@ -23,7 +23,7 @@ jobs:
           go get -v -t -d ./...
       - name: Test
         run: go test -coverprofile cover.out ./...
-        	
+
   cover:
      name: Cover
      runs-on: ubuntu-latest
