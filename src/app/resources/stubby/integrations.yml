@@ -92,7 +92,7 @@
 
 - request:
     method: POST
-    url: ^/octopipe
+    url: ^/octopipe/api/v1/pipeline
 
   response:
     status: 200

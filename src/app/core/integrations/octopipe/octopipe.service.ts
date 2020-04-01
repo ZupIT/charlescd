@@ -1,5 +1,6 @@
 import { forwardRef, HttpService, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { AxiosResponse } from 'axios'
 import { Repository } from 'typeorm'
 import { IPipelineCircle, IPipelineOptions } from '../../../api/components/interfaces'
 import { ICdConfigurationData, IOctopipeConfigurationData } from '../../../api/configurations/interfaces'
@@ -9,37 +10,14 @@ import {
 import { QueuedPipelineTypesEnum } from '../../../api/deployments/enums'
 import { ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository } from '../../../api/deployments/repository'
 import { PipelineErrorHandlerService } from '../../../api/deployments/services'
-import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
 import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
+import { IOctopipePayload, IOctopipeVersion } from './interfaces/octopipe-payload.interface'
+import { IOctopipeResponse } from './interfaces/octopipe-response.interface'
+import { IoCTokensConstants } from '../../constants/ioc'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
-import { AxiosResponse } from 'axios'
-
-interface IOctopipeVersion {
-  version: string
-  versionUrl: string
-}
-
-export interface IOctopipeConfiguration {
-  hosts?: string[],
-  versions: IOctopipeVersion[],
-  unusedVersions: IOctopipeVersion[],
-  istio: {
-    virtualService: {},
-    destinationRules: {}
-  },
-  appName: string,
-  appNamespace: string
-  webHookUrl: string,
-  github: {
-    username?: string,
-    password?: string,
-    token?: string
-  },
-  helmUrl: string
-}
 
 @Injectable()
 export class OctopipeService {
@@ -73,28 +51,29 @@ export class OctopipeService {
 
     const componentDeploymentEntity: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    const payload: IOctopipeConfiguration =
+    const payload: IOctopipePayload =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions,
         configurationData as IOctopipeConfigurationData,
         pipelineCallbackUrl,
         componentDeploymentEntity.moduleDeployment,
-        componentDeploymentEntity.componentName
+        componentDeploymentEntity.componentName,
+        circleId
       )
 
     this.deploy(payload, deploymentId, queueId)
   }
 
   public async deploy(
-    payload: IOctopipeConfiguration,
+    payload: IOctopipePayload,
     deploymentId: string,
     queueId: number
-  ): Promise<AxiosResponse<any> | {error: any}> {
+  ): Promise<AxiosResponse<IOctopipeResponse> | { error: any }> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       const octopipeResponse = await this.httpService.post(
-        `${this.envConfiguration.octopipeUrl}`,
+        `${this.envConfiguration.octopipeUrl}/api/v1/pipeline`,
         payload,
         {
           headers: {
@@ -116,21 +95,26 @@ export class OctopipeService {
     deploymentConfiguration: IOctopipeConfigurationData,
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity,
-    appName: string
-  ): IOctopipeConfiguration {
+    appName: string,
+    circleId: string
+  ): IOctopipePayload {
 
     const payload = {
       appName,
       appNamespace: deploymentConfiguration.namespace,
-      github: {
-        username: deploymentConfiguration.gitUsername,
-        password: deploymentConfiguration.gitPassword
+      git: {
+        provider: deploymentConfiguration.gitProvider,
+        token: deploymentConfiguration.gitToken
+      },
+      k8s: {
+        config: deploymentConfiguration.k8sConfig
       },
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       versions: this.concatAppNameAndVersion(pipelineCirclesOptions.pipelineVersions, appName),
-      webHookUrl: pipelineCallbackUrl
+      webHookUrl: pipelineCallbackUrl,
+      circleId
     }
 
     payload.istio.virtualService = this.buildVirtualServices(
@@ -153,7 +137,10 @@ export class OctopipeService {
 
   private concatAppNameAndVersion(versions: IOctopipeVersion[], appName: string) {
     return versions.map(version => {
-      return Object.assign({}, version, {version: `${appName}-${version.version}`})
+      return {
+        ...version,
+        version: `${appName}-${version.version}`
+      }
     })
   }
 
