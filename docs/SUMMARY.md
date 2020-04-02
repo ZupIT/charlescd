@@ -62,4 +62,3 @@
 * [FAQ](apis/faq.md)
 * [Glossário técnico](apis/glossario-tecnico.md)
 * [Vídeos](apis/videos.md)
-

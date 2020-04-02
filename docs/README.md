@@ -15,7 +15,4 @@ Por aqui, você encontrará as principais informações sobre a ferramenta, bem 
 * Apresentação do Charles e sua história
 * Principais funcionalidades e sua explicação 
 * Tutoriais de uso e instalação da ferramenta 
-* Acesso à comunidade do Charles  
-
-
-
+* Acesso à comunidade do Charles
