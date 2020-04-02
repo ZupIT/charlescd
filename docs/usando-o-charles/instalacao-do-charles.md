@@ -3,7 +3,6 @@
 Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias): 
 
 * Vault
-* Consul
 * Spinnaker \(versão 1.17.3\)
 * Keycloak
 * Tyk
