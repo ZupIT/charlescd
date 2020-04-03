@@ -11,10 +11,7 @@ import {
   ICdConfigurationData,
   IOctopipeConfigurationData
 } from '../../../api/configurations/interfaces'
-import {
-  ComponentDeploymentEntity,
-  ModuleDeploymentEntity
-} from '../../../api/deployments/entity'
+import { ComponentDeploymentEntity } from '../../../api/deployments/entity'
 import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
 import {
@@ -63,6 +60,13 @@ export class OctopipeService {
     private readonly envConfiguration: IEnvConfiguration
   ) { }
 
+  // pipelineCirclesOptions: IPipelineOptions
+  // configurationData: ICdConfigurationData
+  // helmRepository: string
+  // componentName: string
+  // callbackCircleId: string
+  // pipelineCallbackUrl: string
+
   public async createDeployment(
     pipelineCirclesOptions: IPipelineOptions,
     configurationData: ICdConfigurationData,
@@ -76,7 +80,7 @@ export class OctopipeService {
         pipelineCirclesOptions,
         configurationData as IOctopipeConfigurationData,
         pipelineCallbackUrl,
-        componentDeployment.moduleDeployment,
+        componentDeployment.moduleDeployment.helmRepository,
         componentDeployment.componentName
       )
 
@@ -85,7 +89,7 @@ export class OctopipeService {
 
   public async deploy(
     payload: IOctopipeConfiguration
-  ): Promise<AxiosResponse<any> | {error: any}> {
+  ): Promise<AxiosResponse<any> | { error: any }> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
@@ -110,7 +114,7 @@ export class OctopipeService {
     pipelineCirclesOptions: IPipelineOptions,
     deploymentConfiguration: IOctopipeConfigurationData,
     pipelineCallbackUrl: string,
-    moduleDeployment: ModuleDeploymentEntity,
+    helmRepositoryUrl: string,
     appName: string
   ): IOctopipeConfiguration {
 
@@ -121,7 +125,7 @@ export class OctopipeService {
         username: deploymentConfiguration.gitUsername,
         password: deploymentConfiguration.gitPassword
       },
-      helmUrl: moduleDeployment.helmRepository,
+      helmUrl: helmRepositoryUrl,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
       versions: this.concatAppNameAndVersion(pipelineCirclesOptions.pipelineVersions, appName),
@@ -132,7 +136,6 @@ export class OctopipeService {
       appName,
       deploymentConfiguration.namespace,
       pipelineCirclesOptions.pipelineCircles,
-      pipelineCallbackUrl,
       [appName],
       pipelineCirclesOptions.pipelineVersions
     )
@@ -146,19 +149,22 @@ export class OctopipeService {
     return payload
   }
 
-  private concatAppNameAndVersion(versions: IOctopipeVersion[], appName: string) {
+  private concatAppNameAndVersion(versions: IOctopipeVersion[], appName: string): IOctopipeVersion[] {
     return versions.map(version => {
-      return Object.assign({}, version, {version: `${appName}-${version.version}`})
+      return Object.assign({}, version, { version: `${appName}-${version.version }`})
     })
   }
 
   private buildVirtualServices(
-    appName: string, appNamespace: string, circles: IPipelineCircle[], uri: string, hosts: string[], versions: IOctopipeVersion[]
-  ) {
-    const virtualService: IBaseVirtualService | IEmptyVirtualService =
-      versions.length === 0
+    appName: string,
+    appNamespace: string,
+    circles: IPipelineCircle[],
+    hosts: string[],
+    versions: IOctopipeVersion[]
+  ): IBaseVirtualService | IEmptyVirtualService {
+
+      return versions.length === 0
         ? createEmptyVirtualService(appName, appNamespace)
-        : createVirtualService(appName, appNamespace, circles, uri, hosts)
-    return virtualService
+        : createVirtualService(appName, appNamespace, circles, hosts)
   }
 }

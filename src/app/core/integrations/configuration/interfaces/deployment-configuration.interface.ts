@@ -1,5 +1,3 @@
-import { ISpinnakerPipelineUri } from '../../cd/spinnaker/interfaces/spinnaker-pipeline-uri.interface'
-
 export interface IDeploymentConfiguration {
 
   account: string,
@@ -10,11 +8,5 @@ export interface IDeploymentConfiguration {
 
   appName: string,
 
-  appNamespace: string,
-
-  healthCheckPath: string,
-
-  uri: ISpinnakerPipelineUri,
-
-  appPort: number,
+  appNamespace: string
 }
