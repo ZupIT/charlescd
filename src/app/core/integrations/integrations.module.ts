@@ -22,7 +22,7 @@ import { ServicesModule } from '../services/services.module'
 import { DeploymentsModule } from '../../api/deployments/deployments.module'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { CdStrategyFactory } from './cd'
-import { OctopipeService } from './octopipe'
+import { OctopipeService } from './cd/octopipe'
 
 @Module({
   imports: [

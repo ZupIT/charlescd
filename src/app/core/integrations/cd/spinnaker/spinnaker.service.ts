@@ -33,14 +33,17 @@ import {
   of,
   throwError
 } from 'rxjs'
-import { IConnectorConfiguration } from '../interfaces'
+import {
+  ICdServiceStrategy,
+  IConnectorConfiguration
+} from '../interfaces'
 import { application } from 'express'
 import { SpinnakerApiService } from './spinnaker-api.service'
 import { IBaseSpinnakerPipeline } from './connector/interfaces'
 import { create } from 'domain'
 
 @Injectable()
-export class SpinnakerService {
+export class SpinnakerService implements ICdServiceStrategy {
 
   private readonly MAXIMUM_RETRY_ATTEMPTS = 5
   private readonly MILLISECONDS_RETRY_DELAY = 1000
