@@ -1,5 +1,4 @@
 import {
-  HttpService,
   Inject,
   Injectable
 } from '@nestjs/common'
@@ -22,6 +21,7 @@ import {
   ICdServiceStrategy,
   IConnectorConfiguration
 } from '../interfaces'
+import { OctopipeApiService } from './octopipe-api.service'
 
 interface IOctopipeVersion {
   version: string
@@ -51,7 +51,7 @@ export interface IOctopipeConfiguration {
 export class OctopipeService implements ICdServiceStrategy {
 
   constructor(
-    private readonly httpService: HttpService,
+    private readonly octopipeApiService: OctopipeApiService,
     private readonly consoleLoggerService: ConsoleLoggerService,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private readonly envConfiguration: IEnvConfiguration
@@ -64,25 +64,17 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public async deploy(
-    payload: IOctopipeConfiguration
-  ): Promise<AxiosResponse<any> | { error: any }> {
+    octopipeConfiguration: IOctopipeConfiguration
+  ): Promise<AxiosResponse> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
-      const octopipeResponse = await this.httpService.post(
-        `${this.envConfiguration.octopipeUrl}`,
-        payload,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      ).toPromise()
-      this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
-      return octopipeResponse
+      return await this.octopipeApiService.deploy(octopipeConfiguration).toPromise()
     } catch (error) {
       this.consoleLoggerService.error(error)
       throw error
+    } finally {
+      this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
     }
   }
 
