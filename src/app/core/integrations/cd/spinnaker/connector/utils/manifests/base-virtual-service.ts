@@ -137,7 +137,7 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
   ]
 })
 
-const createHttpMatchers = (circles: IPipelineCircle[], appName: string, uri: string): HttpMatcherUnion[] => {
+const createHttpMatchers = (circles: IPipelineCircle[], appName: string): HttpMatcherUnion[] => {
   return circles.reduce((acc: HttpMatcherUnion[], circle) => {
     if (circle.header) {
       pushRegexHttpMatcher(circle, appName, acc)
@@ -163,9 +163,9 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], uri: string, hosts: string[]) => {
+export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts: string[]) => {
   const newVirtualService = baseVirtualService(appName, appNamespace)
-  const matchers = createHttpMatchers(circles, appName, uri)
+  const matchers = createHttpMatchers(circles, appName)
   if (hosts) {
     newVirtualService.spec.hosts = hosts
   }

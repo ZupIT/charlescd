@@ -130,10 +130,7 @@ describe('Spinnaker Service', () => {
       pipelineName: 'some-pipeline-name',
       applicationName: 'some-application-name',
       appName: 'some-app-name',
-      appNamespace: 'some-app-namespace',
-      healthCheckPath: '/health',
-      uri: { uriName: 'https://some.uri' },
-      appPort: 8989
+      appNamespace: 'some-app-namespace'
     }
 
     circle = new CircleDeploymentEntity('dummy-circle')

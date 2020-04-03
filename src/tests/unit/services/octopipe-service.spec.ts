@@ -127,7 +127,7 @@ describe('Spinnaker Service', () => {
           pipelineOptions,
           deploymentConfiguration,
           'dummy-callback-url',
-          moduleDeployment,
+          moduleDeployment.helmRepository,
           'some-app-name'
         )
 
