@@ -3,6 +3,9 @@ package mozart
 import (
 	"log"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/git"
+	"octopipe/pkg/template"
+	"octopipe/pkg/utils"
 )
 
 const (
@@ -26,13 +29,13 @@ type Step struct {
 	Namespace string
 	Action    string
 	Manifest  map[string]interface{}
-	Template  Template
-	Git       Git
+	Template  *Template
+	Git       *Git
 }
 
 type Pipeline struct {
 	Mozart *Mozart
-	Stages [][]Step
+	Stages [][]*Step
 }
 
 func NewPipeline(mozart *Mozart, deployment *deployment.Deployment) *Pipeline {
@@ -52,13 +55,45 @@ func (pipeline *Pipeline) asyncStartPipeline() {
 	}
 }
 
-func (pipeline *Pipeline) executeSteps(steps []Step) {
+func (pipeline *Pipeline) executeSteps(steps []*Step) {
 	for _, step := range steps {
 		log.Println(step)
 		go pipeline.asyncExecuteStep(step)
 	}
 }
 
-func (pipeline *Pipeline) asyncExecuteStep(step Step) {
+func (pipeline *Pipeline) asyncExecuteStep(step *Step) {
+	var err error
 
+	if step.Template != nil {
+		step.Manifest, err = pipeline.getManifestsByTemplateStep(step)
+		if err != nil {
+			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			return
+		}
+	}
+
+	log.Println(step)
+}
+
+func (pipeline *Pipeline) getManifestsByTemplateStep(step *Step) (map[string]interface{}, error) {
+	gitConfig, err := git.NewGit(step.Git.Provider)
+	if err != nil {
+		return nil, err
+	}
+	filesData, err := gitConfig.GetDataFromDefaultFiles(step.Name, step.Git.Token, step.Template.Repository)
+	if err != nil {
+		return nil, err
+	}
+	templateProvider, err := template.NewTemplate(step.Template.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	manifests, err := templateProvider.GetManifests(filesData[0], filesData[1])
+	if err != nil {
+		return nil, err
+	}
+
+	return manifests, nil
 }
