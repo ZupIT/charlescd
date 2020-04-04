@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"octopipe/pkg/pipeline"
+	"octopipe/pkg/deployment"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,9 +23,9 @@ type ExecutionManager struct {
 type UseCases interface {
 	FindAll() (*[]Execution, error)
 	FindByID(id string) (*Execution, error)
-	Create(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error)
+	Create(deployment *deployment.Deployment) (*primitive.ObjectID, error)
 	CreateVersion(
-		executionID *primitive.ObjectID, version *pipeline.Version,
+		executionID *primitive.ObjectID, version *deployment.Version,
 	) (*primitive.ObjectID, error)
 	CreateVersionManifest(
 		executionID *primitive.ObjectID, versionID *primitive.ObjectID, name string, manifest interface{},
@@ -142,17 +142,17 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 	return &execution, nil
 }
 
-func (executionManager *ExecutionManager) Create(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error) {
+func (executionManager *ExecutionManager) Create(deployment *deployment.Deployment) (*primitive.ObjectID, error) {
 	newExecution := &Execution{
-		Name:               pipeline.Name,
-		Namespace:          pipeline.Namespace,
+		Name:               deployment.Name,
+		Namespace:          deployment.Namespace,
 		StartTime:          time.Now(),
 		DeployedVersions:   []ExecutionVersion{},
 		UndeployedVersions: []string{},
 		IstioComponents:    []ExecutionManifest{},
-		Webhook:            pipeline.Webhook,
+		Webhook:            deployment.Webhook,
 		Status:             ExecutionRunning,
-		HelmURL:            pipeline.HelmRepository,
+		HelmURL:            deployment.HelmRepository,
 	}
 
 	col := executionManager.DB.Collection(collection)
@@ -182,7 +182,7 @@ func (executionManager *ExecutionManager) UpdateExecutionStatus(executionID *pri
 }
 
 func (executionManager *ExecutionManager) CreateVersion(
-	executionID *primitive.ObjectID, version *pipeline.Version,
+	executionID *primitive.ObjectID, version *deployment.Version,
 ) (*primitive.ObjectID, error) {
 	col := executionManager.DB.Collection(collection)
 	newID := primitive.NewObjectID()
