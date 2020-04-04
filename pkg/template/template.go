@@ -7,11 +7,11 @@ const (
 )
 
 type Template interface {
-	GetManifests() map[string]interface{}
+	GetManifests(templateContent, valueContent string) (map[string]interface{}, error)
 }
 
-func NewTemplate(helmType string) (Template, error) {
-	switch helmType {
+func NewTemplate(templateType string) (Template, error) {
+	switch templateType {
 	case TypeHelmTemplate:
 		return NewHelmTemplate(), nil
 	default:

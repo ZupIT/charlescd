@@ -1,4 +1,4 @@
-package Git
+package git
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ const (
 )
 
 type Git interface {
-	GetContentData()
+	GetDataFromDefaultFiles(name, token, url string) ([]string, error)
 }
 
 func NewGit(gitProviderType string) (Git, error) {

@@ -5,40 +5,42 @@ import (
 	"octopipe/pkg/template"
 )
 
-func getStages(deployment *deployment.Deployment) [][]Step {
+func getStages(deployment *deployment.Deployment) [][]*Step {
 	deployedVersionSteps := getDeployedVersionsStepsByDeployment(deployment)
 	undeployedVersionsSteps := getUndeployedVersionsStepsByDeployment(deployment)
 	istioComponentSteps := getIstioComponentsSteps(deployment)
 
-	return [][]Step{
+	stages := [][]*Step{
 		deployedVersionSteps,
 		undeployedVersionsSteps,
 		istioComponentSteps,
 	}
+
+	return stages
 }
 
-func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []Step {
+func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
 	return getStepsByVersions(deployment, deployment.Versions, typeDeployAction)
 }
 
-func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []Step {
+func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
 	return getStepsByVersions(deployment, deployment.UnusedVersions, typeUndeployAction)
 }
 
 func getStepsByVersions(
 	deployment *deployment.Deployment, versions []*deployment.Version, action string,
-) []Step {
-	steps := []Step{}
+) []*Step {
+	steps := []*Step{}
 	for _, version := range versions {
-		steps = append(steps, Step{
+		steps = append(steps, &Step{
 			Name:      version.Version,
 			Namespace: deployment.Namespace,
 			Action:    action,
-			Git: Git{
+			Git: &Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
 			},
-			Template: Template{
+			Template: &Template{
 				Type:       template.TypeHelmTemplate,
 				Repository: deployment.HelmRepository,
 				Override: map[string]interface{}{
@@ -53,15 +55,15 @@ func getStepsByVersions(
 	return steps
 }
 
-func getIstioComponentsSteps(deployment *deployment.Deployment) []Step {
-	steps := []Step{}
+func getIstioComponentsSteps(deployment *deployment.Deployment) []*Step {
+	steps := []*Step{}
 	for _, value := range deployment.Istio {
-		steps = append(steps, Step{
+		steps = append(steps, &Step{
 			Name:      deployment.Name,
 			Namespace: deployment.Namespace,
 			Action:    typeDeployAction,
 			Manifest:  value.(map[string]interface{}),
-			Git: Git{
+			Git: &Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
 			},
