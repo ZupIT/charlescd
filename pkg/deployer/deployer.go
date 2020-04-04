@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"octopipe/pkg/connection"
-	"octopipe/pkg/pipeline"
+	"octopipe/pkg/deployment"
 	"octopipe/pkg/utils"
 	"os"
 	"strconv"
@@ -33,7 +33,7 @@ type Deployer struct {
 }
 
 type UseCases interface {
-	GetManifestsByHelmChart(pipeline *pipeline.Pipeline, version *pipeline.Version) (map[string]interface{}, error)
+	GetManifestsByHelmChart(deployment *deployment.Deployment, version *deployment.Version) (map[string]interface{}, error)
 	Deploy(
 		manifest map[string]interface{}, forceUpdate bool, resourceSchema *schema.GroupVersionResource, config *string,
 	) error
@@ -44,9 +44,9 @@ func NewDeployer(k8sConnection *connection.K8sConnection) *Deployer {
 	return &Deployer{k8sConnection}
 }
 
-func (deployer *Deployer) GetManifestsByHelmChart(pipeline *pipeline.Pipeline, version *pipeline.Version) (map[string]interface{}, error) {
+func (deployer *Deployer) GetManifestsByHelmChart(deployment *deployment.Deployment, version *deployment.Version) (map[string]interface{}, error) {
 	encodedManifests := map[string]interface{}{}
-	chart, values, err := deployer.getHelmChartAndValues(pipeline, version)
+	chart, values, err := deployer.getHelmChartAndValues(deployment, version)
 	if err != nil {
 		return nil, err
 	}

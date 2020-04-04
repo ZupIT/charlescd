@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"octopipe/pkg/pipeline"
+	"octopipe/pkg/deployment"
 	"octopipe/pkg/utils"
 	"strings"
 
@@ -19,7 +19,7 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/chart"
 )
 
-func (d *Deployer) overrideVersionAndNamespaceValues(values chartutil.Values, namespace string, component *pipeline.Version) chartutil.Values {
+func (d *Deployer) overrideVersionAndNamespaceValues(values chartutil.Values, namespace string, component *deployment.Version) chartutil.Values {
 	overrideValues := map[string]interface{}{
 		"Release": map[string]interface{}{
 			"Namespace": namespace,
@@ -50,7 +50,7 @@ func (d *Deployer) renderManifest(chart *chart.Chart, values chartutil.Values) (
 	return templateRender, nil
 }
 
-func (d *Deployer) getHelmChartAndValues(pipeline *pipeline.Pipeline, component *pipeline.Version) (*chart.Chart, chartutil.Values, error) {
+func (d *Deployer) getHelmChartAndValues(pipeline *deployment.Deployment, component *deployment.Version) (*chart.Chart, chartutil.Values, error) {
 	templateFileName := fmt.Sprintf("%s-darwin.tgz", pipeline.Name)
 	templateValueFileName := fmt.Sprintf("%s.yaml", pipeline.Name)
 
@@ -108,7 +108,7 @@ func (d *Deployer) encodeStringManifest(manifest string) (map[string]interface{}
 	return unstructuredObj, nil
 }
 
-func (d *Deployer) getContentFile(filename string, pipeline *pipeline.Pipeline) (string, error) {
+func (d *Deployer) getContentFile(filename string, pipeline *deployment.Deployment) (string, error) {
 	client := &http.Client{}
 	helmRepository := pipeline.HelmRepository
 	helmEndpoint := fmt.Sprintf(helmRepository+"%s/%s", pipeline.Name, filename)
