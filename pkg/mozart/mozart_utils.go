@@ -1,6 +1,7 @@
 package mozart
 
 import (
+	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/template"
 )
@@ -20,11 +21,11 @@ func getStages(deployment *deployment.Deployment) [][]*Step {
 }
 
 func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
-	return getStepsByVersions(deployment, deployment.Versions, typeDeployAction)
+	return getStepsByVersions(deployment, deployment.Versions, deployer.DeployAction)
 }
 
 func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
-	return getStepsByVersions(deployment, deployment.UnusedVersions, typeUndeployAction)
+	return getStepsByVersions(deployment, deployment.UnusedVersions, deployer.UndeployAction)
 }
 
 func getStepsByVersions(
