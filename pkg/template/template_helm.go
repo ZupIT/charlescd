@@ -2,14 +2,14 @@ package template
 
 import (
 	"errors"
+	"octopipe/pkg/utils"
+	"strings"
+
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/engine"
 	"k8s.io/helm/pkg/proto/hapi/chart"
-	"log"
-	"octopipe/pkg/utils"
-	"strings"
 )
 
 type HelmTemplate struct {
@@ -71,14 +71,18 @@ func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueCo
 
 }
 
-func (helmTemplate *HelmTemplate) overrideVersionAndNamespaceValues(values chartutil.Values) chartutil.Values {
-	return nil
+func (helmTemplate *HelmTemplate) overrideManifestsValues(values chartutil.Values) chartutil.Values {
+	return values
 }
 
 func (helmTemplate *HelmTemplate) encodeManifests(manifests map[string]string) (map[string]interface{}, error) {
 	encodedManifests := map[string]interface{}{}
 
 	for key, manifest := range manifests {
+		if manifest == "" {
+			continue
+		}
+
 		decode := scheme.Codecs.UniversalDeserializer().Decode
 		obj, _, err := decode([]byte(manifest), nil, nil)
 		if err != nil {
@@ -91,7 +95,6 @@ func (helmTemplate *HelmTemplate) encodeManifests(manifests map[string]string) (
 
 		unstructuredObj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
 		if err != nil {
-			log.Fatalln(err)
 			return nil, err
 		}
 

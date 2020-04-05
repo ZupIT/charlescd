@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -22,8 +21,6 @@ func (githubConfig *GithubConfig) GetDataFromDefaultFiles(name, token, url strin
 
 	for _, fileName := range getDefaultFileNamesByName(name) {
 		filePath := fmt.Sprintf("%s/%s/%s", url, name, fileName)
-
-		log.Println(filePath)
 
 		request, err := http.NewRequest("GET", filePath, nil)
 		if err != nil {
