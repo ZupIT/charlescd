@@ -6,6 +6,7 @@ import (
 	"octopipe/pkg/git"
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
+	"sync"
 )
 
 const (
@@ -56,24 +57,63 @@ func (pipeline *Pipeline) asyncStartPipeline() {
 }
 
 func (pipeline *Pipeline) executeSteps(steps []*Step) {
+	var waitGroup sync.WaitGroup
+
 	for _, step := range steps {
-		log.Println(step)
-		go pipeline.asyncExecuteStep(step)
+		waitGroup.Add(1)
+
+		go func(step *Step) {
+			defer waitGroup.Done()
+
+			pipeline.asyncExecuteStep(step)
+		}(step)
 	}
+
+	waitGroup.Wait()
 }
 
 func (pipeline *Pipeline) asyncExecuteStep(step *Step) {
+	var manifests map[string]interface{}
 	var err error
 
+	if step.Manifest != nil {
+		manifests["default"] = step.Manifest
+		pipeline.executeManifests(manifests)
+	}
+
 	if step.Template != nil {
-		step.Manifest, err = pipeline.getManifestsByTemplateStep(step)
+		manifests, err = pipeline.getManifestsByTemplateStep(step)
 		if err != nil {
 			utils.CustomLog("error", "asyncExecuteStep", err.Error())
 			return
 		}
 	}
 
-	log.Println(step)
+	if len(manifests) <= 0 {
+		utils.CustomLog("error", "asyncExecuteStep", "Not found manifest for execution")
+	}
+
+	pipeline.executeManifests(manifests)
+}
+
+func (pipeline *Pipeline) executeManifests(manifests map[string]interface{}) {
+	var waitGroup sync.WaitGroup
+
+	for _, manifest := range manifests {
+		waitGroup.Add(1)
+
+		go func(manifest interface{}) {
+			defer waitGroup.Done()
+
+			pipeline.asyncExecuteManifest(manifest.(map[string]interface{}))
+		}(manifest)
+	}
+
+	waitGroup.Wait()
+}
+
+func (pipeline *Pipeline) asyncExecuteManifest(manifest map[string]interface{}) {
+	log.Println(manifest)
 }
 
 func (pipeline *Pipeline) getManifestsByTemplateStep(step *Step) (map[string]interface{}, error) {
