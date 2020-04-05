@@ -4,7 +4,7 @@ import (
 	"octopipe/pkg/connection"
 
 	"k8s.io/apimachinery/pkg/runtime"
-	dynamicFake "k8s.io/client-go/dynamic/fake"
+	dynamicFake "k8sconnection.io/client-go/dynamic/fake"
 )
 
 func NewK8sFakeClient() *connection.K8sConnection {

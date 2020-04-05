@@ -1,17 +1,12 @@
 package mozart
 
 import (
-	"log"
+	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/git"
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
-)
-
-const (
-	typeDeployAction   = "DEPLOY"
-	typeUndeployAction = "UNDEPLOY"
 )
 
 type Git struct {
@@ -93,10 +88,10 @@ func (pipeline *Pipeline) asyncExecuteStep(step *Step) {
 		utils.CustomLog("error", "asyncExecuteStep", "Not found manifest for execution")
 	}
 
-	pipeline.executeManifests(manifests)
+	pipeline.executeManifests(step, manifests)
 }
 
-func (pipeline *Pipeline) executeManifests(manifests map[string]interface{}) {
+func (pipeline *Pipeline) executeManifests(step *Step, manifests map[string]interface{}) {
 	var waitGroup sync.WaitGroup
 
 	for _, manifest := range manifests {
@@ -105,15 +100,20 @@ func (pipeline *Pipeline) executeManifests(manifests map[string]interface{}) {
 		go func(manifest interface{}) {
 			defer waitGroup.Done()
 
-			pipeline.asyncExecuteManifest(manifest.(map[string]interface{}))
+			pipeline.asyncExecuteManifest(step.Action, manifest.(map[string]interface{}))
 		}(manifest)
 	}
 
 	waitGroup.Wait()
 }
 
-func (pipeline *Pipeline) asyncExecuteManifest(manifest map[string]interface{}) {
-	log.Println(manifest)
+func (pipeline *Pipeline) asyncExecuteManifest(action string, manifest map[string]interface{}) {
+	deployer, err := deployer.NewDeployer(action)
+	if err != nil {
+		return
+	}
+
+	deployer.Do()
 }
 
 func (pipeline *Pipeline) getManifestsByTemplateStep(step *Step) (map[string]interface{}, error) {
