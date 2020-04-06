@@ -83,19 +83,13 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 'dummy-id',
                 'dummy-name',
                 'dummy-img-url',
-                'dummy-img-tag',
-                'dummy-context-path',
-                'dummy-health-check',
-                1000
+                'dummy-img-tag'
             ),
             new ComponentDeploymentEntity(
                 'dummy-id',
                 'dummy-name2',
                 'dummy-img-url2',
-                'dummy-img-tag2',
-                'dummy-context-path2',
-                'dummy-health-check2',
-                1001
+                'dummy-img-tag2'
             )
         ]
 
