@@ -97,10 +97,7 @@ describe('Spinnaker Service', () => {
         'dummy-id',
         'dummy-name2',
         'dummy-img-url2',
-        'dummy-img-tag2',
-        'dummy-context-path2',
-        'dummy-health-check2',
-        1001
+        'dummy-img-tag2'
       )
       const moduleDeployment = new ModuleDeploymentEntity(
         'dummy-id',
