@@ -1,5 +1,4 @@
 import {
-    forwardRef,
     Inject,
     Injectable,
     InternalServerErrorException
@@ -23,6 +22,7 @@ import { IoCTokensConstants } from '../../../core/constants/ioc'
 import { CdStrategyFactory } from '../../../core/integrations/cd'
 import { CdConfigurationsRepository } from '../../configurations/repository'
 import { CdConfigurationEntity } from '../../configurations/entity'
+import { IConnectorConfiguration } from '../../../core/integrations/cd/interfaces'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -167,10 +167,12 @@ export class PipelineDeploymentsService {
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-        await cdService.createDeployment(
-            componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment,
+        const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+            componentEntity, cdConfiguration, componentDeployment,
             deploymentEntity.circleId, pipelineCallbackUrl
         )
+
+        await cdService.createDeployment(connectorConfiguration)
     }
 
     private async triggerComponentUnDeployment(
@@ -186,12 +188,34 @@ export class PipelineDeploymentsService {
 
             const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-            await cdService.createDeployment(
-                componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment,
+            const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+                componentEntity, cdConfiguration, componentDeployment,
                 undeploymentEntity.circleId, pipelineCallbackUrl
             )
+
+            await cdService.createDeployment(connectorConfiguration)
         } catch (error) {
             throw error
+        }
+    }
+
+    private getConnectorConfiguration(
+        component: ComponentEntity,
+        cdConfiguration: CdConfigurationEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        callbackCircleId: string,
+        pipelineCallbackUrl: string
+    ): IConnectorConfiguration {
+
+        return {
+            pipelineCirclesOptions: component.pipelineOptions,
+            cdConfiguration: cdConfiguration.configurationData,
+            componentId: componentDeployment.componentId,
+            applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+            componentName: componentDeployment.componentName,
+            helmRepository: componentDeployment.moduleDeployment.helmRepository,
+            callbackCircleId,
+            pipelineCallbackUrl
         }
     }
 }

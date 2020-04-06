@@ -136,14 +136,16 @@ export class SpinnakerService implements ICdServiceStrategy {
   }
 
   private createUpdatePipelineObject(
-      pipelineId: string, spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration, pipeline
+      pipelineId: string,
+      spinnakerConfiguration: ISpinnakerPipelineConfiguration,
+      spinnakerPipeline: IBaseSpinnakerPipeline
   ) {
 
     return {
-      ...pipeline,
+      ...spinnakerPipeline,
       id: pipelineId,
-      application: spinnakerPipelineConfiguration.applicationName,
-      name: spinnakerPipelineConfiguration.pipelineName
+      application: spinnakerConfiguration.applicationName,
+      name: spinnakerConfiguration.pipelineName
     }
   }
 
