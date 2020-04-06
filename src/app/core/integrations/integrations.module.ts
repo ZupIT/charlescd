@@ -23,6 +23,8 @@ import { DeploymentsModule } from '../../api/deployments/deployments.module'
 import { CdConfigurationsRepository } from '../../api/configurations/repository'
 import { CdStrategyFactory } from './cd'
 import { OctopipeService } from './cd/octopipe'
+import { SpinnakerApiService } from './cd/spinnaker/spinnaker-api.service'
+import { OctopipeApiService } from './cd/octopipe/octopipe-api.service'
 
 @Module({
   imports: [
@@ -45,7 +47,9 @@ import { OctopipeService } from './cd/octopipe'
     OctopipeService,
     MooveService,
     DatabasesService,
-    CdStrategyFactory
+    CdStrategyFactory,
+    SpinnakerApiService,
+    OctopipeApiService
   ],
   exports: [
     MooveService,

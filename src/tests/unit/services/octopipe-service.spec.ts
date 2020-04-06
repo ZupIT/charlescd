@@ -23,6 +23,8 @@ import {
 import {
   ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
+import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
+import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
 
 describe('Spinnaker Service', () => {
   let octopipeService: OctopipeService
@@ -122,14 +124,19 @@ describe('Spinnaker Service', () => {
         gitUsername: 'git-user',
         gitPassword: 'git-password'
       }
-      const payload =
-        octopipeService.createPipelineConfigurationObject(
-          pipelineOptions,
-          deploymentConfiguration,
-          'dummy-callback-url',
-          moduleDeployment.helmRepository,
-          'some-app-name'
-        )
+
+      const connectorConfiguration: IConnectorConfiguration = {
+        pipelineCirclesOptions: pipelineOptions,
+        cdConfiguration: {} as ICdConfigurationData,
+        componentId: componentDeployment.componentId,
+        applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+        componentName: componentDeployment.componentName,
+        helmRepository: componentDeployment.moduleDeployment.helmRepository,
+        callbackCircleId: 'circle-id',
+        pipelineCallbackUrl: 'callbackUrl'
+      }
+
+      const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
 
       const expectedPayload = {
         appName: 'some-app-name',
