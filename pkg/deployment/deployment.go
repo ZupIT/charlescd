@@ -19,10 +19,6 @@ type GitAccount struct {
 	Token    string `json:"token"`
 }
 
-type K8s struct {
-	cloudprovider.Provider
-}
-
 type Deployment struct {
 	Name           string                 `json:"appName"`
 	Namespace      string                 `json:"appNamespace"`
@@ -31,7 +27,7 @@ type Deployment struct {
 	Webhook        string                 `json:"webhookUrl"`
 	HelmRepository string                 `json:"helmUrl"`
 	GitAccount     GitAccount             `json:"git"`
-	K8s            K8s                    `json:"k8s"`
+	K8s            cloudprovider.Provider `json:"k8s"`
 	Istio          map[string]interface{} `json:"istio"`
 	CircleID       string                 `json:"circleId"`
 }

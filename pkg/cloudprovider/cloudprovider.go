@@ -1,23 +1,23 @@
 package cloudprovider
 
 import (
-	"k8s.io/client-go/dynamic"
 	"octopipe/pkg/cloudprovider/eks"
 	"octopipe/pkg/cloudprovider/generic"
 	"octopipe/pkg/cloudprovider/incluster"
 	"octopipe/pkg/cloudprovider/outofcluster"
 	"os"
+
+	"k8s.io/client-go/dynamic"
 )
 
 const (
 	GenericCloudProviderType = "GENERIC"
 	EKSCloudProviderType     = "EKS"
-	InClusterType            = "IN_CLUSTER"
 	OutOfClusterType         = "OUT_OF_CLUSTER"
 )
 
 type UseCases interface {
-	Connect() (dynamic.Interface, error)
+	GetClient() (dynamic.Interface, error)
 }
 
 type Provider struct {

@@ -2,6 +2,7 @@ package eks
 
 import (
 	"encoding/base64"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -22,7 +23,7 @@ func NewEKSProvider() *EKSProvider {
 	return &EKSProvider{}
 }
 
-func (eksProvider *EKSProvider) Connect() (dynamic.Interface, error) {
+func (eksProvider *EKSProvider) GetClient() (dynamic.Interface, error) {
 	restConfig, err := eksProvider.getRestConfig()
 	if err != nil {
 		return nil, err

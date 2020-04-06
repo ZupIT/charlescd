@@ -34,9 +34,10 @@ func getStepsByVersions(
 	steps := []*Step{}
 	for _, version := range versions {
 		steps = append(steps, &Step{
-			Name:      version.Version,
-			Namespace: deployment.Namespace,
-			Action:    action,
+			Name:        version.Version,
+			Namespace:   deployment.Namespace,
+			Action:      action,
+			ForceUpdate: false,
 			Git: &Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
@@ -50,6 +51,7 @@ func getStepsByVersions(
 					},
 				},
 			},
+			K8sConfig: &deployment.K8s,
 		})
 	}
 
@@ -60,14 +62,16 @@ func getIstioComponentsSteps(deployment *deployment.Deployment) []*Step {
 	steps := []*Step{}
 	for _, value := range deployment.Istio {
 		steps = append(steps, &Step{
-			Name:      deployment.Name,
-			Namespace: deployment.Namespace,
-			Action:    typeDeployAction,
-			Manifest:  value.(map[string]interface{}),
+			Name:        deployment.Name,
+			Namespace:   deployment.Namespace,
+			Action:      deployer.DeployAction,
+			Manifest:    value.(map[string]interface{}),
+			ForceUpdate: true,
 			Git: &Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
 			},
+			K8sConfig: &deployment.K8s,
 		})
 	}
 
