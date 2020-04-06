@@ -79,6 +79,8 @@ describe('Pipeline Deployments Service', () => {
       false,
       'incoming-circle-id'
     )
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
 
     const queuedDeploymentEntity = new QueuedDeploymentEntity(
       'dummy-component-id',
@@ -86,9 +88,8 @@ describe('Pipeline Deployments Service', () => {
       QueuedPipelineStatusEnum.QUEUED,
     )
 
-    expect(async () => {
-      await pipelineDeploymentsService.triggerCircleDeployment(componentDeploymentEntity, componentEntity, deploymentEntity, queuedDeploymentEntity)
-    }
-    ).not.toThrow()
+    await expect(
+      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
+    ).resolves.not.toThrow()
   })
 })
