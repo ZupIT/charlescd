@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
-	github.com/aws/aws-sdk-go v1.30.4 // indirect
+	github.com/aws/aws-sdk-go v1.30.4
 	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/fatih/color v1.9.0
 	github.com/fatih/structs v1.1.0 // indirect
@@ -30,5 +30,5 @@ require (
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 	k8s.io/helm v2.16.1+incompatible
-	sigs.k8s.io/aws-iam-authenticator v0.5.0 // indirect
+	sigs.k8s.io/aws-iam-authenticator v0.5.0
 )
