@@ -3,35 +3,14 @@ import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
 import {
   ConsoleLoggerServiceStub,
   HttpServiceStub,
-  MooveServiceStub,
-  PipelineErrorHandlerServiceStub,
-  PipelineQueuesServiceStub,
-  StatusManagementServiceStub
+  SpinnakerApiServiceStub
 } from '../../stubs/services'
 import { EnvConfigurationStub } from '../../stubs/configurations'
-import { StatusManagementService } from '../../../app/core/services/deployments'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { AxiosResponse } from 'axios'
-import { MooveService } from '../../../app/core/integrations/moove'
-import {
-  PipelineErrorHandlerService,
-  PipelineQueuesService
-} from '../../../app/api/deployments/services'
-import {
-  ComponentDeploymentsRepository,
-  ComponentUndeploymentsRepository,
-  QueuedDeploymentsRepository
-} from '../../../app/api/deployments/repository'
-import {
-  ComponentDeploymentsRepositoryStub,
-  ComponentUndeploymentsRepositoryStub,
-  DeploymentsRepositoryStub,
-  QueuedDeploymentsRepositoryStub
-} from '../../stubs/repository'
 import { HttpService } from '@nestjs/common'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
-import { Repository } from 'typeorm'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity,
@@ -45,59 +24,43 @@ import {
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
+import { SpinnakerApiService } from '../../../app/core/integrations/cd/spinnaker/spinnaker-api.service'
+import { of } from 'rxjs'
+import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
+import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
-  let httpService: HttpService
+  let spinnakerApiService: SpinnakerApiService
   let defaultAxiosGetResponse: AxiosResponse
   let defaultAxiosPostResponse: AxiosResponse
   let pipelineOptions: IPipelineOptions
   let deploymentConfiguration: IDeploymentConfiguration
-  let deploymentsRepository: Repository<DeploymentEntity>
   let deployment: DeploymentEntity
   let circle: CircleDeploymentEntity
-  let statusManagementService: StatusManagementService
-  let mooveService: MooveService
-  let pipelineQueuesService: PipelineQueuesService
-  let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
   let undeploymentComponentDeployments: ComponentDeploymentEntity[]
   let undeploymentModuleDeployments: ModuleDeploymentEntity[]
   let undeploymentDeployment: DeploymentEntity
   let undeployment: UndeploymentEntity
   let queuedUndeployments: QueuedUndeploymentEntity[]
-  let componentUndeploymentsRepository: ComponentUndeploymentsRepository
   let componentUndeployment: ComponentUndeploymentEntity
   let moduleUndeployment: ModuleUndeploymentEntity
-  let pipelineErrorHandlerService: PipelineErrorHandlerService
+  let connectorConfiguration: IConnectorConfiguration
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         SpinnakerService,
         { provide: HttpService, useClass: HttpServiceStub },
-        { provide: StatusManagementService, useClass: StatusManagementServiceStub },
         { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
         { provide: IoCTokensConstants.ENV_CONFIGURATION, useValue: EnvConfigurationStub },
-        { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-        { provide: MooveService, useClass: MooveServiceStub },
-        { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-        { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
-        { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
-        { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub }
+        { provide: SpinnakerApiService, useClass: SpinnakerApiServiceStub }
       ]
     }).compile()
 
     spinnakerService = module.get<SpinnakerService>(SpinnakerService)
-    httpService = module.get<HttpService>(HttpService)
-    deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-    statusManagementService = module.get<StatusManagementService>(StatusManagementService)
-    mooveService = module.get<MooveService>(MooveService)
-    pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
-    queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
-    componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-    pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
+    spinnakerApiService = module.get<SpinnakerApiService>(SpinnakerApiService)
 
     defaultAxiosGetResponse = {
       data: {
@@ -217,5 +180,29 @@ describe('Spinnaker Service', () => {
         undeploymentComponentDeployments[0]
     )
     componentUndeployment.moduleUndeployment = moduleUndeployment
+
+    connectorConfiguration = {
+      pipelineCirclesOptions: pipelineOptions,
+      cdConfiguration: { namespace: 'some-app-namespace', gitUsername: 'git-user', gitPassword: 'git-password' } as ICdConfigurationData,
+      componentId: 'component-id',
+      applicationName: 'application-name',
+      componentName: 'component-name',
+      helmRepository: '',
+      callbackCircleId: 'circle-id',
+      pipelineCallbackUrl: 'dummy-callback-url'
+    }
+  })
+
+  it('should handle on spinnaker deployment failure', async () => {
+    jest.spyOn(spinnakerApiService, 'getApplication')
+        .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'getPipeline')
+        .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'createPipeline')
+        .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'deployPipeline')
+        .mockImplementation(() => { throw new Error('bad request') })
+
+    await expect(spinnakerService.createDeployment(connectorConfiguration)).rejects.toThrow()
   })
 })
