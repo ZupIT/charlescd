@@ -5,11 +5,15 @@ import (
 	"octopipe/pkg/cloudprovider/eks"
 	"octopipe/pkg/cloudprovider/generic"
 	"octopipe/pkg/cloudprovider/incluster"
+	"octopipe/pkg/cloudprovider/outofcluster"
+	"os"
 )
 
 const (
 	GenericCloudProviderType = "GENERIC"
 	EKSCloudProviderType     = "EKS"
+	InClusterType            = "IN_CLUSTER"
+	OutOfClusterType         = "OUT_OF_CLUSTER"
 )
 
 type UseCases interface {
@@ -29,6 +33,14 @@ func NewCloudProvider(provider *Provider) UseCases {
 	case EKSCloudProviderType:
 		return eks.NewEKSProvider()
 	default:
+		return provider.newDefaultConfig()
+	}
+}
+
+func (provider *Provider) newDefaultConfig() UseCases {
+	if config := os.Getenv("K8S_CONFIG"); config == OutOfClusterType {
+		return outofcluster.NewOutOfCluster()
+	} else {
 		return incluster.NewInCluster()
 	}
 }
