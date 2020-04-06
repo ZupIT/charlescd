@@ -106,9 +106,7 @@ export class OctopipeService {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
       },
-      k8s: {
-        config: deploymentConfiguration.k8sConfig
-      },
+      k8s: deploymentConfiguration.k8sConfig,
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
