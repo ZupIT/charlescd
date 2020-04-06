@@ -1,6 +1,7 @@
 package mozart
 
 import (
+	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/git"
@@ -21,12 +22,14 @@ type Template struct {
 }
 
 type Step struct {
-	Name      string
-	Namespace string
-	Action    string
-	Manifest  map[string]interface{}
-	Template  *Template
-	Git       *Git
+	Name        string
+	Namespace   string
+	Action      string
+	ForceUpdate bool
+	Manifest    map[string]interface{}
+	Template    *Template
+	Git         *Git
+	K8sConfig   *cloudprovider.Provider
 }
 
 type Pipeline struct {
@@ -73,7 +76,7 @@ func (pipeline *Pipeline) asyncExecuteStep(step *Step) {
 
 	if step.Manifest != nil {
 		manifests["default"] = step.Manifest
-		pipeline.executeManifests(manifests)
+		pipeline.executeManifests(step, manifests)
 	}
 
 	if step.Template != nil {
@@ -100,15 +103,24 @@ func (pipeline *Pipeline) executeManifests(step *Step, manifests map[string]inte
 		go func(manifest interface{}) {
 			defer waitGroup.Done()
 
-			pipeline.asyncExecuteManifest(step.Action, manifest.(map[string]interface{}))
+			pipeline.asyncExecuteManifest(step, manifest.(map[string]interface{}))
 		}(manifest)
 	}
 
 	waitGroup.Wait()
 }
 
-func (pipeline *Pipeline) asyncExecuteManifest(action string, manifest map[string]interface{}) {
-	deployer, err := deployer.NewDeployer(action)
+func (pipeline *Pipeline) asyncExecuteManifest(step *Step, manifest map[string]interface{}) {
+	cloudConfig := cloudprovider.NewCloudProvider(step.K8sConfig)
+	resource := &deployer.Resource{
+		Action:      step.Action,
+		Manifest:    deployer.ToUnstructured(manifest),
+		ForceUpdate: step.ForceUpdate,
+		Config:      cloudConfig,
+		Namespace:   step.Namespace,
+	}
+
+	deployer, err := deployer.NewDeployer(resource)
 	if err != nil {
 		return
 	}

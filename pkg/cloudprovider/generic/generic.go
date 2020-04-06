@@ -2,6 +2,7 @@ package generic
 
 import (
 	"encoding/base64"
+
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 )
@@ -15,7 +16,7 @@ func NewGenericProvider() *GenericProvider {
 	return &GenericProvider{}
 }
 
-func (genericProvider *GenericProvider) Connect() (dynamic.Interface, error) {
+func (genericProvider *GenericProvider) GetClient() (dynamic.Interface, error) {
 	restConfig, err := genericProvider.getRestConfig()
 	if err != nil {
 		return nil, err

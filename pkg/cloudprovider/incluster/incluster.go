@@ -11,7 +11,7 @@ func NewInCluster() *InCluster {
 	return &InCluster{}
 }
 
-func (inCluster *InCluster) Connect() (dynamic.Interface, error) {
+func (inCluster *InCluster) GetClient() (dynamic.Interface, error) {
 	config, err := inCluster.getRestConfig()
 	if err != nil {
 		return nil, err

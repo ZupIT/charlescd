@@ -1,30 +1,37 @@
 package deployer
 
-import "errors"
+import (
+	"errors"
+	"octopipe/pkg/cloudprovider"
+
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+)
 
 const (
 	DeployAction   = "DEPLOY"
 	UndeployAction = "UNDEPLOY"
 )
 
-type Deployer interface {
-	Do(manifest map[string]interface{})
+type Resource struct {
+	Action      string
+	ForceUpdate bool
+	Manifest    *unstructured.Unstructured
+	Rollout     UseCases
+	Type        []string
+	Config      cloudprovider.UseCases
+	Namespace   string
 }
 
-type DeployerManager struct {
-	K8sConnection interface{}
+type UseCases interface {
+	Do() error
 }
 
-func NewDeployerManager() {
-
-}
-
-func NewDeployer(action string) (Deployer, error) {
-	switch action {
+func NewDeployer(resource *Resource) (UseCases, error) {
+	switch resource.Action {
 	case DeployAction:
-		return NewDeploy(), nil
+		return NewDeploy(resource), nil
 	case UndeployAction:
-		return NewUndeploy(), nil
+		return NewUndeploy(resource), nil
 	default:
 		return nil, errors.New("Deployer action not found!")
 	}
