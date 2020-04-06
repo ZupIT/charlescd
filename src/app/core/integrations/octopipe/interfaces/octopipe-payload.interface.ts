@@ -5,8 +5,22 @@ export interface IOctopipeVersion {
   versionUrl: string
 }
 
+interface IEKSClusterConfig {
+  provider: 'EKS'
+  caData: string
+  awsSID: string
+  awsSecret: string
+  awsRegion: string
+  awsClusterName: string
+}
+
+interface IDefaultClusterConfig {
+  provider: 'GENERIC'
+  clientCertificate: string
+  host: string
+}
+
 export interface IOctopipePayload {
-  hosts?: string[],
   versions: IOctopipeVersion[],
   unusedVersions: IOctopipeVersion[],
   istio: {
@@ -21,8 +35,6 @@ export interface IOctopipePayload {
     token: string
   },
   helmUrl: string,
-  k8s: {
-    config: string
-  },
+  k8s?: IEKSClusterConfig | IDefaultClusterConfig
   circleId: string
 }

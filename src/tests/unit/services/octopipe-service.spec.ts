@@ -79,7 +79,14 @@ describe('Spinnaker Service', () => {
         namespace: 'some-app-namespace',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        k8sConfig: 'kube-config-yaml'
+        k8sConfig: {
+          awsClusterName: 'cluster-name',
+          awsRegion: 'region',
+          awsSID: 'sid',
+          awsSecret: 'secret',
+          caData: 'ca-data',
+          provider: 'EKS',
+        },
       }
 
       const payload: IOctopipePayload =
@@ -100,7 +107,12 @@ describe('Spinnaker Service', () => {
           token: 'some-github-token',
         },
         k8s: {
-          config: 'kube-config-yaml'
+          provider: 'EKS',
+          awsClusterName: 'cluster-name',
+          awsRegion: 'region',
+          awsSID: 'sid',
+          awsSecret: 'secret',
+          caData: 'ca-data'
         },
         helmUrl: 'helm-repository',
         istio: {
