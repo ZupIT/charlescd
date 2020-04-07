@@ -99,14 +99,13 @@ export class OctopipeService {
     circleId: string
   ): IOctopipePayload {
 
-    const payload = {
+    let payload = {
       appName,
       appNamespace: deploymentConfiguration.namespace,
       git: {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
       },
-      k8s: this.buildK8sConfig(deploymentConfiguration),
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
@@ -114,6 +113,7 @@ export class OctopipeService {
       webHookUrl: pipelineCallbackUrl,
       circleId
     }
+    payload = this.addK8sConfig(payload, deploymentConfiguration)
 
     payload.istio.virtualService = this.buildVirtualServices(
       appName,
@@ -173,7 +173,16 @@ export class OctopipeService {
     await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
   }
 
-  private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IDefaultClusterConfig {
+  private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
+    const k8sConfig = this.buildK8sConfig(deploymentConfiguration)
+    if (!k8sConfig) {
+      return payload
+    }
+    payload.k8s = k8sConfig
+    return payload
+  }
+
+  private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IDefaultClusterConfig | null {
     switch (config.provider) {
       case 'EKS':
         return {
@@ -190,6 +199,8 @@ export class OctopipeService {
           clientCertificate: config.clientCertificate,
           host: config.host
         }
+      default:
+        return null
     }
   }
 

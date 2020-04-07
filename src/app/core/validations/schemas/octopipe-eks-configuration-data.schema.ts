@@ -15,12 +15,6 @@ export const OctopipeEKSConfigurationDataSchema: ValidationSchema = {
                 type: 'isNotEmpty'
             }
         ],
-        caData: [{ type: 'isNotEmpty' }],
-        awsSID: [{ type: 'isNotEmpty' }],
-        awsSecret: [{ type: 'isNotEmpty' }],
-        awsRegion: [{ type: 'isNotEmpty' }],
-        awsClusterName: [{ type: 'isNotEmpty' }],
-        gitToken: [{ type: 'isNotEmpty' }],
-        namespace: [{ type: 'isNotEmpty' }]
+        gitToken: [{ type: 'isNotEmpty' }]
     }
 }
