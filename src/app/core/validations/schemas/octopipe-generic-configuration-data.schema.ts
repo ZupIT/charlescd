@@ -15,9 +15,6 @@ export const OctopipeGenericConfigurationDataSchema: ValidationSchema = {
                 type: 'isNotEmpty'
             }
         ],
-        gitToken: [{ type: 'isNotEmpty' }],
-        clientCertificate: [{ type: 'isNotEmpty' }],
-        namespace: [{ type: 'isNotEmpty' }],
-        host: [{ type: 'isNotEmpty' }]
+        gitToken: [{ type: 'isNotEmpty' }]
     }
 }
