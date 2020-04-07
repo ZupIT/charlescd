@@ -5,7 +5,7 @@ export interface IOctopipeVersion {
   versionUrl: string
 }
 
-interface IEKSClusterConfig {
+export interface IEKSClusterConfig {
   provider: 'EKS'
   caData: string
   awsSID: string
@@ -14,7 +14,7 @@ interface IEKSClusterConfig {
   awsClusterName: string
 }
 
-interface IDefaultClusterConfig {
+export interface IDefaultClusterConfig {
   provider: 'GENERIC'
   clientCertificate: string
   host: string

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { AxiosResponse } from 'axios'
 import { Repository } from 'typeorm'
 import { IPipelineCircle, IPipelineOptions } from '../../../api/components/interfaces'
-import { ICdConfigurationData, IOctopipeConfigurationData } from '../../../api/configurations/interfaces'
+import { ICdConfigurationData, OctopipeConfigurationData } from '../../../api/configurations/interfaces'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity
 } from '../../../api/deployments/entity'
@@ -14,7 +14,7 @@ import { ConsoleLoggerService } from '../../logs/console'
 import { IBaseVirtualService, IEmptyVirtualService } from '../cd/spinnaker/connector/interfaces'
 import createDestinationRules from '../cd/spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../cd/spinnaker/connector/utils/manifests/base-virtual-service'
-import { IOctopipePayload, IOctopipeVersion } from './interfaces/octopipe-payload.interface'
+import { IOctopipePayload, IOctopipeVersion, IEKSClusterConfig, IDefaultClusterConfig } from './interfaces/octopipe-payload.interface'
 import { IOctopipeResponse } from './interfaces/octopipe-response.interface'
 import { IoCTokensConstants } from '../../constants/ioc'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
@@ -54,7 +54,7 @@ export class OctopipeService {
     const payload: IOctopipePayload =
       this.createPipelineConfigurationObject(
         pipelineCirclesOptions,
-        configurationData as IOctopipeConfigurationData,
+        configurationData as OctopipeConfigurationData,
         pipelineCallbackUrl,
         componentDeploymentEntity.moduleDeployment,
         componentDeploymentEntity.componentName,
@@ -92,7 +92,7 @@ export class OctopipeService {
 
   public createPipelineConfigurationObject(
     pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IOctopipeConfigurationData,
+    deploymentConfiguration: OctopipeConfigurationData,
     pipelineCallbackUrl: string,
     moduleDeployment: ModuleDeploymentEntity,
     appName: string,
@@ -106,7 +106,7 @@ export class OctopipeService {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
       },
-      k8s: deploymentConfiguration.k8sConfig,
+      k8s: this.buildK8sConfig(deploymentConfiguration),
       helmUrl: moduleDeployment.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
@@ -171,6 +171,26 @@ export class OctopipeService {
 
     await this.pipelineErrorHandlingService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
     await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
+  }
+
+  private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IDefaultClusterConfig {
+    switch (config.provider) {
+      case 'EKS':
+        return {
+          provider: 'EKS',
+          caData: config.caData,
+          awsSID: config.awsSID,
+          awsSecret: config.awsSecret,
+          awsRegion: config.awsRegion,
+          awsClusterName: config.awsClusterName
+        }
+      case 'GENERIC':
+        return {
+          provider: 'GENERIC',
+          clientCertificate: config.clientCertificate,
+          host: config.host
+        }
+    }
   }
 
   private buildVirtualServices(

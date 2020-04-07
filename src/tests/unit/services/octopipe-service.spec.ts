@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { of } from 'rxjs'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { IOctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
+import { OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
 import { ComponentDeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
@@ -75,18 +75,16 @@ describe('Spinnaker Service', () => {
         pipelineUnusedVersions: []
       }
 
-      const deploymentConfiguration: IOctopipeConfigurationData = {
+      const deploymentConfiguration: OctopipeConfigurationData = {
         namespace: 'some-app-namespace',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
-        k8sConfig: {
-          awsClusterName: 'cluster-name',
-          awsRegion: 'region',
-          awsSID: 'sid',
-          awsSecret: 'secret',
-          caData: 'ca-data',
-          provider: 'EKS',
-        },
+        awsClusterName: 'cluster-name',
+        awsRegion: 'region',
+        awsSID: 'sid',
+        awsSecret: 'secret',
+        caData: 'ca-data',
+        provider: 'EKS',
       }
 
       const payload: IOctopipePayload =
