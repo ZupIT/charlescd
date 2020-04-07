@@ -7,21 +7,19 @@ export interface IEKSConfig {
     awsSecret: string
     awsRegion: string
     awsClusterName: string
+    gitProvider: GitProvidersEnum
+    gitToken: string
+    namespace: string
+
 }
 
 export interface IGenericConfig {
     provider: 'GENERIC'
     host: string
     clientCertificate: string
-}
-
-export interface IOctopipeConfigurationData {
-
     gitProvider: GitProvidersEnum
-
     gitToken: string
-
-    k8sConfig: IEKSConfig | IGenericConfig
-
     namespace: string
 }
+
+export type OctopipeConfigurationData = IEKSConfig | IGenericConfig
