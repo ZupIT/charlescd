@@ -12,7 +12,8 @@ import { registerSchema } from 'class-validator'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
 import {
-  OctopipeConfigurationDataSchema,
+  OctopipeEKSConfigurationDataSchema,
+  OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
 } from './app/core/validations/schemas'
 
@@ -26,7 +27,8 @@ async function bootstrap() {
   })
 
   registerSchema(SpinnakerConfigurationDataSchema)
-  registerSchema(OctopipeConfigurationDataSchema)
+  registerSchema(OctopipeEKSConfigurationDataSchema)
+  registerSchema(OctopipeGenericConfigurationDataSchema)
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)

@@ -10,7 +10,6 @@ export interface IEKSConfig {
     gitProvider: GitProvidersEnum
     gitToken: string
     namespace: string
-
 }
 
 export interface IGenericConfig {
