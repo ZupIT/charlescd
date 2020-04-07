@@ -55,7 +55,7 @@ export class PipelineDeploymentsService {
             await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
@@ -76,7 +76,7 @@ export class PipelineDeploymentsService {
             await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
@@ -98,7 +98,7 @@ export class PipelineDeploymentsService {
             await this.triggerComponentUnDeployment(component, undeployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT', error)
             const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)

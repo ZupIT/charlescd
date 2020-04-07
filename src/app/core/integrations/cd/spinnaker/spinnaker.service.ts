@@ -114,13 +114,13 @@ export class SpinnakerService implements ICdServiceStrategy {
   }
 
   private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration): Promise<void> {
-    this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE')
+    this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
-    const pipeline: any =
+    const { data: { id: pipelineId }} =
         await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName, spinnakerConfiguration.pipelineName).toPromise()
 
-    pipeline.id ?
-        await this.updateSpinnakerPipeline(spinnakerConfiguration, pipeline.id) :
+    pipelineId ?
+        await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
         await this.spinnakerApiService.createPipeline(spinnakerPipeline).toPromise()
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE')
@@ -128,7 +128,7 @@ export class SpinnakerService implements ICdServiceStrategy {
 
   private async updateSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineId: string): Promise<void> {
 
-    this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE')
+    this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE', { pipelineId })
     const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
     const updatedSpinnakerPipeline = this.createUpdatePipelineObject(pipelineId, spinnakerConfiguration, spinnakerPipeline)
     await this.spinnakerApiService.updatePipeline(updatedSpinnakerPipeline).toPromise()
