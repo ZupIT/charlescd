@@ -1,13 +1,10 @@
 import { ValidationSchema } from 'class-validator'
 
-export const OctopipeConfigurationDataSchema: ValidationSchema = {
+export const OctopipeGenericConfigurationDataSchema: ValidationSchema = {
 
-    name: 'octopipeConfigurationDataSchema',
+    name: 'octopipeGenericConfigurationDataSchema',
 
     properties: {
-        gitToken: [{
-            type: 'isNotEmpty'
-        }],
         gitProvider: [
             {
                 type: 'isIn',
@@ -18,12 +15,9 @@ export const OctopipeConfigurationDataSchema: ValidationSchema = {
                 type: 'isNotEmpty'
             }
         ],
-        k8sConfig: [{
-            type: 'isNotEmpty'
-        }],
-
-        namespace: [{
-            type: 'isNotEmpty'
-        }]
+        gitToken: [{ type: 'isNotEmpty' }],
+        clientCertificate: [{ type: 'isNotEmpty' }],
+        namespace: [{ type: 'isNotEmpty' }],
+        host: [{ type: 'isNotEmpty' }]
     }
 }
