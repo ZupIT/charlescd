@@ -1,8 +1,8 @@
 package api
 
 import (
+	"octopipe/pkg/deployment"
 	"octopipe/pkg/mozart"
-	"octopipe/pkg/pipeline"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,10 +19,10 @@ func (api *Api) NewPipelineApi(mozart mozart.UseCases) {
 }
 
 func (api *PipelineApi) startPipeline(ctx *gin.Context) {
-	var pipeline *pipeline.Pipeline
-	ctx.Bind(&pipeline)
+	var deployment *deployment.Deployment
+	ctx.Bind(&deployment)
 
-	executionID, _ := api.mozart.Start(pipeline)
+	api.mozart.Start(deployment)
 
-	ctx.JSON(200, map[string]string{"executionID": executionID.Hex()})
+	ctx.JSON(201, nil)
 }
