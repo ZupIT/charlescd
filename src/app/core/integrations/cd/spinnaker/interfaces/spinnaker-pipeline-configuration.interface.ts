@@ -1,5 +1,7 @@
-import { IDeploymentVersion, IPipelineCircle } from '../../../../../api/components/interfaces'
-import { ISpinnakerPipelineUri } from './spinnaker-pipeline-uri.interface'
+import {
+  IDeploymentVersion,
+  IPipelineCircle
+} from '../../../../../api/components/interfaces'
 
 export interface ISpinnakerPipelineConfiguration {
 
@@ -14,12 +16,6 @@ export interface ISpinnakerPipelineConfiguration {
   appNamespace: string,
 
   webhookUri: string,
-
-  healthCheckPath: string,
-
-  uri: ISpinnakerPipelineUri,
-
-  appPort: number,
 
   versions: IDeploymentVersion[],
 

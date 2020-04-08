@@ -1,55 +1,35 @@
-import { HttpService } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 import { OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
-import { ComponentDeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import {
-  ComponentDeploymentsRepository, ComponentUndeploymentsRepository, QueuedDeploymentsRepository
-} from '../../../app/api/deployments/repository'
-import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { GitProvidersEnum } from '../../../app/core/integrations/configuration/interfaces/git-providers.type'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { OctopipeService } from '../../../app/core/integrations/octopipe'
+import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
+import { OctopipeService } from '../../../app/core/integrations/cd/octopipe'
+import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { GitProvidersEnum } from '../../../app/core/integrations/configuration/interfaces'
 import { IOctopipePayload } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import { StatusManagementService } from '../../../app/core/services/deployments'
 import { EnvConfigurationStub } from '../../stubs/configurations'
-import {
-  ComponentDeploymentsRepositoryStub, ComponentUndeploymentsRepositoryStub, DeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub
-} from '../../stubs/repository'
-import {
-  ConsoleLoggerServiceStub, HttpServiceStub, MooveServiceStub, PipelineErrorHandlerServiceStub, PipelineQueuesServiceStub, StatusManagementServiceStub
-} from '../../stubs/services'
+import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
 
-describe('Spinnaker Service', () => {
+describe('Octopipe Service', () => {
   let octopipeService: OctopipeService
-  let httpService: HttpService
-  let queuedDeploymentsRepository: QueuedDeploymentsRepository
+  let octopipeApiService: OctopipeApiService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         OctopipeService,
-        { provide: HttpService, useClass: HttpServiceStub },
-        { provide: StatusManagementService, useClass: StatusManagementServiceStub },
         { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
         { provide: IoCTokensConstants.ENV_CONFIGURATION, useValue: EnvConfigurationStub },
-        { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-        { provide: MooveService, useClass: MooveServiceStub },
-        { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-        { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
-        { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
-        { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-        { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub }
+        { provide: OctopipeApiService, useClass: OctopipeApiServiceStub }
       ]
     }).compile()
 
     octopipeService = module.get<OctopipeService>(OctopipeService)
-    httpService = module.get<HttpService>(HttpService)
-    queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+    octopipeApiService = module.get<OctopipeApiService>(OctopipeApiService)
   })
 
   describe('deploySpinnakerPipeline', () => {
@@ -57,45 +37,60 @@ describe('Spinnaker Service', () => {
     it('should create the right payload', () => {
       const componentDeployment = new ComponentDeploymentEntity(
         'dummy-id',
-        'dummy-name2',
+        'some-app-name',
         'dummy-img-url2',
-        'dummy-img-tag2',
-        'dummy-context-path2',
-        'dummy-health-check2',
-        1001
+        'dummy-img-tag2'
       )
       const moduleDeployment = new ModuleDeploymentEntity(
         'dummy-id',
         'helm-repository',
         [componentDeployment]
       )
+      const deployment = new DeploymentEntity(
+          'dummy-deployment-id',
+          'dummy-application-name',
+          null,
+          'dummy-author-id',
+          'dummy-description',
+          'dummy-callback-url',
+          null,
+          false,
+          'dummy-circle-id'
+      )
+
+      moduleDeployment.deployment = deployment
+      componentDeployment.moduleDeployment = moduleDeployment
+
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
         pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
         pipelineUnusedVersions: []
       }
 
-      const deploymentConfiguration: OctopipeConfigurationData = {
-        namespace: 'some-app-namespace',
-        gitProvider: GitProvidersEnum.GITHUB,
-        gitToken: 'some-github-token',
+      const octopipeConfiguration: OctopipeConfigurationData = {
+        provider: 'EKS',
         awsClusterName: 'cluster-name',
         awsRegion: 'region',
         awsSID: 'sid',
         awsSecret: 'secret',
         caData: 'ca-data',
-        provider: 'EKS',
+        gitProvider: GitProvidersEnum.GITHUB,
+        gitToken: 'some-github-token',
+        namespace: 'some-app-namespace'
       }
 
-      const payload: IOctopipePayload =
-        octopipeService.createPipelineConfigurationObject(
-          pipelineOptions,
-          deploymentConfiguration,
-          'dummy-callback-url',
-          moduleDeployment,
-          'some-app-name',
-          'circle-id'
-        )
+      const connectorConfiguration: IConnectorConfiguration = {
+        pipelineCirclesOptions: pipelineOptions,
+        cdConfiguration: octopipeConfiguration,
+        componentId: componentDeployment.componentId,
+        applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+        componentName: componentDeployment.componentName,
+        helmRepository: componentDeployment.moduleDeployment.helmRepository,
+        callbackCircleId: 'circle-id',
+        pipelineCallbackUrl: 'dummy-callback-url'
+      }
+
+      const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
 
       const expectedPayload: IOctopipePayload = {
         appName: 'some-app-name',
@@ -216,7 +211,7 @@ describe('Spinnaker Service', () => {
 
     it('posts to octopipe server', async () => {
       const payload = {} as IOctopipePayload
-      jest.spyOn(httpService, 'post').mockImplementation(
+      jest.spyOn(octopipeApiService, 'deploy').mockImplementation(
         () => of({
           data: {
             id: 'some-pipeline-id'
@@ -228,26 +223,16 @@ describe('Spinnaker Service', () => {
         })
       )
       expect(
-        await octopipeService.deploy(payload, 'deployment-id', 444)
+        await octopipeService.deploy(payload)
       ).toEqual({ config: {}, data: { id: 'some-pipeline-id' }, headers: {}, status: 200, statusText: 'OK' })
     })
 
     it('should handle on octopipe deployment failure', async () => {
       const payload = {} as IOctopipePayload
-      jest.spyOn(httpService, 'post').mockImplementation(
+      jest.spyOn(octopipeApiService, 'deploy').mockImplementation(
         () => { throw new Error('bad request') }
       )
-
-      jest.spyOn(queuedDeploymentsRepository, 'findOne').mockImplementation(
-        () => Promise.resolve(new QueuedDeploymentEntity(
-          'dummy-component-id',
-          'dummy-component-deployment-id3',
-          QueuedPipelineStatusEnum.QUEUED,
-        ))
-      )
-      expect(
-        await octopipeService.deploy(payload, 'deployment-id', 444)
-      ).toEqual({ error: 'bad request' })
+      await expect(octopipeService.deploy(payload)).rejects.toThrow()
     })
   })
 })

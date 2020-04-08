@@ -1,13 +1,6 @@
-import {
-    CreateModuleDeploymentDto
-} from '../'
-import {
-    CreateDeploymentRequestDto
-} from './'
-import {
-    CircleDeploymentEntity,
-    DeploymentEntity
-} from '../../entity'
+import { CreateModuleDeploymentDto } from '../'
+import { CreateDeploymentRequestDto } from './'
+import { DeploymentEntity } from '../../entity'
 
 export class CreateDefaultDeploymentRequestDto extends CreateDeploymentRequestDto {
 

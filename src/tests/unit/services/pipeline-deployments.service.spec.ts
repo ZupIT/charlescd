@@ -43,10 +43,7 @@ describe('Pipeline Deployments Service', () => {
       'dummy-id',
       'dummy-name2',
       'dummy-img-url2',
-      'dummy-img-tag2',
-      'dummy-context-path2',
-      'dummy-health-check2',
-      1001
+      'dummy-img-tag2'
     )
     const moduleEntity = new ModuleEntity(
       'module-id',
@@ -60,10 +57,7 @@ describe('Pipeline Deployments Service', () => {
       'dummy-id',
       'dummy-name',
       'dummy-img-url',
-      'dummy-img-tag',
-      'dummy-context-path',
-      'dummy-health-check',
-      1234
+      'dummy-img-tag'
     )
 
     const moduleDeployment = new ModuleDeploymentEntity(
@@ -85,6 +79,8 @@ describe('Pipeline Deployments Service', () => {
       false,
       'incoming-circle-id'
     )
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
 
     const queuedDeploymentEntity = new QueuedDeploymentEntity(
       'dummy-component-id',
@@ -92,9 +88,8 @@ describe('Pipeline Deployments Service', () => {
       QueuedPipelineStatusEnum.QUEUED,
     )
 
-    expect(async () => {
-      await pipelineDeploymentsService.triggerCircleDeployment(componentDeploymentEntity, componentEntity, deploymentEntity, queuedDeploymentEntity)
-    }
-    ).not.toThrow()
+    await expect(
+      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
+    ).resolves.not.toThrow()
   })
 })
