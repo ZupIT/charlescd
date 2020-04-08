@@ -1,7 +1,6 @@
 package outofcluster
 
 import (
-	"flag"
 	"os"
 	"path/filepath"
 
@@ -27,19 +26,10 @@ func (outOfCluster *OutOfCluster) GetClient() (dynamic.Interface, error) {
 
 func (outOfCluster *OutOfCluster) getRestConfig() (*rest.Config, error) {
 	var kubeconfig *string
-	if home := outOfCluster.homeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	if home := os.Getenv("HOME"); home != "" {
+		kubeConfigPath := filepath.Join(home, ".kube", "config")
+		kubeconfig = &kubeConfigPath
 	}
-	flag.Parse()
 
 	return clientcmd.BuildConfigFromFlags("", *kubeconfig)
-}
-
-func (outOfCluster *OutOfCluster) homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
-	}
-	return os.Getenv("USERPROFILE") // windows
 }

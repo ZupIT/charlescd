@@ -21,6 +21,7 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/stretchr/testify v1.5.1
+	github.com/tidwall/sjson v1.1.1
 	go.mongodb.org/mongo-driver v1.3.1
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	google.golang.org/appengine v1.6.5 // indirect

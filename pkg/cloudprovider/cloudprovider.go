@@ -38,7 +38,7 @@ func NewCloudProvider(provider *Provider) UseCases {
 }
 
 func (provider *Provider) newDefaultConfig() UseCases {
-	if config := os.Getenv("K8S_CONFIG"); config == OutOfClusterType {
+	if config := os.Getenv("KUBECONFIG"); config == OutOfClusterType {
 		return outofcluster.NewOutOfCluster()
 	} else {
 		return incluster.NewInCluster()

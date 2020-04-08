@@ -1,101 +1,169 @@
 package mozart
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
+	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/execution"
 	"octopipe/pkg/git"
+	"octopipe/pkg/pipeline"
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
 )
 
-type Git struct {
-	Provider string
-	Token    string
+type MozartPipeline struct {
+	*Mozart
+	Stages             [][]*pipeline.Step
+	CurrentExecutionID *primitive.ObjectID
+	//TODO: Add pipeline to struct
 }
 
-type Template struct {
-	Type       string
-	Repository string
-	Override   map[string]interface{}
-}
-
-type Step struct {
-	Name        string
-	Namespace   string
-	Action      string
-	ForceUpdate bool
-	Manifest    map[string]interface{}
-	Template    *Template
-	Git         *Git
-	K8sConfig   *cloudprovider.Provider
-}
-
-type Pipeline struct {
-	Mozart *Mozart
-	Stages [][]*Step
-}
-
-func NewPipeline(mozart *Mozart, deployment *deployment.Deployment) *Pipeline {
-	return &Pipeline{
+// TODO: Change deployment to pipeline
+func NewMozartPipeline(mozart *Mozart, deployment *deployment.Deployment) *MozartPipeline {
+	return &MozartPipeline{
 		Mozart: mozart,
 		Stages: getStages(deployment),
 	}
 }
 
-func (pipeline *Pipeline) Do() {
-	go pipeline.asyncStartPipeline()
+// TODO: Remove deployment param
+func (mozartPipeline *MozartPipeline) Do(deployment *deployment.Deployment) {
+	go mozartPipeline.asyncStartPipeline(deployment)
 }
 
-func (pipeline *Pipeline) asyncStartPipeline() {
-	for _, steps := range pipeline.Stages {
-		pipeline.executeSteps(steps)
+func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.Deployment) {
+	var err error
+
+	mozartPipeline.CurrentExecutionID, err = mozartPipeline.executions.Create()
+	if err != nil {
+		utils.CustomLog("error", "asyncStartPipeline", err.Error())
 	}
+
+	for _, steps := range mozartPipeline.Stages {
+		if len(steps) <= 0 {
+			continue
+		}
+
+		err = mozartPipeline.executeSteps(steps)
+		if err != nil {
+			mozartPipeline.returnPipelineError(err)
+		}
+	}
+
+	mozartPipeline.finishPipeline(deployment, err)
 }
 
-func (pipeline *Pipeline) executeSteps(steps []*Step) {
+func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error {
 	var waitGroup sync.WaitGroup
+	fatalError := make(chan error)
+	waitGroupDone := make(chan bool)
 
 	for _, step := range steps {
 		waitGroup.Add(1)
 
-		go func(step *Step) {
+		go func(step *pipeline.Step) {
 			defer waitGroup.Done()
 
-			pipeline.asyncExecuteStep(step)
+			err := mozartPipeline.asyncExecuteStep(step)
+			if err != nil {
+				fatalError <- err
+			}
 		}(step)
 	}
 
-	waitGroup.Wait()
+	go func() {
+		waitGroup.Wait()
+		close(waitGroupDone)
+	}()
+
+	select {
+	case <-waitGroupDone:
+		return nil
+	case err := <-fatalError:
+		utils.CustomLog("error", "executeSteps", err.Error())
+		close(fatalError)
+		return err
+	}
 }
 
-func (pipeline *Pipeline) asyncExecuteStep(step *Step) {
-	var manifests map[string]interface{}
-	var err error
-
-	if step.Manifest != nil {
-		manifests["default"] = step.Manifest
-		pipeline.executeManifests(step, manifests)
+func (mozartPipeline *MozartPipeline) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
+	err := mozartPipeline.executions.ExecutionFinished(mozartPipeline.CurrentExecutionID)
+	if err != nil {
+		utils.CustomLog("error", "executeSteps", err.Error())
+		return
 	}
 
-	if step.Template != nil {
-		manifests, err = pipeline.getManifestsByTemplateStep(step)
+	if pipeline.Webhook != "" {
+		err = mozartPipeline.triggerWebhook(pipeline, pipelineError)
 		if err != nil {
-			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			utils.CustomLog("error", "executeSteps", err.Error())
 			return
 		}
 	}
 
-	if len(manifests) <= 0 {
-		utils.CustomLog("error", "asyncExecuteStep", "Not found manifest for execution")
-	}
-
-	pipeline.executeManifests(step, manifests)
 }
 
-func (pipeline *Pipeline) executeManifests(step *Step, manifests map[string]interface{}) {
+func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) error {
+	var err error
+	manifests := map[string]interface{}{}
+
+	executionStepID, err := mozartPipeline.executions.CreateExecutionStep(
+		mozartPipeline.CurrentExecutionID, step,
+	)
+	if err != nil {
+		mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
+		utils.CustomLog("error", "asyncExecuteStep", err.Error())
+		return err
+	}
+
+	if step.Manifest != nil {
+		manifests["default"] = step.Manifest
+		err := mozartPipeline.executeManifests(step, manifests)
+		if err != nil {
+			mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
+			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			return err
+		}
+	}
+
+	if step.Template != nil {
+		manifests, err = mozartPipeline.getManifestsByTemplateStep(step)
+		if err != nil {
+			mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
+			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			return err
+		}
+	}
+
+	if len(manifests) <= 0 {
+		mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
+		utils.CustomLog("error", "asyncExecuteStep", "Not found manifest for execution")
+		return errors.New("Not found manifest for execution")
+	}
+
+	err = mozartPipeline.executeManifests(step, manifests)
+	if err != nil {
+		mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
+		utils.CustomLog("error", "asyncExecuteStep", err.Error())
+		return err
+	}
+
+	mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFinished)
+
+	return nil
+}
+
+func (mozartPipeline *MozartPipeline) executeManifests(step *pipeline.Step, manifests map[string]interface{}) error {
 	var waitGroup sync.WaitGroup
+	fatalError := make(chan error)
+	waitGroupDone := make(chan bool)
 
 	for _, manifest := range manifests {
 		waitGroup.Add(1)
@@ -103,14 +171,29 @@ func (pipeline *Pipeline) executeManifests(step *Step, manifests map[string]inte
 		go func(manifest interface{}) {
 			defer waitGroup.Done()
 
-			pipeline.asyncExecuteManifest(step, manifest.(map[string]interface{}))
+			err := mozartPipeline.asyncExecuteManifest(step, manifest.(map[string]interface{}))
+			if err != nil {
+				fatalError <- err
+			}
 		}(manifest)
 	}
 
-	waitGroup.Wait()
+	go func() {
+		waitGroup.Wait()
+		close(waitGroupDone)
+	}()
+
+	select {
+	case <-waitGroupDone:
+		return nil
+	case err := <-fatalError:
+		close(fatalError)
+		utils.CustomLog("error", "executeManifests", err.Error())
+		return err
+	}
 }
 
-func (pipeline *Pipeline) asyncExecuteManifest(step *Step, manifest map[string]interface{}) {
+func (mozartPipeline *MozartPipeline) asyncExecuteManifest(step *pipeline.Step, manifest map[string]interface{}) error {
 	cloudConfig := cloudprovider.NewCloudProvider(step.K8sConfig)
 	resource := &deployer.Resource{
 		Action:      step.Action,
@@ -122,30 +205,79 @@ func (pipeline *Pipeline) asyncExecuteManifest(step *Step, manifest map[string]i
 
 	deployer, err := deployer.NewDeployer(resource)
 	if err != nil {
-		return
+		utils.CustomLog("error", "asyncExecuteManifest", err.Error())
+		return err
 	}
 
-	deployer.Do()
+	err = deployer.Do()
+	if err != nil {
+		utils.CustomLog("error", "asyncExecuteManifest", err.Error())
+		return err
+	}
+
+	return nil
 }
 
-func (pipeline *Pipeline) getManifestsByTemplateStep(step *Step) (map[string]interface{}, error) {
+func (mozartPipeline *MozartPipeline) getManifestsByTemplateStep(step *pipeline.Step) (map[string]interface{}, error) {
 	gitConfig, err := git.NewGit(step.Git.Provider)
 	if err != nil {
+		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
 	}
-	filesData, err := gitConfig.GetDataFromDefaultFiles(step.Name, step.Git.Token, step.Template.Repository)
+	filesData, err := gitConfig.GetDataFromDefaultFiles(step.ModuleName, step.Git.Token, step.Template.Repository)
 	if err != nil {
+		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
 	}
 	templateProvider, err := template.NewTemplate(step.Template.Type)
 	if err != nil {
+		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
 	}
 
-	manifests, err := templateProvider.GetManifests(filesData[0], filesData[1])
+	manifests, err := templateProvider.GetManifests(filesData[0], filesData[1], step.Template.Override)
 	if err != nil {
+		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
 	}
 
 	return manifests, nil
+}
+
+func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deployment, pipelineError error) error {
+	var payload map[string]string
+	client := http.Client{}
+
+	if pipelineError != nil {
+		payload = map[string]string{"status": "FAILED"}
+	} else {
+		payload = map[string]string{"status": "SUCCEEDED"}
+	}
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	request, err := http.NewRequest("POST", pipeline.Webhook, bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+	request.Header.Add("x-circle-id", pipeline.CircleID)
+
+	_, err = client.Do(request)
+	if err != nil {
+		utils.CustomLog("error", "triggerWebhook", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (mozartPipeline *MozartPipeline) returnPipelineError(pipelineError error) {
+	log.Println("DIGRACAA")
+	err := mozartPipeline.executions.ExecutionError(mozartPipeline.CurrentExecutionID, pipelineError)
+	if err != nil {
+		utils.CustomLog("error", "returnPipelineError", err.Error())
+	}
 }

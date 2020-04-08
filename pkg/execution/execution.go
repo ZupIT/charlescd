@@ -2,9 +2,9 @@ package execution
 
 import (
 	"context"
-	"encoding/json"
 	"log"
-	"octopipe/pkg/deployment"
+	"octopipe/pkg/database"
+	"octopipe/pkg/pipeline"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,90 +12,59 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"go.mongodb.org/mongo-driver/bson"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
-
-type ExecutionManager struct {
-	DB *mongo.Database
-}
 
 type UseCases interface {
 	FindAll() (*[]Execution, error)
 	FindByID(id string) (*Execution, error)
-	Create(deployment *deployment.Deployment) (*primitive.ObjectID, error)
-	CreateVersion(
-		executionID *primitive.ObjectID, version *deployment.Version,
+	Create() (*primitive.ObjectID, error)
+	CreateExecutionStep(
+		executionID *primitive.ObjectID, step *pipeline.Step,
 	) (*primitive.ObjectID, error)
-	CreateVersionManifest(
-		executionID *primitive.ObjectID, versionID *primitive.ObjectID, name string, manifest interface{},
-	) (*primitive.ObjectID, error)
-	CreateIstioComponent(
-		executionID *primitive.ObjectID, name string, manifest interface{},
-	) (*primitive.ObjectID, error)
-	CreateUnusedVersion(executionID *primitive.ObjectID, name string)
-	UpdateExecutionStatus(executionID *primitive.ObjectID, status string)
-	UpdateManifestStatus(
-		executionID *primitive.ObjectID, versionID *primitive.ObjectID, manifestID *primitive.ObjectID, status string,
-	)
-	FinishExecution(executionID *primitive.ObjectID, status string)
+	ExecutionError(executionID *primitive.ObjectID, pipelineError error) error
+	ExecutionFinished(executionID *primitive.ObjectID) error
+	UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error
+}
+
+type ExecutionManager struct {
+	DB database.UseCases
 }
 
 const (
-	ExecutionRunning       = "RUNNING"
-	ExecutionFailed        = "FAILED"
-	ExecutionWebhookFailed = "WEBHOOK_FAILED"
-	ExecutionFinished      = "SUCCEEDED"
+	ExecutionRunning  = "RUNNING"
+	ExecutionFailed   = "FAILED"
+	ExecutionFinished = "SUCCEEDED"
 )
 
 const (
-	ManifestCreated   = "CREATED"
-	ManifestDeploying = "DEPLOYING"
-	ManifestDeployed  = "DEPLOYED"
+	StepRunning  = "RUNNING"
+	StepFailed   = "FAILED"
+	StepRollout  = "ROLLOUT"
+	StepFinished = "SUCCEEDED"
 )
-
-const collection = "executions"
-
-type ExecutionManifest struct {
-	ID       primitive.ObjectID `bson:"_id" json:"id,omitempty"`
-	Name     string             `json:"name"`
-	Manifest string             `json:"manifest"`
-	Status   string             `json:"status"`
-}
-
-type ExecutionVersion struct {
-	ID        primitive.ObjectID  `bson:"_id" json:"id,omitempty"`
-	Name      string              `json:"name"`
-	ImageURL  string              `json:"imageURL"`
-	Manifests []ExecutionManifest `json:"manifests"`
-}
 
 type Execution struct {
-	ID                 primitive.ObjectID  `bson:"_id" json:"id,omitempty"`
-	Name               string              `json:"name"`
-	Namespace          string              `json:"namespace"`
-	DeployedVersions   []ExecutionVersion  `json:"deployedVersions"`
-	UndeployedVersions []string            `json:"undeployedVersions"`
-	IstioComponents    []ExecutionManifest `json:"istioComponents"`
-	Author             string              `json:"author"`
-	StartTime          time.Time           `json:"startTime"`
-	FinishTime         time.Time           `json:"finishTime"`
-	Webhook            string              `json:"webhook"`
-	Status             string              `json:"status"`
-	HelmURL            string              `json:"helmUrl"`
-	Error              string              `json:"error"`
-}
-
-type ExecutionListItem struct {
 	ID         primitive.ObjectID `bson:"_id" json:"id,omitempty"`
-	Name       string             `json:"name"`
-	Namespace  string             `json:"namespace"`
+	Status     string             `json:"status"`
+	Steps      []*pipeline.Step   `json:"steps"`
 	StartTime  time.Time          `json:"startTime"`
 	FinishTime time.Time          `json:"finishTime"`
-	Status     string             `json:"status"`
+	Error      string             `json:"error"`
 }
 
-func NewExecutionManager(db *mongo.Database) *ExecutionManager {
+type ExecutionStep struct {
+	ID primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	*pipeline.Step
+	StartTime  time.Time `json:"startTime"`
+	FinishTime time.Time `json:"finishTime"`
+	Status     string    `json:"status"`
+}
+
+const (
+	collection = "executions"
+)
+
+func NewExecutionManager(db database.UseCases) UseCases {
 	return &ExecutionManager{db}
 }
 
@@ -105,7 +74,7 @@ func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
 	opts := &options.FindOptions{
 		Sort: sort,
 	}
-	cur, err := executionManager.DB.Collection(collection).Find(context.TODO(), map[string]string{}, opts)
+	cur, err := executionManager.DB.FindAll(collection, context.TODO(), map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -133,8 +102,7 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 	}
 
 	filter := bson.M{"_id": objectID}
-	collection := executionManager.DB.Collection(collection)
-	err = collection.FindOne(context.TODO(), filter).Decode(&execution)
+	err = executionManager.DB.FindOne(collection, context.TODO(), filter).Decode(&execution)
 	if err != nil {
 		return nil, err
 	}
@@ -142,66 +110,42 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 	return &execution, nil
 }
 
-func (executionManager *ExecutionManager) Create(deployment *deployment.Deployment) (*primitive.ObjectID, error) {
+func (executionManager *ExecutionManager) Create() (*primitive.ObjectID, error) {
 	newExecution := &Execution{
-		Name:               deployment.Name,
-		Namespace:          deployment.Namespace,
-		StartTime:          time.Now(),
-		DeployedVersions:   []ExecutionVersion{},
-		UndeployedVersions: []string{},
-		IstioComponents:    []ExecutionManifest{},
-		Webhook:            deployment.Webhook,
-		Status:             ExecutionRunning,
-		HelmURL:            deployment.HelmRepository,
+		Status:    ExecutionRunning,
+		Steps:     []*pipeline.Step{},
+		StartTime: time.Now(),
 	}
 
-	col := executionManager.DB.Collection(collection)
 	newExecution.ID = primitive.NewObjectID()
-	result, err := col.InsertOne(context.TODO(), newExecution)
+	result, err := executionManager.DB.Create(collection, context.TODO(), newExecution)
 	if err != nil {
 		log.Println("ERROR", err)
 		return nil, err
 	}
 
-	log.Println("RESULT", result)
-
 	objID := result.InsertedID.(primitive.ObjectID)
 	return &objID, nil
 }
 
-func (executionManager *ExecutionManager) UpdateExecutionStatus(executionID *primitive.ObjectID, status string) {
-	col := executionManager.DB.Collection(collection)
-	query := bson.M{"_id": executionID}
-
-	updateData := bson.M{
-		"$set": bson.M{
-			"status": status,
-		},
-	}
-	_, _ = col.UpdateOne(context.TODO(), query, updateData)
-}
-
-func (executionManager *ExecutionManager) CreateVersion(
-	executionID *primitive.ObjectID, version *deployment.Version,
+func (executionManager *ExecutionManager) CreateExecutionStep(
+	executionID *primitive.ObjectID, step *pipeline.Step,
 ) (*primitive.ObjectID, error) {
-	col := executionManager.DB.Collection(collection)
 	newID := primitive.NewObjectID()
-	newVersion := &ExecutionVersion{
+	newExecutionStep := &ExecutionStep{
 		ID:        newID,
-		Name:      version.Version,
-		ImageURL:  version.VersionURL,
-		Manifests: []ExecutionManifest{},
+		Step:      step,
+		Status:    StepRunning,
+		StartTime: time.Now(),
 	}
 
 	query := bson.M{"_id": executionID}
-
 	updateData := bson.M{
 		"$push": bson.M{
-			"deployedversions": newVersion,
+			"steps": newExecutionStep,
 		},
 	}
-	_, err := col.UpdateOne(context.TODO(), query, updateData)
-
+	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
 	if err != nil {
 		return nil, err
 	}
@@ -209,113 +153,57 @@ func (executionManager *ExecutionManager) CreateVersion(
 	return &newID, nil
 }
 
-func (executionManager *ExecutionManager) CreateVersionManifest(
-	executionID *primitive.ObjectID, versionID *primitive.ObjectID, name string, manifest interface{},
-) (*primitive.ObjectID, error) {
-	col := executionManager.DB.Collection(collection)
-	newID := primitive.NewObjectID()
-	rawManifest, _ := json.Marshal(manifest)
-	newManifest := &ExecutionManifest{
-		ID:       newID,
-		Name:     name,
-		Manifest: string(rawManifest),
-		Status:   ManifestDeploying,
-	}
-
-	query := bson.M{"_id": executionID, "deployedversions._id": versionID}
-
-	updateData := bson.M{
-		"$push": bson.M{
-			"deployedversions.$.manifests": newManifest,
-		},
-	}
-	_, err := col.UpdateOne(context.TODO(), query, updateData)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &newID, nil
-}
-
-func (executionManager *ExecutionManager) UpdateManifestStatus(
-	executionID *primitive.ObjectID, versionID *primitive.ObjectID, manifestID *primitive.ObjectID, status string,
-) {
-	col := executionManager.DB.Collection(collection)
-	query := bson.M{
-		"_id":                            executionID,
-		"deployedversions._id":           versionID,
-		"deployedversions.manifests._id": manifestID,
-	}
-
+func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.ObjectID, pipelineError error) error {
+	query := bson.M{"_id": executionID}
 	updateData := bson.M{
 		"$set": bson.M{
-			"deployedversions.$[outer].manifests.$[inner].status": status,
+			"status":     ExecutionFailed,
+			"error":      pipelineError.Error(),
+			"finishTime": time.Now(),
 		},
 	}
 
-	filterArray := []interface{}{
-		map[string]*primitive.ObjectID{"outer._id": versionID},
-		map[string]*primitive.ObjectID{"inner._id": manifestID},
-	}
-
-	options := options.UpdateOptions{ArrayFilters: &options.ArrayFilters{Filters: filterArray}}
-
-	_, _ = col.UpdateOne(context.TODO(), query, updateData, &options)
-}
-
-func (executionManager *ExecutionManager) CreateIstioComponent(
-	executionID *primitive.ObjectID, name string, manifest interface{},
-) (*primitive.ObjectID, error) {
-	col := executionManager.DB.Collection(collection)
-	newID := primitive.NewObjectID()
-	rawManifest, _ := json.Marshal(manifest)
-	newManifest := &ExecutionManifest{
-		ID:       newID,
-		Name:     name,
-		Manifest: string(rawManifest),
-		Status:   ManifestCreated,
-	}
-
-	query := bson.M{"_id": executionID}
-
-	updateData := bson.M{
-		"$push": bson.M{
-			"istiocomponents": newManifest,
-		},
-	}
-	_, err := col.UpdateOne(context.TODO(), query, updateData)
-
+	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &newID, nil
+	return nil
 }
 
-func (executionManager *ExecutionManager) CreateUnusedVersion(executionID *primitive.ObjectID, name string) {
-	col := executionManager.DB.Collection(collection)
-
+func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID) error {
 	query := bson.M{"_id": executionID}
-
-	updateData := bson.M{
-		"$push": bson.M{
-			"undeployedversions": name,
-		},
-	}
-
-	col.UpdateOne(context.TODO(), query, updateData)
-}
-
-func (executionManager *ExecutionManager) FinishExecution(executionID *primitive.ObjectID, status string) {
-	col := executionManager.DB.Collection(collection)
-	query := bson.M{"_id": executionID}
-
 	updateData := bson.M{
 		"$set": bson.M{
-			"status":     status,
+			"status":     ExecutionFinished,
 			"finishtime": time.Now(),
 		},
 	}
-	_, _ = col.UpdateOne(context.TODO(), query, updateData)
+
+	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (executionManager *ExecutionManager) UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error {
+	query := bson.M{
+		"_id":       executionID,
+		"steps._id": stepID,
+	}
+	updateData := bson.M{
+		"$set": bson.M{
+			"steps.$.status":     status,
+			"steps.$.finishtime": time.Now(),
+		},
+	}
+
+	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
