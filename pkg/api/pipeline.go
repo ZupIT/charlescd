@@ -12,7 +12,7 @@ type PipelineApi struct {
 }
 
 func (api *Api) NewPipelineApi(mozart mozart.UseCases) {
-	path := "/deployments"
+	path := "/pipelines"
 	controller := PipelineApi{mozart}
 
 	api.v1.POST(path, controller.startPipeline)
