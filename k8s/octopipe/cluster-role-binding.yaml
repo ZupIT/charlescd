@@ -1,10 +1,10 @@
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8sconnection.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
   name: octopipe-role-binding
 roleRef:
-  apiGroup: rbac.authorization.k8s.io
+  apiGroup: rbac.authorization.k8sconnection.io
   kind: ClusterRole
   name: octopipe-role
 subjects:

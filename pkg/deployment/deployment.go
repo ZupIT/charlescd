@@ -1,5 +1,7 @@
 package deployment
 
+import "octopipe/pkg/cloudprovider"
+
 const (
 	StatusRunning       = "RUNNING"
 	StatusSucceeded     = "SUCCEEDED"
@@ -25,7 +27,7 @@ type Deployment struct {
 	Webhook        string                 `json:"webhookUrl"`
 	HelmRepository string                 `json:"helmUrl"`
 	GitAccount     GitAccount             `json:"git"`
+	K8s            cloudprovider.Provider `json:"k8s"`
 	Istio          map[string]interface{} `json:"istio"`
 	CircleID       string                 `json:"circleId"`
-	Kubeconfig     *string                `json:"kubeconfig"`
 }
