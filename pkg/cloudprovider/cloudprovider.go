@@ -29,9 +29,19 @@ type Provider struct {
 func NewCloudProvider(provider *Provider) UseCases {
 	switch provider.Provider {
 	case GenericCloudProviderType:
-		return generic.NewGenericProvider()
+		genericProvider := &generic.GenericProvider{
+			Host:   provider.Host,
+			CAData: provider.CAData,
+		}
+		return generic.NewGenericProvider(genericProvider)
 	case EKSCloudProviderType:
-		return eks.NewEKSProvider()
+		eksProvider := &eks.EKSProvider{
+			AWSID:          provider.AWSID,
+			AWSSecret:      provider.AWSSecret,
+			AWSRegion:      provider.AWSRegion,
+			AWSClusterName: provider.AWSClusterName,
+		}
+		return eks.NewEKSProvider(eksProvider)
 	default:
 		return provider.newDefaultConfig()
 	}
