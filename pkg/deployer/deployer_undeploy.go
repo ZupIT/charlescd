@@ -5,6 +5,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// TODO: Move const data to received pipeline
 const (
 	permitedUndeployResource = "deployments"
 )
@@ -24,6 +25,7 @@ func (undeploy *Undeploy) Do() error {
 	}
 
 	resourceSchema := getResourceSchemaByManifest(undeploy.Manifest)
+
 	if resourceSchema.Resource != permitedUndeployResource {
 		return nil
 	}
