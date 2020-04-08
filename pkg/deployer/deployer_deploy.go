@@ -43,7 +43,7 @@ func (deploy *Deploy) createResource() error {
 
 	resourceSchema := getResourceSchemaByManifest(deploy.Manifest)
 	k8sResource := client.Resource(resourceSchema)
-	namespace := deploy.Manifest.GetNamespace()
+	namespace := deploy.Namespace
 
 	_, err = k8sResource.Namespace(namespace).Create(deploy.Manifest, metav1.CreateOptions{})
 	if err != nil && k8sErrors.IsAlreadyExists(err) {
@@ -66,7 +66,7 @@ func (deploy *Deploy) updateResource() error {
 	resourceSchema := getResourceSchemaByManifest(deploy.Manifest)
 	k8sResource := client.Resource(resourceSchema)
 	name := deploy.Manifest.GetName()
-	namespace := deploy.Manifest.GetNamespace()
+	namespace := deploy.Namespace
 
 	resource, err := k8sResource.Namespace(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {

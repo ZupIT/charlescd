@@ -9,54 +9,36 @@ import (
 
 type ExecutionManagerFake struct{}
 
-func NewExecutionFake() *ExecutionManagerFake {
-	return &ExecutionManagerFake{}
-}
-
 func (executionManagr *ExecutionManagerFake) FindAll() (*[]execution.Execution, error) {
-	return nil, nil
+	panic("implement me")
 }
 
 func (executionManagr *ExecutionManagerFake) FindByID(id string) (*execution.Execution, error) {
-	return nil, nil
+	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) Create(pipeline *pipeline.Pipeline) (*primitive.ObjectID, error) {
-	return nil, nil
+func NewExecutionFake() execution.UseCases {
+	return &ExecutionManagerFake{}
 }
 
-func (executionManagr *ExecutionManagerFake) CreateVersion(
-	executionID *primitive.ObjectID, version *pipeline.Version,
+func (executionManagr *ExecutionManagerFake) Create() (*primitive.ObjectID, error) {
+	panic("implement me")
+}
+
+func (executionManagr *ExecutionManagerFake) CreateExecutionStep(
+	executionID *primitive.ObjectID, step *pipeline.Step,
 ) (*primitive.ObjectID, error) {
-	return nil, nil
+	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) CreateVersionManifest(
-	executionID *primitive.ObjectID, versionID *primitive.ObjectID, name string, manifest interface{},
-) (*primitive.ObjectID, error) {
-	return nil, nil
+func (executionManagr *ExecutionManagerFake) ExecutionError(executionID *primitive.ObjectID, pipelineError error) error {
+	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) CreateIstioComponent(
-	executionID *primitive.ObjectID, name string, manifest interface{},
-) (*primitive.ObjectID, error) {
-	return nil, nil
+func (executionManagr *ExecutionManagerFake) ExecutionFinished(executionID *primitive.ObjectID) error {
+	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) CreateUnusedVersion(executionID *primitive.ObjectID, name string) {
-	return
-}
-
-func (executionManagr *ExecutionManagerFake) UpdateExecutionStatus(executionID *primitive.ObjectID, status string) {
-	return
-}
-
-func (executionManagr *ExecutionManagerFake) UpdateManifestStatus(
-	executionID *primitive.ObjectID, versionID *primitive.ObjectID, manifestID *primitive.ObjectID, status string,
-) {
-	return
-}
-
-func (executionManagr *ExecutionManagerFake) FinishExecution(executionID *primitive.ObjectID, status string) {
-	return
+func (executionManagr *ExecutionManagerFake) UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error {
+	panic("implement me")
 }
