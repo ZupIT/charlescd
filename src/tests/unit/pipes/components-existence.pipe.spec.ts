@@ -28,10 +28,7 @@ describe('ComponentExistencePipe', () => {
       'component-id',
       'component-name',
       'https://image.url',
-      'image-tag',
-      'context-path',
-      'https://health.check',
-      444
+      'image-tag'
     )
     const components: CreateComponentDeploymentDto = {
       ...componentDeploymentEntity,
@@ -70,10 +67,7 @@ describe('ComponentExistencePipe', () => {
       'component-id',
       'component-name',
       'https://image.url',
-      'image-tag',
-      'context-path',
-      'https://health.check',
-      444
+      'image-tag'
     )
 
     const components: CreateComponentDeploymentDto = {
