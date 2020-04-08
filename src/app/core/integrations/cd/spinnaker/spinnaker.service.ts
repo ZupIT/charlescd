@@ -1,46 +1,14 @@
-import {
-  HttpService,
-  Inject,
-  Injectable
-} from '@nestjs/common'
-import { IPipelineOptions } from '../../../../api/components/interfaces'
-import {
-  ComponentDeploymentEntity,
-  ModuleDeploymentEntity
-} from '../../../../api/deployments/entity'
+import { Inject, Injectable } from '@nestjs/common'
+import { of, throwError } from 'rxjs'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
-import { IoCTokensConstants } from '../../../constants/ioc'
 import { ConsoleLoggerService } from '../../../logs/console'
-import { IDeploymentConfiguration } from '../../configuration/interfaces'
-import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
+import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
 import TotalPipeline from './connector'
-import {
-  ICreateSpinnakerApplication,
-  ISpinnakerPipelineConfiguration
-} from './interfaces'
-import {
-  ICdConfigurationData,
-  ISpinnakerConfigurationData
-} from '../../../../api/configurations/interfaces'
-import {
-  concatMap,
-  delay,
-  map,
-  retryWhen,
-  tap
-} from 'rxjs/operators'
-import {
-  of,
-  throwError
-} from 'rxjs'
-import {
-  ICdServiceStrategy,
-  IConnectorConfiguration
-} from '../interfaces'
-import { application } from 'express'
-import { SpinnakerApiService } from './spinnaker-api.service'
 import { IBaseSpinnakerPipeline } from './connector/interfaces'
-import { create } from 'domain'
+import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
+import { SpinnakerApiService } from './spinnaker-api.service'
 
 @Injectable()
 export class SpinnakerService implements ICdServiceStrategy {
@@ -50,8 +18,6 @@ export class SpinnakerService implements ICdServiceStrategy {
 
   constructor(
     private readonly spinnakerApiService: SpinnakerApiService,
-    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-    private readonly envConfiguration: IEnvConfiguration,
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
@@ -59,17 +25,17 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     this.consoleLoggerService.log('START:PROCESS_SPINNAKER_DEPLOYMENT', configuration)
     const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
-    await this.createSpinnakerApplication(spinnakerConfiguration.applicationName)
+    await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
     await this.createSpinnakerPipeline(spinnakerConfiguration)
-    await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName)
+    await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
     this.consoleLoggerService.log('FINISH:PROCESS_SPINNAKER_DEPLOYMENT', spinnakerConfiguration)
   }
 
   private getSpinnakerConfiguration(configuration: IConnectorConfiguration): ISpinnakerPipelineConfiguration {
-
+    const cdConfiguration = configuration.cdConfiguration as ISpinnakerConfigurationData
     return {
-      account: (configuration.cdConfiguration as ISpinnakerConfigurationData).account,
-      appNamespace: (configuration.cdConfiguration as ISpinnakerConfigurationData).namespace,
+      account: cdConfiguration.account,
+      appNamespace: cdConfiguration.namespace,
       pipelineName: configuration.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${configuration.applicationName}`,
       appName: configuration.componentName,
@@ -77,16 +43,17 @@ export class SpinnakerService implements ICdServiceStrategy {
       versions: configuration.pipelineCirclesOptions.pipelineVersions,
       unusedVersions: configuration.pipelineCirclesOptions.pipelineUnusedVersions,
       circles: configuration.pipelineCirclesOptions.pipelineCircles,
-      githubAccount: this.envConfiguration.spinnakerGithubAccount,
+      githubAccount: cdConfiguration.gitAccount,
       helmRepository: configuration.helmRepository,
-      circleId: configuration.callbackCircleId
+      circleId: configuration.callbackCircleId,
+      url: cdConfiguration.url
     }
   }
 
-  private async deploySpinnakerPipeline(pipelineName: string, applicationName: string): Promise<void> {
+  private async deploySpinnakerPipeline(pipelineName: string, applicationName: string, url: string): Promise<void> {
 
     this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${applicationName} `)
-    await this.spinnakerApiService.deployPipeline(applicationName, pipelineName)
+    await this.spinnakerApiService.deployPipeline(applicationName, pipelineName, url)
         .pipe(
           map(response => response),
           retryWhen(error => this.getDeployRetryCondition(error))
@@ -117,11 +84,12 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
     const { data: { id: pipelineId }} =
-        await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName, spinnakerConfiguration.pipelineName).toPromise()
+      await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
+        spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
 
     pipelineId ?
         await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
-        await this.spinnakerApiService.createPipeline(spinnakerPipeline).toPromise()
+        await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerConfiguration.url).toPromise()
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE')
   }
@@ -131,7 +99,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE', { pipelineId })
     const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
     const updatedSpinnakerPipeline = this.createUpdatePipelineObject(pipelineId, spinnakerConfiguration, spinnakerPipeline)
-    await this.spinnakerApiService.updatePipeline(updatedSpinnakerPipeline).toPromise()
+    await this.spinnakerApiService.updatePipeline(updatedSpinnakerPipeline, spinnakerConfiguration.url).toPromise()
     this.consoleLoggerService.log('FINISH:UPDATE_SPINNAKER_PIPELINE')
   }
 
@@ -149,15 +117,15 @@ export class SpinnakerService implements ICdServiceStrategy {
     }
   }
 
-  private async createSpinnakerApplication(applicationName: string): Promise<void> {
+  private async createSpinnakerApplication(applicationName: string, url: string): Promise<void> {
 
     try {
       this.consoleLoggerService.log('START:GET_SPINNAKER_APPLICATION', { applicationName })
-      await this.spinnakerApiService.getApplication(applicationName).toPromise()
+      await this.spinnakerApiService.getApplication(applicationName, url).toPromise()
     } catch (error) {
       this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION')
       const spinnakerApplication: ICreateSpinnakerApplication = this.getCreateSpinnakerApplicationObject(applicationName)
-      await this.spinnakerApiService.createApplication(spinnakerApplication).toPromise()
+      await this.spinnakerApiService.createApplication(spinnakerApplication, url).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_APPLICATION')
     }
   }

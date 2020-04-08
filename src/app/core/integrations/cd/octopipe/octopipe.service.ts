@@ -1,28 +1,18 @@
-import {
-  Inject,
-  Injectable
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { AxiosResponse } from 'axios'
 import { IPipelineCircle } from '../../../../api/components/interfaces'
 import { OctopipeConfigurationData } from '../../../../api/configurations/interfaces'
 import { IoCTokensConstants } from '../../../constants/ioc'
 import { ConsoleLoggerService } from '../../../logs/console'
-import {
-  IBaseVirtualService,
-  IEmptyVirtualService
-} from '../spinnaker/connector/interfaces'
-import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
-import {
-  createEmptyVirtualService,
-  createVirtualService
-} from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
-import { AxiosResponse } from 'axios'
 import {
-  ICdServiceStrategy,
-  IConnectorConfiguration
-} from '../interfaces'
+  ClusterProviderEnum, IDefaultClusterConfig, IEKSClusterConfig, IOctopipePayload, IOctopipeVersion
+} from '../../octopipe/interfaces/octopipe-payload.interface'
+import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
+import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connector/interfaces'
+import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
+import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
-import { IOctopipePayload, IEKSClusterConfig, IDefaultClusterConfig, IOctopipeVersion } from '../../octopipe/interfaces/octopipe-payload.interface'
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -108,18 +98,18 @@ export class OctopipeService implements ICdServiceStrategy {
 
   private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IDefaultClusterConfig | null {
     switch (config.provider) {
-      case 'EKS':
+      case ClusterProviderEnum.EKS:
         return {
-          provider: 'EKS',
+          provider: ClusterProviderEnum.EKS,
           caData: config.caData,
           awsSID: config.awsSID,
           awsSecret: config.awsSecret,
           awsRegion: config.awsRegion,
           awsClusterName: config.awsClusterName
         }
-      case 'GENERIC':
+      case ClusterProviderEnum.GENERIC:
         return {
-          provider: 'GENERIC',
+          provider: ClusterProviderEnum.GENERIC,
           clientCertificate: config.clientCertificate,
           host: config.host
         }

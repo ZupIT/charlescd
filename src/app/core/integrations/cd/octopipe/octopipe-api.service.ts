@@ -20,7 +20,7 @@ export class OctopipeApiService {
 
     public deploy(octopipeConfiguration: IOctopipePayload): Observable<AxiosResponse> {
         return this.httpService.post(
-            `${this.envConfiguration.octopipeUrl}`,
+            `${this.envConfiguration.octopipeUrl}/api/v1/pipelines`,
             octopipeConfiguration,
             {
                 headers: {
