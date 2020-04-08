@@ -21,4 +21,11 @@ export interface IGenericConfig {
     namespace: string
 }
 
-export type OctopipeConfigurationData = IEKSConfig | IGenericConfig
+export interface IDefaultConfig {
+    provider: 'DEFAULT'
+    gitProvider: GitProvidersEnum
+    gitToken: string
+    namespace: string
+}
+
+export type OctopipeConfigurationData = IEKSConfig | IGenericConfig | IDefaultConfig

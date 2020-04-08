@@ -88,10 +88,10 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
-    const k8sConfig = this.buildK8sConfig(deploymentConfiguration)
-    if (!k8sConfig) {
+    if (deploymentConfiguration.provider === 'DEFAULT') {
       return payload
     }
+    const k8sConfig = this.buildK8sConfig(deploymentConfiguration)
     payload.k8s = k8sConfig
     return payload
   }

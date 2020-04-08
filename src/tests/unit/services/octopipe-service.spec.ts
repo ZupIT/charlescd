@@ -32,9 +32,9 @@ describe('Octopipe Service', () => {
     octopipeApiService = module.get<OctopipeApiService>(OctopipeApiService)
   })
 
-  describe('deploySpinnakerPipeline', () => {
+  describe('octopipeService', () => {
 
-    it('should create the right payload', () => {
+    it('should create the right payload for EKS config', () => {
       const componentDeployment = new ComponentDeploymentEntity(
         'dummy-id',
         'some-app-name',
@@ -47,15 +47,15 @@ describe('Octopipe Service', () => {
         [componentDeployment]
       )
       const deployment = new DeploymentEntity(
-          'dummy-deployment-id',
-          'dummy-application-name',
-          null,
-          'dummy-author-id',
-          'dummy-description',
-          'dummy-callback-url',
-          null,
-          false,
-          'dummy-circle-id'
+        'dummy-deployment-id',
+        'dummy-application-name',
+        null,
+        'dummy-author-id',
+        'dummy-description',
+        'dummy-callback-url',
+        null,
+        false,
+        'dummy-circle-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -106,6 +106,337 @@ describe('Octopipe Service', () => {
           awsSID: 'sid',
           awsSecret: 'secret',
           caData: 'ca-data'
+        },
+        helmUrl: 'helm-repository',
+        istio: {
+          virtualService: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              hosts: [
+                'some-app-name'
+              ],
+              http: [
+                {
+                  match: [
+                    {
+                      headers: {
+                        cookie: {
+                          regex: '.*x-circle-id=dummy-value.*'
+                        }
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'some-app-name',
+                        subset: 'v1'
+                      },
+                      headers: {
+                        request: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  match: [
+                    {
+                      headers: {
+                        'x-dummy-header': {
+                          exact: 'dummy-value'
+                        }
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'some-app-name',
+                        subset: 'v1'
+                      },
+                      headers: {
+                        request: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          destinationRules: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              host: 'some-app-name',
+              subsets: [
+                {
+                  labels: {
+                    version: 'some-app-name-v1'
+                  },
+                  name: 'v1'
+                }
+              ]
+            }
+          }
+        },
+        unusedVersions: [],
+        versions: [
+          {
+            version: 'some-app-name-v1',
+            versionUrl: 'version.url/tag:123'
+          }
+        ],
+        webHookUrl: 'dummy-callback-url',
+        circleId: 'circle-id'
+      }
+      expect(payload).toEqual(expectedPayload)
+    })
+
+    it('should create the right payload for GENERIC config', () => {
+      const componentDeployment = new ComponentDeploymentEntity(
+        'dummy-id',
+        'some-app-name',
+        'dummy-img-url2',
+        'dummy-img-tag2'
+      )
+      const moduleDeployment = new ModuleDeploymentEntity(
+        'dummy-id',
+        'helm-repository',
+        [componentDeployment]
+      )
+      const deployment = new DeploymentEntity(
+        'dummy-deployment-id',
+        'dummy-application-name',
+        null,
+        'dummy-author-id',
+        'dummy-description',
+        'dummy-callback-url',
+        null,
+        false,
+        'dummy-circle-id'
+      )
+
+      moduleDeployment.deployment = deployment
+      componentDeployment.moduleDeployment = moduleDeployment
+
+      const pipelineOptions: IPipelineOptions = {
+        pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
+        pipelineUnusedVersions: []
+      }
+
+      const octopipeConfiguration: OctopipeConfigurationData = {
+        provider: 'GENERIC',
+        clientCertificate: 'client-cert',
+        gitProvider: GitProvidersEnum.GITHUB,
+        gitToken: 'some-github-token',
+        host: 'https://k8s.com',
+        namespace: 'some-app-namespace'
+      }
+
+      const connectorConfiguration: IConnectorConfiguration = {
+        pipelineCirclesOptions: pipelineOptions,
+        cdConfiguration: octopipeConfiguration,
+        componentId: componentDeployment.componentId,
+        applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+        componentName: componentDeployment.componentName,
+        helmRepository: componentDeployment.moduleDeployment.helmRepository,
+        callbackCircleId: 'circle-id',
+        pipelineCallbackUrl: 'dummy-callback-url'
+      }
+
+      const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
+
+      const expectedPayload: IOctopipePayload = {
+        appName: 'some-app-name',
+        appNamespace: 'some-app-namespace',
+        git: {
+          provider: GitProvidersEnum.GITHUB,
+          token: 'some-github-token',
+        },
+        k8s: {
+          provider: ClusterProviderEnum.GENERIC,
+          clientCertificate: 'client-cert',
+          host: 'https://k8s.com',
+        },
+        helmUrl: 'helm-repository',
+        istio: {
+          virtualService: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              hosts: [
+                'some-app-name'
+              ],
+              http: [
+                {
+                  match: [
+                    {
+                      headers: {
+                        cookie: {
+                          regex: '.*x-circle-id=dummy-value.*'
+                        }
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'some-app-name',
+                        subset: 'v1'
+                      },
+                      headers: {
+                        request: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  match: [
+                    {
+                      headers: {
+                        'x-dummy-header': {
+                          exact: 'dummy-value'
+                        }
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'some-app-name',
+                        subset: 'v1'
+                      },
+                      headers: {
+                        request: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          destinationRules: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              host: 'some-app-name',
+              subsets: [
+                {
+                  labels: {
+                    version: 'some-app-name-v1'
+                  },
+                  name: 'v1'
+                }
+              ]
+            }
+          }
+        },
+        unusedVersions: [],
+        versions: [
+          {
+            version: 'some-app-name-v1',
+            versionUrl: 'version.url/tag:123'
+          }
+        ],
+        webHookUrl: 'dummy-callback-url',
+        circleId: 'circle-id'
+      }
+      expect(payload).toEqual(expectedPayload)
+    })
+
+    it('should create the right payload for DEFAULT config', () => {
+      const componentDeployment = new ComponentDeploymentEntity(
+        'dummy-id',
+        'some-app-name',
+        'dummy-img-url2',
+        'dummy-img-tag2'
+      )
+      const moduleDeployment = new ModuleDeploymentEntity(
+        'dummy-id',
+        'helm-repository',
+        [componentDeployment]
+      )
+      const deployment = new DeploymentEntity(
+        'dummy-deployment-id',
+        'dummy-application-name',
+        null,
+        'dummy-author-id',
+        'dummy-description',
+        'dummy-callback-url',
+        null,
+        false,
+        'dummy-circle-id'
+      )
+
+      moduleDeployment.deployment = deployment
+      componentDeployment.moduleDeployment = moduleDeployment
+
+      const pipelineOptions: IPipelineOptions = {
+        pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
+        pipelineUnusedVersions: []
+      }
+
+      const octopipeConfiguration: OctopipeConfigurationData = {
+        provider: 'DEFAULT',
+        gitProvider: GitProvidersEnum.GITHUB,
+        gitToken: 'some-github-token',
+        namespace: 'some-app-namespace'
+      }
+
+      const connectorConfiguration: IConnectorConfiguration = {
+        pipelineCirclesOptions: pipelineOptions,
+        cdConfiguration: octopipeConfiguration,
+        componentId: componentDeployment.componentId,
+        applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+        componentName: componentDeployment.componentName,
+        helmRepository: componentDeployment.moduleDeployment.helmRepository,
+        callbackCircleId: 'circle-id',
+        pipelineCallbackUrl: 'dummy-callback-url'
+      }
+
+      const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
+
+      const expectedPayload: IOctopipePayload = {
+        appName: 'some-app-name',
+        appNamespace: 'some-app-namespace',
+        git: {
+          provider: GitProvidersEnum.GITHUB,
+          token: 'some-github-token',
         },
         helmUrl: 'helm-repository',
         istio: {
