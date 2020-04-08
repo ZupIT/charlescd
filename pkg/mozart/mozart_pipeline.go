@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -16,6 +14,8 @@ import (
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MozartPipeline struct {
@@ -275,7 +275,6 @@ func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deploy
 }
 
 func (mozartPipeline *MozartPipeline) returnPipelineError(pipelineError error) {
-	log.Println("DIGRACAA")
 	err := mozartPipeline.executions.ExecutionError(mozartPipeline.CurrentExecutionID, pipelineError)
 	if err != nil {
 		utils.CustomLog("error", "returnPipelineError", err.Error())
