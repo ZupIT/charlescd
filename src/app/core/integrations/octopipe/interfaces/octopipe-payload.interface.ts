@@ -5,8 +5,13 @@ export interface IOctopipeVersion {
   versionUrl: string
 }
 
+export enum ClusterProviderEnum {
+  EKS = 'EKS',
+  GENERIC = 'GENERIC'
+}
+
 export interface IEKSClusterConfig {
-  provider: 'EKS'
+  provider: ClusterProviderEnum.EKS
   caData: string
   awsSID: string
   awsSecret: string
@@ -15,7 +20,7 @@ export interface IEKSClusterConfig {
 }
 
 export interface IDefaultClusterConfig {
-  provider: 'GENERIC'
+  provider: ClusterProviderEnum.GENERIC
   clientCertificate: string
   host: string
 }

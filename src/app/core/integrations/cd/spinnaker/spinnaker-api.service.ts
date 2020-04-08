@@ -3,8 +3,6 @@ import {
     Inject,
     Injectable
 } from '@nestjs/common'
-import { IoCTokensConstants } from '../../../constants/ioc'
-import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { IBaseSpinnakerPipeline } from './connector/interfaces'
@@ -15,13 +13,11 @@ export class SpinnakerApiService {
 
     constructor(
         private readonly httpService: HttpService,
-        @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-        private readonly envConfiguration: IEnvConfiguration
     ) {}
 
-    public deployPipeline(applicationName: string, pipelineName: string): Observable<AxiosResponse> {
+    public deployPipeline(applicationName: string, pipelineName: string, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
-            `${this.envConfiguration.spinnakerUrl}/pipelines/${applicationName}/${pipelineName}`,
+            `${url}/pipelines/${applicationName}/${pipelineName}`,
             {},
             {
                 headers: {
@@ -31,9 +27,9 @@ export class SpinnakerApiService {
         )
     }
 
-    public createPipeline(spinnakerPipeline: IBaseSpinnakerPipeline): Observable<AxiosResponse> {
+    public createPipeline(spinnakerPipeline: IBaseSpinnakerPipeline, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
-            `${this.envConfiguration.spinnakerUrl}/pipelines`,
+            `${url}/pipelines`,
             spinnakerPipeline,
             {
                 headers: {
@@ -43,9 +39,9 @@ export class SpinnakerApiService {
         )
     }
 
-    public updatePipeline(updatedPipeline): Observable<AxiosResponse> {
+    public updatePipeline(updatedPipeline, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
-            `${this.envConfiguration.spinnakerUrl}/pipelines`,
+            `${url}/pipelines`,
             updatedPipeline,
             {
                 headers: {
@@ -55,15 +51,15 @@ export class SpinnakerApiService {
         )
     }
 
-    public getPipeline(applicationName: string, pipelineName: string): Observable<AxiosResponse> {
+    public getPipeline(applicationName: string, pipelineName: string, url: string): Observable<AxiosResponse> {
         return this.httpService.get(
-        `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
+        `${url}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
         )
     }
 
-    public createApplication(spinnakerApplication: ICreateSpinnakerApplication): Observable<AxiosResponse> {
+    public createApplication(spinnakerApplication: ICreateSpinnakerApplication, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
-            `${this.envConfiguration.spinnakerUrl}/tasks`,
+            `${url}/tasks`,
             spinnakerApplication,
             {
                 headers: {
@@ -73,9 +69,9 @@ export class SpinnakerApiService {
         )
     }
 
-    public getApplication(applicationName: string): Observable<AxiosResponse> {
+    public getApplication(applicationName: string, url: string): Observable<AxiosResponse> {
         return this.httpService.get(
-            `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}`,
+            `${url}/applications/${applicationName}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
