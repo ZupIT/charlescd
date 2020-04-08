@@ -58,8 +58,8 @@ func (database *Database) Create(
 func (database *Database) FindAll(
 	collection string, context context.Context, filter map[string]string, opts interface{},
 ) (*mongo.Cursor, error) {
-	findOptions := opts.(options.FindOptions)
-	return database.DB.Collection(collection).Find(context, filter, &findOptions)
+	findOptions := opts.(*options.FindOptions)
+	return database.DB.Collection(collection).Find(context, filter, findOptions)
 }
 
 func (database *Database) FindOne(
