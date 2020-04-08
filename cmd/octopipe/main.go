@@ -1,15 +1,13 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"log"
 	"octopipe/pkg/api"
-	"octopipe/pkg/connection"
-	"octopipe/pkg/deployer"
+	"octopipe/pkg/database"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/mozart"
-	"os"
-
-	"github.com/joho/godotenv"
+	"octopipe/pkg/pipeline"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -19,24 +17,18 @@ func main() {
 		log.Print("No .env file found")
 	}
 
-	db, err := connection.NewDatabaseConnection()
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	k8sConnection, err := connection.NewK8sConnection(os.Getenv("KUBECONFIG"))
+	db, err := database.NewDatabase()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
 	executionMain := execution.NewExecutionManager(db)
-	deployer := deployer.NewDeployer(k8sConnection)
-	mozart := mozart.NewMozart(deployer, executionMain)
+	_ = pipeline.NewPipelineManager(db)
+	mozartMain := mozart.NewMozart(executionMain)
 
-	api := api.NewApi()
-	api.NewExeuctionApi(executionMain)
-	api.NewPipelineApi(mozart)
-	api.Start()
+	apiMain := api.NewApi()
+	apiMain.NewExeuctionApi(executionMain)
+	apiMain.NewPipelineApi(mozartMain)
+	apiMain.Start()
 }
