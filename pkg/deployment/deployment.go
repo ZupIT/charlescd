@@ -1,5 +1,7 @@
 package deployment
 
+// TODO: Remove todo and useu pipeline pkg
+
 import "octopipe/pkg/cloudprovider"
 
 const (
