@@ -18,6 +18,6 @@ func NewMozart(execution execution.UseCases) *Mozart {
 }
 
 func (mozart *Mozart) Start(deployment *deployment.Deployment) {
-	pipeline := NewPipeline(mozart, deployment)
-	pipeline.Do()
+	pipeline := NewMozartPipeline(mozart, deployment)
+	pipeline.Do(deployment)
 }

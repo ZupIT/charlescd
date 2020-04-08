@@ -4,9 +4,10 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"octopipe/pkg/api"
-	"octopipe/pkg/connection"
+	"octopipe/pkg/database"
 	"octopipe/pkg/execution"
 	"octopipe/pkg/mozart"
+	"octopipe/pkg/pipeline"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -16,17 +17,18 @@ func main() {
 		log.Print("No .env file found")
 	}
 
-	db, err := connection.NewDatabaseConnection()
+	db, err := database.NewDatabase()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
 	executionMain := execution.NewExecutionManager(db)
-	mozart := mozart.NewMozart(executionMain)
+	_ = pipeline.NewPipelineManager(db)
+	mozartMain := mozart.NewMozart(executionMain)
 
-	api := api.NewApi()
-	api.NewExeuctionApi(executionMain)
-	api.NewPipelineApi(mozart)
-	api.Start()
+	apiMain := api.NewApi()
+	apiMain.NewExeuctionApi(executionMain)
+	apiMain.NewPipelineApi(mozartMain)
+	apiMain.Start()
 }

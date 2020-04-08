@@ -3,15 +3,16 @@ package mozart
 import (
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
+	"octopipe/pkg/pipeline"
 	"octopipe/pkg/template"
 )
 
-func getStages(deployment *deployment.Deployment) [][]*Step {
+func getStages(deployment *deployment.Deployment) [][]*pipeline.Step {
 	deployedVersionSteps := getDeployedVersionsStepsByDeployment(deployment)
 	undeployedVersionsSteps := getUndeployedVersionsStepsByDeployment(deployment)
 	istioComponentSteps := getIstioComponentsSteps(deployment)
 
-	stages := [][]*Step{
+	stages := [][]*pipeline.Step{
 		deployedVersionSteps,
 		undeployedVersionsSteps,
 		istioComponentSteps,
@@ -20,35 +21,37 @@ func getStages(deployment *deployment.Deployment) [][]*Step {
 	return stages
 }
 
-func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
+func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*pipeline.Step {
 	return getStepsByVersions(deployment, deployment.Versions, deployer.DeployAction)
 }
 
-func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*Step {
+func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*pipeline.Step {
 	return getStepsByVersions(deployment, deployment.UnusedVersions, deployer.UndeployAction)
 }
 
 func getStepsByVersions(
 	deployment *deployment.Deployment, versions []*deployment.Version, action string,
-) []*Step {
-	steps := []*Step{}
+) []*pipeline.Step {
+	steps := []*pipeline.Step{}
 	for _, version := range versions {
-		steps = append(steps, &Step{
+		steps = append(steps, &pipeline.Step{
 			Name:        version.Version,
+			ModuleName:  deployment.Name,
 			Namespace:   deployment.Namespace,
 			Action:      action,
+			Webhook:     deployment.Webhook,
 			ForceUpdate: false,
-			Git: &Git{
+			Git: &pipeline.Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
 			},
-			Template: &Template{
+			Template: &pipeline.Template{
 				Type:       template.TypeHelmTemplate,
 				Repository: deployment.HelmRepository,
-				Override: map[string]interface{}{
-					"tag": map[string]interface{}{
-						"image": version.VersionURL,
-					},
+				Override: map[string]string{
+					"Name":      version.Version,
+					"Namespace": deployment.Namespace,
+					"image.tag": version.VersionURL,
 				},
 			},
 			K8sConfig: &deployment.K8s,
@@ -58,16 +61,18 @@ func getStepsByVersions(
 	return steps
 }
 
-func getIstioComponentsSteps(deployment *deployment.Deployment) []*Step {
-	steps := []*Step{}
+func getIstioComponentsSteps(deployment *deployment.Deployment) []*pipeline.Step {
+	steps := []*pipeline.Step{}
 	for _, value := range deployment.Istio {
-		steps = append(steps, &Step{
+		steps = append(steps, &pipeline.Step{
 			Name:        deployment.Name,
+			ModuleName:  deployment.Name,
 			Namespace:   deployment.Namespace,
 			Action:      deployer.DeployAction,
+			Webhook:     deployment.Webhook,
 			Manifest:    value.(map[string]interface{}),
 			ForceUpdate: true,
-			Git: &Git{
+			Git: &pipeline.Git{
 				Provider: deployment.GitAccount.Provider,
 				Token:    deployment.GitAccount.Token,
 			},

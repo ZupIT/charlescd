@@ -1,10 +1,12 @@
 package template
 
 import (
+	"encoding/json"
 	"errors"
 	"octopipe/pkg/utils"
 	"strings"
 
+	"github.com/tidwall/sjson"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/helm/pkg/chartutil"
@@ -19,8 +21,8 @@ func NewHelmTemplate() *HelmTemplate {
 	return &HelmTemplate{}
 }
 
-func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent string) (map[string]interface{}, error) {
-	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent)
+func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent string, overrideValues map[string]string) (map[string]interface{}, error) {
+	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, overrideValues)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +52,7 @@ func (helmTemplate *HelmTemplate) renderManifest(chart *chart.Chart, values char
 	return templateRender, nil
 }
 
-func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueContent string) (*chart.Chart, chartutil.Values, error) {
+func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueContent string, overrideValues map[string]string) (*chart.Chart, chartutil.Values, error) {
 	newChart, err := chartutil.LoadArchive(strings.NewReader(templateContent))
 	if err != nil {
 		utils.CustomLog("error", "getHelmChartAndValues", err.Error())
@@ -67,12 +69,41 @@ func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueCo
 		return nil, nil, err
 	}
 
-	return newChart, renderedValues, nil
+	overridedValues, err := helmTemplate.overrideValues(renderedValues.AsMap(), overrideValues)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return newChart, overridedValues, nil
 
 }
 
-func (helmTemplate *HelmTemplate) overrideManifestsValues(values chartutil.Values) chartutil.Values {
-	return values
+func (helmTemplate *HelmTemplate) overrideValues(
+	chartValues map[string]interface{}, overrideValues map[string]string,
+) (map[string]interface{}, error) {
+	overridedManifests := map[string]interface{}{}
+
+	for manifestKey, manifest := range chartValues {
+		manifestBytes, _ := json.Marshal(manifest)
+		for keyPath, value := range overrideValues {
+			manifestStringOverrided, err := sjson.Set(string(manifestBytes), keyPath, value)
+			if err != nil {
+				return nil, err
+			}
+
+			manifestBytes = []byte(manifestStringOverrided)
+		}
+
+		var newManifest map[string]interface{}
+		err := json.Unmarshal([]byte(manifestBytes), &newManifest)
+		if err != nil {
+			return nil, err
+		}
+
+		overridedManifests[manifestKey] = newManifest
+	}
+
+	return overridedManifests, nil
 }
 
 func (helmTemplate *HelmTemplate) encodeManifests(manifests map[string]string) (map[string]interface{}, error) {

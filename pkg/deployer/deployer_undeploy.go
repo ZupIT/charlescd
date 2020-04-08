@@ -5,6 +5,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	permitedUndeployResource = "deployments"
+)
+
 type Undeploy struct {
 	*Resource
 }
@@ -20,6 +24,10 @@ func (undeploy *Undeploy) Do() error {
 	}
 
 	resourceSchema := getResourceSchemaByManifest(undeploy.Manifest)
+	if resourceSchema.Resource != permitedUndeployResource {
+		return nil
+	}
+
 	k8sResource := client.Resource(resourceSchema)
 	namespace := undeploy.Manifest.GetNamespace()
 	name := undeploy.Manifest.GetName()

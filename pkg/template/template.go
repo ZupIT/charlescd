@@ -7,7 +7,7 @@ const (
 )
 
 type Template interface {
-	GetManifests(templateContent, valueContent string) (map[string]interface{}, error)
+	GetManifests(templateContent, valueContent string, overrideValues map[string]string) (map[string]interface{}, error)
 }
 
 func NewTemplate(templateType string) (Template, error) {
