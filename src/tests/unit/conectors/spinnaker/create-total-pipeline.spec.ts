@@ -17,7 +17,8 @@ it('compiles the pipeline', () => {
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
-    circleId: 'circle-id'
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com'
   }
 
   const totalPipeline = new TotalPipeline(contract)
@@ -37,7 +38,8 @@ it('compiles the pipeline with only undeployment', () => {
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
-    circleId: 'circle-id'
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com'
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()

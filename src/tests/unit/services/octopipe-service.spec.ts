@@ -9,7 +9,7 @@ import { IConnectorConfiguration } from '../../../app/core/integrations/cd/inter
 import { OctopipeService } from '../../../app/core/integrations/cd/octopipe'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { GitProvidersEnum } from '../../../app/core/integrations/configuration/interfaces'
-import { IOctopipePayload } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { IOctopipePayload, ClusterProviderEnum } from '../../../app/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
@@ -100,7 +100,7 @@ describe('Octopipe Service', () => {
           token: 'some-github-token',
         },
         k8s: {
-          provider: 'EKS',
+          provider: ClusterProviderEnum.EKS,
           awsClusterName: 'cluster-name',
           awsRegion: 'region',
           awsSID: 'sid',

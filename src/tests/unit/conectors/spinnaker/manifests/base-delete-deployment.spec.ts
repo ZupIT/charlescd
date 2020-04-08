@@ -10,7 +10,7 @@ it('builds base deployment delete manifest', () => {
         applicationName: 'app-name', appNamespace: 'app-namespace',
         circleId: 'circle-id', circles: [], githubAccount: 'github-account',
         helmRepository: 'https://api.github.com/repos/org/repo/contents/',
-        pipelineName: 'pipeline-name', versions: [], webhookUri: 'webhook-uri'
+        pipelineName: 'pipeline-name', versions: [], webhookUri: 'webhook-uri', url: 'https://spinnaker.url.com'
       },
       123, ['req-ref-id'], 'prev-stage')
   ).toEqual(expectedBaseDeleteDeployment)
