@@ -46,7 +46,7 @@ const (
 type Execution struct {
 	ID         primitive.ObjectID `bson:"_id" json:"id,omitempty"`
 	Status     string             `json:"status"`
-	Steps      []*pipeline.Step   `json:"steps"`
+	Steps      []*ExecutionStep   `json:"steps"`
 	StartTime  time.Time          `json:"startTime"`
 	FinishTime time.Time          `json:"finishTime"`
 	Error      string             `json:"error"`
@@ -113,7 +113,7 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 func (executionManager *ExecutionManager) Create() (*primitive.ObjectID, error) {
 	newExecution := &Execution{
 		Status:    ExecutionRunning,
-		Steps:     []*pipeline.Step{},
+		Steps:     []*ExecutionStep{},
 		StartTime: time.Now(),
 	}
 
