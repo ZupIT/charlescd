@@ -68,7 +68,7 @@ describe('Octopipe Service', () => {
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
-        provider: 'EKS',
+        provider: ClusterProviderEnum.EKS,
         awsClusterName: 'cluster-name',
         awsRegion: 'region',
         awsSID: 'sid',
@@ -243,7 +243,7 @@ describe('Octopipe Service', () => {
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
-        provider: 'GENERIC',
+        provider: ClusterProviderEnum.GENERIC,
         clientCertificate: 'client-cert',
         clientKey: 'client-key',
         gitProvider: GitProvidersEnum.GITHUB,
@@ -414,7 +414,7 @@ describe('Octopipe Service', () => {
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
-        provider: 'DEFAULT',
+        provider: ClusterProviderEnum.DEFAULT,
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
         namespace: 'some-app-namespace'

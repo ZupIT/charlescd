@@ -7,7 +7,8 @@ export interface IOctopipeVersion {
 
 export enum ClusterProviderEnum {
   EKS = 'EKS',
-  GENERIC = 'GENERIC'
+  GENERIC = 'GENERIC',
+  DEFAULT = 'DEFAULT'
 }
 
 export interface IEKSClusterConfig {
