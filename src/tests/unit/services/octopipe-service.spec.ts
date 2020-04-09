@@ -245,6 +245,7 @@ describe('Octopipe Service', () => {
       const octopipeConfiguration: OctopipeConfigurationData = {
         provider: 'GENERIC',
         clientCertificate: 'client-cert',
+        clientKey: 'client-key',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
         host: 'https://k8s.com',
@@ -274,6 +275,7 @@ describe('Octopipe Service', () => {
         k8s: {
           provider: ClusterProviderEnum.GENERIC,
           clientCertificate: 'client-cert',
+          clientKey: 'client-key',
           host: 'https://k8s.com',
         },
         helmUrl: 'helm-repository',

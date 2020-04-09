@@ -111,6 +111,7 @@ export class OctopipeService implements ICdServiceStrategy {
         return {
           provider: ClusterProviderEnum.GENERIC,
           clientCertificate: config.clientCertificate,
+          clientKey: config.clientKey,
           host: config.host
         }
       default:
