@@ -1,6 +1,6 @@
 # Instalação do Charles
 
-Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias): 
+Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias):
 
 * Vault
 * Spinnaker \(versão 1.17.3\)
@@ -85,14 +85,16 @@ spec:
   backoffLimit: 2
 ```
 
-```
-
+```text
 Depois de preencher as variáveis você deverá aplicar esse JOB no seu cluster com o seguinte comando.
 
 ```text
 ```
+
 kubectl apply -f PATH/job.yaml --namespace=NAMESPACE
-```
+
+```text
+
 ```
 
 Você verá que, após o JOB, seis novos deployments e services foram criados:
@@ -104,18 +106,20 @@ Você verá que, após o JOB, seis novos deployments e services foram criados:
 5. **`Darwin-ui`**
 6. **`Darwin-villager`**
 
-
-
-### **Casos Especiais**
+## **Casos Especiais**
 
 Caso seu cluster use alguma RBAC você precisará usar uma ServiceAccount com poderes de admin para que o job possa criar os deployments e services.
 
 Para fazer isso basta aplicar:
 
 ```text
+
 ```
+
 kubectl create clusterrolebinding default-admin --clusterrole=admin --serviceaccount=NAMESPACE:SERVICEACCOUNT
-```
+
+```text
+
 ```
 
 Feito isso, na sequência use a `SERVICEACCOUNT` no arquivo job.yaml

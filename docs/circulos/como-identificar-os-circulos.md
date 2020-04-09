@@ -1,12 +1,11 @@
 # Como identificar os círculos?
 
-Se após a criação do círculo for necessária a utilização do Circle Matcher para testar suas regras de segmentação, você pode integrar nas suas aplicações o recurso Identify do módulo `charles-circle-matcher` para detectar os círculos aos quais  o seu usuário pertence.
+Se após a criação do círculo for necessária a utilização do Circle Matcher para testar suas regras de segmentação, você pode integrar nas suas aplicações o recurso Identify do módulo `charles-circle-matcher` para detectar os círculos aos quais o seu usuário pertence.
 
 Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
 
 ![](https://lh6.googleusercontent.com/q573-961WtpntVK8NfXXvPgzSPrxLwxjx3QXRqM3vBlHFM8nAoDkpn1KD26Zfw3_wJtjnhVldYcwRUUzhbveEvqJz6n16NQFkxi0S3hh8rk6Y7OUmWtnBOl_qJekzoymQ64mFF8k)
 
-  
 Ao realizar a requisição de identificação com as seguintes informações, círculos compatíveis serão retornados:
 
 ![](https://lh4.googleusercontent.com/U9V5QwHFcbIWmw9TSKGtyDPNsR2ODnDmSpqaTnIv8zEfcWpp0ud9YLlukw7AAt8CMdhFXBWRH0V11ZD8mx9vgt854-S15VPsE2A3cMKjgphKmFTGUxDOvqgr0gYOu1J7-fevCswe)
@@ -21,7 +20,7 @@ Nessa requisição, apenas o parâmetro x-application-id é obrigatório. O body
 
 \*\*\*\*
 
-O círculo “Stony Brook’s Citizens” foi criado para a identificar usuários que tenham como característica a chave “city” e o exato valor “Stony Brook”. Sendo assim, ele não estará na listagem ao realizar uma requisição para o Identify caso seja informado o body como no exemplo abaixo. 
+O círculo “Stony Brook’s Citizens” foi criado para a identificar usuários que tenham como característica a chave “city” e o exato valor “Stony Brook”. Sendo assim, ele não estará na listagem ao realizar uma requisição para o Identify caso seja informado o body como no exemplo abaixo.
 
 Outro ponto é que, quando o usuário não se enquadra em nenhuma segmentação, o sistema retorna indicando que ele se encaixa no “Mar Aberto”, isto é, em uma espécie de segmentação geral que inclui todos os usuários que estão fora de um círculo específico:
 
