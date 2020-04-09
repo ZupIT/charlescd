@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -14,8 +15,6 @@ import (
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MozartPipeline struct {
@@ -54,6 +53,7 @@ func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.
 		err = mozartPipeline.executeSteps(steps)
 		if err != nil {
 			mozartPipeline.returnPipelineError(err)
+			break
 		}
 	}
 
@@ -236,6 +236,7 @@ func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deploy
 		return err
 	}
 	request.Header.Add("x-circle-id", pipeline.CircleID)
+	request.Header.Set("Content-Type", "application/json")
 
 	_, err = client.Do(request)
 	if err != nil {
