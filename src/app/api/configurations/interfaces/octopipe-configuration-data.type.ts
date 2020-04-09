@@ -16,6 +16,7 @@ export interface IGenericConfig {
     provider: 'GENERIC'
     host: string
     clientCertificate: string
+    clientKey: string
     gitProvider: GitProvidersEnum
     gitToken: string
     namespace: string

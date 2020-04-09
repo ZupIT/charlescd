@@ -22,6 +22,7 @@ export interface IEKSClusterConfig {
 export interface IDefaultClusterConfig {
   provider: ClusterProviderEnum.GENERIC
   clientCertificate: string
+  clientKey: string
   host: string
 }
 
