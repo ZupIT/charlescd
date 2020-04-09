@@ -235,7 +235,7 @@ func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deploy
 	if err != nil {
 		return err
 	}
-	request.Header.Add("x-circle-id", pipeline.CircleID)
+	request.Header.Set("x-circle-id", pipeline.CircleID)
 	request.Header.Set("Content-Type", "application/json")
 
 	_, err = client.Do(request)
