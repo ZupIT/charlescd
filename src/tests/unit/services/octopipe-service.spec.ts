@@ -73,7 +73,6 @@ describe('Octopipe Service', () => {
         awsRegion: 'region',
         awsSID: 'sid',
         awsSecret: 'secret',
-        caData: 'ca-data',
         gitProvider: GitProvidersEnum.GITHUB,
         gitToken: 'some-github-token',
         namespace: 'some-app-namespace'
@@ -105,7 +104,6 @@ describe('Octopipe Service', () => {
           awsRegion: 'region',
           awsSID: 'sid',
           awsSecret: 'secret',
-          caData: 'ca-data'
         },
         helmUrl: 'helm-repository',
         istio: {
@@ -247,6 +245,7 @@ describe('Octopipe Service', () => {
         clientCertificate: 'client-cert',
         clientKey: 'client-key',
         gitProvider: GitProvidersEnum.GITHUB,
+        caData: 'ca-data',
         gitToken: 'some-github-token',
         host: 'https://k8s.com',
         namespace: 'some-app-namespace'
@@ -275,6 +274,7 @@ describe('Octopipe Service', () => {
         k8s: {
           provider: ClusterProviderEnum.GENERIC,
           clientCertificate: 'client-cert',
+          caData: 'ca-data',
           clientKey: 'client-key',
           host: 'https://k8s.com',
         },

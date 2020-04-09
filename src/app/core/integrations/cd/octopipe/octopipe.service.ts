@@ -6,7 +6,7 @@ import { IoCTokensConstants } from '../../../constants/ioc'
 import { ConsoleLoggerService } from '../../../logs/console'
 import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 import {
-  ClusterProviderEnum, IDefaultClusterConfig, IEKSClusterConfig, IOctopipePayload, IOctopipeVersion
+  ClusterProviderEnum, IGenericClusterConfig, IEKSClusterConfig, IOctopipePayload, IOctopipeVersion
 } from '../../octopipe/interfaces/octopipe-payload.interface'
 import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
 import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connector/interfaces'
@@ -96,12 +96,11 @@ export class OctopipeService implements ICdServiceStrategy {
     return payload
   }
 
-  private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IDefaultClusterConfig | null {
+  private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IGenericClusterConfig | null {
     switch (config.provider) {
       case ClusterProviderEnum.EKS:
         return {
           provider: ClusterProviderEnum.EKS,
-          caData: config.caData,
           awsSID: config.awsSID,
           awsSecret: config.awsSecret,
           awsRegion: config.awsRegion,
@@ -111,6 +110,7 @@ export class OctopipeService implements ICdServiceStrategy {
         return {
           provider: ClusterProviderEnum.GENERIC,
           clientCertificate: config.clientCertificate,
+          caData: config.caData,
           clientKey: config.clientKey,
           host: config.host
         }
