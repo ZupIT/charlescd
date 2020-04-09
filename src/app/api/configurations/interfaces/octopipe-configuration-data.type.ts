@@ -1,7 +1,8 @@
 import { GitProvidersEnum } from '../../../core/integrations/configuration/interfaces/git-providers.type'
+import { ClusterProviderEnum } from '../../../core/integrations/octopipe/interfaces/octopipe-payload.interface'
 
 export interface IEKSConfig {
-    provider: 'EKS'
+    provider: ClusterProviderEnum.EKS
     caData: string
     awsSID: string
     awsSecret: string
@@ -13,7 +14,7 @@ export interface IEKSConfig {
 }
 
 export interface IGenericConfig {
-    provider: 'GENERIC'
+    provider: ClusterProviderEnum.GENERIC
     host: string
     clientCertificate: string
     clientKey: string
@@ -23,7 +24,7 @@ export interface IGenericConfig {
 }
 
 export interface IDefaultConfig {
-    provider: 'DEFAULT'
+    provider: ClusterProviderEnum.DEFAULT
     gitProvider: GitProvidersEnum
     gitToken: string
     namespace: string
