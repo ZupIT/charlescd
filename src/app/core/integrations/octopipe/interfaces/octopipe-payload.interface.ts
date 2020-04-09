@@ -13,17 +13,17 @@ export enum ClusterProviderEnum {
 
 export interface IEKSClusterConfig {
   provider: ClusterProviderEnum.EKS
-  caData: string
   awsSID: string
   awsSecret: string
   awsRegion: string
   awsClusterName: string
 }
 
-export interface IDefaultClusterConfig {
+export interface IGenericClusterConfig {
   provider: ClusterProviderEnum.GENERIC
   clientCertificate: string
   clientKey: string
+  caData: string
   host: string
 }
 
@@ -42,6 +42,6 @@ export interface IOctopipePayload {
     token: string
   },
   helmUrl: string,
-  k8s?: IEKSClusterConfig | IDefaultClusterConfig
+  k8s?: IEKSClusterConfig | IGenericClusterConfig
   circleId: string
 }

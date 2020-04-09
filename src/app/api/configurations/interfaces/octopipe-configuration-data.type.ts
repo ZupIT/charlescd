@@ -3,7 +3,6 @@ import { ClusterProviderEnum } from '../../../core/integrations/octopipe/interfa
 
 export interface IEKSConfig {
     provider: ClusterProviderEnum.EKS
-    caData: string
     awsSID: string
     awsSecret: string
     awsRegion: string
@@ -17,6 +16,7 @@ export interface IGenericConfig {
     provider: ClusterProviderEnum.GENERIC
     host: string
     clientCertificate: string
+    caData: string
     clientKey: string
     gitProvider: GitProvidersEnum
     gitToken: string
