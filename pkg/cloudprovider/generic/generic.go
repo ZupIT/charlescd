@@ -12,8 +12,8 @@ type GenericProvider struct {
 	CAData string `json:"clientCertificate"`
 }
 
-func NewGenericProvider() *GenericProvider {
-	return &GenericProvider{}
+func NewGenericProvider(genericProvider *GenericProvider) *GenericProvider {
+	return genericProvider
 }
 
 func (genericProvider *GenericProvider) GetClient() (dynamic.Interface, error) {
