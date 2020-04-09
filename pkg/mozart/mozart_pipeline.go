@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -226,8 +225,6 @@ func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deploy
 	} else {
 		payload = map[string]string{"status": "SUCCEEDED"}
 	}
-
-	log.Println(payload)
 
 	data, err := json.Marshal(payload)
 	if err != nil {
