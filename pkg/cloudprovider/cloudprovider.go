@@ -30,8 +30,10 @@ func NewCloudProvider(provider *Provider) UseCases {
 	switch provider.Provider {
 	case GenericCloudProviderType:
 		genericProvider := &generic.GenericProvider{
-			Host:   provider.Host,
-			CAData: provider.CAData,
+			Host:              provider.Host,
+			CAData:            provider.CAData,
+			ClientCertificate: provider.ClientCertificate,
+			ClientKey:         provider.ClientKey,
 		}
 		return generic.NewGenericProvider(genericProvider)
 	case EKSCloudProviderType:

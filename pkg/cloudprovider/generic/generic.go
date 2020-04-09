@@ -8,8 +8,10 @@ import (
 )
 
 type GenericProvider struct {
-	Host   string `json:"host"`
-	CAData string `json:"clientCertificate"`
+	Host              string `json:"host"`
+	CAData            string `json:"caData"`
+	ClientCertificate string `json:"clientCertificate"`
+	ClientKey         string `json:"clientKey"`
 }
 
 func NewGenericProvider(genericProvider *GenericProvider) *GenericProvider {
@@ -26,7 +28,17 @@ func (genericProvider *GenericProvider) GetClient() (dynamic.Interface, error) {
 }
 
 func (genericProvider *GenericProvider) getRestConfig() (*rest.Config, error) {
-	encodedCertificate, err := genericProvider.getEncodedCertificate()
+	caData, err := genericProvider.getCAData()
+	if err != nil {
+		return nil, err
+	}
+
+	clientCertificate, err := genericProvider.getClientCertificate()
+	if err != nil {
+		return nil, err
+	}
+
+	clientKey, err := genericProvider.getClientKey()
 	if err != nil {
 		return nil, err
 	}
@@ -34,13 +46,23 @@ func (genericProvider *GenericProvider) getRestConfig() (*rest.Config, error) {
 	restConfig := &rest.Config{
 		Host: genericProvider.Host,
 		TLSClientConfig: rest.TLSClientConfig{
-			CAData: encodedCertificate,
+			CertData: clientCertificate,
+			KeyData:  clientKey,
+			CAData:   caData,
 		},
 	}
 
 	return restConfig, nil
 }
 
-func (genericProvider *GenericProvider) getEncodedCertificate() ([]byte, error) {
+func (genericProvider *GenericProvider) getCAData() ([]byte, error) {
 	return base64.StdEncoding.DecodeString(genericProvider.CAData)
+}
+
+func (genericProvider *GenericProvider) getClientCertificate() ([]byte, error) {
+	return base64.StdEncoding.DecodeString(genericProvider.ClientCertificate)
+}
+
+func (genericProvider *GenericProvider) getClientKey() ([]byte, error) {
+	return base64.StdEncoding.DecodeString(genericProvider.ClientKey)
 }
