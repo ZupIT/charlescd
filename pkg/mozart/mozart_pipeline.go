@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -62,8 +63,7 @@ func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.
 
 func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error {
 	var waitGroup sync.WaitGroup
-	fatalError := make(chan error)
-	waitGroupDone := make(chan bool)
+	var err error
 
 	for _, step := range steps {
 		waitGroup.Add(1)
@@ -71,26 +71,13 @@ func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error
 		go func(step *pipeline.Step) {
 			defer waitGroup.Done()
 
-			err := mozartPipeline.asyncExecuteStep(step)
-			if err != nil {
-				fatalError <- err
-			}
+			err = mozartPipeline.asyncExecuteStep(step)
 		}(step)
 	}
 
-	go func() {
-		waitGroup.Wait()
-		close(waitGroupDone)
-	}()
+	waitGroup.Wait()
 
-	select {
-	case <-waitGroupDone:
-		return nil
-	case err := <-fatalError:
-		utils.CustomLog("error", "executeSteps", err.Error())
-		close(fatalError)
-		return err
-	}
+	return err
 }
 
 func (mozartPipeline *MozartPipeline) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
@@ -162,8 +149,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) erro
 
 func (mozartPipeline *MozartPipeline) executeManifests(step *pipeline.Step, manifests map[string]interface{}) error {
 	var waitGroup sync.WaitGroup
-	fatalError := make(chan error)
-	waitGroupDone := make(chan bool)
+	var err error
 
 	for _, manifest := range manifests {
 		waitGroup.Add(1)
@@ -171,26 +157,13 @@ func (mozartPipeline *MozartPipeline) executeManifests(step *pipeline.Step, mani
 		go func(manifest interface{}) {
 			defer waitGroup.Done()
 
-			err := mozartPipeline.asyncExecuteManifest(step, manifest.(map[string]interface{}))
-			if err != nil {
-				fatalError <- err
-			}
+			err = mozartPipeline.asyncExecuteManifest(step, manifest.(map[string]interface{}))
 		}(manifest)
 	}
 
-	go func() {
-		waitGroup.Wait()
-		close(waitGroupDone)
-	}()
+	waitGroup.Wait()
 
-	select {
-	case <-waitGroupDone:
-		return nil
-	case err := <-fatalError:
-		close(fatalError)
-		utils.CustomLog("error", "executeManifests", err.Error())
-		return err
-	}
+	return err
 }
 
 func (mozartPipeline *MozartPipeline) asyncExecuteManifest(step *pipeline.Step, manifest map[string]interface{}) error {
@@ -253,6 +226,8 @@ func (mozartPipeline *MozartPipeline) triggerWebhook(pipeline *deployment.Deploy
 	} else {
 		payload = map[string]string{"status": "SUCCEEDED"}
 	}
+
+	log.Println(payload)
 
 	data, err := json.Marshal(payload)
 	if err != nil {
