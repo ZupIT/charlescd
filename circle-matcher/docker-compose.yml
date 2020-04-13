@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+
+  redis:
+    image: 'bitnami/redis:3.2.9-r3'
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes

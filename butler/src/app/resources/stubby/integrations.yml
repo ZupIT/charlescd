@@ -1,0 +1,137 @@
+# MOOVE
+
+- request:
+    method: GET
+    url: ^/moove/credentials/k8s/.*
+    headers:
+      x-organization: zup
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "value": {
+          "namespace": "k8sNamespace",
+          "account": "k8sAccount"
+        }
+      }
+
+- request:
+    method: POST
+    url: ^/moove/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+# SPINNAKER
+
+- request:
+    method: POST
+    url: ^/spinnaker/pipelines
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: POST
+    url: ^/spinnaker/tasks
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: GET
+    url: ^/spinnaker/applications/.*/pipelineConfigs/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "486b0b26-b2fd-43d0-bdd0-df126e314c70"
+      }
+
+- request:
+    method: POST
+    url: ^/spinnaker/webhooks/webhook/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+- request:
+    method: POST
+    url: ^/spinnaker/pipelines/.*/.*
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+# OCTOPIPE
+
+- request:
+    method: POST
+    url: ^/octopipe
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}
+
+# NOTIFICATION
+
+- request:
+    method: POST
+    url: ^/deploy/notifications/deployment
+  response: 201
+
+# CONSUL
+
+- request:
+    method: GET
+    url: .*/kv/config/darwin-deploy/data$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "Value": {
+            "postgresHost": "localhost",
+            "postgresPort": 5432,
+            "postgresUser": "darwin",
+            "postgresPass": "darwin",
+            "postgresDbName": "darwin",
+            "mooveUrl": "http://localhost:8883/moove",
+            "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/deployment",
+            "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/undeployment",
+            "spinnakerUrl": "http://localhost:8883/spinnaker",
+            "octopipeUrl": "http://localhost:8883/octopipe"
+          }
+        }
+      ]
