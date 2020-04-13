@@ -238,6 +238,7 @@ describe('Spinnaker Service', () => {
       }
       expect(payload).toEqual(expectedPayload)
     })
+
     it('should create a empty virtual service', () => {
       const componentDeployment = new ComponentDeploymentEntity(
           'dummy-id',
