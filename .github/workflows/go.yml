@@ -24,16 +24,15 @@ jobs:
         run: |
           go get -v -t -d ./...
 
-      - name: Test
-        run: go test -v -covermode=count ./...
-
-      - name: Cover
-        run: go test -v -covermode=count -coverprofile=coverage.out ./...
-      
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.0.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Unit tests
+        run: |
+          go test -race -covermode atomic -coverprofile=profile.cov ./...
+      - name: Send coverage
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          GO111MODULE=off go get github.com/mattn/goveralls
+          $(go env GOPATH)/bin/goveralls -coverprofile=profile.cov -service=github
 
       - name: Build
         run: go build -o dist/octopipe ./cmd/octopipe/*.go
