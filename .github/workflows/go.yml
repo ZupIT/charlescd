@@ -29,6 +29,11 @@ jobs:
 
       - name: Cover
         run: go test -v -covermode=count -coverprofile=coverage.out ./...
+      
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         run: go build -o dist/octopipe ./cmd/octopipe/*.go
