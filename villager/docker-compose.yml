@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: villager
+      POSTGRES_USER: villager
+      POSTGRES_DB: villager
+
+  stubby4j:
+    image: joncanning/stubby4j
+    ports:
+      - "8787:8787"
+      - "8882:8882"
+    environment:
+      STUBBY_PORT: 8882
+    volumes:
+      - ./src/test/resources/stubby4j/integrations.yml:/usr/local/stubby.yml
