@@ -182,6 +182,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             expect(queueSpy).not.toHaveBeenCalledWith(1234)
 
         })
+
         it('should handle a failed undeployment callback', async () => {
 
             jest.spyOn(queuedUndeploymentsRepository, 'findOne')
