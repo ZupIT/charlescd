@@ -238,7 +238,109 @@ describe('Spinnaker Service', () => {
       }
       expect(payload).toEqual(expectedPayload)
     })
+    it('should create a empty virtual service', () => {
+      const componentDeployment = new ComponentDeploymentEntity(
+          'dummy-id',
+          'dummy-name2',
+          'dummy-img-url2',
+          'dummy-img-tag2',
+          'dummy-context-path2',
+          'dummy-health-check2',
+          1001
+      )
+      const moduleDeployment = new ModuleDeploymentEntity(
+          'dummy-id',
+          'helm-repository',
+          [componentDeployment]
+      )
+      const pipelineOptions: IPipelineOptions = {
+        pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
+        pipelineVersions: [],
+        pipelineUnusedVersions: []
+      }
 
+      const deploymentConfiguration = {
+        account: 'some-account',
+        pipelineName: 'some-pipeline-name',
+        applicationName: 'some-application-name',
+        namespace: 'some-app-namespace',
+        healthCheckPath: '/health',
+        uri: { uriName: 'https://some.uri' },
+        appPort: 8989,
+        gitUsername: 'git-user',
+        gitPassword: 'git-password'
+      }
+
+      const payload =
+          octopipeService.createPipelineConfigurationObject(
+              pipelineOptions,
+              deploymentConfiguration,
+              'dummy-callback-url',
+              moduleDeployment,
+              'some-app-name'
+          )
+      const expectedPayload = {
+        appName: 'some-app-name',
+        appNamespace: 'some-app-namespace',
+        github: {
+          username: 'git-user',
+          password: 'git-password'
+        },
+        helmUrl: 'helm-repository',
+        istio: {
+          virtualService: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              hosts: [
+                'unreachable-app-name'
+              ],
+              http: [
+                {
+                  match: [
+                    {
+                      headers: {
+                        'unreachable-cookie-name': {
+                          exact: 'unreachable-cookie - value'
+                        }
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'unreachable-app-name'
+                      }
+                    }
+                  ],
+                }
+              ]
+            }
+          },
+          destinationRules: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              host: 'some-app-name',
+              subsets: []
+
+            }
+          }
+        },
+        unusedVersions: [],
+        versions: [],
+        webHookUrl: 'dummy-callback-url'
+      }
+      expect(payload).toEqual(expectedPayload)
+    })
     it('posts to octopipe server', async () => {
       const payload = {} as IOctopipeConfiguration
       jest.spyOn(httpService, 'post').mockImplementation(
