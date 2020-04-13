@@ -175,11 +175,6 @@
 
     <repositories>
         <repository>
-            <id>dw-nexus-release</id>
-            <name>Darwin Nexus Release Repository</name>
-            <url>https://repo.zup.com.br/repository/darwin-jars-all/</url>
-        </repository>
-        <repository>
             <id>mvnrepository</id>
             <name>mvnrepository</name>
             <url>http://www.mvnrepository.com</url>
