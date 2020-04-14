@@ -27,7 +27,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - run: npm ci
+    - run: npm install
       working-directory: ./ui/packages/new-ui
     - run: npm run test
       working-directory: ./ui/packages/new-ui
