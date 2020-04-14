@@ -1,0 +1,2 @@
+PUBLIC_URL=/v2
+REACT_APP_API_URI=https://darwin-api.itiaws.dev

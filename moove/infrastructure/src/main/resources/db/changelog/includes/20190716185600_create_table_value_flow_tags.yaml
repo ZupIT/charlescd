@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190716185600-1
+      author: william.okano
+      comment: "Create table value_flows_labels"
+      changes:
+        - createTable:
+            tableName: value_flows_labels
+            columns:
+              - column:
+                  name: value_flow_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: label_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false

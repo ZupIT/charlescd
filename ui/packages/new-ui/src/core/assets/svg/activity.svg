@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="13px" viewBox="0 0 15 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 63.1 (101010) - https://sketch.com -->
+    <defs>
+        <path d="M9.375,12.75 C9.105625,12.75 8.8675,12.578125 8.7825,12.3225 L5.625,2.85125 L4.343125,6.6975 C4.2575,6.953125 4.019375,7.125 3.75,7.125 L1.25,7.125 C0.905,7.125 0.625,6.845 0.625,6.5 C0.625,6.155 0.905,5.875 1.25,5.875 L3.299375,5.875 L5.031875,0.6775 C5.1175,0.421875 5.355625,0.25 5.625,0.25 C5.894375,0.25 6.133125,0.421875 6.218125,0.6775 L9.375,10.14875 L10.6575,6.3025 C10.7425,6.046875 10.980625,5.875 11.25,5.875 L13.75,5.875 C14.095625,5.875 14.375,6.155 14.375,6.5 C14.375,6.845 14.095625,7.125 13.75,7.125 L11.700625,7.125 L9.9675,12.3225 C9.8825,12.578125 9.644375,12.75 9.375,12.75" id="path-1"></path>
+    </defs>
+    <g id="Circles---Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---0.0---Expand" transform="translate(-409.000000, -62.000000)">
+            <g id="sidebar/expand/circles/open" transform="translate(135.000000, 0.000000)">
+                <g id="Options-circles" transform="translate(16.000000, 58.000000)">
+                    <g id="Icon/Menu/Burger-Copy-3" transform="translate(258.000000, 4.000000)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="Icon-Activity" fill="currentColor" xlink:href="#path-1"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

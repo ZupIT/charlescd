@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190925104000-1
+      author: mateus.cruz
+      comment: "Increasing photo_url field size no table users"
+      changes:
+        - modifyDataType:
+            columnName: photo_url
+            newDataType: varchar(512)
+            tableName: users

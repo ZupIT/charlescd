@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>grid</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.198893229">
+        <g id="Full-HD" transform="translate(-760.000000, -492.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="grid" transform="translate(760.000000, 492.000000)">
+                <g id="Icon-Grid">
+                    <path d="M19,11 C19.553,11 20,11.447 20,12 L20,19 C20,19.553 19.553,20 19,20 L12,20 C11.447,20 11,19.553 11,19 L11,12 C11,11.447 11.447,11 12,11 L19,11 Z M8,11 C8.552,11 9,11.447 9,12 L9,19 C9,19.553 8.552,20 8,20 L1,20 C0.448,20 0,19.553 0,19 L0,12 C0,11.447 0.448,11 1,11 L8,11 Z M18,13 L13,13 L13,18 L18,18 L18,13 Z M7,13 L2,13 L2,18 L7,18 L7,13 Z M8,0 C8.552,0 9,0.448 9,1 L9,8 C9,8.552 8.552,9 8,9 L1,9 C0.448,9 0,8.552 0,8 L0,1 C0,0.448 0.448,0 1,0 L8,0 Z M19,0 C19.553,0 20,0.448 20,1 L20,8 C20,8.552 19.553,9 19,9 L12,9 C11.447,9 11,8.552 11,8 L11,1 C11,0.448 11.447,0 12,0 L19,0 Z M7,2 L2,2 L2,7 L7,7 L7,2 Z M18,2 L13,2 L13,7 L18,7 L18,2 Z" id="path-1"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

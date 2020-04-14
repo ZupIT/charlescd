@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200318180000-1
+      author: adauto.paula
+      comment: "Add column git_configuration_id"
+      changes:
+        - addColumn:
+            tableName: module_snapshots
+            column:
+              name:  git_configuration_id
+              type: varchar(36)
+              constraints:
+                foreignKeyName: fk_git_configuration_id
+                references: git_configurations(id)
+                nullable: false

@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191226170000-1
+      author: lucas.fernandes
+      comment: "Removing not null constraint from cards description"
+      changes:
+        - dropNotNullConstraint:
+            columnName: description
+            tableName: cards

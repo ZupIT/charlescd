@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190725103003-1
+      author: william.okano
+      comment: "Create table cards_comments"
+      changes:
+        - createTable:
+            tableName: cards_comments
+            columns:
+              - column:
+                  name: card_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_cards_comments_cards
+                    references: cards(id)
+              - column:
+                  name: comment_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_cards_comments_comments
+                    references: comments(id)

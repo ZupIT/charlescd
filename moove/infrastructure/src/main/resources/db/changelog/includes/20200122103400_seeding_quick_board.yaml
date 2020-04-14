@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200122103400-1
+      author: monica.ribeiro
+      preConditions:
+          - onFail: MARK_RAN
+          - sqlCheck:
+              expectedResult: 0
+              sql: "select count(*) from value_flows where id = 'd3576079-748a-4b6a-909c-0792b8887fe8';"
+      comment: "Seeding value flow and problem to create Quick Board."
+      changes:
+          - insert:
+              tableName: value_flows
+              columns:
+                  - column:
+                      name: id
+                      value: "d3576079-748a-4b6a-909c-0792b8887fe8"
+                  - column:
+                      name: name
+                      value: "Charlie"
+                  - column:
+                      name: created_at
+                      value: "2020-01-22 11:22:47.916941"
+                  - column:
+                      name: description
+                      value: "Value flow description."
+          - insert:
+              tableName: problems
+              columns:
+                  - column:
+                      name: id
+                      value: "8d289d0b-396c-41b1-9f8e-4c9b037e7404"
+                  - column:
+                      name: name
+                      value: "Quick Board"
+                  - column:
+                      name: created_at
+                      value: "2020-01-22 11:22:47.916941"
+                  - column:
+                      name: description
+                      value: "Quick Board description."
+                  - column:
+                      name: value_flow_id
+                      value: "d3576079-748a-4b6a-909c-0792b8887fe8"

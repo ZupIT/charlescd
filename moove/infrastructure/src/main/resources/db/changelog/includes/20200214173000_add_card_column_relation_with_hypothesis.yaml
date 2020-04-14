@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200214173000-1
+      author: mateus.cruz
+      comment: "Add hypothesis_id to card_columns table"
+      changes:
+        - addColumn:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: hypothesis_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_hypothesis_card_columns
+                    references: hypotheses(id)
+                    nullable: true

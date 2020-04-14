@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190719182600-1
+      author: william.okano
+      comment: "Create table hypotheses"
+      changes:
+        - createTable:
+            tableName: hypotheses
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: problem_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_hypothesis_problem
+                    references: problems(id)
+              - column:
+                  name: author_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_hypothesis_author
+                    references: users(id)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 20190719182600-2
+      author: william.okano
+      comment: "Create table hypotheses_labels"
+      changes:
+        - createTable:
+            tableName: hypotheses_labels
+            columns:
+              - column:
+                  name: hypothesis_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: label_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false

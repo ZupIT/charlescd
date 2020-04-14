@@ -1,0 +1,22 @@
+databaseChangeLog:
+- changeSet:
+    id: 20190719140300-1
+    author: lucas.fernandes
+    comment: "Create table builds_features"
+    changes:
+    - createTable:
+        tableName: builds_features
+        columns:
+        - column:
+            name: build_id
+            type: varchar(36)
+            autoIncrement: false
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: feature_id
+            type: varchar(36)
+            constraints:
+              primaryKey: true
+              nullable: false

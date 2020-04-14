@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190717110600-1
+      author: william.okano
+      comment: "Create table users"
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: photo_url
+                  type: varchar(64)
+                  constraints:
+                    nullable: false

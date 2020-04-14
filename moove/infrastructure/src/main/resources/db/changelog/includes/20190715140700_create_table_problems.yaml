@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190715140700-1
+      author: adauto.paula
+      comment: "Create table problems"
+      changes:
+        - createTable:
+            tableName: problems
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(64)
+                  constraints:
+                    foreignKeyName: user_id_fk
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: value_flow_id
+                  type: varchar(64)
+                  constraints:
+                    foreignKeyName: value_flow_id_fk
+                    references: value_flows(id)
+                    nullable: false
