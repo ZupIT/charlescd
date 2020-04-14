@@ -33,6 +33,8 @@ jobs:
       with:
         node-version: 12.x
     - run: npm ci
+      working-directory: ./butler
     - run: npm run build --if-present
+      working-directory: ./butler
       env:
         CI: true
