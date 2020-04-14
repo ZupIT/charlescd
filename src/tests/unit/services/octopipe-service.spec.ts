@@ -255,7 +255,7 @@ describe('Spinnaker Service', () => {
           [componentDeployment]
       )
       const pipelineOptions: IPipelineOptions = {
-        pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
+        pipelineCircles: [],
         pipelineVersions: [],
         pipelineUnusedVersions: []
       }
