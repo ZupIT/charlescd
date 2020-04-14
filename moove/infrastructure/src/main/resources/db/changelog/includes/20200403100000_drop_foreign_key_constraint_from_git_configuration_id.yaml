@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200403100000-1
+      author: mateus.cruz
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: module_snapshots
+            constraintName: fk_git_configuration_id

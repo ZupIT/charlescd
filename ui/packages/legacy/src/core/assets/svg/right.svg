@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="15px" viewBox="0 0 17 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 60.1 (101010) - https://sketch.com -->
+    <title>3F2FA2F4-1563-4E7C-9D75-DBAC10206C7D</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <path d="M8.66857386,10 C8.49786964,10 8.32716542,9.93875 8.19713681,9.816875 L4.19625665,6.06687507 C3.93553262,5.82250007 3.93553262,5.42750008 4.19625665,5.18312508 C4.45698067,4.93875009 4.87840672,4.93875009 5.13913074,5.18312508 L8.66857386,8.49125003 L12.198017,5.18312508 C12.458741,4.93875009 12.880167,4.93875009 13.1408911,5.18312508 C13.4016151,5.42750008 13.4016151,5.82250007 13.1408911,6.06687507 L9.1400109,9.816875 C9.0099823,9.93875 8.83927808,10 8.66857386,10" id="path-1"></path>
+    </defs>
+    <g id="Asset-Artboard-Page" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon/Chevron/Right" transform="translate(0.003521, 0.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Icon-Chevron-Right" fill="#FFFFFF" transform="translate(8.668574, 7.499922) rotate(-90.000000) translate(-8.668574, -7.499922) " xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

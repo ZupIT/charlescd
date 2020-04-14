@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="20px" viewBox="0 0 22 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M14,20 C13.569,20 13.188,19.725 13.052,19.316 L8,4.162 L5.949,10.316 C5.812,10.725 5.431,11 5,11 L1,11 C0.448,11 0,10.552 0,10 C0,9.448 0.448,9 1,9 L4.279,9 L7.051,0.684 C7.188,0.275 7.569,0 8,0 C8.431,0 8.813,0.275 8.949,0.684 L14,15.838 L16.052,9.684 C16.188,9.275 16.569,9 17,9 L21,9 C21.553,9 22,9.448 22,10 C22,10.552 21.553,11 21,11 L17.721,11 L14.948,19.316 C14.812,19.725 14.431,20 14,20" id="path-metrics"></path>
+    </defs>
+    <g id="Circles---Home-metrics" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---2.0---Expand---0.1-circle-metrics-" transform="translate(-470.000000, -540.000000)">
+            <g id="group/circles/active" transform="translate(438.000000, 0.000000)">
+                <g id="circle-metrics">
+                    <g id="Metrics-metrics" transform="translate(32.000000, 539.000000)">
+                        <g id="Group-10">
+                            <g id="Icon/User/Metrics-metrics" transform="translate(0.000000, 1.000000)">
+                                <mask id="mask-metrics" fill="white">
+                                    <use xlink:href="#path-metrics"></use>
+                                </mask>
+                                <use id="Icon-Activity" fill="currentColor" xlink:href="#path-metrics"></use>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

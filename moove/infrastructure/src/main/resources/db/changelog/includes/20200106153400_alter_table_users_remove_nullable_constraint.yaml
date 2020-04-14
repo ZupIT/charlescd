@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200106153400-1
+      author: lucas.fernandes
+      comment: "Removing not null constraint from users photo_url"
+      changes:
+        - dropNotNullConstraint:
+            columnName: photo_url
+            tableName: users

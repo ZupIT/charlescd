@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200305145000-1
+      author: adauto.paula
+      comment: "Create table component_snapshots"
+      changes:
+        - createTable:
+            tableName: component_snapshots
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: component_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: context_path
+                  type: varchar(64)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: health_check
+                  type: varchar(64)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: port
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: application_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_ms_application_id
+                    references: applications(id)
+                    nullable: false
+              - column:
+                  name: module_snapshot_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_cs_module_snapshot_id
+                    references: module_snapshots(id)
+                    nullable: false

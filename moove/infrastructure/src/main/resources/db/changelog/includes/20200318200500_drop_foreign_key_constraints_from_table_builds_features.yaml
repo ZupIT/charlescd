@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200318200500-1
+      author: adauto.paula
+      comment: "Drop foreign key constraint fk_builds_features_build_id"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: builds_features
+            constraintName: fk_builds_features_build_id
+  - changeSet:
+      id: 20200318200500-2
+      author: adauto.paula
+      comment: "Drop foreign key constraint fk_builds_features_feature_id"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: builds_features
+            constraintName: fk_builds_features_feature_id

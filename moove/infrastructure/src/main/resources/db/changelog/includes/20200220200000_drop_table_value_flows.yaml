@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200220200000-1
+      author: adauto.paula
+      comment: "Drop table value-flows"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: value_flows
+        - dropTable:
+            cascadeConstraints: true
+            tableName: value_flows_labels

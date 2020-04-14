@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190911174000-1
+      author: mateus.cruz
+      comment: "Create table modules_configurations"
+      changes:
+        - createTable:
+            tableName: modules_configurations
+            columns:
+              - column:
+                  name: module_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: configuration_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
