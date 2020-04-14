@@ -1,8 +1,6 @@
 package deployer
 
 import (
-	"log"
-
 	"github.com/imdario/mergo"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,7 +30,6 @@ func (deploy *Deploy) Do() error {
 func (deploy *Deploy) createOrUpdateResource() error {
 	err := deploy.createResource()
 	if deploy.isAlreadyExistsByError(err) {
-		log.Println("ENTROU")
 		err = deploy.updateResource()
 	}
 
@@ -80,9 +77,6 @@ func (deploy *Deploy) updateResource() error {
 	name := deploy.Manifest.GetName()
 	namespace := deploy.Namespace
 
-	log.Println("NAME", name)
-	log.Println("NAME", namespace)
-
 	resource, err := k8sResource.Namespace(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		return err
@@ -95,7 +89,6 @@ func (deploy *Deploy) updateResource() error {
 
 	_, err = k8sResource.Namespace(namespace).Update(resource, metav1.UpdateOptions{})
 	if err != nil {
-		log.Println("UPDATE", resourceSchema.Resource)
 		return err
 	}
 
