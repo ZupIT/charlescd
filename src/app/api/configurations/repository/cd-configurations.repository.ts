@@ -71,7 +71,9 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
 
     private trimObject(configurationData: ICdConfigurationData): ICdConfigurationData {
         Object.keys(configurationData).map(key => {
-            return configurationData[key] = configurationData[key].trim()
+            if (typeof configurationData[key] === 'string') {
+                configurationData[key] = configurationData[key].trim()
+            }
         })
         return configurationData
     }
