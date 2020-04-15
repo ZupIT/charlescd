@@ -243,6 +243,19 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <repository>
+            <id>rw-nexus-release</id>
+            <name>Realwave Nexus Release Repository</name>
+            <url>https://repo.zup.com.br/repository/rw-jars-all/</url>
+        </repository>
+        <repository>
+            <id>darwin-nexus-release</id>
+            <name>Darwin Nexus Release Repository</name>
+            <url>https://repo.zup.com.br/repository/darwin-jars-all/</url>
+        </repository>
+    </repositories>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
