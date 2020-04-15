@@ -9,30 +9,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      
     - uses: actions/cache@v1
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
+          
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
+
     - run: npm ci
       working-directory: ./butler
+      
     - run: npm run build --if-present
       working-directory: ./butler
       env:
         CI: true
+
     - name: Substring branch name
       id: substring
       uses: ricardorames/substring-branch-name-action@v0.2.1
       with:
-        separator: 'release-darwin-' 
+        separator: 'release-darwin-'
+
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
+        working-directory: ./butler
         username: ${{secrets.DOCKER_REGISTRY_USERNAME}}
         password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
         registry: realwavelab.azurecr.io
