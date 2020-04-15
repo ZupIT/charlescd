@@ -98,19 +98,13 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
                 'dummy-id',
                 'dummy-name',
                 'dummy-img-url',
-                'dummy-img-tag',
-                'dummy-context-path',
-                'dummy-health-check',
-                1234
+                'dummy-img-tag'
             ),
             new ComponentDeploymentEntity(
                 'dummy-id',
                 'dummy-name',
                 'dummy-img-url',
-                'dummy-img-tag',
-                'dummy-context-path',
-                'dummy-health-check',
-                1234
+                'dummy-img-tag'
             )
         ]
 
