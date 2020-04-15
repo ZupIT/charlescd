@@ -18,7 +18,7 @@ export class ModuleEntity extends BaseEntity {
   })
   public id: string
 
-  @Column({ name: 'cd_configuration_id'})
+  @Column({ name: 'cd_configuration_id', type: 'varchar'})
   public cdConfigurationId: string | null
 
   @OneToMany(
