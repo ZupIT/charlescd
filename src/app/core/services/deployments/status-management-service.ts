@@ -2,389 +2,401 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import {
-    ComponentDeploymentEntity,
-    ComponentUndeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    ModuleUndeploymentEntity,
-    UndeploymentEntity
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  ModuleUndeploymentEntity,
+  UndeploymentEntity
 } from '../../../api/deployments/entity'
 import {
-    DeploymentStatusEnum,
-    UndeploymentStatusEnum
+  DeploymentStatusEnum,
+  UndeploymentStatusEnum
 } from '../../../api/deployments/enums'
 import {
-    ComponentDeploymentsRepository,
-    ComponentUndeploymentsRepository
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository
 } from '../../../api/deployments/repository'
 
 @Injectable()
 export class StatusManagementService {
 
-    constructor(
-        @InjectRepository(DeploymentEntity)
-        private readonly deploymentsRepository: Repository<DeploymentEntity>,
-        @InjectRepository(ModuleDeploymentEntity)
-        private readonly moduleDeploymentRepository: Repository<ModuleDeploymentEntity>,
-        @InjectRepository(ComponentDeploymentsRepository)
-        private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-        @InjectRepository(ComponentUndeploymentsRepository)
-        private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
-        @InjectRepository(ModuleUndeploymentEntity)
-        private readonly moduleUndeploymentsRepository: Repository<ModuleUndeploymentEntity>,
-        @InjectRepository(UndeploymentEntity)
-        private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
-    ) {}
+  constructor(
+    @InjectRepository(DeploymentEntity)
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    @InjectRepository(ModuleDeploymentEntity)
+    private readonly moduleDeploymentRepository: Repository<ModuleDeploymentEntity>,
+    @InjectRepository(ComponentDeploymentsRepository)
+    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(ComponentUndeploymentsRepository)
+    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
+    @InjectRepository(ModuleUndeploymentEntity)
+    private readonly moduleUndeploymentsRepository: Repository<ModuleUndeploymentEntity>,
+    @InjectRepository(UndeploymentEntity)
+    private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
+  ) { }
 
-    public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.undeploymentsRepository.update(undeployment.id, { status })
-        if (!undeployment.moduleUndeployments) {
-            undeployment.moduleUndeployments =
-                await this.moduleUndeploymentsRepository.find({
-                    where: { undeployment: { id: undeployment.id } },
-                    relations: ['componentUndeployments']
-                })
-        }
-        return Promise.all(undeployment.moduleUndeployments.map(m => this.deepUpdateModuleUndeploymentStatus(m, status)))
-    }
-
-    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status })
-        return Promise.all(
-            moduleUndeployment.componentUndeployments
-                .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
-        )
-    }
-
-    public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
-      await this.deploymentsRepository.update(deployment.id, { status })
-      if (!deployment.modules) {
-            deployment.modules =
-                await this.moduleDeploymentRepository.find({
-                    where: { deployment: {id: deployment.id} }
-                })
-        }
-      return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
-    }
-
-    public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
-      await this.moduleDeploymentRepository.update(module.id, { status })
-      return Promise.all(
-          module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
-      )
-    }
-
-    public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
-
-        const componentDeploymentEntity: ComponentDeploymentEntity =
-            await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
-        await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
-        await this.propagateFailedStatusChange(componentDeploymentEntity)
-    }
-
-    public async setComponentDeploymentStatusAsFinished(
-      componentDeploymentId: string
-    ): Promise<void> {
-
-      const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
-      await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
-      await this.propagateSuccessStatusChange(componentDeploymentEntity)
-    }
-
-    public async setComponentUndeploymentStatusAsFailed(componentUndeploymentId: string): Promise<void> {
-
-        const componentUndeployment: ComponentUndeploymentEntity =
-            await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
-
-        await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FAILED)
-        await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
-    }
-
-    private async propagateFailedUndeploymentStatus(
-        undeployment: UndeploymentEntity
-    ): Promise<void> {
-
-        await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FAILED)
-    }
-
-    private async propagateFailedModuleUndeploymentStatus(
-        moduleUndeployment: ModuleUndeploymentEntity
-    ): Promise<void> {
-
-        await this.updateModuleUndeploymentStatus(moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
-    }
-
-    private async propagateFailedUndeploymentStatusChange(
-        componentUndeployment: ComponentUndeploymentEntity
-    ): Promise<void> {
-
-        await this.propagateFailedModuleUndeploymentStatus(componentUndeployment.moduleUndeployment)
-        await this.propagateFailedUndeploymentStatus(componentUndeployment.moduleUndeployment.undeployment)
-    }
-
-    public async setComponentUndeploymentStatusAsFinished(
-        componentUndeploymentId: string
-    ): Promise<void> {
-
-        const componentUndeploymentEntity: ComponentUndeploymentEntity =
-            await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
-
-        await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FINISHED)
-        await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
-    }
-
-    private async updateComponentUndeploymentStatus(
-        componentUndeploymentId: string,
-        status: UndeploymentStatusEnum
-    ): Promise<void> {
-
-        await this.componentUndeploymentsRepository.update(
-            { id: componentUndeploymentId },
-            { status }
-        )
-    }
-
-    private async propagateUndeploymentSuccessStatusChange(
-        componentUndeployment: ComponentUndeploymentEntity
-    ): Promise<void> {
-
-        await this.propagateModuleUndeploymentSuccess(
-            componentUndeployment.moduleUndeployment.id
-        )
-        await this.propagateUndeploymentSuccess(
-            componentUndeployment.moduleUndeployment.undeployment.id
-        )
-    }
-
-    private async propagateModuleUndeploymentSuccess(
-        moduleUndeploymentId: string
-    ): Promise<void> {
-
-        const moduleUndeployment: ModuleUndeploymentEntity =
-            await this.getModuleUndeploymentEntity(moduleUndeploymentId)
-        const finishedComponents: ComponentUndeploymentEntity[] =
-            this.getModuleUndeploymentFinishedComponents(moduleUndeployment)
-
-        if (finishedComponents.length === moduleUndeployment.componentUndeployments.length) {
-            await this.updateModuleUndeploymentStatus(moduleUndeploymentId, UndeploymentStatusEnum.FINISHED)
-        }
-    }
-
-    private async getModuleUndeploymentEntity(
-        moduleUndeploymentId: string
-    ): Promise<ModuleUndeploymentEntity> {
-
-        return await this.moduleUndeploymentsRepository.findOne({
-            where: { id: moduleUndeploymentId },
-            relations: [
-                'componentUndeployments'
-            ]
+  public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
+    await this.undeploymentsRepository.update(undeployment.id, { status })
+    if (!undeployment.moduleUndeployments) {
+      undeployment.moduleUndeployments =
+        await this.moduleUndeploymentsRepository.find({
+          where: { undeployment: { id: undeployment.id } },
+          relations: ['componentUndeployments']
         })
     }
+    return Promise.all(undeployment.moduleUndeployments.map(m => this.deepUpdateModuleUndeploymentStatus(m, status)))
+  }
 
-    private getModuleUndeploymentFinishedComponents(
-        moduleUndeployment: ModuleUndeploymentEntity
-    ): ComponentUndeploymentEntity[] {
+  public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
+    await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status })
+    return Promise.all(
+      moduleUndeployment.componentUndeployments
+        .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
+    )
+  }
 
-        return moduleUndeployment.componentUndeployments.filter(
-            componentUndeployment => componentUndeployment.status === UndeploymentStatusEnum.FINISHED
-        )
-    }
-
-    private async updateModuleUndeploymentStatus(
-        moduleUndeploymentId: string,
-        status: UndeploymentStatusEnum
-    ): Promise<void> {
-
-        await this.moduleUndeploymentsRepository.update(
-            { id: moduleUndeploymentId },
-            { status }
-        )
-    }
-
-    private async propagateUndeploymentSuccess(
-        undeploymentId: string
-    ): Promise<void> {
-
-        const undeployment: UndeploymentEntity =
-            await this.getUndeploymentEntity(undeploymentId)
-        const finishedModules: ModuleUndeploymentEntity[] =
-            this.getUndeploymentFinishedModules(undeployment)
-
-        if (finishedModules.length === undeployment.moduleUndeployments.length) {
-            await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FINISHED)
-        }
-    }
-
-    private async getUndeploymentEntity(
-        undeploymentId: string
-    ): Promise<UndeploymentEntity> {
-
-        return await this.undeploymentsRepository.findOne({
-            where: { id: undeploymentId },
-            relations: [
-                'moduleUndeployments'
-            ]
+  public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
+    await this.deploymentsRepository.update(deployment.id, { status })
+    if (!deployment.modules) {
+      deployment.modules =
+        await this.moduleDeploymentRepository.find({
+          where: { deployment: { id: deployment.id } }
         })
     }
+    return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
+  }
 
-    private getUndeploymentFinishedModules(
-        undeployment: UndeploymentEntity
-    ): ModuleUndeploymentEntity[] {
+  public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
+    await this.moduleDeploymentRepository.update(module.id, { status })
+    return Promise.all(
+      module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
+    )
+  }
 
-        return undeployment.moduleUndeployments.filter(
-            moduleUndeployment => moduleUndeployment.status === UndeploymentStatusEnum.FINISHED
-        )
+  public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
+
+    const componentDeploymentEntity: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+    await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
+    await this.propagateFailedStatusChange(componentDeploymentEntity)
+  }
+
+  public async setComponentDeploymentStatusAsFinished(
+    componentDeploymentId: string
+  ): Promise<void> {
+
+    const componentDeploymentEntity: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
+    await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
+    await this.propagateSuccessStatusChange(componentDeploymentEntity)
+  }
+
+  public async setComponentUndeploymentStatusAsFailed(componentUndeploymentId: string): Promise<void> {
+
+    const componentUndeployment: ComponentUndeploymentEntity =
+      await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
+
+    await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FAILED)
+    await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
+  }
+
+  private async propagateFailedUndeploymentStatus(
+    undeployment: UndeploymentEntity
+  ): Promise<void> {
+
+    await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FAILED)
+  }
+
+  private async propagateFailedModuleUndeploymentStatus(
+    moduleUndeployment: ModuleUndeploymentEntity
+  ): Promise<void> {
+
+    await this.updateModuleUndeploymentStatus(moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
+  }
+
+  private async propagateFailedUndeploymentStatusChange(
+    componentUndeployment: ComponentUndeploymentEntity
+  ): Promise<void> {
+
+    await this.propagateFailedModuleUndeploymentStatus(componentUndeployment.moduleUndeployment)
+    await this.propagateFailedUndeploymentStatus(componentUndeployment.moduleUndeployment.undeployment)
+  }
+
+  public async setComponentUndeploymentStatusAsFinished(
+    componentUndeploymentId: string
+  ): Promise<void> {
+
+    const componentUndeploymentEntity: ComponentUndeploymentEntity =
+      await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
+
+    await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FINISHED)
+    await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
+  }
+
+  private async updateComponentUndeploymentStatus(
+    componentUndeploymentId: string,
+    status: UndeploymentStatusEnum
+  ): Promise<void> {
+
+    await this.componentUndeploymentsRepository.update(
+      { id: componentUndeploymentId },
+      { status }
+    )
+  }
+
+  private async propagateUndeploymentSuccessStatusChange(
+    componentUndeployment: ComponentUndeploymentEntity
+  ): Promise<void> {
+
+    await this.propagateModuleUndeploymentSuccess(
+      componentUndeployment.moduleUndeployment.id
+    )
+    await this.propagateUndeploymentSuccess(
+      componentUndeployment.moduleUndeployment.undeployment.id
+    )
+  }
+
+  private async propagateModuleUndeploymentSuccess(
+    moduleUndeploymentId: string
+  ): Promise<void> {
+
+    const moduleUndeployment: ModuleUndeploymentEntity | undefined =
+      await this.getModuleUndeploymentEntity(moduleUndeploymentId)
+    if (!moduleUndeployment) {
+      throw Error('404') // TODO Handle this error correctly
     }
+    const finishedComponents: ComponentUndeploymentEntity[] =
+      this.getModuleUndeploymentFinishedComponents(moduleUndeployment)
 
-    private async updateUndeploymentStatus(
-        undeploymentId: string,
-        status: UndeploymentStatusEnum
-    ): Promise<void> {
-
-        await this.undeploymentsRepository.update(
-            { id: undeploymentId },
-            { status }
-        )
+    if (finishedComponents.length === moduleUndeployment.componentUndeployments.length) {
+      await this.updateModuleUndeploymentStatus(moduleUndeploymentId, UndeploymentStatusEnum.FINISHED)
     }
+  }
 
-    private getDeploymentFinishedModules(
-      deployment: DeploymentEntity
-    ): ModuleDeploymentEntity[] {
+  private async getModuleUndeploymentEntity(
+    moduleUndeploymentId: string
+  ): Promise<ModuleUndeploymentEntity | undefined> {
 
-      return deployment.modules.filter(
-        moduleDeployment => moduleDeployment.status === DeploymentStatusEnum.FINISHED
-      )
+    return await this.moduleUndeploymentsRepository.findOne({
+      where: { id: moduleUndeploymentId },
+      relations: [
+        'componentUndeployments'
+      ]
+    })
+  }
+
+  private getModuleUndeploymentFinishedComponents(
+    moduleUndeployment: ModuleUndeploymentEntity
+  ): ComponentUndeploymentEntity[] {
+
+    return moduleUndeployment.componentUndeployments.filter(
+      componentUndeployment => componentUndeployment.status === UndeploymentStatusEnum.FINISHED
+    )
+  }
+
+  private async updateModuleUndeploymentStatus(
+    moduleUndeploymentId: string,
+    status: UndeploymentStatusEnum
+  ): Promise<void> {
+
+    await this.moduleUndeploymentsRepository.update(
+      { id: moduleUndeploymentId },
+      { status }
+    )
+  }
+
+  private async propagateUndeploymentSuccess(
+    undeploymentId: string
+  ): Promise<void> {
+
+    const undeployment: UndeploymentEntity | undefined =
+      await this.getUndeploymentEntity(undeploymentId)
+    if (!undeployment) {
+      throw Error('404') // TODO Handle this error correctly
     }
+    const finishedModules: ModuleUndeploymentEntity[] =
+      this.getUndeploymentFinishedModules(undeployment)
 
-    private getModuleFinishedComponents(
-      moduleDeployment: ModuleDeploymentEntity
-    ): ComponentDeploymentEntity[] {
-
-      return moduleDeployment.components.filter(
-        componentDeployment => componentDeployment.status === DeploymentStatusEnum.FINISHED
-      )
+    if (finishedModules.length === undeployment.moduleUndeployments.length) {
+      await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FINISHED)
     }
+  }
 
-    private async updateDeploymentStatus(
-      deploymentId: string,
-      status: DeploymentStatusEnum
-    ): Promise<void> {
+  private async getUndeploymentEntity(
+    undeploymentId: string
+  ): Promise<UndeploymentEntity | undefined> {
 
-      await this.deploymentsRepository.update(
-        { id: deploymentId },
-        { status }
-      )
+    return await this.undeploymentsRepository.findOne({
+      where: { id: undeploymentId },
+      relations: [
+        'moduleUndeployments'
+      ]
+    })
+  }
+
+  private getUndeploymentFinishedModules(
+    undeployment: UndeploymentEntity
+  ): ModuleUndeploymentEntity[] {
+
+    return undeployment.moduleUndeployments.filter(
+      moduleUndeployment => moduleUndeployment.status === UndeploymentStatusEnum.FINISHED
+    )
+  }
+
+  private async updateUndeploymentStatus(
+    undeploymentId: string,
+    status: UndeploymentStatusEnum
+  ): Promise<void> {
+
+    await this.undeploymentsRepository.update(
+      { id: undeploymentId },
+      { status }
+    )
+  }
+
+  private getDeploymentFinishedModules(
+    deployment: DeploymentEntity
+  ): ModuleDeploymentEntity[] {
+
+    return deployment.modules.filter(
+      moduleDeployment => moduleDeployment.status === DeploymentStatusEnum.FINISHED
+    )
+  }
+
+  private getModuleFinishedComponents(
+    moduleDeployment: ModuleDeploymentEntity
+  ): ComponentDeploymentEntity[] {
+
+    return moduleDeployment.components.filter(
+      componentDeployment => componentDeployment.status === DeploymentStatusEnum.FINISHED
+    )
+  }
+
+  private async updateDeploymentStatus(
+    deploymentId: string,
+    status: DeploymentStatusEnum
+  ): Promise<void> {
+
+    await this.deploymentsRepository.update(
+      { id: deploymentId },
+      { status }
+    )
+  }
+
+  private async getDeploymentEntity(
+    deploymentId: string
+  ): Promise<DeploymentEntity | undefined> {
+
+    return await this.deploymentsRepository.findOne({
+      where: { id: deploymentId },
+      relations: [
+        'modules'
+      ]
+    })
+  }
+
+  private async propagateSuccessStatusChangeToDeployment(
+    deploymentId: string
+  ): Promise<void> {
+
+    const deployment: DeploymentEntity | undefined =
+      await this.getDeploymentEntity(deploymentId)
+    if (!deployment) {
+      throw Error('404') // TODO Handle this error correctly
     }
+    const finishedModules: ModuleDeploymentEntity[] =
+      this.getDeploymentFinishedModules(deployment)
 
-    private async getDeploymentEntity(
-      deploymentId: string
-    ): Promise<DeploymentEntity> {
-
-      return await this.deploymentsRepository.findOne({
-        where: { id: deploymentId },
-        relations: [
-          'modules'
-        ]
-      })
+    if (finishedModules.length === deployment.modules.length) {
+      await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FINISHED)
     }
+  }
 
-    private async propagateSuccessStatusChangeToDeployment(
-      deploymentId: string
-    ): Promise<void> {
+  private async updateModuleDeploymentStatus(
+    moduleDeploymentId: string,
+    status: DeploymentStatusEnum
+  ): Promise<void> {
 
-      const deployment: DeploymentEntity =
-        await this.getDeploymentEntity(deploymentId)
-      const finishedModules: ModuleDeploymentEntity[] =
-        this.getDeploymentFinishedModules(deployment)
+    await this.moduleDeploymentRepository.update(
+      { id: moduleDeploymentId },
+      { status }
+    )
+  }
 
-      if (finishedModules.length === deployment.modules.length) {
-        await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FINISHED)
-      }
+  private async getModuleDeploymentEntity(
+    moduleDeploymentId: string
+  ): Promise<ModuleDeploymentEntity | undefined> {
+
+    return await this.moduleDeploymentRepository.findOne({
+      where: { id: moduleDeploymentId },
+      relations: [
+        'components'
+      ]
+    })
+  }
+
+  private async propagateSuccessStatusChangeToModule(
+    moduleDeploymentId: string
+  ): Promise<void> {
+
+    const moduleDeployment: ModuleDeploymentEntity | undefined =
+      await this.getModuleDeploymentEntity(moduleDeploymentId)
+    if (!moduleDeployment) {
+      throw Error('404') // TODO Handle this error correctly
     }
+    const finishedComponents: ComponentDeploymentEntity[] =
+      this.getModuleFinishedComponents(moduleDeployment)
 
-    private async updateModuleDeploymentStatus(
-      moduleDeploymentId: string,
-      status: DeploymentStatusEnum
-    ): Promise<void> {
-
-      await this.moduleDeploymentRepository.update(
-        { id: moduleDeploymentId },
-        { status }
-      )
+    if (finishedComponents.length === moduleDeployment.components.length) {
+      await this.updateModuleDeploymentStatus(moduleDeploymentId, DeploymentStatusEnum.FINISHED)
     }
+  }
 
-    private async getModuleDeploymentEntity(
-      moduleDeploymentId: string
-    ): Promise<ModuleDeploymentEntity> {
+  private async propagateSuccessStatusChange(
+    componentDeploymentEntity: ComponentDeploymentEntity
+  ): Promise<void> {
 
-      return await this.moduleDeploymentRepository.findOne({
-        where: { id: moduleDeploymentId },
-        relations: [
-          'components'
-        ]
-      })
-    }
+    await this.propagateSuccessStatusChangeToModule(
+      componentDeploymentEntity.moduleDeployment.id
+    )
+    await this.propagateSuccessStatusChangeToDeployment(
+      componentDeploymentEntity.moduleDeployment.deployment.id
+    )
+  }
 
-    private async propagateSuccessStatusChangeToModule(
-      moduleDeploymentId: string
-    ): Promise<void> {
+  private async updateComponentDeploymentStatus(
+    componentDeploymentId: string,
+    status: DeploymentStatusEnum
+  ): Promise<void> {
 
-      const moduleDeployment: ModuleDeploymentEntity =
-        await this.getModuleDeploymentEntity(moduleDeploymentId)
-      const finishedComponents: ComponentDeploymentEntity[] =
-        this.getModuleFinishedComponents(moduleDeployment)
+    await this.componentDeploymentsRepository.update(
+      { id: componentDeploymentId },
+      { status }
+    )
+  }
 
-      if (finishedComponents.length === moduleDeployment.components.length) {
-        await this.updateModuleDeploymentStatus(moduleDeploymentId, DeploymentStatusEnum.FINISHED)
-      }
-    }
+  private async propagageFailedStatusChangeToDeployment(
+    deployment: DeploymentEntity
+  ): Promise<void> {
 
-    private async propagateSuccessStatusChange(
-      componentDeploymentEntity: ComponentDeploymentEntity
-    ): Promise<void> {
+    await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FAILED)
+  }
 
-      await this.propagateSuccessStatusChangeToModule(
-        componentDeploymentEntity.moduleDeployment.id
-      )
-      await this.propagateSuccessStatusChangeToDeployment(
-        componentDeploymentEntity.moduleDeployment.deployment.id
-      )
-    }
+  private async propagateFailedStatusChangeToModule(
+    moduleDeployment: ModuleDeploymentEntity
+  ): Promise<void> {
 
-    private async updateComponentDeploymentStatus(
-      componentDeploymentId: string,
-      status: DeploymentStatusEnum
-    ): Promise<void> {
+    await this.updateModuleDeploymentStatus(moduleDeployment.id, DeploymentStatusEnum.FAILED)
+  }
 
-      await this.componentDeploymentsRepository.update(
-        { id: componentDeploymentId },
-        { status }
-      )
-    }
+  private async propagateFailedStatusChange(
+    componentDeploymentEntity: ComponentDeploymentEntity
+  ): Promise<void> {
 
-    private async propagageFailedStatusChangeToDeployment(
-      deployment: DeploymentEntity
-    ): Promise<void> {
-
-      await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FAILED)
-    }
-
-    private async propagateFailedStatusChangeToModule(
-      moduleDeployment: ModuleDeploymentEntity
-    ): Promise<void> {
-
-      await this.updateModuleDeploymentStatus(moduleDeployment.id, DeploymentStatusEnum.FAILED)
-    }
-
-    private async propagateFailedStatusChange(
-      componentDeploymentEntity: ComponentDeploymentEntity
-    ): Promise<void> {
-
-      await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
-      await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
-    }
+    await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
+    await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
+  }
 }

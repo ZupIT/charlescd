@@ -12,7 +12,7 @@ export class ComponentsExistencePipe implements PipeTransform {
     }
 
     async transform(idComponent: string, metadata: ArgumentMetadata) {
-        const componentEntity: ComponentEntity = await this.componentRepository.findOne({id: idComponent})
+        const componentEntity: ComponentEntity | undefined = await this.componentRepository.findOne({id: idComponent})
         if (!componentEntity) {
             throw new BadRequestException('Component not found')
         }
