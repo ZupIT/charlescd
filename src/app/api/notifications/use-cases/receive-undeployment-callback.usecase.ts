@@ -89,7 +89,7 @@ export class ReceiveUndeploymentCallbackUsecase {
 
     if (undeployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, deployment.circleId
+        deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId
       )
     }
   }
