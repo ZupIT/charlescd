@@ -6,15 +6,21 @@ import {
     ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import {
+    ComponentDeploymentsRepository,
+    QueuedDeploymentsRepository
+} from '../../../app/api/deployments/repository'
 import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
-    ComponentsRepositoryStub, DeploymentsRepositoryStub,
-    QueuedDeploymentsRepositoryStub, QueuedUndeploymentsRepositoryStub,
+    ComponentDeploymentsRepositoryStub,
+    ComponentsRepositoryStub,
+    DeploymentsRepositoryStub,
+    QueuedDeploymentsRepositoryStub,
+    QueuedUndeploymentsRepositoryStub,
     UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
@@ -30,6 +36,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let deploymentsRepository: Repository<DeploymentEntity>
     let undeploymentsRepository: Repository<UndeploymentEntity>
     let createUndeploymentDto: CreateUndeploymentDto
+    let componentDeploymentRepository: ComponentDeploymentsRepository
     let deployment: DeploymentEntity
     let undeployment: UndeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
@@ -47,6 +54,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 CreateUndeploymentRequestUsecase,
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
+                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
@@ -66,6 +74,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
         mooveService = module.get<MooveService>(MooveService)
+        componentDeploymentRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
 
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
 
@@ -74,19 +83,13 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 'dummy-id',
                 'dummy-name',
                 'dummy-img-url',
-                'dummy-img-tag',
-                'dummy-context-path',
-                'dummy-health-check',
-                1000
+                'dummy-img-tag'
             ),
             new ComponentDeploymentEntity(
                 'dummy-id',
                 'dummy-name2',
                 'dummy-img-url2',
-                'dummy-img-tag2',
-                'dummy-context-path2',
-                'dummy-health-check2',
-                1001
+                'dummy-img-tag2'
             )
         ]
 

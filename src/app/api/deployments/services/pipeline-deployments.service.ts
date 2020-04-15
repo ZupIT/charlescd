@@ -1,5 +1,4 @@
 import {
-    forwardRef,
     Inject,
     Injectable,
     InternalServerErrorException
@@ -23,6 +22,7 @@ import { IoCTokensConstants } from '../../../core/constants/ioc'
 import { CdStrategyFactory } from '../../../core/integrations/cd'
 import { CdConfigurationsRepository } from '../../configurations/repository'
 import { CdConfigurationEntity } from '../../configurations/entity'
+import { IConnectorConfiguration } from '../../../core/integrations/cd/interfaces'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -52,13 +52,10 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineCircle(componentDeployment, deployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-            await this.triggerComponentDeployment(
-                component, deployment, componentDeployment,
-                pipelineCallbackUrl, queuedDeployment.id
-            )
+            await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
@@ -76,13 +73,10 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
             await this.setComponentPipelineDefaultCircle(componentDeployment, component)
             const pipelineCallbackUrl: string = this.getDeploymentCallbackUrl(queuedDeployment.id)
-            await this.triggerComponentDeployment(
-                component, deployment, componentDeployment,
-                pipelineCallbackUrl, queuedDeployment.id
-            )
+            await this.triggerComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT', error)
             await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
             await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
@@ -101,13 +95,10 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
             await this.unsetComponentPipelineCircle(deployment, component)
             const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
-            await this.triggerComponentUnDeployment(
-                component, deployment, undeployment, componentDeployment,
-                pipelineCallbackUrl, queuedUndeployment.id
-            )
+            await this.triggerComponentUnDeployment(component, undeployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT', error)
             const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
@@ -168,8 +159,7 @@ export class PipelineDeploymentsService {
         componentEntity: ComponentEntity,
         deploymentEntity: DeploymentEntity,
         componentDeployment: ComponentDeploymentEntity,
-        pipelineCallbackUrl: string,
-        queueId: number
+        pipelineCallbackUrl: string
     ): Promise<void> {
 
         const cdConfiguration: CdConfigurationEntity =
@@ -177,19 +167,19 @@ export class PipelineDeploymentsService {
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-        await cdService.createDeployment(
-            componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
-            deploymentEntity.id, deploymentEntity.circleId, pipelineCallbackUrl, queueId
+        const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+            componentEntity, cdConfiguration, componentDeployment,
+            deploymentEntity.circleId, pipelineCallbackUrl
         )
+
+        await cdService.createDeployment(connectorConfiguration)
     }
 
     private async triggerComponentUnDeployment(
         componentEntity: ComponentEntity,
-        deploymentEntity: DeploymentEntity,
         undeploymentEntity: UndeploymentEntity,
         componentDeployment: ComponentDeploymentEntity,
-        pipelineCallbackUrl: string,
-        queueId: number
+        pipelineCallbackUrl: string
     ): Promise<void> {
 
         try {
@@ -198,12 +188,34 @@ export class PipelineDeploymentsService {
 
             const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-            await cdService.createDeployment(
-                componentEntity.pipelineOptions, cdConfiguration.configurationData, componentDeployment.id,
-                deploymentEntity.id, undeploymentEntity.circleId, pipelineCallbackUrl, queueId
+            const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+                componentEntity, cdConfiguration, componentDeployment,
+                undeploymentEntity.circleId, pipelineCallbackUrl
             )
+
+            await cdService.createDeployment(connectorConfiguration)
         } catch (error) {
             throw error
+        }
+    }
+
+    private getConnectorConfiguration(
+        component: ComponentEntity,
+        cdConfiguration: CdConfigurationEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        callbackCircleId: string,
+        pipelineCallbackUrl: string
+    ): IConnectorConfiguration {
+
+        return {
+            pipelineCirclesOptions: component.pipelineOptions,
+            cdConfiguration: cdConfiguration.configurationData,
+            componentId: componentDeployment.componentId,
+            applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+            componentName: componentDeployment.componentName,
+            helmRepository: componentDeployment.moduleDeployment.helmRepository,
+            callbackCircleId,
+            pipelineCallbackUrl
         }
     }
 }

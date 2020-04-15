@@ -2,6 +2,7 @@ import { CreateModuleDeploymentDto } from '../index'
 import { Type } from 'class-transformer'
 import {
   Allow,
+  IsDefined,
   IsNotEmpty,
   Length,
   Matches,
@@ -24,7 +25,7 @@ export abstract class CreateDeploymentRequestDto {
   @IsNotEmpty()
   public authorId: string
 
-  @Allow()
+  @IsDefined()
   public description: string
 
   @IsNotEmpty()

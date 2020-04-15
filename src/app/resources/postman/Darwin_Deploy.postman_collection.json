@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d9433fae-8cf7-4f75-ac2f-fb6097835b2e",
+		"_postman_id": "99f23536-c82a-42b6-a36f-b6f2dd9a4c6b",
 		"name": "Darwin Deploy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,7 +9,7 @@
 			"name": "Configurations",
 			"item": [
 				{
-					"name": "Create octopipe cd configuration",
+					"name": "Create octopipe cd configuration Generic cluster",
 					"event": [
 						{
 							"listen": "test",
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitUsername\": \"git-user\",\n\t\t\"gitPassword\": \"git-password\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"provider\": \"GENERIC\",\n\t\t\"clientCertificate\": \"cert-data\",\n\t\t\"host\": \"https://kube.cluster.com\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,7 +72,7 @@
 					"response": []
 				},
 				{
-					"name": "Create spinnaker cd configuration Copy",
+					"name": "Create octopipe cd configuration EKS cluster",
 					"event": [
 						{
 							"listen": "test",
@@ -113,13 +113,164 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"gitToken\": \"git-token\",\n\t\t\"provider\": \"EKS\",\n\t\t\"caData\": \"ca-data\",\n\t\t\"awsSID\": \"aws-sid\",\n\t\t\"awsSecret\": \"aws-secret\",\n\t\t\"awsRegion\": \"aws-region\",\n\t\t\"awsClusterName\": \"cluster-name\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create octopipe cd configuration DEFAULT cluster",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"type": "text",
+								"value": "{{applicationId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"gitToken\": \"git-token\",\n\t\t\"provider\": \"DEFAULT\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create spinnaker cd configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"type": "text",
+								"value": "{{applicationId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"gitAccount\": \"gitaccount\",\n\t\t\"url\": \"http://localhost:8883/spinnaker\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get configurations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-application-id",
+								"value": "{{applicationId}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/configurations/cd",
 							"host": [
@@ -483,6 +634,48 @@
 							"path": [
 								"deployments",
 								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Undeploymentt",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53e645b7-a035-47fb-9e99-a14e479ab5e4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"{{authorId}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/deployments/{{deploymentId}}/undeploy",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"deployments",
+								"{{deploymentId}}",
+								"undeploy"
 							]
 						}
 					},
