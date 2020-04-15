@@ -22,9 +22,9 @@ jobs:
       with:
         node-version: 12.x
 
-    - run: npm install
+    - run: npm run install
       working-directory: ./ui/packages/new-ui
-    - run: npm run-script build
+    - run: npm run build
       working-directory: ./ui/packages/new-ui
       env:
         CI: true
