@@ -144,15 +144,16 @@ describe('PipelinesService', () => {
             'dummy-circle-id'
         )
 
+        componentUndeployment = new ComponentUndeploymentEntity(
+            componentDeployment
+        )
+
         moduleUndeployment = new ModuleUndeploymentEntity(
-            null,
-            null
+            moduleDeployment,
+            [componentUndeployment]
         )
         moduleUndeployment.undeployment = undeployment
 
-        componentUndeployment = new ComponentUndeploymentEntity(
-            null
-        )
         componentUndeployment.moduleUndeployment = moduleUndeployment
 
         componentUndeploymentsList = [
@@ -161,7 +162,7 @@ describe('PipelinesService', () => {
         ]
 
         moduleUndeploymentWithRelations = new ModuleUndeploymentEntity(
-            null,
+            moduleDeployment,
             componentUndeploymentsList
         )
     })

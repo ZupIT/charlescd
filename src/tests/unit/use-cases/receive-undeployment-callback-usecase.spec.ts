@@ -134,15 +134,15 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             'dummy-circle-id'
         )
 
+        componentUndeployment = new ComponentUndeploymentEntity(
+            componentDeployments[0]
+        )
         moduleUndeployment = new ModuleUndeploymentEntity(
-            null,
-            null
+            moduleDeployments[0],
+            [componentUndeployment]
         )
         moduleUndeployment.undeployment = undeployment
 
-        componentUndeployment = new ComponentUndeploymentEntity(
-            null
-        )
         componentUndeployment.moduleUndeployment = moduleUndeployment
     })
 

@@ -27,7 +27,7 @@ export class DeploymentEntity extends BaseEntity {
     moduleDeployment => moduleDeployment.deployment,
     { cascade: true }
   )
-  public modules: ModuleDeploymentEntity[]
+  public modules: ModuleDeploymentEntity[] | null
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -55,7 +55,7 @@ export class DeploymentEntity extends BaseEntity {
       to: circle => circle
     }
   })
-  public circle: CircleDeploymentEntity
+  public circle: CircleDeploymentEntity | null
 
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
@@ -63,11 +63,11 @@ export class DeploymentEntity extends BaseEntity {
   constructor(
     deploymentId: string,
     applicationName: string,
-    modules: ModuleDeploymentEntity[],
+    modules: ModuleDeploymentEntity[] | null,
     authorId: string,
     description: string,
     callbackUrl: string,
-    circle: CircleDeploymentEntity,
+    circle: CircleDeploymentEntity | null,
     defaultCircle: boolean,
     circleId: string
   ) {
@@ -88,7 +88,7 @@ export class DeploymentEntity extends BaseEntity {
     return new ReadDeploymentDto(
       this.id,
       this.applicationName,
-      this.modules.map(module => module.toReadDto()),
+      this.modules?.map(module => module.toReadDto()),
       this.authorId,
       this.description,
       this.status,
@@ -109,8 +109,18 @@ export class DeploymentEntity extends BaseEntity {
   }
 
   public getComponentDeploymentsIds(): string[] {
-    return this.modules.reduce(
-      (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components.map(component => component.id)], []
-    )
+    if (!this.modules) { return [] }
+
+    return this.modules.reduce((acc, moduleDeployment) => {
+      if (moduleDeployment?.components) {
+        return acc.concat(moduleDeployment.components.map(component => component.id))
+      }
+      return acc
+    }, [] as string[])
+
+    // TODO improve this
+    // return this.modules.reduce(
+    //   (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components.map(component => component.id)], []
+    // )
   }
 }

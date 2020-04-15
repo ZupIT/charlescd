@@ -7,6 +7,7 @@ import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
 import { ICdConfigurationData } from '../interfaces'
+import _ = require('lodash')
 
 @EntityRepository(CdConfigurationEntity)
 export class CdConfigurationsRepository extends Repository<CdConfigurationEntity> {
@@ -44,7 +45,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         return queryResult.map(configuration => plainToClass(CdConfigurationEntity, configuration))
     }
 
-    public async findDecrypted(id: string): Promise<CdConfigurationEntity> {
+    public async findDecrypted(id: string): Promise<CdConfigurationEntity | undefined> {
 
         const queryResult = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
@@ -59,7 +60,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             queryResult.configurationData = JSON.parse(queryResult.configurationData)
         }
 
-        return queryResult ? plainToClass(CdConfigurationEntity, queryResult) : undefined
+        return plainToClass(CdConfigurationEntity, queryResult)[0]
     }
 
     private setConfigurationData(configurationData: ICdConfigurationData): () => string {
@@ -69,12 +70,12 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         return () => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
     }
 
-    private trimObject(configurationData: ICdConfigurationData): ICdConfigurationData {
-        Object.keys(configurationData).map(key => {
-            if (typeof configurationData[key] === 'string') {
-                configurationData[key] = configurationData[key].trim()
+    private trimObject(configurationData: ICdConfigurationData) {
+        return _.mapValues(configurationData, (value) => {
+            if (typeof value === 'string') {
+                return value.trim()
             }
+            return value
         })
-        return configurationData
     }
 }

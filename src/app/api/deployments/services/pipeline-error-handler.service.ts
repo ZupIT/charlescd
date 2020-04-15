@@ -38,7 +38,7 @@ export class PipelineErrorHandlerService {
         private readonly componentsRepository: Repository<ComponentEntity>
     ) {}
 
-    public async handleDeploymentFailure(deployment: DeploymentEntity): Promise<void> {
+    public async handleDeploymentFailure(deployment: DeploymentEntity | undefined): Promise<void> {
 
         if (deployment && !deployment.hasFailed()) {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
@@ -54,13 +54,15 @@ export class PipelineErrorHandlerService {
         circle: CircleDeploymentEntity
     ): Promise<void> {
 
-        const component: ComponentEntity = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
-        await this.removeComponentPipelineCircle(component, circle)
+        const component: ComponentEntity | undefined = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+        if (component) {
+            await this.removeComponentPipelineCircle(component, circle)
+        }
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }
 
-    public async handleUndeploymentFailure(undeployment: UndeploymentEntity): Promise<void> {
+    public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
 
         if (undeployment && !undeployment.hasFailed()) {
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)

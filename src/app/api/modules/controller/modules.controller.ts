@@ -3,7 +3,8 @@ import {
   Controller,
   Get,
   Param,
-  Post
+  Post,
+  NotFoundException
 } from '@nestjs/common'
 import {
   CreateModuleDto,
@@ -35,6 +36,10 @@ export class ModulesController {
 
   @Get(':id')
   public async getModuleById(@Param('id') id: string): Promise<ReadModuleDto> {
-    return await this.modulesService.getModuleById(id)
+    const module = await this.modulesService.getModuleById(id)
+    if (!module) {
+      throw new NotFoundException(`Module not found - id: ${id}`)
+    }
+    return module
   }
 }

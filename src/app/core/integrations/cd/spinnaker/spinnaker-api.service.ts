@@ -39,7 +39,7 @@ export class SpinnakerApiService {
         )
     }
 
-    public updatePipeline(updatedPipeline, url: string): Observable<AxiosResponse> {
+    public updatePipeline(updatedPipeline: IBaseSpinnakerPipeline, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
             `${url}/pipelines`,
             updatedPipeline,

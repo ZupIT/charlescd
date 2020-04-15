@@ -50,10 +50,12 @@ export class StatusManagementService {
 
   public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
     await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status })
-    return Promise.all(
-      moduleUndeployment.componentUndeployments
-        .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
-    )
+    if (moduleUndeployment.componentUndeployments) {
+      return Promise.all(
+        moduleUndeployment.componentUndeployments
+          .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
+      )
+    }
   }
 
   public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
@@ -69,38 +71,46 @@ export class StatusManagementService {
 
   public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
     await this.moduleDeploymentRepository.update(module.id, { status })
-    return Promise.all(
-      module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
-    )
+    if (module.components) {
+      return Promise.all(
+        module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
+      )
+    }
   }
 
   public async setComponentDeploymentStatusAsFailed(componentDeploymentId: string): Promise<void> {
 
-    const componentDeploymentEntity: ComponentDeploymentEntity =
+    const componentDeploymentEntity: ComponentDeploymentEntity | undefined =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
     await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FAILED)
-    await this.propagateFailedStatusChange(componentDeploymentEntity)
+    if (componentDeploymentEntity) {
+      await this.propagateFailedStatusChange(componentDeploymentEntity)
+    }
   }
 
   public async setComponentDeploymentStatusAsFinished(
     componentDeploymentId: string
   ): Promise<void> {
 
-    const componentDeploymentEntity: ComponentDeploymentEntity =
+    const componentDeploymentEntity: ComponentDeploymentEntity | undefined =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
     await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
-    await this.propagateSuccessStatusChange(componentDeploymentEntity)
+    if (componentDeploymentEntity) {
+      await this.propagateSuccessStatusChange(componentDeploymentEntity)
+    }
   }
 
   public async setComponentUndeploymentStatusAsFailed(componentUndeploymentId: string): Promise<void> {
 
-    const componentUndeployment: ComponentUndeploymentEntity =
+    const componentUndeployment: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
     await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FAILED)
-    await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
+    if (componentUndeployment) {
+      await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
+    }
   }
 
   private async propagateFailedUndeploymentStatus(
@@ -129,11 +139,14 @@ export class StatusManagementService {
     componentUndeploymentId: string
   ): Promise<void> {
 
-    const componentUndeploymentEntity: ComponentUndeploymentEntity =
+    const componentUndeploymentEntity: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
     await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FINISHED)
-    await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
+
+    if (componentUndeploymentEntity) {
+      await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
+    }
   }
 
   private async updateComponentUndeploymentStatus(
@@ -171,7 +184,7 @@ export class StatusManagementService {
     const finishedComponents: ComponentUndeploymentEntity[] =
       this.getModuleUndeploymentFinishedComponents(moduleUndeployment)
 
-    if (finishedComponents.length === moduleUndeployment.componentUndeployments.length) {
+    if (finishedComponents.length === moduleUndeployment?.componentUndeployments?.length) {
       await this.updateModuleUndeploymentStatus(moduleUndeploymentId, UndeploymentStatusEnum.FINISHED)
     }
   }
@@ -191,6 +204,8 @@ export class StatusManagementService {
   private getModuleUndeploymentFinishedComponents(
     moduleUndeployment: ModuleUndeploymentEntity
   ): ComponentUndeploymentEntity[] {
+
+    if (!moduleUndeployment.componentUndeployments) { return [] }
 
     return moduleUndeployment.componentUndeployments.filter(
       componentUndeployment => componentUndeployment.status === UndeploymentStatusEnum.FINISHED
@@ -220,7 +235,7 @@ export class StatusManagementService {
     const finishedModules: ModuleUndeploymentEntity[] =
       this.getUndeploymentFinishedModules(undeployment)
 
-    if (finishedModules.length === undeployment.moduleUndeployments.length) {
+    if (finishedModules.length === undeployment?.moduleUndeployments?.length) {
       await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FINISHED)
     }
   }
@@ -240,6 +255,7 @@ export class StatusManagementService {
   private getUndeploymentFinishedModules(
     undeployment: UndeploymentEntity
   ): ModuleUndeploymentEntity[] {
+    if (!undeployment.moduleUndeployments) { return [] }
 
     return undeployment.moduleUndeployments.filter(
       moduleUndeployment => moduleUndeployment.status === UndeploymentStatusEnum.FINISHED
@@ -260,6 +276,7 @@ export class StatusManagementService {
   private getDeploymentFinishedModules(
     deployment: DeploymentEntity
   ): ModuleDeploymentEntity[] {
+    if (!deployment.modules) { return [] }
 
     return deployment.modules.filter(
       moduleDeployment => moduleDeployment.status === DeploymentStatusEnum.FINISHED
@@ -269,6 +286,7 @@ export class StatusManagementService {
   private getModuleFinishedComponents(
     moduleDeployment: ModuleDeploymentEntity
   ): ComponentDeploymentEntity[] {
+    if (!moduleDeployment.components) { return [] }
 
     return moduleDeployment.components.filter(
       componentDeployment => componentDeployment.status === DeploymentStatusEnum.FINISHED
@@ -310,7 +328,7 @@ export class StatusManagementService {
     const finishedModules: ModuleDeploymentEntity[] =
       this.getDeploymentFinishedModules(deployment)
 
-    if (finishedModules.length === deployment.modules.length) {
+    if (finishedModules.length === deployment?.modules?.length) {
       await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FINISHED)
     }
   }
@@ -350,7 +368,7 @@ export class StatusManagementService {
     const finishedComponents: ComponentDeploymentEntity[] =
       this.getModuleFinishedComponents(moduleDeployment)
 
-    if (finishedComponents.length === moduleDeployment.components.length) {
+    if (finishedComponents.length === moduleDeployment?.components?.length) {
       await this.updateModuleDeploymentStatus(moduleDeploymentId, DeploymentStatusEnum.FINISHED)
     }
   }

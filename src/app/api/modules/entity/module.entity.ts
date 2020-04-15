@@ -19,7 +19,7 @@ export class ModuleEntity extends BaseEntity {
   public id: string
 
   @Column({ name: 'cd_configuration_id'})
-  public cdConfigurationId: string
+  public cdConfigurationId: string | null
 
   @OneToMany(
     type => ComponentEntity,
@@ -33,7 +33,7 @@ export class ModuleEntity extends BaseEntity {
 
   constructor(
     moduleId: string,
-    cdConfigurationId: string,
+    cdConfigurationId: string | null,
     components: ComponentEntity[]
   ) {
     super()
