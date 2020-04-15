@@ -5,7 +5,8 @@ import {
   Headers,
   Param,
   Post,
-  UsePipes
+  UsePipes,
+  NotFoundException
 } from '@nestjs/common'
 import {
   CreateCircleDeploymentRequestDto,
@@ -78,7 +79,10 @@ export class DeploymentsController {
 
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
-
-    return await this.deploymentsService.getDeploymentById(id)
+    const deployment = await this.deploymentsService.getDeploymentById(id)
+    if (!deployment) {
+      throw new NotFoundException(`Deployment not found - id: ${id}`)
+    }
+    return deployment
   }
 }

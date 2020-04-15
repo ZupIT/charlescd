@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
 import {
   ComponentDeploymentEntity,
@@ -35,7 +35,7 @@ export class ReceiveDeploymentCallbackUsecase {
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
-  ) {}
+  ) { }
 
   public async execute(
     queuedDeploymentId: number,
@@ -44,12 +44,12 @@ export class ReceiveDeploymentCallbackUsecase {
 
     try {
       this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-      const queuedDeploymentEntity: QueuedDeploymentEntity =
-          await this.queuedDeploymentsRepository.findOne({id : queuedDeploymentId})
-      if (queuedDeploymentEntity.isRunning()) {
+      const queuedDeploymentEntity: QueuedDeploymentEntity | undefined =
+        await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
+      if (queuedDeploymentEntity?.isRunning()) {
         finishDeploymentDto.isSuccessful() ?
-            await this.handleDeploymentSuccess(queuedDeploymentId) :
-            await this.handleDeploymentFailure(queuedDeploymentId)
+          await this.handleDeploymentSuccess(queuedDeploymentId) :
+          await this.handleDeploymentFailure(queuedDeploymentId)
         this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
@@ -62,10 +62,23 @@ export class ReceiveDeploymentCallbackUsecase {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
-    const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
+    const queuedDeployment: QueuedDeploymentEntity | undefined = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
+
+    if (!queuedDeployment) {
+      throw new NotFoundException(`QueuedDeploymentEntity not found - id: ${queuedDeploymentId}`)
+    }
+
+    const componentDeployment: ComponentDeploymentEntity | undefined =
+      await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
+
+    if (!componentDeployment) {
+      throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${queuedDeployment.componentDeploymentId}`)
+    }
+
     const { moduleDeployment: { deployment } } = componentDeployment
+    if (!deployment.circle) {
+      throw new NotFoundException(`Deployment dont have a circle`)
+    }
 
     await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
     await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
@@ -76,8 +89,12 @@ export class ReceiveDeploymentCallbackUsecase {
     componentDeploymentId: string
   ): Promise<void> {
 
-    const componentDeployment: ComponentDeploymentEntity =
+    const componentDeployment: ComponentDeploymentEntity | undefined =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+    if (!componentDeployment) {
+      throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentDeploymentId}`)
+    }
+
     const { moduleDeployment: { deployment } } = componentDeployment
 
     if (deployment.hasFinished()) {
@@ -91,10 +108,17 @@ export class ReceiveDeploymentCallbackUsecase {
     queuedDeploymentId: number
   ): Promise<void> {
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
-    const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
+    const queuedDeployment: QueuedDeploymentEntity | undefined = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
+    if (!queuedDeployment) {
+      throw new NotFoundException(`Queue Undeployment not found - id: ${queuedDeploymentId}`)
+    }
+    const componentDeployment: ComponentDeploymentEntity | undefined =
+      await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
+
+    if (!componentDeployment) {
+      throw new NotFoundException(`Component deployment not found - id: ${queuedDeployment.componentDeploymentId}`)
+    }
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
     await this.notifyMooveIfDeploymentFinished(componentDeployment.id)

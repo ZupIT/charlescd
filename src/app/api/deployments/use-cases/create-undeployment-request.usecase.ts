@@ -1,6 +1,7 @@
 import {
   Injectable,
-  InternalServerErrorException
+  InternalServerErrorException,
+  NotFoundException
 } from '@nestjs/common'
 import {
   CreateUndeploymentDto,
@@ -47,11 +48,9 @@ export class CreateUndeploymentRequestUsecase {
   ) { }
 
   public async execute(createUndeploymentDto: CreateUndeploymentDto, deploymentId: string, circleId: string): Promise<ReadUndeploymentDto> {
-    let undeployment: UndeploymentEntity
-
+    const undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
     try {
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
-      undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
       await this.scheduleComponentUndeployments(undeployment)
       this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
@@ -63,16 +62,19 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async saveUndeploymentRequest(
-      createUndeploymentDto: CreateUndeploymentDto,
-      deploymentId: string,
-      circleId: string
+    createUndeploymentDto: CreateUndeploymentDto,
+    deploymentId: string,
+    circleId: string
   ): Promise<UndeploymentEntity> {
 
     try {
-      const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({
+      const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOne({
         where: { id: deploymentId },
         relations: ['modules', 'modules.components']
       })
+      if (!deployment) {
+        throw new NotFoundException(`DeploymentEntity not found - id: ${deploymentId}`)
+      }
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment, circleId))
     } catch (error) {
       throw new InternalServerErrorException('Could not save undeployment')
@@ -99,17 +101,20 @@ export class CreateUndeploymentRequestUsecase {
 
     try {
       const queuedUndeployment: QueuedUndeploymentEntity =
-          await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
-      const componentDeployment: ComponentDeploymentEntity =
-          await this.componentDeploymentsRepository.getOneWithRelations(componentUndeployment.componentDeployment.id)
-      const component: ComponentEntity = await this.componentsRepository.findOne(
-          { id: componentDeployment.componentId }, { relations: ['module'] }
+        await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
+      const componentDeployment: ComponentDeploymentEntity | undefined =
+        await this.componentDeploymentsRepository.getOneWithRelations(componentUndeployment.componentDeployment.id)
+      if (!componentDeployment) {
+        throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentUndeployment.componentDeployment.id}`)
+      }
+      const component: ComponentEntity | undefined = await this.componentsRepository.findOne(
+        { id: componentDeployment.componentId }, { relations: ['module'] }
       )
 
-      if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+      if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING && component) {
         await this.pipelineDeploymentsService.triggerUndeployment(
-            componentDeployment, undeployment, component,
-            undeployment.deployment, queuedUndeployment
+          componentDeployment, undeployment, component,
+          undeployment.deployment, queuedUndeployment
         )
       }
     } catch (error) {

@@ -107,7 +107,7 @@ export class SpinnakerService implements ICdServiceStrategy {
       pipelineId: string,
       spinnakerConfiguration: ISpinnakerPipelineConfiguration,
       spinnakerPipeline: IBaseSpinnakerPipeline
-  ) {
+  ) { // TODO create this return interface
 
     return {
       ...spinnakerPipeline,

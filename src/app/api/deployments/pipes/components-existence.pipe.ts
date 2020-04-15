@@ -18,15 +18,20 @@ export class ComponentsExistencePipe implements PipeTransform {
     constructor(
         @InjectRepository(ComponentEntity)
         private readonly componentEntityRepository: Repository<ComponentEntity>
-    ) {}
+    ) { }
 
     public async transform(deploymentRequest: CreateDeploymentRequestDto, metadata: ArgumentMetadata): Promise<CreateDeploymentRequestDto> {
 
         const componentDeploymentsDto: CreateComponentDeploymentDto[] = deploymentRequest.modules.reduce(
-            (accumulated, moduleDeploymentDto) => [...accumulated, ...moduleDeploymentDto.components], []
+            (accumulated, moduleDeploymentDto) => {
+                if (moduleDeploymentDto.components) {
+                    return [...accumulated, ...moduleDeploymentDto.components]
+                }
+                return accumulated
+            }, [] as CreateComponentDeploymentDto[]
         )
 
-        const components: ComponentEntity[] = await Promise.all(
+        const components: Array<ComponentEntity | undefined> = await Promise.all(
             componentDeploymentsDto.map(
                 componentDeployment => this.componentEntityRepository.findOne({ id: componentDeployment.componentId })
             )

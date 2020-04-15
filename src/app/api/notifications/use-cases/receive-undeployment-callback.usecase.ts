@@ -80,9 +80,12 @@ export class ReceiveUndeploymentCallbackUsecase {
     if (!componentDeployment) {
       throw new NotFoundException(`ComponentDeploymentEntity with id ${queuedUndeployment.componentDeploymentId} not found`)
     }
-    const componentUndeployment: ComponentUndeploymentEntity =
+    const componentUndeployment: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
+    if (!componentUndeployment) {
+      throw new NotFoundException(`ComponentUndeploymentEntity not found - id: ${queuedUndeployment.componentUndeploymentId}`)
+    }
     await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
@@ -93,8 +96,11 @@ export class ReceiveUndeploymentCallbackUsecase {
     componentUndeploymentId: string
   ): Promise<void> {
 
-    const componentUndeployment: ComponentUndeploymentEntity =
+    const componentUndeployment: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
+    if (!componentUndeployment) {
+      throw new NotFoundException(`ComponentUndeploymentEntity not found - id: ${componentUndeploymentId}`)
+    }
     const { moduleUndeployment: { undeployment } } = componentUndeployment
     const { deployment } = undeployment
 

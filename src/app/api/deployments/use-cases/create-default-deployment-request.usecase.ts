@@ -1,6 +1,7 @@
 import {
     Injectable,
-    InternalServerErrorException
+    InternalServerErrorException,
+    NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -49,11 +50,10 @@ export class CreateDefaultDeploymentRequestUsecase {
     ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        let deployment: DeploymentEntity
+        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
+        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
 
         try {
-            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
-            deployment = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
             await this.scheduleComponentDeployments(deployment)
             this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
@@ -95,13 +95,16 @@ export class CreateDefaultDeploymentRequestUsecase {
     ): Promise<void> {
 
         try {
-            const componentDeployment: ComponentDeploymentEntity =
+            const componentDeployment: ComponentDeploymentEntity | undefined =
                 await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+            if (!componentDeployment) {
+                throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentDeploymentId}`)
+            }
             const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity =
+            const component: ComponentEntity | undefined =
                 await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
 
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING && component) {
                 await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
             }
         } catch (error) {

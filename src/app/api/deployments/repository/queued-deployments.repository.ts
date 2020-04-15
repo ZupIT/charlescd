@@ -8,7 +8,7 @@ import { QueuedPipelineStatusEnum } from '../enums'
 @EntityRepository(QueuedDeploymentEntity)
 export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEntity> {
 
-  public async getNextQueuedDeployment(componentId: string): Promise<QueuedDeploymentEntity> {
+  public async getNextQueuedDeployment(componentId: string): Promise<QueuedDeploymentEntity | undefined> {
     return this.createQueryBuilder('queued_deployment')
         .where(
             'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',
@@ -33,7 +33,7 @@ export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEnti
       .getMany()
   }
 
-  public async getOneByComponentIdRunning(componentId: string): Promise<QueuedDeploymentEntity> {
+  public async getOneByComponentIdRunning(componentId: string): Promise<QueuedDeploymentEntity | undefined> {
     return this.createQueryBuilder('queued_deployment')
       .where(
         'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',

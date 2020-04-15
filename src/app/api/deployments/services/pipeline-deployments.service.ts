@@ -1,7 +1,8 @@
 import {
     Inject,
     Injectable,
-    InternalServerErrorException
+    InternalServerErrorException,
+    NotFoundException
 } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import {
@@ -39,7 +40,7 @@ export class PipelineDeploymentsService {
         private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
         @InjectRepository(CdConfigurationsRepository)
         private readonly cdConfigurationsRepository: CdConfigurationsRepository
-    ) {}
+    ) { }
 
     public async triggerCircleDeployment(
         componentDeployment: ComponentDeploymentEntity,
@@ -56,8 +57,11 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('FINISH:TRIGGER_CIRCLE_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_CIRCLE_DEPLOYMENT', error)
-            await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
-            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
+            if (deployment.circle) {
+                await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+                await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
+            }
+            console.log(error)
             throw error
         }
     }
@@ -77,9 +81,11 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('FINISH:TRIGGER_DEFAULT_DEPLOYMENT', queuedDeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_DEFAULT_DEPLOYMENT', error)
-            await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
-            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
-            throw error
+            if (deployment.circle) {
+                await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
+                await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
+                throw error
+            }
         }
     }
 
@@ -99,10 +105,12 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT', error)
-            const componentUndeployment: ComponentUndeploymentEntity =
+            const componentUndeployment: ComponentUndeploymentEntity | undefined =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
-            await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
+            if (componentUndeployment) {
+                await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
+            }
             throw error
         }
     }
@@ -112,7 +120,9 @@ export class PipelineDeploymentsService {
         deployment: DeploymentEntity,
         component: ComponentEntity
     ): Promise<void> {
-
+        if (!deployment.circle) {
+            throw new NotFoundException(`Deployment does not have a circle`)
+        }
         try {
             component.setPipelineCircle(deployment.circle, componentDeployment)
             await this.componentsRepository.save(component)
@@ -138,7 +148,9 @@ export class PipelineDeploymentsService {
         deployment: DeploymentEntity,
         component: ComponentEntity
     ): Promise<void> {
-
+        if (!deployment.circle) {
+            throw new NotFoundException(`Deployment does not have a circle`)
+        }
         try {
             component.unsetPipelineCircle(deployment.circle)
             await this.componentsRepository.save(component)
@@ -162,9 +174,15 @@ export class PipelineDeploymentsService {
         pipelineCallbackUrl: string
     ): Promise<void> {
 
-        const cdConfiguration: CdConfigurationEntity =
+        if (!componentEntity.module.cdConfigurationId) {
+            throw new NotFoundException(`Module does not have configuration id`)
+        }
+        const cdConfiguration =
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
+        if (!cdConfiguration) {
+            throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
+        }
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
@@ -183,9 +201,14 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         try {
-            const cdConfiguration: CdConfigurationEntity =
+            if (!componentEntity.module.cdConfigurationId) {
+                throw new NotFoundException(`Module does not have configuration id`)
+            }
+            const cdConfiguration =
                 await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
-
+            if (!cdConfiguration) {
+                throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
+            }
             const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
             const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(

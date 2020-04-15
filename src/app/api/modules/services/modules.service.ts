@@ -21,8 +21,8 @@ export class ModulesService {
       .then(modules => ModulesService.convertModulesToReadDto(modules))
   }
 
-  public async getModuleById(id: string): Promise<ReadModuleDto> {
+  public async getModuleById(id: string): Promise<ReadModuleDto | undefined> {
     return this.modulesRepository.findOne({ id })
-      .then(deployment => deployment.toReadDto())
+      .then(deployment => deployment?.toReadDto())
   }
 }

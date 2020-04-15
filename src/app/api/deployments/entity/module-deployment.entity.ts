@@ -12,7 +12,7 @@ import { DeploymentEntity } from './deployment.entity'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
 import { ReadModuleDeploymentDto } from '../dto'
 import { DeploymentStatusEnum } from '../enums'
-import * as uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 
 @Entity('module_deployments')
 export class ModuleDeploymentEntity extends BaseEntity {
@@ -25,7 +25,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
     deployment => deployment.modules,
   )
   @JoinColumn({ name: 'deployment_id' })
-  public deployment: DeploymentEntity
+  public deployment!: DeploymentEntity
 
   @Column({ name: 'module_id' })
   public moduleId: string
@@ -41,15 +41,15 @@ export class ModuleDeploymentEntity extends BaseEntity {
     componentDeployment => componentDeployment.moduleDeployment,
     { cascade: true, eager: true }
   )
-  public components: ComponentDeploymentEntity[]
+  public components: ComponentDeploymentEntity[] | null | undefined
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
 
   constructor(
     moduleId: string,
     helmRepository: string,
-    components: ComponentDeploymentEntity[]
+    components: ComponentDeploymentEntity[] | null | undefined
   ) {
     super()
     this.id = uuidv4()
@@ -64,7 +64,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
       this.id,
       this.moduleId,
       this.helmRepository,
-      this.components.map(component => component.toReadDto()),
+      this.components?.map(component => component.toReadDto()),
       this.status,
       this.createdAt
     )

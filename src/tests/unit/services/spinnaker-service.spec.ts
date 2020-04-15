@@ -170,15 +170,16 @@ describe('Spinnaker Service', () => {
       'dummy-circle-id'
     )
 
-    moduleUndeployment = new ModuleUndeploymentEntity(
-      undeploymentModuleDeployments[0],
-      null
-    )
-    moduleUndeployment.undeployment = undeployment
-
     componentUndeployment = new ComponentUndeploymentEntity(
       undeploymentComponentDeployments[0]
     )
+
+    moduleUndeployment = new ModuleUndeploymentEntity(
+      undeploymentModuleDeployments[0],
+      [componentUndeployment]
+    )
+    moduleUndeployment.undeployment = undeployment
+
     componentUndeployment.moduleUndeployment = moduleUndeployment
 
     connectorConfiguration = {
