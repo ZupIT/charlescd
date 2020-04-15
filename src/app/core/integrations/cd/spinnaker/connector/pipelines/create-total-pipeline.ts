@@ -53,7 +53,7 @@ export default class TotalPipeline {
     return this.previousStages
   }
 
-  private buildDeployments(): IDeploymentReturn {
+  private buildDeployments(): IDeploymentReturn | undefined {
     if (this.contract.versions.length === 0) { return }
 
     const preRefId = this.refId - 1
@@ -145,7 +145,7 @@ export default class TotalPipeline {
     }
   }
 
-  private buildDeleteDeployments(): IBuildReturn {
+  private buildDeleteDeployments(): IBuildReturn | undefined {
     if (this.contract.unusedVersions.length) {
       const stageName = 'Delete Deployments'
 

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { of, throwError } from 'rxjs'
+import { of, throwError, Observable } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
@@ -61,7 +61,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
-  private getDeployRetryCondition(deployError) {
+  private getDeployRetryCondition(deployError: Observable<any>) {
 
     return deployError.pipe(
         concatMap((error, attempts) => {
@@ -72,7 +72,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     )
   }
 
-  private getDeployRetryPipe(error, attempts: number) {
+  private getDeployRetryPipe(error: any, attempts: number) {
 
     return of(error).pipe(
         tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),

@@ -16,7 +16,7 @@ import { ComponentDeploymentEntity } from './component-deployment.entity'
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
 
-  @PrimaryColumn({name: 'id'})
+  @PrimaryColumn({ name: 'id' })
   public id: string
 
   @Column({ name: 'application_name' })
@@ -32,19 +32,19 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'user_id' })
   public authorId: string
 
-  @Column({ name: 'description'} )
+  @Column({ name: 'description' })
   public description: string
 
-  @Column({ name: 'callback_url'} )
+  @Column({ name: 'callback_url' })
   public callbackUrl: string
 
-  @Column({ name: 'status'} )
+  @Column({ name: 'status' })
   public status: DeploymentStatusEnum
 
-  @Column({ name: 'default_circle', nullable: true } )
+  @Column({ name: 'default_circle', nullable: true })
   public defaultCircle: boolean
 
-  @Column({ name: 'circle_id', nullable: true } )
+  @Column({ name: 'circle_id', nullable: true })
   public circleId: string
 
   @Column({
@@ -57,8 +57,8 @@ export class DeploymentEntity extends BaseEntity {
   })
   public circle: CircleDeploymentEntity
 
-  @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  @CreateDateColumn({ name: 'created_at' })
+  public createdAt!: Date
 
   constructor(
     deploymentId: string,
@@ -91,11 +91,12 @@ export class DeploymentEntity extends BaseEntity {
       this.modules.map(module => module.toReadDto()),
       this.authorId,
       this.description,
-      this.circle ? this.circle.toReadDto() : null,
       this.status,
       this.callbackUrl,
       this.defaultCircle,
-      this.createdAt
+      this.createdAt,
+      this.circle ? this.circle.toReadDto() : undefined
+
     )
   }
 
