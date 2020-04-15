@@ -47,7 +47,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
 
     public async findDecrypted(id: string): Promise<CdConfigurationEntity | undefined> {
 
-        const queryResult = await this.createQueryBuilder('cd_configurations')
+        const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
             .addSelect('application_id', 'applicationId')
@@ -60,7 +60,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             queryResult.configurationData = JSON.parse(queryResult.configurationData)
         }
 
-        return plainToClass(CdConfigurationEntity, queryResult)[0]
+        return plainToClass(CdConfigurationEntity, queryResult)
     }
 
     private setConfigurationData(configurationData: ICdConfigurationData): () => string {
