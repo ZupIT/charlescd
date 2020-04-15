@@ -3,9 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity } from '../entity'
+import {
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  QueuedDeploymentEntity,
+  QueuedUndeploymentEntity,
+  UndeploymentEntity
+} from '../entity'
 import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
+import {
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../repository'
 import { PipelineDeploymentsService } from './'
 
 @Injectable()
@@ -19,6 +29,8 @@ export class PipelineQueuesService {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(ComponentUndeploymentsRepository)
+    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
     @Inject(forwardRef(() => PipelineDeploymentsService))
@@ -66,13 +78,15 @@ export class PipelineQueuesService {
   private async triggerQueuedUndeployment(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
 
     let componentDeployment: ComponentDeploymentEntity
+    let componentUndeployment: ComponentUndeploymentEntity
     let component: ComponentEntity
 
     try {
+      componentUndeployment = await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
       componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
       component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
       const { moduleDeployment: { deployment } } = componentDeployment
-      const undeployment = await this.undeploymentsRepository.findOne({ where: { deployment_id: deployment.id } })
+      const undeployment = await this.undeploymentsRepository.findOne({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id } })
       await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
     } catch (error) {
       throw error
