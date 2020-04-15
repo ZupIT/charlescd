@@ -11,16 +11,14 @@ it('compiles the pipeline', () => {
     applicationName: 'application-name',
     appName: 'app-name',
     appNamespace: 'app-namespace',
-    healthCheckPath: '/health',
-    uri: { uriName: 'uri-name' },
-    appPort: 12345,
     webhookUri: 'webhook.uri',
     versions: [{ version: 'v1', versionUrl: '/v1' }],
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
-    circleId: 'circle-id'
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com'
   }
 
   const totalPipeline = new TotalPipeline(contract)
@@ -34,16 +32,14 @@ it('compiles the pipeline with only undeployment', () => {
     applicationName: 'application-name',
     appName: 'app-name',
     appNamespace: 'app-namespace',
-    healthCheckPath: '/health',
-    uri: { uriName: 'uri-name' },
-    appPort: 12345,
     webhookUri: 'webhook.uri',
     versions: [],
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
-    circleId: 'circle-id'
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com'
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()

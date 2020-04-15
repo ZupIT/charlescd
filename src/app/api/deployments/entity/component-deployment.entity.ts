@@ -37,15 +37,6 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
 
-  @Column({ name: 'context_path' })
-  public contextPath: string
-
-  @Column({ name: 'health_check' })
-  public healthCheck: string
-
-  @Column({ name: 'port' })
-  public port: number
-
   @Column({ name: 'status' })
   public status: DeploymentStatusEnum
 
@@ -56,10 +47,7 @@ export class ComponentDeploymentEntity extends BaseEntity {
     componentId: string,
     componentName: string,
     buildImageUrl: string,
-    buildImageTag: string,
-    contextPath: string,
-    healthCheck: string,
-    port: number
+    buildImageTag: string
   ) {
     super()
     this.id = uuidv4()
@@ -67,9 +55,6 @@ export class ComponentDeploymentEntity extends BaseEntity {
     this.componentName = componentName
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
-    this.contextPath = contextPath
-    this.healthCheck = healthCheck
-    this.port = port
     this.status = DeploymentStatusEnum.CREATED
   }
 
@@ -80,9 +65,6 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.componentName,
       this.buildImageUrl,
       this.buildImageTag,
-      this.contextPath,
-      this.healthCheck,
-      this.port,
       this.status,
       this.createdAt
     )

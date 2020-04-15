@@ -6,6 +6,7 @@ import {
 import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
+import { ICdConfigurationData } from '../interfaces'
 
 @EntityRepository(CdConfigurationEntity)
 export class CdConfigurationsRepository extends Repository<CdConfigurationEntity> {
@@ -19,8 +20,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .values({
                 id: cdConfig.id,
                 type: cdConfig.type,
-                configurationData: () =>
-                    `PGP_SYM_ENCRYPT('${JSON.stringify(cdConfig.configurationData)}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`,
+                configurationData: this.setConfigurationData(cdConfig.configurationData),
                 name: cdConfig.name,
                 authorId: cdConfig.authorId,
                 applicationId: cdConfig.applicationId
@@ -60,5 +60,21 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         }
 
         return queryResult ? plainToClass(CdConfigurationEntity, queryResult) : undefined
+    }
+
+    private setConfigurationData(configurationData: ICdConfigurationData): () => string {
+        const stringConfigurationData = JSON.stringify(
+            this.trimObject(configurationData)
+        )
+        return () => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
+    }
+
+    private trimObject(configurationData: ICdConfigurationData): ICdConfigurationData {
+        Object.keys(configurationData).map(key => {
+            if (typeof configurationData[key] === 'string') {
+                configurationData[key] = configurationData[key].trim()
+            }
+        })
+        return configurationData
     }
 }

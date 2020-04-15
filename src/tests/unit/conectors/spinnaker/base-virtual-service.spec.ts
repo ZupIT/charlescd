@@ -12,7 +12,7 @@ it('creates the virtual service when there is no header on the circle', () => {
   const circles = [{ destination: { version: 'v3' }, header: { headerValue: 'header-value', headerName: 'header-name' } }]
   const uri = 'uri-name'
   const hosts = undefined
-  const virtualService = createVirtualService(appName, appNamespace, circles, uri, hosts)
+  const virtualService = createVirtualService(appName, appNamespace, circles, hosts)
 
   expect(virtualService).toEqual(expectedBaseVirtualService)
 })
