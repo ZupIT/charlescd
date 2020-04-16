@@ -19,6 +19,7 @@ import {
 } from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
+import { of, throwError } from 'rxjs';
 
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
