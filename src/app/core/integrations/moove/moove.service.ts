@@ -1,7 +1,9 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConsoleLoggerService } from '../../logs/console'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { AxiosResponse } from 'axios'
 import { IoCTokensConstants } from '../../constants/ioc'
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class MooveService {
@@ -13,20 +15,20 @@ export class MooveService {
       private readonly envConfiguration: IEnvConfiguration
     ) {}
 
-    public async notifyDeploymentStatus(
+    public  notifyDeploymentStatus(
       deploymentId: string,
       status: string,
       callbackUrl: string,
       circleId: string
-    ): Promise<void> {
+    ): Observable<AxiosResponse> {
 
       try {
         this.consoleLoggerService.log('START:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
-        await this.httpService.post(
+        return this.httpService.post(
           callbackUrl,
           { deploymentStatus: status },
           { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
-        ).toPromise()
+        )
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
         this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
