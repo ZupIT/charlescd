@@ -1,6 +1,9 @@
+import { Observable,of } from 'rxjs';
+import { AxiosResponse } from 'axios';
+
 export class MooveServiceStub {
 
-    public async notifyDeploymentStatus(): Promise<void> {
-        return Promise.resolve()
+    public  notifyDeploymentStatus(): Observable<AxiosResponse> {
+        return of({} as AxiosResponse)
     }
 }
