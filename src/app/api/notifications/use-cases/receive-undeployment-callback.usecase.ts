@@ -20,10 +20,13 @@ import {
 } from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
+import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
+import {of, throwError} from 'rxjs';
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {
-
+  private readonly MAXIMUM_RETRY_ATTEMPTS = 3
+  private readonly MILLISECONDS_RETRY_DELAY = 1000
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
@@ -89,11 +92,32 @@ export class ReceiveUndeploymentCallbackUsecase {
 
     if (undeployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, deployment.circleId
-      )
+        deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId
+      ).pipe(
+          map(response => response),
+          retryWhen(error => this.getNotificationRetryCondition(error))
+      ).toPromise()
     }
   }
 
+  private getNotificationRetryCondition(deployError) {
+
+    return deployError.pipe(
+        concatMap((error, attempts) => {
+          return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+              throwError('Reached maximum attemps.') :
+              this.getNotificationRetryPipe(error, attempts)
+        })
+    )
+  }
+
+  private getNotificationRetryPipe(error, attempts: number) {
+
+    return of(error).pipe(
+        tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+        delay(this.MILLISECONDS_RETRY_DELAY)
+    )
+  }
   private async handleSuccessfulUndeployment(
     queuedUndeploymentId: number
   ): Promise<void> {
@@ -103,7 +127,6 @@ export class ReceiveUndeploymentCallbackUsecase {
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
-
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFinished(queuedUndeployment.componentUndeploymentId)
