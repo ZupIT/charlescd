@@ -78,10 +78,6 @@ export class DeploymentsController {
 
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
-    const deployment = await this.deploymentsService.getDeploymentById(id)
-    if (!deployment) {
-      throw new NotFoundException(`Deployment not found - id: ${id}`)
-    }
-    return deployment
+    return await this.deploymentsService.getDeploymentById(id)
   }
 }
