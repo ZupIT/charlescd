@@ -28,28 +28,6 @@ export class DatabasesService {
       postgresHost, postgresPort, postgresUser, postgresPass, postgresDbName
     } = envConfiguration
 
-    if (!postgresHost) {
-      throw Error
-    }
-
-    if (!postgresPort) {
-      throw Error
-    }
-
-    if (!postgresUser) {
-      throw Error
-    }
-
-    if (!postgresPass) {
-      throw Error
-    }
-
-    if (!postgresDbName) {
-      throw Error
-    }
-
-    // TODO FIX THIS VERY VERY VERY BAD CHECK
-
     return {
       host: postgresHost,
       port: postgresPort,
