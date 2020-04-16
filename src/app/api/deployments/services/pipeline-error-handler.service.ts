@@ -23,10 +23,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { QueuedDeploymentsRepository } from '../repository'
 import { ComponentEntity } from '../../components/entity'
 import { Repository } from 'typeorm'
+import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
+import {of, throwError} from 'rxjs';
 
 @Injectable()
 export class PipelineErrorHandlerService {
-
+    private readonly MAXIMUM_RETRY_ATTEMPTS = 3
+    private readonly MILLISECONDS_RETRY_DELAY = 1000
     constructor(
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly statusManagementService: StatusManagementService,
@@ -44,8 +47,30 @@ export class PipelineErrorHandlerService {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-            )
+            ).pipe(
+                map(response=>response),
+                retryWhen(error=> this.getNotificationRetryCondition(error))
+             ).toPromise()
         }
+    }
+
+    private getNotificationRetryCondition(deployError) {
+
+        return deployError.pipe(
+            concatMap((error, attempts) => {
+                return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+                    throwError('Reached maximum attemps.') :
+                    this.getNotificationRetryPipe(error, attempts)
+            })
+        )
+    }
+
+    private getNotificationRetryPipe(error, attempts: number) {
+
+        return of(error).pipe(
+            tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+            delay(this.MILLISECONDS_RETRY_DELAY)
+        )
     }
 
     public async handleComponentDeploymentFailure(
@@ -64,9 +89,12 @@ export class PipelineErrorHandlerService {
 
         if (undeployment && !undeployment.hasFailed()) {
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
-            await this.mooveService.notifyDeploymentStatus(
+            this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
+            ).pipe(
+                map(response=>response),
+                retryWhen(error=> this.getNotificationRetryCondition(error))
             )
         }
     }

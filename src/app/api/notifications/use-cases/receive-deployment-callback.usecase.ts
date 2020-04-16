@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
@@ -21,9 +22,11 @@ import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
 import { of, throwError } from 'rxjs';
 
+
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
-
+  private readonly MAXIMUM_RETRY_ATTEMPTS = 3
+  private readonly MILLISECONDS_RETRY_DELAY = 1000
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
@@ -82,11 +85,33 @@ export class ReceiveDeploymentCallbackUsecase {
     const { moduleDeployment: { deployment } } = componentDeployment
 
     if (deployment.hasFinished()) {
+
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
-      )
+      ).pipe(
+          map(response => response),
+          retryWhen(error => this.getNotificationRetryCondition(error))
+      ).toPromise()
     }
   }
+  private getNotificationRetryCondition(deployError) {
+
+    return deployError.pipe(
+        concatMap((error, attempts) => {
+          return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+              throwError('Reached maximum attemps.') :
+              this.getNotificationRetryPipe(error, attempts)
+        })
+    )
+  }
+  private getNotificationRetryPipe(error, attempts: number) {
+
+    return of(error).pipe(
+        tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+        delay(this.MILLISECONDS_RETRY_DELAY)
+    )
+  }
+
 
   private async handleDeploymentSuccess(
     queuedDeploymentId: number
