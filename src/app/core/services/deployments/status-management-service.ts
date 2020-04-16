@@ -176,11 +176,9 @@ export class StatusManagementService {
     moduleUndeploymentId: string
   ): Promise<void> {
 
-    const moduleUndeployment: ModuleUndeploymentEntity | undefined =
+    const moduleUndeployment: ModuleUndeploymentEntity =
       await this.getModuleUndeploymentEntity(moduleUndeploymentId)
-    if (!moduleUndeployment) {
-      throw Error('404') // TODO Handle this error correctly
-    }
+
     const finishedComponents: ComponentUndeploymentEntity[] =
       this.getModuleUndeploymentFinishedComponents(moduleUndeployment)
 
@@ -191,9 +189,9 @@ export class StatusManagementService {
 
   private async getModuleUndeploymentEntity(
     moduleUndeploymentId: string
-  ): Promise<ModuleUndeploymentEntity | undefined> {
+  ): Promise<ModuleUndeploymentEntity> {
 
-    return await this.moduleUndeploymentsRepository.findOne({
+    return await this.moduleUndeploymentsRepository.findOneOrFail({
       where: { id: moduleUndeploymentId },
       relations: [
         'componentUndeployments'
@@ -227,11 +225,9 @@ export class StatusManagementService {
     undeploymentId: string
   ): Promise<void> {
 
-    const undeployment: UndeploymentEntity | undefined =
+    const undeployment: UndeploymentEntity =
       await this.getUndeploymentEntity(undeploymentId)
-    if (!undeployment) {
-      throw Error('404') // TODO Handle this error correctly
-    }
+
     const finishedModules: ModuleUndeploymentEntity[] =
       this.getUndeploymentFinishedModules(undeployment)
 
@@ -242,9 +238,9 @@ export class StatusManagementService {
 
   private async getUndeploymentEntity(
     undeploymentId: string
-  ): Promise<UndeploymentEntity | undefined> {
+  ): Promise<UndeploymentEntity> {
 
-    return await this.undeploymentsRepository.findOne({
+    return await this.undeploymentsRepository.findOneOrFail({
       where: { id: undeploymentId },
       relations: [
         'moduleUndeployments'
@@ -306,9 +302,9 @@ export class StatusManagementService {
 
   private async getDeploymentEntity(
     deploymentId: string
-  ): Promise<DeploymentEntity | undefined> {
+  ): Promise<DeploymentEntity> {
 
-    return await this.deploymentsRepository.findOne({
+    return await this.deploymentsRepository.findOneOrFail({
       where: { id: deploymentId },
       relations: [
         'modules'
@@ -320,11 +316,9 @@ export class StatusManagementService {
     deploymentId: string
   ): Promise<void> {
 
-    const deployment: DeploymentEntity | undefined =
+    const deployment: DeploymentEntity =
       await this.getDeploymentEntity(deploymentId)
-    if (!deployment) {
-      throw Error('404') // TODO Handle this error correctly
-    }
+
     const finishedModules: ModuleDeploymentEntity[] =
       this.getDeploymentFinishedModules(deployment)
 
@@ -346,9 +340,9 @@ export class StatusManagementService {
 
   private async getModuleDeploymentEntity(
     moduleDeploymentId: string
-  ): Promise<ModuleDeploymentEntity | undefined> {
+  ): Promise<ModuleDeploymentEntity> {
 
-    return await this.moduleDeploymentRepository.findOne({
+    return await this.moduleDeploymentRepository.findOneOrFail({
       where: { id: moduleDeploymentId },
       relations: [
         'components'
@@ -360,11 +354,8 @@ export class StatusManagementService {
     moduleDeploymentId: string
   ): Promise<void> {
 
-    const moduleDeployment: ModuleDeploymentEntity | undefined =
+    const moduleDeployment: ModuleDeploymentEntity =
       await this.getModuleDeploymentEntity(moduleDeploymentId)
-    if (!moduleDeployment) {
-      throw Error('404') // TODO Handle this error correctly
-    }
     const finishedComponents: ComponentDeploymentEntity[] =
       this.getModuleFinishedComponents(moduleDeployment)
 

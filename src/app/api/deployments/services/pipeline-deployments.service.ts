@@ -105,7 +105,7 @@ export class PipelineDeploymentsService {
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT', error)
-            const componentUndeployment: ComponentUndeploymentEntity | undefined =
+            const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
             if (componentUndeployment) {
@@ -199,27 +199,19 @@ export class PipelineDeploymentsService {
         componentDeployment: ComponentDeploymentEntity,
         pipelineCallbackUrl: string
     ): Promise<void> {
-
-        try {
-            if (!componentEntity.module.cdConfigurationId) {
-                throw new NotFoundException(`Module does not have configuration id`)
-            }
-            const cdConfiguration =
-                await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
-            if (!cdConfiguration) {
-                throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
-            }
-            const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
-
-            const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
-                componentEntity, cdConfiguration, componentDeployment,
-                undeploymentEntity.circleId, pipelineCallbackUrl
-            )
-
-            await cdService.createDeployment(connectorConfiguration)
-        } catch (error) {
-            throw error
+        if (!componentEntity.module.cdConfigurationId) {
+            throw new NotFoundException(`Module does not have configuration id`)
         }
+        const cdConfiguration =
+            await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
+
+        const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
+
+        const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+            componentEntity, cdConfiguration, componentDeployment,
+            undeploymentEntity.circleId, pipelineCallbackUrl
+        )
+        await cdService.createDeployment(connectorConfiguration)
     }
 
     private getConnectorConfiguration(

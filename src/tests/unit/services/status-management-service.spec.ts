@@ -210,7 +210,7 @@ describe('PipelinesService', () => {
 
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
-            jest.spyOn(moduleUndeploymentsRepository, 'findOne')
+            jest.spyOn(moduleUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
             jest.spyOn(undeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undeployment))

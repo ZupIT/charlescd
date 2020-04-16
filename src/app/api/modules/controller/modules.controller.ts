@@ -17,13 +17,13 @@ import { CreateModuleUsecase } from '../use-cases'
 export class ModulesController {
 
   constructor(
-      private readonly modulesService: ModulesService,
-      private readonly createModuleUsecase: CreateModuleUsecase
-    ) {}
+    private readonly modulesService: ModulesService,
+    private readonly createModuleUsecase: CreateModuleUsecase
+  ) { }
 
   @Post()
   public async createModule(
-      @Body() createModuleDto: CreateModuleDto
+    @Body() createModuleDto: CreateModuleDto
   ): Promise<ReadModuleDto> {
 
     return await this.createModuleUsecase.execute(createModuleDto)
@@ -36,10 +36,6 @@ export class ModulesController {
 
   @Get(':id')
   public async getModuleById(@Param('id') id: string): Promise<ReadModuleDto> {
-    const module = await this.modulesService.getModuleById(id)
-    if (!module) {
-      throw new NotFoundException(`Module not found - id: ${id}`)
-    }
-    return module
+    return await this.modulesService.getModuleById(id)
   }
 }

@@ -19,9 +19,9 @@ export class ModulesExistencePipe implements PipeTransform {
 
     public async transform(deploymentRequest: CreateDeploymentRequestDto, metadata: ArgumentMetadata): Promise<CreateDeploymentRequestDto> {
 
-        const modules: Array<ModuleEntity | undefined> = await Promise.all(
+        const modules: ModuleEntity[] = await Promise.all(
             deploymentRequest.modules.map(
-                moduleDeployment => this.moduleEntityRepository.findOne({ id: moduleDeployment.moduleId })
+                moduleDeployment => this.moduleEntityRepository.findOneOrFail({ id: moduleDeployment.moduleId })
             )
         )
 

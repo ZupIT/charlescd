@@ -8,6 +8,7 @@ import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
 import { ICdConfigurationData } from '../interfaces'
 import _ = require('lodash')
+import { NotFoundException } from '@nestjs/common'
 
 @EntityRepository(CdConfigurationEntity)
 export class CdConfigurationsRepository extends Repository<CdConfigurationEntity> {
@@ -45,7 +46,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         return queryResult.map(configuration => plainToClass(CdConfigurationEntity, configuration))
     }
 
-    public async findDecrypted(id: string): Promise<CdConfigurationEntity | undefined> {
+    public async findDecrypted(id: string): Promise<CdConfigurationEntity> {
 
         const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
@@ -56,7 +57,11 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .where('cd_configurations.id = :id', { id })
             .getRawOne()
 
-        if (queryResult && queryResult.configurationData) {
+        if (!queryResult) {
+            throw new NotFoundException(`CdConfiguration not found - id: ${id}`)
+        }
+
+        if (queryResult.configurationData) {
             queryResult.configurationData = JSON.parse(queryResult.configurationData)
         }
 

@@ -111,7 +111,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     describe('execute', () => {
         it('should update successful callback queued entry status to FINISHED', async () => {
 
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
@@ -127,7 +127,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
         it('should not execute a finished deployment', async () => {
 
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedDeploymentFinished))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))

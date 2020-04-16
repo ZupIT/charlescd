@@ -54,7 +54,7 @@ export class PipelineErrorHandlerService {
         circle: CircleDeploymentEntity
     ): Promise<void> {
 
-        const component: ComponentEntity | undefined = await this.componentsRepository.findOne({ id: componentDeployment.componentId })
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId })
         if (component) {
             await this.removeComponentPipelineCircle(component, circle)
         }

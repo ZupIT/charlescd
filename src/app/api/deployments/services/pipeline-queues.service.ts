@@ -46,47 +46,32 @@ export class PipelineQueuesService {
   }
 
   private async triggerQueuedDeployment(queuedDeployment: QueuedDeploymentEntity): Promise<void> {
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
 
-    let componentDeployment: ComponentDeploymentEntity | undefined
-    let component: ComponentEntity | undefined
+    const component: ComponentEntity =
+      await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId }, { relations: ['module'] })
 
+    const { moduleDeployment: { deployment } } = componentDeployment
     try {
-      componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
-      if (!componentDeployment) {
-        throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${queuedDeployment.componentDeploymentId}`)
-      }
-      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-      const { moduleDeployment: { deployment } } = componentDeployment
-
-      if (component) {
-        deployment.defaultCircle ?
-          await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment) :
-          await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
-      }
+      deployment.defaultCircle ?
+        await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment) :
+        await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
     } catch (error) {
       throw error
     }
   }
 
   private async triggerQueuedUndeployment(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
+    const componentDeployment: ComponentDeploymentEntity
+      = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
 
-    let componentDeployment: ComponentDeploymentEntity | undefined
-    let component: ComponentEntity | undefined
+    const component: ComponentEntity =
+      await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId }, { relations: ['module'] })
 
-    try {
-      componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
-      if (!componentDeployment) {
-        throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${queuedUndeployment.componentDeploymentId}`)
-      }
-      component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-      const { moduleDeployment: { deployment } } = componentDeployment
-      const undeployment = await this.undeploymentsRepository.findOne({ where: { deployment_id: deployment.id } })
-      if (undeployment && component) {
-        await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
-      }
-    } catch (error) {
-      throw error
-    }
+    const { moduleDeployment: { deployment } } = componentDeployment
+    const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { deployment_id: deployment.id } })
+    await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
   }
 
   private async setQueuedDeploymentStatus(queuedDeployment: QueuedDeploymentEntity, status: QueuedPipelineStatusEnum): Promise<void> {

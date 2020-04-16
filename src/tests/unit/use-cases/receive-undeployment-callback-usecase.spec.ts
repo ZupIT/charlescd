@@ -149,7 +149,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
     describe('execute', () => {
         it('should update successful callback queued entry status to FINISHED', async () => {
 
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeployment))
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -164,7 +164,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         })
 
         it('should not execute a finished undeployment', async () => {
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeploymentFinished))
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
