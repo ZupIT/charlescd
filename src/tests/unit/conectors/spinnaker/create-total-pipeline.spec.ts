@@ -43,6 +43,6 @@ it('compiles the pipeline with only undeployment', () => {
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()
-  // TODO conferir esse resultado
+
   expect(result).toEqual(expectedPipelineWithoutDeployments)
 })
