@@ -47,11 +47,8 @@ export class ReceiveUndeploymentCallbackUsecase {
 
     try {
       this.consoleLoggerService.log('START:FINISH_UNDEPLOYMENT_NOTIFICATION', finishUndeploymentDto)
-      const queuedUndeploymentEntity: QueuedDeploymentEntity | undefined =
-        await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
-      if (!queuedUndeploymentEntity) {
-        throw new NotFoundException(`QueuedDeploymentEntity with id ${queuedUndeploymentId} not found`)
-      }
+      const queuedUndeploymentEntity: QueuedDeploymentEntity =
+        await this.queuedUndeploymentsRepository.findOneOrFail({ id: queuedUndeploymentId })
       if (queuedUndeploymentEntity.isRunning()) {
         finishUndeploymentDto.isSuccessful() ?
           await this.handleSuccessfulUndeployment(queuedUndeploymentId) :
@@ -68,24 +65,15 @@ export class ReceiveUndeploymentCallbackUsecase {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
-    const queuedUndeployment: QueuedUndeploymentEntity | undefined =
-      await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
+    const queuedUndeployment: QueuedUndeploymentEntity =
+      await this.queuedUndeploymentsRepository.findOneOrFail({ id: queuedUndeploymentId })
 
-    if (!queuedUndeployment) {
-      throw new NotFoundException(`QueuedUndeploymentEntity with id ${queuedUndeploymentId} not found`)
-    }
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.findOneOrFail({ id: queuedUndeployment.componentDeploymentId })
 
-    const componentDeployment: ComponentDeploymentEntity | undefined =
-      await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
-    if (!componentDeployment) {
-      throw new NotFoundException(`ComponentDeploymentEntity with id ${queuedUndeployment.componentDeploymentId} not found`)
-    }
-    const componentUndeployment: ComponentUndeploymentEntity | undefined =
+    const componentUndeployment: ComponentUndeploymentEntity =
       await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
-    if (!componentUndeployment) {
-      throw new NotFoundException(`ComponentUndeploymentEntity not found - id: ${queuedUndeployment.componentUndeploymentId}`)
-    }
     await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
@@ -116,19 +104,11 @@ export class ReceiveUndeploymentCallbackUsecase {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:UNDEPLOYMENT_SUCCESS_WEBHOOK', { queuedUndeploymentId })
-    const queuedUndeployment: QueuedUndeploymentEntity | undefined =
-      await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
+    const queuedUndeployment: QueuedUndeploymentEntity =
+      await this.queuedUndeploymentsRepository.findOneOrFail({ id: queuedUndeploymentId })
 
-    if (!queuedUndeployment) {
-      throw new NotFoundException(`Undeployment with id ${queuedUndeploymentId} not found`)
-    }
-
-    const componentDeployment: ComponentDeploymentEntity | undefined =
-      await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
-
-    if (!componentDeployment) {
-      throw new NotFoundException(`ComponentDeploymentEntity with id ${queuedUndeployment.componentDeploymentId} not found`)
-    }
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.findOneOrFail({ id: queuedUndeployment.componentDeploymentId })
 
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)

@@ -9,8 +9,8 @@ export class ComponentDeploymentsRepository extends Repository<ComponentDeployme
 
   public async getOneWithRelations(
     componentDeploymentId: string
-  ): Promise<ComponentDeploymentEntity | undefined> {
-    return this.findOne({
+  ): Promise<ComponentDeploymentEntity> {
+    return this.findOneOrFail({
       where: { id: componentDeploymentId },
       relations: ['moduleDeployment', 'moduleDeployment.deployment']
     })

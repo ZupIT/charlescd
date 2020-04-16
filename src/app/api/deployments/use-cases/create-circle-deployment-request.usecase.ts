@@ -1,7 +1,6 @@
 import {
     Injectable,
-    InternalServerErrorException,
-    NotFoundException
+    InternalServerErrorException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
@@ -20,8 +19,7 @@ import { ModuleEntity } from '../../modules/entity'
 import { ComponentEntity } from '../../components/entity'
 import {
     PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
+    PipelineErrorHandlerService
 } from '../services'
 import {
     ComponentDeploymentsRepository,
@@ -44,7 +42,6 @@ export class CreateCircleDeploymentRequestUsecase {
         @InjectRepository(ComponentDeploymentsRepository)
         private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
-        private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
     ) { }
@@ -76,39 +73,25 @@ export class CreateCircleDeploymentRequestUsecase {
     }
 
     private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
-
-        try {
-            const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
-            await Promise.all(
-                componentDeploymentsIds.map(
-                    componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
-                )
+        const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
+        await Promise.all(
+            componentDeploymentsIds.map(
+                componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
             )
-        } catch (error) {
-            throw error
-        }
+        )
     }
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
         componentDeploymentId: string
     ): Promise<void> {
-
-        try {
-            const componentDeployment: ComponentDeploymentEntity | undefined =
-                await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-            if (!componentDeployment) {
-                throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentDeploymentId}`)
-            }
-            const queuedDeployment: QueuedDeploymentEntity | undefined = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity | undefined =
-                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING && component) {
-                await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
-            }
-        } catch (error) {
-            throw error
+        const componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+        const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+            { id: componentDeployment.componentId }, { relations: ['module'] }
+        )
+        if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
         }
     }
 

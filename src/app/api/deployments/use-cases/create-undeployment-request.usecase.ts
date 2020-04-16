@@ -66,15 +66,11 @@ export class CreateUndeploymentRequestUsecase {
     deploymentId: string,
     circleId: string
   ): Promise<UndeploymentEntity> {
-
+    const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOneOrFail({
+      where: { id: deploymentId },
+      relations: ['modules', 'modules.components']
+    })
     try {
-      const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOne({
-        where: { id: deploymentId },
-        relations: ['modules', 'modules.components']
-      })
-      if (!deployment) {
-        throw new NotFoundException(`DeploymentEntity not found - id: ${deploymentId}`)
-      }
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment, circleId))
     } catch (error) {
       throw new InternalServerErrorException('Could not save undeployment')
@@ -82,16 +78,12 @@ export class CreateUndeploymentRequestUsecase {
   }
 
   private async scheduleComponentUndeployments(undeployment: UndeploymentEntity): Promise<void> {
-    try {
-      const componentUndeployments: ComponentUndeploymentEntity[] = undeployment.getComponentUndeployments()
-      await Promise.all(
-        componentUndeployments.map(
-          componentUndeployment => this.enqueueComponentUndeployment(undeployment, componentUndeployment)
-        )
+    const componentUndeployments: ComponentUndeploymentEntity[] = undeployment.getComponentUndeployments()
+    await Promise.all(
+      componentUndeployments.map(
+        componentUndeployment => this.enqueueComponentUndeployment(undeployment, componentUndeployment)
       )
-    } catch (error) {
-      throw error
-    }
+    )
   }
 
   private async enqueueComponentUndeployment(
@@ -99,26 +91,21 @@ export class CreateUndeploymentRequestUsecase {
     componentUndeployment: ComponentUndeploymentEntity
   ): Promise<void> {
 
-    try {
-      const queuedUndeployment: QueuedUndeploymentEntity =
-        await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
-      const componentDeployment: ComponentDeploymentEntity | undefined =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentUndeployment.componentDeployment.id)
-      if (!componentDeployment) {
-        throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentUndeployment.componentDeployment.id}`)
-      }
-      const component: ComponentEntity | undefined = await this.componentsRepository.findOne(
-        { id: componentDeployment.componentId }, { relations: ['module'] }
-      )
+    const queuedUndeployment: QueuedUndeploymentEntity =
+      await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
 
-      if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING && component) {
-        await this.pipelineDeploymentsService.triggerUndeployment(
-          componentDeployment, undeployment, component,
-          undeployment.deployment, queuedUndeployment
-        )
-      }
-    } catch (error) {
-      throw error
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.getOneWithRelations(componentUndeployment.componentDeployment.id)
+
+    const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+      { id: componentDeployment.componentId }, { relations: ['module'] }
+    )
+
+    if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+      await this.pipelineDeploymentsService.triggerUndeployment(
+        componentDeployment, undeployment, component,
+        undeployment.deployment, queuedUndeployment
+      )
     }
   }
 

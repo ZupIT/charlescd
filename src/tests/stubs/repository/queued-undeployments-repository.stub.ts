@@ -6,6 +6,10 @@ export class QueuedUndeploymentsRepositoryStub {
         return Promise.resolve({} as QueuedUndeploymentEntity)
     }
 
+    public async findOneOrFail(): Promise<QueuedUndeploymentEntity> {
+        return Promise.resolve({} as QueuedUndeploymentEntity)
+    }
+
     public async save(): Promise<QueuedUndeploymentEntity> {
         return Promise.resolve({} as QueuedUndeploymentEntity)
     }

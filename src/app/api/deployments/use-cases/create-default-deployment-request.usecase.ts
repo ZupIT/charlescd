@@ -77,38 +77,25 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
-        try {
-            const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
-            await Promise.all(
-                componentDeploymentsIds.map(
-                    componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
-                )
+        const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
+        await Promise.all(
+            componentDeploymentsIds.map(
+                componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
             )
-        } catch (error) {
-            throw error
-        }
+        )
     }
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
         componentDeploymentId: string
     ): Promise<void> {
-
-        try {
-            const componentDeployment: ComponentDeploymentEntity | undefined =
-                await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-            if (!componentDeployment) {
-                throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentDeploymentId}`)
-            }
-            const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity | undefined =
-                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING && component) {
-                await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
-            }
-        } catch (error) {
-            throw error
+        const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+        const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+            { id: componentDeployment.componentId }, { relations: ['module'] }
+        )
+        if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
         }
     }
 

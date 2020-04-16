@@ -57,7 +57,6 @@ export class DeploymentsController {
       @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
       @Headers('x-circle-id') circleId: string
   ): Promise<ReadDeploymentDto> {
-
     return await this.createDefaultDeploymentRequestUsecase.execute(createDefaultDeploymentRequestDto, circleId)
   }
 
