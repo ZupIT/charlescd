@@ -49,7 +49,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
@@ -222,7 +222,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
@@ -395,7 +395,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
