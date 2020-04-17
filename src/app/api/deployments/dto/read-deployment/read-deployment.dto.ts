@@ -7,7 +7,7 @@ export class ReadDeploymentDto {
 
   public readonly applicationName: string
 
-  public readonly modulesDeployments: ReadModuleDeploymentDto[] | null | undefined
+  public readonly modulesDeployments: ReadModuleDeploymentDto[]
 
   public readonly authorId: string
 
@@ -26,7 +26,7 @@ export class ReadDeploymentDto {
   constructor(
     id: string,
     applicationName: string,
-    modulesDeployments: ReadModuleDeploymentDto[] | null | undefined,
+    modulesDeployments: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
     status: string,

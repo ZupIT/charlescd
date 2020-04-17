@@ -6,7 +6,7 @@ export class ReadModuleUndeploymentDto {
 
     public readonly moduleUndeployment: string
 
-    public readonly componentsUndeployments: ReadComponentUndeploymentDto[] | null | undefined
+    public readonly componentsUndeployments: ReadComponentUndeploymentDto[]
 
     public readonly status: string
 
@@ -15,7 +15,7 @@ export class ReadModuleUndeploymentDto {
     constructor(
         id: string,
         moduleUndeployment: string,
-        componentsUndeployments: ReadComponentUndeploymentDto[] | null | undefined,
+        componentsUndeployments: ReadComponentUndeploymentDto[],
         status: string,
         createdAt: Date
     ) {

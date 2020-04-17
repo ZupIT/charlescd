@@ -66,7 +66,7 @@ export class CreateUndeploymentRequestUsecase {
     deploymentId: string,
     circleId: string
   ): Promise<UndeploymentEntity> {
-    const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOneOrFail({
+    const deployment: DeploymentEntity = await this.deploymentsRepository.findOneOrFail({
       where: { id: deploymentId },
       relations: ['modules', 'modules.components']
     })

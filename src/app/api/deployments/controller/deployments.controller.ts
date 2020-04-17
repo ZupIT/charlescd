@@ -1,31 +1,10 @@
+import { Body, Controller, Get, Headers, Param, Post, UsePipes } from '@nestjs/common'
 import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  UsePipes,
-  NotFoundException
-} from '@nestjs/common'
-import {
-  CreateCircleDeploymentRequestDto,
-  CreateDefaultDeploymentRequestDto,
-  CreateUndeploymentDto,
-  ReadDeploymentDto,
-  ReadUndeploymentDto
+  CreateCircleDeploymentRequestDto, CreateDefaultDeploymentRequestDto, CreateUndeploymentDto, ReadDeploymentDto, ReadUndeploymentDto
 } from '../dto'
+import { ComponentsExistencePipe, DeploymentUniquenessPipe, ModulesExistencePipe } from '../pipes'
 import { DeploymentsService } from '../services'
-import {
-  CreateCircleDeploymentRequestUsecase,
-  CreateDefaultDeploymentRequestUsecase,
-  CreateUndeploymentRequestUsecase
-} from '../use-cases'
-import {
-  ComponentsExistencePipe,
-  DeploymentUniquenessPipe,
-  ModulesExistencePipe
-} from '../pipes'
+import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
 
 @Controller('deployments')
 export class DeploymentsController {

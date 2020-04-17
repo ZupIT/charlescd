@@ -8,7 +8,7 @@ export class ReadModuleDeploymentDto {
 
   public readonly helmRepository: string
 
-  public readonly componentsDeployments: ReadComponentDeploymentDto[] | null | undefined
+  public readonly componentsDeployments: ReadComponentDeploymentDto[]
 
   public readonly status: string
 
@@ -18,7 +18,7 @@ export class ReadModuleDeploymentDto {
     id: string,
     moduleId: string,
     helmRepository: string,
-    componentsDeployments: ReadComponentDeploymentDto[] | null | undefined,
+    componentsDeployments: ReadComponentDeploymentDto[],
     status: string,
     createdAt: Date
   ) {
