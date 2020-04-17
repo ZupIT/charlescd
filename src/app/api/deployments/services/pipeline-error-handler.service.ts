@@ -28,8 +28,7 @@ import {of, throwError} from 'rxjs';
 
 @Injectable()
 export class PipelineErrorHandlerService {
-    private readonly MAXIMUM_RETRY_ATTEMPTS = 3
-    private readonly MILLISECONDS_RETRY_DELAY = 1000
+
     constructor(
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly statusManagementService: StatusManagementService,
@@ -49,28 +48,9 @@ export class PipelineErrorHandlerService {
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
             ).pipe(
                 map(response=>response),
-                retryWhen(error=> this.getNotificationRetryCondition(error))
+                retryWhen(error=> this.mooveService.getNotificationRetryCondition(error))
              ).toPromise()
         }
-    }
-
-    private getNotificationRetryCondition(deployError) {
-
-        return deployError.pipe(
-            concatMap((error, attempts) => {
-                return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
-                    throwError('Reached maximum attemps.') :
-                    this.getNotificationRetryPipe(error, attempts)
-            })
-        )
-    }
-
-    private getNotificationRetryPipe(error, attempts: number) {
-
-        return of(error).pipe(
-            tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
-            delay(this.MILLISECONDS_RETRY_DELAY)
-        )
     }
 
     public async handleComponentDeploymentFailure(
