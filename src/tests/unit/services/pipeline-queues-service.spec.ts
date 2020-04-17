@@ -140,10 +140,23 @@ describe('PipelineQueuesService', () => {
 
         circle = new CircleDeploymentEntity('dummy-circle')
 
+        componentDeployment = new ComponentDeploymentEntity(
+            'dummy-id',
+            'dummy-name',
+            'dummy-img-url',
+            'dummy-img-tag'
+        )
+
+        moduleDeployment = new ModuleDeploymentEntity(
+            'dummy-id',
+            'helm-repository',
+            [componentDeployment]
+        )
+
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
-            null,
+            [moduleDeployment],
             'dummy-author-id',
             'dummy-description',
             'dummy-callback-url',
@@ -152,19 +165,7 @@ describe('PipelineQueuesService', () => {
             'dummy-circle-id'
         )
 
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            null
-        )
         moduleDeployment.deployment = deployment
-
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag'
-        )
         componentDeployment.moduleDeployment = moduleDeployment
 
         componentDeploymentsList = [
