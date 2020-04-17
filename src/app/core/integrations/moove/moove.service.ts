@@ -3,7 +3,9 @@ import { ConsoleLoggerService } from '../../logs/console'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
 import { AxiosResponse } from 'axios'
 import { IoCTokensConstants } from '../../constants/ioc'
-import {Observable} from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators';
+import { AppConstants } from '../../constants';
 
 @Injectable()
 export class MooveService {
@@ -28,11 +30,32 @@ export class MooveService {
           callbackUrl,
           { deploymentStatus: status },
           { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
+        ).pipe(
+            map(response=>response),
+            retryWhen(error=> this.getNotificationRetryCondition(error))
         )
         this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
       } catch (error) {
         this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
         throw error
       }
+    }
+    private getNotificationRetryCondition(deployError) {
+
+        return deployError.pipe(
+            concatMap((error, attempts) => {
+                return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS ?
+                    throwError('Reached maximum attemps.') :
+                    this.getNotificationRetryPipe(error, attempts)
+            })
+        )
+    }
+
+    private getNotificationRetryPipe(error, attempts: number) {
+
+        return of(error).pipe(
+            tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+            delay(AppConstants.MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY)
+        )
     }
 }
