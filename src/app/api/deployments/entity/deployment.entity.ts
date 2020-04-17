@@ -27,7 +27,7 @@ export class DeploymentEntity extends BaseEntity {
     moduleDeployment => moduleDeployment.deployment,
     { cascade: true }
   )
-  public modules: ModuleDeploymentEntity[] | null
+  public modules: ModuleDeploymentEntity[]
 
   @Column({ name: 'user_id' })
   public authorId: string
@@ -63,7 +63,7 @@ export class DeploymentEntity extends BaseEntity {
   constructor(
     deploymentId: string,
     applicationName: string,
-    modules: ModuleDeploymentEntity[] | null,
+    modules: ModuleDeploymentEntity[],
     authorId: string,
     description: string,
     callbackUrl: string,
@@ -109,18 +109,11 @@ export class DeploymentEntity extends BaseEntity {
   }
 
   public getComponentDeploymentsIds(): string[] {
-    if (!this.modules) { return [] }
-
     return this.modules.reduce((acc, moduleDeployment) => {
-      if (moduleDeployment?.components) {
+      if (moduleDeployment.components) {
         return acc.concat(moduleDeployment.components.map(component => component.id))
       }
       return acc
     }, [] as string[])
-
-    // TODO improve this
-    // return this.modules.reduce(
-    //   (accumulated, moduleDeployment) => [...accumulated, ...moduleDeployment.components.map(component => component.id)], []
-    // )
   }
 }

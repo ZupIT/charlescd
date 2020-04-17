@@ -7,7 +7,7 @@ import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
 import { ICdConfigurationData } from '../interfaces'
-import _ = require('lodash')
+import { mapValues } from 'lodash'
 import { NotFoundException } from '@nestjs/common'
 
 @EntityRepository(CdConfigurationEntity)
@@ -76,7 +76,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
     }
 
     private trimObject(configurationData: ICdConfigurationData) {
-        return _.mapValues(configurationData, (value) => {
+        return mapValues(configurationData, (value) => {
             if (typeof value === 'string') {
                 return value.trim()
             }

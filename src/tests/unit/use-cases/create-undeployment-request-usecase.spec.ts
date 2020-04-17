@@ -138,7 +138,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     describe('execute', () => {
         it('should return the correct read dto for a given create dto', async () => {
 
-            jest.spyOn(deploymentsRepository, 'findOne')
+            jest.spyOn(deploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(undeployment))
@@ -151,7 +151,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
 
         it('should handle duplicated module undeployment', async () => {
 
-            jest.spyOn(deploymentsRepository, 'findOne')
+            jest.spyOn(deploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(undeployment))

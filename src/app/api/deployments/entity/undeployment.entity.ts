@@ -39,7 +39,7 @@ export class UndeploymentEntity extends BaseEntity {
     moduleUndeployment => moduleUndeployment.undeployment,
     { cascade: true }
   )
-  public moduleUndeployments: ModuleUndeploymentEntity[] | null
+  public moduleUndeployments: ModuleUndeploymentEntity[]
 
   @Column({ name: 'status' })
   public status: UndeploymentStatusEnum
@@ -57,7 +57,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
-    this.moduleUndeployments = deployment ? this.createModuleUndeploymentsArray(deployment) : null
+    this.moduleUndeployments = this.createModuleUndeploymentsArray(deployment)
     this.circleId = circleId
   }
 
@@ -69,7 +69,7 @@ export class UndeploymentEntity extends BaseEntity {
       this.deployment.id,
       this.status,
       this.circleId,
-      this.moduleUndeployments?.map(module => module.toReadDto())
+      this.moduleUndeployments.map(module => module.toReadDto())
     )
   }
 
@@ -82,9 +82,6 @@ export class UndeploymentEntity extends BaseEntity {
   }
 
   public getComponentUndeployments(): ComponentUndeploymentEntity[] {
-    // TODO improve this
-    if (!this.moduleUndeployments) { return [] }
-
     return this.moduleUndeployments.reduce(
       (accumulated, moduleUndeployment) => {
         if (!moduleUndeployment.componentUndeployments) { return accumulated }
@@ -94,8 +91,6 @@ export class UndeploymentEntity extends BaseEntity {
   }
 
   private createModuleUndeploymentsArray(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
-    if (!deployment.modules) { return [] }
-
     return deployment.modules.map(
       moduleDeployment => this.createModuleUndeployment(moduleDeployment)
     )
@@ -111,9 +106,6 @@ export class UndeploymentEntity extends BaseEntity {
   }
 
   private createComponentUndeploymentsArray(moduleDeployment: ModuleDeploymentEntity): ComponentUndeploymentEntity[] {
-    if (!moduleDeployment.components) {
-      throw new NotFoundException(`Module does not have components`)
-    }
     return moduleDeployment.components.map(
       componentDeployment => this.createComponentUndeployment(componentDeployment)
     )

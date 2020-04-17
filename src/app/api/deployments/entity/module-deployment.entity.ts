@@ -41,7 +41,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
     componentDeployment => componentDeployment.moduleDeployment,
     { cascade: true, eager: true }
   )
-  public components: ComponentDeploymentEntity[] | null | undefined
+  public components: ComponentDeploymentEntity[]
 
   @CreateDateColumn({ name: 'created_at'})
   public createdAt!: Date
@@ -49,7 +49,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
   constructor(
     moduleId: string,
     helmRepository: string,
-    components: ComponentDeploymentEntity[] | null | undefined
+    components: ComponentDeploymentEntity[]
   ) {
     super()
     this.id = uuidv4()
@@ -64,7 +64,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
       this.id,
       this.moduleId,
       this.helmRepository,
-      this.components?.map(component => component.toReadDto()),
+      this.components.map(component => component.toReadDto()),
       this.status,
       this.createdAt
     )
