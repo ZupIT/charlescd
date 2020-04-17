@@ -6,7 +6,7 @@ import { AppConstants } from '../../../constants'
 import { ConsoleLoggerService } from '../../../logs/console'
 import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
 import TotalPipeline from './connector'
-import { IBaseSpinnakerPipeline } from './connector/interfaces'
+import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { SpinnakerApiService } from './spinnaker-api.service'
 
@@ -107,7 +107,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     pipelineId: string,
     spinnakerConfiguration: ISpinnakerPipelineConfiguration,
     spinnakerPipeline: IBaseSpinnakerPipeline
-  ): IBaseSpinnakerPipeline & { id: string } {
+  ): IUpdateSpinnakerPipeline {
 
     return {
       ...spinnakerPipeline,
