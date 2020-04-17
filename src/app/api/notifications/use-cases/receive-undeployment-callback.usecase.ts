@@ -93,31 +93,10 @@ export class ReceiveUndeploymentCallbackUsecase {
     if (undeployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId
-      ).pipe(
-          map(response => response),
-          retryWhen(error => this.getNotificationRetryCondition(error))
       ).toPromise()
     }
   }
 
-  private getNotificationRetryCondition(deployError) {
-
-    return deployError.pipe(
-        concatMap((error, attempts) => {
-          return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
-              throwError('Reached maximum attemps.') :
-              this.getNotificationRetryPipe(error, attempts)
-        })
-    )
-  }
-
-  private getNotificationRetryPipe(error, attempts: number) {
-
-    return of(error).pipe(
-        tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
-        delay(this.MILLISECONDS_RETRY_DELAY)
-    )
-  }
   private async handleSuccessfulUndeployment(
     queuedUndeploymentId: number
   ): Promise<void> {

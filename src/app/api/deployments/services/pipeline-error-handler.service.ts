@@ -23,8 +23,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { QueuedDeploymentsRepository } from '../repository'
 import { ComponentEntity } from '../../components/entity'
 import { Repository } from 'typeorm'
-import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
-import {of, throwError} from 'rxjs';
 
 @Injectable()
 export class PipelineErrorHandlerService {
@@ -44,12 +42,9 @@ export class PipelineErrorHandlerService {
 
         if (deployment && !deployment.hasFailed()) {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-            await this.mooveService.notifyDeploymentStatus(
+             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-            ).pipe(
-                map(response=>response),
-                retryWhen(error=> this.mooveService.getNotificationRetryCondition(error))
-             ).toPromise()
+            ).toPromise()
         }
     }
 
@@ -69,13 +64,10 @@ export class PipelineErrorHandlerService {
 
         if (undeployment && !undeployment.hasFailed()) {
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
-            this.mooveService.notifyDeploymentStatus(
+            await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-            ).pipe(
-                map(response=>response),
-                retryWhen(error=> this.getNotificationRetryCondition(error))
-            )
+            ).toPromise()
         }
     }
 
