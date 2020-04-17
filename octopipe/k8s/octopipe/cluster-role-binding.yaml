@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8sconnection.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+  name: octopipe-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8sconnection.io
+  kind: ClusterRole
+  name: octopipe-role
+subjects:
+- kind: ServiceAccount
+  name: octopipe-service-account
+  namespace: darwin

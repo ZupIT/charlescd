@@ -1,0 +1,171 @@
+apiVersion: rbac.authorization.k8sconnection.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"ClusterRole","metadata":{"annotations":{},"name":"octopipe-role"},"rules":[{"apiGroups":[""],"resources":["namespaces","configmaps","events","replicationcontrollers","serviceaccounts","pods/log"],"verbs":["get","list"]},{"apiGroups":[""],"resources":["pods","services","secrets"],"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]},{"apiGroups":["autoscaling"],"resources":["horizontalpodautoscalers"],"verbs":["list","get"]},{"apiGroups":["apps"],"resources":["controllerrevisions","statefulsets"],"verbs":["list"]},{"apiGroups":["extensions","apps"],"resources":["deployments","replicasets","ingresses"],"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]},{"apiGroups":[""],"resources":["services/proxy","pods/portforward"],"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]}]}
+  creationTimestamp: "2019-07-30T20:18:29Z"
+  name: octopipe-role
+  resourceVersion: "1714955"
+  selfLink: /apis/rbac.authorization.k8sconnection.io/v1/clusterroles/octopipe-role
+  uid: 3203fca4-b307-11e9-b7cf-4201ac250008
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - configmaps
+  - events
+  - replicationcontrollers
+  - serviceaccounts
+  - pods/log
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - secrets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - controllerrevisions
+  - statefulsets
+  verbs:
+  - list
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - deployments
+  - replicasets
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services/proxy
+  - pods/portforward
+  verbs:apiVersion: rbac.authorization.k8sconnection.io/v1
+kind: ClusterRole
+metadata:
+  name: octopipe-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - configmaps
+  - events
+  - replicationcontrollers
+  - serviceaccounts
+  - pods/log
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - secrets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - controllerrevisions
+  - statefulsets
+  verbs:
+  - list
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - deployments
+  - replicasets
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services/proxy
+  - pods/portforward
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - "networking.istio.io"
+  resources:
+  - "*"
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch

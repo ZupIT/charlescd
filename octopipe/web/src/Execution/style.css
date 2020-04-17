@@ -1,0 +1,48 @@
+.execution__navbar {
+  background-color: #5e35b1;
+  height: 60px;
+}
+
+.execution__navbar a {
+  color: #fff;
+}
+
+.execution__content {
+  margin-top: 20px;
+}
+
+.execution__content__basic {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #424242;
+  color: #fff;
+}
+
+.execution__content__resume {
+  margin-bottom: 20px;
+}
+
+.execution__content__manifests {
+
+}
+
+.execution__content__manifest__status {
+  margin-right: 10px;
+  font-size: 11px;
+  padding: 5px;
+  text-align: center;
+}
+
+.execution__content__manifest {
+}
+
+.execution__content__manifest:hover {
+  cursor: pointer;
+}
+
+.execution__content__manifest__collapse {
+  border: 1px solid #eee;
+}
