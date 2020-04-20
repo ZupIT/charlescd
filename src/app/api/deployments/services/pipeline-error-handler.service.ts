@@ -36,7 +36,7 @@ export class PipelineErrorHandlerService {
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
         @InjectRepository(ComponentEntity)
         private readonly componentsRepository: Repository<ComponentEntity>
-    ) {}
+    ) { }
 
     public async handleDeploymentFailure(deployment: DeploymentEntity | undefined): Promise<void> {
 
@@ -55,9 +55,7 @@ export class PipelineErrorHandlerService {
     ): Promise<void> {
 
         const component: ComponentEntity = await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId })
-        if (component) {
-            await this.removeComponentPipelineCircle(component, circle)
-        }
+        await this.removeComponentPipelineCircle(component, circle)
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }

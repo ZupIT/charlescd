@@ -61,7 +61,6 @@ export class PipelineDeploymentsService {
                 await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
                 await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             }
-            console.log(error)
             throw error
         }
     }
@@ -108,9 +107,7 @@ export class PipelineDeploymentsService {
             const componentUndeployment: ComponentUndeploymentEntity =
                 await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
             await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
-            if (componentUndeployment) {
-                await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
-            }
+            await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
             throw error
         }
     }

@@ -81,11 +81,8 @@ export class ReceiveDeploymentCallbackUsecase {
     componentDeploymentId: string
   ): Promise<void> {
 
-    const componentDeployment: ComponentDeploymentEntity | undefined =
+    const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-    if (!componentDeployment) {
-      throw new NotFoundException(`ComponentDeploymentEntity not found - id: ${componentDeploymentId}`)
-    }
 
     const { moduleDeployment: { deployment } } = componentDeployment
 
