@@ -15,24 +15,33 @@ on:
 jobs:
   static_code_analysis:
     name: StaticCodeAnalysis
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
-      - name: Set up Go 1.13
+      - name: Install Go
         uses: actions/setup-go@v1
         with:
-          go-version: 1.13
+          go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          path: 'octopipe'
       - name: Build
         run: go build -o dist/octopipe ./cmd/octopipe/*.go
+        working-directory: ./octopipe
       - name: Run Unit tests
         run: |
           go test -race -covermode atomic -coverprofile=profile.cov ./...
+        working-directory: ./octopipe
       - name: Send coverage
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           GO111MODULE=off go get github.com/mattn/goveralls
           $(go env GOPATH)/bin/goveralls -coverprofile=profile.cov -service=github
+        working-directory: ./octopipe
