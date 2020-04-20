@@ -33,9 +33,11 @@ jobs:
         working-directory: ./octopipe
         run: go build -o dist/octopipe ./cmd/octopipe/*.go
       - name: Run Unit tests
+        working-directory: ./octopipe
         run: |
           go test -race -covermode atomic -coverprofile=profile.cov ./...
       - name: Send coverage
+        working-directory: ./octopipe
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
