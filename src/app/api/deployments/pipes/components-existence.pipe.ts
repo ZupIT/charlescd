@@ -24,10 +24,7 @@ export class ComponentsExistencePipe implements PipeTransform {
 
         const componentDeploymentsDto: CreateComponentDeploymentDto[] = deploymentRequest.modules.reduce(
             (accumulated, moduleDeploymentDto) => {
-                if (moduleDeploymentDto.components) {
-                    return [...accumulated, ...moduleDeploymentDto.components]
-                }
-                return accumulated
+                return [...accumulated, ...moduleDeploymentDto.components]
             }, [] as CreateComponentDeploymentDto[]
         )
 
