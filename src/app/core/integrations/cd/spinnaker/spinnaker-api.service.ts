@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { IBaseSpinnakerPipeline } from './connector/interfaces'
+import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
 import { ICreateSpinnakerApplication } from './interfaces'
 
 @Injectable()
@@ -39,7 +39,7 @@ export class SpinnakerApiService {
         )
     }
 
-    public updatePipeline(updatedPipeline: IBaseSpinnakerPipeline, url: string): Observable<AxiosResponse> {
+    public updatePipeline(updatedPipeline: IUpdateSpinnakerPipeline, url: string): Observable<AxiosResponse> {
         return this.httpService.post(
             `${url}/pipelines`,
             updatedPipeline,
