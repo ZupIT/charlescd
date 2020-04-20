@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200403034700-1
+      author: adauto.paula
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: modules_git_configurations

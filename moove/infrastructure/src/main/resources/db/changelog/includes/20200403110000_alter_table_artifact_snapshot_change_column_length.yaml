@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200403110000-1
+      author: adauto.paula
+      changes:
+        - modifyDataType:
+            columnName: artifact
+            newDataType: varchar(1028)
+            tableName: artifact_snapshots

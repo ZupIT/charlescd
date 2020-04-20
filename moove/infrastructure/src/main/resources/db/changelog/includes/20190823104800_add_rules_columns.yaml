@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190823104800-1
+      author: eliezer
+      comment: "Add fields rules on table circle"
+      changes:
+        - addColumn:
+            tableName: circles
+            column:
+              name: rule_matcher_type
+              type: varchar(64)
+              defaultValue: DARWIN
+              constraints:
+                nullable: false
+        - addColumn:
+            tableName: circles
+            column:
+              name: rule_external_id
+              type: varchar(32)
+        - addColumn:
+            tableName: circles
+            column:
+              name: rules
+              type: JSONB
+        - addColumn:
+            tableName: circles
+            column:
+              name: priority
+              type: int
+              defaultValueNumeric: 0

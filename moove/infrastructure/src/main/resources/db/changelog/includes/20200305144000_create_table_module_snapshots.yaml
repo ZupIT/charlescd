@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200305144000-1
+      author: adauto.paula
+      comment: "Create table module_snapshots"
+      changes:
+        - createTable:
+            tableName: module_snapshots
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: module_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: git_repository_address
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: helm_repository
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: application_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_ms_application_id
+                    references: applications(id)
+                    nullable: false
+              - column:
+                  name: feature_snapshot_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_ms_feature_snapshot_id
+                    references: feature_snapshots(id)
+                    nullable: false
+

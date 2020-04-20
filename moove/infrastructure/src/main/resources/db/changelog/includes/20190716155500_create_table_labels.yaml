@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190716155500-1
+      author: william.okano
+      comment: "Create table labels"
+      changes:
+        - createTable:
+            tableName: labels
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(64)
+                  constraints:
+                    foreignKeyName: fk_labels_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: hex_color
+                  type: varchar(6)
+                  constraints:
+                    nullable: false

@@ -1,0 +1,290 @@
+---
+constraints:
+  - pattern: /builds/**
+    roles:
+      build_read:
+        - GET
+      build_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/builds/**
+    roles:
+      build_read:
+        - GET
+      build_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /cards/**
+    roles:
+      moove_read:
+        - GET
+      moove_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /features/**
+    roles:
+      moove_read:
+        - GET
+      moove_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /hypotheses/**
+    roles:
+      moove_read:
+        - GET
+      moove_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /labels/**
+    roles:
+      moove_read:
+        - GET
+      moove_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /problems/**
+    roles:
+      moove_read:
+        - GET
+      moove_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /circles/**
+    roles:
+      circle_read:
+        - GET
+      circle_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /config/**
+    roles:
+      config_read:
+        - GET
+      config_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/configurations/**
+    roles:
+      config_read:
+        - GET
+      config_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /deployments/**
+    roles:
+      deploy_read:
+        - GET
+      deploy_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/deployments/**
+    roles:
+      deploy_read:
+        - GET
+      deploy_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /modules/**
+    roles:
+      module_read:
+        - GET
+      module_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /users/**
+    roles:
+      moove_read:
+        - GET
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /auth/info/**
+    roles:
+      admin:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /metrics/**
+    roles:
+      circle_read:
+        - GET
+      circle_write:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+      admin:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+
+  - pattern: /applications/**
+    roles:
+      admin:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+
+publicConstraints:
+  - pattern: /credentials/{service}/{id}
+    methods:
+      - GET
+
+  - pattern: /callback/**
+    methods:
+      - POST
+
+  - pattern: /users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/deployments/{id:.+}/callback
+    methods:
+      - POST
+
+  - pattern: /v2/builds/{id:.+}/callback
+    methods:
+      - POST
+
+  - pattern: /actuator/health
+    methods:
+      - GET

@@ -1,0 +1,1797 @@
+{
+	"info": {
+		"_postman_id": "ee8dda36-0daf-4413-b1e6-c4ad7fed85d3",
+		"name": "Darwin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get all users paged",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d77765fc-3354-4330-8f56-e47f267c5ab4",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"userId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"William Okano\",\n\t\"photoUrl\": \"https://avatars3.githubusercontent.com/u/5909442?s=400&v=4\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d77765fc-3354-4330-8f56-e47f267c5ab4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"William Johnson\",\n\t\"photoUrl\": \"https://avatars3.githubusercontent.com/u/5909442?s=400&v=4\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Labels",
+			"item": [
+				{
+					"name": "Get all labels paginated",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/labels?sort=createdAt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"labels"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "createdAt"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get label by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/labels/{{labelId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"labels",
+								"{{labelId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create label",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d77765fc-3354-4330-8f56-e47f267c5ab4",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"labelId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Darwin - {{$guid}}\",\n    \"hexColor\": \"BBAADD\",\n    \"authorId\": \"{{userId}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/labels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"labels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update label",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d77765fc-3354-4330-8f56-e47f267c5ab4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Frontend\",\n    \"hex_color\": \"FAFAFA\",\n    \"author_id\": \"{{userId}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/labels/{{labelId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"labels",
+								"{{labelId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete label by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/labels/{{labelId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"labels",
+								"{{labelId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "Create module",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyModule\",\n\t\"authorId\": \"37d09028-9653-405a-ac1e-91d0861cbf12\",\n\t\"labels\": [\"d38d0f78-0b7d-4bfc-8889-114cfb591126\"]\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get module by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/modules/{{moduleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"modules",
+								"{{moduleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all modules paged",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update module",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"UPDATED MODULE\",\n\t\"labels\": [\"59704797-b5cb-43d2-b97b-48d1ddb94da1\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/modules/{{moduleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"modules",
+								"{{moduleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete module",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/modules/{{moduleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"modules",
+								"{{moduleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Builds",
+			"item": [
+				{
+					"name": "Create build",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"37d09028-9653-405a-ac1e-91d0861cbf12\",\n\t\"features\": [\"d38d0f78-0b7d-4bfc-8889-114cfb591126\"],\n\t\"tagName\": \"RC.2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/builds",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"builds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get build by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/builds/{{buildId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"builds",
+								"{{buildId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all builds paged",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/builds",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"builds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update build",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"features\": [],\n\t\"tagName\": \"RC-?\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/builds/{{buildId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"builds",
+								"{{buildId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete build",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/builds/77327c46-22c3-487b-b01d-25e0684f4b0e",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"builds",
+								"77327c46-22c3-487b-b01d-25e0684f4b0e"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Value Flow",
+			"item": [
+				{
+					"name": "Get value flows paginated",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/valueflows",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"valueflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create value flow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e6005506-1a8e-4470-bc8d-2b09a355c2a2",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"valueFlowId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"{{userId}}\",\n\t\"name\": \"Increase Churn\",\n\t\"description\": \"Increase churn whatever the hell churn means\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/valueflows",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"valueflows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Labels",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t\"{{labelId}}\"\n]"
+						},
+						"url": {
+							"raw": "http://localhost:8080/valueflows/{{valueFlowId}}/labels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"valueflows",
+								"{{valueFlowId}}",
+								"labels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove label",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/valueflows/{{valueFlowId}}/labels/{{labelId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"valueflows",
+								"{{valueFlowId}}",
+								"labels",
+								"{{labelId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Problem",
+			"item": [
+				{
+					"name": "Get problems paginated",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/problems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"problems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create problem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bba8c4a-e59f-46bd-9c16-63ce68e5b64f",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"problemId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"{{userId}}\",\n\t\"name\": \"Value Flow {{$guid}}\",\n\t\"description\": \"Value Flow Description {{$guid}}\",\n\t\"valueFlowId\": \"{{valueFlowId}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/problems",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"problems"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deployments",
+			"item": [
+				{
+					"name": "Create deployment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"f129f329-6fea-461b-bf01-c3cd76a66721\",\n\t\"circleId\": \"8662e4b3-7c8c-416c-a78d-f1c3ce7eb51a\",\n\t\"buildId\": \"95501913-ea92-4c67-bd37-be2d613f01d5\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/deployments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deployments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get deployment by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/deployments/{{deploymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deployments",
+								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all deployments paged",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/deployments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deployments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update deployment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"circleId\": \"8662e4b3-7c8c-416c-a78d-f1c3ce7eb51a\",\n\t\"buildId\": \"1b71c040-2b7a-45c2-bbbb-17524c995b2f\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/deployments/{{deploymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deployments",
+								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete deployment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/deployments/{{deploymentId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deployments",
+								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hypothesis",
+			"item": [
+				{
+					"name": "CRUD",
+					"item": [
+						{
+							"name": "Get hypotheses paginated",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get hypothesis by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses/{{hypothesisId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses",
+										"{{hypothesisId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create hypothesis",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8b8a4655-c34d-422d-9d87-0ef55a04709d",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"postman.setGlobalVariable(\"hypothesisId\", response[\"id\"]);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Hypothesis {{$guid}}\",\n\t\"description\": \"Some hypothesis description with {{$guid}} lost in the middle\",\n\t\"authorId\": \"{{userId}}\",\n\t\"problemId\": \"{{problemId}}\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update hypothesis",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8b8a4655-c34d-422d-9d87-0ef55a04709d",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Bliw Blew\",\n\t\"description\": \"Some updated description\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses/{{hypothesisId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses",
+										"{{hypothesisId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete hypothesis by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses/{{hypothesisId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses",
+										"{{hypothesisId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Label",
+					"item": [
+						{
+							"name": "Add labels to hypothesis",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\"{{labelId}}\"]"
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses/{{hypothesisId}}/labels",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses",
+										"{{hypothesisId}}",
+										"labels"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove label from hypothesis",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/hypotheses/{{hypothesisId}}/labels/{{labelId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"hypotheses",
+										"{{hypothesisId}}",
+										"labels",
+										"{{labelId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Cards",
+			"item": [
+				{
+					"name": "Create card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"cardId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyCard5\",\n\t\"description\": \"Random card description\",\n\t\"type\": \"FEATURE\",\n\t\"labels\": [\"{{labelId}}\"],\n\t\"authorId\": \"{{userId}}\",\n\t\"featureId\": \"{{featureId}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get card by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards/{{cardId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards",
+								"{{cardId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all cards paginated",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"cardId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"MyCard2\",\n    \"description\": \"Random card description2\",\n    \"column\": \"doing\",\n    \"labels\": [\"60158ff1-536a-456d-af18-449e1a17cde7\"],\n    \"type\": \"FEATURE\",\n    \"featureId\": \"0cee382f-442f-400d-8a1e-e1738e52537b\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards/{{cardId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards",
+								"{{cardId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete card by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards/{{cardId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards",
+								"{{cardId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update card column",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/cards/{{cardId}}/column/61fc4155-8316-4982-8c6d-5cced65efc8b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cards",
+								"{{cardId}}",
+								"column",
+								"61fc4155-8316-4982-8c6d-5cced65efc8b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Features",
+			"item": [
+				{
+					"name": "Create feature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"featureId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyFeature\",\n\t\"authorId\": \"{{userId}}\",\n\t\"modules\": [\"{{moduleId}}\"],\n\t\"members\": [\"{{userId}}\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/features",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"features"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get feature by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/features/{{featureId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"features",
+								"{{featureId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all features paginated",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/features",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"features"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update feature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"cardId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyFeature2\",\n\t\"modules\": [\"{{moduleId}}\"],\n\t\"members\": [\"{{userId}}\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/features/{{featureId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"features",
+								"{{featureId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete feature by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/features/{{featureId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"features",
+								"{{featureId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "512b4e7c-9246-460f-a3d6-ddf748a81063",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d3abba27-857f-4210-b8cb-4de61dd526a1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Circles",
+			"item": [
+				{
+					"name": "Create circle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"circleId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyCircle\",\n\t\"authorId\": \"{{userId}}\",\n\t\"segmentations\": [\"Segment1\", \"Segment2\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/circles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"circles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get circle by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/circles/{{circleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"circles",
+								"{{circleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all circles paginated",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/circles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"circles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update circle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0dc94b-e2ea-4bf4-a11f-74e946c6df4a",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"cardId\", response[\"id\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"MyCircle2\",\n\t\"segmentations\": [\"Segment1\", \"Segment2\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/circles/{{circleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"circles",
+								"{{circleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete circle by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/circles/{{circleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"circles",
+								"{{circleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "512b4e7c-9246-460f-a3d6-ddf748a81063",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d3abba27-857f-4210-b8cb-4de61dd526a1",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,88 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190809190500-1
+      author: mateus.cruz
+      comment: "Create table module_applications"
+      changes:
+        - createTable:
+            tableName: module_applications
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: module_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_module_applications_module_id
+                    references: modules(id)
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 20190809190500-2
+      author: mateus.cruz
+      comment: "Create table artifacts"
+      changes:
+        - createTable:
+            tableName: artifacts
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: artifact
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: build_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_artifacts_build_id
+                    references: builds(id)
+              - column:
+                  name: module_application_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_artifacts_module_application_id
+                    references: module_applications(id)
+  - changeSet:
+      id: 20190809190500-3
+      author: mateus.cruz
+      comment: "Alter table deployments to include status"
+      changes:
+        - addColumn:
+            tableName: deployments
+            columns:
+              - column:
+                  name: status
+                  type: varchar(32)

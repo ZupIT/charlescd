@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200305143000-1
+      author: adauto.paula
+      comment: "Create table feature_snapshots"
+      changes:
+        - createTable:
+            tableName: feature_snapshots
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: branch_name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: build_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_fs_build_id
+                    references: builds(id)
+                    nullable: false

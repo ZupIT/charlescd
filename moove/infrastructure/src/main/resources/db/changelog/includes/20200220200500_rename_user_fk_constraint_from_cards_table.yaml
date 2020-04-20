@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200220200500-1
+      author: adauto.paula
+      comment: "Rename user id foreign key constraint"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: cards
+            constraintName: fk_labels_users
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: cards
+            constraintName: fk_cards_users
+            referencedColumnNames: id
+            referencedTableName: users

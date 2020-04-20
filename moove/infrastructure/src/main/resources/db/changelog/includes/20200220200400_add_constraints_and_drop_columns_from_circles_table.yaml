@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200220200400-1
+      author: adauto.paula
+      comment: "Drop columns from circles table"
+      changes:
+        - dropColumn:
+            columnName: segmentations
+            tableName: circles
+        - dropColumn:
+            columnName: rule_matcher_type
+            tableName: circles
+        - dropColumn:
+            columnName: priority
+            tableName: circles
+
+  - changeSet:
+      id: 20200220200400-2
+      author: adauto.paula
+      comment: "Set Default circle reference"
+      changes:
+        - sql:
+            sql: update circles set reference = 'e79bd6ad-485c-4b75-9acd-073c1e227e38' where id = 'f5d23a57-5607-4306-9993-477e1598cc2a'
+
+  - changeSet:
+      id: 20200220200400-3
+      author: adauto.paula
+      comment: "Delete circles without reference"
+      changes:
+        - sql:
+            sql: delete from circles where id <> 'f5d23a57-5607-4306-9993-477e1598cc2a' and reference is NULL
+
+  - changeSet:
+      id: 20200220200400-4
+      author: adauto.paula
+      comment: "Add not null constraint to reference and matcher_type columns"
+      changes:
+        - addNotNullConstraint:
+            columnName: reference
+            tableName: circles
+        - addNotNullConstraint:
+            columnName: matcher_type
+            tableName: circles
