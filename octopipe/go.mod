@@ -9,7 +9,6 @@ require (
 	github.com/aws/aws-sdk-go v1.30.4
 	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
 	github.com/fatih/color v1.9.0
-	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gin-gonic/gin v1.5.0
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/google/uuid v1.1.1
@@ -23,11 +22,8 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/sjson v1.1.1
 	go.mongodb.org/mongo-driver v1.3.1
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1
-	k8s.io/api v0.0.0-20190620084959-7cf5895f2711
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 	k8s.io/helm v2.16.1+incompatible
