@@ -53,7 +53,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
     let deployment: DeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
-
+    let pipelineErrorHandlerService: PipelineErrorHandlerService
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
@@ -75,7 +75,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         queuedUndeploymentsRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
         componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-
+        pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         successfulFinishUndeploymentDto = new FinishUndeploymentDto('SUCCEEDED')
         failedFinishUndeploymentDto = new FinishUndeploymentDto('FAILED')
 
@@ -175,6 +175,22 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             )
             expect(queueSpy).not.toHaveBeenCalledWith(1234)
 
+        })
+
+        it('should handle a failed undeployment callback', async () => {
+
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
+                .mockImplementation(() => Promise.resolve(queuedUndeployment))
+            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentUndeployment))
+            const queueSpy = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
+            const queueSpy1 = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
+            await receiveUndeploymentCallbackUsecase.execute(
+                1234,
+                failedFinishUndeploymentDto
+            )
+            expect(queueSpy).toHaveBeenCalled()
+            expect(queueSpy1).toHaveBeenCalled()
         })
     })
 })
