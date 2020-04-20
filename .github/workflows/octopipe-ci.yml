@@ -29,10 +29,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          path: 'octopipe'
       - name: Build
-        run: go build -o dist/octopipe ./cmd/octopipe/*.go
+        run: go build -o octopipe/dist/octopipe ./octopipe/cmd/octopipe/*.go
       - name: Run Unit tests
         run: |
           go test -race -covermode atomic -coverprofile=profile.cov ./...
