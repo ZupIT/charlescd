@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
+import {ICdConfigurationData, OctopipeConfigurationData} from '../../../app/api/configurations/interfaces'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
@@ -542,6 +542,134 @@ describe('Octopipe Service', () => {
       expect(payload).toEqual(expectedPayload)
     })
 
+    it('should create a empty virtual service', () => {
+      const componentDeployment = new ComponentDeploymentEntity(
+          'dummy-id',
+          'some-app-name',
+          'dummy-img-url2',
+          'dummy-img-tag2',
+      )
+      const deployment = new DeploymentEntity(
+          'dummy-deployment-id',
+          'dummy-application-name',
+          null,
+          'dummy-author-id',
+          'dummy-description',
+          'dummy-callback-url',
+          null,
+          false,
+          'dummy-circle-id'
+      )
+
+      const moduleDeployment = new ModuleDeploymentEntity(
+          'dummy-id',
+          'helm-repository',
+          [componentDeployment]
+      )
+      moduleDeployment.deployment = deployment
+      componentDeployment.moduleDeployment  = moduleDeployment
+      const pipelineOptions: IPipelineOptions = {
+        pipelineCircles: [],
+        pipelineVersions: [],
+        pipelineUnusedVersions: []
+      }
+      const octopipeConfiguration: OctopipeConfigurationData = {
+        provider: ClusterProviderEnum.EKS,
+        awsClusterName: 'cluster-name',
+        awsRegion: 'region',
+        awsSID: 'sid',
+        awsSecret: 'secret',
+        gitProvider: GitProvidersEnum.GITHUB,
+        gitToken: 'some-github-token',
+        namespace: 'some-app-namespace'
+      }
+
+      const connectorConfiguration: IConnectorConfiguration = {
+        pipelineCirclesOptions: pipelineOptions,
+        cdConfiguration: octopipeConfiguration,
+        componentId: componentDeployment.componentId,
+        applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
+        componentName: componentDeployment.componentName,
+        helmRepository: componentDeployment.moduleDeployment.helmRepository,
+        callbackCircleId: 'circle-id',
+        pipelineCallbackUrl: 'dummy-callback-url'
+      }
+
+      const payload =
+          octopipeService.createPipelineConfigurationObject(
+              connectorConfiguration
+          )
+
+      const expectedPayload = {
+        appName: 'some-app-name',
+        appNamespace: 'some-app-namespace',
+        circleId : 'circle-id',
+        git: {
+          provider: 'GITHUB',
+          token: 'some-github-token'
+        },
+        helmUrl: 'helm-repository',
+        istio: {
+            virtualService: {
+                apiVersion: 'networking.istio.io/v1alpha3',
+                kind: 'VirtualService',
+                metadata: {
+                    name: 'some-app-name',
+                    namespace: 'some-app-namespace'
+                },
+                spec: {
+                    hosts: [
+                        'unreachable-app-name'
+                    ],
+                    http: [
+                        {
+                            match: [
+                                {
+                                    headers: {
+                                        'unreachable-cookie-name': {
+                                            exact: 'unreachable-cookie - value'
+                                        }
+                                    }
+                                }
+                            ],
+                            route: [
+                                {
+                                    destination: {
+                                        host: 'unreachable-app-name'
+                                    }
+                                }
+                            ],
+                        }
+                    ]
+                }
+            },
+            destinationRules: {
+                apiVersion: 'networking.istio.io/v1alpha3',
+                kind: 'DestinationRule',
+                metadata: {
+                    name: 'some-app-name',
+                    namespace: 'some-app-namespace'
+                },
+                spec: {
+                    host: 'some-app-name',
+                    subsets: []
+
+                },
+            },
+        },
+        k8s: {
+             awsClusterName: 'cluster-name',
+             awsRegion: 'region',
+             awsSID: 'sid',
+             awsSecret: 'secret',
+             provider: 'EKS',
+        },
+        unusedVersions: [],
+        versions: [],
+        webHookUrl: 'dummy-callback-url'
+      }
+      expect(payload).toEqual(expectedPayload)
+    })
     it('posts to octopipe server', async () => {
       const payload = {} as IOctopipePayload
       jest.spyOn(octopipeApiService, 'deploy').mockImplementation(
