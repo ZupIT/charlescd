@@ -1,0 +1,1 @@
+postgresqlPassword: "${postgres_password}"
