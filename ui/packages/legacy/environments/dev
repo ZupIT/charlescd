@@ -1,0 +1,6 @@
+HOST=https://darwin-api.continuousplatform.com/moove
+NOTIFICATION=https://darwin-api.continuousplatform.com
+CONSUL=https://consul-darwin.apirealwave.io
+APM=https://darwin-apm-manager-consumer.continuousplatform.com
+KEYCLOAK=https://darwin-keycloak.continuousplatform.com
+CIRCLE_MATCHER=https://darwin-api.continuousplatform.com/darwin-circle-matcher

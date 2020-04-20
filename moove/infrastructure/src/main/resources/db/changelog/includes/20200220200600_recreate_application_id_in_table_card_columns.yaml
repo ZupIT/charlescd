@@ -1,0 +1,29 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 20200220200600-1
+      author: adauto.paula
+      comment: "Recreate application id card column"
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                - columnName: application_id
+                - tableName: card_columns
+      changes:
+        - addColumn:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: application_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 20200220200600-2
+      author: adauto.paula
+      comment: "Delete seeded card columns"
+      changes:
+        - sql:
+            sql: delete from card_columns where application_id is NULL

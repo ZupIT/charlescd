@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200403034500-1
+      author: mateus.cruz
+      changes:
+        - modifyDataType:
+            tableName: module_snapshots
+            columnName: git_repository_address
+            newDataType: varchar(128)
+        - modifyDataType:
+            tableName: module_snapshots
+            columnName: helm_repository
+            newDataType: varchar(256)

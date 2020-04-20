@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200207143500-1
+      author: mateus.cruz
+      comment: "Create table users_applications"
+      changes:
+        - createTable:
+            tableName: users_applications
+            columns:
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_users_applications_user
+                    references: users(id)
+              - column:
+                  name: application_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_users_applications_application
+                    references: applications(id)

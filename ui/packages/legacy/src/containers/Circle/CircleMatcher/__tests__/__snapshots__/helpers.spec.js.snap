@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Circle Matcher helpers should build parameters 1`] = `
+Object {
+  "": "value",
+  "email": "",
+  "name": "John Wick",
+  "password": "12345",
+  "user": "foobar",
+}
+`;

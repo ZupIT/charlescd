@@ -1,0 +1,32 @@
+---
+constraints:
+  - pattern: /api/circle/*
+    roles:
+      admin:
+        - GET
+        - POST
+
+  - pattern: /api/triangle
+    roles:
+      moove_read:
+        - GET
+
+  - pattern: /api/square/*
+    roles:
+      config_write:
+        - POST
+        - PUT
+        - DELETE
+      config_read:
+        - GET
+
+publicConstraints:
+  - pattern: /api/rectangle
+    methods:
+      - GET
+
+  - pattern: /api/ellipse/{radius}
+    methods:
+      - POST
+      - PUT
+

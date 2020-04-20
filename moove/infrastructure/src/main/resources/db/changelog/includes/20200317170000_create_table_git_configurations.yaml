@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200317170000-1
+      author: mateus.cruz
+      comment: "Create table git_credentials"
+      changes:
+        - createTable:
+            tableName: git_configurations
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credentials
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_git_configurations_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: application_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_git_configurations_applications
+                    references: applications(id)
+                    nullable: false

@@ -1,0 +1,19 @@
+version: '3'
+services:
+
+  darwin-application:
+    image: ${DOCKER_REGISTRY_URL}/darwin-web:builder
+    volumes:
+      - .:/home/application
+    working_dir: /home/application
+    command: ["/home/application/run-ci.sh"]
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_DB=darwin
+      - POSTGRES_USER=darwin
+      - POSTGRES_PASSWORD=darwin
+      - MAX_CONNECTIONS=300

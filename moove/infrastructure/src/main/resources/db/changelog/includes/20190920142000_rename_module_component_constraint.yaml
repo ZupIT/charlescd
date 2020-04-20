@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190920142000-1
+      author: mateus.cruz
+      comment: "Rename constraint fk_module_applications_module_id to fk_component_module_id"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: components
+            constraintName: fk_module_applications_module_id
+        - addForeignKeyConstraint:
+            baseColumnNames: module_id
+            baseTableName: components
+            constraintName: fk_components_module_id
+            referencedColumnNames: id
+            referencedTableName: modules

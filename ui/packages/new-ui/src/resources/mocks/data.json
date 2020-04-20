@@ -1,0 +1,245 @@
+{
+  "circles": {
+    "id": "ab3237bf-069f-476d-9795-47eff65df16b",
+    "name": "QA-1",
+    "author": {
+      "id": "697c7a9f-c7a8-4896-aa51-19e4004fd1f3",
+      "name": "Schumaiquer Souto",
+      "email": "schumaiquer.parreira@zup.com.br",
+      "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFCrPEcDm2zGA/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=UIsmX72PKZCbiov0_fxPicKEoOAUHz3qsLlVClq37Q4",
+      "createdAt": "2020-01-16 21:12:20"
+    },
+    "createdAt": "2020-01-29 17:26:41",
+    "matcherType": "REGULAR",
+    "rules": {
+      "type": "CLAUSE",
+      "clauses": [
+        {
+          "type": "RULE",
+          "content": {
+            "key": "username",
+            "value": ["schumaiquer@zup.com.br"],
+            "condition": "EQUAL"
+          }
+        }
+      ],
+      "logicalOperator": "OR"
+    },
+    "deployment": {
+      "id": "e4a4212f-4ecf-4536-8624-6bc23dc3c416",
+      "author": {
+        "id": "6e414c9a-8cef-43e6-a1e0-f204bbc02818",
+        "name": "Leticia Lima",
+        "email": "leticia.lima@zup.com.br",
+        "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFYPvsAtA4QsQ/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=5zs6viHmpdyZumJtDhe159xwZD8KZ-Du5tEUTA6Hzb0",
+        "createdAt": "2020-01-16 21:12:20"
+      },
+      "createdAt": "2020-03-17 16:51:46",
+      "deployedAt": "2020-03-17 16:53:20",
+      "circle": {
+        "id": "ab3237bf-069f-476d-9795-47eff65df16b",
+        "name": "QA-1",
+        "author": {
+          "id": "697c7a9f-c7a8-4896-aa51-19e4004fd1f3",
+          "name": "Schumaiquer Souto",
+          "email": "schumaiquer.parreira@zup.com.br",
+          "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFCrPEcDm2zGA/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=UIsmX72PKZCbiov0_fxPicKEoOAUHz3qsLlVClq37Q4",
+          "createdAt": "2020-01-16 21:12:20"
+        },
+        "createdAt": "2020-01-29 17:26:41",
+        "matcherType": "REGULAR",
+        "rules": {
+          "type": "CLAUSE",
+          "clauses": [
+            {
+              "type": "RULE",
+              "content": {
+                "key": "username",
+                "value": ["schumaiquer@zup.com.br"],
+                "condition": "EQUAL"
+              }
+            }
+          ],
+          "logicalOperator": "OR"
+        },
+        "deployment": null,
+        "importedAt": null,
+        "importedKvRecords": null
+      },
+      "build": {
+        "id": "daca1c84-8e3a-41e8-ae20-de4e6e603248",
+        "author": {
+          "id": "6e414c9a-8cef-43e6-a1e0-f204bbc02818",
+          "name": "Leticia Lima",
+          "email": "leticia.lima@zup.com.br",
+          "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFYPvsAtA4QsQ/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=5zs6viHmpdyZumJtDhe159xwZD8KZ-Du5tEUTA6Hzb0",
+          "createdAt": "2020-01-16 21:12:20"
+        },
+        "createdAt": "2020-03-17 16:51:45",
+        "features": [
+          {
+            "id": "81069d50-b50c-4bc2-b85b-f12da08cbb75",
+            "name": "release-darwin-nome-release-teste",
+            "branchName": "release-darwin-nome-release-teste",
+            "author": {
+              "id": "6e414c9a-8cef-43e6-a1e0-f204bbc02818",
+              "name": "Leticia Lima",
+              "email": "leticia.lima@zup.com.br",
+              "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFYPvsAtA4QsQ/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=5zs6viHmpdyZumJtDhe159xwZD8KZ-Du5tEUTA6Hzb0",
+              "createdAt": "2020-01-16 21:12:20"
+            },
+            "modules": [
+              {
+                "id": "baf82f10-b5ab-495a-85a7-41ff94824776",
+                "name": "ZupIT/darwin-villager",
+                "gitRepositoryAddress": "https://github.com/ZupIT/darwin-villager",
+                "helmRepository": "https://api.github.com/repos/zupit/darwin-k8s-chart-values/contents/",
+                "gitConfigurationId": "5fc1c7b7-cb82-4fb6-8d3f-c87f9a48458e",
+                "registryConfigurationId": "a5009b60-2d18-4c00-b3ee-1e30cdd7cba9",
+                "k8sConfigurationId": "24f5e4a2-19a5-4d57-808d-317b4efea3ec",
+                "createdAt": "2019-09-30 21:38:38",
+                "author": {
+                  "id": "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f",
+                  "name": "Mateus Cruz",
+                  "email": "mateus.cruz@zup.com.br",
+                  "photoUrl": "https://media.licdn.com/dms/image/C4E03AQGWjPETso_h9A/profile-displayphoto-shrink_100_100/0?e=1582761600&v=beta&t=E-36ECmyHw2Br3mHbPRrCrIkhU4_VJ2IMW316SzqQx8",
+                  "createdAt": "2020-01-16 21:12:20"
+                },
+                "labels": [],
+                "components": [
+                  {
+                    "id": "d6aa6f5b-13de-4409-ba3f-a6a9753cf7b6",
+                    "name": "darwin-villager",
+                    "contextPath": "/",
+                    "port": 8080,
+                    "healthCheck": "/health",
+                    "createdAt": "2019-09-30 21:38:38",
+                    "moduleId": "baf82f10-b5ab-495a-85a7-41ff94824776",
+                    "artifacts": [
+                      {
+                        "id": "62ef9b3d-b366-42f9-a9e7-30f550f48605",
+                        "artifact": "realwavelab.azurecr.io/darwin-villager:darwin-aa-villager-rc-1",
+                        "version": "darwin-aa-villager-rc-1",
+                        "createdAt": "2020-03-17 16:51:45",
+                        "buildId": "daca1c84-8e3a-41e8-ae20-de4e6e603248",
+                        "componentId": "d6aa6f5b-13de-4409-ba3f-a6a9753cf7b6"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "8f129779-252f-449b-b34c-653194d6fb69",
+                "name": "ZupIT/darwin-ui",
+                "gitRepositoryAddress": "https://github.com/ZupIT/darwin-ui",
+                "helmRepository": "https://api.github.com/repos/zupit/darwin-k8s-chart-values/contents/",
+                "gitConfigurationId": "5fc1c7b7-cb82-4fb6-8d3f-c87f9a48458e",
+                "registryConfigurationId": "a5009b60-2d18-4c00-b3ee-1e30cdd7cba9",
+                "k8sConfigurationId": "24f5e4a2-19a5-4d57-808d-317b4efea3ec",
+                "createdAt": "2020-02-19 19:31:31",
+                "author": {
+                  "id": "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f",
+                  "name": "Mateus Cruz",
+                  "email": "mateus.cruz@zup.com.br",
+                  "photoUrl": "https://media.licdn.com/dms/image/C4E03AQGWjPETso_h9A/profile-displayphoto-shrink_100_100/0?e=1582761600&v=beta&t=E-36ECmyHw2Br3mHbPRrCrIkhU4_VJ2IMW316SzqQx8",
+                  "createdAt": "2020-01-16 21:12:20"
+                },
+                "labels": [],
+                "components": [
+                  {
+                    "id": "b3829638-6a3a-4fd9-a348-3e62a2a615c8",
+                    "name": "darwin-ui-legacy",
+                    "contextPath": null,
+                    "port": null,
+                    "healthCheck": null,
+                    "createdAt": "2020-02-19 19:31:31",
+                    "moduleId": "8f129779-252f-449b-b34c-653194d6fb69",
+                    "artifacts": [
+                      {
+                        "id": "80ed1e27-fe78-4950-8cc1-c960e6a5c648",
+                        "artifact": "realwavelab.azurecr.io/darwin-ui-legacy:darwin-v-1-7-6",
+                        "version": "darwin-v-1-7-6",
+                        "createdAt": "2020-03-17 16:51:45",
+                        "buildId": "daca1c84-8e3a-41e8-ae20-de4e6e603248",
+                        "componentId": "b3829638-6a3a-4fd9-a348-3e62a2a615c8"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b2a9d959-e6c2-4096-8851-9552e245fa02",
+                    "name": "darwin-ui-new",
+                    "contextPath": null,
+                    "port": null,
+                    "healthCheck": null,
+                    "createdAt": "2020-02-19 19:31:31",
+                    "moduleId": "8f129779-252f-449b-b34c-653194d6fb69",
+                    "artifacts": [
+                      {
+                        "id": "14b5b791-067e-46df-a86b-769cd9e42e46",
+                        "artifact": "realwavelab.azurecr.io/darwin-ui-new:darwin-v-1-7-6",
+                        "version": "darwin-v-1-7-6",
+                        "createdAt": "2020-03-17 16:51:45",
+                        "buildId": "daca1c84-8e3a-41e8-ae20-de4e6e603248",
+                        "componentId": "b2a9d959-e6c2-4096-8851-9552e245fa02"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "createdAt": "2020-03-17 16:51:45",
+            "branches": [
+              "https://github.com/ZupIT/darwin-villager/tree/release-darwin-nome-release-teste",
+              "https://github.com/ZupIT/darwin-ui/tree/release-darwin-nome-release-teste"
+            ]
+          }
+        ],
+        "tag": "release-darwin-nome-release-teste",
+        "status": "BUILT",
+        "deployments": [
+          {
+            "id": "e4a4212f-4ecf-4536-8624-6bc23dc3c416",
+            "createdAt": "2020-03-17 16:51:46",
+            "deployedAt": "2020-03-17 16:53:20",
+            "buildId": "daca1c84-8e3a-41e8-ae20-de4e6e603248",
+            "tag": "release-darwin-nome-release-teste",
+            "status": "DEPLOYED",
+            "circle": {
+              "id": "ab3237bf-069f-476d-9795-47eff65df16b",
+              "name": "QA-1",
+              "author": {
+                "id": "697c7a9f-c7a8-4896-aa51-19e4004fd1f3",
+                "name": "Schumaiquer Souto",
+                "email": "schumaiquer.parreira@zup.com.br",
+                "photoUrl": "https://media-exp1.licdn.com/dms/image/C4E03AQFCrPEcDm2zGA/profile-displayphoto-shrink_200_200/0?e=1584576000&v=beta&t=UIsmX72PKZCbiov0_fxPicKEoOAUHz3qsLlVClq37Q4",
+                "createdAt": "2020-01-16 21:12:20"
+              },
+              "createdAt": "2020-01-29 17:26:41",
+              "matcherType": "REGULAR",
+              "rules": {
+                "type": "CLAUSE",
+                "clauses": [
+                  {
+                    "type": "RULE",
+                    "content": {
+                      "key": "username",
+                      "value": ["schumaiquer@zup.com.br"],
+                      "condition": "EQUAL"
+                    }
+                  }
+                ],
+                "logicalOperator": "OR"
+              },
+              "deployment": null,
+              "importedAt": null,
+              "importedKvRecords": null
+            }
+          }
+        ]
+      },
+      "status": "DEPLOYED"
+    },
+    "importedAt": null,
+    "importedKvRecords": null
+  }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="13px" viewBox="0 0 15 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 63.1 (101010) - https://sketch.com -->
+    <defs>
+        <path d="M6.875,10.488625 L8.125,11.113625 L8.125,6.787375 C8.125,6.639875 8.1775,6.49675 8.2725,6.38425 L12.403125,1.499875 L2.596875,1.499875 L6.7275,6.38425 C6.8225,6.49675 6.875,6.639875 6.875,6.787375 L6.875,10.488625 Z M8.75,12.749875 C8.654375,12.749875 8.55875,12.728 8.470625,12.68425 L5.970625,11.43425 C5.75875,11.328 5.625,11.11175 5.625,10.874875 L5.625,7.016125 L0.7725,1.278625 C0.615625,1.093 0.580625,0.832375 0.683125,0.61175 C0.785625,0.391125 1.006875,0.249875 1.25,0.249875 L13.75,0.249875 C13.99375,0.249875 14.214375,0.391125 14.316875,0.61175 C14.419375,0.832375 14.384375,1.093 14.2275,1.278625 L9.375,7.016125 L9.375,12.124875 C9.375,12.34175 9.2625,12.542375 9.078125,12.65675 C8.978125,12.718625 8.864375,12.749875 8.75,12.749875 L8.75,12.749875 Z" id="path-1"></path>
+    </defs>
+    <g id="Circles---Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---0.0---Expand" transform="translate(-260.000000, -62.000000)">
+            <g id="sidebar/expand/circles/open" transform="translate(135.000000, 0.000000)">
+                <g id="Options-circles" transform="translate(16.000000, 58.000000)">
+                    <g id="Group-15" transform="translate(109.000000, 3.000000)">
+                        <g id="Group-14">
+                            <g id="Group-7">
+                                <g id="Icon/Chevron/Down" transform="translate(0.000000, 1.000000)">
+                                    <mask id="mask-2" fill="white">
+                                        <use xlink:href="#path-1"></use>
+                                    </mask>
+                                    <use id="Icon-Filter" fill="currentColor" xlink:href="#path-1"></use>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

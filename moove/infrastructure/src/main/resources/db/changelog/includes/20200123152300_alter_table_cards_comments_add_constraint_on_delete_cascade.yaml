@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200123152300-1
+      author: monica.ribeiro
+      comment: "Adding constraint on table cascade at column comment_id."
+      changes:
+        - sql:
+            comment: Adding constraint on delete cascade
+            sql: ALTER TABLE cards_comments DROP CONSTRAINT fk_cards_comments_comments, ADD CONSTRAINT fk_cards_comments_comments FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE;

@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200213173000-1
+      author: mateus.cruz
+      comment: "Add user_id on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: user_id
+                  type: varchar(64)
+                  defaultValue: "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f"
+                  constraints:
+                    foreignKeyName: application_user_id_fk
+                    references: users(id)
+                    nullable: false

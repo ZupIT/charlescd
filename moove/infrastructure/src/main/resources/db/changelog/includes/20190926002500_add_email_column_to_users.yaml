@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190926002500-1
+      author: mateus.cruz
+      comment: "Add fields email on table users"
+      changes:
+        - addColumn:
+            tableName: users
+            column:
+              name: email
+              type: varchar(128)
+              constraints:
+                nullable: true

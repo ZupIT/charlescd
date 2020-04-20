@@ -1,0 +1,93 @@
+#
+# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+- request:
+    method: GET
+    url: ^/v2/test/tags/list$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+          "name": "test-application",
+          "tags": [
+              "test-v1",
+              "test-v2",
+              "test-v3"
+          ]
+      }
+
+- request:
+    method: GET
+    url: ^/credentials/registry/169cd202-1ca6-48ee-97fb-b2a9829527cd$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+          "credentialId": {
+              "organization": "zup",
+              "service": "registry",
+              "id": "169cd202-1ca6-48ee-97fb-b2a9829527cd"
+          },
+          "value": {
+              "registry-base-address": "http://648839423626.dkr.ecr.us-east-1.amazonaws.com",
+              "registry-type": "AWS",
+              "registry-auth-type": "BASIC",
+              "username": "not",
+              "password": "not",
+              "registry-host": "648839423626.dkr.ecr.us-east-1.amazonaws.com",
+              "access-key": "AKIAZOEOX42FG34SJSUJ",
+              "secret-key": "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",
+              "region": "us-east-1"
+          }
+      }
+
+- request:
+    method: GET
+    url: ^/v2/darwin-notifications/tags/list$
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+      authorization-basic: "user:password"
+    body: >
+      {
+          "name": "darwin-notifications",
+          "tags": [
+              "builder",
+              "darwin-crud-notifications",
+              "darwin-crud-notifications-db-auth",
+              "darwin-crud-notifications-fixed",
+              "darwin-events",
+              "darwin-feature-notifications",
+              "darwin-mark-all-as-read",
+              "darwin-notification-application",
+              "darwin-notifications-all",
+              "darwin-notifications-all-final",
+              "darwin-notifications-front-back",
+              "darwin-notifications-helm",
+              "darwin-reference-fields",
+              "darwin-teste-teste",
+              "darwin-teste-teste-iti",
+              "darwin-version-notification-app",
+              "latest"
+          ]
+      }

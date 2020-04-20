@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200213200000-1
+      author: mateus.cruz
+      comment: "Removing not null constraint from problems"
+      changes:
+        - dropNotNullConstraint:
+            columnName: value_flow_id
+            tableName: problems

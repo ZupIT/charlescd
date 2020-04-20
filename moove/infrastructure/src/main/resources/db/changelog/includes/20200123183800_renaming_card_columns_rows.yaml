@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200123172300-1
+      author: monica.ribeiro
+      comment: "Renaming rows at card_columns table."
+      changes:
+        - update:
+            columns:
+              - column:
+                  name: name
+                  value: To Do
+            tableName: card_columns
+            where: id='eb6dd013-3606-4da3-8324-b630406b7a64'
+        - update:
+            columns:
+              - column:
+                  name: name
+                  value: Doing
+            tableName: card_columns
+            where: id='5bd86112-0900-4eb4-a673-5e71e405796f'
+        - update:
+            columns:
+              - column:
+                  name: name
+                  value: Ready to Go
+            tableName: card_columns
+            where: id='dc2bfa97-e87a-49bf-95a9-72b9d77e151b'
+        - update:
+            columns:
+              - column:
+                  name: name
+                  value: Builds
+            tableName: card_columns
+            where: id='c7884347-8c34-4f35-bd55-736b11fbf517'
+        - update:
+            columns:
+              - column:
+                  name: name
+                  value: Deployed Releases
+            tableName: card_columns
+            where: id='75ea93c5-0632-4cd2-93cb-290f5fa1c041'

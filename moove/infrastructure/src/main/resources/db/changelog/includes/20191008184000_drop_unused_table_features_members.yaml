@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191008184000-1
+      author: mateus.cruz
+      comment: "Removing unused features_members table"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: features_members

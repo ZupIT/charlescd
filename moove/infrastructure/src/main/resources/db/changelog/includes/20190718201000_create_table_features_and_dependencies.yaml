@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190718201000-1
+      author: mateus.cruz
+      comment: "Create table features, features_modules and features_members"
+      changes:
+        - createTable:
+            tableName: features
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(64)
+                  constraints:
+                    foreignKeyName: fk_labels_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: features_modules
+            columns:
+              - column:
+                  name: feature_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: module_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+        - createTable:
+            tableName: features_members
+            columns:
+              - column:
+                  name: feature_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: member_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false

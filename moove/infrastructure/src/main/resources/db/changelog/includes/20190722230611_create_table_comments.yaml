@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190722230611-1
+      author: william.okano
+      comment: "Create table comments"
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: comment
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_comments_author
+                    references: users(id)

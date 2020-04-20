@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 63.1 (101010) - https://sketch.com -->
+    <title>53E3F7CA-FC5F-4C93-AFAE-BFDF80500825</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <path d="M7.5,1.875 C4.39875,1.875 1.875,4.39875 1.875,7.5 C1.875,10.601875 4.39875,13.125 7.5,13.125 C10.601875,13.125 13.125,10.601875 13.125,7.5 C13.125,4.39875 10.601875,1.875 7.5,1.875 M7.5,14.375 C3.709375,14.375 0.625,11.290625 0.625,7.5 C0.625,3.709375 3.709375,0.625 7.5,0.625 C11.290625,0.625 14.375,3.709375 14.375,7.5 C14.375,11.290625 11.290625,14.375 7.5,14.375" id="path-circle-mneu"></path>
+    </defs>
+    <g id="Circles---Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---2.0---Expand---0.1-circle-" transform="translate(-151.000000, -242.000000)">
+            <g id="sidebar/expand/circles/open" transform="translate(135.000000, 0.000000)">
+                <g id="list/circles/unselected-copy-2" transform="translate(0.000000, 226.000000)">
+                    <g id="Icon/Chevron/Right" transform="translate(16.000000, 16.000000)">
+                        <mask id="mask-circle-mneu" fill="white">
+                            <use xlink:href="#path-circle-mneu"></use>
+                        </mask>
+                        <use id="Icon-Placeholder" fill="currentColor" xlink:href="#path-circle-mneu"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

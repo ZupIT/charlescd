@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200116143500-1
+      author: lucas.fernandes
+      comment: "Add created_at field on table users"
+      changes:
+        - addColumn:
+            tableName: users
+            column:
+              name: created_at
+              type: timestamp
+              defaultValue: clock_timestamp()
+              constraints:
+                nullable: false

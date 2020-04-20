@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190725201744-1
+      author: william.okano
+      comment: "Add field created_at on table comments"
+      changes:
+        - addColumn:
+            tableName: comments
+            column:
+              name: created_at
+              type: timestamp
