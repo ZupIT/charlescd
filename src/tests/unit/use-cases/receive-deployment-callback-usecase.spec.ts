@@ -28,7 +28,8 @@ import {
     ComponentDeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    QueuedDeploymentEntity
+    QueuedDeploymentEntity,
+    CircleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
@@ -45,6 +46,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     let componentDeployment: ComponentDeploymentEntity
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let pipelineQueuesService: PipelineQueuesService
+    let pipelineErrorHandlerService: PipelineErrorHandlerService
     let statusManagementService: StatusManagementService
     beforeEach(async () => {
 
@@ -65,6 +67,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         receiveDeploymentCallbackUsecase = module.get<ReceiveDeploymentCallbackUsecase>(ReceiveDeploymentCallbackUsecase)
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
+        pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
@@ -89,7 +92,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
-            'helm-repository',
+            'dummy-id',
             [componentDeployment]
         )
 
@@ -104,9 +107,9 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             false,
             'dummy-circle-id'
         )
-        moduleDeployment.deployment = deployment
-
         componentDeployment.moduleDeployment = moduleDeployment
+        moduleDeployment.deployment = deployment
+        deployment.circle = new CircleDeploymentEntity('header-value')
     })
 
     describe('execute', () => {
@@ -138,6 +141,22 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 successfulFinishDeploymentDto
             )
             expect(queueSpy).not.toHaveBeenCalledWith(1234)
+        })
+
+        it('should handle a failed deployment callback', async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
+                .mockImplementation(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            const queueSpy = jest.spyOn(pipelineErrorHandlerService, 'handleDeploymentFailure')
+            const queueSpy1 = jest.spyOn(pipelineErrorHandlerService, 'handleComponentDeploymentFailure')
+            await receiveDeploymentCallbackUsecase.execute(
+                1234,
+                failedFinishDeploymentDto
+            )
+            expect(queueSpy).toHaveBeenCalled()
+            expect(queueSpy1).toHaveBeenCalled()
         })
     })
 })
