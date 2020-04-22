@@ -51,11 +51,13 @@ export class PipelineErrorHandlerService {
     public async handleComponentDeploymentFailure(
         componentDeployment: ComponentDeploymentEntity,
         queuedDeployment: QueuedDeploymentEntity,
-        circle: CircleDeploymentEntity
+        circle?: CircleDeploymentEntity
     ): Promise<void> {
 
         const component: ComponentEntity = await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId })
-        await this.removeComponentPipelineCircle(component, circle)
+        if (circle) {
+            await this.removeComponentPipelineCircle(component, circle)
+        }
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     }

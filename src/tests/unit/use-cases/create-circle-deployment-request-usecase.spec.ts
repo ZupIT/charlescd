@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
 import { CreateCircleDeploymentDto, CreateCircleDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity, CircleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
     ComponentDeploymentsRepository,
@@ -91,6 +91,8 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
             false,
             'dummy-circle-id'
         )
+
+        deployment.circle = new CircleDeploymentEntity('header-value')
 
         createCircleDeploymentDto = new CreateCircleDeploymentDto(
             'header-value'

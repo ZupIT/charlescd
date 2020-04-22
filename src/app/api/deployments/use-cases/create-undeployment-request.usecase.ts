@@ -104,7 +104,7 @@ export class CreateUndeploymentRequestUsecase {
     if (queuedUndeployment.status === QueuedPipelineStatusEnum.RUNNING) {
       await this.pipelineDeploymentsService.triggerUndeployment(
         componentDeployment, undeployment, component,
-        undeployment.deployment, queuedUndeployment
+        queuedUndeployment, undeployment.deployment.circle
       )
     }
   }
