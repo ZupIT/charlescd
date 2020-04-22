@@ -53,7 +53,7 @@ export class StatusManagementService {
     }
 
     public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id,status)
+        await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id, status)
         return Promise.all(
             moduleUndeployment.componentUndeployments
                 .map(component => this.componentUndeploymentsRepository.updateStatus(component.id, status))
@@ -61,7 +61,7 @@ export class StatusManagementService {
     }
 
     public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
-      await this.deploymentsRepository.updateStatus(deployment.id,status)
+      await this.deploymentsRepository.updateStatus(deployment.id, status)
       if (!deployment.modules) {
             deployment.modules =
                 await this.moduleDeploymentRepository.find({
@@ -145,7 +145,7 @@ export class StatusManagementService {
         status: UndeploymentStatusEnum
     ): Promise<void> {
 
-        await this.componentUndeploymentsRepository.updateStatus(componentUndeploymentId,status)
+        await this.componentUndeploymentsRepository.updateStatus(componentUndeploymentId, status)
 
     }
 
@@ -201,7 +201,7 @@ export class StatusManagementService {
         status: UndeploymentStatusEnum
     ): Promise<void> {
 
-        await this.moduleUndeploymentsRepository.updateStatus(moduleUndeploymentId,status)
+        await this.moduleUndeploymentsRepository.updateStatus(moduleUndeploymentId, status)
     }
 
     private async propagateUndeploymentSuccess(
@@ -244,7 +244,7 @@ export class StatusManagementService {
         status: UndeploymentStatusEnum
     ): Promise<void> {
 
-        await this.undeploymentsRepository.updateStatus(undeploymentId,status)
+        await this.undeploymentsRepository.updateStatus(undeploymentId, status)
     }
     private getDeploymentFinishedModules(
       deployment: DeploymentEntity
@@ -269,7 +269,7 @@ export class StatusManagementService {
       status: DeploymentStatusEnum
     ): Promise<void> {
 
-      await this.deploymentsRepository.updateStatus(deploymentId,status)
+      await this.deploymentsRepository.updateStatus(deploymentId, status)
     }
 
     private async getDeploymentEntity(
@@ -303,7 +303,7 @@ export class StatusManagementService {
       status: DeploymentStatusEnum
     ): Promise<void> {
 
-      await this.moduleDeploymentRepository.updateStatus(moduleDeploymentId,status)
+      await this.moduleDeploymentRepository.updateStatus(moduleDeploymentId, status)
     }
 
     private async getModuleDeploymentEntity(
