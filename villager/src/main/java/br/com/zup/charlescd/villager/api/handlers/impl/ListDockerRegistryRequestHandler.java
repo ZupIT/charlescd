@@ -21,14 +21,14 @@ import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryInput
 
 public class ListDockerRegistryRequestHandler implements RequestHandler<ListDockerRegistryInput> {
 
-    private String applicationId;
+    private String workspaceId;
 
-    public ListDockerRegistryRequestHandler(String applicationId) {
-        this.applicationId = applicationId;
+    public ListDockerRegistryRequestHandler(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     @Override
     public ListDockerRegistryInput handle() {
-        return new ListDockerRegistryInput(this.applicationId);
+        return new ListDockerRegistryInput(this.workspaceId);
     }
 }

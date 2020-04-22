@@ -18,14 +18,14 @@ package br.com.zup.charlescd.villager.interactor.registry;
 
 public class ListDockerRegistryTagsInput {
     private String artifactName;
-    private String applicationId;
+    private String workspaceId;
     private String artifactRepositoryConfigurationId;
     private Integer max;
     private String last;
 
-    private ListDockerRegistryTagsInput(String artifactName, String applicationId, String artifactRepositoryConfigurationId, Integer max, String last) {
+    private ListDockerRegistryTagsInput(String artifactName, String workspaceId, String artifactRepositoryConfigurationId, Integer max, String last) {
         this.artifactName = artifactName;
-        this.applicationId = applicationId;
+        this.workspaceId = workspaceId;
         this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
         this.max = max;
         this.last = last;
@@ -36,8 +36,8 @@ public class ListDockerRegistryTagsInput {
     }
 
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getWorkspaceId() {
+        return workspaceId;
     }
 
     public String getArtifactRepositoryConfigurationId() {
@@ -58,7 +58,7 @@ public class ListDockerRegistryTagsInput {
 
     public static final class ListDockerRegistryTagsInputBuilder {
         private String artifactName;
-        private String applicationId;
+        private String workspaceId;
         private String artifactRepositoryConfigurationId;
         private Integer max;
         private String last;
@@ -75,8 +75,8 @@ public class ListDockerRegistryTagsInput {
             return this;
         }
 
-        public ListDockerRegistryTagsInputBuilder withApplicationId(String applicationId) {
-            this.applicationId = applicationId;
+        public ListDockerRegistryTagsInputBuilder withWorkspaceId(String workspaceId) {
+            this.workspaceId = workspaceId;
             return this;
         }
 
@@ -96,7 +96,7 @@ public class ListDockerRegistryTagsInput {
         }
 
         public ListDockerRegistryTagsInput build() {
-            return new ListDockerRegistryTagsInput(artifactName, applicationId, artifactRepositoryConfigurationId, max, last);
+            return new ListDockerRegistryTagsInput(artifactName, workspaceId, artifactRepositoryConfigurationId, max, last);
         }
     }
 }

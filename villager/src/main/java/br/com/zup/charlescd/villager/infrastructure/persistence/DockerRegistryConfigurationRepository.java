@@ -50,7 +50,7 @@ public class DockerRegistryConfigurationRepository {
 
     public void save(DockerRegistryConfigurationEntity entity) {
 
-        var insertSql = "INSERT INTO docker_registry_configuration (id, name, type, author_id, application_id, connection_data, created_at) VALUES (?, ?, ?, ?, ?, PGP_SYM_ENCRYPT(?, ?), ?)";
+        var insertSql = "INSERT INTO docker_registry_configuration (id, name, type, author_id, workspace_id, connection_data, created_at) VALUES (?, ?, ?, ?, ?, PGP_SYM_ENCRYPT(?, ?), ?)";
 
         try (var conn = dataSource.getConnection()) {
 
@@ -63,7 +63,7 @@ public class DockerRegistryConfigurationRepository {
                 stmt.setString(2, entity.name);
                 stmt.setString(3, entity.type.name());
                 stmt.setString(4, entity.authorId);
-                stmt.setString(5, entity.applicationId);
+                stmt.setString(5, entity.workspaceId);
                 stmt.setString(6, new ObjectMapper().writeValueAsString(entity.connectionData));
                 stmt.setString(7, this.cryptKey);
                 stmt.setTimestamp(8, Timestamp.from(entity.createdAt.toInstant(ZoneOffset.UTC)));
@@ -84,7 +84,7 @@ public class DockerRegistryConfigurationRepository {
 
     public Optional<DockerRegistryConfigurationEntity> findById(String id) {
 
-        var findSql = "SELECT id, name, type, author_id, application_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE id = ?";
+        var findSql = "SELECT id, name, type, author_id, workspace_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE id = ?";
 
         try (var conn = dataSource.getConnection()) {
 
@@ -115,7 +115,7 @@ public class DockerRegistryConfigurationRepository {
     }
 
     public void delete(String registryId, String workspaceId) {
-        var deleteSql = "DELETE FROM docker_registry_configuration WHERE id = ? AND application_id = ?";
+        var deleteSql = "DELETE FROM docker_registry_configuration WHERE id = ? AND workspace_id = ?";
 
         try (var conn = dataSource.getConnection()) {
 
@@ -133,7 +133,7 @@ public class DockerRegistryConfigurationRepository {
     }
 
     public Boolean exists(String registryId, String workspaceId) {
-        var selectSql = "SELECT count(*) FROM docker_registry_configuration WHERE id = ? AND application_id = ?";
+        var selectSql = "SELECT count(*) FROM docker_registry_configuration WHERE id = ? AND workspace_id = ?";
         boolean exists = false;
 
         try (var conn = dataSource.getConnection()) {
@@ -159,8 +159,8 @@ public class DockerRegistryConfigurationRepository {
         return exists;
     }
 
-    public List<DockerRegistryConfigurationEntity> listByApplicationId(String applicationId) {
-        var findSql = "SELECT id, name, type, author_id, application_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE application_id = ?";
+    public List<DockerRegistryConfigurationEntity> listByWorkspaceId(String workspaceId) {
+        var findSql = "SELECT id, name, type, author_id, workspace_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE workspace_id = ?";
 
         var result = new ArrayList<DockerRegistryConfigurationEntity>();
 
@@ -168,7 +168,7 @@ public class DockerRegistryConfigurationRepository {
 
             try (var stmt = conn.prepareStatement(findSql)) {
                 stmt.setString(1, this.cryptKey);
-                stmt.setString(2, applicationId);
+                stmt.setString(2, workspaceId);
 
                 try (var rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -197,7 +197,7 @@ public class DockerRegistryConfigurationRepository {
         entity.name = rs.getString("name");
         entity.type = RegistryType.valueOf(rs.getString("type"));
         entity.authorId = rs.getString("author_id");
-        entity.applicationId = rs.getString("application_id");
+        entity.workspaceId = rs.getString("workspace_id");
         // ATENTION: The connection data has been deserialized to Map because we don't want to put Jackson's annotations in the Entity classes.
         switch (entity.type) {
             case AWS:

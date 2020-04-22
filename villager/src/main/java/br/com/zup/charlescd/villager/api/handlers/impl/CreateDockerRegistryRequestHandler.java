@@ -28,10 +28,10 @@ import br.com.zup.charlescd.villager.interactor.registry.AzureDockerRegistryAuth
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
     private CreateDockerRegistryConfigurationRequest request;
-    private String applicationId;
+    private String workspaceId;
 
-    public CreateDockerRegistryRequestHandler(String applicationId, CreateDockerRegistryConfigurationRequest request) {
-        this.applicationId = applicationId;
+    public CreateDockerRegistryRequestHandler(String workspaceId, CreateDockerRegistryConfigurationRequest request) {
+        this.workspaceId = workspaceId;
         this.request = request;
     }
 
@@ -41,7 +41,7 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         var inputBuilder = DockerRegistryConfigurationInput.builder()
                 .withName(this.request.getName())
                 .withAddress(this.request.getAddress())
-                .withApplicationId(this.applicationId)
+                .withWorkspaceId(this.workspaceId)
                 .withAuthorId(this.request.getAuthorId());
 
         if (this.request instanceof AzureCreateDockerRegistryRequest) {
