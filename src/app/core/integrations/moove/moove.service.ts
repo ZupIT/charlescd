@@ -17,7 +17,7 @@ export class MooveService {
       private readonly envConfiguration: IEnvConfiguration
     ) {}
 
-    public  notifyDeploymentStatus(
+    public notifyDeploymentStatus(
       deploymentId: string,
       status: string,
       callbackUrl: string,
