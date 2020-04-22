@@ -20,13 +20,11 @@ import {
 } from '../../deployments/repository'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
-import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
-import {of, throwError} from 'rxjs';
+
 
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {
-  private readonly MAXIMUM_RETRY_ATTEMPTS = 3
-  private readonly MILLISECONDS_RETRY_DELAY = 1000
+
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly mooveService: MooveService,
