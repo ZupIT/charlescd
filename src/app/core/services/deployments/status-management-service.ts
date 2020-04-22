@@ -275,7 +275,7 @@ export class StatusManagementService {
 
       await this.deploymentsRepository.update(
         { id: deploymentId },
-    { status, finishedAt: new Date() },
+        { status, finishedAt: new Date() }
 
       )
     }
