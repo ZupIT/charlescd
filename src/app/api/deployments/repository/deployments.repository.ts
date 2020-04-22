@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentEntity, } from '../entity'
-import {DeploymentStatusEnum} from '../enums';
+import { DeploymentStatusEnum } from '../enums';
 
 
 @EntityRepository(DeploymentEntity)

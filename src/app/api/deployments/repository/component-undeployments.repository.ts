@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
 import { ComponentUndeploymentEntity } from '../entity'
-import {DeploymentStatusEnum, UndeploymentStatusEnum} from '../enums';
+import { UndeploymentStatusEnum } from '../enums';
 
 @EntityRepository(ComponentUndeploymentEntity)
 export class ComponentUndeploymentsRepository extends Repository<ComponentUndeploymentEntity> {
@@ -17,13 +17,12 @@ export class ComponentUndeploymentsRepository extends Repository<ComponentUndepl
                 'moduleUndeployment.undeployment.deployment'
             ]
         })
-
     }
 
     public async updateStatus(
         componentUndeploymentId: string,
         status: UndeploymentStatusEnum
     ): Promise<void> {
-       await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
+        await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
     }
 }
