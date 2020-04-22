@@ -3,7 +3,7 @@ import { QueryFailedError, Repository } from 'typeorm'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
 import {
     ComponentDeploymentEntity, DeploymentEntity,
-    ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+    ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity, CircleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
@@ -112,6 +112,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
             false,
             'dummy-circle-id'
         )
+
+        deployment.circle = new CircleDeploymentEntity('header-value')
 
         undeployment = new UndeploymentEntity(
             'dummy-author-id',

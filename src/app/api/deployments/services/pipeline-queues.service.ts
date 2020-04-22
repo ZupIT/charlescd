@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common'
+import { forwardRef, Inject, Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
@@ -29,19 +29,15 @@ export class PipelineQueuesService {
   ) { }
 
   public async triggerNextComponentPipeline(finishedComponentDeployment: ComponentDeploymentEntity): Promise<void> {
-    try {
-      const nextQueuedDeployment: QueuedDeploymentEntity | undefined =
-        await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
-      const runningDeployment: QueuedDeploymentEntity | undefined =
-        await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
-      if (nextQueuedDeployment && !runningDeployment) {
-        nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
-          await this.triggerQueuedDeployment(nextQueuedDeployment) :
-          await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
-        await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
-      }
-    } catch (error) {
-      throw error
+    const nextQueuedDeployment: QueuedDeploymentEntity | undefined =
+      await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
+    const runningDeployment: QueuedDeploymentEntity | undefined =
+      await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
+    if (nextQueuedDeployment && !runningDeployment) {
+      nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
+        await this.triggerQueuedDeployment(nextQueuedDeployment) :
+        await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
+      await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
     }
   }
 
@@ -67,6 +63,9 @@ export class PipelineQueuesService {
 
     const { moduleDeployment: { deployment } } = componentDeployment
     const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { deployment_id: deployment.id } })
+    if (!deployment.circle) {
+      throw new BadRequestException('Cannot perform undeployment without a circle')
+    }
     await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)
   }
 
