@@ -9,4 +9,8 @@ export class ComponentUndeploymentsRepositoryStub {
     public async update(): Promise<void> {
         return Promise.resolve()
     }
+
+    public async updateStatus(): Promise<void> {
+        return Promise.resolve()
+    }
 }
