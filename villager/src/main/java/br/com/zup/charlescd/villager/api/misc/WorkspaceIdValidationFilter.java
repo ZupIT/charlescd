@@ -27,9 +27,9 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ApplicationIdValidationFilter implements ContainerRequestFilter {
+public class WorkspaceIdValidationFilter implements ContainerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationIdValidationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceIdValidationFilter.class);
 
     @Override
     public void filter(ContainerRequestContext reqContext) {

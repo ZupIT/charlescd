@@ -17,13 +17,13 @@
 package br.com.zup.charlescd.villager.interactor.registry;
 
 public class ListDockerRegistryInput {
-    private String applicationId;
+    private String workspaceId;
 
-    public ListDockerRegistryInput(String applicationId) {
-        this.applicationId = applicationId;
+    public ListDockerRegistryInput(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getWorkspaceId() {
+        return workspaceId;
     }
 }

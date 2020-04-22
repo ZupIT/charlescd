@@ -54,9 +54,9 @@ public class DockerRegistryResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@HeaderParam(Constants.X_WORKSPACE_ID) String applicationId, @Valid CreateDockerRegistryConfigurationRequest request) {
+    public Response create(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId, @Valid CreateDockerRegistryConfigurationRequest request) {
 
-        var requestHandler = new CreateDockerRegistryRequestHandler(applicationId, request);
+        var requestHandler = new CreateDockerRegistryRequestHandler(workspaceId, request);
 
         return Response
                 .status(Response.Status.CREATED)

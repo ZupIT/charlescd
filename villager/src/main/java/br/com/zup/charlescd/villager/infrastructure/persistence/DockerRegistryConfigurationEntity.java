@@ -26,7 +26,7 @@ public class DockerRegistryConfigurationEntity {
     public String id;
     public String name;
     public RegistryType type;
-    public String applicationId;
+    public String workspaceId;
     public String authorId;
     public DockerRegistryConnectionData connectionData;
     public LocalDateTime createdAt;

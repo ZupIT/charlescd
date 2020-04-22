@@ -89,7 +89,7 @@ public class DockerRegistryConfigurationInput {
             return this;
         }
 
-        public RegistryConfigurationInputBuilder withApplicationId(String workspaceId) {
+        public RegistryConfigurationInputBuilder withWorkspaceId(String workspaceId) {
             this.workspaceId = workspaceId;
             return this;
         }
