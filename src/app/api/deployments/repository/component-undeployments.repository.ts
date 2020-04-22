@@ -20,9 +20,9 @@ export class ComponentUndeploymentsRepository extends Repository<ComponentUndepl
     }
 
     public async updateStatus(
-        componentUndeploymentId: string,
-        status: UndeploymentStatusEnum
+      componentUndeploymentId: string,
+      status: UndeploymentStatusEnum
     ): Promise<void> {
-        await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
+      await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
     }
 }

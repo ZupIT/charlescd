@@ -6,9 +6,9 @@ import { UndeploymentStatusEnum } from '../enums';
 export class UndeploymentsRepository extends Repository<UndeploymentEntity> {
 
     public async updateStatus(
-        undeploymentId: string,
-        status: UndeploymentStatusEnum
+      undeploymentId: string,
+      status: UndeploymentStatusEnum
     ): Promise<void> {
-          await this.update(undeploymentId, { status, finishedAt: new Date() })
+      await this.update(undeploymentId, { status, finishedAt: new Date() })
     }
 }

@@ -18,8 +18,8 @@ export class ComponentDeploymentsRepository extends Repository<ComponentDeployme
   }
 
   public async updateStatus(
-      componentDeploymentId: string,
-      status: DeploymentStatusEnum
+    componentDeploymentId: string,
+    status: DeploymentStatusEnum
   ): Promise<void> {
     await this.update(componentDeploymentId, { status, finishedAt: new Date() })
   }
