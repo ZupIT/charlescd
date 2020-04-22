@@ -33,10 +33,10 @@ public class ApplicationIdValidationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext reqContext) {
-        String contentType = reqContext.getHeaders().getFirst(Constants.X_APPLICATION_ID);
+        String contentType = reqContext.getHeaders().getFirst(Constants.X_WORKSPACE_ID);
 
         if (StringUtils.isEmpty(contentType)) {
-            var msg = "Header x-application-id is required!";
+            var msg = "Header x-workspace-id is required!";
             LOGGER.error(RequestContext.getTag(), msg);
             throw new IllegalArgumentException(msg);
         }
