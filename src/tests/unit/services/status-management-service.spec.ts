@@ -168,7 +168,8 @@ describe('PipelinesService', () => {
 
     describe('setComponentDeploymentStatusAsFinished', () => {
         it('should correctly update component deployment status to FINISHED', async () => {
-
+            jest.spyOn(global, 'Date')
+                .mockImplementation(() => '2020-04-20T19:16:46.700Z')
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
             jest.spyOn(moduleDeploymentsRepository, 'findOne')
