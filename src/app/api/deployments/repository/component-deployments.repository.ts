@@ -3,7 +3,7 @@ import {
   Repository
 } from 'typeorm'
 import { ComponentDeploymentEntity } from '../entity'
-import {DeploymentStatusEnum, } from '../enums';
+import { DeploymentStatusEnum } from '../enums';
 
 @EntityRepository(ComponentDeploymentEntity)
 export class ComponentDeploymentsRepository extends Repository<ComponentDeploymentEntity> {

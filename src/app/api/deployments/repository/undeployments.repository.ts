@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
-import {ComponentUndeploymentEntity, UndeploymentEntity} from '../entity'
-import {UndeploymentStatusEnum} from '../enums';
+import { UndeploymentEntity } from '../entity'
+import { UndeploymentStatusEnum } from '../enums';
 
 @EntityRepository(UndeploymentEntity)
 export class UndeploymentsRepository extends Repository<UndeploymentEntity> {

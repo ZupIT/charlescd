@@ -3,7 +3,7 @@ import {
   Repository
 } from 'typeorm'
 import { ModuleDeploymentEntity} from '../entity'
-import { DeploymentStatusEnum, UndeploymentStatusEnum } from '../enums';
+import { DeploymentStatusEnum } from '../enums';
 
 @EntityRepository(ModuleDeploymentEntity)
 export class ModuleDeploymentsRepository extends Repository<ModuleDeploymentEntity> {F
