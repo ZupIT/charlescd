@@ -46,6 +46,9 @@ export class ModuleDeploymentEntity extends BaseEntity {
   @CreateDateColumn({ name: 'created_at'})
   public createdAt: Date
 
+  @Column({ name: 'finished_at'})
+  public finishedAt: Date
+
   constructor(
     moduleId: string,
     helmRepository: string,
