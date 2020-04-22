@@ -81,14 +81,12 @@ export class PipelineDeploymentsService {
         undeployment: UndeploymentEntity,
         component: ComponentEntity,
         queuedUndeployment: QueuedUndeploymentEntity,
-        circle: CircleDeploymentEntity | null,
+        circle: CircleDeploymentEntity,
     ): Promise<void> {
 
         try {
             this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
-            if (circle) {
-                await this.unsetComponentPipelineCircle(circle, component)
-            }
+            await this.unsetComponentPipelineCircle(circle, component)
             const pipelineCallbackUrl: string = this.getUndeploymentCallbackUrl(queuedUndeployment.id)
             await this.triggerComponentUnDeployment(component, undeployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_UNDEPLOYMENT', queuedUndeployment)
