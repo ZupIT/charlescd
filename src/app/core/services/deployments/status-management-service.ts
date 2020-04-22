@@ -143,7 +143,7 @@ export class StatusManagementService {
 
         await this.componentUndeploymentsRepository.update(
             { id: componentUndeploymentId },
-        { status, finishedAt: new Date() }
+            { status, finishedAt: new Date() }
         )
     }
 
@@ -247,7 +247,7 @@ export class StatusManagementService {
 
         await this.undeploymentsRepository.update(
             { id: undeploymentId },
-        { status, finishedAt: new Date() }
+            { status, finishedAt: new Date() }
         )
     }
     private getDeploymentFinishedModules(
@@ -362,7 +362,7 @@ export class StatusManagementService {
 
       await this.componentDeploymentsRepository.update(
         { id: componentDeploymentId },
-    { status, finishedAt: new Date() }
+        { status, finishedAt: new Date() }
       )
     }
 
