@@ -91,7 +91,7 @@ export class UndeploymentEntity extends BaseEntity {
   }
 
   private createModuleUndeploymentsArray(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
-    return deployment.modules.map(
+    return deployment?.modules.map(
       moduleDeployment => this.createModuleUndeployment(moduleDeployment)
     )
   }
