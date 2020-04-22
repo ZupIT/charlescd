@@ -34,6 +34,18 @@ resource "helm_release" "charles-postgresql" {
   ]
 }
 
+//resource "helm_release" "charles-notifications" {
+//  name      = "charles-postgresql"
+//  chart     = "${path.module}/charts/charles-notification"
+//  namespace = var.namespace
+//
+//  values = [data.template_file.charles-postgresql-extravars.rendered]
+//
+//  depends_on = [
+//    kubernetes_namespace.charles
+//  ]
+//}
+
 //resource "helm_release" "kube-lego" {
 //  name  = "kube-lego"
 //  chart = "stable/kube-lego"
