@@ -21,7 +21,6 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
 
-
 @Injectable()
 export class ReceiveUndeploymentCallbackUsecase {
 
@@ -104,6 +103,7 @@ export class ReceiveUndeploymentCallbackUsecase {
         await this.queuedUndeploymentsRepository.findOne({ id: queuedUndeploymentId })
     const componentDeployment: ComponentDeploymentEntity =
         await this.componentDeploymentsRepository.findOne({ id: queuedUndeployment.componentDeploymentId })
+    
     await this.pipelineQueuesService.setQueuedUndeploymentStatusFinished(queuedUndeploymentId)
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     await this.deploymentsStatusManagementService.setComponentUndeploymentStatusAsFinished(queuedUndeployment.componentUndeploymentId)
