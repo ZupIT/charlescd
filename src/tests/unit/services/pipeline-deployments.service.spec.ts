@@ -84,7 +84,7 @@ describe('Pipeline Deployments Service', () => {
     )
 
     await expect(
-      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
+      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity, circle)
     ).resolves.not.toThrow()
   })
 })

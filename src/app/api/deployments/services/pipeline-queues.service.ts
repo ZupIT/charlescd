@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
@@ -53,13 +53,9 @@ export class PipelineQueuesService {
       await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId }, { relations: ['module'] })
 
     const { moduleDeployment: { deployment } } = componentDeployment
-    try {
-      deployment.defaultCircle ?
-        await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment) :
-        await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
-    } catch (error) {
-      throw error
-    }
+    !deployment.circle ?
+      await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment) :
+      await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment, deployment.circle)
   }
 
   private async triggerQueuedUndeployment(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
@@ -71,7 +67,7 @@ export class PipelineQueuesService {
 
     const { moduleDeployment: { deployment } } = componentDeployment
     const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { deployment_id: deployment.id } })
-    await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
+    await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)
   }
 
   private async setQueuedDeploymentStatus(queuedDeployment: QueuedDeploymentEntity, status: QueuedPipelineStatusEnum): Promise<void> {
