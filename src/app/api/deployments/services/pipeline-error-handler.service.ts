@@ -42,7 +42,7 @@ export class PipelineErrorHandlerService {
 
         if (deployment && !deployment.hasFailed()) {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
-             await this.mooveService.notifyDeploymentStatus(
+            await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
             ).toPromise()
         }
