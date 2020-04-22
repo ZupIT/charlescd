@@ -86,13 +86,13 @@ public class DockerRegistryConfigurationRepository {
 
         var findSql = "SELECT id, name, type, author_id, application_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE id = ?";
 
-        try(var conn = dataSource.getConnection()) {
+        try (var conn = dataSource.getConnection()) {
 
             try (var stmt = conn.prepareStatement(findSql)) {
                 stmt.setString(1, this.cryptKey);
                 stmt.setString(2, id);
 
-                try(var rs = stmt.executeQuery()) {
+                try (var rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         return Optional.of(resultSetExtractor(rs));
                     }
@@ -114,18 +114,63 @@ public class DockerRegistryConfigurationRepository {
         return Optional.empty();
     }
 
+    public void delete(String registryId, String workspaceId) {
+        var deleteSql = "DELETE FROM docker_registry_configuration WHERE id = ? AND application_id = ?";
+
+        try (var conn = dataSource.getConnection()) {
+
+            try (var stmt = conn.prepareStatement(deleteSql)) {
+                stmt.setString(1, registryId);
+                stmt.setString(2, workspaceId);
+                stmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public Boolean exists(String registryId, String workspaceId) {
+        var selectSql = "SELECT count(*) FROM docker_registry_configuration WHERE id = ? AND application_id = ?";
+        boolean exists = false;
+
+        try (var conn = dataSource.getConnection()) {
+
+            try (var stmt = conn.prepareStatement(selectSql)) {
+                stmt.setString(1, registryId);
+                stmt.setString(2, workspaceId);
+                var rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    int numberOfRows = rs.getInt(1);
+                    if (numberOfRows != 0) exists = true;
+                } else {
+                    System.out.println("error: could not get the record counts");
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+        return exists;
+    }
+
     public List<DockerRegistryConfigurationEntity> listByApplicationId(String applicationId) {
         var findSql = "SELECT id, name, type, author_id, application_id, PGP_SYM_DECRYPT(connection_data::bytea, ?) as connection_data, created_at FROM docker_registry_configuration WHERE application_id = ?";
 
         var result = new ArrayList<DockerRegistryConfigurationEntity>();
 
-        try(var conn = dataSource.getConnection()) {
+        try (var conn = dataSource.getConnection()) {
 
             try (var stmt = conn.prepareStatement(findSql)) {
                 stmt.setString(1, this.cryptKey);
                 stmt.setString(2, applicationId);
 
-                try(var rs = stmt.executeQuery()) {
+                try (var rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         result.add(resultSetExtractor(rs));
                     }
