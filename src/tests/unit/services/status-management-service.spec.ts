@@ -177,12 +177,12 @@ describe('PipelinesService', () => {
             jest.spyOn(deploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(deploymentWithRelations))
 
-            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'update')
+            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
             await statusManagementService.setComponentDeploymentStatusAsFinished(
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FINISHED, finishedAt: new Date() })
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id' , DeploymentStatusEnum.FINISHED)
         })
     })
 
@@ -196,12 +196,12 @@ describe('PipelinesService', () => {
             jest.spyOn(deploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(deploymentWithRelations))
 
-            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'update')
+            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
             await statusManagementService.setComponentDeploymentStatusAsFailed(
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FAILED, finishedAt: new Date() })
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.FAILED)
         })
     })
 
@@ -215,11 +215,11 @@ describe('PipelinesService', () => {
             jest.spyOn(undeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undeployment))
 
-            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'update')
+            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
             await statusManagementService.setComponentUndeploymentStatusAsFinished(
                 'dummy-component-undeployment-id'
             )
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FINISHED,finishedAt: new Date() })
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FINISHED)
         })
     })
 
@@ -233,12 +233,12 @@ describe('PipelinesService', () => {
             jest.spyOn(undeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undeployment))
 
-            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'update')
+            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
             await statusManagementService.setComponentUndeploymentStatusAsFailed(
                 'dummy-component-undeployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FAILED, finishedAt: new Date() })
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FAILED)
         })
     })
 })
