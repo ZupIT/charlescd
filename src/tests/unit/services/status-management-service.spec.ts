@@ -181,7 +181,7 @@ describe('PipelinesService', () => {
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FINISHED })
+            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FINISHED, finishedAt: new Date() })
         })
     })
 
@@ -200,7 +200,7 @@ describe('PipelinesService', () => {
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FAILED })
+            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-deployment-id' }, { status: DeploymentStatusEnum.FAILED, finishedAt: new Date() })
         })
     })
 
@@ -218,8 +218,7 @@ describe('PipelinesService', () => {
             await statusManagementService.setComponentUndeploymentStatusAsFinished(
                 'dummy-component-undeployment-id'
             )
-
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FINISHED })
+            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FINISHED,finishedAt: new Date() })
         })
     })
 
@@ -238,7 +237,7 @@ describe('PipelinesService', () => {
                 'dummy-component-undeployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FAILED })
+            expect(queueSpy).toHaveBeenCalledWith({ id: 'dummy-component-undeployment-id' }, { status: UndeploymentStatusEnum.FAILED, finishedAt: new Date() })
         })
     })
 })

@@ -37,7 +37,7 @@ export class StatusManagementService {
     ) {}
 
     public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.undeploymentsRepository.update(undeployment.id, { status })
+        await this.undeploymentsRepository.update(undeployment.id, { status, finishedAt: new Date() })
         if (!undeployment.moduleUndeployments) {
             undeployment.moduleUndeployments =
                 await this.moduleUndeploymentsRepository.find({
@@ -49,15 +49,15 @@ export class StatusManagementService {
     }
 
     public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
-        await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status })
+        await this.moduleUndeploymentsRepository.update(moduleUndeployment.id, { status, finishedAt: new Date() })
         return Promise.all(
             moduleUndeployment.componentUndeployments
-                .map(component => this.componentUndeploymentsRepository.update(component.id, { status }))
+                .map(component => this.componentUndeploymentsRepository.update(component.id, { status, finishedAt: new Date() }))
         )
     }
 
     public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
-      await this.deploymentsRepository.update(deployment.id, { status })
+      await this.deploymentsRepository.update(deployment.id, { status, finishedAt: new Date() })
       if (!deployment.modules) {
             deployment.modules =
                 await this.moduleDeploymentRepository.find({
@@ -68,9 +68,9 @@ export class StatusManagementService {
     }
 
     public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
-      await this.moduleDeploymentRepository.update(module.id, { status })
+      await this.moduleDeploymentRepository.update(module.id, { status, finishedAt: new Date() })
       return Promise.all(
-          module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status }))
+          module.components.map(component => this.componentDeploymentsRepository.update(component.id, { status, finishedAt: new Date() }))
       )
     }
 
@@ -143,7 +143,7 @@ export class StatusManagementService {
 
         await this.componentUndeploymentsRepository.update(
             { id: componentUndeploymentId },
-            { status }
+        { status, finishedAt: new Date() }
         )
     }
 
@@ -201,7 +201,7 @@ export class StatusManagementService {
 
         await this.moduleUndeploymentsRepository.update(
             { id: moduleUndeploymentId },
-            { status }
+            { status, finishedAt: new Date() }
         )
     }
 
@@ -247,10 +247,9 @@ export class StatusManagementService {
 
         await this.undeploymentsRepository.update(
             { id: undeploymentId },
-            { status }
+        { status, finishedAt: new Date() }
         )
     }
-
     private getDeploymentFinishedModules(
       deployment: DeploymentEntity
     ): ModuleDeploymentEntity[] {
@@ -276,7 +275,8 @@ export class StatusManagementService {
 
       await this.deploymentsRepository.update(
         { id: deploymentId },
-        { status }
+    { status, finishedAt: new Date() },
+
       )
     }
 
@@ -313,7 +313,7 @@ export class StatusManagementService {
 
       await this.moduleDeploymentRepository.update(
         { id: moduleDeploymentId },
-        { status }
+        { status, finishedAt: new Date() }
       )
     }
 
@@ -362,7 +362,7 @@ export class StatusManagementService {
 
       await this.componentDeploymentsRepository.update(
         { id: componentDeploymentId },
-        { status }
+    { status, finishedAt: new Date() }
       )
     }
 

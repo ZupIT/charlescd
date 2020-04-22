@@ -46,6 +46,9 @@ export class UndeploymentEntity extends BaseEntity {
   @Column({name: 'circle_id', nullable: false})
   public circleId: string
 
+  @Column({ name: 'finished_at'})
+  public finishedAt: Date
+
   constructor(
     authorId: string,
     deployment: DeploymentEntity,
