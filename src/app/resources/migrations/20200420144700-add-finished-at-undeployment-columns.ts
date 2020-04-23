@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class AddFinishedAtColumns20200420144600 implements MigrationInterface {
+export class AddFinishedAtUndeploymentColumns20200420144800 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner) {
     await queryRunner.addColumn('undeployments', new TableColumn({
