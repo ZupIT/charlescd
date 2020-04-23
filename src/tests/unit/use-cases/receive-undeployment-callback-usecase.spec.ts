@@ -206,7 +206,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         })
 
         it('should call mooveService with undeployment circle-id', async () => {
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeployment))
             jest.spyOn(undeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undeployment))
