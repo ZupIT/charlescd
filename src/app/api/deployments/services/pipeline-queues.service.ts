@@ -88,7 +88,6 @@ export class PipelineQueuesService {
       component = await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
       const { moduleDeployment: { deployment } } = componentDeployment
       const undeployment = await this.undeploymentsRepository.findOne({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id } })
-      this.consoleLoggerService.log('START:TRIGGER_UNDEPLOYMENT_ID', undeployment.id)
       await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, deployment, queuedUndeployment)
     } catch (error) {
       throw error
