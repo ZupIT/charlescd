@@ -32,13 +32,13 @@ export class CreateCdConfigurationDto {
         this.authorId = authorId
     }
 
-    public toEntity(applicationId: string): CdConfigurationEntity {
+    public toEntity(workspaceId: string): CdConfigurationEntity {
         return new CdConfigurationEntity(
             this.type,
             this.configurationData,
             this.name,
             this.authorId,
-            applicationId
+            workspaceId
         )
     }
 }

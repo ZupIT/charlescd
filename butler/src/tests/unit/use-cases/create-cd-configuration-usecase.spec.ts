@@ -37,7 +37,7 @@ describe('CreateCdConfigurationUsecase', () => {
             { account: 'my-account', namespace: 'my-namespace' },
             'config-name',
             'authorId',
-            'applicationId'
+            'workspaceId'
         )
     })
 
@@ -47,7 +47,7 @@ describe('CreateCdConfigurationUsecase', () => {
             jest.spyOn(cdConfigurationsRepository, 'saveEncrypted')
                 .mockImplementation(() => Promise.resolve(cdConfiguration))
 
-            expect(await createCdConfigurationUsecase.execute(createCdConfigurationDto, 'applicationId'))
+            expect(await createCdConfigurationUsecase.execute(createCdConfigurationDto, 'workspaceId'))
                 .toEqual(cdConfiguration.toReadDto())
         })
     })

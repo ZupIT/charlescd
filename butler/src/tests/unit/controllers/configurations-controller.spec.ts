@@ -60,7 +60,7 @@ describe('ConfigurationsController', () => {
                 'id',
                 createCdConfigurationDto.name,
                 createCdConfigurationDto.authorId,
-                'applicationId',
+                'workspaceId',
                 creationDate
             )
 
@@ -68,7 +68,7 @@ describe('ConfigurationsController', () => {
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDto))
 
             expect(
-                await configurationsController.createCdConfiguration(createCdConfigurationDto, 'applicationId')
+                await configurationsController.createCdConfiguration(createCdConfigurationDto, 'workspaceId')
             ).toBe(readK8sConfigurationDto)
         })
     })
@@ -82,7 +82,7 @@ describe('ConfigurationsController', () => {
                 'id',
                 createCdConfigurationDto.name,
                 createCdConfigurationDto.authorId,
-                'applicationId',
+                'workspaceId',
                 creationDate
             )
             const readK8sConfigurationDtoArray: ReadCdConfigurationDto[] = [readK8sConfigurationDto, readK8sConfigurationDto]
@@ -91,7 +91,7 @@ describe('ConfigurationsController', () => {
                 .mockImplementation(() => Promise.resolve(readK8sConfigurationDtoArray))
 
             expect(
-                await configurationsController.getCdConfigurations('applicationId')
+                await configurationsController.getCdConfigurations('workspaceId')
             ).toBe(readK8sConfigurationDtoArray)
         })
     })

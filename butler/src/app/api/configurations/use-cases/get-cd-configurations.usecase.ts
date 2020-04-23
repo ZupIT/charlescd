@@ -15,11 +15,11 @@ export class GetCdConfigurationsUsecase {
         private readonly cdConfigurationsRepository: CdConfigurationsRepository
     ) {}
 
-    public async execute(applicationId: string): Promise<ReadCdConfigurationDto[]> {
+    public async execute(workspaceId: string): Promise<ReadCdConfigurationDto[]> {
 
         try {
             const cdConfigurations: CdConfigurationEntity[] =
-                await this.cdConfigurationsRepository.findAllByApplicationId(applicationId)
+                await this.cdConfigurationsRepository.findAllByWorkspaceId(workspaceId)
             return cdConfigurations.map(configuration => configuration.toReadDto())
         } catch (error) {
             throw new InternalServerErrorException(error)

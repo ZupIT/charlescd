@@ -23,22 +23,22 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
                     `PGP_SYM_ENCRYPT('${JSON.stringify(cdConfig.configurationData)}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`,
                 name: cdConfig.name,
                 authorId: cdConfig.authorId,
-                applicationId: cdConfig.applicationId
+                workspaceId: cdConfig.workspaceId
             })
-            .returning('id, type, name, user_id, application_id, created_at')
+            .returning('id, type, name, user_id, workspace_id, created_at')
             .execute()
 
         return plainToClass(CdConfigurationEntity, queryResult.generatedMaps[0])
     }
 
-    public async findAllByApplicationId(applicationId: string): Promise<CdConfigurationEntity[]> {
+    public async findAllByWorkspaceId(workspaceId: string): Promise<CdConfigurationEntity[]> {
 
         const queryResult: object[] = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
-            .addSelect('application_id', 'applicationId')
+            .addSelect('workspace_id', 'workspaceId')
             .addSelect('created_at', 'createdAt')
-            .where('cd_configurations.application_id = :applicationId', { applicationId })
+            .where('cd_configurations.workspace_id = :workspaceId', { workspaceId })
             .getRawMany()
 
         return queryResult.map(configuration => plainToClass(CdConfigurationEntity, configuration))
@@ -49,7 +49,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         const queryResult = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
-            .addSelect('application_id', 'applicationId')
+            .addSelect('workspace_id', 'workspaceId')
             .addSelect('created_at', 'createdAt')
             .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
             .where('cd_configurations.id = :id', { id })

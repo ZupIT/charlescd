@@ -6,7 +6,7 @@ export class ReadCdConfigurationDto {
 
     public readonly authorId: string
 
-    public readonly applicationId: string
+    public readonly workspaceId: string
 
     public readonly createdAt: Date
 
@@ -14,13 +14,13 @@ export class ReadCdConfigurationDto {
         id: string,
         name: string,
         authorId: string,
-        applicationId: string,
+        workspaceId: string,
         createdAt: Date
     ) {
         this.id = id
         this.name = name
         this.authorId = authorId
-        this.applicationId = applicationId
+        this.workspaceId = workspaceId
         this.createdAt = createdAt
     }
 }

@@ -28,17 +28,17 @@ export class ConfigurationsController {
     @Post('cd')
     public async createCdConfiguration(
         @Body() createCdConfigurationDto: CreateCdConfigurationDto,
-        @Headers('x-application-id') applicationId: string
+        @Headers('x-workspace-id') workspaceId: string
     ): Promise<ReadCdConfigurationDto> {
 
-        return await this.createCdConfigurationUseCase.execute(createCdConfigurationDto, applicationId)
+        return await this.createCdConfigurationUseCase.execute(createCdConfigurationDto, workspaceId)
     }
 
     @Get('cd')
     public async getCdConfigurations(
-        @Headers('x-application-id') applicationId: string
+        @Headers('x-workspace-id') workspaceId: string
     ): Promise<ReadCdConfigurationDto[]> {
 
-        return await this.getCdConfigurationsUseCase.execute(applicationId)
+        return await this.getCdConfigurationsUseCase.execute(workspaceId)
     }
 }

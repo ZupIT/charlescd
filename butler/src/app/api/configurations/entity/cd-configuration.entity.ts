@@ -27,8 +27,8 @@ export class CdConfigurationEntity extends BaseEntity {
     @Column({ name: 'user_id' })
     public authorId: string
 
-    @Column({ name: 'application_id' })
-    public applicationId: string
+    @Column({ name: 'workspace_id' })
+    public workspaceId: string
 
     @Column({ name: 'created_at'})
     public createdAt: Date
@@ -38,7 +38,7 @@ export class CdConfigurationEntity extends BaseEntity {
         configurationData: ICdConfigurationData,
         name: string,
         authorId: string,
-        applicationId: string
+        workspaceId: string
     ) {
         super()
         this.id = uuidv4()
@@ -46,7 +46,7 @@ export class CdConfigurationEntity extends BaseEntity {
         this.configurationData = configurationData
         this.name = name
         this.authorId = authorId
-        this.applicationId = applicationId
+        this.workspaceId = workspaceId
     }
 
     public toReadDto(): ReadCdConfigurationDto {
@@ -54,7 +54,7 @@ export class CdConfigurationEntity extends BaseEntity {
             this.id,
             this.name,
             this.authorId,
-            this.applicationId,
+            this.workspaceId,
             this.createdAt
         )
     }

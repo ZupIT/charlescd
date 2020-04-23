@@ -20,12 +20,12 @@ export class CreateCdConfigurationUsecase {
 
     public async execute(
         createCdConfigurationDto: CreateCdConfigurationDto,
-        applicationId: string
+        workspaceId: string
     ): Promise<ReadCdConfigurationDto> {
 
         try {
             const cdConfiguration: CdConfigurationEntity =
-                await this.cdConfigurationsRepository.saveEncrypted(createCdConfigurationDto.toEntity(applicationId))
+                await this.cdConfigurationsRepository.saveEncrypted(createCdConfigurationDto.toEntity(workspaceId))
             return cdConfiguration.toReadDto()
         } catch (error) {
             throw new InternalServerErrorException(error)
