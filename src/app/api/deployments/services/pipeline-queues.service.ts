@@ -3,9 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity } from '../entity'
+import {
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  QueuedDeploymentEntity,
+  QueuedUndeploymentEntity,
+  UndeploymentEntity
+} from '../entity'
 import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
+import {
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../repository'
 import { PipelineDeploymentsService } from './'
 
 @Injectable()
@@ -19,6 +29,8 @@ export class PipelineQueuesService {
     private readonly queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+    @InjectRepository(ComponentUndeploymentsRepository)
+    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
     @InjectRepository(ComponentEntity)
     private readonly componentsRepository: Repository<ComponentEntity>,
     @Inject(forwardRef(() => PipelineDeploymentsService))
@@ -57,12 +69,13 @@ export class PipelineQueuesService {
   private async triggerQueuedUndeployment(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
     const componentDeployment: ComponentDeploymentEntity
       = await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
-
     const component: ComponentEntity =
       await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId }, { relations: ['module'] })
+    const componentUndeployment: ComponentUndeploymentEntity =
+      await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
     const { moduleDeployment: { deployment } } = componentDeployment
-    const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { deployment_id: deployment.id } })
+    const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id} })
     if (!deployment.circle) {
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
