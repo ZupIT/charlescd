@@ -26,6 +26,10 @@ import {
     DeploymentStatusEnum,
     UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
+import {DeploymentsRepository} from '../../../app/api/deployments/repository/deployments.repository';
+import {ModuleDeploymentsRepository} from '../../../app/api/deployments/repository/module-deployments.repository';
+import {ModuleUndeploymentsRepository} from '../../../app/api/deployments/repository/module-undeployments.repository';
+import {UndeploymentsRepository} from '../../../app/api/deployments/repository/undeployments.repository';
 
 describe('PipelinesService', () => {
 
@@ -55,22 +59,22 @@ describe('PipelinesService', () => {
         const module = await Test.createTestingModule({
             providers: [
                 StatusManagementService,
-                { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: 'ModuleDeploymentEntityRepository', useClass: ModuleDeploymentsRepositoryStub },
+                { provide: DeploymentsRepository, useClass: DeploymentsRepositoryStub },
+                { provide: ModuleDeploymentsRepository, useClass: ModuleDeploymentsRepositoryStub },
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
-                { provide: 'ModuleUndeploymentEntityRepository', useClass: ModuleUndeploymentsRepositoryStub },
-                { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub }
+                { provide: ModuleUndeploymentsRepository, useClass: ModuleUndeploymentsRepositoryStub },
+                { provide: UndeploymentsRepository, useClass: UndeploymentsRepositoryStub }
             ]
         }).compile()
 
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-        moduleUndeploymentsRepository = module.get<Repository<ModuleUndeploymentEntity>>('ModuleUndeploymentEntityRepository')
-        deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-        undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
-        moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
+        moduleUndeploymentsRepository = module.get<Repository<ModuleUndeploymentEntity>>(ModuleUndeploymentsRepository)
+        deploymentsRepository = module.get<Repository<DeploymentEntity>>(DeploymentsRepository)
+        undeploymentsRepository = module.get<Repository<UndeploymentEntity>>(UndeploymentsRepository)
+        moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>(ModuleDeploymentsRepository)
 
         circle = new CircleDeploymentEntity('dummy-circle')
 
