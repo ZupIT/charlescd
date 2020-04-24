@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { of, throwError } from 'rxjs'
+import { of, throwError, Observable } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
 import { ConsoleLoggerService } from '../../../logs/console'
 import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
 import TotalPipeline from './connector'
-import { IBaseSpinnakerPipeline } from './connector/interfaces'
+import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { SpinnakerApiService } from './spinnaker-api.service'
 
@@ -19,7 +19,7 @@ export class SpinnakerService implements ICdServiceStrategy {
   constructor(
     private readonly spinnakerApiService: SpinnakerApiService,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) {}
+  ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
 
@@ -54,42 +54,42 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${applicationName} `)
     await this.spinnakerApiService.deployPipeline(applicationName, pipelineName, url)
-        .pipe(
-          map(response => response),
-          retryWhen(error => this.getDeployRetryCondition(error))
-        ).toPromise()
+      .pipe(
+        map(response => response),
+        retryWhen(error => this.getDeployRetryCondition(error))
+      ).toPromise()
     this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
-  private getDeployRetryCondition(deployError) {
+  private getDeployRetryCondition(deployError: Observable<any>) {
 
     return deployError.pipe(
-        concatMap((error, attempts) => {
-          return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
-              throwError('Reached maximum attemps.') :
-              this.getDeployRetryPipe(error, attempts)
-        })
+      concatMap((error, attempts) => {
+        return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+          throwError('Reached maximum attemps.') :
+          this.getDeployRetryPipe(error, attempts)
+      })
     )
   }
 
-  private getDeployRetryPipe(error, attempts: number) {
+  private getDeployRetryPipe(error: any, attempts: number) {
 
     return of(error).pipe(
-        tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
-        delay(this.MILLISECONDS_RETRY_DELAY)
+      tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+      delay(this.MILLISECONDS_RETRY_DELAY)
     )
   }
 
   private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration): Promise<void> {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
-    const { data: { id: pipelineId }} =
+    const { data: { id: pipelineId } } =
       await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
         spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
 
     pipelineId ?
-        await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
-        await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerConfiguration.url).toPromise()
+      await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
+      await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerConfiguration.url).toPromise()
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE')
   }
@@ -104,10 +104,10 @@ export class SpinnakerService implements ICdServiceStrategy {
   }
 
   private createUpdatePipelineObject(
-      pipelineId: string,
-      spinnakerConfiguration: ISpinnakerPipelineConfiguration,
-      spinnakerPipeline: IBaseSpinnakerPipeline
-  ) {
+    pipelineId: string,
+    spinnakerConfiguration: ISpinnakerPipelineConfiguration,
+    spinnakerPipeline: IBaseSpinnakerPipeline
+  ): IUpdateSpinnakerPipeline {
 
     return {
       ...spinnakerPipeline,

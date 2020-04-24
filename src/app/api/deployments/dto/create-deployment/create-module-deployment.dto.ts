@@ -10,15 +10,15 @@ import { Type } from 'class-transformer'
 export class CreateModuleDeploymentDto {
 
   @IsNotEmpty()
-  public readonly moduleId: string
+  public readonly moduleId!: string
 
   @IsNotEmpty()
-  public readonly helmRepository: string
+  public readonly helmRepository!: string
 
   @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => CreateComponentDeploymentDto)
-  public readonly components: CreateComponentDeploymentDto[]
+  public readonly components!: CreateComponentDeploymentDto[]
 
   public toEntity(): ModuleDeploymentEntity {
     return new ModuleDeploymentEntity(

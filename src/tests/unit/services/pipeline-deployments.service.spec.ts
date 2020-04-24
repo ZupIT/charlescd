@@ -39,12 +39,6 @@ describe('Pipeline Deployments Service', () => {
   })
 
   it('triggers deployment without error', async () => {
-    const componentDeploymentEntity = new ComponentDeploymentEntity(
-      'dummy-id',
-      'dummy-name2',
-      'dummy-img-url2',
-      'dummy-img-tag2'
-    )
     const moduleEntity = new ModuleEntity(
       'module-id',
       null,
@@ -52,6 +46,7 @@ describe('Pipeline Deployments Service', () => {
     )
     const componentEntity = new ComponentEntity('component-id')
     componentEntity.module = moduleEntity
+    componentEntity.module.cdConfigurationId = 'cd-config-id'
 
     const componentDeployment = new ComponentDeploymentEntity(
       'dummy-id',
@@ -89,7 +84,7 @@ describe('Pipeline Deployments Service', () => {
     )
 
     await expect(
-      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
+      pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity, circle)
     ).resolves.not.toThrow()
   })
 })

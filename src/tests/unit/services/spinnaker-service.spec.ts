@@ -47,6 +47,8 @@ describe('Spinnaker Service', () => {
   let componentUndeployment: ComponentUndeploymentEntity
   let moduleUndeployment: ModuleUndeploymentEntity
   let connectorConfiguration: IConnectorConfiguration
+  let moduleDeployment: ModuleDeploymentEntity
+  let componentDeployment: ComponentDeploymentEntity
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -94,10 +96,23 @@ describe('Spinnaker Service', () => {
 
     circle = new CircleDeploymentEntity('dummy-circle')
 
+    componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
+
+    moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
+
     deployment = new DeploymentEntity(
       'dummy-deployment-id',
       'dummy-application-name',
-      null,
+      [moduleDeployment],
       'dummy-author-id',
       'dummy-description',
       'dummy-callback-url',
@@ -170,15 +185,16 @@ describe('Spinnaker Service', () => {
       'dummy-circle-id'
     )
 
-    moduleUndeployment = new ModuleUndeploymentEntity(
-      undeploymentModuleDeployments[0],
-      null
-    )
-    moduleUndeployment.undeployment = undeployment
-
     componentUndeployment = new ComponentUndeploymentEntity(
       undeploymentComponentDeployments[0]
     )
+
+    moduleUndeployment = new ModuleUndeploymentEntity(
+      undeploymentModuleDeployments[0],
+      [componentUndeployment]
+    )
+    moduleUndeployment.undeployment = undeployment
+
     componentUndeployment.moduleUndeployment = moduleUndeployment
 
     connectorConfiguration = {

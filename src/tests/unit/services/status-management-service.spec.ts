@@ -74,10 +74,23 @@ describe('PipelinesService', () => {
 
         circle = new CircleDeploymentEntity('dummy-circle')
 
+        componentDeployment = new ComponentDeploymentEntity(
+            'dummy-id',
+            'dummy-name',
+            'dummy-img-url',
+            'dummy-img-tag'
+        )
+
+        moduleDeployment = new ModuleDeploymentEntity(
+            'dummy-id',
+            'helm-repository',
+            [componentDeployment]
+        )
+
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
-            null,
+            [moduleDeployment],
             'dummy-author-id',
             'dummy-description',
             'dummy-callback-url',
@@ -86,19 +99,8 @@ describe('PipelinesService', () => {
             'dummy-circle-id'
         )
 
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            null
-        )
         moduleDeployment.deployment = deployment
 
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag'
-        )
         componentDeployment.moduleDeployment = moduleDeployment
 
         componentDeploymentsList = [
@@ -144,15 +146,16 @@ describe('PipelinesService', () => {
             'dummy-circle-id'
         )
 
+        componentUndeployment = new ComponentUndeploymentEntity(
+            componentDeployment
+        )
+
         moduleUndeployment = new ModuleUndeploymentEntity(
-            null,
-            null
+            moduleDeployment,
+            [componentUndeployment]
         )
         moduleUndeployment.undeployment = undeployment
 
-        componentUndeployment = new ComponentUndeploymentEntity(
-            null
-        )
         componentUndeployment.moduleUndeployment = moduleUndeployment
 
         componentUndeploymentsList = [
@@ -161,7 +164,7 @@ describe('PipelinesService', () => {
         ]
 
         moduleUndeploymentWithRelations = new ModuleUndeploymentEntity(
-            null,
+            moduleDeployment,
             componentUndeploymentsList
         )
     })
@@ -209,7 +212,7 @@ describe('PipelinesService', () => {
 
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
-            jest.spyOn(moduleUndeploymentsRepository, 'findOne')
+            jest.spyOn(moduleUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
             jest.spyOn(undeploymentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(undeployment))

@@ -1,6 +1,7 @@
 import {
     Injectable,
-    InternalServerErrorException
+    InternalServerErrorException,
+    NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -49,11 +50,10 @@ export class CreateDefaultDeploymentRequestUsecase {
     ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        let deployment: DeploymentEntity
+        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
+        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
 
         try {
-            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
-            deployment = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
             await this.scheduleComponentDeployments(deployment)
             this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
@@ -77,35 +77,25 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
-        try {
-            const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
-            await Promise.all(
-                componentDeploymentsIds.map(
-                    componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
-                )
+        const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
+        await Promise.all(
+            componentDeploymentsIds.map(
+                componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
             )
-        } catch (error) {
-            throw error
-        }
+        )
     }
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
         componentDeploymentId: string
     ): Promise<void> {
-
-        try {
-            const componentDeployment: ComponentDeploymentEntity =
-                await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-            const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity =
-                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
-            }
-        } catch (error) {
-            throw error
+        const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+        const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+            { id: componentDeployment.componentId }, { relations: ['module'] }
+        )
+        if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
         }
     }
 
