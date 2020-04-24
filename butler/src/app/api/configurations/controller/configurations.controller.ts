@@ -1,8 +1,8 @@
 import {
     Body,
-    Controller,
+    Controller, Delete,
     Get,
-    Headers,
+    Headers, Param,
     Post,
     UsePipes
 } from '@nestjs/common'
@@ -12,7 +12,8 @@ import {
 } from '../dto'
 import {
     CreateCdConfigurationUsecase,
-    GetCdConfigurationsUsecase
+    GetCdConfigurationsUsecase,
+    DeleteCdConfigurationUsecase
 } from '../use-cases'
 import { ValidConfigurationDataPipe } from '../pipes'
 
@@ -21,7 +22,8 @@ export class ConfigurationsController {
 
     constructor(
         private readonly createCdConfigurationUseCase: CreateCdConfigurationUsecase,
-        private readonly getCdConfigurationsUseCase: GetCdConfigurationsUsecase
+        private readonly getCdConfigurationsUseCase: GetCdConfigurationsUsecase,
+        private readonly deleteCdConfigurationUsecase: DeleteCdConfigurationUsecase
     ) {}
 
     @UsePipes(ValidConfigurationDataPipe)
@@ -40,5 +42,13 @@ export class ConfigurationsController {
     ): Promise<ReadCdConfigurationDto[]> {
 
         return await this.getCdConfigurationsUseCase.execute(workspaceId)
+    }
+
+    @Delete('cd/:id')
+    public async deleteCdConfigurations(
+        @Param('id') id: string,
+        @Headers('x-workspace-id') workspaceId: string
+    ) {
+        await this.deleteCdConfigurationUsecase.execute(id, workspaceId)
     }
 }

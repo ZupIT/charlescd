@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing'
 import {
-    CreateCdConfigurationUsecaseStub,
+    CreateCdConfigurationUsecaseStub, DeleteCdConfigurationUsecaseStub,
     GetCdConfigurationUsecaseStub
 } from '../../stubs/use-cases'
 import { ConfigurationsController } from '../../../app/api/configurations/controller'
 import {
-    CreateCdConfigurationUsecase,
+    CreateCdConfigurationUsecase, DeleteCdConfigurationUsecase,
     GetCdConfigurationsUsecase
 } from '../../../app/api/configurations/use-cases'
 import {
@@ -18,6 +18,7 @@ describe('ConfigurationsController', () => {
 
     let configurationsController: ConfigurationsController
     let createK8sConfigurationUsecase: CreateCdConfigurationUsecase
+    let deleteCdConfigurationUsecase: DeleteCdConfigurationUsecase
     let createCdConfigurationDto: CreateCdConfigurationDto
     let getK8sConfigurationUsecase: GetCdConfigurationsUsecase
 
@@ -35,12 +36,17 @@ describe('ConfigurationsController', () => {
                 {
                     provide: GetCdConfigurationsUsecase,
                     useClass: GetCdConfigurationUsecaseStub
+                },
+                {
+                    provide: DeleteCdConfigurationUsecase,
+                    useClass: DeleteCdConfigurationUsecaseStub
                 }
             ]
         }).compile()
 
         configurationsController = module.get<ConfigurationsController>(ConfigurationsController)
         createK8sConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
+        deleteCdConfigurationUsecase = module.get<DeleteCdConfigurationUsecase>(DeleteCdConfigurationUsecase)
         getK8sConfigurationUsecase = module.get<GetCdConfigurationsUsecase>(GetCdConfigurationsUsecase)
 
         createCdConfigurationDto = new CreateCdConfigurationDto(

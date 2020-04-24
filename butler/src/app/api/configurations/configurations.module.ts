@@ -3,7 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigurationsController } from './controller'
 import {
     CreateCdConfigurationUsecase,
-    GetCdConfigurationsUsecase
+    GetCdConfigurationsUsecase,
+    DeleteCdConfigurationUsecase
 } from './use-cases'
 import { CdConfigurationsRepository } from './repository'
 
@@ -18,7 +19,8 @@ import { CdConfigurationsRepository } from './repository'
     ],
     providers: [
         CreateCdConfigurationUsecase,
-        GetCdConfigurationsUsecase
+        GetCdConfigurationsUsecase,
+        DeleteCdConfigurationUsecase
     ]
 })
 export class ConfigurationsModule {}
