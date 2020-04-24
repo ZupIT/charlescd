@@ -26,10 +26,10 @@ import {
     DeploymentStatusEnum,
     UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
-import { DeploymentsRepository } from '../../../app/api/deployments/repository/deployments.repository';
-import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository';
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
-import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
+import { DeploymentsRepository } from '../../../app/api/deployments/repository/deployments.repository'
+import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
+import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
+import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
 
 describe('PipelinesService', () => {
 
@@ -122,6 +122,8 @@ describe('PipelinesService', () => {
             )
         ]
 
+        moduleDeployment.components = componentDeploymentsList
+
         moduleDeploymentWithRelations = new ModuleDeploymentEntity(
             'dummy-id',
             'helm-repository',
@@ -171,6 +173,9 @@ describe('PipelinesService', () => {
             moduleDeployment,
             componentUndeploymentsList
         )
+
+        undeployment.moduleUndeployments = [moduleUndeploymentWithRelations]
+
     })
 
     describe('setComponentDeploymentStatusAsFinished', () => {
@@ -179,9 +184,9 @@ describe('PipelinesService', () => {
                 .mockImplementation(() => '2020-04-20T19:16:46.700Z')
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
-            jest.spyOn(moduleDeploymentsRepository, 'findOne')
+            jest.spyOn(moduleDeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(moduleDeploymentWithRelations))
-            jest.spyOn(deploymentsRepository, 'findOne')
+            jest.spyOn(deploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(deploymentWithRelations))
 
             const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
@@ -189,7 +194,7 @@ describe('PipelinesService', () => {
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id' , DeploymentStatusEnum.FINISHED)
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.FINISHED)
         })
     })
 
@@ -219,7 +224,7 @@ describe('PipelinesService', () => {
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
             jest.spyOn(moduleUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
-            jest.spyOn(undeploymentsRepository, 'findOne')
+            jest.spyOn(undeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(undeployment))
 
             const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
