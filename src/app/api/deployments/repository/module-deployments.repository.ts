@@ -6,7 +6,7 @@ import { ModuleDeploymentEntity} from '../entity'
 import { DeploymentStatusEnum } from '../enums';
 
 @EntityRepository(ModuleDeploymentEntity)
-export class ModuleDeploymentsRepository extends Repository<ModuleDeploymentEntity> {F
+export class ModuleDeploymentsRepository extends Repository<ModuleDeploymentEntity> {
 
   public async updateStatus(
     moduleDeploymentId: string,

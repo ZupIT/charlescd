@@ -26,17 +26,17 @@ import { ModuleDeploymentsRepository } from '../../../api/deployments/repository
 export class StatusManagementService {
 
     constructor(
-        @InjectRepository(DeploymentEntity)
+        @InjectRepository(DeploymentsRepository)
         private readonly deploymentsRepository: DeploymentsRepository,
-        @InjectRepository(ModuleDeploymentEntity)
+        @InjectRepository(ModuleDeploymentsRepository)
         private readonly moduleDeploymentRepository: ModuleDeploymentsRepository,
         @InjectRepository(ComponentDeploymentsRepository)
         private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         @InjectRepository(ComponentUndeploymentsRepository)
         private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
-        @InjectRepository(ModuleUndeploymentEntity)
+        @InjectRepository(ModuleUndeploymentsRepository)
         private readonly moduleUndeploymentsRepository: ModuleUndeploymentsRepository,
-        @InjectRepository(UndeploymentEntity)
+        @InjectRepository(UndeploymentsRepository)
         private readonly undeploymentsRepository: UndeploymentsRepository,
     ) {}
 
