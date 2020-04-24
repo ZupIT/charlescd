@@ -163,7 +163,7 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts: string[]) => {
+export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts?: string[]) => {
   const newVirtualService = baseVirtualService(appName, appNamespace)
   const matchers = createHttpMatchers(circles, appName)
   if (hosts) {
