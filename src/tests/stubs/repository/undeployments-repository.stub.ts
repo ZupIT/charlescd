@@ -10,6 +10,10 @@ export class UndeploymentsRepositoryStub {
         return Promise.resolve()
     }
 
+    public async findOneOrFail(): Promise<UndeploymentEntity> {
+        return Promise.resolve({} as UndeploymentEntity)
+    }
+
     public async save(): Promise<UndeploymentEntity> {
         return Promise.resolve({} as UndeploymentEntity)
     }
