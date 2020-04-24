@@ -20,6 +20,7 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
 
+
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
 
@@ -89,7 +90,7 @@ export class ReceiveDeploymentCallbackUsecase {
     if (deployment.hasFinished()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
-      )
+      ).toPromise()
     }
   }
 

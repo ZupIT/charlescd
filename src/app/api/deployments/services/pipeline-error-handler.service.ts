@@ -44,7 +44,7 @@ export class PipelineErrorHandlerService {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-            )
+            ).toPromise()
         }
     }
 
@@ -69,7 +69,7 @@ export class PipelineErrorHandlerService {
             await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-            )
+            ).toPromise()
         }
     }
 
