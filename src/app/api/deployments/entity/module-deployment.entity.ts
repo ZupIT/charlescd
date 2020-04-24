@@ -47,7 +47,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
   public createdAt!: Date
 
   @Column({ name: 'finished_at'})
-  public finishedAt: Date
+  public finishedAt!: Date
 
   constructor(
     moduleId: string,

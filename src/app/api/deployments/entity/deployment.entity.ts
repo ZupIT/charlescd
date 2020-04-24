@@ -60,9 +60,8 @@ export class DeploymentEntity extends BaseEntity {
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
-
   @Column({ name: 'finished_at' })
-  public finishedAt: Date
+  public finishedAt!: Date
 
   constructor(
     deploymentId: string,

@@ -39,7 +39,7 @@ export class ComponentUndeploymentEntity extends BaseEntity {
 
 
   @Column({ name: 'finished_at' } )
-  public finishedAt: Date
+  public finishedAt!: Date
 
   constructor(
     componentDeployment: ComponentDeploymentEntity

@@ -48,7 +48,7 @@ export class UndeploymentEntity extends BaseEntity {
   public circleId: string
 
   @Column({ name: 'finished_at'})
-  public finishedAt: Date
+  public finishedAt!: Date
 
   constructor(
     authorId: string,
