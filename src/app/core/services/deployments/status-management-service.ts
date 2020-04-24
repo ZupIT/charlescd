@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import {
     ComponentDeploymentEntity,
     ComponentUndeploymentEntity,
@@ -17,10 +16,10 @@ import {
     ComponentDeploymentsRepository,
     ComponentUndeploymentsRepository
 } from '../../../api/deployments/repository'
-import { UndeploymentsRepository } from '../../../api/deployments/repository/undeployments.repository';
-import { ModuleUndeploymentsRepository } from '../../../api/deployments/repository/module-undeployments.repository';
-import { DeploymentsRepository } from '../../../api/deployments/repository/deployments.repository';
-import { ModuleDeploymentsRepository } from '../../../api/deployments/repository/module-deployments.repository';
+import { UndeploymentsRepository } from '../../../api/deployments/repository/undeployments.repository'
+import { ModuleUndeploymentsRepository } from '../../../api/deployments/repository/module-undeployments.repository'
+import { DeploymentsRepository } from '../../../api/deployments/repository/deployments.repository'
+import { ModuleDeploymentsRepository } from '../../../api/deployments/repository/module-deployments.repository'
 
 @Injectable()
 export class StatusManagementService {
