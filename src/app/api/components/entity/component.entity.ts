@@ -33,7 +33,7 @@ export class ComponentEntity extends BaseEntity {
     moduleEntity => moduleEntity.components
   )
   @JoinColumn({ name: 'module_id' })
-  public module: ModuleEntity
+  public module!: ModuleEntity
 
   @Column({
     type: 'jsonb',
@@ -42,7 +42,7 @@ export class ComponentEntity extends BaseEntity {
   public pipelineOptions: IPipelineOptions
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
 
   constructor(
     componentId: string

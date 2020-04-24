@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
 import {
   ComponentDeploymentEntity,
@@ -36,21 +36,21 @@ export class ReceiveDeploymentCallbackUsecase {
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
     @InjectRepository(DeploymentEntity)
     private readonly deploymentsRepository: Repository<DeploymentEntity>
-  ) {}
+  ) { }
 
   public async execute(
     queuedDeploymentId: number,
     finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
+    this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
+    const queuedDeploymentEntity: QueuedDeploymentEntity =
+      await this.queuedDeploymentsRepository.findOneOrFail({ id: queuedDeploymentId })
 
     try {
-      this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_NOTIFICATION', finishDeploymentDto)
-      const queuedDeploymentEntity: QueuedDeploymentEntity =
-          await this.queuedDeploymentsRepository.findOne({id : queuedDeploymentId})
       if (queuedDeploymentEntity.isRunning()) {
         finishDeploymentDto.isSuccessful() ?
-            await this.handleDeploymentSuccess(queuedDeploymentId) :
-            await this.handleDeploymentFailure(queuedDeploymentId)
+          await this.handleDeploymentSuccess(queuedDeploymentId) :
+          await this.handleDeploymentFailure(queuedDeploymentId)
         this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
@@ -63,10 +63,15 @@ export class ReceiveDeploymentCallbackUsecase {
   ): Promise<void> {
 
     this.consoleLoggerService.log('START:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
+    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOneOrFail({ id: queuedDeploymentId })
+
     const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
+      await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
+
     const { moduleDeployment: { deployment } } = componentDeployment
+    if (!deployment.circle) {
+      throw new NotFoundException(`Deployment dont have a circle`)
+    }
 
     await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
     await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
@@ -79,6 +84,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+
     const { moduleDeployment: { deployment } } = componentDeployment
 
     if (deployment.hasFinished()) {
@@ -92,10 +98,13 @@ export class ReceiveDeploymentCallbackUsecase {
     queuedDeploymentId: number
   ): Promise<void> {
     this.consoleLoggerService.log('START:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queuedDeploymentId })
+    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOneOrFail({ id: queuedDeploymentId })
+
     const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
+      await this.componentDeploymentsRepository.findOneOrFail({ id: queuedDeployment.componentDeploymentId })
+
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
+
     this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
     await this.notifyMooveIfDeploymentFinished(componentDeployment.id)

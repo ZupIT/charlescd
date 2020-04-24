@@ -15,7 +15,7 @@ export class ReadUndeploymentDto {
 
   public readonly circleId: string
 
-  public readonly modulesUndeployments: ReadModuleUndeploymentDto[]
+  public readonly modulesUndeployments: ReadModuleUndeploymentDto[] | null | undefined
 
   constructor(
     id: string,
@@ -24,7 +24,7 @@ export class ReadUndeploymentDto {
     deployment: string,
     status: UndeploymentStatusEnum,
     circleId: string,
-    modulesUndeployments: ReadModuleUndeploymentDto[]
+    modulesUndeployments: ReadModuleUndeploymentDto[] | null | undefined
   ) {
     this.id = id
     this.authorId = authorId

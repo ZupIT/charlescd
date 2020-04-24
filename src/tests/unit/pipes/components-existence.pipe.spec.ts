@@ -23,7 +23,7 @@ describe('ComponentExistencePipe', () => {
   })
 
   it('throws when no component found', async () => {
-    jest.spyOn(componentRepository, 'findOne').mockImplementation(() => undefined)
+    jest.spyOn(componentRepository, 'findOne').mockImplementation(() => Promise.resolve(undefined))
     const componentDeploymentEntity: ComponentDeploymentEntity = new ComponentDeploymentEntity(
       'component-id',
       'component-name',

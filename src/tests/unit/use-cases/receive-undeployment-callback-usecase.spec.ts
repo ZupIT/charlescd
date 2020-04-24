@@ -18,7 +18,8 @@ import {
     ComponentDeploymentsRepositoryStub,
     ComponentUndeploymentsRepositoryStub,
     DeploymentsRepositoryStub,
-    QueuedUndeploymentsRepositoryStub
+    QueuedUndeploymentsRepositoryStub,
+    UndeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     ComponentDeploymentsRepository,
@@ -35,13 +36,16 @@ import {
     UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+
+import { NotificationStatusEnum } from '../../../app/api/notifications/enums';
 
 describe('ReceiveUndeploymentCallbackUsecase', () => {
 
     let receiveUndeploymentCallbackUsecase: ReceiveUndeploymentCallbackUsecase
     let componentUndeploymentsRepository: ComponentUndeploymentsRepository
     let queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>
+    let undeploymentsRepository: Repository<UndeploymentEntity>
     let pipelineQueuesService: PipelineQueuesService
     let successfulFinishUndeploymentDto: FinishUndeploymentDto
     let failedFinishUndeploymentDto: FinishUndeploymentDto
@@ -54,6 +58,8 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
     let pipelineErrorHandlerService: PipelineErrorHandlerService
+    let mooveService: MooveService
+
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
@@ -68,6 +74,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+                { provide: 'UndeploymentsRepository', useClass: UndeploymentsRepositoryStub },
             ]
         }).compile()
 
@@ -76,9 +83,11 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         queuedUndeploymentsRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
         componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
         pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
+        mooveService = module.get<MooveService>(MooveService)
         successfulFinishUndeploymentDto = new FinishUndeploymentDto('SUCCEEDED')
         failedFinishUndeploymentDto = new FinishUndeploymentDto('FAILED')
 
+        undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentsRepository')
         queuedUndeployment = new QueuedUndeploymentEntity(
             'dummy-component-id',
             'dummy-component-deployment-id',
@@ -125,7 +134,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'another-circle-id'
         )
 
         undeployment = new UndeploymentEntity(
@@ -133,23 +142,26 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             deployment,
             'dummy-circle-id'
         )
+        undeployment.deployment = deployment
+        undeployment.status  = UndeploymentStatusEnum.FINISHED
 
+
+        componentUndeployment = new ComponentUndeploymentEntity(
+            componentDeployments[0]
+        )
         moduleUndeployment = new ModuleUndeploymentEntity(
-            null,
-            null
+            moduleDeployments[0],
+            [componentUndeployment]
         )
         moduleUndeployment.undeployment = undeployment
 
-        componentUndeployment = new ComponentUndeploymentEntity(
-            null
-        )
         componentUndeployment.moduleUndeployment = moduleUndeployment
     })
 
     describe('execute', () => {
         it('should update successful callback queued entry status to FINISHED', async () => {
 
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeployment))
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -164,7 +176,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         })
 
         it('should not execute a finished undeployment', async () => {
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeploymentFinished))
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -179,7 +191,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
 
         it('should handle a failed undeployment callback', async () => {
 
-            jest.spyOn(queuedUndeploymentsRepository, 'findOne')
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeployment))
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -191,6 +203,23 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             )
             expect(queueSpy).toHaveBeenCalled()
             expect(queueSpy1).toHaveBeenCalled()
+        })
+
+        it('should call mooveService with undeployment circle-id', async () => {
+            jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
+                .mockImplementation(() => Promise.resolve(queuedUndeployment))
+            jest.spyOn(undeploymentsRepository, 'findOne')
+                .mockImplementation(() => Promise.resolve(undeployment))
+            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentUndeployment))
+
+            const mooveSpy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
+            await receiveUndeploymentCallbackUsecase.execute(
+                1234,
+                successfulFinishUndeploymentDto
+            )
+            expect(mooveSpy).toHaveBeenCalledWith(deployment.id,NotificationStatusEnum.UNDEPLOYED,deployment.callbackUrl,undeployment.circleId)
         })
     })
 })

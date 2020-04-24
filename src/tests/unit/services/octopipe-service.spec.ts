@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import {ICdConfigurationData, OctopipeConfigurationData} from '../../../app/api/configurations/interfaces'
+import { ICdConfigurationData, OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
@@ -49,7 +49,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
@@ -222,7 +222,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
@@ -395,7 +395,7 @@ describe('Octopipe Service', () => {
       const deployment = new DeploymentEntity(
         'dummy-deployment-id',
         'dummy-application-name',
-        null,
+        [moduleDeployment],
         'dummy-author-id',
         'dummy-description',
         'dummy-callback-url',
@@ -544,30 +544,31 @@ describe('Octopipe Service', () => {
 
     it('should create a empty virtual service', () => {
       const componentDeployment = new ComponentDeploymentEntity(
-          'dummy-id',
-          'some-app-name',
-          'dummy-img-url2',
-          'dummy-img-tag2',
-      )
-      const deployment = new DeploymentEntity(
-          'dummy-deployment-id',
-          'dummy-application-name',
-          null,
-          'dummy-author-id',
-          'dummy-description',
-          'dummy-callback-url',
-          null,
-          false,
-          'dummy-circle-id'
+        'dummy-id',
+        'some-app-name',
+        'dummy-img-url2',
+        'dummy-img-tag2',
       )
 
       const moduleDeployment = new ModuleDeploymentEntity(
-          'dummy-id',
-          'helm-repository',
-          [componentDeployment]
+        'dummy-id',
+        'helm-repository',
+        [componentDeployment]
+      )
+
+      const deployment = new DeploymentEntity(
+        'dummy-deployment-id',
+        'dummy-application-name',
+        [moduleDeployment],
+        'dummy-author-id',
+        'dummy-description',
+        'dummy-callback-url',
+        null,
+        false,
+        'dummy-circle-id'
       )
       moduleDeployment.deployment = deployment
-      componentDeployment.moduleDeployment  = moduleDeployment
+      componentDeployment.moduleDeployment = moduleDeployment
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [],
         pipelineVersions: [],
@@ -596,73 +597,73 @@ describe('Octopipe Service', () => {
       }
 
       const payload =
-          octopipeService.createPipelineConfigurationObject(
-              connectorConfiguration
-          )
+        octopipeService.createPipelineConfigurationObject(
+          connectorConfiguration
+        )
 
       const expectedPayload = {
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
-        circleId : 'circle-id',
+        circleId: 'circle-id',
         git: {
           provider: 'GITHUB',
           token: 'some-github-token'
         },
         helmUrl: 'helm-repository',
         istio: {
-            virtualService: {
-                apiVersion: 'networking.istio.io/v1alpha3',
-                kind: 'VirtualService',
-                metadata: {
-                    name: 'some-app-name',
-                    namespace: 'some-app-namespace'
-                },
-                spec: {
-                    hosts: [
-                        'unreachable-app-name'
-                    ],
-                    http: [
-                        {
-                            match: [
-                                {
-                                    headers: {
-                                        'unreachable-cookie-name': {
-                                            exact: 'unreachable-cookie - value'
-                                        }
-                                    }
-                                }
-                            ],
-                            route: [
-                                {
-                                    destination: {
-                                        host: 'unreachable-app-name'
-                                    }
-                                }
-                            ],
+          virtualService: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'VirtualService',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
+            },
+            spec: {
+              hosts: [
+                'unreachable-app-name'
+              ],
+              http: [
+                {
+                  match: [
+                    {
+                      headers: {
+                        'unreachable-cookie-name': {
+                          exact: 'unreachable-cookie - value'
                         }
-                    ]
+                      }
+                    }
+                  ],
+                  route: [
+                    {
+                      destination: {
+                        host: 'unreachable-app-name'
+                      }
+                    }
+                  ],
                 }
+              ]
+            }
+          },
+          destinationRules: {
+            apiVersion: 'networking.istio.io/v1alpha3',
+            kind: 'DestinationRule',
+            metadata: {
+              name: 'some-app-name',
+              namespace: 'some-app-namespace'
             },
-            destinationRules: {
-                apiVersion: 'networking.istio.io/v1alpha3',
-                kind: 'DestinationRule',
-                metadata: {
-                    name: 'some-app-name',
-                    namespace: 'some-app-namespace'
-                },
-                spec: {
-                    host: 'some-app-name',
-                    subsets: []
+            spec: {
+              host: 'some-app-name',
+              subsets: []
 
-                },
             },
+          },
         },
         k8s: {
-             awsClusterName: 'cluster-name',
-             awsRegion: 'region',
-             awsSID: 'sid',
-             awsSecret: 'secret',
-             provider: 'EKS',
+          awsClusterName: 'cluster-name',
+          awsRegion: 'region',
+          awsSID: 'sid',
+          awsSecret: 'secret',
+          provider: 'EKS',
         },
         unusedVersions: [],
         versions: [],
