@@ -381,70 +381,6 @@
 			"name": "Deployments",
 			"item": [
 				{
-					"name": "Create Routed Deployment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
-								"exec": [
-									"const response = JSON.parse(responseBody);",
-									"",
-									"postman.setGlobalVariable(\"deploymentId\", response[\"id\"]);",
-									"postman.setGlobalVariable(\"componentDeploymentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"id\"]);",
-									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
-									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);",
-									"",
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(201)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
-								"exec": [
-									"var uuid = require('uuid');",
-									"",
-									"postman.setGlobalVariable('deploymentID', uuid.v4());",
-									"postman.setGlobalVariable('applicationName', uuid.v4());",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/deployments/circle",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"deployments",
-								"circle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create Default Deployment",
 					"event": [
 						{
@@ -509,12 +445,12 @@
 					"response": []
 				},
 				{
-					"name": "Create Deployment without circle",
+					"name": "Create Routed Deployment",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f906e23-12b8-493c-826a-cfcab899ee4f",
+								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -533,7 +469,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "921ac85e-b7d6-46b3-912d-e219bd89d770",
+								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -555,10 +491,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/deployments/default",
+							"raw": "http://localhost:3000/deployments/circle",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -566,7 +502,7 @@
 							"port": "3000",
 							"path": [
 								"deployments",
-								"default"
+								"circle"
 							]
 						}
 					},

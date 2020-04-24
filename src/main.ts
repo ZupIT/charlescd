@@ -16,6 +16,8 @@ import {
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
 } from './app/core/validations/schemas'
+import { EntityNotFoundExceptionFilter } from './app/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from './app/core/logs/console'
 
 async function bootstrap() {
 
@@ -32,10 +34,10 @@ async function bootstrap() {
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)
-
+  const logger = app.get<ConsoleLoggerService>(ConsoleLoggerService)
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
-
+  app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

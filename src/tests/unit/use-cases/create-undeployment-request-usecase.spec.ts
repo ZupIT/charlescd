@@ -3,7 +3,7 @@ import { QueryFailedError, Repository } from 'typeorm'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
 import {
     ComponentDeploymentEntity, DeploymentEntity,
-    ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+    ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity, CircleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
@@ -113,6 +113,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
             'dummy-circle-id'
         )
 
+        deployment.circle = new CircleDeploymentEntity('header-value')
+
         undeployment = new UndeploymentEntity(
             'dummy-author-id',
             deployment,
@@ -138,7 +140,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     describe('execute', () => {
         it('should return the correct read dto for a given create dto', async () => {
 
-            jest.spyOn(deploymentsRepository, 'findOne')
+            jest.spyOn(deploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(undeployment))
@@ -151,7 +153,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
 
         it('should handle duplicated module undeployment', async () => {
 
-            jest.spyOn(deploymentsRepository, 'findOne')
+            jest.spyOn(deploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(undeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(undeployment))

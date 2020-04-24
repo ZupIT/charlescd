@@ -17,7 +17,7 @@ import { ReadQueuedDeploymentDto } from '../dto'
 export class QueuedDeploymentEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn()
-  public id: number
+  public id!: number
 
   @Column({ name: 'component_id' })
   public componentId: string
@@ -32,7 +32,7 @@ export class QueuedDeploymentEntity extends BaseEntity {
   public type: QueuedPipelineTypesEnum
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
 
   constructor(
     componentId: string,

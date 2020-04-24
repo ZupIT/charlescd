@@ -20,5 +20,15 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
     spinnakerUrl: 'spinnakerurl.com',
 
-    octopipeUrl: 'octopipe.com'
+    octopipeUrl: 'octopipe.com',
+
+    darwinNotificationUrl: 'darwin-notification.url.com',
+
+    helmPrefixUrl: 'helm-prefix',
+
+    helmRepoBranch: 'helm-branch',
+
+    helmTemplateUrl: 'helm-template',
+
+    spinnakerGithubAccount: 'spinnaker-github-account'
 }

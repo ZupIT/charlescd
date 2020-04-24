@@ -1,32 +1,32 @@
 export default interface IEnvConfiguration {
 
-  postgresHost?: string
+  postgresHost: string
 
-  postgresPort?: number
+  postgresPort: number
 
-  postgresUser?: string
+  postgresUser: string
 
-  postgresPass?: string
+  postgresPass: string
 
-  postgresDbName?: string
+  postgresDbName: string
 
-  mooveUrl?: string
+  mooveUrl: string
 
-  darwinNotificationUrl?: string
+  darwinNotificationUrl: string
 
-  darwinUndeploymentCallbackUrl?: string
+  darwinUndeploymentCallbackUrl: string
 
-  darwinDeploymentCallbackUrl?: string
+  darwinDeploymentCallbackUrl: string
 
-  spinnakerUrl?: string
+  spinnakerUrl: string
 
-  octopipeUrl?: string
+  octopipeUrl: string
 
-  spinnakerGithubAccount?: string
+  spinnakerGithubAccount: string
 
-  helmTemplateUrl?: string
+  helmTemplateUrl: string
 
-  helmPrefixUrl?: string
+  helmPrefixUrl: string
 
-  helmRepoBranch?: string
+  helmRepoBranch: string
 }
