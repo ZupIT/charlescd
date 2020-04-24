@@ -26,10 +26,10 @@ import {
     DeploymentStatusEnum,
     UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
-import {DeploymentsRepository} from '../../../app/api/deployments/repository/deployments.repository';
-import {ModuleDeploymentsRepository} from '../../../app/api/deployments/repository/module-deployments.repository';
-import {ModuleUndeploymentsRepository} from '../../../app/api/deployments/repository/module-undeployments.repository';
-import {UndeploymentsRepository} from '../../../app/api/deployments/repository/undeployments.repository';
+import { DeploymentsRepository } from '../../../app/api/deployments/repository/deployments.repository';
+import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository';
+import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
+import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
 
 describe('PipelinesService', () => {
 
