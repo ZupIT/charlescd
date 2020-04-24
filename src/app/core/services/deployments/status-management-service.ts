@@ -178,7 +178,7 @@ export class StatusManagementService {
         moduleUndeploymentId: string
     ): Promise<ModuleUndeploymentEntity> {
 
-        return await this.moduleUndeploymentsRepository.findOne({
+        return await this.moduleUndeploymentsRepository.findOneOrFail({
             where: { id: moduleUndeploymentId },
             relations: [
                 'componentUndeployments'
@@ -221,7 +221,7 @@ export class StatusManagementService {
         undeploymentId: string
     ): Promise<UndeploymentEntity> {
 
-        return await this.undeploymentsRepository.findOne({
+        return await this.undeploymentsRepository.findOneOrFail({
             where: { id: undeploymentId },
             relations: [
                 'moduleUndeployments'
@@ -275,7 +275,7 @@ export class StatusManagementService {
         deploymentId: string
     ): Promise<DeploymentEntity> {
 
-        return await this.deploymentsRepository.findOne({
+        return await this.deploymentsRepository.findOneOrFail({
             where: { id: deploymentId },
             relations: [
                 'modules'
@@ -309,7 +309,7 @@ export class StatusManagementService {
         moduleDeploymentId: string
     ): Promise<ModuleDeploymentEntity> {
 
-        return await this.moduleDeploymentRepository.findOne({
+        return await this.moduleDeploymentRepository.findOneOrFail({
             where: { id: moduleDeploymentId },
             relations: [
                 'components'
