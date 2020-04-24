@@ -6,6 +6,10 @@ export class ModuleDeploymentsRepositoryStub {
         return Promise.resolve({} as ModuleDeploymentEntity)
     }
 
+    public async updateStatus(): Promise<void> {
+        return Promise.resolve()
+    }
+
     public async findOneOrFail(): Promise<ModuleDeploymentEntity> {
         return Promise.resolve({} as ModuleDeploymentEntity)
     }
