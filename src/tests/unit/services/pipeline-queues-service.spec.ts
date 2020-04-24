@@ -80,15 +80,15 @@ describe('PipelineQueuesService', () => {
             providers: [
                 PipelineQueuesService,
                 { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: QueuedDeploymentsRepository, useClass:  QueuedDeploymentsRepositoryStub},
-                { provide: 'QueuedUndeploymentEntityRepository', useClass:  QueuedUndeploymentsRepositoryStub},
-                { provide: ComponentDeploymentsRepository, useClass:  ComponentDeploymentsRepositoryStub },
-                { provide: ComponentUndeploymentsRepository, useClass:  ComponentUndeploymentsRepositoryStub },
+                { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
+                { provide: 'QueuedUndeploymentEntityRepository', useClass: QueuedUndeploymentsRepositoryStub },
+                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+                { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
                 { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
                 { provide: StatusManagementService, useClass: StatusManagementServiceStub },
                 { provide: MooveService, useClass: MooveServiceStub },
-                { provide: 'ComponentEntityRepository', useClass:  ComponentsRepositoryStub },
+                { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub }
             ]
@@ -140,10 +140,23 @@ describe('PipelineQueuesService', () => {
 
         circle = new CircleDeploymentEntity('dummy-circle')
 
+        componentDeployment = new ComponentDeploymentEntity(
+            'dummy-id',
+            'dummy-name',
+            'dummy-img-url',
+            'dummy-img-tag'
+        )
+
+        moduleDeployment = new ModuleDeploymentEntity(
+            'dummy-id',
+            'helm-repository',
+            [componentDeployment]
+        )
+
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
-            null,
+            [moduleDeployment],
             'dummy-author-id',
             'dummy-description',
             'dummy-callback-url',
@@ -152,19 +165,7 @@ describe('PipelineQueuesService', () => {
             'dummy-circle-id'
         )
 
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            null
-        )
         moduleDeployment.deployment = deployment
-
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag'
-        )
         componentDeployment.moduleDeployment = moduleDeployment
 
         componentDeploymentsList = [
@@ -256,15 +257,16 @@ describe('PipelineQueuesService', () => {
         queuedUndeployments[0].id = 200
         queuedUndeployments[1].id = 201
 
-        moduleUndeployment = new ModuleUndeploymentEntity(
-            undeploymentModuleDeployments[0],
-            null
-        )
-        moduleUndeployment.undeployment = undeployment
-
         componentUndeployment = new ComponentUndeploymentEntity(
             undeploymentComponentDeployments[0]
         )
+
+        moduleUndeployment = new ModuleUndeploymentEntity(
+            undeploymentModuleDeployments[0],
+            [componentUndeployment]
+        )
+        moduleUndeployment.undeployment = undeployment
+
         componentUndeployment.moduleUndeployment = moduleUndeployment
 
         moduleEntity = new ModuleEntity(

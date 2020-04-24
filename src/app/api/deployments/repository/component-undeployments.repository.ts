@@ -8,7 +8,7 @@ export class ComponentUndeploymentsRepository extends Repository<ComponentUndepl
         componentUndeploymentId: string
     ): Promise<ComponentUndeploymentEntity> {
 
-        return this.findOne({
+        return this.findOneOrFail({
             where: { id: componentUndeploymentId },
             relations: [
                 'moduleUndeployment',

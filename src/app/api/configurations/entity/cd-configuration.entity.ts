@@ -5,7 +5,7 @@ import {
     PrimaryColumn
 } from 'typeorm'
 import { ReadCdConfigurationDto } from '../dto'
-import * as uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import { ICdConfigurationData } from '../interfaces'
 import { CdTypeEnum } from '../enums'
 
@@ -31,7 +31,7 @@ export class CdConfigurationEntity extends BaseEntity {
     public applicationId: string
 
     @Column({ name: 'created_at'})
-    public createdAt: Date
+    public createdAt!: Date
 
     constructor(
         type: CdTypeEnum,

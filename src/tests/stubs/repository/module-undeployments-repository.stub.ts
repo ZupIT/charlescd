@@ -9,4 +9,8 @@ export class ModuleUndeploymentsRepositoryStub {
     public async findOne(): Promise<ModuleUndeploymentEntity> {
         return Promise.resolve({} as ModuleUndeploymentEntity)
     }
+
+    public async findOneOrFail(): Promise<ModuleUndeploymentEntity> {
+        return Promise.resolve({} as ModuleUndeploymentEntity)
+    }
 }

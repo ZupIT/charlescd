@@ -18,7 +18,7 @@ export class DeploymentUniquenessPipe implements PipeTransform {
     ) {}
 
     public async transform(deploymentRequest: CreateDeploymentRequestDto, metadata: ArgumentMetadata): Promise<CreateDeploymentRequestDto> {
-        const deployment: DeploymentEntity =
+        const deployment: DeploymentEntity | undefined =
             await this.deploymentsRepository.findOne({ id: deploymentRequest.deploymentId })
         if (deployment) {
             throw new BadRequestException('Deployment already exists')

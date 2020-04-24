@@ -4,16 +4,16 @@ import { IsNotEmpty } from 'class-validator'
 export class CreateComponentDeploymentDto {
 
   @IsNotEmpty()
-  public readonly componentId: string
+  public readonly componentId!: string
 
   @IsNotEmpty()
-  public readonly componentName: string
+  public readonly componentName!: string
 
   @IsNotEmpty()
-  public readonly buildImageUrl: string
+  public readonly buildImageUrl!: string
 
   @IsNotEmpty()
-  public readonly buildImageTag: string
+  public readonly buildImageTag!: string
 
   public toEntity(): ComponentDeploymentEntity {
     return new ComponentDeploymentEntity(
