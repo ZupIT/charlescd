@@ -14,6 +14,10 @@ export class DeploymentsRepositoryStub {
         return Promise.resolve()
     }
 
+    public async updateStatus(): Promise<void> {
+        return Promise.resolve()
+    }
+
     public async save(): Promise<DeploymentEntity> {
         return Promise.resolve({} as DeploymentEntity)
     }
