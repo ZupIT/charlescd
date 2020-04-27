@@ -76,8 +76,8 @@ export class UndeploymentEntity extends BaseEntity {
     )
   }
 
-  public hasFinished(): boolean {
-    return this.status === UndeploymentStatusEnum.FINISHED
+  public hasSucceedeed(): boolean {
+    return this.status === UndeploymentStatusEnum.SUCCEEDED
   }
 
   public hasFailed(): boolean {
