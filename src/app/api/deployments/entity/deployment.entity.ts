@@ -103,8 +103,8 @@ export class DeploymentEntity extends BaseEntity {
     )
   }
 
-  public hasFinished(): boolean {
-    return this.status === DeploymentStatusEnum.FINISHED
+  public hasSucceeded(): boolean {
+    return this.status === DeploymentStatusEnum.SUCCEEDED
   }
 
   public hasFailed(): boolean {
