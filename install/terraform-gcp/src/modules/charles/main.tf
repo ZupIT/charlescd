@@ -19,3 +19,15 @@ resource "helm_release" "charles-circle-matcher" {
   chart     = "${path.module}/charts/darwin-circle-matcher"
   namespace = var.namespace
 }
+
+resource "helm_release" "charles-ui-new" {
+  name      = "charles-ui-new"
+  chart     = "${path.module}/charts/darwin-ui-new"
+  namespace = var.namespace
+}
+
+resource "helm_release" "charles-ui-legacy" {
+  name      = "charles-ui-legacy"
+  chart     = "${path.module}/charts/darwin-ui-legacy"
+  namespace = var.namespace
+}

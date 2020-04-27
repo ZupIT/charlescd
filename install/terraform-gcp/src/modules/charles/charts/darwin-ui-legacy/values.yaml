@@ -1,0 +1,93 @@
+replicaCount: 1
+envVars:
+  - name: HOST
+    value: http://35.188.161.63:8080
+  - name: NOTIFICATION
+    value: /notifications
+  - name: CONSUL
+    value: https://consul-darwin.apirealwave.io
+  - name: APM
+    value: https://darwin-apm-manager-consumer.itiaws.dev
+  - name: KEYCLOAK
+    value: http://34.69.22.164
+  - name: CIRCLE_MATCHER
+    value: http://34.70.217.136:8080
+
+appname: darwin-ui-legacy
+  
+image:
+  repository: darwin-ui-legacy
+  tag: realwavelab.azurecr.io/darwin-ui-legacy:test-gcp
+  blueTag: latest
+service:
+  name: darwin-ui-legacy-web
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 3000
+configmaps:
+  enabled: false
+  files:
+    - darwin-ui-legacy-nginx.conf
+startcommand: 
+  enabled: false
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-legacy-nginx.conf\"]"
+ingress:
+  enabled: false
+  annotations: 
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - name: zup.lab.realwave.zup.me
+      port: http
+  tls: 
+    - secretName: lab-realwave-zupme
+      hosts:
+        - zup.lab.realwave.zup.me
+resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials:
+  registry: realwavelab.azurecr.io
+  username: realwavelab
+  password: /uU7PBzXFzMlvlbQZWTHPAPqj38jfLV1
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP  
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+consulnode:
+  enabled: false
+  repository: realwave-node-consul
+  path: /opt/darwin-ui/config
+
+istio:
+  enabled: true
+
+vault:
+  enabled: false
