@@ -18,12 +18,21 @@ data "google_container_engine_versions" "default" {
 }
 
 resource "google_container_cluster" "default" {
-  name               = "tf-charless"
+  name               = "charlescd"
   location           = var.zone
   initial_node_count = 1
   min_master_version = data.google_container_engine_versions.default.latest_master_version
   network            = google_compute_subnetwork.default.name
   subnetwork         = google_compute_subnetwork.default.name
+  node_locations = [
+    "us-central1-c",
+    "us-central1-f"
+  ]
+  node_config {
+    machine_type = "n1-standard-2"
+    disk_size_gb = 20
+  }
+
 
   provider = google-beta
 
@@ -31,15 +40,6 @@ resource "google_container_cluster" "default" {
     istio_config {
       disabled = false
       auth     = "AUTH_MUTUAL_TLS"
-    }
-  }
-
-  node_config {
-    preemptible  = true
-    machine_type = "n1-standard-1"
-
-    metadata = {
-      disable-legacy-endpoints = "true"
     }
   }
 
@@ -61,22 +61,60 @@ resource "kubernetes_namespace" "charles" {
   }
 }
 
-output "network" {
-  value = google_compute_subnetwork.default.network
+resource "random_password" "charlesnotifications_password" {
+  length           = 16
+  special          = false
+  override_special = "_%@/"
 }
 
-output "subnetwork_name" {
-  value = google_compute_subnetwork.default.name
+resource "random_password" "charlesmoove_password" {
+  length           = 16
+  special          = false
+  override_special = "_%@/"
 }
 
-output "cluster_name" {
-  value = google_container_cluster.default.name
+resource "random_password" "charlescirclematcher_password" {
+  length           = 16
+  special          = false
+  override_special = "_%@/"
 }
 
-output "cluster_region" {
-  value = var.region
+resource "random_password" "charlesdeploy_password" {
+  length           = 16
+  special          = false
+  override_special = "_%@/"
 }
 
-output "cluster_zone" {
-  value = google_container_cluster.default.zone
+module "keycloak" {
+  source = "./modules/keycloak"
+
+  namespace = kubernetes_namespace.charles.metadata[0].name
+}
+
+module "postgresql" {
+  source = "./modules/postgresql"
+
+  namespace = kubernetes_namespace.charles.metadata[0].name
+  db-notifications-username = "charlesnotifications"
+  db-notifications-password = random_password.charlesnotifications_password.result
+  db-moove-username = "charlesmoove"
+  db-moove-password = random_password.charlesnotifications_password.result
+  db-circle-matcher-username = "charlescirclematcher"
+  db-circle-matcher-password = random_password.charlescirclematcher_password.result
+  db-deploy-username = "charlesdeploy"
+  db-deploy-password = random_password.charlesdeploy_password.result
+}
+
+module "charles" {
+  source = "./modules/charles"
+
+  namespace = kubernetes_namespace.charles.metadata[0].name
+  db-notifications-username = "charlesnotifications"
+  db-notifications-password = random_password.charlesnotifications_password.result
+  db-moove-username = "charlesmoove"
+  db-moove-password = random_password.charlesnotifications_password.result
+//  db-circle-matcher-username = "charlescirclematcher"
+//  db-circle-matcher-password = random_password.charlescirclematcher_password
+//  db-deploy-username = "charlesdeploy"
+//  db-deploy-password = random_password.charlesdeploy_password
 }

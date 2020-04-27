@@ -1,12 +1,12 @@
 provider "google" {
   # ... other configuration ...
-  region  = "us-central1"
+  region  = var.zone
   version = "~> 3.0.0-beta.1"
 }
 
 provider "google-beta" {
   # ... other configuration ...
-  region  = "us-central1"
+  region  = var.zone
   version = "~> 3.0.0-beta.1"
 }
 

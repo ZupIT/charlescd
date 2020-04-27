@@ -10,7 +10,7 @@ variable "zone" {
 
 variable "network_name" {
   type = string
-  default = "tf-charles-gcp"
+  default = "charles-cd"
 }
 
 variable "helm_version" {
