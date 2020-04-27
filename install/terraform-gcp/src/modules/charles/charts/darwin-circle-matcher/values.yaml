@@ -1,38 +1,25 @@
 replicaCount: 1
 envVars:
   - name: SPRING_PROFILES_ACTIVE
-    value: "k8s"
-  - name: DB_URL
-    value: "jdbc:postgresql://charles-postgres-postgresql:5432/darwinapplication"
-  - name: DB_USERNAME
-    value: "postgres"
-  - name: DB_PASSWORD
-    value: "batatinha"
-  - name: KEYCLOCK_REALM
-    value: "darwin"
-  - name: KEYCLOAK_SERVER_URL
-    value: "http://charles-keycloak-http/auth"
-  - name: KEYCLOAK_CLIENT_ID
-    value: "realm-darwin"
-  - name: KEYCLOAK_CLIENT_SECRET
-    value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
-  - name: ZUP_CORS_ALLOWED-ORIGINS
-    value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,https://darwin.continuousplatform.com, http://35.222.121.238:3000"
+    value: "redis-standalone"
+  - name: SPRING_REDIS_HOST
+    value: "charles-redis-master"
+  - name: SPRING_REDIS_PORT
+    value: 6379
+  - name: SPRING_REDIS_PASSWORD
+    value: "firstpassword"
+  - name: ALLOWED_ORIGINS
+    value: "localhost:3000"
+  
+appname: darwin-circle-matcher
 
-secretEnvVars:
-  - name: ENCRYPTION_KEY
-    secretName: "application-aes256-key"
-    secretKey: "encryption-key"
-
-appname: darwin-application
-    
 image:
-  repository: darwin-application
-  tag: realwavelab.azurecr.io/darwin-application:darwin-build-flow-refactoring-aws-21
+  repository: darwin-circle-matcher
+  tag: realwavelab.azurecr.io/darwin-circle-matcher:darwin-with-cors
   blueTag: latest
 service:
-  name: darwin-application
-  type: ClusterIP
+  name: darwin-circle-matcher
+  type: LoadBalancer
   ports:
    - name: http
      port: 8080
@@ -75,8 +62,8 @@ livenessProbe:
     path: /actuator/health
     port: 8080
     scheme: HTTP
-  initialDelaySeconds: 120
-  periodSeconds: 20
+  initialDelaySeconds: 30
+  periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1
 readinessProbe:
@@ -85,8 +72,8 @@ readinessProbe:
     path: /actuator/health
     port: 8080
     scheme: HTTP  
-  initialDelaySeconds: 120
-  periodSeconds: 20
+  initialDelaySeconds: 30
+  periodSeconds: 10
   successThreshold: 1
   timeoutSeconds: 1   
 

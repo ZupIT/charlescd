@@ -118,3 +118,9 @@ module "charles" {
 //  db-deploy-username = "charlesdeploy"
 //  db-deploy-password = random_password.charlesdeploy_password
 }
+
+module "redis" {
+  source = "./modules/redis"
+
+  namespace = kubernetes_namespace.charles.metadata[0].name
+}

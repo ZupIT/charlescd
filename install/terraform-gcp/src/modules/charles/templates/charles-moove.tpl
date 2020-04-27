@@ -2,11 +2,11 @@ envVars:
   - name: SPRING_PROFILES_ACTIVE
     value: "k8s"
   - name: DB_URL
-    value: "jdbc:postgresql://charles-postgresql:5432/${db-moove-username}"
+    value: "jdbc:postgresql://charles-postgresql:5432/${db-moove-username}?sslMode=disabled"
   - name: DB_USERNAME
-    value: ${db-moove-username}
+    value: "postgres"
   - name: DB_PASSWORD
-    value: ${db-moove-password}
+    value: "firstpassword"
   - name: KEYCLOCK_REALM
     value: "darwin"
   - name: KEYCLOAK_SERVER_URL

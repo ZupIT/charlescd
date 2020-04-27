@@ -1,11 +1,13 @@
 provider "google" {
   # ... other configuration ...
+  project = "charles-cd"
   region  = var.zone
   version = "~> 3.0.0-beta.1"
 }
 
 provider "google-beta" {
   # ... other configuration ...
+  project = "charles-cd"
   region  = var.zone
   version = "~> 3.0.0-beta.1"
 }

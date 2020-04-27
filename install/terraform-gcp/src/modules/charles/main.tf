@@ -13,3 +13,9 @@ resource "helm_release" "charles-moove" {
 
   values = [data.template_file.charles-moove-extravars.rendered]
 }
+
+resource "helm_release" "charles-circle-matcher" {
+  name      = "charles-circle-matcher"
+  chart     = "${path.module}/charts/darwin-circle-matcher"
+  namespace = var.namespace
+}
