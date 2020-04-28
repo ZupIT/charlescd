@@ -22,7 +22,6 @@ import br.com.zup.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import br.com.zup.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import br.com.zup.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import br.com.zup.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -44,7 +43,7 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
 
         entity.name = input.getName();
         entity.type = input.getRegistryType();
-        entity.applicationId = input.getWorkspaceId();
+        entity.workspaceId = input.getWorkspaceId();
         entity.authorId = input.getAuthorId();
         entity.connectionData = convertToConnectionData(input);
         repository.save(entity);
