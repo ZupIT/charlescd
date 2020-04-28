@@ -27,16 +27,16 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ApplicationIdValidationFilter implements ContainerRequestFilter {
+public class WorkspaceIdValidationFilter implements ContainerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationIdValidationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceIdValidationFilter.class);
 
     @Override
     public void filter(ContainerRequestContext reqContext) {
-        String contentType = reqContext.getHeaders().getFirst(Constants.X_APPLICATION_ID);
+        String contentType = reqContext.getHeaders().getFirst(Constants.X_WORKSPACE_ID);
 
         if (StringUtils.isEmpty(contentType)) {
-            var msg = "Header x-application-id is required!";
+            var msg = "Header x-workspace-id is required!";
             LOGGER.error(RequestContext.getTag(), msg);
             throw new IllegalArgumentException(msg);
         }

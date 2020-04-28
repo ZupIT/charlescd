@@ -19,12 +19,10 @@ package br.com.zup.charlescd.villager.interactor.registry.impl;
 import br.com.zup.charlescd.villager.exceptions.IllegalAccessResourceException;
 import br.com.zup.charlescd.villager.exceptions.ResourceNotFoundException;
 import br.com.zup.charlescd.villager.infrastructure.integration.registry.RegistryClient;
-import br.com.zup.charlescd.villager.infrastructure.integration.registry.TagsResponse;
 import br.com.zup.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import br.com.zup.charlescd.villager.interactor.registry.ComponentTagDTO;
 import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
 import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +53,7 @@ public class ListDockerRegistryTagsInteractorImpl implements ListDockerRegistryT
         var optionalEntity = this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
         var entity = optionalEntity.orElseThrow(() -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
-        if(!entity.applicationId.equals(input.getApplicationId())) {
+        if(!entity.workspaceId.equals(input.getWorkspaceId())) {
             throw new IllegalAccessResourceException("This docker registry does not belongs to the request application id.");
         }
 

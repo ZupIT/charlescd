@@ -20,4 +20,5 @@ package br.com.zup.charlescd.villager.interactor.registry;
 public interface SaveDockerRegistryConfigurationInteractor {
 
     String execute(DockerRegistryConfigurationInput input);
+
 }

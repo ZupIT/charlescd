@@ -44,9 +44,9 @@ public class ListDockerRegistryInteractorTest {
     public void testListDockerRegistriesWithSuccess() {
 
         // Mock - Docker Registry Configuration
-        var applicationId = "a69c3cfb-5587-448f-b011-beae9a4a3fbb";
+        var workspaceId = "a69c3cfb-5587-448f-b011-beae9a4a3fbb";
 
-        when(dockerRegistryConfigurationRepository.listByApplicationId(applicationId)).thenAnswer(invocationOnMock -> {
+        when(dockerRegistryConfigurationRepository.listByWorkspaceId(workspaceId)).thenAnswer(invocationOnMock -> {
             var result = new ArrayList<DockerRegistryConfigurationEntity>();
 
             result.add(mockAzureDockerRegistryData("edce5d09-e7a2-4763-910e-41c003f68fb9", "Docker Registry 1"));
@@ -58,7 +58,7 @@ public class ListDockerRegistryInteractorTest {
 
         // Execute
         var interactor = new ListDockerRegistryInteractorImpl(dockerRegistryConfigurationRepository);
-        var dockerRegistryList = interactor.execute(new ListDockerRegistryInput(applicationId));
+        var dockerRegistryList = interactor.execute(new ListDockerRegistryInput(workspaceId));
 
         // Check
         assertThat(dockerRegistryList, notNullValue());
@@ -81,13 +81,13 @@ public class ListDockerRegistryInteractorTest {
     public void testListNoDockerRegistriesWithSuccess() {
 
         // Mock - Docker Registry Configuration
-        var applicationId = "a69c3cfb-5587-448f-b011-beae9a4a3fbb";
+        var workspaceId = "a69c3cfb-5587-448f-b011-beae9a4a3fbb";
 
-        when(dockerRegistryConfigurationRepository.listByApplicationId(applicationId)).thenReturn(new ArrayList<>());
+        when(dockerRegistryConfigurationRepository.listByWorkspaceId(workspaceId)).thenReturn(new ArrayList<>());
 
         // Execute
         var interactor = new ListDockerRegistryInteractorImpl(dockerRegistryConfigurationRepository);
-        var dockerRegistryList = interactor.execute(new ListDockerRegistryInput(applicationId));
+        var dockerRegistryList = interactor.execute(new ListDockerRegistryInput(workspaceId));
 
         // Check
         assertThat(dockerRegistryList.isEmpty(), is(true));
@@ -100,7 +100,7 @@ public class ListDockerRegistryInteractorTest {
         entity.type = RegistryType.AZURE;
         entity.name = name;
         entity.authorId = "456337ed-7af2-4f0d-9dfb-6e285ad00ee0";
-        entity.applicationId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
+        entity.workspaceId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
         entity.createdAt = LocalDateTime.now();
         entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test", "usertest", "passtest");
         return entity;
@@ -112,7 +112,7 @@ public class ListDockerRegistryInteractorTest {
         entity.type = RegistryType.AWS;
         entity.name = name;
         entity.authorId = "456337ed-7af2-4f0d-9dfb-6e285ad00ee0";
-        entity.applicationId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
+        entity.workspaceId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
         entity.createdAt = LocalDateTime.now();
         entity.connectionData = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData("http://registry/test", "accesskey", "secretkey", "br");
         return entity;
