@@ -1,0 +1,109 @@
+replicaCount: 1
+image:
+  repository: darwin-deploy
+  tag: realwavelab.azurecr.io/darwin-deploy:darwin-v-1-7-6
+  blueTag: latest
+
+envVars:
+  - name: CONSUL_HOST
+    value: consul-server
+  - name: DATABASE_HOST
+    value: "charles-postgresql"
+  - name: DATABASE_PORT
+    value: 5432
+  - name: DATABASE_USER
+    value: "postgres"
+  - name: DATABASE_PASS
+    value: "firstpassword"
+  - name: DATABASE_NAME
+    value: "charlesdeploy"
+  - name: MOOVE_URL
+    value: "http://darwin-application:8080"
+  - name: DARWIN_NOTIFICATION_URL
+    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications"
+  - name: DARWIN_UNDEPLOYMENT_CALLBACK
+    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications/undeployment"
+  - name: DARWIN_DEPLOYMENT_CALLBACK
+    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications/deployment"
+  - name: SPINNAKER_URL
+    value: "https://darwin-spinnaker-gate.continuousplatform.com"
+  - name: SPINNAKER_GITHUB_ACCOUNT
+    value: "github-artifact"
+
+secretEnvVars:
+  - name: ENCRYPTION_KEY
+    secretName: "deploy-aes256-key"
+    secretKey: "encryption-key"
+
+appname: darwin-deploy
+
+service:
+  name: darwin-deploy
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 3000
+configmaps:
+  enabled: false
+startcommand: 
+  enabled: false
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
+ingress:
+  enabled: false
+  annotations: 
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - name: zup.lab.realwave.zup.me
+      port: http
+  tls: 
+    - secretName: lab-realwave-zupme
+      hosts:
+        - zup.lab.realwave.zup.me
+resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials:
+  registry: realwavelab.azurecr.io
+  username: realwavelab
+  password: /uU7PBzXFzMlvlbQZWTHPAPqj38jfLV1
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /healthcheck
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /healthcheck
+    port: 3000
+    scheme: HTTP  
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+consulnode:
+  enabled: false
+  repository: realwave-node-consul
+  path: /opt/darwin-ui/config
+
+istio:
+  enabled: true
+
+vault:
+  enabled: false

@@ -1,0 +1,92 @@
+replicaCount: 1
+
+envVars:
+  - name: SPRING_PROFILES_ACTIVE
+    value: k8s
+  - name: DARWIN_VILLAGER_DB_URI
+    value: jdbc:postgresql://charles-postgresql:5432/charlesvillager
+  - name: DARWIN_VILLAGER_DB_USERNAME
+    value: postgres
+  - name: DARWIN_VILLAGER_DB_PASSWORD
+    value: firstpassword
+  - name: DARWIN_BUILD_TIMEOUT
+    value: 15
+  - name: DARWIN_MOOVE_ORGANIZATION
+    value: zup
+
+appname: darwin-villager
+
+image:
+  repository: darwin-villager
+  tag: realwavelab.azurecr.io/darwin-villager:darwin-v-1-7-6
+  blueTag: latest
+service:
+  name: darwin-villager
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 8080
+configmaps:
+  enabled: false
+startcommand:
+  enabled: false
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
+ingress:
+  enabled: false
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - name: zup.lab.realwave.zup.me
+      port: http
+  tls:
+    - secretName: lab-realwave-zupme
+      hosts:
+        - zup.lab.realwave.zup.me
+resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials:
+  registry: realwavelab.azurecr.io
+  username: realwavelab
+  password: /uU7PBzXFzMlvlbQZWTHPAPqj38jfLV1
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+
+consulnode:
+  enabled: false
+  repository: realwave-node-consul
+  path: /opt/darwin-ui/config
+
+istio:
+  enabled: true
+
+vault:
+  enabled: false

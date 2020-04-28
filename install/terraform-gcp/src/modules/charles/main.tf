@@ -31,3 +31,15 @@ resource "helm_release" "charles-ui-legacy" {
   chart     = "${path.module}/charts/darwin-ui-legacy"
   namespace = var.namespace
 }
+
+resource "helm_release" "charles-deploy" {
+  name      = "charles-deploy"
+  chart     = "${path.module}/charts/darwin-deploy"
+  namespace = var.namespace
+}
+
+resource "helm_release" "charles-villager" {
+  name      = "charles-villager"
+  chart     = "${path.module}/charts/darwin-villager"
+  namespace = var.namespace
+}

@@ -9,9 +9,9 @@ initdbScripts:
     CREATE USER ${db-deploy-username} WITH PASSWORD '${db-deploy-password}';
     GRANT ALL PRIVILEGES ON DATABASE ${db-deploy-username} TO ${db-deploy-username};
 
-    CREATE DATABASE ${db-circle-matcher-username};
-    CREATE USER ${db-circle-matcher-username} WITH PASSWORD '${db-circle-matcher-password}';
-    GRANT ALL PRIVILEGES ON DATABASE ${db-circle-matcher-username} TO ${db-circle-matcher-username};
+    CREATE DATABASE ${db-villager-username};
+    CREATE USER ${db-villager-username} WITH PASSWORD '${db-villager-password}';
+    GRANT ALL PRIVILEGES ON DATABASE ${db-villager-username} TO ${db-villager-username};
 
     CREATE DATABASE ${db-moove-username};
     CREATE USER ${db-moove-username} WITH PASSWORD '${db-moove-password}';
