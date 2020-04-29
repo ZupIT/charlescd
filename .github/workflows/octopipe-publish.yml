@@ -15,19 +15,25 @@ jobs:
 
     - name: Get the version
       id: get_version
+      working-directory: ./octopipe
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: Build
+      working-directory: ./octopipe
       run: docker build -t octopipe/octopipe:latest -f cmd/octopipe/Dockerfile .
 
     - name: Login
+      working-directory: ./octopipe
       run: docker login -u "mayconjrpacheco" -p "99103457"
 
     - name: Tag versions
+      working-directory: ./octopipe
       run: docker tag octopipe/octopipe:latest octopipe/octopipe:${{ steps.get_version.outputs.VERSION }}
 
     - name: Push Version
+      working-directory: ./octopipe
       run: docker push octopipe/octopipe:${{ steps.get_version.outputs.VERSION }}
 
     - name: Push Latest
+      working-directory: ./octopipe
       run: docker push octopipe/octopipe:latest
