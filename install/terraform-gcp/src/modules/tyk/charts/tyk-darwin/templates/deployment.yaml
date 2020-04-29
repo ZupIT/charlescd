@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tyk-darwin.fullname" . }}
+  labels:
+{{ include "tyk-darwin.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "tyk-darwin.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "tyk-darwin.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "tyk-darwin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: certs-tyk
+        configMap:
+          name: certs-tyk
+          defaultMode: 0700
+      - name: conf-tyk
+        configMap:
+          name: conf-tyk
+          defaultMode: 0700
+      - name: policies-tyk
+        configMap:
+          name: policies-tyk
+          defaultMode: 0700
+      - name: apps-tyk
+        configMap:
+          name: apps-tyk
+          defaultMode: 0700
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+          {{ range $i, $var := .Values.envVars -}}
+          - name: {{ $var.name | upper}}
+            value: {{ $var.value | quote}}
+          {{ end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+          - /bin/sh
+          - -c
+          - cp /opt/tyk-gateway/conf/tyk.conf.template /opt/tyk-gateway/tyk.conf && /opt/tyk-gateway/entrypoint.sh
+          volumeMounts:
+          - name: conf-tyk
+            mountPath: /opt/tyk-gateway/conf
+          - name: policies-tyk
+            mountPath: /opt/tyk-gateway/policies
+          - name: apps-tyk
+            mountPath: /opt/tyk-gateway/apps
+          - name: certs-tyk
+            mountPath: /opt/tyk-gateway/certs
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

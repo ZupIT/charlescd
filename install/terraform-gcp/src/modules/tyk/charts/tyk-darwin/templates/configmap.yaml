@@ -1,0 +1,1971 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: certs-tyk
+  namespace: charles
+data:
+  continuousplatform.cert: |
+    -----BEGIN CERTIFICATE-----
+    MIIGTzCCBTegAwIBAgIQCPMyN6f9xo7Epurfnoc6YTANBgkqhkiG9w0BAQsFADBe
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+    d3cuZGlnaWNlcnQuY29tMR0wGwYDVQQDExRSYXBpZFNTTCBSU0EgQ0EgMjAxODAe
+    Fw0xOTA0MzAwMDAwMDBaFw0yMTA3MjkxMjAwMDBaMCMxITAfBgNVBAMMGCouY29u
+    dGludW91c3BsYXRmb3JtLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+    ggEBAM+lBHf4EsK6F4WpW2tSjw9oGxUja05DAftGvLe0yYWZ2XCW5IQDHGpzTrOm
+    iuZtD/lgjLOyubgoOFBRtsTyu83Ndx9pZrEVhZQ+VGIBjiKHhd7oP53JjShXNBRw
+    78E3gciz3l8A+sG0NoGj9oo579IqVYTnBloswmMREyOMAnxRw885e6v7i5byuj4L
+    g2wQo4Ao4pAt4V5YcE7jcks5BwwLlHcbUwCx66eM6Xq1Lv2vN3kKIeJBkMqS5ynD
+    5eXUPkyTSEmPuCsxJqce1I6o5jVeHEC5ONpgkrTvluVdIckm7V7g2pVQyKF4QlrW
+    H9PLWL5Y3cxWaPEJv7C5YBPP67sCAwEAAaOCA0IwggM+MB8GA1UdIwQYMBaAFFPK
+    F1n8a8ADIS8aruSqqByCVtp1MB0GA1UdDgQWBBSp30vUzIlKJ+D60LuM9yJ2LyDj
+    IzA7BgNVHREENDAyghgqLmNvbnRpbnVvdXNwbGF0Zm9ybS5jb22CFmNvbnRpbnVv
+    dXNwbGF0Zm9ybS5jb20wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUF
+    BwMBBggrBgEFBQcDAjA+BgNVHR8ENzA1MDOgMaAvhi1odHRwOi8vY2RwLnJhcGlk
+    c3NsLmNvbS9SYXBpZFNTTFJTQUNBMjAxOC5jcmwwTAYDVR0gBEUwQzA3BglghkgB
+    hv1sAQIwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQ
+    UzAIBgZngQwBAgEwdQYIKwYBBQUHAQEEaTBnMCYGCCsGAQUFBzABhhpodHRwOi8v
+    c3RhdHVzLnJhcGlkc3NsLmNvbTA9BggrBgEFBQcwAoYxaHR0cDovL2NhY2VydHMu
+    cmFwaWRzc2wuY29tL1JhcGlkU1NMUlNBQ0EyMDE4LmNydDAJBgNVHRMEAjAAMIIB
+    fgYKKwYBBAHWeQIEAgSCAW4EggFqAWgAdwDuS723dc5guuFCaR+r4Z5mow9+X7By
+    2IMAxHuJeqj9ywAAAWpv3+4bAAAEAwBIMEYCIQCrMaqJ9yrXU0pSf0FXLPhDtRlF
+    t8Ij4BdoEcYUaXeqHwIhAP61j8C2WtgtZ2nDVSpBhrjS0gUjkvopnmAbBprznNM6
+    AHYAh3W/51l8+IxDmV+9827/Vo1HVjb/SrVgwbTq/16ggw8AAAFqb9/vNAAABAMA
+    RzBFAiEA2bU16d49zdiUHcl6jJv/R3a575blsmh7SybEpQNTldQCIAn+k5ANJ9Wd
+    O6192terlZ0zb9SiU1B+NiACbK05W89HAHUARJRlLrDuzq/EQAfYqP4owNrmgr7Y
+    yzG1P9MzlrW2gagAAAFqb9/tuQAABAMARjBEAiBmZc1oEhxlzixnhlf/GfN0m83c
+    EOjpWLffsQhx5PMHGgIgU2/aqLfxusKU8tAR5BW1C3MCaVvvXMN3jmtdK9NS7SMw
+    DQYJKoZIhvcNAQELBQADggEBAHtHHOwjRL/+23wETCvBSMoZWGRJyRwDkASI98KV
+    ehYo1p2a+KQILpqN8GF+PrsjpVXOBQTA4PPZYDEPjP6cqgppl2oMYCE0CdxNxNbs
+    5zi2MEmFwqZvy/U+u3yn9ACEUNffoEUv/3Be4XFSCK8KZc/NtZuIH4zCL85Au2kL
+    2v/73gFGJQxJw4t6qYtJQqWvNeTm9Dab84qKBPO6ge+5uh9ZZ4LqKE2CG+uBkXbB
+    WSiV69ZqnO9pcI4Bg6bgwgyXsehdijvpRblT6td5tuFJDe2GIVAfWptb5mFUgOUI
+    7jhvmscYL1RHcOcnz6KbILyIV1fe3t5YeFm0DnAaOqKmPz4=
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIEsTCCA5mgAwIBAgIQCKWiRs1LXIyD1wK0u6tTSTANBgkqhkiG9w0BAQsFADBh
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+    d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD
+    QTAeFw0xNzExMDYxMjIzMzNaFw0yNzExMDYxMjIzMzNaMF4xCzAJBgNVBAYTAlVT
+    MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
+    b20xHTAbBgNVBAMTFFJhcGlkU1NMIFJTQSBDQSAyMDE4MIIBIjANBgkqhkiG9w0B
+    AQEFAAOCAQ8AMIIBCgKCAQEA5S2oihEo9nnpezoziDtx4WWLLCll/e0t1EYemE5n
+    +MgP5viaHLy+VpHP+ndX5D18INIuuAV8wFq26KF5U0WNIZiQp6mLtIWjUeWDPA28
+    OeyhTlj9TLk2beytbtFU6ypbpWUltmvY5V8ngspC7nFRNCjpfnDED2kRyJzO8yoK
+    MFz4J4JE8N7NA1uJwUEFMUvHLs0scLoPZkKcewIRm1RV2AxmFQxJkdf7YN9Pckki
+    f2Xgm3b48BZn0zf0qXsSeGu84ua9gwzjzI7tbTBjayTpT+/XpWuBVv6fvarI6bik
+    KB859OSGQuw73XXgeuFwEPHTIRoUtkzu3/EQ+LtwznkkdQIDAQABo4IBZjCCAWIw
+    HQYDVR0OBBYEFFPKF1n8a8ADIS8aruSqqByCVtp1MB8GA1UdIwQYMBaAFAPeUDVW
+    0Uy7ZvCj4hsbw5eyPdFVMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEF
+    BQcDAQYIKwYBBQUHAwIwEgYDVR0TAQH/BAgwBgEB/wIBADA0BggrBgEFBQcBAQQo
+    MCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBCBgNVHR8E
+    OzA5MDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRHbG9i
+    YWxSb290Q0EuY3JsMGMGA1UdIARcMFowNwYJYIZIAYb9bAECMCowKAYIKwYBBQUH
+    AgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwCwYJYIZIAYb9bAEBMAgG
+    BmeBDAECATAIBgZngQwBAgIwDQYJKoZIhvcNAQELBQADggEBAH4jx/LKNW5ZklFc
+    YWs8Ejbm0nyzKeZC2KOVYR7P8gevKyslWm4Xo4BSzKr235FsJ4aFt6yAiv1eY0tZ
+    /ZN18bOGSGStoEc/JE4ocIzr8P5Mg11kRYHbmgYnr1Rxeki5mSeb39DGxTpJD4kG
+    hs5lXNoo4conUiiJwKaqH7vh2baryd8pMISag83JUqyVGc2tWPpO0329/CWq2kry
+    qv66OSMjwulUz0dXf4OHQasR7CNfIr+4KScc6ABlQ5RDF86PGeE6kdwSQkFiB/cQ
+    ysNyq0jEDQTkfa2pjmuWtMCNbBnhFXBYejfubIhaUbEv2FOQB3dCav+FPg5eEveX
+    TVyMnGo=
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+    d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD
+    QTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVT
+    MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
+    b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG
+    9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsB
+    CSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97
+    nh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt
+    43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7P
+    T19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4
+    gdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAO
+    BgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbR
+    TLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUw
+    DQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/Esr
+    hMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg
+    06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJF
+    PnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0ls
+    YSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQk
+    CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=
+    -----END CERTIFICATE-----
+  continuousplatform.key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEpQIBAAKCAQEAz6UEd/gSwroXhalba1KPD2gbFSNrTkMB+0a8t7TJhZnZcJbk
+    hAMcanNOs6aK5m0P+WCMs7K5uCg4UFG2xPK7zc13H2lmsRWFlD5UYgGOIoeF3ug/
+    ncmNKFc0FHDvwTeByLPeXwD6wbQ2gaP2ijnv0ipVhOcGWizCYxETI4wCfFHDzzl7
+    q/uLlvK6PguDbBCjgCjikC3hXlhwTuNySzkHDAuUdxtTALHrp4zperUu/a83eQoh
+    4kGQypLnKcPl5dQ+TJNISY+4KzEmpx7UjqjmNV4cQLk42mCStO+W5V0hySbtXuDa
+    lVDIoXhCWtYf08tYvljdzFZo8Qm/sLlgE8/ruwIDAQABAoIBAQCorH7dyYnL3wk+
+    jZ1yqAUIWeQuHrCLSYlxijvA6z4MpjZo7FpDFpfdrT9QVkhc+FlSlWiWjOeqvhlI
+    vag/goKmonJS9PbzgO0ayCsZ1fOU/wvzUCxlS5W8IGJw/HD2PtXRqLNJ72zDL1Zb
+    p0qdbITw72y64kRZuiRJ/1PRu2lFfFoV2eB71RzppCJ/6nuYkRXMUeKKfSrL0lRa
+    fCPM7Ose6hZRLqb3QOZuYZBHzc6UW+/CKTNfyEykEjcJ/CBJ9yBhFJgA9+UZOIT4
+    sK3BN4NLM973Mv/B3ll8G9CkPLiB3fi7TL5T+lswcBnoiGx5vxxwp9lxEKpFXszd
+    cKqYLWZJAoGBAPudFuhRrWS9veaPOuyT+NP/ablAH0ITjZOjuhQ82GhUbtA0fZZU
+    W0iTL9YFY38BtnM3CYDZ0lNmkYc+FwBy39RrvehR6LpAJtG5CID2pKMh7U9am1JS
+    hPQCFb1oo557Er6c1yiU+prW1pj1c2txcy5BQXiC4lBcK1qWXrqSGYA9AoGBANND
+    s40Rtx3xp0rLNJLi5lAg5Y80/FGqZK+qPaJ4EaHeI3ijNVgzct7Oj4t3hWN6Ls5b
+    CCgoN3nrrGtKzMz0Ahyj4PQrGxGDUZ/ZLQkrmAt+Y8rF6wKpgjDrQCfSCKfODg2y
+    ar75+yeKjepjHnvXwpOUKrimlTKIqL0NeorX4SNXAoGBAKCwPDb2IqRZwPODuX/p
+    KFpLnbtfRhcu4ZXOVEIkcZh/g52YSDQ/f2SkC0LFgjtUXq7KEVmmwnnc4Ufb0VjK
+    BERm4ouB8/0uhxwc7V9fJNnCCwpItTUn2hzzT+r87rGBrADrrUUPj9RfLAHXj3So
+    qYR6zFMoU1w64L0jly/TqlGJAoGARgrMHJki/OqBbGqyo4BWm3pMoY4PmYPEnfjz
+    NkpYjjH30KdLqFJmYzhYnwShVLnNitzjd2zd964LHAdQnyLHEHfEvS8NamD/Tt/R
+    7phlcGoW68Nyhw9r+owEWS9pbzkBr8jXWznF6vYk1vDFyoleGU+mWlHgZUCpsQQm
+    /KFWI0ECgYEAgNgp8LaImwwtVMgb/VeqwYsN9PE+Af3esBX973YDP4W982Ey2JSH
+    t9NtvckX/d2FB3OCdTIUi+VS4bswVBoyufQaZTFkK2/7NyUi2fXlEFyVmOZWw8cY
+    +ATcvQo7EoCWtlj7GSQgWKA9OiHFnrzOOg2tsNtteSf0rJTDLOVKat4=
+    -----END RSA PRIVATE KEY-----
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf-tyk 
+  labels:
+{{ include "tyk-darwin.labels" . | indent 4 }}
+data:
+  tyk.conf.template: |
+    {
+      "listen_port": {{ .Values.tyk.port }},
+      "secret": "{{ .Values.tyk.gw_secret }}",
+      "template_path": "/opt/tyk-gateway/templates",
+      "tyk_js_path": "/opt/tyk-gateway/js/tyk.js",
+      "middleware_path": "/opt/tyk-gateway/middleware",
+      "use_db_app_configs": false,
+      "app_path": "/opt/tyk-gateway/apps/",
+      "storage": {
+        "type": "redis",
+        "enable_cluster": true,
+        "hosts":{"{{ .Values.tyk.redis_server }}": "{{ .Values.tyk.redis_port }}"},
+        "username": "{{ .Values.tyk.redis_username }}",
+        "password": "{{ .Values.tyk.redis_password }}",
+        "database": 0,
+        "optimisation_max_idle": 2000,
+        "optimisation_max_active": 4000
+      },
+      "enable_analytics": false,
+      "analytics_config": {
+        "type": "csv",
+        "csv_dir": "/tmp",
+        "mongo_url": "",
+        "mongo_db_name": "",
+        "mongo_collection": "",
+        "purge_delay": -1,
+        "ignored_ips": []
+      },
+      "health_check": {
+        "enable_health_checks": true,
+        "health_check_value_timeouts": 60,
+        "endpoint_name": "/hello"
+      },
+      "optimisations_use_async_session_write": true,
+      "enable_non_transactional_rate_limiter": true,
+      "enable_sentinel_rate_limiter": false,
+      "allow_master_keys": false,
+      "policies": {
+        "policy_source": "file",
+        "policy_record_name": "/opt/tyk-gateway/policies/policies.json"
+      },
+      "hash_keys": true,
+      "close_connections": false,
+      "http_server_options": {
+        "enable_websockets": true
+      },
+      "allow_insecure_configs": true,
+      "coprocess_options": {
+        "enable_coprocess": true,
+        "coprocess_grpc_server": ""
+      },
+      "enable_bundle_downloader": true,
+      "bundle_base_url": "",
+      "global_session_lifetime": 100,
+      "force_global_session_lifetime": false,
+      "max_idle_connections_per_host": 500,
+      "enable_custom_domains": true,
+      "http_server_options": {
+        "use_ssl": true,
+        "server_name": "continuousplatform",
+        "min_version": 771,
+        "certificates": [
+          {
+            "domain_name": "*.continuousplatform.com",
+            "cert_file": "/opt/tyk-gateway/certs/continuousplatform.cert",
+            "key_file": "/opt/tyk-gateway/certs/continuousplatform.key"
+          }
+        ]
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: policies-tyk 
+  labels:
+{{ include "tyk-darwin.labels" . | indent 4 }}
+data:
+  policies.json: |
+    {
+        "default": {
+        "rate": 1000,
+        "per": 1,
+        "quota_max": 100,
+        "quota_renewal_rate": 60,
+        "access_rights": {
+          "41433797848f41a558c1573d3e55a410": {
+            "api_name": "My API",
+            "api_id": "41433797848f41a558c1573d3e55a410",
+            "versions": [
+              "Default"
+            ]
+          }
+        },
+        "org_id": "54de205930c55e15bd000001",
+        "hmac_enabled": false
+        },
+        "darwin": {
+            "access_rights": {
+                "iti_bff_withdrawal": {
+                    "allowed_urls": [],
+                    "api_name": "Iti Bff Withdrawal",
+                    "api_id": "iti_bff_withdrawal",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "iti_bff_home": {
+                    "allowed_urls": [],
+                    "api_name": "Iti Bff Home",
+                    "api_id": "iti_bff_home",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "octopipe": {
+                    "allowed_urls": [],
+                    "api_name": "Octopipe",
+                    "api_id": "octopipe",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "techleads_training": {
+                    "allowed_urls": [],
+                    "api_name": "techleads training",
+                    "api_id": "techleads_training",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "iti_bff_login": {
+                    "allowed_urls": [],
+                    "api_name": "Iti Bff Login",
+                    "api_id": "iti_bff_login",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_web_ui_legacy": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin WEB UI legacy",
+                    "api_id": "darwin_web_ui_legacy",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_web_ui_new": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin WEB UI New",
+                    "api_id": "darwin_web_ui_new",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_aws_test": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin Aws test",
+                    "api_id": "darwin_aws-test",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_beagle_framework": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin Beagle Framework",
+                    "api_id": "darwin_beagle_framework",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_beagle_tmdb": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin Beagle tmdb",
+                    "api_id": "darwin_beagle_tmdb",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_builds": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Builds",
+                    "api_id": "moove_builds",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_v2_builds": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Builds",
+                  "api_id": "moove_v2_builds",
+                  "versions": [
+                      "Default"
+                  ]
+                },
+                "moove_applications": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Applications",
+                    "api_id": "moove_applications",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_cards": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Cards",
+                    "api_id": "moove_cards",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_circles": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Circles",
+                    "api_id": "moove_circles",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_config": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Config",
+                    "api_id": "moove_config",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_v2_config": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Config",
+                  "api_id": "moove_v2_config",
+                  "versions": [
+                      "Default"
+                  ]
+                },
+                "moove_deployments": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Deployments",
+                    "api_id": "moove_deployments",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_v2_deployments": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Deployments",
+                  "api_id": "moove_v2_deployments",
+                  "versions": [
+                      "Default"
+                  ]
+                },
+                "moove_metrics": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Metrics",
+                    "api_id": "moove_metrics",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_hypotheses": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Hypotheses",
+                    "api_id": "moove_hypotheses",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_auth": {
+                  "allowed_urls": [],
+                    "api_name": "Moove Auth",
+                    "api_id": "moove_auth",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_modules": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Modules",
+                    "api_id": "moove_modules",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_problems": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Problems",
+                    "api_id": "moove_problems",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_users": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Users",
+                    "api_id": "moove_users",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_valueflows": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Valueflows",
+                    "api_id": "moove_valueflows",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_actuator_health": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Actuator Health",
+                    "api_id": "moove_actuator_health",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "notifications": {
+                    "allowed_urls": [],
+                    "api_name": "Notifications",
+                    "api_id": "notifications",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "notifications_viewed": {
+                    "allowed_urls": [],
+                    "api_name": "Notifications Viewed",
+                    "api_id": "notifications_viewed",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "notifications_connect": {
+                    "allowed_urls": [],
+                    "api_name": "Notifications Connect",
+                    "api_id": "notifications_connect",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "iti_bff": {
+                    "allowed_urls": [],
+                    "api_name": "ITI bff",
+                    "api_id": "iti_bff",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_circle_matcher": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin Circle Matcher",
+                    "api_id": "darwin_circle_matcher",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "darwin_circle_matcher_beta": {
+                    "allowed_urls": [],
+                    "api_name": "Darwin Circle Matcher",
+                    "api_id": "darwin_circle_matcher_beta",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "spinnaker_deck": {
+                    "allowed_urls": [],
+                    "name": "Spinnaker Deck",
+                    "api_id": "spinnaker_deck",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "spinnaker_gate": {
+                    "allowed_urls": [],
+                    "name": "Spinnaker Gate",
+                    "api_id": "spinnaker_gate",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "content": {
+                    "allowed_urls": [],
+                    "api_name": "Content",
+                    "api_id": "darwin_content",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "stack_demo": {
+                    "allowed_urls": [],
+                    "api_name": "Stack Demo",
+                    "api_id": "stack_demo",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "keycloak": {
+                    "allowed_urls": [],
+                    "api_name": "Keycloak",
+                    "api_id": "keycloak",
+                    "versions": [
+                        "Default"
+                    ]
+                }
+            },
+            "active": true,
+            "name": "Darwin",
+            "rate": 100,
+            "per": 1,
+            "quota_max": 10000,
+            "quota_renewal_rate": 3600,
+            "tags": ["Startup Users"],
+            "org_id": "default"
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apps-tyk
+  labels:
+{{ include "tyk-darwin.labels" . | indent 4 }}
+data:
+
+  moove_metrics.json: |
+    {
+        "name": "Moove Metrics",
+        "api_id": "moove_metrics",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/metrics",
+            "target_url": "http://darwin-application:8080/metrics",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_applications.json: |
+    {
+        "name": "Moove Applications",
+        "api_id": "moove_applications",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/applications",
+            "target_url": "http://darwin-application:8080/applications",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_cards.json: |
+    {
+        "name": "Moove Cards",
+        "api_id": "moove_cards",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/cards",
+            "target_url": "http://darwin-application:8080/cards",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_circles.json: |
+    {
+        "name": "Moove Circles",
+        "api_id": "moove_circles",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/circles",
+            "target_url": "http://darwin-application:8080/circles",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_config.json: |
+    {
+        "name": "Moove Config",
+        "api_id": "moove_config",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/config",
+            "target_url": "http://darwin-application:8080/config",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_v2_config.json: |
+    {
+        "name": "Moove v2 Config",
+        "api_id": "moove_v2_config",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/configurations",
+            "target_url": "http://darwin-application:8080/v2/configurations",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_builds.json: |
+    {
+        "name": "Moove Builds",
+        "api_id": "moove_builds",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/builds",
+            "target_url": "http://darwin-application:8080/builds",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_v2_builds.json: |
+    {
+        "name": "Moove v2 Builds",
+        "api_id": "moove_v2_builds",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/builds",
+            "target_url": "http://darwin-application:8080/v2/builds",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    } 
+
+  moove_deployments.json: |
+    {
+        "name": "Moove Deployments",
+        "api_id": "moove_deployments",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/deployments",
+            "target_url": "http://darwin-application:8080/deployments",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_v2_deployments.json: |
+    {
+        "name": "Moove v2 Deployments",
+        "api_id": "moove_v2_deployments",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/deployments",
+            "target_url": "http://darwin-application:8080/v2/deployments",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_hypotheses.json: |
+    {
+        "name": "Moove Hypotheses",
+        "api_id": "moove_hypotheses",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/hypotheses",
+            "target_url": "http://darwin-application:8080/hypotheses",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_auth.json: |
+    {
+        "name": "Moove Auth",
+        "api_id": "moove_auth",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/auth",
+            "target_url": "http://darwin-application:8080/auth",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+
+  moove_modules.json: |
+    {
+        "name": "Moove Modules",
+        "api_id": "moove_modules",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/modules",
+            "target_url": "http://darwin-application:8080/modules",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_problems.json: |
+    {
+        "name": "Moove Problems",
+        "api_id": "moove_problems",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/problems",
+            "target_url": "http://darwin-application:8080/problems",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_users.json: |
+    {
+        "name": "Moove Users",
+        "api_id": "moove_users",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/users",
+            "target_url": "http://darwin-application:8080/users",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_valueflows.json: |
+    {
+        "name": "Moove Valueflows",
+        "api_id": "moove_valueflows",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/valueflows",
+            "target_url": "http://darwin-application:8080/valueflows",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_actuator_health.json: |
+    {
+        "name": "Moove Actuator Health",
+        "api_id": "moove_actuator_health",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/actuator/health",
+            "target_url": "http://darwin-application:8080/actuator/health",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  darwin-aws-test.json: |
+    {
+        "name": "Darwin aws test",
+        "api_id": "darwin_aws_test",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/darwin-aws-test",
+            "target_url": "http://darwin-aws-test:3000",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  notifications.json: |
+    {
+        "name": "Notifications",
+        "api_id": "notifications",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/notifications",
+            "target_url": "http://darwin-notifications:8080/notifications",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["GET", "OPTIONS", "PATCH"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  notifications_viewed.json: |
+    {
+        "name": "Notifications Viewed",
+        "api_id": "notifications_viewed",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/notifications/recipients",
+            "target_url": "http://darwin-notifications:8080/notifications/recipients",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["PUT", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  notifications_connect.json: |
+    {
+        "name": "Notifications Connect",
+        "api_id": "notifications_connect",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/notifications/connect",
+            "target_url": "http://darwin-notifications:8080/connect",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id", "cache-control", "origin", "Access-Control-Request-Method", "Access-Control-Allow-Origin"],
+            "allowed_methods": ["GET", "OPTIONS", "POST"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+
+
+  darwin_cicle_matcher.json: |
+    {
+        "name": "Darwin Circle Matcher",
+        "api_id": "darwin_circle_matcher",
+        "org_id": "darwin_circle_matcher",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/darwin-circle-matcher/identify",
+            "target_url": "http://darwin-circle-matcher:8080/identify",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+  darwin_cicle_matcher_beta.json: |
+    {
+        "name": "Darwin Circle Matcher",
+        "api_id": "darwin_circle_matcher_beta",
+        "org_id": "darwin_circle_matcher_beta",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/darwin-circle-matcher/v2/identify",
+            "target_url": "http://darwin-circle-matcher:8080/identify",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  stack_demo.json: |
+    {
+        "name": "Stack Demo",
+        "api_id": "stack_demo",
+        "org_id": "stack_demo",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/stack-demo",
+            "target_url": "http://stack-demo:8080",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["GET", "POST", "OPTIONS", "PUT","PATCH"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  darwin_web_ui_legacy.json: |
+    {
+        "name": "Darwin WEB UI legacy",
+        "api_id": "darwin_web_ui_legacy",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.web }}",
+        "proxy": {
+            "listen_path": "/",
+            "target_url": "http://darwin-ui-legacy:3000",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }
+
+  darwin_web_ui_new.json: |
+    {
+        "name": "Darwin WEB UI New",
+        "api_id": "darwin_web_ui_new",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.web }}",
+        "proxy": {
+            "listen_path": "/v2",
+            "target_url": "http://darwin-ui-new:3000",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }
+
+  spinnaker_deck.json: |
+    {
+        "name": "Spinnaker Deck",
+        "api_id": "spinnaker_deck",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.spinnakerdeck }}",
+        "proxy": {
+            "listen_path": "/",
+            "target_url": "http://spin-deck.spinnaker.svc.cluster.local:9000",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }
+
+  spinnaker_gate.json: |
+    {
+        "name": "Spinnaker Gate",
+        "api_id": "spinnaker_gate",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.spinnakergate }}",
+        "proxy": {
+            "listen_path": "/",
+            "target_url": "http://spin-gate.spinnaker.svc.cluster.local:8084",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }
+
+  octopipe.json: |
+    {
+        "name": "Octopipe",
+        "api_id": "octopipe",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/octopipe",
+            "target_url": "http://octopipe:8080",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }
+
+  keycloak.json: |
+    {
+        "name": "Keycloak",
+        "api_id": "keycloak",
+        "org_id": "keycloak",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.keycloak }}",
+        "proxy": {
+            "listen_path": "/",
+            "target_url": "http://charles-keycloak-http",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
+    }

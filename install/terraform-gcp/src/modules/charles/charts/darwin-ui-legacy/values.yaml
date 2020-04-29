@@ -1,17 +1,13 @@
 replicaCount: 1
 envVars:
   - name: HOST
-    value: http://35.188.161.63:8080
+    value: https://charles-api.continuousplatform.com
   - name: NOTIFICATION
-    value: /notifications
-  - name: CONSUL
-    value: https://consul-darwin.apirealwave.io
-  - name: APM
-    value: https://darwin-apm-manager-consumer.itiaws.dev
+    value: https://charles-api.continuousplatform.com/notifications
   - name: KEYCLOAK
-    value: http://34.69.22.164
+    value: https://charles-keycloak.continuousplatform.com
   - name: CIRCLE_MATCHER
-    value: http://34.70.217.136:8080
+    value: https://charles-api.continuousplatform.com/darwin-circle-matcher
 
 appname: darwin-ui-legacy
   

@@ -1,0 +1,85 @@
+envVars:
+  - name: REDIS_SERVER
+    value: charles-redis-master
+  - name: REDIS_PASSWORD
+    value: firstpassword
+  - name: REDIS_PORT
+    value: "6379"
+  - name: TYK_GW_LISTEN_PORT
+    value: "8080"
+  - name: TYK_GW_SECRET
+    value: cijlkdsjfaj3q0089qzup
+  - name: TYK_GW_COPROCESSOPTIONS_ENABLECOPROCESS
+    value: "false"
+
+
+replicaCount: 1
+
+image:
+  repository: tykio/tyk-gateway
+  tag: v2.9.1
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  name:
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: 
+  limits:
+    cpu: 512m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+service:
+  name: tyk-darwin
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 443
+    target_port: 8080
+
+ingress:
+  enabled: false
+  externalPort: 8080
+  hosts:
+    - name: darwin-api.hostname-placeholder
+      path: /
+      annotations:
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/subnets: aws-subnets-placeholder
+        alb.ingress.kubernetes.io/certificate-arn: certificate-arn-placeholder
+        external-dns.alpha.kubernetes.io/hostname:  darwin-api.hostname-placeholder
+
+
+tyk:
+  port: 8080
+  gw_secret: "cijlkdsjfaj3q0089qzup"
+  redis_server: "redis"
+  redis_port: "6379"
+  redis_username: "redis"
+  redis_password: "redis"
+  address: 
+    api: "darwin-api.continuousplatform.com"
+    spinnakerdeck: "spinnaker.continuousplatform.com"
+    spinnakergate: "spinnaker-gate.continuousplatform.com"
+    keycloak: "keycloak.continuousplatform.com"
+    web: "darwin.continuousplatform.com"
+
+

@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled -}}
+{{- $serviceName := .Values.service.name -}}
+{{- $servicePort := .Values.ingress.externalPort -}}
+{{- $releaseName := .Release.Name -}}
+{{- $kubernetesName := include "tyk-darwin.name" . -}}
+{{- range .Values.ingress.hosts }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .name }}
+  labels:
+    app.kubernetes.io/name: {{ $kubernetesName }}
+    app.kubernetes.io/instance: {{ $releaseName }}
+{{- if .annotations}}
+  annotations:
+    {{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+{{- end }}
+spec:
+  rules:
+    {{- $path := default "/" .path }}
+    - host: {{ .name }}
+      http:
+        paths:
+          - path: {{ $path }}
+            backend:
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+          - path: {{ printf "%s/*" (trimSuffix "/" $path) }}
+            backend:
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+---
+{{- end -}}
+{{end}}

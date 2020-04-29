@@ -1,7 +1,7 @@
 replicaCount: 1
 envVars:
   - name: REACT_APP_API_URI
-    value: 35.188.161.63:8080
+    value: https://charles-api.continuousplatform.com
 
 
 appname: darwin-ui-new
