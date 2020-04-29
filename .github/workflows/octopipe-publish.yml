@@ -6,7 +6,6 @@ on:
       - created
 
 jobs:
-
   publish:
     name: Publish
     runs-on: ubuntu-latest
