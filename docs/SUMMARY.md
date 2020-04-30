@@ -2,10 +2,10 @@
 
 * [Overview](README.md)
 * [Glossário técnico](glossario-tecnico.md)
+* [Arquitetura do sistema](arquitetura-do-sistema.md)
 
 ## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
 
-* [Arquitetura do sistema](usando-o-charles/arquitetura-do-sistema.md)
 * [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
 * [Configuração de dependências](usando-o-charles/configuracao-de-dependencias/README.md)
   * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
