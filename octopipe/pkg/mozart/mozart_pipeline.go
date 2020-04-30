@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -15,6 +14,8 @@ import (
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MozartPipeline struct {
@@ -52,7 +53,7 @@ func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.
 
 		err = mozartPipeline.executeSteps(steps)
 		if err != nil {
-			mozartPipeline.executeRollbackSteps(mozartPipeline.Stages[:index + 1])
+			mozartPipeline.executeRollbackSteps(mozartPipeline.Stages[:index+1])
 			mozartPipeline.returnPipelineError(err)
 			break
 		}
@@ -76,7 +77,8 @@ func (mozartPipeline *MozartPipeline) executeRollbackSteps(stages [][]*pipeline.
 
 func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error {
 	var waitGroup sync.WaitGroup
-	var err error
+	fatalErr := make(chan error)
+	done := make(chan bool)
 
 	for _, step := range steps {
 		waitGroup.Add(1)
@@ -84,13 +86,24 @@ func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error
 		go func(step *pipeline.Step) {
 			defer waitGroup.Done()
 
-			err = mozartPipeline.asyncExecuteStep(step)
+			err := mozartPipeline.asyncExecuteStep(step)
+			if err != nil {
+				fatalErr <- err
+			}
 		}(step)
 	}
 
-	waitGroup.Wait()
+	go func() {
+		waitGroup.Wait()
+		close(done)
+	}()
 
-	return err
+	select {
+	case <-done:
+		return nil
+	case err := <-fatalErr:
+		return err
+	}
 }
 
 func (mozartPipeline *MozartPipeline) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
@@ -119,7 +132,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) erro
 	)
 	if err != nil {
 		mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
-		utils.CustomLog("error", "asyncExecuteStep", err.Error())
+		utils.CustomLog("error", "asyncExecuteStep::CreateExecutionStep", err.Error())
 		return err
 	}
 
@@ -128,7 +141,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) erro
 		err := mozartPipeline.executeManifests(step, manifests)
 		if err != nil {
 			mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
-			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			utils.CustomLog("error", "asyncExecuteStep::executeManifests", err.Error())
 			return err
 		}
 	}
@@ -137,7 +150,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) erro
 		manifests, err = mozartPipeline.getManifestsByTemplateStep(step)
 		if err != nil {
 			mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
-			utils.CustomLog("error", "asyncExecuteStep", err.Error())
+			utils.CustomLog("error", "asyncExecuteStep::getManifestsByTemplateStep", err.Error())
 			return err
 		}
 	}
@@ -151,7 +164,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteStep(step *pipeline.Step) erro
 	err = mozartPipeline.executeManifests(step, manifests)
 	if err != nil {
 		mozartPipeline.executions.UpdateExecutionStepStatus(mozartPipeline.CurrentExecutionID, executionStepID, execution.StepFailed)
-		utils.CustomLog("error", "asyncExecuteStep", err.Error())
+		utils.CustomLog("error", "asyncExecuteStep::executeManifests", err.Error())
 		return err
 	}
 
