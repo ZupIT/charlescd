@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Glossário técnico](glossario-tecnico.md)
+* [Principais conceitos](glossario-tecnico.md)
 * [Arquitetura do sistema](arquitetura-do-sistema.md)
 
 ## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
