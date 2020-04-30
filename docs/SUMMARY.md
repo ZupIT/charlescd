@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Principais conceitos](glossario-tecnico.md)
+* [Glossário técnico](glossario-tecnico.md)
 
 ## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
 
@@ -9,16 +9,15 @@
 * [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
 * [Configuração de dependências](usando-o-charles/configuracao-de-dependencias/README.md)
   * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
-  * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-  * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
   * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
+  * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
   * [Módulos](usando-o-charles/configuracao-de-dependencias/modulos.md)
 
 ## CÍRCULOS
 
 * [O que são círculos?](circulos/o-que-sao-circulos.md)
 * [Como segmentar e identificar os círculos?](circulos/segmentacoes-dos-circulos.md)
-* [Outras configurações dos círculos](circulos/outras-configuracoes-dos-circulos.md)
+* [Outras configurações](circulos/como-integrar-circulos-com-servicos.md)
 * [Circle Matcher](circulos/circle-matcher.md)
 
 ## HIPÓTESES

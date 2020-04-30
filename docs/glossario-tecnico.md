@@ -5,7 +5,7 @@ description: >-
   dentro da comunidade de desenvolvedores.
 ---
 
-# Principais conceitos
+# Glossário técnico
 
 ### **Círculos**
 
