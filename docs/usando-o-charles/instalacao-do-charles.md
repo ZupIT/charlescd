@@ -1,9 +1,7 @@
 # Instalação do Charles
 
-Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias):
+Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes configurações prontas:
 
-* Vault
-* Spinnaker \(versão 1.17.3\)
 * Keycloak
 * Tyk
 * Kubernetes
@@ -113,13 +111,7 @@ Caso seu cluster use alguma RBAC você precisará usar uma ServiceAccount com po
 Para fazer isso basta aplicar:
 
 ```text
-
-```
-
 kubectl create clusterrolebinding default-admin --clusterrole=admin --serviceaccount=NAMESPACE:SERVICEACCOUNT
-
-```text
-
 ```
 
 Feito isso, na sequência use a `SERVICEACCOUNT` no arquivo job.yaml
