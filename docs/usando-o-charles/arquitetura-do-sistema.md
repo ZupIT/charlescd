@@ -8,5 +8,5 @@ A plataforma, construída utilizando a abordagem de microsserviços, possui os s
 * `charles-releases:` faz a busca no registry da imagem gerada após a criação da release candidate de uma nova versão. _\*\*_
 * `charles-circle-matcher:` gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características.
 
-![Arquitetura do Charles ](.gitbook/assets/arquitetura-do-sistema.png)
+![Arquitetura do Charles ](../.gitbook/assets/arquitetura-do-sistema.png)
 
