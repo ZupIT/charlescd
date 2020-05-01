@@ -61,13 +61,13 @@ CharlesCD has many modules. The environment settings are different between them.
 
 ### Writing a bugfix
 1. Make sure your branch is based on the branch of version where the bug was first introduced.
-2. We recommend follow **Our step-by-step making changes suggestion**.
+2. We recommend follow [Our step-by-step making changes suggestion](#our-step-by-step-making-changes-suggestion).
 3. Open a new GitHub pull request with the patch.
 4. Ensure the PR description clearly describes the problem and solution, including the issue number.
 
 ### Writing a new feature?
 1. Make sure your branch is based on master.
-2. We recommend follow **Our step-by-step making changes suggestion**.
+2. We recommend follow [Our step-by-step making changes suggestion](#our-step-by-step-making-changes-suggestion).
 3. Update the documetation if applicable.
 4. Open a new GitHub pull request with the new code.
 5. Ensure the PR description clearly describes the new feature, including the issue number.
