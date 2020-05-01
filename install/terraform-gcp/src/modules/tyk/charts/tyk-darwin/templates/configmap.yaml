@@ -324,6 +324,30 @@ data:
                       "Default"
                   ]
                 },
+                "moove_v2_circles": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Circles",
+                  "api_id": "moove_v2_circles",
+                  "versions": [
+                      "Default"
+                  ]
+                },
+                "moove_v2_modules": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Modules",
+                  "api_id": "moove_v2_modules",
+                  "versions": [
+                      "Default"
+                  ]
+                },,
+                "moove_v2_users": {
+                  "allowed_urls": [],
+                  "api_name": "Moove v2 Users",
+                  "api_id": "moove_v2_users",
+                  "versions": [
+                      "Default"
+                  ]
+                },
                 "moove_applications": {
                     "allowed_urls": [],
                     "api_name": "Moove Applications",
@@ -440,6 +464,14 @@ data:
                     "allowed_urls": [],
                     "api_name": "Moove Actuator Health",
                     "api_id": "moove_actuator_health",
+                    "versions": [
+                        "Default"
+                    ]
+                },
+                "moove_v2_workspace": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Workspace",
+                    "api_id": "moove_v2_workspace",
                     "versions": [
                         "Default"
                     ]
@@ -598,7 +630,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -651,7 +683,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -704,7 +736,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -757,7 +789,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -810,7 +842,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -863,7 +895,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -916,7 +948,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -969,12 +1001,65 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
         }
-    } 
+    }
+
+  moove_v2_workspace.json: |
+    {
+        "name": "Moove v2 Workspace",
+        "api_id": "moove_v2_workspace",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/workspaces",
+            "target_url": "http://darwin-application:8080/v2/workspaces",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
 
   moove_deployments.json: |
     {
@@ -1022,7 +1107,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1075,13 +1160,171 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
         }
     }
 
+  moove_v2_circles.json: |
+    {
+        "name": "Moove v2 Circles",
+        "api_id": "moove_v2_circles",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/circles",
+            "target_url": "http://darwin-application:8080/v2/circles",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-workspace-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_v2_users.json: |
+    {
+        "name": "Moove v2 Users",
+        "api_id": "moove_v2_users",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/users",
+            "target_url": "http://darwin-application:8080/v2/users",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-workspace-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
+
+  moove_v2_modules.json: |
+    {
+        "name": "Moove v2 Modules",
+        "api_id": "moove_v2_modules",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": false,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "use_openid": true,
+        "openid_options": {
+            "providers": [
+              {
+                "issuer": "https://{{ .Values.tyk.address.keycloak }}/auth/realms/darwin",
+                "client_ids": {
+                    "ZGFyd2luLWNsaWVudA==": "darwin"
+                }
+              }
+            ],
+            "segregate_by_client": false
+        },
+        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/v2/modules",
+            "target_url": "http://darwin-application:8080/v2/modules",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true,
+        "CORS": {
+            "enable": true,
+            "allowed_headers": ["x-workspace-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
+            "allow_credentials": true,
+            "debug": true
+        }
+    }
   moove_hypotheses.json: |
     {
         "name": "Moove Hypotheses",
@@ -1128,7 +1371,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1181,7 +1424,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1235,7 +1478,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1288,7 +1531,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1341,7 +1584,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1394,7 +1637,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1447,7 +1690,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true
@@ -1488,7 +1731,7 @@ data:
         "enable_batch_request_support": true,
         "CORS": {
             "enable": true,
-            "allowed_headers": ["x-application-id", "authorization", "content-type", "x-circle-id"],
+            "allowed_headers": ["x-application-id", "x-workspace-id", "authorization", "content-type", "x-circle-id"],
             "allowed_methods": ["POST", "PUT", "GET", "PATCH", "DELETE", "OPTIONS"],
             "allow_credentials": true,
             "debug": true

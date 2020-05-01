@@ -1,7 +1,7 @@
 {
   "version": 4,
   "terraform_version": "0.12.13",
-  "serial": 275,
+  "serial": 274,
   "lineage": "f8e9bc43-46a5-445b-1be2-abd7b4e7f609",
   "outputs": {
     "cluster_name": {
@@ -1300,6 +1300,69 @@
             "wait": true
           },
           "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "module": "module.spinnaker",
+      "mode": "managed",
+      "type": "helm_release",
+      "name": "spinnaker",
+      "provider": "provider.helm",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "atomic": false,
+            "chart": "stable/spinnaker",
+            "cleanup_on_fail": false,
+            "dependency_update": false,
+            "description": null,
+            "devel": null,
+            "disable_crd_hooks": false,
+            "disable_openapi_validation": false,
+            "disable_webhooks": false,
+            "force_update": false,
+            "id": "spinnaker",
+            "keyring": null,
+            "max_history": 0,
+            "metadata": [
+              {
+                "chart": "spinnaker",
+                "name": "spinnaker",
+                "namespace": "spinnaker",
+                "revision": 1,
+                "values": "{\"halyard\":{\"additionalProfileConfigMaps\":{\"data\":{\"gate-local.yml\":\"redis:\\n  configuration:\\n    secure: true\"}},\"additionalScripts\":{\"configMapKey\":\"config.sh\",\"configMapName\":\"my-halyard-config\",\"create\":true,\"data\":{\"config.sh\":\"$HAL_COMMAND config security ui edit --no-validate --override-base-url https://charles-spinnaker.continuousplatform.com\\n$HAL_COMMAND config security api edit --no-validate --override-base-url https://charles-spinnaker-gate.continuousplatform.com\\n$HAL_COMMAND config artifact github enable \\n$HAL_COMMAND config artifact github account add github-artifact --token becd4b7a621d95328bcdc2b4f82dbc2bd1a1d7c7\\n$HAL_COMMAND config provider kubernetes account edit default --live-manifest-calls true\"},\"enabled\":false}},\"minio\":{\"enabled\":false},\"redis\":{\"cluster\":{\"enabled\":false},\"enabled\":false,\"external\":{\"host\":\"http://charles-redis-spinnaker-master.spinnaker.svc.cluster.local\",\"password\":\"firstpassword\",\"port\":\"5439\"}},\"s3\":{\"bucket\":\"gs://charles-spinnaker-gcp\",\"enabled\":true,\"endpoint\":\"\",\"region\":\"us-central1\"}}",
+                "version": "1.20.2"
+              }
+            ],
+            "name": "spinnaker",
+            "namespace": "spinnaker",
+            "postrender": [],
+            "recreate_pods": false,
+            "render_subchart_notes": true,
+            "replace": false,
+            "repository": "stable",
+            "repository_ca_file": null,
+            "repository_cert_file": null,
+            "repository_key_file": null,
+            "repository_password": null,
+            "repository_username": null,
+            "reset_values": false,
+            "reuse_values": false,
+            "set": [],
+            "set_sensitive": [],
+            "set_string": [],
+            "skip_crds": false,
+            "status": "uninstalling",
+            "timeout": 600,
+            "values": [
+              "s3:\n  enabled: true\n  bucket: \"gs://charles-spinnaker-gcp\"\n  region: \"us-central1\"\n  endpoint: \"\"\n\nhalyard:\n  additionalScripts:\n    enabled: false\n    configMapName: my-halyard-config\n    configMapKey: config.sh\n    create: true\n    data: \n      config.sh: |-\n        $HAL_COMMAND config security ui edit --no-validate --override-base-url https://charles-spinnaker.continuousplatform.com\n        $HAL_COMMAND config security api edit --no-validate --override-base-url https://charles-spinnaker-gate.continuousplatform.com\n        $HAL_COMMAND config artifact github enable \n        $HAL_COMMAND config artifact github account add github-artifact --token becd4b7a621d95328bcdc2b4f82dbc2bd1a1d7c7\n        $HAL_COMMAND config provider kubernetes account edit default --live-manifest-calls true\n\n  additionalProfileConfigMaps:\n      data:\n        gate-local.yml: |-\n          redis:\n            configuration:\n              secure: true\n\nminio:\n  enabled: false\n\nredis:\n  enabled: false\n  cluster:\n    enabled: false\n  external:\n    host: \"http://charles-redis-spinnaker-master.spinnaker.svc.cluster.local\"\n    port: \"5439\"\n    password: \"firstpassword\""
+            ],
+            "verify": false,
+            "version": "1.20.2",
+            "wait": true
+          }
         }
       ]
     },

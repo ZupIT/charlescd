@@ -28,7 +28,7 @@ appname: darwin-application
     
 image:
   repository: darwin-application
-  tag: realwavelab.azurecr.io/darwin-application:darwin-release-darwin-workspace-rc-5
+  tag: realwavelab.azurecr.io/darwin-application:darwin-workspace-rc-7
   blueTag: latest
 service:
   name: darwin-application
