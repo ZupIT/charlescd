@@ -2,6 +2,9 @@ keycloak:
     password: ${keycloak_password}
     persistence:
         dbPassword: ${keycloak_password}
+    podAnnotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "\"true\""
+
 
     extraEnv: |
         - name: KEYCLOAK_FRONTEND_URL

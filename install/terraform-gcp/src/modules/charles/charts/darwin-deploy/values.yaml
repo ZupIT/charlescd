@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: darwin-deploy
-  tag: realwavelab.azurecr.io/darwin-deploy:darwin-v-1-7-6
+  tag: realwavelab.azurecr.io/darwin-deploy:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 
 envVars:
@@ -20,11 +20,11 @@ envVars:
   - name: MOOVE_URL
     value: "http://darwin-application:8080"
   - name: DARWIN_NOTIFICATION_URL
-    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications"
+    value: "http://darwin-deploy.charles.svc.cluster.local:3000/notifications"
   - name: DARWIN_UNDEPLOYMENT_CALLBACK
-    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications/undeployment"
+    value: "http://darwin-deploy.charles.svc.cluster.local:3000/notifications/undeployment"
   - name: DARWIN_DEPLOYMENT_CALLBACK
-    value: "http://darwin-deploy.qa.svc.cluster.local:3000/notifications/deployment"
+    value: "http://darwin-deploy.charles.svc.cluster.local:3000/notifications/deployment"
   - name: SPINNAKER_URL
     value: "https://darwin-spinnaker-gate.continuousplatform.com"
   - name: SPINNAKER_GITHUB_ACCOUNT

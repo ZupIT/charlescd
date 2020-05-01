@@ -1,0 +1,436 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-30T14:59:35Z"
+    labels:
+      app.kubernetes.io/instance: charles-keycloak
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: keycloak
+      helm.sh/chart: keycloak-7.5.1
+      service: headless
+    name: charles-keycloak-headless
+    namespace: charles
+    resourceVersion: "638245"
+    selfLink: /api/v1/namespaces/charles/services/charles-keycloak-headless
+    uid: 74685e4d-01bb-4b03-b264-a6fdfd5f976f
+  spec:
+    clusterIP: None
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    selector:
+      app.kubernetes.io/instance: charles-keycloak
+      app.kubernetes.io/name: keycloak
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-30T14:59:35Z"
+    labels:
+      app.kubernetes.io/instance: charles-keycloak
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: keycloak
+      helm.sh/chart: keycloak-7.5.1
+      service: http
+    name: charles-keycloak-http
+    namespace: charles
+    resourceVersion: "638249"
+    selfLink: /api/v1/namespaces/charles/services/charles-keycloak-http
+    uid: 7fd3d749-de7c-4d0e-adde-5c4a9208daf0
+  spec:
+    clusterIP: 10.3.249.108
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    selector:
+      app.kubernetes.io/instance: charles-keycloak
+      app.kubernetes.io/name: keycloak
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:19:04Z"
+    labels:
+      app: postgresql
+      chart: postgresql-8.9.0
+      heritage: Helm
+      release: charles-postgresql
+    name: charles-postgresql
+    namespace: charles
+    resourceVersion: "2536"
+    selfLink: /api/v1/namespaces/charles/services/charles-postgresql
+    uid: fb44bb89-0ed8-44c9-a7bd-4d39a7d4ea86
+  spec:
+    clusterIP: 10.3.243.65
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    selector:
+      app: postgresql
+      release: charles-postgresql
+      role: master
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:19:04Z"
+    labels:
+      app: postgresql
+      chart: postgresql-8.9.0
+      heritage: Helm
+      release: charles-postgresql
+    name: charles-postgresql-headless
+    namespace: charles
+    resourceVersion: "2532"
+    selfLink: /api/v1/namespaces/charles/services/charles-postgresql-headless
+    uid: b07eb314-40ea-48b5-9e0a-9a55d55f3ba6
+  spec:
+    clusterIP: None
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    selector:
+      app: postgresql
+      release: charles-postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:30Z"
+    labels:
+      app: redis
+      chart: redis-10.5.12
+      heritage: Helm
+      release: charles-redis
+    name: charles-redis-headless
+    namespace: charles
+    resourceVersion: "1930"
+    selfLink: /api/v1/namespaces/charles/services/charles-redis-headless
+    uid: edd3ebda-de09-414c-a317-7a9c59c09007
+  spec:
+    clusterIP: None
+    ports:
+    - name: redis
+      port: 6379
+      protocol: TCP
+      targetPort: redis
+    selector:
+      app: redis
+      release: charles-redis
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:30Z"
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    labels:
+      app: redis
+      chart: redis-10.5.12
+      heritage: Helm
+      release: charles-redis
+    name: charles-redis-master
+    namespace: charles
+    resourceVersion: "2664"
+    selfLink: /api/v1/namespaces/charles/services/charles-redis-master
+    uid: 752e3100-2fe6-4bcd-ba3b-1308206a3daf
+  spec:
+    clusterIP: 10.3.253.188
+    externalTrafficPolicy: Cluster
+    ports:
+    - name: redis
+      nodePort: 31402
+      port: 6379
+      protocol: TCP
+      targetPort: redis
+    selector:
+      app: redis
+      release: charles-redis
+      role: master
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 35.188.84.60
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:30Z"
+    labels:
+      app: redis
+      chart: redis-10.5.12
+      heritage: Helm
+      release: charles-redis
+    name: charles-redis-slave
+    namespace: charles
+    resourceVersion: "1935"
+    selfLink: /api/v1/namespaces/charles/services/charles-redis-slave
+    uid: 453c433e-6302-4d13-b957-3b1ce9c467ad
+  spec:
+    clusterIP: 10.3.249.71
+    ports:
+    - name: redis
+      port: 6379
+      protocol: TCP
+      targetPort: redis
+    selector:
+      app: redis
+      release: charles-redis
+      role: slave
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T21:03:28Z"
+    labels:
+      app: darwin-application
+      service: darwin-application
+    name: darwin-application
+    namespace: charles
+    resourceVersion: "343652"
+    selfLink: /api/v1/namespaces/charles/services/darwin-application
+    uid: 7c9427c4-4fe9-4abe-828f-595747eaeeba
+  spec:
+    clusterIP: 10.3.249.154
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: darwin-application
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:28Z"
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    labels:
+      app: darwin-circle-matcher
+      service: darwin-circle-matcher
+    name: darwin-circle-matcher
+    namespace: charles
+    resourceVersion: "2262"
+    selfLink: /api/v1/namespaces/charles/services/darwin-circle-matcher
+    uid: 58d59885-94c4-4f91-86f7-b0cdda573013
+  spec:
+    clusterIP: 10.3.247.173
+    externalTrafficPolicy: Cluster
+    ports:
+    - name: http
+      nodePort: 30241
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: darwin-circle-matcher
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 35.239.239.149
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:29Z"
+    labels:
+      app: darwin-deploy
+      service: darwin-deploy
+    name: darwin-deploy
+    namespace: charles
+    resourceVersion: "1840"
+    selfLink: /api/v1/namespaces/charles/services/darwin-deploy
+    uid: 8fe19812-7506-4fed-9246-611fba7fa1b9
+  spec:
+    clusterIP: 10.3.252.227
+    ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: darwin-deploy
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T01:16:30Z"
+    labels:
+      app: darwin-notifications
+      service: darwin-notifications
+    name: darwin-notifications
+    namespace: charles
+    resourceVersion: "18695"
+    selfLink: /api/v1/namespaces/charles/services/darwin-notifications
+    uid: ed37eb86-a3ad-4e4f-8a48-0e928147ab89
+  spec:
+    clusterIP: 10.3.245.4
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: darwin-notifications
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:28Z"
+    labels:
+      app: darwin-ui-legacy
+      service: darwin-ui-legacy
+    name: darwin-ui-legacy
+    namespace: charles
+    resourceVersion: "1785"
+    selfLink: /api/v1/namespaces/charles/services/darwin-ui-legacy
+    uid: 6d0196ba-7642-456a-bcbb-683f85dc26d4
+  spec:
+    clusterIP: 10.3.246.220
+    ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: darwin-ui-legacy
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:28Z"
+    labels:
+      app: darwin-ui-new
+      service: darwin-ui-new
+    name: darwin-ui-new
+    namespace: charles
+    resourceVersion: "1822"
+    selfLink: /api/v1/namespaces/charles/services/darwin-ui-new
+    uid: 572dfe98-809c-448d-9780-6b2bd23bd8f1
+  spec:
+    clusterIP: 10.3.242.100
+    ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: darwin-ui-new
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T20:34:26Z"
+    labels:
+      app: darwin-villager
+      service: darwin-villager
+    name: darwin-villager
+    namespace: charles
+    resourceVersion: "335409"
+    selfLink: /api/v1/namespaces/charles/services/darwin-villager
+    uid: 2eb69915-e0e4-4827-982e-06bffc8cef4b
+  spec:
+    clusterIP: 10.3.247.26
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: darwin-villager
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2020-04-29T00:17:29Z"
+    finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+    labels:
+      app.kubernetes.io/instance: charles-tyk
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: tyk-darwin
+      app.kubernetes.io/version: "1.0"
+      helm.sh/chart: tyk-darwin-0.1.7
+    name: tyk-darwin
+    namespace: charles
+    resourceVersion: "644165"
+    selfLink: /api/v1/namespaces/charles/services/tyk-darwin
+    uid: bed531e6-7793-418e-9b13-a060324e0800
+  spec:
+    clusterIP: 10.3.242.82
+    externalTrafficPolicy: Cluster
+    ports:
+    - name: http
+      nodePort: 30342
+      port: 443
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app.kubernetes.io/name: tyk-darwin
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 34.69.253.170
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

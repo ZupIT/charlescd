@@ -15,7 +15,7 @@ appname: darwin-circle-matcher
 
 image:
   repository: darwin-circle-matcher
-  tag: realwavelab.azurecr.io/darwin-circle-matcher:darwin-with-cors
+  tag: realwavelab.azurecr.io/darwin-circle-matcher:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 service:
   name: darwin-circle-matcher

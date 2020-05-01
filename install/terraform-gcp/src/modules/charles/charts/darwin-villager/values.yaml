@@ -13,12 +13,14 @@ envVars:
     value: 15
   - name: DARWIN_MOOVE_ORGANIZATION
     value: zup
+  - name: CRYPT_KEY
+    value: pvMPbPPNNB
 
 appname: darwin-villager
 
 image:
   repository: darwin-villager
-  tag: realwavelab.azurecr.io/darwin-villager:darwin-v-1-7-6
+  tag: realwavelab.azurecr.io/darwin-villager:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 service:
   name: darwin-villager

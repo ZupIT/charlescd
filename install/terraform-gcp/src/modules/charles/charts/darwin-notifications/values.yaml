@@ -14,7 +14,7 @@ appname: darwin-notifications
 
 image:
   repository: darwin-notifications
-  tag: realwavelab.azurecr.io/darwin-notifications:darwin-v-1-7-6
+  tag: realwavelab.azurecr.io/darwin-notifications:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 service:
   name: darwin-notifications

@@ -1,7 +1,7 @@
 replicaCount: 1
 envVars:
   - name: HOST
-    value: https://charles-api.continuousplatform.com
+    value: https://charles-api.continuousplatform.com/moove
   - name: NOTIFICATION
     value: https://charles-api.continuousplatform.com/notifications
   - name: KEYCLOAK
@@ -13,7 +13,7 @@ appname: darwin-ui-legacy
   
 image:
   repository: darwin-ui-legacy
-  tag: realwavelab.azurecr.io/darwin-ui-legacy:test-gcp
+  tag: realwavelab.azurecr.io/darwin-ui-legacy:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 service:
   name: darwin-ui-legacy-web

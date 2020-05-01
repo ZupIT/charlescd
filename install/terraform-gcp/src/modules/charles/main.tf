@@ -38,8 +38,8 @@ resource "helm_release" "charles-deploy" {
   namespace = var.namespace
 }
 
-//resource "helm_release" "charles-villager" {
-//  name      = "charles-villager"
-//  chart     = "${path.module}/charts/darwin-villager"
-//  namespace = var.namespace
-//}
+resource "helm_release" "charles-villager" {
+  name      = "charles-villager"
+  chart     = "${path.module}/charts/darwin-villager"
+  namespace = var.namespace
+}

@@ -14,6 +14,6 @@ envVars:
   - name: KEYCLOAK_CLIENT_ID
     value: "realm-darwin"
   - name: KEYCLOAK_CLIENT_SECRET
-    value: "32e76153-d62e-403b-9105-d5a36946d807"
-  - name: ZUP_CORS_ALLOWED-ORIGINS
-    value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,https://darwin.continuousplatform.com, http://35.222.121.238:3000"
+    value: "d0ea8e11-00a5-4723-9594-755a8025d4e1"
+  - name: ORIGIN_HOSTS
+    value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,https://charles.continuousplatform.com"

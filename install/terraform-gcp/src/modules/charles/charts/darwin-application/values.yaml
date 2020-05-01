@@ -16,8 +16,8 @@ envVars:
     value: "realm-darwin"
   - name: KEYCLOAK_CLIENT_SECRET
     value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
-  - name: ZUP_CORS_ALLOWED-ORIGINS
-    value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,https://darwin.continuousplatform.com, http://35.222.121.238:3000"
+  - name: ORIGIN_HOSTS
+    value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,https://charles.continuousplatform.com"
 
 secretEnvVars:
   - name: ENCRYPTION_KEY
@@ -28,7 +28,7 @@ appname: darwin-application
     
 image:
   repository: darwin-application
-  tag: realwavelab.azurecr.io/darwin-application:darwin-build-flow-refactoring-aws-21
+  tag: realwavelab.azurecr.io/darwin-application:darwin-release-darwin-workspace-rc-5
   blueTag: latest
 service:
   name: darwin-application

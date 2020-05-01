@@ -47,6 +47,14 @@ resource "kubernetes_namespace" "charles" {
   }
 }
 
+
+resource "kubernetes_namespace" "spinnaker" {
+  metadata {
+
+    name = "spinnaker"
+  }
+}
+
 resource "random_password" "charlesnotifications_password" {
   length           = 16
   special          = false
@@ -85,7 +93,7 @@ module "postgresql" {
   db-notifications-password = random_password.charlesnotifications_password.result
   db-moove-username = "charlesmoove"
   db-moove-password = random_password.charlesnotifications_password.result
-  db-villager-username = "charlescirclematcher"
+  db-villager-username = "charlesvillager"
   db-villager-password = random_password.charlesvillager_password.result
   db-deploy-username = "charlesdeploy"
   db-deploy-password = random_password.charlesdeploy_password.result
@@ -116,3 +124,19 @@ module "tyk" {
 
   namespace = kubernetes_namespace.charles.metadata[0].name
 }
+
+//module "redis-spinnaker" {
+//  source = "./modules/redis-spinnaker"
+//
+//  namespace = kubernetes_namespace.spinnaker.metadata[0].name
+//}
+//
+//module "spinnaker" {
+//  source = "./modules/spinnaker"
+//
+//  domain-name = "continuousplatform.com"
+//  location = var.zone
+//  redis_host = "http://charles-redis-spinnaker-master.spinnaker.svc.cluster.local"
+//  redis_port = 5439
+//  redis_pass = "firstpassword"
+//}
