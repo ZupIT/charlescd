@@ -4,7 +4,7 @@ moove: moove/**
 octopipe: octopipe/**
 circle-matcher: circler-matcher/**
 new-ui: ui/packages/new-ui/**
-new-ui: ui/packages/legacy/**
+legacy-ui: ui/packages/legacy/**
 tracing: tracing/**
 docs: docs/**
 installer: install/**
