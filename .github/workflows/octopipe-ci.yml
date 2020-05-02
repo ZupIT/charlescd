@@ -5,10 +5,6 @@ on:
     branches: [ master ]
     paths:
       - 'octopipe/**'
-    paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'LICENSE'
     tags: 
       - '!*'
   pull_request:
@@ -16,10 +12,6 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'octopipe/**'
-    paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'LICENSE'
 
 jobs:
   static_code_analysis:
