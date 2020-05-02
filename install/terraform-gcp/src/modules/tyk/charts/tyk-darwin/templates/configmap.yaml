@@ -308,6 +308,14 @@ data:
                         "Default"
                     ]
                 },
+                "moove_swagger": {
+                    "allowed_urls": [],
+                    "api_name": "Moove Swagger",
+                    "api_id": "moove_swagger",
+                    "versions": [
+                        "Default"
+                    ]
+                },
                 "moove_builds": {
                     "allowed_urls": [],
                     "api_name": "Moove Builds",
@@ -339,7 +347,7 @@ data:
                   "versions": [
                       "Default"
                   ]
-                },,
+                },
                 "moove_v2_users": {
                   "allowed_urls": [],
                   "api_name": "Moove v2 Users",
@@ -1204,7 +1212,7 @@ data:
             ],
             "segregate_by_client": false
         },
-        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "domain": "{{ .Values.tyk.address.api }}",
         "proxy": {
             "listen_path": "/moove/v2/circles",
             "target_url": "http://darwin-application:8080/v2/circles",
@@ -1257,7 +1265,7 @@ data:
             ],
             "segregate_by_client": false
         },
-        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "domain": "{{ .Values.tyk.address.api }}",
         "proxy": {
             "listen_path": "/moove/v2/users",
             "target_url": "http://darwin-application:8080/v2/users",
@@ -1310,7 +1318,7 @@ data:
             ],
             "segregate_by_client": false
         },
-        "domain": "domain": "{{ .Values.tyk.address.api }}",
+        "domain": "{{ .Values.tyk.address.api }}",
         "proxy": {
             "listen_path": "/moove/v2/modules",
             "target_url": "http://darwin-application:8080/v2/modules",
@@ -1695,6 +1703,40 @@ data:
             "allow_credentials": true,
             "debug": true
         }
+    }
+
+  moove_swagger.json: |
+    {
+        "name": "Moove Swagger",
+        "api_id": "moove_swagger",
+        "org_id": "default",
+        "definition": {
+            "location": "header",
+            "key": "version"
+        },
+        "use_keyless": true,
+        "version_data": {
+            "not_versioned": true,
+            "versions": {
+                "Default": {
+                    "name": "Default",
+                    "expires": "3000-01-02 15:04",
+                    "use_extended_paths": true,
+                    "extended_paths": {
+                        "ignored": [],
+                        "white_list": [],
+                        "black_list": []
+                    }
+                }
+            }
+        },
+        "domain": "{{ .Values.tyk.address.api }}",
+        "proxy": {
+            "listen_path": "/moove/swagger-ui.html",
+            "target_url": "http://darwin-application:8080/swagger-ui.html",
+            "strip_listen_path": true
+        },
+        "enable_batch_request_support": true
     }
 
   darwin-aws-test.json: |

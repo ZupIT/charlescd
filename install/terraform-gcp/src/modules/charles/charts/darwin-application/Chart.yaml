@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: Darwin Application with k8s
 name: darwin-application
-version: "darwin-workspace-rc-7"
+version: "darwin-workspace-rc-13"

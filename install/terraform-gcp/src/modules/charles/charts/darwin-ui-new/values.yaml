@@ -8,7 +8,7 @@ appname: darwin-ui-new
   
 image:
   repository: darwin-ui-new
-  tag: realwavelab.azurecr.io/darwin-ui-new:darwin-release-darwin-workspace-rc-5
+  tag: realwavelab.azurecr.io/darwin-ui-new:darwin-workspace-rc-12
   blueTag: latest
 service:
   name: darwin-ui-new-web

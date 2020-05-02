@@ -50,7 +50,7 @@ service:
   name: tyk-darwin
   type: LoadBalancer
   ports:
-  - name: http
+  - name: https
     port: 443
     target_port: 8080
 

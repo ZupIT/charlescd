@@ -13,7 +13,7 @@ appname: darwin-ui-legacy
   
 image:
   repository: darwin-ui-legacy
-  tag: realwavelab.azurecr.io/darwin-ui-legacy:darwin-release-darwin-workspace-rc-5
+  tag: realwavelab.azurecr.io/darwin-ui-legacy:darwin-workspace-rc-12
   blueTag: latest
 service:
   name: darwin-ui-legacy-web
