@@ -34,7 +34,7 @@ func main() {
 	deployerMain := deployer.NewDeployerManager()
 	cloudproviderMain := cloudprovider.NewCloudproviderManager()
 	_ = pipeline.NewPipelineManager(db)
-	mozartMain := mozart.NewMozart(
+	mozartMain := mozart.NewMozartManager(
 		executionMain,
 		templateMain,
 		gitMain,
