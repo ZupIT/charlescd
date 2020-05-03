@@ -5,13 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/execution"
-	"octopipe/pkg/git"
 	"octopipe/pkg/pipeline"
-	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
 
@@ -181,7 +178,7 @@ func (mozartPipeline *MozartPipeline) executeManifests(step *pipeline.Step, mani
 }
 
 func (mozartPipeline *MozartPipeline) asyncExecuteManifest(step *pipeline.Step, manifest map[string]interface{}) error {
-	cloudConfig := cloudprovider.NewCloudProvider(step.K8sConfig)
+	cloudConfig := mozartPipeline.cloudprovider.NewCloudProvider(step.K8sConfig)
 	resource := &deployer.Resource{
 		Action:      step.Action,
 		Manifest:    deployer.ToUnstructured(manifest),
@@ -190,7 +187,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteManifest(step *pipeline.Step, 
 		Namespace:   step.Namespace,
 	}
 
-	deployer, err := deployer.NewDeployer(resource)
+	deployer, err := mozartPipeline.deployer.NewDeployer(resource)
 	if err != nil {
 		utils.CustomLog("error", "asyncExecuteManifest", err.Error())
 		return err
@@ -206,7 +203,7 @@ func (mozartPipeline *MozartPipeline) asyncExecuteManifest(step *pipeline.Step, 
 }
 
 func (mozartPipeline *MozartPipeline) getManifestsByTemplateStep(step *pipeline.Step) (map[string]interface{}, error) {
-	gitConfig, err := git.NewGit(step.Git.Provider)
+	gitConfig, err := mozartPipeline.git.NewGit(step.Git.Provider)
 	if err != nil {
 		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
@@ -216,7 +213,7 @@ func (mozartPipeline *MozartPipeline) getManifestsByTemplateStep(step *pipeline.
 		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
 	}
-	templateProvider, err := template.NewTemplate(step.Template.Type)
+	templateProvider, err := mozartPipeline.template.NewTemplate(step.Template.Type)
 	if err != nil {
 		utils.CustomLog("error", "getManifestsByTemplateStep", err.Error())
 		return nil, err
