@@ -1,8 +1,12 @@
 package mozart
 
 import (
+	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/execution"
+	"octopipe/pkg/git"
+	"octopipe/pkg/template"
 )
 
 type UseCases interface {
@@ -10,11 +14,26 @@ type UseCases interface {
 }
 
 type Mozart struct {
-	executions execution.UseCases
+	executions    execution.ManagerUseCases
+	template      template.ManagerUseCases
+	git           git.ManagerUseCases
+	deployer      deployer.ManagerUseCases
+	cloudprovider cloudprovider.ManagerUseCases
 }
 
-func NewMozart(execution execution.UseCases) *Mozart {
-	return &Mozart{execution}
+func NewMozart(execution execution.ManagerUseCases,
+	template template.ManagerUseCases,
+	git git.ManagerUseCases,
+	deployer deployer.ManagerUseCases,
+	cloudprovider cloudprovider.ManagerUseCases,
+) *Mozart {
+	return &Mozart{
+		execution,
+		template,
+		git,
+		deployer,
+		cloudprovider,
+	}
 }
 
 func (mozart *Mozart) Start(deployment *deployment.Deployment) {
