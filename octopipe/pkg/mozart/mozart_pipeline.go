@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployer"
@@ -15,6 +14,8 @@ import (
 	"octopipe/pkg/template"
 	"octopipe/pkg/utils"
 	"sync"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MozartPipeline struct {
@@ -52,7 +53,7 @@ func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.
 
 		err = mozartPipeline.executeSteps(steps)
 		if err != nil {
-			mozartPipeline.executeRollbackSteps(mozartPipeline.Stages[:index + 1])
+			mozartPipeline.executeRollbackSteps(mozartPipeline.Stages[:index+1])
 			mozartPipeline.returnPipelineError(err)
 			break
 		}
@@ -94,7 +95,7 @@ func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error
 }
 
 func (mozartPipeline *MozartPipeline) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
-	err := mozartPipeline.executions.ExecutionFinished(mozartPipeline.CurrentExecutionID)
+	err := mozartPipeline.executions.ExecutionFinished(mozartPipeline.CurrentExecutionID, pipelineError)
 	if err != nil {
 		utils.CustomLog("error", "executeSteps", err.Error())
 		return
