@@ -143,7 +143,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             'dummy-circle-id'
         )
         undeployment.deployment = deployment
-        undeployment.status  = UndeploymentStatusEnum.FINISHED
+        undeployment.status  = UndeploymentStatusEnum.SUCCEEDED
 
 
         componentUndeployment = new ComponentUndeploymentEntity(

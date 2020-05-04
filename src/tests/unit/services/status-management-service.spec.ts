@@ -179,7 +179,7 @@ describe('PipelinesService', () => {
     })
 
     describe('setComponentDeploymentStatusAsFinished', () => {
-        it('should correctly update component deployment status to FINISHED', async () => {
+        it('should correctly update component deployment status to SUCCEEDED', async () => {
             jest.spyOn(global, 'Date')
                 .mockImplementation(() => '2020-04-20T19:16:46.700Z')
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
@@ -194,7 +194,7 @@ describe('PipelinesService', () => {
                 'dummy-component-deployment-id'
             )
 
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.FINISHED)
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.SUCCEEDED)
         })
     })
 
@@ -218,7 +218,7 @@ describe('PipelinesService', () => {
     })
 
     describe('setComponentUndeploymentStatusAsFinished', () => {
-        it('should correctly update component undeployment status to FINISHED', async () => {
+        it('should correctly update component undeployment status to SUCCEEDED', async () => {
 
             jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
@@ -231,7 +231,7 @@ describe('PipelinesService', () => {
             await statusManagementService.setComponentUndeploymentStatusAsFinished(
                 'dummy-component-undeployment-id'
             )
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FINISHED)
+            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.SUCCEEDED)
         })
     })
 

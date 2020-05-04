@@ -87,7 +87,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     const { moduleDeployment: { deployment } } = componentDeployment
 
-    if (deployment.hasFinished()) {
+    if (deployment.hasSucceeded()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
       ).toPromise()

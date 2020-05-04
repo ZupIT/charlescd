@@ -92,7 +92,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     const { moduleUndeployment: { undeployment } } = componentUndeployment
     const { deployment } = undeployment
 
-    if (undeployment.hasFinished()) {
+    if (undeployment.hasSucceedeed()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId
       ).toPromise()
