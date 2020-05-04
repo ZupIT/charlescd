@@ -93,7 +93,7 @@ export class StatusManagementService {
         const componentDeploymentEntity: ComponentDeploymentEntity =
             await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
-        await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.FINISHED)
+        await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.SUCCEEDED)
         await this.propagateSuccessStatusChange(componentDeploymentEntity)
     }
 
@@ -135,7 +135,7 @@ export class StatusManagementService {
         const componentUndeploymentEntity: ComponentUndeploymentEntity =
             await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
-        await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FINISHED)
+        await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.SUCCEEDED)
         await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
     }
 
@@ -170,7 +170,7 @@ export class StatusManagementService {
             this.getModuleUndeploymentFinishedComponents(moduleUndeployment)
 
         if (finishedComponents.length === moduleUndeployment.componentUndeployments.length) {
-            await this.updateModuleUndeploymentStatus(moduleUndeploymentId, UndeploymentStatusEnum.FINISHED)
+            await this.updateModuleUndeploymentStatus(moduleUndeploymentId, UndeploymentStatusEnum.SUCCEEDED)
         }
     }
 
@@ -191,7 +191,7 @@ export class StatusManagementService {
     ): ComponentUndeploymentEntity[] {
 
         return moduleUndeployment.componentUndeployments.filter(
-            componentUndeployment => componentUndeployment.status === UndeploymentStatusEnum.FINISHED
+            componentUndeployment => componentUndeployment.status === UndeploymentStatusEnum.SUCCEEDED
         )
     }
 
@@ -213,7 +213,7 @@ export class StatusManagementService {
             this.getUndeploymentFinishedModules(undeployment)
 
         if (finishedModules.length === undeployment.moduleUndeployments.length) {
-            await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FINISHED)
+            await this.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.SUCCEEDED)
         }
     }
 
@@ -234,7 +234,7 @@ export class StatusManagementService {
     ): ModuleUndeploymentEntity[] {
 
         return undeployment.moduleUndeployments.filter(
-            moduleUndeployment => moduleUndeployment.status === UndeploymentStatusEnum.FINISHED
+            moduleUndeployment => moduleUndeployment.status === UndeploymentStatusEnum.SUCCEEDED
         )
     }
 
@@ -250,7 +250,7 @@ export class StatusManagementService {
     ): ModuleDeploymentEntity[] {
 
         return deployment.modules.filter(
-            moduleDeployment => moduleDeployment.status === DeploymentStatusEnum.FINISHED
+            moduleDeployment => moduleDeployment.status === DeploymentStatusEnum.SUCCEEDED
         )
     }
 
@@ -259,7 +259,7 @@ export class StatusManagementService {
     ): ComponentDeploymentEntity[] {
 
         return moduleDeployment.components.filter(
-            componentDeployment => componentDeployment.status === DeploymentStatusEnum.FINISHED
+            componentDeployment => componentDeployment.status === DeploymentStatusEnum.SUCCEEDED
         )
     }
 
@@ -293,7 +293,7 @@ export class StatusManagementService {
             this.getDeploymentFinishedModules(deployment)
 
         if (finishedModules.length === deployment.modules.length) {
-            await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.FINISHED)
+            await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.SUCCEEDED)
         }
     }
 
@@ -327,7 +327,7 @@ export class StatusManagementService {
             this.getModuleFinishedComponents(moduleDeployment)
 
         if (finishedComponents.length === moduleDeployment.components.length) {
-            await this.updateModuleDeploymentStatus(moduleDeploymentId, DeploymentStatusEnum.FINISHED)
+            await this.updateModuleDeploymentStatus(moduleDeploymentId, DeploymentStatusEnum.SUCCEEDED)
         }
     }
 
