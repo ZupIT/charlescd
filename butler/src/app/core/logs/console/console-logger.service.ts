@@ -25,7 +25,6 @@ export class ConsoleLoggerService {
         new winston.transports.Console(),
         new (winston.transports.File)({
           filename: 'log.log',
-
         }),
       ]
     })

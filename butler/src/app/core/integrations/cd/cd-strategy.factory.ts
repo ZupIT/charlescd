@@ -22,7 +22,7 @@ export class CdStrategyFactory {
             case CdTypeEnum.OCTOPIPE:
                 return this.octopipeService
             default:
-                this.consoleLoggerService.error('ERROR:INVALID CD TYPE VALUE')
+                this.consoleLoggerService.error('ERROR:INVALID_CD_TYPE_VALUE', type)
                 throw new Error('invalid cd type value')
 
         }

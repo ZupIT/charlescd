@@ -35,7 +35,7 @@ export class CreateUndeploymentRequestUsecase {
     const undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
 
     if (!undeployment.deployment.circle) {
-      this.consoleLoggerService.error('ERROR:Cannot perform undeployment without a circle')
+      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE')
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
 
@@ -47,9 +47,7 @@ export class CreateUndeploymentRequestUsecase {
       return undeployment.toReadDto()
     } catch (error) {
       this.consoleLoggerService.error('ERROR:CREATE_UNDEPLOYMENT', error)
-      this.consoleLoggerService.log('START:HANDLING UNDEPLOYMENT')
       this.pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
-      this.consoleLoggerService.log('FINISH:HANDLING UNDEPLOYMENT')
       throw error
     }
   }
@@ -66,7 +64,7 @@ export class CreateUndeploymentRequestUsecase {
     try {
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment, circleId))
     } catch (error) {
-      this.consoleLoggerService.error('ERROR:Could not save undeployment')
+      this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_UNDEPLOYMENT')
       throw new InternalServerErrorException('Could not save undeployment')
     }
   }
@@ -133,7 +131,7 @@ export class CreateUndeploymentRequestUsecase {
       )
     }
 
-    this.consoleLoggerService.error('ERROR: Could not save queued undeployment')
+    this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_QUEUED_DEPLOYMENT')
     throw new InternalServerErrorException('Could not save queued undeployment')
   }
 

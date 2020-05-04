@@ -63,6 +63,7 @@ export class PipelineErrorHandlerService {
     }
 
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
+        this.consoleLoggerService.log('START:HANDLING_UNDEPLOYMENT')
         if (undeployment && !undeployment.hasFailed()) {
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
@@ -71,6 +72,7 @@ export class PipelineErrorHandlerService {
             ).toPromise()
             this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
         }
+        this.consoleLoggerService.log('FINISH:HANDLING_UNDEPLOYMENT')
     }
 
     public async handleComponentUndeploymentFailure(
@@ -91,6 +93,7 @@ export class PipelineErrorHandlerService {
             component.removePipelineCircle(circle)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE')
             throw new InternalServerErrorException('Could not update component pipeline on component deployment failure')
         }
     }

@@ -182,13 +182,13 @@ export class PipelineDeploymentsService {
         if (!componentEntity.module.cdConfigurationId) {
             throw new NotFoundException(`Module does not have configuration id`)
         }
-        this.consoleLoggerService.log('START:CREATE CD CONFIGURATION')
+        this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
         const cdConfiguration =
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-        this.consoleLoggerService.log('FINISH:CREATE CD CONFIGURATION', cdService)
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_CONFIGURATION', cdService)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             undeploymentEntity.circleId, pipelineCallbackUrl
