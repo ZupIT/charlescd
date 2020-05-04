@@ -1,8 +1,8 @@
 import {
-    IOctopipeConfigurationData,
+    OctopipeConfigurationData,
     ISpinnakerConfigurationData
 } from './'
 
 export type ICdConfigurationData =
     ISpinnakerConfigurationData |
-    IOctopipeConfigurationData
+    OctopipeConfigurationData

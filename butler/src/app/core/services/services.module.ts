@@ -13,6 +13,10 @@ import {
     ComponentDeploymentsRepository,
     ComponentUndeploymentsRepository
 } from '../../api/deployments/repository'
+import { ModuleDeploymentsRepository } from '../../api/deployments/repository/module-deployments.repository';
+import { DeploymentsRepository } from '../../api/deployments/repository/deployments.repository';
+import { ModuleUndeploymentsRepository } from '../../api/deployments/repository/module-undeployments.repository';
+import { UndeploymentsRepository } from '../../api/deployments/repository/undeployments.repository';
 
 @Module({
     imports: [
@@ -20,11 +24,15 @@ import {
             ComponentDeploymentEntity,
             ComponentDeploymentsRepository,
             DeploymentEntity,
+            DeploymentsRepository,
             ModuleDeploymentEntity,
+            ModuleDeploymentsRepository,
             ComponentUndeploymentEntity,
             ComponentUndeploymentsRepository,
             ModuleUndeploymentEntity,
-            UndeploymentEntity
+            ModuleUndeploymentsRepository,
+            UndeploymentEntity,
+            UndeploymentsRepository
         ])
     ],
     providers: [

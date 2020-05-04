@@ -1,272 +1,133 @@
-import {
-  forwardRef,
-  HttpService,
-  Inject,
-  Injectable
-} from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { IPipelineOptions } from '../../../../api/components/interfaces'
-import {
-  ComponentDeploymentEntity,
-  ComponentUndeploymentEntity,
-  DeploymentEntity,
-  ModuleDeploymentEntity,
-  QueuedDeploymentEntity,
-  QueuedUndeploymentEntity
-} from '../../../../api/deployments/entity'
-import { QueuedPipelineTypesEnum } from '../../../../api/deployments/enums'
-import {
-  ComponentDeploymentsRepository,
-  ComponentUndeploymentsRepository,
-  QueuedDeploymentsRepository
-} from '../../../../api/deployments/repository'
-import { PipelineErrorHandlerService } from '../../../../api/deployments/services'
+import { Inject, Injectable } from '@nestjs/common'
+import { of, throwError, Observable } from 'rxjs'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
 import { AppConstants } from '../../../constants'
-import { IoCTokensConstants } from '../../../constants/ioc'
 import { ConsoleLoggerService } from '../../../logs/console'
-import { IDeploymentConfiguration } from '../../configuration/interfaces'
-import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
+import { ICdServiceStrategy, IConnectorConfiguration } from '../interfaces'
 import TotalPipeline from './connector'
-import {
-  ICreateSpinnakerApplication,
-  ISpinnakerPipelineConfiguration
-} from './interfaces'
-import {
-  ICdConfigurationData,
-  ISpinnakerConfigurationData
-} from '../../../../api/configurations/interfaces'
+import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
+import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
+import { SpinnakerApiService } from './spinnaker-api.service'
 
 @Injectable()
-export class SpinnakerService {
+export class SpinnakerService implements ICdServiceStrategy {
+
+  private readonly MAXIMUM_RETRY_ATTEMPTS = 5
+  private readonly MILLISECONDS_RETRY_DELAY = 1000
 
   constructor(
-    private readonly httpService: HttpService,
-    private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-    private readonly envConfiguration: IEnvConfiguration,
-    @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>,
-    @InjectRepository(QueuedDeploymentsRepository)
-    private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
-    @InjectRepository(ComponentUndeploymentsRepository)
-    private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
-    @InjectRepository(ComponentDeploymentsRepository)
-    private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @Inject(forwardRef(() => PipelineErrorHandlerService))
-    private readonly pipelineErrorHandlingService: PipelineErrorHandlerService
-  ) {}
+    private readonly spinnakerApiService: SpinnakerApiService,
+    private readonly consoleLoggerService: ConsoleLoggerService
+  ) { }
 
-  public async createDeployment(
-    pipelineCirclesOptions: IPipelineOptions,
-    configurationData: ICdConfigurationData,
-    componentDeploymentId: string,
-    deploymentId: string,
-    circleId: string,
-    pipelineCallbackUrl: string,
-    queueId: number
-  ): Promise<void> {
+  public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
 
-    this.consoleLoggerService.log(
-      'START:CREATE_SPINNAKER_PIPELINE',
-      { pipelineCirclesOptions, configurationData, componentDeploymentId, deploymentId }
-    )
-
-    const componentDeploymentEntity: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
-    const deploymentConfiguration: IDeploymentConfiguration =
-        this.getConfigurationObject(configurationData as ISpinnakerConfigurationData, componentDeploymentEntity)
-
-    const spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration =
-      this.createPipelineConfigurationObject(
-        pipelineCirclesOptions, deploymentConfiguration, circleId, pipelineCallbackUrl, componentDeploymentEntity.moduleDeployment
-      )
-
-    await this.processSpinnakerApplication(deploymentConfiguration)
-    await this.processSpinnakerPipeline(spinnakerPipelineConfiguration, deploymentConfiguration)
-
-    this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE', spinnakerPipelineConfiguration)
-
-    this.deploySpinnakerPipeline(
-        spinnakerPipelineConfiguration.pipelineName,
-        spinnakerPipelineConfiguration.applicationName,
-        deploymentId,
-        queueId
-    )
+    this.consoleLoggerService.log('START:PROCESS_SPINNAKER_DEPLOYMENT', configuration)
+    const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
+    await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    await this.createSpinnakerPipeline(spinnakerConfiguration)
+    await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    this.consoleLoggerService.log('FINISH:PROCESS_SPINNAKER_DEPLOYMENT', spinnakerConfiguration)
   }
 
-  public async deploySpinnakerPipeline(
-      pipelineName: string,
-      application: string,
-      deploymentId: string,
-      queueId: number
-  ): Promise<void> {
+  private getSpinnakerConfiguration(configuration: IConnectorConfiguration): ISpinnakerPipelineConfiguration {
+    const cdConfiguration = configuration.cdConfiguration as ISpinnakerConfigurationData
+    return {
+      account: cdConfiguration.account,
+      appNamespace: cdConfiguration.namespace,
+      pipelineName: configuration.componentId,
+      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${configuration.applicationName}`,
+      appName: configuration.componentName,
+      webhookUri: configuration.pipelineCallbackUrl,
+      versions: configuration.pipelineCirclesOptions.pipelineVersions,
+      unusedVersions: configuration.pipelineCirclesOptions.pipelineUnusedVersions,
+      circles: configuration.pipelineCirclesOptions.pipelineCircles,
+      githubAccount: cdConfiguration.gitAccount,
+      helmRepository: configuration.helmRepository,
+      circleId: configuration.callbackCircleId,
+      url: cdConfiguration.url
+    }
+  }
 
-    try {
-      await this.waitForPipelineCreation()
-      this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${application} `)
-      await this.httpService.post(
-          `${this.envConfiguration.spinnakerUrl}/pipelines/${application}/${pipelineName}`,
-          {},
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
+  private async deploySpinnakerPipeline(pipelineName: string, applicationName: string, url: string): Promise<void> {
+
+    this.consoleLoggerService.log(`START:DEPLOY_SPINNAKER_PIPELINE ${pipelineName} - APPLICATION ${applicationName} `)
+    await this.spinnakerApiService.deployPipeline(applicationName, pipelineName, url)
+      .pipe(
+        map(response => response),
+        retryWhen(error => this.getDeployRetryCondition(error))
       ).toPromise()
-      this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
-    } catch (error) {
-      await this.handleDeploymentFailure(deploymentId, queueId)
-    }
+    this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
-  private getConfigurationObject(
-      cdConfigurationData: ISpinnakerConfigurationData,
-      componentDeploymentEntity: ComponentDeploymentEntity
-  ): IDeploymentConfiguration {
+  private getDeployRetryCondition(deployError: Observable<any>) {
 
-    return {
-      account: cdConfigurationData.account,
-      appNamespace: cdConfigurationData.namespace,
-      pipelineName: componentDeploymentEntity.componentId,
-      applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${componentDeploymentEntity.moduleDeployment.deployment.applicationName}`,
-      appName: componentDeploymentEntity.componentName,
-      healthCheckPath: componentDeploymentEntity.healthCheck,
-      uri: {
-        uriName: componentDeploymentEntity.contextPath
-      },
-      appPort: componentDeploymentEntity.port
-    }
+    return deployError.pipe(
+      concatMap((error, attempts) => {
+        return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+          throwError('Reached maximum attemps.') :
+          this.getDeployRetryPipe(error, attempts)
+      })
+    )
   }
 
-  private createPipelineConfigurationObject(
-    pipelineCirclesOptions: IPipelineOptions,
-    deploymentConfiguration: IDeploymentConfiguration,
-    circleId: string,
-    pipelineCallbackUrl: string,
-    moduleDeployment: ModuleDeploymentEntity
-  ): ISpinnakerPipelineConfiguration {
+  private getDeployRetryPipe(error: any, attempts: number) {
 
-    return {
-      ...deploymentConfiguration,
-      webhookUri: pipelineCallbackUrl,
-      versions: pipelineCirclesOptions.pipelineVersions,
-      unusedVersions: pipelineCirclesOptions.pipelineUnusedVersions,
-      circles: pipelineCirclesOptions.pipelineCircles,
-      githubAccount: this.envConfiguration.spinnakerGithubAccount,
-      helmRepository: moduleDeployment.helmRepository,
-      circleId
-    }
+    return of(error).pipe(
+      tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+      delay(this.MILLISECONDS_RETRY_DELAY)
+    )
   }
 
-  private async getSpinnakerPipeline(
-    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
-  ) {
+  private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration): Promise<void> {
+    this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
+    const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
+    const { data: { id: pipelineId } } =
+      await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
+        spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
 
-    const spinnakerBuilder = new TotalPipeline(spinnakerPipelineConfiguration)
+    pipelineId ?
+      await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
+      await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerConfiguration.url).toPromise()
 
-    return spinnakerBuilder.buildPipeline()
+    this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE')
   }
 
-  public async waitForPipelineCreation(): Promise<void> {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve()
-      }, 30000)
-    })
-  }
+  private async updateSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineId: string): Promise<void> {
 
-  private async createSpinnakerPipeline(
-    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration
-  ): Promise<void> {
-
-    try {
-      const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguration)
-      await this.httpService.post(
-        `${this.envConfiguration.spinnakerUrl}/pipelines`,
-        pipeline,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      ).toPromise()
-    } catch (error) {
-      throw error
-    }
-  }
-
-  private createUpdatePipelineObject(
-    pipelineId: string, spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration, pipeline
-  ) {
-    return {
-      ...pipeline,
-      id: pipelineId,
-      application: spinnakerPipelineConfiguration.applicationName,
-      name: spinnakerPipelineConfiguration.pipelineName
-    }
-  }
-
-  private async updateSpinnakerPipeline(
-    spinnakerPipelineConfiguraton: ISpinnakerPipelineConfiguration, pipelineId: string
-  ): Promise<void> {
-
-    this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE')
-
-    const pipeline = await this.getSpinnakerPipeline(spinnakerPipelineConfiguraton)
-    const updatePipelineObject =
-      this.createUpdatePipelineObject(pipelineId, spinnakerPipelineConfiguraton, pipeline)
-
-    await this.httpService.post(
-      `${this.envConfiguration.spinnakerUrl}/pipelines`,
-      updatePipelineObject,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).toPromise()
-
+    this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE', { pipelineId })
+    const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
+    const updatedSpinnakerPipeline = this.createUpdatePipelineObject(pipelineId, spinnakerConfiguration, spinnakerPipeline)
+    await this.spinnakerApiService.updatePipeline(updatedSpinnakerPipeline, spinnakerConfiguration.url).toPromise()
     this.consoleLoggerService.log('FINISH:UPDATE_SPINNAKER_PIPELINE')
   }
 
-  private async handleDeploymentFailure(deploymentId: string, queueId: number): Promise<void> {
-    this.consoleLoggerService.error(`ERROR:DEPLOY_SPINNAKER_PIPELINE ${deploymentId} ${queueId}`)
-    const queuedDeployment: QueuedDeploymentEntity = await this.queuedDeploymentsRepository.findOne({ id: queueId })
+  private createUpdatePipelineObject(
+    pipelineId: string,
+    spinnakerConfiguration: ISpinnakerPipelineConfiguration,
+    spinnakerPipeline: IBaseSpinnakerPipeline
+  ): IUpdateSpinnakerPipeline {
 
-    if (queuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity) {
-      await this.handleQueuedDeploymentFailure(queuedDeployment, deploymentId)
-    } else {
-      await this.handleQueuedUndeploymentFailure(queuedDeployment as QueuedUndeploymentEntity)
+    return {
+      ...spinnakerPipeline,
+      id: pipelineId,
+      application: spinnakerConfiguration.applicationName,
+      name: spinnakerConfiguration.pipelineName
     }
   }
 
-  private async handleQueuedDeploymentFailure(queuedDeployment: QueuedDeploymentEntity, deploymentId: string): Promise<void> {
-    const deployment: DeploymentEntity = await this.deploymentsRepository.findOne({ id: deploymentId })
-    const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.findOne({ id: queuedDeployment.componentDeploymentId })
+  private async createSpinnakerApplication(applicationName: string, url: string): Promise<void> {
 
-    await this.pipelineErrorHandlingService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
-    await this.pipelineErrorHandlingService.handleDeploymentFailure(deployment)
-  }
-
-  private async handleQueuedUndeploymentFailure(queuedUndeployment: QueuedUndeploymentEntity): Promise<void> {
-    const componentUndeployment: ComponentUndeploymentEntity =
-        await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
-    const componentDeployment: ComponentDeploymentEntity =
-        await this.componentDeploymentsRepository.getOneWithRelations(queuedUndeployment.componentDeploymentId)
-    const { moduleUndeployment: { undeployment } } = componentUndeployment
-
-    await this.pipelineErrorHandlingService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
-    await this.pipelineErrorHandlingService.handleUndeploymentFailure(undeployment)
-  }
-
-  private async checkPipelineExistence(pipelineName: string, applicationName: string): Promise<string> {
-    const { data: { id } } = await this.httpService.get(
-      `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}/pipelineConfigs/${pipelineName}`
-    ).toPromise()
-    return id
+    try {
+      this.consoleLoggerService.log('START:GET_SPINNAKER_APPLICATION', { applicationName })
+      await this.spinnakerApiService.getApplication(applicationName, url).toPromise()
+    } catch (error) {
+      this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION')
+      const spinnakerApplication: ICreateSpinnakerApplication = this.getCreateSpinnakerApplicationObject(applicationName)
+      await this.spinnakerApiService.createApplication(spinnakerApplication, url).toPromise()
+      this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_APPLICATION')
+    }
   }
 
   private getCreateSpinnakerApplicationObject(applicationName: string): ICreateSpinnakerApplication {
@@ -281,59 +142,6 @@ export class SpinnakerService {
         }
       }],
       application: applicationName
-    }
-  }
-
-  private async createSpinnakerApplication(applicationName: string): Promise<void> {
-    const createApplicationObject: ICreateSpinnakerApplication =
-      this.getCreateSpinnakerApplicationObject(applicationName)
-    this.consoleLoggerService.log('START:CREATE_SPINNAKER_APPLICATION', { createApplicationObject })
-
-    await this.httpService.post(
-      `${this.envConfiguration.spinnakerUrl}/tasks`,
-      createApplicationObject,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).toPromise()
-    this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_APPLICATION')
-  }
-
-  private async checkSpinnakerApplicationExistence(applicationName: string): Promise<void> {
-    await this.httpService.get(
-      `${this.envConfiguration.spinnakerUrl}/applications/${applicationName}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    ).toPromise()
-  }
-
-  private async processSpinnakerPipeline(
-    spinnakerPipelineConfiguration: ISpinnakerPipelineConfiguration,
-    deploymentConfiguration: IDeploymentConfiguration
-  ): Promise<void> {
-
-    const pipelineId: string = await this.checkPipelineExistence(
-      spinnakerPipelineConfiguration.pipelineName, deploymentConfiguration.applicationName
-    )
-
-    pipelineId ?
-      await this.updateSpinnakerPipeline(spinnakerPipelineConfiguration, pipelineId) :
-      await this.createSpinnakerPipeline(spinnakerPipelineConfiguration)
-  }
-
-  private async processSpinnakerApplication(
-    deploymentConfiguration: IDeploymentConfiguration
-  ): Promise<void> {
-
-    try {
-      await this.checkSpinnakerApplicationExistence(deploymentConfiguration.applicationName)
-    } catch (error) {
-      await this.createSpinnakerApplication(deploymentConfiguration.applicationName)
     }
   }
 }

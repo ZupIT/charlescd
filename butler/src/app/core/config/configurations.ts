@@ -1,5 +1,5 @@
-import { ConfigurationConstants } from '../core/constants/application/configuration.constants'
-import IEnvConfiguration from '../core/integrations/configuration/interfaces/env-configuration.interface'
+import { ConfigurationConstants } from '../constants/application/configuration.constants'
+import IEnvConfiguration from '../integrations/configuration/interfaces/env-configuration.interface'
 
 export const Configuration: IEnvConfiguration = {
 
