@@ -10,7 +10,7 @@ import {
 import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { DeploymentStatusEnum } from '../enums'
-import * as uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 
 @Entity('component_deployments')
 export class ComponentDeploymentEntity extends BaseEntity {
@@ -23,7 +23,7 @@ export class ComponentDeploymentEntity extends BaseEntity {
     moduleDeployment => moduleDeployment.components
   )
   @JoinColumn({ name: 'module_deployment_id' })
-  public moduleDeployment: ModuleDeploymentEntity
+  public moduleDeployment!: ModuleDeploymentEntity
 
   @Column({ name: 'component_id' })
   public componentId: string
@@ -37,29 +37,20 @@ export class ComponentDeploymentEntity extends BaseEntity {
   @Column({ name: 'build_image_tag' })
   public buildImageTag: string
 
-  @Column({ name: 'context_path' })
-  public contextPath: string
-
-  @Column({ name: 'health_check' })
-  public healthCheck: string
-
-  @Column({ name: 'port' })
-  public port: number
-
   @Column({ name: 'status' })
   public status: DeploymentStatusEnum
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
+
+  @Column({ name: 'finished_at'})
+  public finishedAt!: Date
 
   constructor(
     componentId: string,
     componentName: string,
     buildImageUrl: string,
-    buildImageTag: string,
-    contextPath: string,
-    healthCheck: string,
-    port: number
+    buildImageTag: string
   ) {
     super()
     this.id = uuidv4()
@@ -67,9 +58,6 @@ export class ComponentDeploymentEntity extends BaseEntity {
     this.componentName = componentName
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
-    this.contextPath = contextPath
-    this.healthCheck = healthCheck
-    this.port = port
     this.status = DeploymentStatusEnum.CREATED
   }
 
@@ -80,9 +68,6 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.componentName,
       this.buildImageUrl,
       this.buildImageTag,
-      this.contextPath,
-      this.healthCheck,
-      this.port,
       this.status,
       this.createdAt
     )

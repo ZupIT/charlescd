@@ -22,7 +22,7 @@ export class ModulesService {
   }
 
   public async getModuleById(id: string): Promise<ReadModuleDto> {
-    return this.modulesRepository.findOne({ id })
+    return this.modulesRepository.findOneOrFail({ id })
       .then(deployment => deployment.toReadDto())
   }
 }

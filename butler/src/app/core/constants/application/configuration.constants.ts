@@ -16,6 +16,14 @@ export const ConfigurationConstants = {
 
   DARWIN_NOTIFICATION_URL: 'http://localhost:8883/deploy/notifications',
 
+  MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS:  3,
+
+  MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY: 1000,
+
+  SPINNAKER_CONNECTION_MAXIMUM_RETRY_ATTEMPTS : 5,
+
+  SPINNAKER_CONNECTION_MILLISECONDS_RETRY_DELAY: 1000,
+
   DARWIN_UNDEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/undeployment',
 
   DARWIN_DEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/deployment',

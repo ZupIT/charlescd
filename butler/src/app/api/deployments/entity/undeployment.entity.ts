@@ -11,11 +11,12 @@ import {
 import { DeploymentEntity } from './deployment.entity'
 import { UndeploymentStatusEnum } from '../enums'
 import { ReadUndeploymentDto } from '../dto'
-import * as uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import { ModuleUndeploymentEntity } from './module-undeployment.entity'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { ComponentUndeploymentEntity } from './component-undeployment.entity'
 import { ComponentDeploymentEntity } from './component-deployment.entity'
+import { NotFoundException } from '@nestjs/common'
 
 @Entity('undeployments')
 export class UndeploymentEntity extends BaseEntity {
@@ -26,8 +27,8 @@ export class UndeploymentEntity extends BaseEntity {
   @Column({ name: 'user_id' })
   public authorId: string
 
-  @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  @CreateDateColumn({ name: 'created_at' })
+  public createdAt!: Date
 
   @OneToOne(type => DeploymentEntity)
   @JoinColumn({ name: 'deployment_id' })
@@ -40,11 +41,14 @@ export class UndeploymentEntity extends BaseEntity {
   )
   public moduleUndeployments: ModuleUndeploymentEntity[]
 
-  @Column({ name: 'status'} )
+  @Column({ name: 'status' })
   public status: UndeploymentStatusEnum
 
-  @Column({name: 'circle_id', nullable: false})
+  @Column({ name: 'circle_id', nullable: false })
   public circleId: string
+
+  @Column({ name: 'finished_at'})
+  public finishedAt!: Date
 
   constructor(
     authorId: string,
@@ -56,7 +60,7 @@ export class UndeploymentEntity extends BaseEntity {
     this.authorId = authorId
     this.deployment = deployment
     this.status = UndeploymentStatusEnum.CREATED
-    this.moduleUndeployments = deployment ? this.createModuleUndeploymentsArray(deployment) : null
+    this.moduleUndeployments = this.createModuleUndeploymentsArray(deployment)
     this.circleId = circleId
   }
 
@@ -72,8 +76,8 @@ export class UndeploymentEntity extends BaseEntity {
     )
   }
 
-  public hasFinished(): boolean {
-    return this.status === UndeploymentStatusEnum.FINISHED
+  public hasSucceedeed(): boolean {
+    return this.status === UndeploymentStatusEnum.SUCCEEDED
   }
 
   public hasFailed(): boolean {
@@ -82,12 +86,15 @@ export class UndeploymentEntity extends BaseEntity {
 
   public getComponentUndeployments(): ComponentUndeploymentEntity[] {
     return this.moduleUndeployments.reduce(
-        (accumulated, moduleUndeployment) => [...accumulated, ...moduleUndeployment.componentUndeployments], []
+      (accumulated, moduleUndeployment) => {
+        if (!moduleUndeployment.componentUndeployments) { return accumulated }
+        return [...accumulated, ...moduleUndeployment.componentUndeployments]
+      }, [] as ComponentUndeploymentEntity[]
     )
   }
 
   private createModuleUndeploymentsArray(deployment: DeploymentEntity): ModuleUndeploymentEntity[] {
-    return deployment.modules.map(
+    return deployment?.modules.map(
       moduleDeployment => this.createModuleUndeployment(moduleDeployment)
     )
   }
