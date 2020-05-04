@@ -35,7 +35,9 @@ export class CreateUndeploymentRequestUsecase {
     const undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
 
     if (!undeployment.deployment.circle) {
-      throw new BadRequestException('Cannot perform undeployment without a circle')
+      const error =  new BadRequestException('Cannot perform undeployment without a circle')
+      this.consoleLoggerService.error('ERROR:Cannot perform undeployment without a circle')
+      throw error
     }
 
     const deploymentCircle: CircleDeploymentEntity = undeployment.deployment.circle
@@ -43,11 +45,12 @@ export class CreateUndeploymentRequestUsecase {
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
       await this.scheduleComponentUndeployments(undeployment, deploymentCircle)
       this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT', undeployment)
-      throw Error()
       return undeployment.toReadDto()
     } catch (error) {
       this.consoleLoggerService.error('ERROR:CREATE_UNDEPLOYMENT', error)
+      this.consoleLoggerService.log('START:HANDLING UNDEPLOYMENT')
       this.pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
+      this.consoleLoggerService.log('FINISH:HANDLING UNDEPLOYMENT')
       throw error
     }
   }
@@ -82,7 +85,6 @@ export class CreateUndeploymentRequestUsecase {
     componentUndeployment: ComponentUndeploymentEntity,
     circle: CircleDeploymentEntity
   ): Promise<void> {
-
     const queuedUndeployment: QueuedUndeploymentEntity =
       await this.saveQueuedUndeployment(componentUndeployment.componentDeployment, componentUndeployment)
 
@@ -129,7 +131,7 @@ export class CreateUndeploymentRequestUsecase {
         )
       )
     }
-
+    this.consoleLoggerService.error('ERROR: Could not save queued undeployment')
     throw new InternalServerErrorException('Could not save queued undeployment')
   }
 

@@ -63,13 +63,13 @@ export class PipelineErrorHandlerService {
     }
 
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
-
         if (undeployment && !undeployment.hasFailed()) {
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
             ).toPromise()
+            this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
         }
     }
 

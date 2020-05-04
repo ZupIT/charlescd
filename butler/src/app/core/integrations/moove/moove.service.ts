@@ -34,7 +34,6 @@ export class MooveService {
         map(response => response),
         retryWhen(error => this.getNotificationRetryCondition(error))
       )
-      this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
       throw error
