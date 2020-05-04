@@ -39,13 +39,14 @@ export class PipelineErrorHandlerService {
     ) { }
 
     public async handleDeploymentFailure(deployment: DeploymentEntity | undefined): Promise<void> {
-
+        this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_FAILURE')
         if (deployment && !deployment.hasFailed()) {
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
-            ).toPromise()
+            )
         }
+        this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_FAILURE')
     }
 
     public async handleComponentDeploymentFailure(
@@ -53,13 +54,14 @@ export class PipelineErrorHandlerService {
         queuedDeployment: QueuedDeploymentEntity,
         circle?: CircleDeploymentEntity
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:HANDLE_COMPONENT_DEPLOYMENT_FAILURE')
         const component: ComponentEntity = await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId })
         if (circle) {
             await this.removeComponentPipelineCircle(component, circle)
         }
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+        this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_DEPLOYMENT_FAILURE')
     }
 
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
@@ -69,8 +71,7 @@ export class PipelineErrorHandlerService {
             await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
-            ).toPromise()
-            this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
+            )
         }
         this.consoleLoggerService.log('FINISH:HANDLING_UNDEPLOYMENT')
     }

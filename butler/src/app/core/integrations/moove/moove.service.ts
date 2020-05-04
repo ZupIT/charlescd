@@ -17,23 +17,24 @@ export class MooveService {
     private readonly envConfiguration: IEnvConfiguration
   ) { }
 
-  public notifyDeploymentStatus(
+  public async notifyDeploymentStatus(
     deploymentId: string,
     status: string,
     callbackUrl: string,
     circleId: string
-  ): Observable<AxiosResponse> {
+  ): Promise<void> {
 
     try {
       this.consoleLoggerService.log('START:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
-      return this.httpService.post(
+      await this.httpService.post(
         callbackUrl,
         { deploymentStatus: status },
         { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
       ).pipe(
         map(response => response),
         retryWhen(error => this.getNotificationRetryCondition(error))
-      )
+      ).toPromise()
+      this.consoleLoggerService.log('START:FINISH_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
       throw error

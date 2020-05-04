@@ -70,6 +70,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     const { moduleDeployment: { deployment } } = componentDeployment
     if (!deployment.circle) {
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_WITHOUT_CIRCLE')
       throw new NotFoundException(`Deployment dont have a circle`)
     }
 
@@ -90,7 +91,7 @@ export class ReceiveDeploymentCallbackUsecase {
     if (deployment.hasSucceeded()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
-      ).toPromise()
+      )
     }
   }
 
