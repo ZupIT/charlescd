@@ -185,6 +185,7 @@ export class PipelineDeploymentsService {
         this.consoleLoggerService.log('START:CREATE CD CONFIGURATION')
         const cdConfiguration =
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
+
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
         this.consoleLoggerService.log('FINISH:CREATE CD CONFIGURATION', cdService)

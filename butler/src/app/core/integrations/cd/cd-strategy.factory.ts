@@ -3,7 +3,7 @@ import { CdTypeEnum } from '../../../api/configurations/enums'
 import { SpinnakerService } from './spinnaker'
 import { OctopipeService } from './octopipe'
 import { ICdServiceStrategy } from './interfaces'
-import { ConsoleLoggerService } from '../../logs/console';
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class CdStrategyFactory {
@@ -22,8 +22,8 @@ export class CdStrategyFactory {
             case CdTypeEnum.OCTOPIPE:
                 return this.octopipeService
             default:
+                this.consoleLoggerService.error('ERROR:INVALID CD TYPE VALUE')
                 const error = new Error('invalid cd type value')
-                this.consoleLoggerService.error('ERROR:INVALID CD TYPE VALUE', error)
                 throw error
 
         }

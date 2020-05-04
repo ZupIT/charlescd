@@ -79,7 +79,6 @@ export class PipelineQueuesService {
     if (!deployment.circle) {
       this.consoleLoggerService.error('Cannot perform undeployment without a circle')
       throw new BadRequestException('Cannot perform undeployment without a circle')
-
     }
     await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)
   }
