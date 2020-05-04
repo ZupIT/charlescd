@@ -9,17 +9,16 @@ export class ConsoleLoggerService {
 
   private logger: winston.Logger
 
-
   constructor() {
     this.logger = ConsoleLoggerService.createLogger()
   }
 
   private static createLogger(): winston.Logger {
-    const trace = stackTrace.get()[1]
+
      return winston.createLogger({
       format: winston.format.combine(
       winston.format.timestamp(),
-      this.jsonFormat(trace),
+      this.jsonFormat(),
     ),
       transports: [
         new winston.transports.Console()
@@ -27,15 +26,14 @@ export class ConsoleLoggerService {
     })
   }
 
-  private static jsonFormat(trace: any) {
+  private static jsonFormat() {
     return winston.format.printf(({timestamp, level, message, ...data}) => {
       return JSON.stringify({
         requestId: rTracer.id(),
         timestamp: timestamp,
         level: level,
         message: message,
-        data,
-         ...this.TraceLogger(trace)
+        ...data,
       })
     })
   }
@@ -53,10 +51,8 @@ export class ConsoleLoggerService {
   ): void {
     this.logger.log('error', error, { error: errorObject })
   }
-   private static TraceLogger(trace: StackFrame) {
-    return {
-      fileName: trace.getFileName(),
-      functionName: trace.getFunctionName(),
-    }
+
+  public getDataTrace(data: any) {
+    return { data, functionName: stackTrace.get()[1].getFunctionName(), fileName: stackTrace.get()[1].getFileName() }
   }
 }
