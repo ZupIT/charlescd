@@ -11,6 +11,7 @@ import { AppConstants } from './app/core/constants'
 import { registerSchema } from 'class-validator'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
+import * as rTracer from 'cls-rtracer'
 import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
@@ -38,6 +39,7 @@ async function bootstrap() {
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
+  app.use(rTracer.expressMiddleware())
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

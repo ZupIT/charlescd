@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^6.11.11",
     "@nestjs/typeorm": "^6.3.4",
     "@octokit/rest": "^16.43.1",
+    "@types/stack-trace": "0.0.29",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
     "cls-hooked": "^4.2.2",
