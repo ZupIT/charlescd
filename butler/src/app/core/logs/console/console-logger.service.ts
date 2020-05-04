@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import * as winston from 'winston'
-import { TraceLogger } from './trace-logger'
-import * as stackTrace from 'stack-trace'
 import * as rTracer from 'cls-rtracer'
+import * as stackTrace from 'stack-trace'
+import { StackFrame } from 'stack-trace'
 
 @Injectable()
 export class ConsoleLoggerService {
 
   private logger: winston.Logger
+
 
   constructor() {
     this.logger = ConsoleLoggerService.createLogger()
@@ -15,11 +16,10 @@ export class ConsoleLoggerService {
 
   private static createLogger(): winston.Logger {
     const trace = stackTrace.get()[1]
-    const rid = rTracer.id()
-    return winston.createLogger({
+     return winston.createLogger({
       format: winston.format.combine(
       winston.format.timestamp(),
-      this.jsonFormat(trace, rid),
+      this.jsonFormat(trace),
     ),
       transports: [
         new winston.transports.Console(),
@@ -31,15 +31,16 @@ export class ConsoleLoggerService {
     })
   }
 
-  private static jsonFormat(trace: any, rid: any) {
-    return winston.format.printf(({timestamp, level, message, ...meta}) => {
+  private static jsonFormat(trace: any) {
+    return winston.format.printf(({timestamp, level, message, ...data}) => {
+      console.log(JSON.stringify(data))
       return JSON.stringify({
         requestId: rTracer.id(),
         timestamp: timestamp,
         level: level,
         message: message,
-        meta,
-         ...TraceLogger(trace)
+        data,
+         ...this.TraceLogger(trace)
       })
     })
   }
@@ -48,7 +49,6 @@ export class ConsoleLoggerService {
     message: string,
     messageObject?: any
   ): void {
-
     this.logger.log('info', message, messageObject)
   }
 
@@ -56,7 +56,12 @@ export class ConsoleLoggerService {
     error: string,
     errorObject?: Error
   ): void {
-
     this.logger.log('error', error, { error: errorObject })
+  }
+   private static TraceLogger(trace: StackFrame) {
+    return {
+      fileName: trace.getFileName(),
+      functionName: trace.getFunctionName(),
+    }
   }
 }

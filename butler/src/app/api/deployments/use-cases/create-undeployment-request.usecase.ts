@@ -43,9 +43,10 @@ export class CreateUndeploymentRequestUsecase {
       this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
       await this.scheduleComponentUndeployments(undeployment, deploymentCircle)
       this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT', undeployment)
+      throw Error()
       return undeployment.toReadDto()
     } catch (error) {
-      this.consoleLoggerService.log('ERROR:CREATE_UNDEPLOYMENT', error)
+      this.consoleLoggerService.error('ERROR:CREATE_UNDEPLOYMENT', error)
       this.pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
       throw error
     }
