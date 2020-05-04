@@ -10,6 +10,7 @@
 * [Configuração de dependências](usando-o-charles/configuracao-de-dependencias/README.md)
   * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
   * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
+  * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
   * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
   * [Módulos](usando-o-charles/configuracao-de-dependencias/modulos.md)
 
