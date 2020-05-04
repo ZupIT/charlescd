@@ -89,7 +89,7 @@ export class PipelineQueuesService {
         { id: queuedDeployment.id }, { status }
       )
     } catch (error) {
-      this.consoleLoggerService.error('ERROR:COULD_UPDATE_QUEUED_DEPLOYMENT_STATUS')
+      this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_QUEUED_DEPLOYMENT_STATUS')
       throw new InternalServerErrorException('Could not update queued deployment status')
     }
   }
