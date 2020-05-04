@@ -134,7 +134,7 @@ export class PipelineDeploymentsService {
             component.unsetPipelineCircle(circle)
             await this.componentsRepository.save(component)
         } catch (error) {
-            this.consoleLoggerService.error('ERROR: Could not update component pipeline', error)
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
