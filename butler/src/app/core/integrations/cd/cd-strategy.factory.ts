@@ -23,8 +23,7 @@ export class CdStrategyFactory {
                 return this.octopipeService
             default:
                 this.consoleLoggerService.error('ERROR:INVALID CD TYPE VALUE')
-                const error = new Error('invalid cd type value')
-                throw error
+                throw new Error('invalid cd type value')
 
         }
     }
