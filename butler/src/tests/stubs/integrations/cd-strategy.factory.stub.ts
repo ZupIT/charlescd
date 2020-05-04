@@ -1,6 +1,6 @@
 import { CdTypeEnum } from '../../../app/api/configurations/enums'
 import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
-import { OctopipeService } from '../../../app/core/integrations/octopipe'
+import { OctopipeService } from '../../../app/core/integrations/cd/octopipe'
 
 const serviceStub = {
     createDeployment: () => Promise.resolve(undefined)
