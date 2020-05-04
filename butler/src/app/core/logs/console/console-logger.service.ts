@@ -22,10 +22,7 @@ export class ConsoleLoggerService {
       this.jsonFormat(trace),
     ),
       transports: [
-        new winston.transports.Console(),
-        new (winston.transports.File)({
-          filename: 'log.log',
-        }),
+        new winston.transports.Console()
       ]
     })
   }
