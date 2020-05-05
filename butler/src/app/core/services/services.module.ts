@@ -17,6 +17,7 @@ import { ModuleDeploymentsRepository } from '../../api/deployments/repository/mo
 import { DeploymentsRepository } from '../../api/deployments/repository/deployments.repository';
 import { ModuleUndeploymentsRepository } from '../../api/deployments/repository/module-undeployments.repository';
 import { UndeploymentsRepository } from '../../api/deployments/repository/undeployments.repository';
+import { LogsModule } from '../logs/logs.module'
 
 @Module({
     imports: [
@@ -33,7 +34,7 @@ import { UndeploymentsRepository } from '../../api/deployments/repository/undepl
             ModuleUndeploymentsRepository,
             UndeploymentEntity,
             UndeploymentsRepository
-        ])
+        ]), LogsModule
     ],
     providers: [
         StatusManagementService
