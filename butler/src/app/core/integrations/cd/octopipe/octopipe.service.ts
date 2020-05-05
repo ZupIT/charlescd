@@ -13,6 +13,7 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
+import {config} from 'rxjs';
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -46,7 +47,7 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
-    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT')
+    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,

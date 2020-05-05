@@ -28,6 +28,7 @@ export class CreateModuleUsecase {
             this.consoleLoggerService.log('FINISH:CREATE_MODULE')
             return moduleEntity.toReadDto()
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:CREATE_MODULE', error)
             throw error
         }
     }

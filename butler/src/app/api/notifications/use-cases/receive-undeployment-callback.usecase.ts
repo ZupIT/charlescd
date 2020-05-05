@@ -88,6 +88,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     const componentUndeployment: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
     if (!componentUndeployment) {
+      this.consoleLoggerService.error('ERROR:COMPONENT_UNDEPLOYMENT_NOT_FOUND', new Error(`${componentUndeploymentId}`))
       throw new NotFoundException(`ComponentUndeploymentEntity not found - id: ${componentUndeploymentId}`)
     }
     const { moduleUndeployment: { undeployment } } = componentUndeployment
