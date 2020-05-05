@@ -77,7 +77,7 @@ export class PipelineQueuesService {
     const { moduleDeployment: { deployment } } = componentDeployment
     const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id} })
     if (!deployment.circle) {
-      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE')
+      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', new Error(`${deployment}`))
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
     await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)
@@ -89,7 +89,7 @@ export class PipelineQueuesService {
         { id: queuedDeployment.id }, { status }
       )
     } catch (error) {
-      this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_QUEUED_DEPLOYMENT_STATUS')
+      this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_QUEUED_DEPLOYMENT_STATUS', error)
       throw new InternalServerErrorException('Could not update queued deployment status')
     }
   }

@@ -39,14 +39,14 @@ export class PipelineErrorHandlerService {
     ) { }
 
     public async handleDeploymentFailure(deployment: DeploymentEntity | undefined): Promise<void> {
-        this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_FAILURE')
         if (deployment && !deployment.hasFailed()) {
+            this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_FAILURE')
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
             )
+            this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_FAILURE')
         }
-        this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_FAILURE')
     }
 
     public async handleComponentDeploymentFailure(
@@ -80,9 +80,10 @@ export class PipelineErrorHandlerService {
         componentDeployment: ComponentDeploymentEntity,
         queuedDeployment: QueuedDeploymentEntity
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE')
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
+        this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE')
     }
 
     private async removeComponentPipelineCircle(

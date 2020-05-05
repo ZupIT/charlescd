@@ -28,11 +28,13 @@ export class CreateCdConfigurationUsecase {
     ): Promise<ReadCdConfigurationDto> {
 
         try {
-            this.consoleLoggerService.log('START:CREATE_CONFIGURATION', this.consoleLoggerService.getDataTrace(createCdConfigurationDto))
+            this.consoleLoggerService.log('START:CREATE_CONFIGURATION', createCdConfigurationDto)
             const cdConfiguration: CdConfigurationEntity =
                 await this.cdConfigurationsRepository.saveEncrypted(createCdConfigurationDto.toEntity(applicationId))
+            this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration.toReadDto())
             return cdConfiguration.toReadDto()
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:INTERNAL_SERVER_ERROR: ', error)
             throw new InternalServerErrorException(error)
         }
     }

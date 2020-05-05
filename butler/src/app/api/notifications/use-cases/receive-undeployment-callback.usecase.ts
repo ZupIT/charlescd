@@ -56,6 +56,7 @@ export class ReceiveUndeploymentCallbackUsecase {
         this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
+      this.consoleLoggerService.error('ERROR:', error)
       return Promise.reject({ error })
     }
   }
@@ -77,7 +78,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
-    this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
+    this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
   }
 
   private async notifyMooveIfUndeploymentFinished(

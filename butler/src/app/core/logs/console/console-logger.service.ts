@@ -42,7 +42,8 @@ export class ConsoleLoggerService {
     message: string,
     messageObject?: any
   ): void {
-    this.logger.log('info', message, messageObject)
+
+    this.logger.log('info', message, this.getDataTrace(messageObject))
   }
 
   public error(
@@ -53,6 +54,6 @@ export class ConsoleLoggerService {
   }
 
   public getDataTrace(data: any) {
-    return { data, functionName: stackTrace.get()[1].getFunctionName(), fileName: stackTrace.get()[1].getFileName() }
+    return { data, functionName: stackTrace.get()[2].getFunctionName(), fileName: stackTrace.get()[2].getFileName() }
   }
 }

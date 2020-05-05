@@ -5,13 +5,15 @@ import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ModuleEntity } from './entity'
 import { CreateModuleUsecase } from './use-cases'
+import { LogsModule } from '../../core/logs/logs.module';
 
 @Module({
   imports: [
     IntegrationsModule,
     TypeOrmModule.forFeature([
       ModuleEntity
-    ])
+    ]),
+    LogsModule
   ],
   controllers: [
       ModulesController

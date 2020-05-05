@@ -20,6 +20,7 @@ import { UndeploymentsRepository } from '../../../api/deployments/repository/und
 import { ModuleUndeploymentsRepository } from '../../../api/deployments/repository/module-undeployments.repository'
 import { DeploymentsRepository } from '../../../api/deployments/repository/deployments.repository'
 import { ModuleDeploymentsRepository } from '../../../api/deployments/repository/module-deployments.repository'
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class StatusManagementService {
@@ -37,6 +38,7 @@ export class StatusManagementService {
         private readonly moduleUndeploymentsRepository: ModuleUndeploymentsRepository,
         @InjectRepository(UndeploymentsRepository)
         private readonly undeploymentsRepository: UndeploymentsRepository,
+        private readonly consoleLoggerService: ConsoleLoggerService
     ) {}
 
     public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
@@ -89,21 +91,23 @@ export class StatusManagementService {
     public async setComponentDeploymentStatusAsFinished(
         componentDeploymentId: string
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', { componentDeploymentId })
         const componentDeploymentEntity: ComponentDeploymentEntity =
             await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
         await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.SUCCEEDED)
         await this.propagateSuccessStatusChange(componentDeploymentEntity)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', componentDeploymentEntity)
     }
 
     public async setComponentUndeploymentStatusAsFailed(componentUndeploymentId: string): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_UNDEPLOYMENT_STATUS_FAILED', { componentUndeploymentId })
         const componentUndeployment: ComponentUndeploymentEntity =
             await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
         await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FAILED)
         await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_UNDEPLOYMENT_STATUS_FAILED', componentUndeployment)
     }
 
     private async propagateFailedUndeploymentStatus(
@@ -131,12 +135,13 @@ export class StatusManagementService {
     public async setComponentUndeploymentStatusAsFinished(
         componentUndeploymentId: string
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', { componentUndeploymentId })
         const componentUndeploymentEntity: ComponentUndeploymentEntity =
             await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
         await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.SUCCEEDED)
         await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', componentUndeploymentEntity)
     }
 
     private async updateComponentUndeploymentStatus(
