@@ -28,12 +28,13 @@ export class ConsoleLoggerService {
 
   private static jsonFormat() {
     return winston.format.printf(({timestamp, level, message, ...data}) => {
+
       return JSON.stringify({
-        requestId: rTracer.id(),
-        timestamp: timestamp,
-        level: level,
-        message: message,
-        ...data,
+         requestId:  rTracer.id(),
+         timestamp,
+         level,
+         message,
+          ...data,
       })
     })
   }
@@ -50,10 +51,12 @@ export class ConsoleLoggerService {
     error: string,
     errorObject?: Error
   ): void {
-    this.logger.log('error', error, { error: errorObject })
+
+    this.logger.log('error', error, { error: JSON.stringify({message: errorObject?.message, stack: errorObject?.stack})})
   }
 
-  public getDataTrace(data: any) {
+  public getDataTrace(data?: any) {
     return { data, functionName: stackTrace.get()[2].getFunctionName(), fileName: stackTrace.get()[2].getFileName() }
   }
+
 }
