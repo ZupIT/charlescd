@@ -6,8 +6,8 @@ import {
     GetCdConfigurationsUsecase
 } from './use-cases'
 import { CdConfigurationsRepository } from './repository'
-import {ConsoleLoggerService} from '../../core/logs/console';
-import {LogsModule} from '../../core/logs/logs.module';
+
+import { LogsModule } from '../../core/logs/logs.module';
 
 @Module({
     imports: [
