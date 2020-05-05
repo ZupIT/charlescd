@@ -40,7 +40,7 @@ export class PipelineErrorHandlerService {
 
     public async handleDeploymentFailure(deployment: DeploymentEntity | undefined): Promise<void> {
         if (deployment && !deployment.hasFailed()) {
-            this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_FAILURE')
+            this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_FAILURE', deployment)
             await this.statusManagementService.deepUpdateDeploymentStatus(deployment, DeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 deployment.id, NotificationStatusEnum.FAILED, deployment.callbackUrl, deployment.circleId
@@ -66,7 +66,7 @@ export class PipelineErrorHandlerService {
 
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
         if (undeployment && !undeployment.hasFailed()) {
-            this.consoleLoggerService.log('START:HANDLING_UNDEPLOYMENT')
+            this.consoleLoggerService.log('START:HANDLING_UNDEPLOYMENT', undeployment)
             await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
