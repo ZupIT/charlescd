@@ -34,7 +34,7 @@ export class CreateCircleDeploymentRequestUsecase {
         this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
         const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
         if (!deployment.circle) {
-            this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', new Error(`${deployment}`) )
+            this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
             throw new BadRequestException('Deployment does not have a circle')
         }
         try {

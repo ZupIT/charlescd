@@ -34,7 +34,7 @@ export class CreateCdConfigurationUsecase {
             this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration.toReadDto())
             return cdConfiguration.toReadDto()
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:INTERNAL_SERVER_ERROR: ', error)
+            this.consoleLoggerService.error('ERROR:CREATE_CONFIGURATION: ', error)
             throw new InternalServerErrorException(error)
         }
     }

@@ -53,7 +53,7 @@ export class ReceiveDeploymentCallbackUsecase {
         this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
-      this.consoleLoggerService.error('ERROR:', error)
+      this.consoleLoggerService.error('ERROR:FINISH_DEPLOYMENT_NOTIFICATION', error)
       return Promise.reject({ error })
     }
   }
@@ -70,7 +70,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     const { moduleDeployment: { deployment } } = componentDeployment
     if (!deployment.circle) {
-      this.consoleLoggerService.error('ERROR:DEPLOYMENT_WITHOUT_CIRCLE', new Error(`${deployment}`))
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_WITHOUT_CIRCLE', deployment)
       throw new NotFoundException(`Deployment dont have a circle`)
     }
 

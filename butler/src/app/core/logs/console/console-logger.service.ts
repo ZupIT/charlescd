@@ -49,10 +49,10 @@ export class ConsoleLoggerService {
 
   public error(
     error: string,
-    errorObject?: Error
+    errorObject?: any
   ): void {
 
-    this.logger.log('error', error, { error: JSON.stringify({message: errorObject?.message, stack: errorObject?.stack})})
+    this.logger.log('error', error, { error: JSON.stringify(errorObject, Object.getOwnPropertyNames(errorObject))})
   }
 
   public getDataTrace(data?: any) {

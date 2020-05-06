@@ -77,7 +77,7 @@ export class PipelineQueuesService {
     const { moduleDeployment: { deployment } } = componentDeployment
     const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id} })
     if (!deployment.circle) {
-      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', new Error(`${deployment}`))
+      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', deployment)
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
     await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)

@@ -157,7 +157,7 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         if (!componentEntity.module.cdConfigurationId) {
-            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', new Error(`${componentEntity.module}`))
+            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', componentEntity.module)
             throw new NotFoundException(`Module does not have configuration id`)
         }
         this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
@@ -165,7 +165,7 @@ export class PipelineDeploymentsService {
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
         if (!cdConfiguration) {
-            this.consoleLoggerService.error('ERROR:CONFIGURATION_NOT_FOUND', new Error(`${componentEntity.module.cdConfigurationId}`) )
+            this.consoleLoggerService.error('ERROR:CONFIGURATION_NOT_FOUND', componentEntity.module.cdConfigurationId )
             throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
         }
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
@@ -186,7 +186,7 @@ export class PipelineDeploymentsService {
         pipelineCallbackUrl: string
     ): Promise<void> {
         if (!componentEntity.module.cdConfigurationId) {
-            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', new Error(`${componentEntity.module}`))
+            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', componentEntity.module )
             throw new NotFoundException(`Module does not have configuration id`)
         }
         this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')

@@ -22,10 +22,10 @@ export class CreateModuleUsecase {
     ): Promise<ReadModuleDto> {
 
         try {
-            this.consoleLoggerService.log('START:CREATE_MODULE')
+            this.consoleLoggerService.log('START:CREATE_MODULE', createModuleDto)
             const moduleEntity: ModuleEntity =
                 await this.moduleEntityRepository.save(createModuleDto.toEntity())
-            this.consoleLoggerService.log('FINISH:CREATE_MODULE')
+            this.consoleLoggerService.log('FINISH:CREATE_MODULE', createModuleDt)
             return moduleEntity.toReadDto()
         } catch (error) {
             this.consoleLoggerService.error('ERROR:CREATE_MODULE', error)
