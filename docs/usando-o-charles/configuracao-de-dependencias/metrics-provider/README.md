@@ -11,14 +11,5 @@ Caso esteja procurando como configurar sua ferramenta de métricas para ler e ex
 3. Clique em **Add Metric Provider**.
 4. Selecione a opção de ferramenta que você utiliza.
 
-### Prometheus
 
-Se deseja utilizar o Prometheus como seu provedor de métricas:
-
-1. Selecione a opção **Prometheus** na listagem.
-2. Clique em **Add**.
-3. Digite a **URL** do seu Prometheus.
-4. Clique em **Save**.
-
-{gif com um exemplo de configuração} 
 
