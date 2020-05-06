@@ -47,5 +47,5 @@
 
 ## Observability
 
-* [Metrics](observability/metrics.md)
+* [Métricas](observability/metrics.md)
 
