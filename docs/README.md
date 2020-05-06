@@ -36,16 +36,5 @@ A metodologia implementada pelo Charles traz vários diferenciais como:
 
 Monitoramento dos impactos de cada versão por meio de métricas definidas durante a criação da implantação.
 
-## Arquitetura do sistema
-
-A plataforma, construída utilizando a abordagem de microsserviços, possui os seguintes módulos:
-
-![](.gitbook/assets/charles-c.d-vertical-8.png)
-
-* `charlescd-ui:` responsável pelo gerenciamento de workspaces, usuários, módulos, hipóteses e boards, ou seja, de toda estrutura da plataforma.   
-* `charles-moove:` realiza a gestão das branchs no CI e envia notificações das releases para o Charles Butler.   
-* `charles-butler:` responsável por orquestrar as imagens geradas no docker, além de gerenciar os círculos e deploys realizados.  
-* `charles-circle-matcher:` gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características.
-
 
 

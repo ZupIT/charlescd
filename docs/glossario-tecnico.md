@@ -5,7 +5,7 @@ description: >-
   dentro da comunidade de desenvolvedores.
 ---
 
-# Key concepts
+# Principais conceitos
 
 ### **Círculos**
 
