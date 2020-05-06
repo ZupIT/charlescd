@@ -5,10 +5,22 @@
 As métricas relacionadas à requisições de cada círculo são quantificadas e expostas pelo Istio, por isso é necessário configura-lo para que se tenha informações referentes à cada círculo.
 
 {% hint style="info" %}
-Se deseja entender um pouco mais sobre a metrificação do Istio, recomendamos que olhe [aqui](https://istio.io/docs/tasks/observability/metrics/).
+Se deseja entender um pouco mais sobre a telemetria do Istio, recomendamos que olhe [aqui](https://istio.io/docs/tasks/observability/metrics/).
 {% endhint %}
 
-Para configurar seu Istio para expor as métricas relacionas ao charles é necessário executar o seguinte comando no seu cluster Kubernetes.
+Para configurar seu Istio é necessário habilitá-lo para expor métricas, e configura-lo para expor as métricas do charles.
+
+Se seu Istio não está habilitado para para expor métricas, é necessário executar o seguinte comando para habilita-lo.
+
+```bash
+ $ istioctl manifest generate --set mixer.telemetry.enabled=true
+```
+
+{% hint style="info" %}
+Para executar o comando acima é necessário ter configurado o istioctl, caso não tenha, clique [aqui](https://istio.io/pt-br/docs/reference/config/istio.operator.v1alpha12.pb/).
+{% endhint %}
+
+Para expor as métricas relacionadas ao Charles, é preciso executar o comando.
 
 ```bash
 $ kubectl apply -f path/your-metrics-config.yaml

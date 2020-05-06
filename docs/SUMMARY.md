@@ -48,5 +48,6 @@
 ## Observability
 
 * [Métricas](observability/metrics/README.md)
+  * [Overview](observability/metrics/overview.md)
   * [Configuração](observability/metrics/configuration.md)
 
