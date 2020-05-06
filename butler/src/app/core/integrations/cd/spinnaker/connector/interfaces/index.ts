@@ -173,6 +173,10 @@ export interface IBaseSpinnakerPipeline {
   updateTs: string
 }
 
+export interface IUpdateSpinnakerPipeline extends IBaseSpinnakerPipeline {
+  id: string
+}
+
 export interface IBuildService {
   stages: BaseStagesUnion
   refId: number

@@ -1,6 +1,7 @@
 import {
     Injectable,
-    InternalServerErrorException
+    InternalServerErrorException,
+    NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -18,7 +19,10 @@ import {
     QueuedDeploymentEntity
 } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
-import { QueuedDeploymentsRepository } from '../repository'
+import {
+    ComponentDeploymentsRepository,
+    QueuedDeploymentsRepository
+} from '../repository'
 import {
     PipelineDeploymentsService,
     PipelineErrorHandlerService,
@@ -37,6 +41,8 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(ComponentDeploymentsRepository)
+        private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
@@ -44,16 +50,15 @@ export class CreateDefaultDeploymentRequestUsecase {
     ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        let deployment: DeploymentEntity
+        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
+        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
 
         try {
-            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
-            deployment = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
             await this.scheduleComponentDeployments(deployment)
-            this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', deployment)
+            this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT')
+            this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT', error)
             this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
             throw error
         }
@@ -72,34 +77,25 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
-        try {
-            const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
-            await Promise.all(
-                componentDeployments.map(
-                    componentDeployment => this.enqueueComponentDeployment(deployment, componentDeployment)
-                )
+        const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
+        await Promise.all(
+            componentDeploymentsIds.map(
+                componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId)
             )
-        } catch (error) {
-            throw error
-        }
+        )
     }
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
-        componentDeployment: ComponentDeploymentEntity
+        componentDeploymentId: string
     ): Promise<void> {
-
-        let queuedDeployment: QueuedDeploymentEntity
-
-        try {
-            queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity =
-                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
-            }
-        } catch (error) {
-            throw error
+        const componentDeployment: ComponentDeploymentEntity = await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+        const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+            { id: componentDeployment.componentId }, { relations: ['module'] }
+        )
+        if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
         }
     }
 

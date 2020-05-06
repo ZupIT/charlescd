@@ -1,5 +1,5 @@
 export enum DeploymentStatusEnum {
     CREATED = 'CREATED',
-    FINISHED = 'FINISHED',
+    SUCCEEDED = 'SUCCEEDED',
     FAILED = 'FAILED'
 }

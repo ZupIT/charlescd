@@ -1,9 +1,9 @@
 import { ICdConfigurationData } from './cd-configuration-data.interface'
 import { ISpinnakerConfigurationData } from './spinnaker-configuration-data.interface'
-import { IOctopipeConfigurationData } from './octopipe-configuration-data.interface'
+import { OctopipeConfigurationData } from './octopipe-configuration-data.type'
 
 export {
     ICdConfigurationData,
     ISpinnakerConfigurationData,
-    IOctopipeConfigurationData
+    OctopipeConfigurationData
 }

@@ -13,7 +13,7 @@ export class ReadDeploymentDto {
 
   public readonly description: string
 
-  public readonly circle: ReadCircleDeploymentDto
+  public readonly circle: ReadCircleDeploymentDto | undefined
 
   public readonly status: string
 
@@ -29,11 +29,12 @@ export class ReadDeploymentDto {
     modulesDeployments: ReadModuleDeploymentDto[],
     authorId: string,
     description: string,
-    circle: ReadCircleDeploymentDto,
     status: string,
     callbackUrl: string,
     defaultCircle: boolean,
-    createdAt: Date
+    createdAt: Date,
+    circle?: ReadCircleDeploymentDto,
+
   ) {
     this.id = id
     this.applicationName = applicationName

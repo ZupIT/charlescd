@@ -1,29 +1,15 @@
-import {
-    Injectable,
-    InternalServerErrorException
-} from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    QueuedDeploymentEntity
-} from '../entity'
 import { Repository } from 'typeorm'
-import {
-    CreateCircleDeploymentRequestDto,
-    ReadDeploymentDto
-} from '../dto'
-import { ConsoleLoggerService } from '../../../core/logs/console'
-import { QueuedPipelineStatusEnum } from '../enums'
-import { ModuleEntity } from '../../modules/entity'
-import { ComponentEntity } from '../../components/entity'
-import {
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../services'
-import { QueuedDeploymentsRepository } from '../repository'
 import { QueuedDeploymentsConstraints } from '../../../core/integrations/databases/constraints'
+import { ConsoleLoggerService } from '../../../core/logs/console'
+import { ComponentEntity } from '../../components/entity'
+import { ModuleEntity } from '../../modules/entity'
+import { CreateCircleDeploymentRequestDto, ReadDeploymentDto } from '../dto'
+import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import { QueuedPipelineStatusEnum } from '../enums'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService } from '../services'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
@@ -37,19 +23,21 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(ComponentDeploymentsRepository)
+        private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
-        private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
         private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
     ) { }
 
     public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        let deployment: DeploymentEntity
-
+        this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
+        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
+        if (!deployment.circle) {
+            throw new BadRequestException('Deployment does not have a circle')
+        }
         try {
-            this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
-            deployment = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
-            await this.scheduleComponentDeployments(deployment)
+            await this.scheduleComponentDeployments(deployment, deployment.circle)
             this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
@@ -71,35 +59,27 @@ export class CreateCircleDeploymentRequestUsecase {
         }
     }
 
-    private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {
-        try {
-            const componentDeployments: ComponentDeploymentEntity[] = deployment.getComponentDeployments()
-            await Promise.all(
-                componentDeployments.map(
-                    componentDeployment => this.enqueueComponentDeployment(deployment, componentDeployment)
-                )
+    private async scheduleComponentDeployments(deployment: DeploymentEntity, circle: CircleDeploymentEntity): Promise<void> {
+        const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
+        await Promise.all(
+            componentDeploymentsIds.map(
+                componentDeploymentId => this.enqueueComponentDeployment(deployment, componentDeploymentId, circle)
             )
-        } catch (error) {
-            throw error
-        }
+        )
     }
 
     private async enqueueComponentDeployment(
         deployment: DeploymentEntity,
-        componentDeployment: ComponentDeploymentEntity
+        componentDeploymentId: string,
+        circle: CircleDeploymentEntity
     ): Promise<void> {
-
-        let queuedDeployment: QueuedDeploymentEntity
-
-        try {
-            queuedDeployment = await this.saveQueuedDeployment(componentDeployment)
-            const component: ComponentEntity =
-                await this.componentsRepository.findOne({ id: componentDeployment.componentId }, { relations: ['module'] })
-            if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
-                await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment)
-            }
-        } catch (error) {
-            throw error
+        const componentDeployment = await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
+        const queuedDeployment: QueuedDeploymentEntity = await this.saveQueuedDeployment(componentDeployment)
+        const component: ComponentEntity = await this.componentsRepository.findOneOrFail(
+            { id: componentDeployment.componentId }, { relations: ['module'] }
+        )
+        if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
+            await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment, circle)
         }
     }
 

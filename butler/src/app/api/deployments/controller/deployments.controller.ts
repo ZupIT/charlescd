@@ -1,30 +1,10 @@
+import { Body, Controller, Get, Headers, Param, Post, UsePipes } from '@nestjs/common'
 import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  UsePipes
-} from '@nestjs/common'
-import {
-  CreateCircleDeploymentRequestDto,
-  CreateDefaultDeploymentRequestDto,
-  CreateUndeploymentDto,
-  ReadDeploymentDto,
-  ReadUndeploymentDto
+  CreateCircleDeploymentRequestDto, CreateDefaultDeploymentRequestDto, CreateUndeploymentDto, ReadDeploymentDto, ReadUndeploymentDto
 } from '../dto'
+import { ComponentsExistencePipe, DeploymentUniquenessPipe, ModulesExistencePipe } from '../pipes'
 import { DeploymentsService } from '../services'
-import {
-  CreateCircleDeploymentRequestUsecase,
-  CreateDefaultDeploymentRequestUsecase,
-  CreateUndeploymentRequestUsecase
-} from '../use-cases'
-import {
-  ComponentsExistencePipe,
-  DeploymentUniquenessPipe,
-  ModulesExistencePipe
-} from '../pipes'
+import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -56,7 +36,6 @@ export class DeploymentsController {
       @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
       @Headers('x-circle-id') circleId: string
   ): Promise<ReadDeploymentDto> {
-
     return await this.createDefaultDeploymentRequestUsecase.execute(createDefaultDeploymentRequestDto, circleId)
   }
 
@@ -78,7 +57,6 @@ export class DeploymentsController {
 
   @Get(':id')
   public async getDeploymentById(@Param('id') id: string): Promise<ReadDeploymentDto> {
-
     return await this.deploymentsService.getDeploymentById(id)
   }
 }
