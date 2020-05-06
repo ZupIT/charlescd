@@ -1,8 +1,7 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Principais conceitos](glossario-tecnico.md)
-* [Arquitetura do sistema](arquitetura-do-sistema.md)
+* [Key concepts](glossario-tecnico.md)
 
 ## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
 
@@ -13,22 +12,24 @@
   * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
   * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
   * [Módulos](usando-o-charles/configuracao-de-dependencias/modulos.md)
+  * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider/README.md)
+    * [Prometheus](usando-o-charles/configuracao-de-dependencias/metrics-provider/prometheus.md)
 
 ## CÍRCULOS
 
-* [O que são círculos?](circulos/o-que-sao-circulos.md)
-* [Como segmentar e identificar os círculos?](circulos/segmentacoes-dos-circulos.md)
-* [Outras configurações](circulos/como-integrar-circulos-com-servicos.md)
-* [Circle Matcher](circulos/circle-matcher.md)
+* [O que são e como funcionam os círculos?](circulos/o-que-sao-circulos.md)
+
+## CIRCLE MATCHER
+
+* [O que é e como funciona o Circle Matcher](circle-matcher/circle-matcher.md)
 
 ## HIPÓTESES
 
-* [O que são e como criar hipóteses?](hipoteses/o-que-sao-hipoteses.md)
-* [Gestão do board](hipoteses/gestao-do-board.md)
+* [O que são e como funcionam as hipóteses?](hipoteses/o-que-sao-hipoteses.md)
 
 ## RELEASES
 
-* [O que são e como criar releases?](releases/o-que-sao-releases.md)
+* [O que são e como funcionam as releases?](releases/o-que-sao-releases.md)
 
 ## RECURSOS <a id="apis"></a>
 
@@ -42,4 +43,8 @@
 * [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
 * [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
 * [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
+
+## Observability
+
+* [Métricas](observability/metrics.md)
 
