@@ -22,7 +22,7 @@ type UseCases interface {
 		executionID *primitive.ObjectID, step *pipeline.Step,
 	) (*primitive.ObjectID, error)
 	ExecutionError(executionID *primitive.ObjectID, pipelineError error) error
-	ExecutionFinished(executionID *primitive.ObjectID) error
+	ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error
 	UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error
 }
 
@@ -171,12 +171,22 @@ func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.
 	return nil
 }
 
-func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID) error {
+func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error {
+	var status string
+	var pipelineErrorMessage string
+	if pipelineError != nil {
+		status = ExecutionFailed
+		pipelineErrorMessage = pipelineError.Error()
+	} else {
+		status = ExecutionFinished
+		pipelineErrorMessage = ""
+	}
 	query := bson.M{"_id": executionID}
 	updateData := bson.M{
 		"$set": bson.M{
-			"status":     ExecutionFinished,
+			"status":     status,
 			"finishtime": time.Now(),
+			"error":      pipelineErrorMessage,
 		},
 	}
 
