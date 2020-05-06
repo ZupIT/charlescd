@@ -6,7 +6,7 @@ import (
 
 type DeployerManagerFake struct{}
 
-func NewDeployerManagerFake() deployer.UseCases {
+func NewDeployerManagerFake() deployer.DeployerUseCases {
 	return &DeployerManagerFake{}
 }
 
