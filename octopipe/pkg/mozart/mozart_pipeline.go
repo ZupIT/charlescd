@@ -107,7 +107,7 @@ func (mozartPipeline *MozartPipeline) executeSteps(steps []*pipeline.Step) error
 }
 
 func (mozartPipeline *MozartPipeline) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
-	err := mozartPipeline.executions.ExecutionFinished(mozartPipeline.CurrentExecutionID)
+	err := mozartPipeline.executions.ExecutionFinished(mozartPipeline.CurrentExecutionID, pipelineError)
 	if err != nil {
 		utils.CustomLog("error", "executeSteps", err.Error())
 		return
