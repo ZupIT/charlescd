@@ -18,8 +18,8 @@ export class ModuleEntity extends BaseEntity {
   })
   public id: string
 
-  @Column({ name: 'cd_configuration_id'})
-  public cdConfigurationId: string
+  @Column({ name: 'cd_configuration_id', type: 'varchar'})
+  public cdConfigurationId: string | null
 
   @OneToMany(
     type => ComponentEntity,
@@ -29,11 +29,11 @@ export class ModuleEntity extends BaseEntity {
   public components: ComponentEntity[]
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
 
   constructor(
     moduleId: string,
-    cdConfigurationId: string,
+    cdConfigurationId: string | null,
     components: ComponentEntity[]
   ) {
     super()

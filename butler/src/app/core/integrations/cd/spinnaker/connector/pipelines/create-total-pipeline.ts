@@ -53,7 +53,7 @@ export default class TotalPipeline {
     return this.previousStages
   }
 
-  private buildDeployments(): IDeploymentReturn {
+  private buildDeployments(): IDeploymentReturn | undefined {
     if (this.contract.versions.length === 0) { return }
 
     const preRefId = this.refId - 1
@@ -125,7 +125,7 @@ export default class TotalPipeline {
       this.contract.versions.length === 0
         ? createEmptyVirtualService(this.contract.appName, this.contract.appNamespace)
         : createVirtualService(
-          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.uri.uriName, this.contract.hosts
+          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.hosts
         )
     const virtualServiceStage = baseStage(
       virtualService,
@@ -145,7 +145,7 @@ export default class TotalPipeline {
     }
   }
 
-  private buildDeleteDeployments(): IBuildReturn {
+  private buildDeleteDeployments(): IBuildReturn | undefined {
     if (this.contract.unusedVersions.length) {
       const stageName = 'Delete Deployments'
 

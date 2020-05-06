@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d9433fae-8cf7-4f75-ac2f-fb6097835b2e",
+		"_postman_id": "99f23536-c82a-42b6-a36f-b6f2dd9a4c6b",
 		"name": "Darwin Deploy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,7 +9,7 @@
 			"name": "Configurations",
 			"item": [
 				{
-					"name": "Create octopipe cd configuration",
+					"name": "Create octopipe cd configuration Generic cluster",
 					"event": [
 						{
 							"listen": "test",
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitUsername\": \"git-user\",\n\t\t\"gitPassword\": \"git-password\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"provider\": \"GENERIC\",\n\t\t\"clientCertificate\": \"cert-data\",\n\t\t\"host\": \"https://kube.cluster.com\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,7 +72,7 @@
 					"response": []
 				},
 				{
-					"name": "Create spinnaker cd configuration Copy",
+					"name": "Create octopipe cd configuration EKS cluster",
 					"event": [
 						{
 							"listen": "test",
@@ -113,13 +113,164 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"gitToken\": \"git-token\",\n\t\t\"provider\": \"EKS\",\n\t\t\"caData\": \"ca-data\",\n\t\t\"awsSID\": \"aws-sid\",\n\t\t\"awsSecret\": \"aws-secret\",\n\t\t\"awsRegion\": \"aws-region\",\n\t\t\"awsClusterName\": \"cluster-name\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create octopipe cd configuration DEFAULT cluster",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"type": "text",
+								"value": "{{applicationId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"gitToken\": \"git-token\",\n\t\t\"provider\": \"DEFAULT\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create spinnaker cd configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-application-id",
+								"type": "text",
+								"value": "{{applicationId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"account\":\"some-account\",\n\t\"namespace\":\"some-namespace\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"SPINNAKER\",\n\t\"configurationData\": {\n\t\t\"account\": \"account\",\n\t\t\"gitAccount\": \"gitaccount\",\n\t\t\"url\": \"http://localhost:8883/spinnaker\",\n\t\t\"namespace\": \"namespace\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get configurations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-application-id",
+								"value": "{{applicationId}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/configurations/cd",
 							"host": [
@@ -230,70 +381,6 @@
 			"name": "Deployments",
 			"item": [
 				{
-					"name": "Create Routed Deployment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
-								"exec": [
-									"const response = JSON.parse(responseBody);",
-									"",
-									"postman.setGlobalVariable(\"deploymentId\", response[\"id\"]);",
-									"postman.setGlobalVariable(\"componentDeploymentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"id\"]);",
-									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
-									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);",
-									"",
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(201)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
-								"exec": [
-									"var uuid = require('uuid');",
-									"",
-									"postman.setGlobalVariable('deploymentID', uuid.v4());",
-									"postman.setGlobalVariable('applicationName', uuid.v4());",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3000/deployments/circle",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"deployments",
-								"circle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create Default Deployment",
 					"event": [
 						{
@@ -358,12 +445,12 @@
 					"response": []
 				},
 				{
-					"name": "Create Deployment without circle",
+					"name": "Create Routed Deployment",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f906e23-12b8-493c-826a-cfcab899ee4f",
+								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -382,7 +469,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "921ac85e-b7d6-46b3-912d-e219bd89d770",
+								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -404,10 +491,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n    \t{\n    \t\t\"headerValue\": \"val1\",\n    \t\t\"removeCircle\": true\n    \t}\t\n\t]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/deployments/default",
+							"raw": "http://localhost:3000/deployments/circle",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -415,7 +502,7 @@
 							"port": "3000",
 							"path": [
 								"deployments",
-								"default"
+								"circle"
 							]
 						}
 					},
@@ -483,6 +570,48 @@
 							"path": [
 								"deployments",
 								"{{deploymentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Undeploymentt",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53e645b7-a035-47fb-9e99-a14e479ab5e4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"authorId\": \"{{authorId}}\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/deployments/{{deploymentId}}/undeploy",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"deployments",
+								"{{deploymentId}}",
+								"undeploy"
 							]
 						}
 					},
