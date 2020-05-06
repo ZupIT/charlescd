@@ -16,17 +16,17 @@ type Resource struct {
 	Action      string
 	ForceUpdate bool
 	Manifest    *unstructured.Unstructured
-	Rollout     string
+	Rollout     UseCases
 	Type        []string
-	Config      cloudprovider.CloudproviderUseCases
+	Config      cloudprovider.UseCases
 	Namespace   string
 }
 
-type DeployerUseCases interface {
+type UseCases interface {
 	Do() error
 }
 
-func (deployerManager *DeployerManager) NewDeployer(resource *Resource) (DeployerUseCases, error) {
+func NewDeployer(resource *Resource) (UseCases, error) {
 	switch resource.Action {
 	case DeployAction:
 		return NewDeploy(resource), nil

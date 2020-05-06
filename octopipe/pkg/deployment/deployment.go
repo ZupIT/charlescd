@@ -22,14 +22,14 @@ type GitAccount struct {
 }
 
 type Deployment struct {
-	Name           string                      `json:"appName"`
-	Namespace      string                      `json:"appNamespace"`
-	Versions       []*Version                  `json:"versions"`
-	UnusedVersions []*Version                  `json:"unusedVersions"`
-	Webhook        string                      `json:"webhookUrl"`
-	HelmRepository string                      `json:"helmUrl"`
-	GitAccount     GitAccount                  `json:"git"`
-	K8s            cloudprovider.Cloudprovider `json:"k8s"`
-	Istio          map[string]interface{}      `json:"istio"`
-	CircleID       string                      `json:"circleId"`
+	Name           string                 `json:"appName"`
+	Namespace      string                 `json:"appNamespace"`
+	Versions       []*Version             `json:"versions"`
+	UnusedVersions []*Version             `json:"unusedVersions"`
+	Webhook        string                 `json:"webhookUrl"`
+	HelmRepository string                 `json:"helmUrl"`
+	GitAccount     GitAccount             `json:"git"`
+	K8s            cloudprovider.Provider `json:"k8s"`
+	Istio          map[string]interface{} `json:"istio"`
+	CircleID       string                 `json:"circleId"`
 }
