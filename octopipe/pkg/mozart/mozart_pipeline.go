@@ -53,7 +53,7 @@ func (mozartPipeline *MozartPipeline) asyncStartPipeline(deployment *deployment.
 
 		err = mozartPipeline.executeSteps(steps)
 		if err != nil {
-            mozartPipeline.returnPipelineError(err)
+			mozartPipeline.returnPipelineError(err)
 			break
 		}
 	}
