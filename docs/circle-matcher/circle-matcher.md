@@ -1,4 +1,4 @@
-# Circle Matcher
+# O que é e como funciona o Circle Matcher
 
 O Circle Matcher é uma feature que permite você validar e/ou identificar se as regras lógicas definidas para criar segmentações nos seus círculos realmente estão puxando os usuários que você quer.
 
