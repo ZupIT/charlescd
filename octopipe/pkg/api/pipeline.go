@@ -8,10 +8,10 @@ import (
 )
 
 type PipelineApi struct {
-	mozart mozart.MozartUseCases
+	mozart mozart.UseCases
 }
 
-func (api *Api) NewPipelineApi(mozart mozart.MozartUseCases) {
+func (api *Api) NewPipelineApi(mozart mozart.UseCases) {
 	path := "/pipelines"
 	controller := PipelineApi{mozart}
 

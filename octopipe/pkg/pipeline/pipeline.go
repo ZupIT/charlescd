@@ -2,13 +2,12 @@ package pipeline
 
 import (
 	"context"
-	"log"
-	"octopipe/pkg/cloudprovider"
-	"octopipe/pkg/database"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
+	"octopipe/pkg/cloudprovider"
+	"octopipe/pkg/database"
 )
 
 type Git struct {
@@ -23,17 +22,17 @@ type Template struct {
 }
 
 type Step struct {
-	Name           string                       `json:"name"`
-	ModuleName     string                       `json:"moduleName"`
-	Namespace      string                       `json:"namespace"`
-	Action         string                       `json:"action"`
-	RollbackAction string                       `json:"action"`
-	Webhook        string                       `json:"webhook"`
-	ForceUpdate    bool                         `json:"forceUpdate"`
-	Manifest       map[string]interface{}       `json:"manifest"`
-	Template       *Template                    `json:"template"`
-	Git            *Git                         `json:"git"`
-	K8sConfig      *cloudprovider.Cloudprovider `json:"k8s"`
+	Name        	string                  `json:"name"`
+	ModuleName  	string                  `json:"moduleName"`
+	Namespace   	string                  `json:"namespace"`
+	Action      	string                  `json:"action"`
+	RollbackAction  string          		`json:"action"`
+	Webhook     	string                  `json:"webhook"`
+	ForceUpdate 	bool                    `json:"forceUpdate"`
+	Manifest    	map[string]interface{}  `json:"manifest"`
+	Template    	*Template               `json:"template"`
+	Git         	*Git                    `json:"git"`
+	K8sConfig   	*cloudprovider.Provider `json:"k8s"`
 }
 
 type Pipeline struct {

@@ -9,10 +9,10 @@ import (
 )
 
 type ExecutionAPI struct {
-	executionMain execution.ManagerUseCases
+	executionMain execution.UseCases
 }
 
-func (api *Api) NewExeuctionApi(executionMain execution.ManagerUseCases) {
+func (api *Api) NewExeuctionApi(executionMain execution.UseCases) {
 	path := "/executions"
 
 	executionAPI := ExecutionAPI{executionMain}

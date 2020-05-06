@@ -17,7 +17,7 @@ func (executionManagr *ExecutionManagerFake) FindByID(id string) (*execution.Exe
 	panic("implement me")
 }
 
-func NewExecutionFake() execution.ManagerUseCases {
+func NewExecutionFake() execution.UseCases {
 	return &ExecutionManagerFake{}
 }
 

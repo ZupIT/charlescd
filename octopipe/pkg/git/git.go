@@ -8,11 +8,11 @@ const (
 	typeGithubProvider = "GITHUB"
 )
 
-type GitUseCases interface {
+type Git interface {
 	GetDataFromDefaultFiles(name, token, url string) ([]string, error)
 }
 
-func (gitManager *GitManager) NewGit(gitProviderType string) (GitUseCases, error) {
+func NewGit(gitProviderType string) (Git, error) {
 	switch gitProviderType {
 	case typeGithubProvider:
 		return NewGithubConfig(), nil

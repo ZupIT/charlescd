@@ -3,6 +3,7 @@ package execution
 import (
 	"context"
 	"log"
+	"octopipe/pkg/database"
 	"octopipe/pkg/pipeline"
 	"time"
 
@@ -12,6 +13,22 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+type UseCases interface {
+	FindAll() (*[]Execution, error)
+	FindByID(id string) (*Execution, error)
+	Create() (*primitive.ObjectID, error)
+	CreateExecutionStep(
+		executionID *primitive.ObjectID, step *pipeline.Step,
+	) (*primitive.ObjectID, error)
+	ExecutionError(executionID *primitive.ObjectID, pipelineError error) error
+	ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error
+	UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error
+}
+
+type ExecutionManager struct {
+	DB database.UseCases
+}
 
 const (
 	ExecutionRunning  = "RUNNING"
@@ -46,6 +63,10 @@ type ExecutionStep struct {
 const (
 	collection = "executions"
 )
+
+func NewExecutionManager(db database.UseCases) UseCases {
+	return &ExecutionManager{db}
+}
 
 func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
 	executions := []Execution{}
