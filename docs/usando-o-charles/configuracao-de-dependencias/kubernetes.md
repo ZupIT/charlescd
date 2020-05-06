@@ -1,6 +1,6 @@
 # Kubernetes
 
-Durante a instalação do Charles, é necessário configurar o kubernetes no qual você está gerenciando suas aplicações. Para isso, basta fazer o seguinte passo a passo:
+Seguindo com as configurações, é necessário configurar o kubernetes no qual você está gerenciando suas aplicações. Para isso, basta fazer o seguinte passo a passo:
 
 1. Clique no seu nome, no canto superior direito e, em seguida, selecione **Settings.**
 2. Clique em **Credentials.** 
