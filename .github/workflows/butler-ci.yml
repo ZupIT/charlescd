@@ -8,12 +8,21 @@ on:
     branches: [ master ]
     paths:
       - 'butler/**'
+    paths-ignore:
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
     tags: 
       - '!*'
   pull_request:
     branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'butler/**'
+    paths-ignore:
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
 
 jobs:
   build:
