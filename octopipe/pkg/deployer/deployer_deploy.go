@@ -1,17 +1,9 @@
 package deployer
 
 import (
-	"errors"
-	"os"
-	"strconv"
-	"time"
-
 	"github.com/imdario/mergo"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
 )
 
 type Deploy struct {
@@ -27,15 +19,46 @@ func (deploy *Deploy) Do() error {
 		return deploy.createOrUpdateResource()
 	}
 
-	return deploy.createResource()
+	err := deploy.createResource()
+	if deploy.isAlreadyExistsByError(err) {
+		return nil
+	}
+
+	return err
 }
 
 func (deploy *Deploy) createOrUpdateResource() error {
 	err := deploy.createResource()
-	if err != nil && k8sErrors.IsAlreadyExists(err) {
+	if deploy.isAlreadyExistsByError(err) {
 		err = deploy.updateResource()
 	}
 
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (deploy *Deploy) isAlreadyExistsByError(err error) bool {
+	if err != nil && k8sErrors.IsAlreadyExists(err) {
+		return true
+	}
+
+	return false
+}
+
+func (deploy *Deploy) createResource() error {
+	client, err := deploy.Config.GetClient()
+	if err != nil {
+		return err
+	}
+
+	resourceSchema := getResourceSchemaByManifest(deploy.Manifest)
+	k8sResource := client.Resource(resourceSchema)
+	namespace := deploy.Namespace
+
+	_, err = k8sResource.Namespace(namespace).Create(deploy.Manifest, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -59,118 +82,15 @@ func (deploy *Deploy) updateResource() error {
 		return err
 	}
 
-	mergo.Merge(&resource.Object, deploy.Manifest.Object, mergo.WithOverride)
-	_, err = client.Resource(resourceSchema).Update(deploy.Manifest, metav1.UpdateOptions{})
+	err = mergo.Merge(&resource.Object, deploy.Manifest.Object, mergo.WithOverride)
+	if err != nil {
+		return err
+	}
+
+	_, err = k8sResource.Namespace(namespace).Update(resource, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (deploy *Deploy) createResource() error {
-	client, err := deploy.Config.GetClient()
-	if err != nil {
-		return err
-	}
-
-	resourceSchema := getResourceSchemaByManifest(deploy.Manifest)
-	k8sResource := client.Resource(resourceSchema)
-	resource := k8sResource.Namespace(deploy.Namespace)
-
-	_, err = resource.Create(deploy.Manifest, metav1.CreateOptions{})
-	if err != nil && k8sErrors.IsAlreadyExists(err) {
-		return nil
-	}
-
-	err = deploy.newResourceVerification(resource, resourceSchema)
-	if err != nil {
-		return err
-	}
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (deploy *Deploy) newResourceVerification(resource dynamic.ResourceInterface, schema schema.GroupVersionResource) error {
-	clusterItem, err := resource.Get(deploy.Manifest.GetName(), metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	replicas, found, _ := unstructured.NestedInt64(clusterItem.Object, "spec", "replicas")
-	if !found {
-		return nil
-	}
-
-	err = deploy.asyncStartResourceVerification(resource, deploy.Manifest.GetName(), int(replicas))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (deploy *Deploy) asyncStartResourceVerification(resource dynamic.ResourceInterface, name string, replicas int) error {
-	timeout := make(chan struct{})
-	done := make(chan struct{})
-
-	go deploy.startTimer(timeout, done)
-
-	err := deploy.startReplicasVerification(resource, replicas, name, done, timeout)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (deploy *Deploy) startTimer(timeout chan<- struct{}, done <-chan struct{}) {
-	for {
-		resourceVerificationTime, _ := strconv.Atoi(os.Getenv("TIMEOUT_RESOURCE_VERIFICATION"))
-		select {
-		case <-time.After(time.Duration(resourceVerificationTime) * time.Second):
-			timeout <- struct{}{}
-		case <-done:
-			return
-		}
-	}
-}
-
-func (deploy *Deploy) startReplicasVerification(
-	resource dynamic.ResourceInterface, replicas int, name string, done chan<- struct{}, timeout <-chan struct{},
-) error {
-	ticker := time.NewTicker(1 * time.Second)
-	for {
-		select {
-		case <-ticker.C:
-			availableReplicas, err := deploy.getAvailableReplicasByName(resource, name)
-			if err != nil {
-				return err
-			}
-			if availableReplicas == replicas {
-				done <- struct{}{}
-				return nil
-			}
-		case <-timeout:
-			return errors.New("Timeout resource verification")
-		}
-	}
-}
-
-func (deploy *Deploy) getAvailableReplicasByName(resource dynamic.ResourceInterface, name string) (int, error) {
-	clusterItem, err := resource.Get(deploy.Manifest.GetName(), metav1.GetOptions{})
-	if err != nil {
-		return 0, err
-	}
-
-	availableReplicas, statusFound, _ := unstructured.NestedInt64(clusterItem.Object, "status", "availableReplicas")
-	if !statusFound {
-		return 0, nil
-	}
-
-	return int(availableReplicas), nil
 }
