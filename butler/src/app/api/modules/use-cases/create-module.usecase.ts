@@ -25,7 +25,7 @@ export class CreateModuleUsecase {
             this.consoleLoggerService.log('START:CREATE_MODULE', createModuleDto)
             const moduleEntity: ModuleEntity =
                 await this.moduleEntityRepository.save(createModuleDto.toEntity())
-            this.consoleLoggerService.log('FINISH:CREATE_MODULE', createModuleDt)
+            this.consoleLoggerService.log('FINISH:CREATE_MODULE', moduleEntity.toReadDto())
             return moduleEntity.toReadDto()
         } catch (error) {
             this.consoleLoggerService.error('ERROR:CREATE_MODULE', error)

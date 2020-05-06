@@ -165,7 +165,7 @@ export class PipelineDeploymentsService {
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
         if (!cdConfiguration) {
-            this.consoleLoggerService.error('ERROR:CONFIGURATION_NOT_FOUND', componentEntity.module.cdConfigurationId )
+            this.consoleLoggerService.error('ERROR:CONFIGURATION_NOT_FOUND', { id: componentEntity.module.cdConfigurationId })
             throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
         }
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
