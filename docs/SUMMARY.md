@@ -23,6 +23,10 @@
 
 * [O que é e como funciona o Circle Matcher](circle-matcher/circle-matcher.md)
 
+## MÉTRICAS <a id="observability"></a>
+
+* [O que são e como funcionam as métricas?](observability/metrics.md)
+
 ## HIPÓTESES
 
 * [O que são e como funcionam as hipóteses?](hipoteses/o-que-sao-hipoteses.md)
@@ -43,8 +47,4 @@
 * [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
 * [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
 * [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
-
-## Observability
-
-* [Métricas](observability/metrics.md)
 
