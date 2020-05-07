@@ -49,5 +49,6 @@
 
 * [Métricas](observability/metrics/README.md)
   * [Overview](observability/metrics/overview.md)
-  * [Configuração](observability/metrics/configuration.md)
+  * [Configuração](observability/metrics/configuration/README.md)
+    * [Prometheus](observability/metrics/configuration/prometheus.md)
 
