@@ -9,7 +9,7 @@ description: >-
 
 O canary release, ou implantação canário, funciona por meio da publicação gradual da nova versão de um software.
 
-![](../.gitbook/assets/deploys-em-circulos-vs.-canary-release.png)
+![](../.gitbook/assets/deploys-em-circulos-vs.-canary-release%20%282%29.png)
 
 Para isso, é feito um roteamento dentro da infraestrutura onde o sistema foi desenvolvido, de modo que uma pequena base de usuários tenha acesso à nova release. À medida em que a versão é testada e se torna mais confiável, seu acesso é expandido a mais usuários da base.
 
