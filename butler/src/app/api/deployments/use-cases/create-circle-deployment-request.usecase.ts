@@ -6,10 +6,11 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
 import { CreateCircleDeploymentRequestDto, ReadDeploymentDto } from '../dto'
-import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity } from '../entity'
+import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedIstioDeploymentEntity } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
 import { PipelineDeploymentsService, PipelineErrorHandlerService } from '../services'
+import { QueuedIstioDeploymentsRepository } from '../repository/queued-istio-deployments.repository'
 
 @Injectable()
 export class CreateCircleDeploymentRequestUsecase {
@@ -23,6 +24,8 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly componentsRepository: Repository<ComponentEntity>,
         @InjectRepository(QueuedDeploymentsRepository)
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
+        @InjectRepository(QueuedIstioDeploymentsRepository)
+        private readonly queuedIstioDeploymentsRepository: QueuedDeploymentsRepository,
         @InjectRepository(ComponentDeploymentsRepository)
         private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
@@ -38,6 +41,7 @@ export class CreateCircleDeploymentRequestUsecase {
         }
         try {
             await this.scheduleComponentDeployments(deployment, deployment.circle)
+            await this.scheduleIstioDeployment(deployment, deployment.circle)
             this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
             return deployment.toReadDto()
         } catch (error) {
@@ -56,6 +60,14 @@ export class CreateCircleDeploymentRequestUsecase {
             return await this.deploymentsRepository.save(createCircleDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
             throw new InternalServerErrorException('Could not save deployment')
+        }
+    }
+
+    private async scheduleIstioDeployment(deployment: DeploymentEntity, circle: CircleDeploymentEntity) {
+        try {
+            return await this.saveQueuedIstioDeployment(deployment.id, circle.headerValue)
+        } catch (error) {
+            throw new InternalServerErrorException('Cold not save istio deployment')
         }
     }
 
@@ -80,6 +92,16 @@ export class CreateCircleDeploymentRequestUsecase {
         )
         if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
             await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment, circle)
+        }
+    }
+
+    private async saveQueuedIstioDeployment(deploymentId: string, circleHeaderValue: string): Promise<QueuedIstioDeploymentEntity> {
+        try {
+            return await this.queuedIstioDeploymentsRepository.save(
+                new QueuedIstioDeploymentEntity(deploymentId, circleHeaderValue, QueuedPipelineStatusEnum.QUEUED)
+            )
+        } catch (error) {
+            throw new InternalServerErrorException('Could not save queued deployment')
         }
     }
 

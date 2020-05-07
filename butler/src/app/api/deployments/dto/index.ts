@@ -13,6 +13,7 @@ import {
   ReadModuleDeploymentDto
 } from './read-deployment'
 import { CreateUndeploymentDto } from './create-undeployment'
+import { ReadQueuedIstioDeploymentDto } from './read-queued-istio-deployment'
 import { ReadQueuedDeploymentDto } from './read-queued-deployment'
 import {
   ReadComponentUndeploymentDto,
@@ -35,5 +36,6 @@ export {
   ReadQueuedDeploymentDto,
   ReadUndeploymentDto,
   ReadModuleUndeploymentDto,
-  ReadComponentUndeploymentDto
+  ReadComponentUndeploymentDto,
+  ReadQueuedIstioDeploymentDto,
 }

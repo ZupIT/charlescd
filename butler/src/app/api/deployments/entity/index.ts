@@ -7,6 +7,7 @@ import { UndeploymentEntity } from './undeployment.entity'
 import { ModuleUndeploymentEntity } from './module-undeployment.entity'
 import { ComponentUndeploymentEntity } from './component-undeployment.entity'
 import { QueuedUndeploymentEntity } from './queued-undeployment.entity'
+import { QueuedIstioDeploymentEntity } from './queued-istio-deployment.entity'
 
 export {
   DeploymentEntity,
@@ -17,5 +18,6 @@ export {
   UndeploymentEntity,
   ModuleUndeploymentEntity,
   ComponentUndeploymentEntity,
-  QueuedUndeploymentEntity
+  QueuedUndeploymentEntity,
+  QueuedIstioDeploymentEntity,
 }

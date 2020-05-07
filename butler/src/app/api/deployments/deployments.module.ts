@@ -11,7 +11,8 @@ import {
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   QueuedUndeploymentEntity,
-  UndeploymentEntity
+  UndeploymentEntity,
+  QueuedIstioDeploymentEntity
 } from './entity'
 import { ModuleEntity } from '../modules/entity'
 import { ComponentEntity } from '../components/entity'
@@ -19,7 +20,8 @@ import { LogsModule } from '../../core/logs/logs.module'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
-  QueuedDeploymentsRepository
+  QueuedDeploymentsRepository,
+  QueuedIstioDeploymentsRepository
 } from './repository'
 import {
   DeploymentsService,
@@ -53,7 +55,9 @@ import { CdConfigurationsRepository } from '../configurations/repository'
       QueuedUndeploymentEntity,
       UndeploymentEntity,
       ComponentUndeploymentsRepository,
-      CdConfigurationsRepository
+      CdConfigurationsRepository,
+      QueuedIstioDeploymentsRepository,
+      QueuedIstioDeploymentEntity
     ])
   ],
   controllers: [
