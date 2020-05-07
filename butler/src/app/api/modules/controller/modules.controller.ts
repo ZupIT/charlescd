@@ -3,7 +3,8 @@ import {
   Controller,
   Get,
   Param,
-  Post
+  Post,
+  NotFoundException
 } from '@nestjs/common'
 import {
   CreateModuleDto,
@@ -16,13 +17,13 @@ import { CreateModuleUsecase } from '../use-cases'
 export class ModulesController {
 
   constructor(
-      private readonly modulesService: ModulesService,
-      private readonly createModuleUsecase: CreateModuleUsecase
-    ) {}
+    private readonly modulesService: ModulesService,
+    private readonly createModuleUsecase: CreateModuleUsecase
+  ) { }
 
   @Post()
   public async createModule(
-      @Body() createModuleDto: CreateModuleDto
+    @Body() createModuleDto: CreateModuleDto
   ): Promise<ReadModuleDto> {
 
     return await this.createModuleUsecase.execute(createModuleDto)

@@ -1,7 +1,7 @@
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ApiModule } from './api/api.module'
-import { Configuration } from './config/configurations'
+import { Configuration } from './core/config/configurations'
 import { AppConstants } from './core/constants'
 import { CoreModule } from './core/core.module'
 import IEnvConfiguration from './core/integrations/configuration/interfaces/env-configuration.interface'

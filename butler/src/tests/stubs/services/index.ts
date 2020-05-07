@@ -10,6 +10,8 @@ import { MooveServiceStub } from './moove-service.stub'
 import { PipelineDeploymentsServiceStub } from './pipeline-deployments-service.stub'
 import { PipelineErrorHandlerServiceStub } from './pipeline-error-handler-service.stub'
 import { ModulesServiceStub } from './modules-service.stub'
+import { OctopipeApiServiceStub } from './octopipe-api-service.stub'
+import { SpinnakerApiServiceStub } from './spinnaker-api-service.stub'
 
 export {
     DeploymentsServiceStub,
@@ -23,5 +25,7 @@ export {
     MooveServiceStub,
     PipelineDeploymentsServiceStub,
     PipelineErrorHandlerServiceStub,
-    ModulesServiceStub
+    ModulesServiceStub,
+    OctopipeApiServiceStub,
+    SpinnakerApiServiceStub
 }
