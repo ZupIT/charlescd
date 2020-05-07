@@ -43,33 +43,19 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 		utils.CustomLog("error", "asyncStartPipeline", err.Error())
 	}
 
-	for index, steps := range mozart.Stages {
+	for _, steps := range mozart.Stages {
 		if len(steps) <= 0 {
 			continue
 		}
 
 		err = mozart.executeSteps(steps)
 		if err != nil {
-			mozart.executeRollbackSteps(mozart.Stages[:index+1])
 			mozart.returnPipelineError(err)
 			break
 		}
 	}
 
 	mozart.finishPipeline(deployment, err)
-}
-
-func (mozart *Mozart) executeRollbackSteps(stages [][]*pipeline.Step) {
-	for _, steps := range stages {
-		if len(steps) <= 0 || steps[0].RollbackAction == "" {
-			continue
-		}
-		var rollbackSteps = convertToRollbackSteps(steps)
-		var err = mozart.executeSteps(rollbackSteps)
-		if err != nil {
-			utils.CustomLog("error", "executeRollbackSteps", "Failed to rollback steps")
-		}
-	}
 }
 
 func (mozart *Mozart) executeSteps(steps []*pipeline.Step) error {

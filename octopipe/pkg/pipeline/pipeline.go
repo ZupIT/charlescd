@@ -23,17 +23,16 @@ type Template struct {
 }
 
 type Step struct {
-	Name           string                       `json:"name"`
-	ModuleName     string                       `json:"moduleName"`
-	Namespace      string                       `json:"namespace"`
-	Action         string                       `json:"action"`
-	RollbackAction string                       `json:"action"`
-	Webhook        string                       `json:"webhook"`
-	ForceUpdate    bool                         `json:"forceUpdate"`
-	Manifest       map[string]interface{}       `json:"manifest"`
-	Template       *Template                    `json:"template"`
-	Git            *Git                         `json:"git"`
-	K8sConfig      *cloudprovider.Cloudprovider `json:"k8s"`
+	Name        string                       `json:"name"`
+	ModuleName  string                       `json:"moduleName"`
+	Namespace   string                       `json:"namespace"`
+	Action      string                       `json:"action"`
+	Webhook     string                       `json:"webhook"`
+	ForceUpdate bool                         `json:"forceUpdate"`
+	Manifest    map[string]interface{}       `json:"manifest"`
+	Template    *Template                    `json:"template"`
+	Git         *Git                         `json:"git"`
+	K8sConfig   *cloudprovider.Cloudprovider `json:"k8s"`
 }
 
 type Pipeline struct {
