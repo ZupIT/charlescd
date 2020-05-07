@@ -1,6 +1,6 @@
 # Módulos
 
-Durante a instalação do Charles, também é necessário adicionar os módulos com os quais pretende trabalhar suas aplicações. Para isso, basta seguir o passo a passo abaixo:
+Seguindo com as configurações, também é necessário adicionar os módulos com os quais pretende trabalhar suas aplicações. Para isso, basta seguir o passo a passo abaixo:
 
 1. Clique na opção **Modules** que aparece na barra lateral esquerda da página inicial. 
 2. Clique em **Create module.** 
