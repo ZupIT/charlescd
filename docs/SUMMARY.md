@@ -11,7 +11,8 @@
   * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
   * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
   * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-  * [Módulos](usando-o-charles/configuracao-de-dependencias/modulos.md)
+  * [Módulos](usando-o-charles/configuracao-de-dependencias/modules/README.md)
+    * [Componentes](usando-o-charles/configuracao-de-dependencias/modules/components.md)
   * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider/README.md)
     * [Prometheus](usando-o-charles/configuracao-de-dependencias/metrics-provider/prometheus.md)
 
