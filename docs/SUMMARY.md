@@ -11,10 +11,8 @@
   * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
   * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
   * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-  * [Módulos](usando-o-charles/configuracao-de-dependencias/modules/README.md)
-    * [Componentes](usando-o-charles/configuracao-de-dependencias/modules/components.md)
-  * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider/README.md)
-    * [Prometheus](usando-o-charles/configuracao-de-dependencias/metrics-provider/prometheus.md)
+  * [Módulos](usando-o-charles/configuracao-de-dependencias/modules.md)
+  * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider.md)
 
 ## CÍRCULOS
 
@@ -24,12 +22,9 @@
 
 * [O que é e como funciona o Circle Matcher](circle-matcher/circle-matcher.md)
 
-## Observability
+## MÉTRICAS <a id="observability"></a>
 
-* [Métricas](observability/metrics/README.md)
-  * [Overview](observability/metrics/overview.md)
-  * [Configuração](observability/metrics/configuration/README.md)
-    * [Prometheus](observability/metrics/configuration/prometheus.md)
+* [O que são e como funcionam as métricas?](observability/metrics.md)
 
 ## HIPÓTESES
 
