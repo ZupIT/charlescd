@@ -93,10 +93,7 @@ describe('Pipeline Error Handler Service specs', () => {
             'dummy-id',
             'dummy-name',
             'dummy-img-url',
-            'dummy-img-tag',
-            'dummy-context-path',
-            'dummy-health-check',
-            1234
+            'dummy-img-tag'
         )
 
         moduleDeployment = new ModuleDeploymentEntity(
@@ -191,10 +188,7 @@ describe('Pipeline Error Handler Service specs', () => {
             'dummy-id',
             'dummy-name',
             'dummy-img-url',
-            'dummy-img-tag',
-            'dummy-context-path',
-            'dummy-health-check',
-            1234
+            'dummy-img-tag'
         )
 
         queuedDeployment = new QueuedDeploymentEntity(
@@ -208,7 +202,7 @@ describe('Pipeline Error Handler Service specs', () => {
     describe('handleComponentDeploymentFailure', () => {
 
         it('should  remove circle when component deployment fails', async () => {
-            jest.spyOn(componentsRepository, 'findOne')
+            jest.spyOn(componentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             await pipelineErrorHandlerService
                 .handleComponentDeploymentFailure(componentDeployment, queuedDeployment, circle)
@@ -216,7 +210,7 @@ describe('Pipeline Error Handler Service specs', () => {
         })
 
         it('should throw a internal server exception when fails to save updated component in database', async () => {
-            jest.spyOn(componentsRepository, 'findOne')
+            jest.spyOn(componentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             jest.spyOn(componentEntity, 'removePipelineCircle')
                 .mockImplementation(() => { throw Error()})

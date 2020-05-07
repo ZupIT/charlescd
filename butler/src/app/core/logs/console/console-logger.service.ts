@@ -24,7 +24,7 @@ export class ConsoleLoggerService {
 
   public log(
     message: string,
-    messageObject?
+    messageObject?: any
   ): void {
 
     this.logger.log('info', message, messageObject)

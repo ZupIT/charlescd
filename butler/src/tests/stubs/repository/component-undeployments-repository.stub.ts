@@ -6,7 +6,15 @@ export class ComponentUndeploymentsRepositoryStub {
         return Promise.resolve({} as ComponentUndeploymentEntity)
     }
 
+    public async getOneOrFail(): Promise<ComponentUndeploymentEntity> {
+        return Promise.resolve({} as ComponentUndeploymentEntity)
+    }
+
     public async update(): Promise<void> {
+        return Promise.resolve()
+    }
+
+    public async updateStatus(): Promise<void> {
         return Promise.resolve()
     }
 }

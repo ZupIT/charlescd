@@ -6,6 +6,9 @@ import {
 import { CdConfigurationEntity, } from '../entity'
 import { plainToClass } from 'class-transformer'
 import { AppConstants } from '../../../core/constants'
+import { ICdConfigurationData } from '../interfaces'
+import { mapValues } from 'lodash'
+import { NotFoundException } from '@nestjs/common'
 
 @EntityRepository(CdConfigurationEntity)
 export class CdConfigurationsRepository extends Repository<CdConfigurationEntity> {
@@ -19,8 +22,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .values({
                 id: cdConfig.id,
                 type: cdConfig.type,
-                configurationData: () =>
-                    `PGP_SYM_ENCRYPT('${JSON.stringify(cdConfig.configurationData)}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`,
+                configurationData: this.setConfigurationData(cdConfig.configurationData),
                 name: cdConfig.name,
                 authorId: cdConfig.authorId,
                 applicationId: cdConfig.applicationId
@@ -46,7 +48,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
 
     public async findDecrypted(id: string): Promise<CdConfigurationEntity> {
 
-        const queryResult = await this.createQueryBuilder('cd_configurations')
+        const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
             .addSelect('application_id', 'applicationId')
@@ -55,10 +57,30 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
             .where('cd_configurations.id = :id', { id })
             .getRawOne()
 
-        if (queryResult && queryResult.configurationData) {
+        if (!queryResult) {
+            throw new NotFoundException(`CdConfiguration not found - id: ${id}`)
+        }
+
+        if (queryResult.configurationData) {
             queryResult.configurationData = JSON.parse(queryResult.configurationData)
         }
 
-        return queryResult ? plainToClass(CdConfigurationEntity, queryResult) : undefined
+        return plainToClass(CdConfigurationEntity, queryResult)
+    }
+
+    private setConfigurationData(configurationData: ICdConfigurationData): () => string {
+        const stringConfigurationData = JSON.stringify(
+            this.trimObject(configurationData)
+        )
+        return () => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
+    }
+
+    private trimObject(configurationData: ICdConfigurationData) {
+        return mapValues(configurationData, (value) => {
+            if (typeof value === 'string') {
+                return value.trim()
+            }
+            return value
+        })
     }
 }
