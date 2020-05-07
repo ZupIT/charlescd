@@ -2,7 +2,7 @@
 
 É possível também configurar um provedor de métricas, o qual vai ser utilizado pelo Charles para fazer leituras e permitir o acompanhamento da saúde de cada um dos seus círculos. 
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Caso esteja procurando como configurar sua ferramenta de métricas para ler e expor os dados dos círculos, sugiro dar uma olhada aqui {link da configuração da ferramenta}.
 {% endhint %}
 
