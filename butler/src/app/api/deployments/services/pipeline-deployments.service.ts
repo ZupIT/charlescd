@@ -195,7 +195,7 @@ export class PipelineDeploymentsService {
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
-        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdService)
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             undeploymentEntity.circleId, pipelineCallbackUrl
