@@ -31,7 +31,7 @@ export class CreateCdConfigurationUsecase {
             this.consoleLoggerService.log('START:CREATE_CONFIGURATION', createCdConfigurationDto)
             const cdConfiguration: CdConfigurationEntity =
                 await this.cdConfigurationsRepository.saveEncrypted(createCdConfigurationDto.toEntity(applicationId))
-            this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration.toReadDto())
+            this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration)
             return cdConfiguration.toReadDto()
         } catch (error) {
             this.consoleLoggerService.error('ERROR:CREATE_CONFIGURATION: ', error)

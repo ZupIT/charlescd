@@ -52,7 +52,7 @@ export class ConsoleLoggerService {
     errorObject?: any
   ): void {
 
-    this.logger.log('error', error, { error: JSON.stringify(errorObject, Object.getOwnPropertyNames(errorObject))})
+    this.logger.log('error', error, { error: JSON.stringify(errorObject, Object.getOwnPropertyNames(errorObject)) })
   }
 
   public getDataTrace(data?: any) {
