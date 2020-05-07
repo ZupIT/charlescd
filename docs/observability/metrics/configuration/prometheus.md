@@ -1,6 +1,6 @@
 # Prometheus
 
-### Overview
+## Overview
 
 Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas. Sendo a principal recomendação para monitoramento do [Cloud Native Computing Foundation](https://cncf.io/), é uma das principais ferramentas do mercado.
 
@@ -8,7 +8,7 @@ Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas
 Se quiser saber mais, é só dar uma olhada no [site oficial](https://prometheus.io/).
 {% endhint %}
 
-### Configuração
+## Configuração
 
 Para o Prometheus conseguir ler e armazenar os dados das métricas que configuramos à pouco, é preciso configura-lo.
 

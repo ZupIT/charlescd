@@ -6,5 +6,3 @@ As métrica permitem quantificar performance e status de aplicações através d
 
 {% page-ref page="configuration/" %}
 
-
-

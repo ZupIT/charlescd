@@ -27,7 +27,7 @@ $ kubectl apply -f path/your-metrics-config.yaml
 ```
 
 {% hint style="info" %}
- O arquivo your-metrics-config.yaml que está sendo usado deve ser referente à ferramenta que você utiliza.
+O arquivo your-metrics-config.yaml que está sendo usado deve ser referente à ferramenta que você utiliza.
 {% endhint %}
 
 Os arquivos para configuração podem ser encontrados abaixo.

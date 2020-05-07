@@ -1,6 +1,6 @@
 # Provedor de Métricas
 
-É possível também configurar um provedor de métricas, o qual vai ser utilizado pelo Charles para fazer leituras e permitir o acompanhamento da saúde de cada um dos seus círculos. 
+É possível também configurar um provedor de métricas, o qual vai ser utilizado pelo Charles para fazer leituras e permitir o acompanhamento da saúde de cada um dos seus círculos.
 
 {% hint style="info" %}
 Para configurar sua ferramenta de métricas para ler e expor os dados dos círculos, sugiro dar uma olhada aqui {link da configuração da ferramenta}.
@@ -10,6 +10,4 @@ Para configurar sua ferramenta de métricas para ler e expor os dados dos círcu
 2. Clique em **Credentials**.
 3. Clique em **Add Metric Provider**.
 4. Selecione a opção de ferramenta que você utiliza.
-
-
 

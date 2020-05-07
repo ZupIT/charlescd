@@ -23,9 +23,12 @@
 
 * [O que é e como funciona o Circle Matcher](circle-matcher/circle-matcher.md)
 
-## OBSERVALITY <a id="observability"></a>
+## Observability
 
-* [Métricas](observability/metrics.md)
+* [Métricas](observability/metrics/README.md)
+  * [Overview](observability/metrics/overview.md)
+  * [Configuração](observability/metrics/configuration/README.md)
+    * [Prometheus](observability/metrics/configuration/prometheus.md)
 
 ## HIPÓTESES
 
@@ -47,11 +50,4 @@
 * [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
 * [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
 * [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
-
-## Observability
-
-* [Métricas](observability/metrics/README.md)
-  * [Overview](observability/metrics/overview.md)
-  * [Configuração](observability/metrics/configuration/README.md)
-    * [Prometheus](observability/metrics/configuration/prometheus.md)
 

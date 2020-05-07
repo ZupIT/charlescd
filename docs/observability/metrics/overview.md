@@ -1,6 +1,6 @@
 # Overview
 
-O Charles dispõe de capacidade de ler métricas de cada um dos seus círculos, possibilitando assim análises sobre a saúde e o desempenho de cada um deles. 
+O Charles dispõe de capacidade de ler métricas de cada um dos seus círculos, possibilitando assim análises sobre a saúde e o desempenho de cada um deles.
 
 Essas métricas são expostas pelo Istio e lidas pelo agente da sua ferramenta de métricas.
 
@@ -11,7 +11,7 @@ As métricas disponíveis para análise estão descritas na tabela abaixo.
 | istio\_charles\_request\_total | Contagem do número de requisições | Contador |
 | istio\_charles\_request\_duration\_seconds | Agrupamento do tempo de resposta de cada requisição | Histograma |
 
-### Metainformações
+## Metainformações
 
 Cada métrica possui uma gama de metainformações que permitem que sejam criados os mais variados tipos de filtro e análises. Essas metainformações estão descritas na seguinte tabela.
 
@@ -25,7 +25,7 @@ Cada métrica possui uma gama de metainformações que permitem que sejam criado
 | circle\_source | Header "x-circle-source" que é colocado pelo filtro do Envoy na interceptação de cada requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
 | response\_status | O status HTTP da resposta daquela requisição | Numérico | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
 
-### Provedores aceitos
+## Provedores aceitos
 
 Os provedores de métrica aceitos pelo Charles são:
 
