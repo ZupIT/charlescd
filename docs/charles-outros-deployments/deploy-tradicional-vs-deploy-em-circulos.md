@@ -23,7 +23,7 @@ Enquanto que nos deploys em círculos você trabalha em um só ambiente, segment
 
 No caso do Charles, o sistema de deploys em círculos funciona somente em um ambiente que, no caso, seria de produção. A validação por release é fragmentada de acordo com os círculos selecionados, ou seja, você pode ir ampliando gradativamente o acesso à release a mais e mais círculos.
 
-![](../.gitbook/assets/conceito-de-deploy-em-circulos-1%20%281%29.png)
+![](../.gitbook/assets/conceito-de-deploy-em-circulos-1%20%282%29.png)
 
 Com o deploy em círculos, o desenvolvedor tem a possibilidade de, por exemplo, testar sua hipótese apenas para o seu time de desenvolvimento e ir evoluindo a sua feature para grupos maiores até chegar a todos os usuários. Para a equipe de negócio, é dada a possibilidade de realizar testes de hipótese em fluxos de valores com círculos personalizados.
 
