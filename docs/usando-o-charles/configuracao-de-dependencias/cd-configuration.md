@@ -22,5 +22,5 @@ Seguindo com as configurações, é necessário cadastrar um CD configuration vi
 3. Insira o **token** do seu git. 
 4. Por fim, selecione um **manager** para associar à CD Configuration. 
 
-![](../../.gitbook/assets/cd-configuration-2%20%281%29.gif)
+![](../../.gitbook/assets/cd-configuration-2-1%20%281%29.gif)
 
