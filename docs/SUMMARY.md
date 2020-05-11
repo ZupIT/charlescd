@@ -1,16 +1,20 @@
 # CharlesCD
 
 * [Overview](README.md)
+* [Principais Conceitos](glossario-tecnico.md)
 * Primeiros Passos
   * [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
-  * Configuração de dependências
-    * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
+  * Configurando Workspace
+  * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
+  * Configurações de deploy
     * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
     * [Configuração de CD](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
-    * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-    * [Módulos](usando-o-charles/configuracao-de-dependencias/modules.md)
-    * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider.md)
-* Guia do Usuário
+  * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
+  * [Módulos](usando-o-charles/configuracao-de-dependencias/modules.md)
+  * Primeiro Deploy
+  * [Usando Círculos](circle-matcher/circle-matcher.md)
+  * [Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider.md)
+* Referência
   * [Círculos](circulos/o-que-sao-circulos.md)
   * [Circle Matcher](circle-matcher/circle-matcher.md)
   * [Hipótese](hipoteses/o-que-sao-hipoteses.md)
@@ -23,4 +27,3 @@
   * [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
   * [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
   * [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
-* [Glossário](glossario-tecnico.md)
