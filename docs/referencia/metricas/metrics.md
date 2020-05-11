@@ -1,6 +1,6 @@
 # Configurando Provedor de Métricas
 
-As métricas do CharlesCD são expostas pelo **Istio**, e estão listadas na tabela abaixo:
+As métricas do Charles CD são expostas pelo **Istio**, e estão listadas na tabela abaixo:
 
 | Nome da métrica | Descrição | Tipo da métrica |
 | :--- | :--- | :--- |
