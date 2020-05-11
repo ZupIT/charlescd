@@ -1,49 +1,26 @@
-# Table of contents
+# CharlesCD
 
 * [Overview](README.md)
-* [Key concepts](glossario-tecnico.md)
-
-## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
-
-* [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
-* [Configuração de dependências](usando-o-charles/configuracao-de-dependencias/README.md)
-  * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
-  * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
-  * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
-  * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-  * [Módulos](usando-o-charles/configuracao-de-dependencias/modules.md)
-  * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider.md)
-
-## CÍRCULOS
-
-* [O que são e como funcionam os círculos?](circulos/o-que-sao-circulos.md)
-
-## CIRCLE MATCHER
-
-* [O que é e como funciona o Circle Matcher](circle-matcher/circle-matcher.md)
-
-## MÉTRICAS <a id="observability"></a>
-
-* [O que são e como funcionam as métricas?](observability/metrics.md)
-
-## HIPÓTESES
-
-* [O que são e como funcionam as hipóteses?](hipoteses/o-que-sao-hipoteses.md)
-
-## RELEASES
-
-* [O que são e como funcionam as releases?](releases/o-que-sao-releases.md)
-
-## RECURSOS <a id="apis"></a>
-
-* [APIs](apis/apis/README.md)
+* Primeiros Passos
+  * [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
+  * Configuração de dependências
+    * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
+    * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
+    * [Configuração de CD](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
+    * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
+    * [Módulos](usando-o-charles/configuracao-de-dependencias/modules.md)
+    * [Provedor de Métricas](usando-o-charles/configuracao-de-dependencias/metrics-provider.md)
+* Guia do Usuário
+  * [Círculos](circulos/o-que-sao-circulos.md)
+  * [Circle Matcher](circle-matcher/circle-matcher.md)
+  * [Hipótese](hipoteses/o-que-sao-hipoteses.md)
+  * [Release](releases/o-que-sao-releases.md)
+  * [Métricas](observability/metrics.md)
+* [APIs](apis/README.md)
   * [Collection Postman](https://documenter.getpostman.com/view/4745449/SzRw1WTS)
 * [FAQ](apis/faq.md)
-
-## CHARLES x OUTROS DEPLOYMENTS <a id="charles-outros-deployments"></a>
-
-* [Conceito de deploy em círculos](charles-outros-deployments/conceito-de-deploy-em-circulos.md)
-* [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
-* [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
-* [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
-
+  * [Conceito de deploy em círculos](charles-outros-deployments/conceito-de-deploy-em-circulos.md)
+  * [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
+  * [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
+  * [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
+* [Glossário](glossario-tecnico.md)
