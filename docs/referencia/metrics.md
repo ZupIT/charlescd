@@ -20,11 +20,6 @@ Os provedores de métrica aceitos pelo Charles são:
 
 * [Prometheus](https://prometheus.io/)
 
-Provedores que estão planejados para o futuro são: 
-
-* [DataDog](https://www.datadoghq.com/)
-* [New Relic](https://newrelic.com/)
-
 ## Metainformações
 
 Cada métrica possui uma gama de metainformações que permitem que sejam criados os mais variados tipos de filtro e análises. Essas metainformações estão descritas na seguinte tabela.
