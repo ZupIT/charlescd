@@ -15,7 +15,7 @@ Para configurar seu Istio é necessário habilitá-lo para expor métricas, e co
 Se seu Istio não está habilitado para expor métricas, é necessário executar o seguinte comando para habilita-lo.
 
 ```bash
-$ istioctl manifest generate --set mixer.telemetry.enabled=true
+$ istioctl manifest apply --set values.mixer.telemetry.enabled=true
 ```
 
 {% hint style="warning" %}
