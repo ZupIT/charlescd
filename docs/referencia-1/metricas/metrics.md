@@ -1,32 +1,5 @@
 # Configurando Provedor de Métricas
 
-As métricas do Charles CD são expostas pelo **Istio**, e estão listadas na tabela abaixo:
-
-| Nome da métrica | Descrição | Tipo da métrica |
-| :--- | :--- | :--- |
-| istio\_charles\_request\_total | Contagem do número de requisições | Contador |
-| istio\_charles\_request\_duration\_seconds | Agrupamento do tempo de resposta de cada requisição | Histograma |
-
-## Provedores aceitos
-
-Os provedores de métrica aceitos pelo Charles são: 
-
-* [Prometheus](https://prometheus.io/)
-
-## Metainformações
-
-Cada métrica possui uma gama de metainformações que permitem que sejam criados os mais variados tipos de filtros e análises. Essas metainformações estão descritas na seguinte tabela.
-
-| Metadado | Descrição | Tipo | Métricas que estão presentes |
-| :--- | :--- | :--- | :--- |
-| source | Nome da POD da qual foi feita a requisição, ou "unknown" se a requisição tiver origem de fora da malha | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| destination\_pod | Nome da POD para onde foi destinada requisição, ou "unknown" se a requisição um destino fora da malha | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| destination\_host | Endereço para onde foi feito a requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| destination\_component | Valor presente na label "app" da POD que recebeu a requisição , ou "unknown" se tal informação não estiver presente | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| circle\_id | Header "x-circle-id" que é passado nas requisições, ou "unknown" se o header não estiver presente | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| circle\_source | Header "x-circle-source" que é colocado pelo filtro do Envoy na interceptação de cada requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-| response\_status | O status HTTP da resposta daquela requisição | Numérico | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-
 ## Configurações das métricas 
 
 ### Configurando Istio
@@ -169,9 +142,13 @@ spec:
 
 ### Configurando sua ferramenta de métricas
 
-Após feita a configuração do Istio é preciso configurar sua ferramenta para ser capaz de ler as métricas que foram configuradas para serem expostas.
+Após feita a configuração do Istio é preciso configurar sua ferramenta para ser capaz de ler as métricas expostas.
 
 O primeiro passo é selecionar qual das ferramentas aceitas pelo Charles que você utiliza.
+
+{% hint style="danger" %}
+Atualmente o Charles da suporte apenas  ao Prometheus como ferramenta de métricas, estamos trabalhando para trazer suporte a outras ferramentas no futuro.
+{% endhint %}
 
 {% hint style="info" %}
 Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [sugerir para nós](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [contribua conosco](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais. 
@@ -222,6 +199,29 @@ Fique atento à configuração "namespaces", o valor configurado deve ser o mesm
 {% endhint %}
 {% endtab %}
 {% endtabs %}
+
+## Entendendo as Métricas
+
+As métricas relacionadas ao CharlesCD são :
+
+| Nome da métrica | Descrição | Tipo da métrica |
+| :--- | :--- | :--- |
+| istio\_charles\_request\_total | Contagem do número de requisições | Contador |
+| istio\_charles\_request\_duration\_seconds | Agrupamento do tempo de resposta de cada requisição | Histograma |
+
+### Metainformações
+
+Cada métrica possui uma gama de metainformações que permitem que sejam criados os mais variados tipos de filtros e análises. Essas metainformações estão descritas na seguinte tabela.
+
+| Metadado | Descrição | Tipo | Métricas que estão presentes |
+| :--- | :--- | :--- | :--- |
+| source | Nome da POD da qual foi feita a requisição, ou "unknown" se a requisição tiver origem de fora da malha | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| destination\_pod | Nome da POD para onde foi destinada requisição, ou "unknown" se a requisição um destino fora da malha | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| destination\_host | Endereço para onde foi feito a requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| destination\_component | Valor presente na label "app" da POD que recebeu a requisição , ou "unknown" se tal informação não estiver presente | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| circle\_id | Header "x-circle-id" que é passado nas requisições, ou "unknown" se o header não estiver presente | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| circle\_source | Header "x-circle-source" que é colocado pelo filtro do Envoy na interceptação de cada requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
+| response\_status | O status HTTP da resposta daquela requisição | Numérico | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
 
 
 

@@ -4,8 +4,8 @@ Para um uso completo da ferramenta, recomendamos que o módulo de métricas este
 
 Para configurar as métricas no charles é necessário tanto configurar a sua ferramenta de métricas para coletar as métricas das aplicações, quanto o charles para conseguir acessar esse provedor e ler essas métricas.
 
-{% hint style="info" %}
-Você pode encontrar quais ferramentas o Charles se integra [aqui](metrics.md#provedores-aceitos).
+{% hint style="danger" %}
+Atualmente o Charles da suporte apenas  ao Prometheus como ferramenta de métricas, estamos trabalhando para trazer suporte a outras ferramentas no futuro.
 {% endhint %}
 
 ## Configuração da ferramenta
