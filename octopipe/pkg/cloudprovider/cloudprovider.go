@@ -16,17 +16,17 @@ const (
 	OutOfClusterType         = "OUT_OF_CLUSTER"
 )
 
-type UseCases interface {
+type CloudproviderUseCases interface {
 	GetClient() (dynamic.Interface, error)
 }
 
-type Provider struct {
+type Cloudprovider struct {
 	Provider string `json:"provider"`
 	eks.EKSProvider
 	generic.GenericProvider
 }
 
-func NewCloudProvider(provider *Provider) UseCases {
+func (cloudproviderManager *CloudproviderManager) NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases {
 	switch provider.Provider {
 	case GenericCloudProviderType:
 		genericProvider := &generic.GenericProvider{
@@ -49,7 +49,7 @@ func NewCloudProvider(provider *Provider) UseCases {
 	}
 }
 
-func (provider *Provider) newDefaultConfig() UseCases {
+func (provider *Cloudprovider) newDefaultConfig() CloudproviderUseCases {
 	if config := os.Getenv("KUBECONFIG"); config == OutOfClusterType {
 		return outofcluster.NewOutOfCluster()
 	} else {
