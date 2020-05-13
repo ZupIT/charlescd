@@ -1,4 +1,4 @@
-# Instalação do Charles
+# Instalando o Charles
 
 Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias):
 
