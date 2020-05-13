@@ -19,7 +19,7 @@ $ istioctl manifest apply --set values.mixer.telemetry.enabled=true
 ```
 
 {% hint style="warning" %}
-Para executar o comando acima é necessário ter configurado o istioctl, caso não tenha, clique [aqui](https://istio.io/pt-br/docs/reference/config/istio.operator.v1alpha12.pb/).
+Para executar o comando acima é necessário ter configurado o istioctl, caso não tenha, clique [aqui](https://istio.io/docs/setup/getting-started/#download).
 {% endhint %}
 
 Para expor as métricas relacionadas ao Charles, é preciso executar o comando.
