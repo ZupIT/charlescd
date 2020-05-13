@@ -17,7 +17,7 @@ func (executionManagr *ExecutionManagerFake) FindByID(id string) (*execution.Exe
 	panic("implement me")
 }
 
-func NewExecutionFake() execution.UseCases {
+func NewExecutionFake() execution.ManagerUseCases {
 	return &ExecutionManagerFake{}
 }
 
@@ -35,7 +35,7 @@ func (executionManagr *ExecutionManagerFake) ExecutionError(executionID *primiti
 	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) ExecutionFinished(executionID *primitive.ObjectID) error {
+func (executionManagr *ExecutionManagerFake) ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error {
 	panic("implement me")
 }
 
