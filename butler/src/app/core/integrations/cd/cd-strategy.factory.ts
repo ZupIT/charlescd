@@ -3,13 +3,15 @@ import { CdTypeEnum } from '../../../api/configurations/enums'
 import { SpinnakerService } from './spinnaker'
 import { OctopipeService } from './octopipe'
 import { ICdServiceStrategy } from './interfaces'
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class CdStrategyFactory {
 
     constructor(
         private readonly spinnakerService: SpinnakerService,
-        private readonly octopipeService: OctopipeService
+        private readonly octopipeService: OctopipeService,
+        private readonly consoleLoggerService: ConsoleLoggerService
     ) {}
 
     public create(type: CdTypeEnum): ICdServiceStrategy {
@@ -20,7 +22,9 @@ export class CdStrategyFactory {
             case CdTypeEnum.OCTOPIPE:
                 return this.octopipeService
             default:
-                throw new Error('Invalid cd type value')
+                this.consoleLoggerService.error('ERROR:INVALID_CD_TYPE_VALUE', type)
+                throw new Error('invalid cd type value')
+
         }
     }
 }

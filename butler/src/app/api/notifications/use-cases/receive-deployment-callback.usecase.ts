@@ -20,7 +20,6 @@ import {
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
 
-
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
 
@@ -54,6 +53,7 @@ export class ReceiveDeploymentCallbackUsecase {
         this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
+      this.consoleLoggerService.error('ERROR:FINISH_DEPLOYMENT_NOTIFICATION', error)
       return Promise.reject({ error })
     }
   }
@@ -70,6 +70,7 @@ export class ReceiveDeploymentCallbackUsecase {
 
     const { moduleDeployment: { deployment } } = componentDeployment
     if (!deployment.circle) {
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_WITHOUT_CIRCLE', deployment)
       throw new NotFoundException(`Deployment dont have a circle`)
     }
 
@@ -90,7 +91,7 @@ export class ReceiveDeploymentCallbackUsecase {
     if (deployment.hasSucceeded()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
-      ).toPromise()
+      )
     }
   }
 

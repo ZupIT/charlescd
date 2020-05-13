@@ -34,6 +34,7 @@ export class CreateCircleDeploymentRequestUsecase {
         this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
         const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
         if (!deployment.circle) {
+            this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
             throw new BadRequestException('Deployment does not have a circle')
         }
         try {
@@ -55,6 +56,7 @@ export class CreateCircleDeploymentRequestUsecase {
         try {
             return await this.deploymentsRepository.save(createCircleDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_DEPLOYMENT', error)
             throw new InternalServerErrorException('Could not save deployment')
         }
     }
@@ -103,6 +105,7 @@ export class CreateCircleDeploymentRequestUsecase {
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
             )
         }
+        this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_QUEUED_DEPLOYMENT', error)
         throw new InternalServerErrorException('Could not save queued deployment')
     }
 }

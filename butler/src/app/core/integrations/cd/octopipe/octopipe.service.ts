@@ -38,7 +38,7 @@ export class OctopipeService implements ICdServiceStrategy {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       return await this.octopipeApiService.deploy(octopipeConfiguration).toPromise()
     } catch (error) {
-      this.consoleLoggerService.error(error)
+      this.consoleLoggerService.error('ERROR:DEPLOY_OCTOPIPE_PIPELINE', error)
       throw error
     } finally {
       this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
@@ -46,6 +46,7 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
+    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -77,7 +78,7 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions
     )
-
+    this.consoleLoggerService.log('FINISH:CREATE_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 

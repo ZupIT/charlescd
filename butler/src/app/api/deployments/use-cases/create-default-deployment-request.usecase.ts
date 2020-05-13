@@ -72,6 +72,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         try {
             return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_DEPLOYMENT', error)
             throw new InternalServerErrorException('Could not save deployment')
         }
     }
@@ -120,6 +121,7 @@ export class CreateDefaultDeploymentRequestUsecase {
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
             )
         }
+        this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_QUEUED_DEPLOYMENT', error)
         throw new InternalServerErrorException('Could not save queued deployment')
     }
 }

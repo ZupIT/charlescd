@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import * as winston from 'winston'
+import * as rTracer from 'cls-rtracer'
+import * as stackTrace from 'stack-trace'
+import { StackFrame } from 'stack-trace'
 
 @Injectable()
 export class ConsoleLoggerService {
@@ -11,14 +14,28 @@ export class ConsoleLoggerService {
   }
 
   private static createLogger(): winston.Logger {
-    return winston.createLogger({
+
+     return winston.createLogger({
       format: winston.format.combine(
-        winston.format.splat(),
-        winston.format.simple()
-      ),
+      winston.format.timestamp(),
+      this.jsonFormat(),
+    ),
       transports: [
         new winston.transports.Console()
       ]
+    })
+  }
+
+  private static jsonFormat() {
+    return winston.format.printf(({timestamp, level, message, ...data}) => {
+
+      return JSON.stringify({
+         requestId:  rTracer.id(),
+         timestamp,
+         level,
+         message,
+          ...data,
+      })
     })
   }
 
@@ -27,14 +44,19 @@ export class ConsoleLoggerService {
     messageObject?: any
   ): void {
 
-    this.logger.log('info', message, messageObject)
+    this.logger.log('info', message, this.getDataTrace(messageObject))
   }
 
   public error(
     error: string,
-    errorObject?: Error
+    errorObject?: any
   ): void {
 
-    this.logger.log('error', error, { error: errorObject })
+    this.logger.log('error', error, { error: JSON.stringify(errorObject, Object.getOwnPropertyNames(errorObject)) })
   }
+
+  public getDataTrace(data?: any) {
+    return { data, functionName: stackTrace.get()[2].getFunctionName(), fileName: stackTrace.get()[2].getFileName() }
+  }
+
 }

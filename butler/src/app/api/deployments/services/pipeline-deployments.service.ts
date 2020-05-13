@@ -109,6 +109,7 @@ export class PipelineDeploymentsService {
             component.setPipelineCircle(circle, componentDeployment)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -122,6 +123,7 @@ export class PipelineDeploymentsService {
             component.setPipelineDefaultCircle(componentDeployment)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -134,6 +136,7 @@ export class PipelineDeploymentsService {
             component.unsetPipelineCircle(circle)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -154,16 +157,20 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
 
         if (!componentEntity.module.cdConfigurationId) {
+            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', componentEntity.module)
             throw new NotFoundException(`Module does not have configuration id`)
         }
+        this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
         const cdConfiguration =
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
         if (!cdConfiguration) {
+            this.consoleLoggerService.error('ERROR:CONFIGURATION_NOT_FOUND', { id: componentEntity.module.cdConfigurationId })
             throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
         }
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             deploymentEntity.circleId, pipelineCallbackUrl
@@ -179,13 +186,16 @@ export class PipelineDeploymentsService {
         pipelineCallbackUrl: string
     ): Promise<void> {
         if (!componentEntity.module.cdConfigurationId) {
+            this.consoleLoggerService.error('ERROR:MODULE_DOES_NOT_HAVE_CONFIGURATION_ID', componentEntity.module )
             throw new NotFoundException(`Module does not have configuration id`)
         }
+        this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
         const cdConfiguration =
             await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             undeploymentEntity.circleId, pipelineCallbackUrl
