@@ -1,6 +1,6 @@
 ---
 description: >-
-  Nesta seção, você encontra informações iniciais sobre o Charles antes de se
+  Nesta seção, você encontra as informações iniciais sobre o Charles antes de se
   aprofundar no produto.
 ---
 
