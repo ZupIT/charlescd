@@ -1,0 +1,29 @@
+# Cadastrando o provedor de métricas
+
+O cadastro do provedor de métricas é uma etapa fundamental para você usar o Charles em todo seu potencial, já que elas permitem que você quantifique a performance de suas aplicações e acompanhe o status delas.
+
+Para ter a função de métricas configurada no Charles, é necessário: 
+
+* Configurar sua ferramenta de métricas; 
+* Acessar as métricas por meio de um provedor previamente cadastrado.
+
+{% hint style="danger" %}
+Atualmente, o Charles dá suporte apenas ao Prometheus como ferramenta de métricas. A expectativa é que, para as próximas versões, a ferramenta suporte outros provedores. 
+{% endhint %}
+
+### Configuração da ferramenta
+
+Antes de cadastrar o seu provedor, é necessário ter finalizado a [configuração de métricas](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Freferencia-1%2Fmetricas%2Fmetrics%23configuracoes-das-metricas). 
+
+### Configuração do Charles
+
+Por fim, adicione o seu provedor de métricas dentro da parte de configurações do Charles. Abaixo, você confere como realizar essa configuração com os seguintes passos:
+
+1. Clique no seu nome, no canto inferior esquerdo e, em seguida, selecione **Settings**. 
+2. Clique em **Credentials**. 
+3. Clique em **Add Metric Provider**. 
+4. Selecione a **opção de ferramenta** que você utiliza. 
+5. Faça a configuração baseada na ferramenta selecionada.
+
+![](../../.gitbook/assets/metrics-provider.gif)
+
