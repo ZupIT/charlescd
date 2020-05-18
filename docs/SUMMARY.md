@@ -21,6 +21,7 @@
 * [Configuração de CD](referencia-1/configuracao-cd.md)
 * [Hipótese](referencia-1/hipotese.md)
 * [Release](referencia-1/release.md)
+* [Permissionamento dos Grupos de Usuários](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
 * [Métricas](referencia-1/metricas/README.md)
   * [Configurando as métricas](referencia-1/metricas/configurando-metricas.md)
   * [Cadastrando o provedor de métricas](referencia-1/metricas/provedor-metrica.md)
