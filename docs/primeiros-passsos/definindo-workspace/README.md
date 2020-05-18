@@ -14,6 +14,6 @@ Cada Workspace contempla nas suas configurações:
 * Registro do[ **Provedor de Métricas**](../../referencia-1/metricas/) das suas aplicações.
 
 {% hint style="warning" %}
-A criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem ser feitas tanto por ele quanto pelos usuários associados workspace com perfil de **mantenedor**.
+A criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem ser feitas tanto por ele quanto pelos usuários associados ao workspace com perfil de **mantenedor**.
 {% endhint %}
 
