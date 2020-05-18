@@ -16,7 +16,7 @@ Caso contrário, se todos do time tiverem a mesma permissão, poderíamos criar 
 
 O permissionamento do Charles é dado aos grupos de usuário no momento que você os associa ao workspace.
 
-Os seguintes perfis são suportados:
+Atualmente, os seguintes perfis são suportados:
 
 * **Mantenedor**: pode acessar e editar todas as configurações do workspace. Além de realizar implantações, ele também tem a permissão de criar, editar e deletar círculos, módulos e hipóteses.
 * **Desenvolvedor**: tem o acesso para realizar implantações. Além disso, também pode criar, editar e deletar círculos, módulos e hipóteses. 
