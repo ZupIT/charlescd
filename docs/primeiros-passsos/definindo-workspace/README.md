@@ -13,3 +13,5 @@ Cada Workspace contempla nas suas configurações:
 * Personalização do [**Circle Matcher**](../../referencia-1/circle-matcher.md).
 * Registro do[ **Provedor de Métricas**](../../referencia-1/metricas/) das suas aplicações. 
 
+É importante frisar que, a criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem ser feitas tanto por ele quanto pelos usuários associados workspace com perfil de mantenedor.
+
