@@ -17,7 +17,7 @@ Em caso de dúvidas para encontrar ou gerar essas informações, sugerimos a doc
 * **Nome**: esse nome representará sua configuração no Charles.
 * **URL do seu registry**: a URL para o seu registry padrão é [https://**aws\_account\_id**.dkr.ecr.region.amazonaws.com](https://aws_account_id.dkr.ecr.region.amazonaws.com).
 * **Username**: ID da entidade de serviço que será usada pelo Kubernetes para acessar o registro.
-* **Password**: Senha da entidade de serviço
+* **Password**: Senha da entidade de serviço.
 
 Em caso de dúvidas para encontrar ou gerar essas informações, sugerimos a documentação da [**Azure Container Registry**](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-concepts).
 
