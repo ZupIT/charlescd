@@ -1,6 +1,6 @@
 # Docker Registry
 
-Durante a configuração do seu workspace, é necessário cadastrar o registry onde as imagens das suas aplicações estão armazendadas. Esse acesso é importante, pois, uma vez configurado, o CharlesCD ganha **visibilidade das imagens existentes**. 
+Durante a configuração do seu workspace, é necessário cadastrar o registry onde as imagens das suas aplicações estão armazendadas. Esse acesso é importante, pois, uma vez configurado, o CharlesCD pode **observar novas imagens sendo geradas e listar as imagens já salvas no seu registry** para implantá-las.
 
 Existem duas categorias de cadastros dessa configuração que podem ser feitas pelo workspace. Para isso, basta adicionar as seguintes informações:
 
