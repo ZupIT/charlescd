@@ -33,7 +33,7 @@ spec:
 Execute o comando abaixo:
 
 ```bash
-$ istioctl manifest -f telemetry.yaml
+$ istioctl manifest apply -f telemetry.yaml
 ```
 
 {% hint style="warning" %}
