@@ -1,4 +1,4 @@
-# Configurando as métricas
+# Setting your metrics
 
 ## Cadastrando provedor de métricas
 

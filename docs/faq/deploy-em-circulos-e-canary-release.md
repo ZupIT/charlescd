@@ -5,7 +5,7 @@ description: >-
   release.
 ---
 
-# Qual a diferença entre deploy em círculos e canary releases?
+# What's the difference between circle deploy and canary release?
 
 O canary release, ou implantação canário, funciona por meio da publicação gradual da nova versão de um software.
 

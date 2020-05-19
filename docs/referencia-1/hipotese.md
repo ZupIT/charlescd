@@ -1,4 +1,4 @@
-# Hipótese
+# Hypothesis
 
 As hipóteses são as alternativas cadastradas na plataforma para resolver algum problema ou validar uma ou mais mudanças nas aplicações que você integrou ao Charles. 
 

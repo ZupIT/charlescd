@@ -1,4 +1,4 @@
-# Criando seu Primeiro Módulo
+# Creating your First Module
 
 Uma vez criado e configurado o seu [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace), também é necessário adicionar os módulos com os quais pretende trabalhar suas aplicações. Para isso, basta seguir o passo a passo abaixo:
 

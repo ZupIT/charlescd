@@ -1,4 +1,4 @@
-# Configuração de CD
+# CD Configuration
 
 Seguindo com as configurações, é necessário cadastrar um CD configuration vinculado ao seu docker. Para isso, basta realizar os seguintes passos:
 

@@ -4,7 +4,7 @@ description: >-
   círculos da plataforma do Charles em relação aos deploys tradicionais.
 ---
 
-# Qual a diferença entre deploy em círculos e deploy tradicional?
+# What's the difference between circle deploy and traditional deploy?
 
 ## Deploy tradicional
 

@@ -1,4 +1,4 @@
-# Cadastrando o provedor de métricas
+# Registering a metrics provider
 
 O cadastro do provedor de métricas é uma etapa fundamental para você usar o Charles em todo seu potencial, já que elas permitem que você quantifique a performance de suas aplicações e acompanhe o status delas.
 

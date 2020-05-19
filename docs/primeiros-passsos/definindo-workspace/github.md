@@ -1,4 +1,4 @@
-# Credenciais do Git
+# Git Credentials
 
 Durante a configuração do seu workspace, você pode adicionar o seu Git \(sistema de histórico e controle de versões\). Para isso, basta seguir os seguinte passos:
 

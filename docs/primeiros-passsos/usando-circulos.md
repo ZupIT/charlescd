@@ -1,4 +1,4 @@
-# Usando Círculos
+# Using Circles
 
 A partir do momento em que você começa a fazer seus deploys, o próximo passo é [**criar os primeiros círculos**](https://docs.charlescd.io/referencia-1/circles) para melhor segmentação das suas aplicações. 
 

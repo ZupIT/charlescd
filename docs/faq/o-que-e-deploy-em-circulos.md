@@ -1,4 +1,4 @@
-# O que é deploy em círculos?
+# What is circle deploy?
 
 Quando analisamos a confiabilidade de um site, ou o Site Reliability Engineering \(SRE\), um dos indicadores mais importantes é o percentual de tolerância de erros que esse sistema deve apresentar, mais conhecido como error budget. Em geral, o valor médio deste error budget é 0,01%
 

@@ -1,4 +1,4 @@
-# Definindo um Workspace
+# Defining a Workspace
 
 O workspace permite que você segmente o uso do CharlesCD dentro da sua empresa ou do seu time, definindo **permissões personalizadas dos usuários**, o que garante mais segurança para o seu projeto.
 

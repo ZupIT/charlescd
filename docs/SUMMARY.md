@@ -1,30 +1,30 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Principais Conceitos](principais-conceitos.md)
+* [Key Concepts](principais-conceitos.md)
 
 ## GET STARTED <a id="primeiros-passsos"></a>
 
-* [Instalando o Charles](primeiros-passsos/instalando-charles.md)
-* [Definindo um Workspace](primeiros-passsos/definindo-workspace/README.md)
+* [Installing Charles](primeiros-passsos/instalando-charles.md)
+* [Defining a Workspace](primeiros-passsos/definindo-workspace/README.md)
   * [Docker Registry](primeiros-passsos/definindo-workspace/docker-registry.md)
-  * [Configurando seu Cluster](primeiros-passsos/definindo-workspace/configuracoes-de-deploy.md)
-  * [Credenciais do Git](primeiros-passsos/definindo-workspace/github.md)
-* [Criando seu Primeiro Módulo](primeiros-passsos/criando-modulos.md)
-* [Primeiro Deploy](primeiros-passsos/primeiro-deploy.md)
-* [Usando Círculos](primeiros-passsos/usando-circulos.md)
+  * [Setting a Cluster](primeiros-passsos/definindo-workspace/configuracoes-de-deploy.md)
+  * [Git Credentials](primeiros-passsos/definindo-workspace/github.md)
+* [Creating your First Module](primeiros-passsos/criando-modulos.md)
+* [First Deploy](primeiros-passsos/primeiro-deploy.md)
+* [Using Circles](primeiros-passsos/usando-circulos.md)
 
 ## REFERENCES <a id="referencia-1"></a>
 
-* [Círculos](referencia-1/circulos.md)
+* [Circles](referencia-1/circulos.md)
 * [Circle Matcher](referencia-1/circle-matcher.md)
-* [Configuração de CD](referencia-1/configuracao-cd.md)
-* [Grupo de Usuários](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
-* [Hipótese](referencia-1/hipotese.md)
+* [CD Configuration](referencia-1/configuracao-cd.md)
+* [Users Group](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
+* [Hypothesis](referencia-1/hipotese.md)
 * [Release](referencia-1/release.md)
-* [Métricas](referencia-1/metricas/README.md)
-  * [Configurando as métricas](referencia-1/metricas/configurando-metricas.md)
-  * [Cadastrando o provedor de métricas](referencia-1/metricas/provedor-metrica.md)
+* [Metrics](referencia-1/metricas/README.md)
+  * [Setting your metrics](referencia-1/metricas/configurando-metricas.md)
+  * [Registering a metrics provider](referencia-1/metricas/provedor-metrica.md)
 
 ## API
 
@@ -32,8 +32,8 @@
 
 ## FAQ
 
-* [O que é deploy em círculos?](faq/o-que-e-deploy-em-circulos.md)
-* [Qual a diferença entre deploy em círculos e deploy tradicional?](faq/deploy-em-circulos-e-deploy-tradicional.md)
-* [Qual a diferença entre deploy em círculos e blue-green deploy?](faq/deploy-em-circulos-e-blue-green.md)
-* [Qual a diferença entre deploy em círculos e canary releases?](faq/deploy-em-circulos-e-canary-release.md)
+* [What is circle deploy?](faq/o-que-e-deploy-em-circulos.md)
+* [What's the difference between circle deploy and traditional deploy?](faq/deploy-em-circulos-e-deploy-tradicional.md)
+* [What's the difference between circle deploy and blue-green deploy?](faq/deploy-em-circulos-e-blue-green.md)
+* [What's the difference between circle deploy and canary release?](faq/deploy-em-circulos-e-canary-release.md)
 

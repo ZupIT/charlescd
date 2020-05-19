@@ -1,4 +1,4 @@
-# Configurando seu Cluster
+# Setting a Cluster
 
 Mostrar a configuração de um cluster via Octopipe no próprio cluster \(Default\).
 

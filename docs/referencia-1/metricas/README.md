@@ -1,4 +1,4 @@
-# Métricas
+# Metrics
 
 ## O que são as métricas?
 

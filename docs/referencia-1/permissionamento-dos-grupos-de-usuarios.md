@@ -1,4 +1,4 @@
-# Grupo de Usuários
+# Users Group
 
 Um grupo de usuários pode representar um time ou até mesmo um subconjunto de pessoas baseado em suas habilidades. 
 
