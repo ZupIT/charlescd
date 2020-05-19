@@ -1,8 +1,8 @@
 # Grupo de Usuários
 
-Um grupo de usuários pode representar um time ou até mesmo um subconjunto baseado em habilidades. 
+Um grupo de usuários pode representar um time ou até mesmo um subconjunto de pessoas baseado em suas habilidades. 
 
-Por exemplo, em um time muito grande, onde as permissões de acesso ao Charles se diferem de acordo com sua posição, poderíamos ter os seguintes grupos:
+Por exemplo, em um time muito grande, as permissões de acesso ao Charles iriam se diferenciar de acordo com sua posição, poderíamos ter os seguintes grupos:
 
 * _Desenvolvedores do Produto X._
 * _QAs do Produto X._
@@ -12,14 +12,14 @@ Caso contrário, se todos do time tiverem a mesma permissão, poderíamos criar 
 
 * _Time do Produto X._
 
-### Permissionamento de Grupos de Usuário no Workspace
+## Permissões para o Grupo de Usuários no Workspace
 
-O permissionamento do Charles é dado aos grupos de usuário no momento que você os associa ao workspace.
+As permissões do Charles são dadas aos grupos de usuários quando você os associa a um workspace.
 
-Atualmente, os seguintes perfis são suportados:
+Os seguintes perfis são suportados:
 
-* **Mantenedor**: pode acessar e editar todas as configurações do workspace. Além de realizar implantações, ele também tem a permissão de criar, editar e deletar círculos, módulos e hipóteses.
-* **Desenvolvedor**: tem o acesso para realizar implantações. Além disso, também pode criar, editar e deletar círculos, módulos e hipóteses. 
-* **Analista**: pode visualizar  as configurações dos módulos. Além disso, tem permissão de criar, editar e deletar círculos, módulos e hipóteses. 
+* **Mantenedor**: pode acessar e editar todas as configurações do workspace. Ele pode realizar implantações, e também tem a permissão para criar, editar e deletar círculos, módulos e hipóteses.
+* **Desenvolvedor**: possui acesso para realizar implantações e também pode criar, editar, deletar círculos, módulos e hipóteses. 
+* **Analista**: possui permissão para criar, editar e deletar círculos, módulos e hipóteses. E também pode visualizar as configurações dos módulos.
 * **Leitor**: pode visualizar círculos, hipóteses e módulos.
 
