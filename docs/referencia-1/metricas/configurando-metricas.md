@@ -14,6 +14,10 @@ Para configurar seu Istio é necessário habilitá-lo para expor métricas, e co
 
 Se seu Istio não está habilitado para expor métricas, siga os seguintes passos:
 
+{% hint style="warning" %}
+As configurações abaixo são referentes a versão 1.5 do Istio.
+{% endhint %}
+
 Crie um arquivo chamado **telemetry.yaml** com o conteúdo:
 
 ```yaml
