@@ -12,10 +12,28 @@ Se deseja entender um pouco mais sobre a telemetria do Istio, recomendamos que c
 
 Para configurar seu Istio é necessário habilitá-lo para expor métricas, e configurá-lo para expor as métricas do charles.
 
-Se seu Istio não está habilitado para expor métricas, é necessário executar o seguinte comando para habilita-lo.
+Se seu Istio não está habilitado para expor métricas, siga os seguintes passos:
+
+Crie um arquivo chamado **telemetry.yaml** com o conteúdo:
+
+```yaml
+apiVersion: install.istio.io/v1alpha2
+kind: IstioControlPlane
+spec:
+  values:
+    prometheus:
+      enabled: false
+    telemetry:
+      v1:
+        enabled: true
+      v2:
+        enabled: false
+```
+
+Execute o comando abaixo:
 
 ```bash
-$ istioctl manifest apply --set values.mixer.telemetry.enabled=true
+$ istioctl manifest -f telemetry.yaml
 ```
 
 {% hint style="warning" %}
