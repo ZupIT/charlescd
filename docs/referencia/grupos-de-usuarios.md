@@ -12,7 +12,7 @@ Caso contrário, se todos do time tiverem a mesma permissão, poderíamos criar 
 
 * _Time do Produto X._
 
-## Permissionamento de Grupos de Usuário no Workspace
+### Permissionamento de Grupos de Usuário no Workspace
 
 O permissionamento do Charles é dado aos grupos de usuário no momento que você os associa ao workspace.
 

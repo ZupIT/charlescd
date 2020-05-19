@@ -14,17 +14,17 @@
 * [Primeiro Deploy](primeiros-passsos/primeiro-deploy.md)
 * [Usando Círculos](primeiros-passsos/usando-circulos.md)
 
-## Referência <a id="referencia-1"></a>
+## Referência
 
-* [Círculos](referencia-1/circulos.md)
-* [Circle Matcher](referencia-1/circle-matcher.md)
-* [Configuração de CD](referencia-1/configuracao-cd.md)
-* [Grupo de Usuários](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
-* [Hipótese](referencia-1/hipotese.md)
-* [Release](referencia-1/release.md)
-* [Métricas](referencia-1/metricas/README.md)
-  * [Configurando as métricas](referencia-1/metricas/configurando-metricas.md)
-  * [Cadastrando o provedor de métricas](referencia-1/metricas/provedor-metrica.md)
+* [Círculos](referencia/circulos.md)
+* [Circle Matcher](referencia/circle-matcher.md)
+* [Configuração de CD](referencia/configuracao-cd.md)
+* [Grupo de Usuários](referencia/grupos-de-usuarios.md)
+* [Hipótese](referencia/hipotese.md)
+* [Release](referencia/release.md)
+* [Métricas](referencia/metricas/README.md)
+  * [Configurando as métricas](referencia/metricas/configurando-metricas.md)
+  * [Cadastrando o provedor de métricas](referencia/metricas/provedor-metrica.md)
 
 ## API
 
