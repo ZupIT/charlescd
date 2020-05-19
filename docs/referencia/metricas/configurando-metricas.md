@@ -167,7 +167,7 @@ Após feita a configuração do Istio é preciso configurar sua ferramenta para 
 O primeiro passo é selecionar qual das ferramentas aceitas pelo Charles que você utiliza.
 
 {% hint style="danger" %}
-Atualmente o Charles da suporte apenas  ao Prometheus como ferramenta de métricas, estamos trabalhando para trazer suporte a outras ferramentas no futuro.
+Atualmente o Charles oferece suporte apenas ao Prometheus como ferramenta de métricas, estamos trabalhando para trazer suporte a outras ferramentas no futuro.
 {% endhint %}
 
 {% hint style="info" %}
