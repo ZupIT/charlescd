@@ -1,29 +1,28 @@
 # Criando seu Primeiro Módulo
 
-Uma vez criado e configurado o seu [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace), também é necessário adicionar os módulos com os quais pretende trabalhar suas aplicações. Para isso, basta seguir o passo a passo abaixo:
+Uma vez criado e configurado o seu [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace), também é necessário adicionar os módulos. 
 
-1. Clique na opção **Modules** que aparece na barra lateral esquerda da página inicial; 
-2. Clique em **Create module**;
-3. Defina um **nome** para o módulo;
-4. Digite um **git address** para seu módulo;
-5. Selecione uma **git configuration** para o módulo. Exemplo: github-test;
-6. Selecione uma **registry configuration** para o módulo. Exemplo: registry-example;
-7. Selecione uma **k8s configuration.** Exemplo: kubernetes example;
-8. Por fim, preencha os campos com componentes do kubernetes e o módulo está criado.
+{% hint style="info" %}
+Um **módulo** nada mais é que a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](definindo-workspace/github.md).
+{% endhint %}
+
+Para isso, basta acessar o menu _Modules_ no _workspace_ desejado, e __seguir os seguintes passos:
+
+* **Nome**: o nome do módulo deve ser o mesmo nome do seu repositório. 
+* **Git URL**: informe a URL do seu repositório. Por exemplo: [https://github.com/ZupIT/charlescd](https://github.com/ZupIT/charlescd).
+
+Caso seu repositório tenha várias aplicações, as cadastre como componentes informando:
+
+* **Nome**: o nome da aplicação, conforme está no repositório.
+* **Métricas**: latência \(ms\) e erro HTTP \(%\). Em ambos os casos, deve-se informar um valor de risco que você gostaria de ser alertado caso seu componente alcançasse ou ultrapassasse.
 
 ## Componentes 
 
-{% hint style="warning" %}
-Componentes são a abstração das aplicações, sendo que cada componente corresponde à uma aplicação daquele módulo, e cada um de seus componentes tem sua própria configuração.
+{% hint style="info" %}
+Componentes são abstrações das aplicações. Dentro do seu repositório, caso ele tenha múltiplas aplicações, cada componente corresponderá à uma delas.
 {% endhint %}
 
-### Configuração
+### Métricas de saúde
 
-Para cadastrar um componente é necessário apenas escolher o nome do seu componente e salvar.
-
-### Limites de saúde
-
-Para cada componente é possível cadastrar alguns limites para análise da saúde do componente. 
-
-É possível cadastrar os limites de Latência e percentagem de erros HTTP daquele componente, e quando esses limites forem atingidos, ou estiverem à menos de 10%, você receberá alertas sobre o status para o círculo que demonstra o problema.
+Para cada componente é possível cadastrar as seguintes métricas para análise de saúde: **latência** \(ms\) e **erro HTTP** \(%\). Quando os limites forem atingidos, ou estiverem à menos de 10%, você receberá alerta informando o estado da sua aplicação no círculo que demonstra o problema.
 
