@@ -1,18 +1,20 @@
 # Credenciais do Git
 
-Durante a configuração do seu workspace, é necessário cadastrar o Git onde estão armazenados seus repositórios. Esse acesso é importante, pois, uma vez configurado, o CharlesCD ganha **visibilidade das imagens existentes**. 
+Durante a configuração do seu workspace, é necessário cadastrar o Git onde estão armazenados seus repositórios. Esse acesso é importante, pois, através dele, o Chales **pode criar, excluir e mesclar ramificações** durante a utilização do board das hipóteses, além de **visualizar e criar releases**.
 
 Existem duas categorias de cadastros dessa configuração que podem ser feitas pelo workspace. Para isso, basta adicionar as seguintes informações:
 
+### GitHub
 
+* **Nome**: esse nome representará sua configuração no Charles. 
+* **URL**: se você tiver um domínio personalizado, preencha aqui. Caso contrário, informe o valor padrão: [https://github.com](https://github.com) \(sem barra no final\). 
+* **Token**: **ao** [**gerar esse token**](https://help.github.com/pt/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), é necessário que ele tenha acesso completo ao item "**repo**".
 
-Durante a configuração do seu workspace, você pode adicionar o seu Git \(sistema de histórico e controle de versões\). Para isso, basta seguir os seguinte passos:
+### GitLab
 
-1. Clique no seu nome, no canto superior direito e, em seguida, selecione **Settings**;
-2. Clique em **Credentials**;
-3. **Clique em Add Git**;
-4. Selecione a opção de Git entre **GitHub** ou **GitLab 5**;
-5. Por fim, cole o link do seu git e ele será adicionado.
+* **Nome**: esse nome representará sua configuração no Charles. 
+* **URL**: se você tiver um domínio personalizado, preencha aqui. Caso contrário, informe o valor padrão: [https://gitlab.com](https://gitlab.com/) \(sem barra no final\). 
+* **Token**: consulte a documentação para ****[**gerar o token**](https://docs.gitlab.com/ee/api/#personalproject-access-tokens).
 
 
 
