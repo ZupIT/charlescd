@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-br.com.zup.tracing.zuptracing.configuration.ZupTracingAutoConfiguration
+io.charlescd.utils.tracing.configuration.CharlesTracingAutoConfiguration

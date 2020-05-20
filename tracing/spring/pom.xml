@@ -22,10 +22,11 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.6.RELEASE</version>
     </parent>
-    <groupId>br.com.zup.charlescd</groupId>
-    <artifactId>spring-circle-propagation</artifactId>
+    <groupId>io.charlescd.utils</groupId>
+    <artifactId>tracing</artifactId>
     <version>0.0.8-SNAPSHOT</version>
-    <name>spring-circle-propagation</name>
+    <name>charles-tracing</name>
+    <description>CharlesCD distributed tracing library</description>
 
     <properties>
         <java.version>1.8</java.version>

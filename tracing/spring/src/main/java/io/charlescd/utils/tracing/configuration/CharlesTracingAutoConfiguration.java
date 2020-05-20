@@ -14,10 +14,10 @@
  *   limitations under the License.
  */
 
-package br.com.zup.tracing.zuptracing.configuration;
+package io.charlescd.utils.tracing.configuration;
 
 
-import br.com.zup.tracing.zuptracing.decorator.ZupJaegerSpanDecorator;
+import io.charlescd.utils.tracing.decorator.CharlesJaegerSpanDecorator;
 import io.jaegertracing.internal.propagation.TextMapCodec;
 import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
 import io.opentracing.contrib.web.servlet.filter.ServletFilterSpanDecorator;
@@ -31,14 +31,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableFeignClients
-@ConditionalOnProperty(value = "zup.tracing.enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = "charles.tracing.enable", havingValue = "true", matchIfMissing = true)
 @AutoConfigureBefore(name = "io.opentracing.contrib.java.spring.jaeger.starter.JaegerAutoConfiguration")
-public class ZupTracingAutoConfiguration {
+public class CharlesTracingAutoConfiguration {
 
     private TextMapCodec httpMapCodec;
     private String headerPattern;
 
-    public ZupTracingAutoConfiguration(@Value("${zup.tracing.header.name:x-circle-id}") String headerPattern) {
+    public CharlesTracingAutoConfiguration(@Value("${charles.tracing.header.name:x-circle-id}") String headerPattern) {
         this.headerPattern = headerPattern;
         this.httpMapCodec = TextMapCodec.builder()
                 .withBaggagePrefix(this.headerPattern)
@@ -48,7 +48,7 @@ public class ZupTracingAutoConfiguration {
 
     @Bean
     public ServletFilterSpanDecorator createDecorator() {
-        return new ZupJaegerSpanDecorator(this.headerPattern);
+        return new CharlesJaegerSpanDecorator(this.headerPattern);
     }
 
     @Bean
@@ -57,7 +57,7 @@ public class ZupTracingAutoConfiguration {
     }
 
     @Bean
-    public TracerBuilderCustomizer zupTracerCustomizer() {
+    public TracerBuilderCustomizer charlesTracerCustomizer() {
         return builder -> builder
                 .registerInjector(Format.Builtin.HTTP_HEADERS, httpMapCodec)
                 .registerExtractor(Format.Builtin.HTTP_HEADERS, httpMapCodec);
