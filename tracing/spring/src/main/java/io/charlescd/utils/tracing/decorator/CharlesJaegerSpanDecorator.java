@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package br.com.zup.tracing.zuptracing.decorator;
+package io.charlescd.utils.tracing.decorator;
 
 import io.opentracing.Span;
 import io.opentracing.contrib.web.servlet.filter.ServletFilterSpanDecorator;
@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
-public class ZupJaegerSpanDecorator implements ServletFilterSpanDecorator {
+public class CharlesJaegerSpanDecorator implements ServletFilterSpanDecorator {
 
     private String headerPattern;
 
-    public ZupJaegerSpanDecorator(String headerPattern) {
+    public CharlesJaegerSpanDecorator(String headerPattern) {
         this.headerPattern = headerPattern;
     }
 
