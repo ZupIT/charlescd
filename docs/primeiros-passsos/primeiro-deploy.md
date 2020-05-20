@@ -1,14 +1,16 @@
 ---
 description: >-
-  Nesta seção, você encontra um passo a passo detalhado para realizar o seu
-  primeiro deploy utilizando o Charles.
+  Nesta seção, você encontra os passos para realizar o seu primeiro deploy
+  utilizando o Charles.
 ---
 
 # Primeiro Deploy
 
-Após criar o seu primeiro [módulo](https://docs.charlescd.io/primeiros-passsos/criando-modulos) e cadastrar as [credenciais do seu cluster](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/configuracoes-de-deploy), você agora completou todos os passos  de configuração necessários para a realização do seu primeiro deploy. Agora, é necessário criar uma [release](https://docs.charlescd.io/referencia/release) e disponibiliza-la no cluster configurado.
+Após criar o seu primeiro [módulo](https://docs.charlescd.io/primeiros-passsos/criando-modulos) e cadastrar as [credenciais do seu cluster](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/configuracoes-de-deploy), você completou todos os passos  de configuração necessários para a realização do seu primeiro deploy. Agora, é necessário criar uma [release](https://docs.charlescd.io/referencia/release) e disponibilizá-la no cluster configurado.
 
-No Charles, oferecemos duas alternativas para a criação de uma release. São elas: Utilizar o fluxo de um quadro de [hipótese](https://docs.charlescd.io/referencia/hipotese) ou cria-la a partir de imagens docker já disponíveis no [registry](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry) configurado. Nesta seção de primeiros passos iremos focar na primeira abordagem:
+No Charles, oferecemos duas alternativas para a criação de uma release: Utilizar o fluxo de um quadro de [hipótese](https://docs.charlescd.io/referencia/hipotese) ou criá-la a partir de imagens docker já disponíveis no [registry](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry) configurado. 
+
+Nesta seção de passos iremos focar a primeira abordagem:
 
 1. Clique na opção **Hypotheses** que aparece na barra lateral esquerda na página inicial;
 2.  Preencha o nome da nova hipótese a ser criada no campo **Create new hypothesis** na parte inferior da listagem de hipóteses e aperte a **tecla enter**;
@@ -26,7 +28,7 @@ Após a realização do processo acima, teremos uma release pronta para o deploy
 2. Clique no círculo **Default** \(Este representa o mar aberto\);
 3. Clique em **Override release** no canto direito superior;
 4. Clique em **Search for ready releases**;
-5. Digite o nome da release criada nos passos acima, a selecione e clique em **Deploy**;
+5. Digite o nome da release criada nos passos acima, a selecione e clique em **Deploy.**
 
-Após isso, o Charles se encarregará de disponibilizar a release criada no cluster configurado em mar aberto. O status do deploy será exibido e atualizado conforme o progresso.
+Depois disso, o Charles se encarregará de disponibilizar a release criada no cluster configurado em mar aberto. O status do deploy será exibido e atualizado conforme o progresso.
 
