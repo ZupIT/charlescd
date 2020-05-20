@@ -1,6 +1,6 @@
 # Credenciais do Git
 
-Durante a configuração do seu workspace, é necessário cadastrar o Git onde estão armazenados seus repositórios. Esse acesso é importante, pois, através dele, o Chales **pode criar, excluir e mesclar ramificações** durante a utilização do board das hipóteses, além de **visualizar e criar releases**.
+Durante a configuração do seu workspace, é necessário cadastrar o Git, que é onde estão armazenados seus repositórios. Esse acesso é importante porque por meio dele, o Charles é capaz de **criar, excluir e mesclar ramificações** durante a utilização do board das hipóteses, além de poder **visualizar e criar releases**.
 
 Existem duas categorias de cadastros dessa configuração que podem ser feitas pelo workspace. Para isso, basta adicionar as seguintes informações:
 
@@ -13,7 +13,7 @@ Existem duas categorias de cadastros dessa configuração que podem ser feitas p
 ### GitLab
 
 * **Nome**: esse nome representará sua configuração no Charles. 
-* **URL**: se você tiver um domínio personalizado, preencha aqui. Caso contrário, informe o valor padrão: [https://gitlab.com](https://gitlab.com/) \(sem barra no final\). 
+* **URL**: se você tiver um domínio personalizado, preencha nesse espaço. Caso contrário, informe o valor padrão: [https://gitlab.com](https://gitlab.com/) \(sem barra no final\). 
 * **Token**: consulte a documentação para ****[**gerar o token**](https://docs.gitlab.com/ee/api/#personalproject-access-tokens).
 
 
