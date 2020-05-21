@@ -36,5 +36,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONARCLOUD_KEY }}
-        JAVA_HOME: /opt/hostedtoolcache/jdk/11.0.7/x64
-        JAVA_HOME_11.0.7_x64: /opt/hostedtoolcache/jdk/11.0.7/x64
+        JAVA_HOME: ''
