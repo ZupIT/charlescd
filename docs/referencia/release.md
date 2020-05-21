@@ -1,23 +1,32 @@
 # Release
 
-Releases são as versões de uma aplicação. Diferente de outras formas de deploy, em que geralmente a release passa por diversos ambientes até chegar em produção, no Charles é possível que uma mesma release seja publicada para diferentes [**círculos**](https://docs.charlescd.io/referencia-1/circles). 
+Releases são as versões de uma aplicação. Diferente de outras formas de deploy, em que geralmente ela passa por diversos ambientes até chegar em produção, no Charles é possível que uma mesma release seja publicada para diferentes [**círculos**](https://docs.charlescd.io/referencia-1/circles). 
 
-## Como criar releases?
+## Como criar releases através do Charles?
 
-Quando você cadastrar uma hipótese dentro do Charles, a sua requisição será encaminhada ao `charles-butler`. No final desse processo, o sistema irá gerar automaticamente um quadro \(board\) no qual é possível criar e gerenciar cartões com as releases e ações necessárias para testar as hipóteses levantadas.
+Após o cadastro de uma [**hipótese**](hipotese.md#como-criar-hipoteses) dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese.
 
-Esses cartões podem ser de dois tipos:
+Neste quadro, temos duas categorias de cartões: o **azul que representa a codificação de uma feature** e o **cinza que remete às ações que não necessariamente envolvem implementação**.
 
-1. **Action:** são os cards que envolvem codificação, como a implementação de novas funcionalidades \(features\) ou ajustes em partes do projeto. 
-2. **Feature:** são os cards que, como o nome sugere, indicam uma ação a ser feita. Por exemplo, realizar um teste de campo com os usuários. 
+Para gerar novas releases, os cartões azuis, que representam features, são os que nos interessam. Uma vez que eles estão na coluna _Ready to Go_,  pode-se selecionar um ou um conjunto deles para construir a nossa release.
 
-![](https://lh5.googleusercontent.com/1I3yXY8rsLsu3HgoIOOxH77NrMts42tKz30upnLI3qfRO9Ui6cD1NP-ZgtcSHZfji8kvN97DRfzSGj1fLjPCVg86lQVmVrHb-9gZaf2r4ymLdcIfEI_WrteXRJr9HUU0meFIFSyF)
+**\[GIF DA SELEÇÃO DOS CARDS\]**
 
-Quando um cartão de feature é adicionado, o Charles cria uma nova branch no git do cliente que, por sua vez, é armazenada diretamente no SCM utilizado, seja ele Git ou Bitbucket por exemplo.
+Uma vez que a criação de uma release é acionada, uma branch com o prefixo "**release-darwin" será criada no repositório do módulo, disparando assim a ferramenta de CI configurada**. Além disso, um novo cartão com o estado "**Building**" aparecerá na coluna _Builds_ para representar o processo em andamento.
+
+{% hint style="warning" %}
+Ao acionar o pipeline da sua ferramenta de CI através do prefixo **"release-darwin"**, esperamos que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](../primeiros-passsos/definindo-workspace/docker-registry.md).
+{% endhint %}
+
+A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) ****observará o seu registry em busca da release gerada. Aguarde até que o estado do cartão passe para "**Built**".
+
+{% hint style="info" %}
+Qualquer caso de sucesso ou erro estará refletido no estado do cartão da release.
+{% endhint %}
 
 ## Como buscar uma release existente?
 
-Caso a release tenha sido gerada através do Board, você pode buscá-la filtrando e selecionando a versão anterior. Isso porque o arquivo, nesse caso, pode ser composto por versões de diversos módulos com vários componentes.
+Caso a release tenha sido gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) ****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**. 
 
-Dessa forma, a realização do ****[**deploy em círculos**](https://docs.charlescd.io/faq-1/conceito-de-deploy-em-circulos) se torna mais ágil.
+**\[GIF PROCURANDO UMA RELEASE ATRAVÉS DO DEPLOY NO CÍRCULO\]**
 
