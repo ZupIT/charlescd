@@ -1,12 +1,18 @@
 # Git Credentials
 
-Durante a configuração do seu workspace, você pode adicionar o seu Git \(sistema de histórico e controle de versões\). Para isso, basta seguir os seguinte passos:
+While you are configuring your workspace, you need to register on Git, where your have your repositories. This access is importante because Charles will be able to create, delete and merge branches during the hypothesis board use, and it is also possible to view and create releases. 
 
-1. Clique no seu nome, no canto superior direito e, em seguida, selecione **Settings**;
-2. Clique em **Credentials**;
-3. **Clique em Add Git**;
-4. Selecione a opção de Git entre **GitHub** ou **GitLab 5**;
-5. Por fim, cole o link do seu git e ele será adicionado.
+There are two register categories GitHub and Gitlab; to configure add the following information:
 
+### **GitHub**
 
+* **Name**: this name will be used for your Charles configuration. 
+* **URL**: if you have a personalized domain, add it here. If you don't add a pattern value here [https://github.com](https://github.com) \(without the /\).
+* **Token**: when [**this token**](https://help.github.com/pt/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) ****is generated, it needs to have all access to the **"repo"** item. 
+
+### **GitLab**
+
+* **Name**: this name will be used for your Charles configuration.
+* **URL**: if you have a personalized domain, add it here. If you don't add a pattern value here [https://gitlab.com](https://gitlab.com/) \(sem a barra no final\). 
+* **Token**: check out the documentation[ **on how to create a token**](https://docs.gitlab.com/ee/api/#personalproject-access-tokens). 
 
