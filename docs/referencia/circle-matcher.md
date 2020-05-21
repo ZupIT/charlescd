@@ -1,6 +1,6 @@
 # Circle Matcher
 
-O Circle Matcher possui um recurso te permite validar se os seus [**círculos**](circulos.md#como-criar-circulos) estão com segmentações coerentes. Além de isso, você também pode utilizá-lo em suas aplicações para determinar em qual círculo os seus usuários se encaixam.
+O Circle Matcher é um recurso te permite validar se os seus [**círculos**](circulos.md#como-criar-circulos) estão com segmentações coerentes. Além de isso, você também pode utilizá-lo em suas aplicações para determinar em qual círculo os seus usuários se encaixam.
 
 {% hint style="info" %}
 Uma boa prática é realizar essa identificação sempre que o usuário faz login na aplicação. Entretanto, isso pode ser alterado de acordo com a necessidade da sua regra de negócio.
@@ -28,7 +28,7 @@ Caso aconteça de você passar informações que estejam fora das condições l�
 
 ## Identificação de círculos através da API
 
-Você pode integrar nas suas aplicações o recurso **Identify** do módulo [`charle-moove`](https://github.com/ZupIT/charlescd/tree/master/moove) para detectar os círculos aos quais o seu usuário pertence.
+Você pode integrar nas suas aplicações o recurso **Identify** do módulo [`charle-moove`](https://github.com/ZupIT/charlescd/tree/master/moove) para detectar os círculos que o seu usuário pertence.
 
 Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
 
