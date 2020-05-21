@@ -46,7 +46,7 @@ spec:
 $ istioctl manifest apply -f telemetry.yaml
 ```
 
-#### \*\*\*\*
+\*\*\*\*
 
 #### **Parte 2: Adicionando as métricas do Charles no Istio** 
 
@@ -168,7 +168,7 @@ Atualmente, o Charles oferece suporte apenas o Prometheus como ferramenta de mé
 {% endtab %}
 {% endtabs %}
 
-### 
+
 
 ### Configurando sua própria ferramenta de métricas
 
