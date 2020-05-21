@@ -187,7 +187,7 @@ Abaixo, você confere detalhes da ferramenta compatível com Charles.
 O Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas. É considerada a principal recomendação para monitoramento do [Cloud Native Computing Foundation](https://cncf.io/), além de uma das principais ferramentas do mercado.
 
 {% hint style="info" %}
-Se quiser saber mais, sugerimos visitar na [doc oficial](https://prometheus.io/) deles.
+Se quiser saber mais, sugerimos a [doc oficial](https://prometheus.io/).
 {% endhint %}
 
 É preciso configurar o Prometheus para que ele consiga ler e armazenar os dados das métricas que habilitamos, conforme o tutorial que explicamos no início. 
