@@ -196,7 +196,7 @@ Se quiser saber mais, sugerimos a [doc oficial](https://prometheus.io/).
 É importante lembrar que, para que essas configurações funcionem, é necessário que seu Prometheus esteja no mesmo cluster de Kubernetes que o Istio e o restante das suas aplicações.
 {% endhint %}
 
-Feito isso, basta adicionar o job abaixo para realizar a configuração. Só fique atento para que a configuração `namespaces`, pois o valor configurado deve ser igual ao que foi instalado no seu Istio. 
+Basta adicionar o job abaixo para realizar a configuração. Só fique atento para que a configuração `namespaces`, pois o valor configurado deve ser igual ao que foi instalado no seu Istio. 
 
 ```yaml
 global:
