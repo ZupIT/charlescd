@@ -48,7 +48,7 @@ $ istioctl manifest apply -f telemetry.yaml
 
 #### \*\*\*\*
 
-#### **Parte 2: Habilitando o Istio no Charles** 
+#### **Parte 2: Adicionando as métricas do Charles no Istio** 
 
 Uma vez feita a habilitação do Istio, você precisa executar o comando abaixo para configurar a opção de expor as métricas relacionadas ao Charles: 
 
