@@ -10,7 +10,7 @@ Imagine uma situação na qual duas equipes trabalham no mesmo produto e têm id
 
 ## Como criar hipóteses?
 
-Ao cadastrar uma hipótese dentro do Charles, a sua requisição será encaminhada ao `charles-application`. Ao final desse processo, o sistema irá gerar automaticamente um quadro \(board\) no qual é possível criar e gerenciar cartões com as releases e ações necessárias para testar as hipóteses levantadas.
+Ao cadastrar uma hipótese dentro do Charles, a sua requisição será encaminhada ao `charlescd-moove`. Ao final desse processo, o sistema irá gerar automaticamente um quadro \(board\) no qual é possível criar e gerenciar cartões com as releases e ações necessárias para testar as hipóteses levantadas.
 
 Esses cartões podem ser de dois tipos:
 
