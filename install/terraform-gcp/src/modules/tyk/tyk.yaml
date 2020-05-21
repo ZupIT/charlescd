@@ -724,7 +724,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/metrics",
-            "target_url": "http://darwin-application:8080/metrics",
+            "target_url": "http://charlescd-moove:8080/metrics",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -777,7 +777,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/builds",
-            "target_url": "http://darwin-application:8080/builds",
+            "target_url": "http://charlescd-moove:8080/builds",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -830,7 +830,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/v2/builds",
-            "target_url": "http://darwin-application:8080/v2/builds",
+            "target_url": "http://charlescd-moove:8080/v2/builds",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -884,7 +884,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/v2/configurations",
-            "target_url": "http://darwin-application:8080/v2/configurations",
+            "target_url": "http://charlescd-moove:8080/v2/configurations",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -937,7 +937,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/applications",
-            "target_url": "http://darwin-application:8080/applications",
+            "target_url": "http://charlescd-moove:8080/applications",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -990,7 +990,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/cards",
-            "target_url": "http://darwin-application:8080/cards",
+            "target_url": "http://charlescd-moove:8080/cards",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1043,7 +1043,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/circles",
-            "target_url": "http://darwin-application:8080/circles",
+            "target_url": "http://charlescd-moove:8080/circles",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1096,7 +1096,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/config",
-            "target_url": "http://darwin-application:8080/config",
+            "target_url": "http://charlescd-moove:8080/config",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1149,7 +1149,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/v2/deployments",
-            "target_url": "http://darwin-application:8080/v2/deployments",
+            "target_url": "http://charlescd-moove:8080/v2/deployments",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1202,7 +1202,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/deployments",
-            "target_url": "http://darwin-application:8080/deployments",
+            "target_url": "http://charlescd-moove:8080/deployments",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1255,7 +1255,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/hypotheses",
-            "target_url": "http://darwin-application:8080/hypotheses",
+            "target_url": "http://charlescd-moove:8080/hypotheses",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1308,7 +1308,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/auth",
-            "target_url": "http://darwin-application:8080/auth",
+            "target_url": "http://charlescd-moove:8080/auth",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1361,7 +1361,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/modules",
-            "target_url": "http://darwin-application:8080/modules",
+            "target_url": "http://charlescd-moove:8080/modules",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1414,7 +1414,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/problems",
-            "target_url": "http://darwin-application:8080/problems",
+            "target_url": "http://charlescd-moove:8080/problems",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1467,7 +1467,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/users",
-            "target_url": "http://darwin-application:8080/users",
+            "target_url": "http://charlescd-moove:8080/users",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1520,7 +1520,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/valueflows",
-            "target_url": "http://darwin-application:8080/valueflows",
+            "target_url": "http://charlescd-moove:8080/valueflows",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1573,7 +1573,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/moove/actuator/health",
-            "target_url": "http://darwin-application:8080/actuator/health",
+            "target_url": "http://charlescd-moove:8080/actuator/health",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1829,7 +1829,7 @@ data:
         "domain": "charles-api.continuousplatform.com",
         "proxy": {
             "listen_path": "/darwin-circle-matcher/identify",
-            "target_url": "http://darwin-circle-matcher:8080/identify",
+            "target_url": "http://charlescd-circle-matcher:8080/identify",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true,
@@ -1979,7 +1979,7 @@ data:
         "domain": "charles.continuousplatform.com",
         "proxy": {
             "listen_path": "/",
-            "target_url": "http://darwin-ui-legacy:3000",
+            "target_url": "http://charlescd-ui-legacy:3000",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true
@@ -2013,7 +2013,7 @@ data:
         "domain": "charles.continuousplatform.com",
         "proxy": {
             "listen_path": "/v2",
-            "target_url": "http://darwin-ui-new:3000",
+            "target_url": "http://charlescd-ui-new:3000",
             "strip_listen_path": true
         },
         "enable_batch_request_support": true
