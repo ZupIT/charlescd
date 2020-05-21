@@ -18,7 +18,7 @@ export class DeploymentsService {
   }
 
   public async getDeploymentById(id: string): Promise<ReadDeploymentDto> {
-    return this.deploymentsRepository.findOne({ where: { id }, relations: ['modules'] })
-      .then(deployment => deployment.toReadDto())
+    return this.deploymentsRepository.findOneOrFail({ where: { id }, relations: ['modules'] })
+      .then(deployment => deployment?.toReadDto())
   }
 }

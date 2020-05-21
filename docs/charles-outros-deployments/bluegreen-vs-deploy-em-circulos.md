@@ -12,7 +12,7 @@ description: >-
 O blue-green deployment, ou implantação azul-verde, funciona por meio da criação de dois ambientes idênticos na infraestrutura, porém com diferentes versões de uma aplicação implantados em cada um.
 
 ```text
-                                                               **\[IMAGEM\]** 
+                                                               **\[IMAGEM\]**
 ```
 
 Uma vez definido os ambientes "azuis e verdes", é possível configurar um load balancer responsável por direcionar o tráfego do ambiente atual para o outro desejado. Depois de confirmar que todas as validações estão dentro do esperado, você pode finalizar a transição o restante do tráfego para a nova versão.
@@ -25,5 +25,5 @@ No caso do Charles, o deploy em círculos oferece ao time mais confiança e rapi
 
 Além disso, é possível refinar através dos círculos quem serão os usuários que farão a validação da sua nova versão.
 
-![](../.gitbook/assets/conceito-de-deploy-em-circulos-4.png)
+![](https://github.com/ZupIT/charlescd/tree/3f920366062d055b4fa05ddbd1bb5b360d9f749f/docs/.gitbook/assets/conceito-de-deploy-em-circulos-4.png)
 

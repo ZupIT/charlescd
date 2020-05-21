@@ -1,0 +1,40 @@
+name: build circle-matcher
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'circle-matcher/**'
+    tags: 
+      - '!*'
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'circle-matcher/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Build with Maven
+      run: mvn -B package
+      working-directory: ./circle-matcher
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONARCLOUD_KEY }}
+        JAVA_HOME: /opt/hostedtoolcache/jdk/11.0.7/x64
+        JAVA_HOME_11.0.7_x64: /opt/hostedtoolcache/jdk/11.0.7/x64

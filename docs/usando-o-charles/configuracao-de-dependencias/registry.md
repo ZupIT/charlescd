@@ -1,6 +1,6 @@
 # Registry
 
-**Durante a instalação do Charles, é necessário cadastrar um registry vinculado ao seu docker. Para isso, basta realizar o seguinte passo a passo:**
+Seguindo com as configurações, é necessário cadastrar um registry vinculado ao seu docker. Para isso, basta realizar o seguinte passo a passo:
 
 1. Clique no seu nome, no canto superior direito e, em seguida, selecione **Settings.**
 2. Clique em **Credentials.** 

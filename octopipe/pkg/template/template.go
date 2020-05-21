@@ -6,11 +6,11 @@ const (
 	TypeHelmTemplate = "HELM"
 )
 
-type Template interface {
+type TemplateUseCases interface {
 	GetManifests(templateContent, valueContent string, overrideValues map[string]string) (map[string]interface{}, error)
 }
 
-func NewTemplate(templateType string) (Template, error) {
+func (templateManager *TemplateManager) NewTemplate(templateType string) (TemplateUseCases, error) {
 	switch templateType {
 	case TypeHelmTemplate:
 		return NewHelmTemplate(), nil

@@ -1,6 +1,6 @@
 # Github
 
-Durante a instalação do Charles, você pode adicionar o seu Git \(sistema de histórico e controle de versões\). Para isso, basta realizar o seguinte **passo a passo**:
+Após a instalação do Charles, você pode adicionar o seu Git \(sistema de histórico e controle de versões\). Para isso, basta realizar o seguinte **passo a passo**:
 
 1. Clique no seu nome, no canto superior direito e, em seguida, selecione **Settings**
 2. Clique em **Credentials** 
