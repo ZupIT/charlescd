@@ -21,14 +21,14 @@ import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryTagsI
 
 public class ListDockerRegistryTagsRequestHandler implements RequestHandler<ListDockerRegistryTagsInput> {
 
-    private String applicationId;
+    private String workspaceId;
     private String registryConfigurationId;
     private String componentName;
     private Integer max;
     private String last;
 
-    public ListDockerRegistryTagsRequestHandler(String applicationId, String registryConfigurationId, String componentName, Integer max, String last) {
-        this.applicationId = applicationId;
+    public ListDockerRegistryTagsRequestHandler(String workspaceId, String registryConfigurationId, String componentName, Integer max, String last) {
+        this.workspaceId = workspaceId;
         this.registryConfigurationId = registryConfigurationId;
         this.componentName = componentName;
         this.max = max;
@@ -38,7 +38,7 @@ public class ListDockerRegistryTagsRequestHandler implements RequestHandler<List
     @Override
     public ListDockerRegistryTagsInput handle() {
         return ListDockerRegistryTagsInput.builder()
-                .withApplicationId(applicationId)
+                .withWorkspaceId(workspaceId)
                 .withArtifactRepositoryConfigurationId(registryConfigurationId)
                 .withArtifactName(componentName)
                 .withMax(max)

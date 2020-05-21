@@ -38,7 +38,7 @@ public class ListDockerRegistryInteractorImpl implements ListDockerRegistryInter
 
     @Override
     public List<DockerRegistryDTO> execute(ListDockerRegistryInput input) {
-        var dockerRegistryList = dockerRegistryConfigurationRepository.listByApplicationId(input.getApplicationId());
+        var dockerRegistryList = dockerRegistryConfigurationRepository.listByWorkspaceId(input.getWorkspaceId());
         return dockerRegistryList.stream()
                 .map(entity -> new DockerRegistryDTO(entity.id, entity.name, entity.type, entity.authorId))
                 .collect(Collectors.toList());
