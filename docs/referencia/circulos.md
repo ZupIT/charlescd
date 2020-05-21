@@ -4,32 +4,36 @@ Os círculos são o principal diferencial do [**novo conceito de deploy**](https
 
 ![Representa&#xE7;&#xE3;o dos c&#xED;rculos gerados no Charles](../.gitbook/assets/circles_bg_white.jpg)
 
- Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público.
+Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público.
 
 Uma vez escolhidas as pessoas certas para terem acesso à sua release associada ao círculo, o Charles irá gerar uma [**série de métricas**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Freferencia-1%2Fmetricas) ****de negócio ou desempenho. Essas informações te darão maior visibilidade dos resultados de uma hipótese ou feature em análise, possibilitando testes mais assertivos**.**
 
 ## Círculos ativos e inativos
 
-O que define se um círculo é ativo ou não é a existência de releases, isto é, de versões implantadas para aquele segmentação de usuários. Logo, os círculos ativos são aqueles que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma delas.
+O que define se um círculo é ativo ou não, é a existência de releases, isto é, de versões implantadas para aquela segmentação de usuários. Logo, os círculos ativos são aqueles que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma delas.
+
+![Alternando o filtro de estado do c&#xED;rculo entre ATIVO e INATIVO.](../.gitbook/assets/chrome-capture-2-.gif)
 
 ## Como criar círculos?
 
 Para você criar um círculo, basta fazer o seguinte passo a passo:
 
-**1.** Clique em Create Circle.  
+**1.** Clique em **Create Circle**.  
 **2.** Dê um nome ao seu círculo.  
 **3.** Defina uma segmentação.  
 **4.** \[Opcional\] Implante uma release.
 
 ![Exemplo de como criar um c&#xED;rculo](../.gitbook/assets/criar-circulo.gif)
 
-As segmentações são um conjunto de características que você define para agrupar seus usuários nos círculos do Charles. Para realizar essa ação, é possível segmentar seus usuários através do preenchimento de informações de forma manual ou por meio da importação de um arquivo csv.
+As segmentações são um conjunto de características que você define para agrupar seus usuários nos círculos. Para realizar essa ação, é possível segmentar seus usuários através do **preenchimento de informações de forma manual** ou por meio da **importação de um arquivo CSV**.
 
-Uma grande vantagem de utilizar as segmentações é porque, com elas, é possível fazer combinações lógicas entre vários atributos para criar diferentes tipos de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “profissão” e “região”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
+{% hint style="info" %}
+Uma **grande vantagem de utilizar as segmentações** é a possibilidade fazer combinações lógicas entre vários atributos para criar diferentes categorias de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “_profissão_” e “_região_”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
+{% endhint %}
 
 ### **Segmentação manual**
 
-Neste tipo de segmentação, você define as lógicas que o círculo deve seguir para compor um match com usuários que atendam às características pré-determinadas.
+Nesta segmentação, você define as lógicas que o círculo deve seguir para compor um match com usuários que atendam às características pré-determinadas.
 
 Essas características podem ser definidas com base nas lógicas de:
 
@@ -39,20 +43,27 @@ Essas características podem ser definidas com base nas lógicas de:
 * Lower or equal to
 * Higher than
 * Higher or equal to
-* Between
 * Starts With
-
-Isso significa que, ao setar na plataforma do Charles uma segmentação considerando um dessas variáveis acima, o sistema irá retornar com um círculo cuja base será composta por estes usuários.
 
 Vamos a alguns exemplos:
 
-![Exemplo de segmenta&#xE7;&#xE3;o manual](https://lh6.googleusercontent.com/5hg_2ZW34hb69J69-MtDNctjLJX5-gwBP9kgN6Bto9_tm2tK9DL-rgmvTleoVihRft37P2QmcA6MzBc3Uj_vguGM9VQVc9fhKEpittLr8LXxvThC3dewpNGsEYSHXp6KfhX8GGx_)
+![](../.gitbook/assets/chrome-capture-1-.jpg)
 
 ### **Segmentação por importação de csv**
 
-Neste tipo de segmentação, é utilizada apenas a primeira coluna do csv para criar as regras. O único operador lógico suportado até o momento é o OR.
+Nesta segmentação, é utilizada apenas a primeira coluna do csv para criar as regras. ****Sendo assim, a primeira linha da primeira coluna deve conter o nome da chave e a mesma deve ser informada no campo _key._
 
-Na prática, essa modalidade permite que você possa, por exemplo, extrair de uma database externa os IDs dos clientes com um perfil específico e importá-los direto na plataforma do Charles.
+![](../.gitbook/assets/image%20%282%29.png)
+
+Uma vez feito o upload do arquivo e salvado as configurações, será um overview aparecerá demonstrando como está sua segmentação:
+
+![](../.gitbook/assets/image%20%281%29.png)
+
+Na prática, essa modalidade permite que você possa, por exemplo, extrair de uma base externa de IDs dos clientes com um perfil específico e importá-los direto na plataforma do Charles. 
+
+{% hint style="warning" %}
+O único operador lógico suportado até o momento nesta segmentação é o OR.
+{% endhint %}
 
 ## Como integrar círculos com serviços?
 
