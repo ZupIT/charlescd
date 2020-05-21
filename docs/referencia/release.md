@@ -4,9 +4,9 @@ Releases são as versões de uma aplicação. Diferente de outras formas de depl
 
 ## Como criar releases através do Charles?
 
-Existem duas formas de criar suas releases no Charles:
+É possível criar releases de duas formas. Uma delas oferece todo o potencial de uso do produto ao trabalhar com o conceito de teste de hipóteses durante todo o ciclo de desenvolvimento, e a outra oferece a flexibilidade necessária para casos onde é desejado que toda a parte de desenvolvimento e geração de artefatos esteja apartada do Charles.
 
-### Através de uma hipótese
+### Através do quadro de hipóteses
 
 Após o cadastro de uma [**hipótese**](hipotese.md#como-criar-hipoteses) dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese.
 
@@ -30,19 +30,17 @@ Qualquer caso de sucesso ou erro estará refletido no estado do cartão da relea
 
 **\[GIF DE CASOS DE SUCESSOS, ERROS E ANDAMENTO DE BUILDS\]**
 
-### Através de um círculo
+### **Através de imagens existentes no Docker Registry configurado**
 
-**\[IMAGEM DA CRIAÇÃO DA RELEASE NO CÍRCULO\]**
+Para criar uma release sem necessariamente passar pelo quadro de hipóteses, é preciso que as imagens Docker desejadas já estejam disponíveis no [registry configurado](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry) para o módulo. Uma vez que este requisito seja cumprido, basta clicar na opção **Circles** no menu do Charles e selecionar o círculo desejado para o deploy da release a ser criada.
 
-Escolha um círculo que você queira gerar uma release a ser implantada e selecione a opção de _Create Release_. Com isso, informe as seguintes informações:
+Caso o círculo esteja sendo criado agora, clique em **Insert release** e logo após em **Create release**. Caso o círculo já exista, clique em **Override release** e logo após em **Create release.**
 
-* **Nome**: escolha um nome que irá representar a sua release.
-* **Módulo**: você pode cadastrar quantos módulos quiser, basta preencher os dados:
-  * _nome**:**_ ****selecione o nome de um dos módulos listados. ****
-  * _componente:_ eleja um dos componentes que aparecem na lista.
-  * _versão:_ escolha uma das versões de componentes.
+Na tela de criação de releases, preencha o nome desejado e selecione um módulo e sua componente.  No campo ao lado, uma lista com todas as imagens disponíveis daquela componente no registry serão listadas. Selecione uma e caso seja necessário adicionar mais módulos a release, basta clicar em **Add modules** e repetir o processo anterior. Uma vez que todos os módulos desejados estejam cadastrados, clique em **deploy**.
 
-Uma vez que essas informações foram preenchidas, execute o deploy. A partir dessa ação, a versão será criada e implantada, e, além disso, estará disponível no workspace para ser utilizada em outros círculos.
+**\[GIF DA CRIAÇAO DE RELEASE A PARTIR DE IMAGENS EXISTENTES\]**
+
+Após o deploy desta nova release, ela estará disponível para utilização em outros círculos a partir da opção **"Search for existing releases"**, que será explicada a seguir.
 
 ## Como buscar uma release existente?
 
