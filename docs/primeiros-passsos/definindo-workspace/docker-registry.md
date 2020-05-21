@@ -2,7 +2,7 @@
 
 Durante a configuração do seu workspace, é necessário cadastrar o registry onde as imagens das suas aplicações estão armazenadas. Esse acesso é importante, pois uma vez configurado, o CharlesCD pode **observar novas imagens sendo geradas e listar as imagens já salvas no seu registry** para implantá-las.
 
-Existem duas categorias de cadastros de configuração que podem ser feitas pelo workspace. Você pode escolher e adicionar as seguintes informações:
+Existem duas categorias de cadastros de configuração que podem ser feitas pelo workspace; AWS e Azure, você escolhe e adiciona as seguintes informações:
 
 ### AWS
 
@@ -12,7 +12,7 @@ Existem duas categorias de cadastros de configuração que podem ser feitas pelo
 * **Secret Key**: informação de segurança gerada pela AWS ECR;
 * **Region**: a região de onde você está operando. 
 
-Em caso de dúvidas para encontrar ou gerar essas informações, sugerimos a documentação da [**Amazon ECR**](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html).
+Em caso de dúvidas para encontrar essas informações, sugerimos a documentação da [**Amazon ECR**](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html).
 
 ### AZURE
 
@@ -21,5 +21,5 @@ Em caso de dúvidas para encontrar ou gerar essas informações, sugerimos a doc
 * **Username**: ID da entidade de serviço que será usada pelo Kubernetes para acessar o registro;
 * **Password**: Senha da entidade de serviço.
 
-Em caso de dúvidas para encontrar ou gerar essas informações, sugerimos a documentação da [**Azure Container Registry**](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-concepts).
+Em caso de dúvidas para encontrar essas informações, sugerimos a documentação da [**Azure Container Registry**](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-concepts).
 
