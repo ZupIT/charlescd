@@ -16,7 +16,7 @@
 
 ## Referência
 
-* [Círculos](referencia/circulos.md)
+* [Círculo](referencia/circulos.md)
 * [Circle Matcher](referencia/circle-matcher.md)
 * [Configuração de CD](referencia/configuracao-cd.md)
 * [Grupo de Usuários](referencia/grupos-de-usuarios.md)

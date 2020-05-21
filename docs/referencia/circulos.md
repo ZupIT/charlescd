@@ -1,4 +1,4 @@
-# Círculos
+# Círculo
 
 Os círculos são o principal diferencial do [**novo conceito de deploy**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) trazido pelo Charles. Isso porque ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
 
@@ -67,19 +67,19 @@ O único operador lógico suportado até o momento nesta segmentação é o OR.
 
 ## Como integrar círculos com serviços?
 
-Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro x-circle-id no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
+Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
 ![](../.gitbook/assets/17.png)
 
-Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(App1\) - como no login, por exemplo - o `charles-circle-matcher` \(_Circle\_Matcher_\) **-** deverá ser acionado para obter o círculo.
+Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(**`App1`**\) - como no login, por exemplo - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
 
-Com isso, o ID deve ser repassado como valor no parâmetro x-circle-id localizado no header da requisição das próximas chamadas \(App2\). O Charles é responsável por propagar essa informação que, quando recebida no Kubernetes, seja utilizada para redirecionar a requisição para a versão correspondente ao deploy realizado no círculo.
+Com isso, o ID deve ser repassado como valor no parâmetro **`x-circle-id`** localizado no header de todas as próximas chamadas dos seus serviços \(**`App2`**\). O Charles é responsável por propagar essa informação que, quando recebida no Kubernetes, será utilizada para redirecionar a requisição para a versão correspondente à release associada ao círculo.
 
-Caso o x-circle-id não seja repassado, todas as requisições serão redirecionadas para versões de “Mar Aberto”, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
+Caso o **`x-circle-id`** não seja repassado, todas as requisições serão redirecionadas para versões _Default_, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
 
 ### **Mescla de serviços com versões diferentes na minha release**
 
-Para facilitar seu entendimento, vamos exemplificar com um um cenário onde a sua stack possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
+Para facilitar seu entendimento, vamos exemplificar com um cenário onde o seu ambiente possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
 
 ![](../.gitbook/assets/18.png)
 

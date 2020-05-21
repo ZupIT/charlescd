@@ -37,10 +37,10 @@ A metodologia implementada pelo Charles traz várias vantagens, como:
 
 A plataforma foi construída utilizando a abordagem de microsserviços e possui os seguintes módulos:
 
-![Arquitetura do Charles](.gitbook/assets/charles_c.d_v3.png)
+![](.gitbook/assets/arquitetura-flat-2-.png)
 
 * `charlescd-ui:` responsável por espelhar, no front, as configurações de workspaces, usuários, módulos, hipóteses e boards, ou seja, toda interface gráfica da plataforma. 
-* `charles-moove:` responsável pelo gerenciamento de workspaces, usuários, módulos, hipóteses e boards, ou seja, de toda estrutura da plataforma.  
-* `charles-butler:` responsável por orquestrar e gerenciar as releases e deploys realizados. 
-* `charles-circle-matcher:`gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características.
+* `charlescd-moove:` responsável pelo gerenciamento de workspaces, usuários, módulos, hipóteses e boards, ou seja, de toda estrutura da plataforma.  
+* `charlescd-butler:` responsável por orquestrar e gerenciar as releases e deploys realizados. 
+* `charlescd-circle-matcher:`gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características.
 
