@@ -20,7 +20,7 @@ Neste modelo de deploy, é possível **segmentar seus clientes através de carac
 
 O Charles surgiu da necessidade de oferecer para a comunidade uma solução mais eficaz no trabalho de fazer deploys e testar hipóteses simultaneamente, permitindo mais rapidez na identificação de erros e execução de possíveis soluções para resolver os bugs. 
 
- O conceito por trás da ferramenta remete à teoria proposta pelo biólogo Charles Darwin \(1809-1882\), ou seja, a de que a evolução se dá pela adaptação a um novo ambiente. No caso do desenvolvimento, essa evolução se dá por meio de constantes melhorias nas aplicações ao construir e testar hipóteses de maneira a implantar as releases mais precisas e eficazes. 
+ O conceito por trás da ferramenta remete à teoria proposta pelo biólogo Charles Darwin \(1809-1882\), ou seja, a de que a evolução se dá pela adaptação a um novo ambiente. No caso do desenvolvimento, essa evolução se dá através de constantes melhorias nas aplicações ao construir e testar hipóteses de maneira a implantar as releases mais precisas e eficazes. 
 
 Por esse motivo, consideramos que o Charles é a aplicação do darwinismo dentro do universo de desenvolvimento e programação.
 
@@ -31,7 +31,7 @@ A metodologia implementada pelo Charles traz várias vantagens, como:
 * Simples segmentação de usuários com base em seu perfil ou até mesmo dados demográficos; 
 * Criação de estratégias de implantação de maneira mais fácil e sofisticada utilizando os círculos; 
 * Fácil gerenciamento de versões em caso de múltiplas releases em paralelo no ambiente produtivo; 
-* Monitoramento dos impactos de cada versão por meio de métricas definidas durante a criação da implantação.
+* Monitoramento dos impactos de cada versão através de métricas definidas durante a criação da implantação.
 
 ## Arquitetura do sistema
 
