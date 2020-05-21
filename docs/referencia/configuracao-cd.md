@@ -24,8 +24,8 @@ Para cadastrar qualquer uma delas, basta seguir os passos:
 1. **Name:** Nome da configuração que será criada;
 2. **Namespace:** Defina o namespace que será utilizado nos deploys no cluster Kubernetes;
 3. **Url**: Insira a url de acesso ao Spinnaker;
-4. **Git account:** Insira o nome da configuração de git criada na instalação do Spinnaker.
-5. **Kubernetes account:** Insira o nome da configuração de acesso ao cluster Kubernetes criado na instalação do Spinnaker.
+4. **Git account:** Insira o nome da configuração de git criada na instalação do Spinnaker;
+5. **Kubernetes account:** Insira o nome da configuração de acesso ao cluster Kubernetes criado na instalação do Spinnaker;
 
 ## Utilizando Octopipe
 
