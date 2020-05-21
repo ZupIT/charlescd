@@ -37,3 +37,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONARCLOUD_KEY }}
         JAVA_HOME: ''
+      with:
+        projectBaseDir: ./circle-matcher
