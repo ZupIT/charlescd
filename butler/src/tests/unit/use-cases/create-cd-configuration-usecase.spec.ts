@@ -27,14 +27,14 @@ describe('CreateCdConfigurationUsecase', () => {
 
         createCdConfigurationDto = new CreateCdConfigurationDto(
             CdTypeEnum.SPINNAKER,
-            { account: 'my-account', namespace: 'my-namespace' },
+            { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
             'config-name',
             'authorId'
         )
 
         cdConfiguration = new CdConfigurationEntity(
             CdTypeEnum.SPINNAKER,
-            { account: 'my-account', namespace: 'my-namespace' },
+            { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
             'config-name',
             'authorId',
             'applicationId'

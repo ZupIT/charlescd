@@ -1,5 +1,5 @@
 export enum UndeploymentStatusEnum {
   CREATED = 'CREATED',
-  FINISHED = 'FINISHED',
+  SUCCEEDED = 'SUCCEEDED',
   FAILED = 'FAILED'
 }

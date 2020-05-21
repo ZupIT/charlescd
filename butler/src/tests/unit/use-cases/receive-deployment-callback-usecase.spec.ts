@@ -28,7 +28,8 @@ import {
     ComponentDeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    QueuedDeploymentEntity
+    QueuedDeploymentEntity,
+    CircleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 
@@ -45,6 +46,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     let componentDeployment: ComponentDeploymentEntity
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let pipelineQueuesService: PipelineQueuesService
+    let pipelineErrorHandlerService: PipelineErrorHandlerService
     let statusManagementService: StatusManagementService
     beforeEach(async () => {
 
@@ -65,6 +67,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         receiveDeploymentCallbackUsecase = module.get<ReceiveDeploymentCallbackUsecase>(ReceiveDeploymentCallbackUsecase)
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
+        pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
         statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
@@ -80,10 +83,23 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             QueuedPipelineStatusEnum.FINISHED
         )
 
+        componentDeployment = new ComponentDeploymentEntity(
+            'dummy-id',
+            'dummy-name',
+            'dummy-img-url',
+            'dummy-img-tag'
+        )
+
+        moduleDeployment = new ModuleDeploymentEntity(
+            'dummy-id',
+            'dummy-id',
+            [componentDeployment]
+        )
+
         deployment = new DeploymentEntity(
             'dummy-deployment-id',
             'dummy-application-name',
-            null,
+            [moduleDeployment],
             'dummy-author-id',
             'dummy-description',
             'dummy-callback-url',
@@ -91,30 +107,15 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             false,
             'dummy-circle-id'
         )
-
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            null
-        )
-        moduleDeployment.deployment = deployment
-
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag',
-            'dummy-context-path',
-            'dummy-health-check',
-            1234
-        )
         componentDeployment.moduleDeployment = moduleDeployment
+        moduleDeployment.deployment = deployment
+        deployment.circle = new CircleDeploymentEntity('header-value')
     })
 
     describe('execute', () => {
         it('should update successful callback queued entry status to FINISHED', async () => {
 
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
@@ -130,7 +131,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
 
         it('should not execute a finished deployment', async () => {
 
-            jest.spyOn(queuedDeploymentsRepository, 'findOne')
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedDeploymentFinished))
             jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
                 .mockImplementation(() => Promise.resolve(componentDeployment))
@@ -140,6 +141,22 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 successfulFinishDeploymentDto
             )
             expect(queueSpy).not.toHaveBeenCalledWith(1234)
+        })
+
+        it('should handle a failed deployment callback', async () => {
+
+            jest.spyOn(queuedDeploymentsRepository, 'findOneOrFail')
+                .mockImplementation(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+                .mockImplementation(() => Promise.resolve(componentDeployment))
+            const queueSpy = jest.spyOn(pipelineErrorHandlerService, 'handleDeploymentFailure')
+            const queueSpy1 = jest.spyOn(pipelineErrorHandlerService, 'handleComponentDeploymentFailure')
+            await receiveDeploymentCallbackUsecase.execute(
+                1234,
+                failedFinishDeploymentDto
+            )
+            expect(queueSpy).toHaveBeenCalled()
+            expect(queueSpy1).toHaveBeenCalled()
         })
     })
 })

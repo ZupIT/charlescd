@@ -12,7 +12,7 @@ import {
 import { UndeploymentStatusEnum } from '../enums'
 import { ComponentUndeploymentEntity } from './component-undeployment.entity'
 import { UndeploymentEntity } from './undeployment.entity'
-import * as uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { ReadModuleUndeploymentDto } from '../dto'
 
@@ -31,7 +31,7 @@ export class ModuleUndeploymentEntity extends BaseEntity {
     undeployment => undeployment.moduleUndeployments,
   )
   @JoinColumn({ name: 'undeployment_id' })
-  public undeployment: UndeploymentEntity
+  public undeployment!: UndeploymentEntity
 
   @OneToMany(
     type => ComponentUndeploymentEntity,
@@ -44,7 +44,10 @@ export class ModuleUndeploymentEntity extends BaseEntity {
   public status: UndeploymentStatusEnum
 
   @CreateDateColumn({ name: 'created_at'})
-  public createdAt: Date
+  public createdAt!: Date
+
+  @Column({ name: 'finished_at' })
+  public finishedAt!: Date
 
   constructor(
     moduleDeployment: ModuleDeploymentEntity,
