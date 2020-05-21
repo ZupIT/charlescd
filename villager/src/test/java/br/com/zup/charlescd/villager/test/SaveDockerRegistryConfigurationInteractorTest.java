@@ -71,7 +71,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 .withAddress("http://test.org")
                 .withRegistryType(RegistryType.AZURE)
                 .withAuth(new AzureDockerRegistryAuth("usertest", "userpass"))
-                .withApplicationId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
                 .build();
 
@@ -86,7 +86,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.name, is("Test"));
         assertThat(entityCaptured.type, is(RegistryType.AZURE));
         assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
-        assertThat(entityCaptured.applicationId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
+        assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
         assertThat(entityCaptured.createdAt, is(createdAt));
         assertThat(entityCaptured.connectionData.address, is("http://test.org"));
         assertThat(entityCaptured.connectionData.host, is("test.org"));
@@ -117,7 +117,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 .withAddress("http://test.org")
                 .withRegistryType(RegistryType.AWS)
                 .withAuth(new AWSDockerRegistryAuth("accesskeytest", "secretkeytest", "regiontest"))
-                .withApplicationId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
                 .build();
 
@@ -132,7 +132,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.name, is("Test"));
         assertThat(entityCaptured.type, is(RegistryType.AWS));
         assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
-        assertThat(entityCaptured.applicationId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
+        assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
         assertThat(entityCaptured.createdAt, is(createdAt));
         assertThat(entityCaptured.connectionData.address, is("http://test.org"));
         assertThat(entityCaptured.connectionData.host, is("test.org"));
@@ -158,7 +158,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 .withAddress("http://test.org")
                 .withRegistryType(RegistryType.AWS)
                 .withAuth(new AWSDockerRegistryAuth("accesskeytest", "secretkeytest", "regiontest"))
-                .withApplicationId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
                 .build();
 
@@ -182,7 +182,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 .withName("Test")
                 .withAddress("http://test.org")
                 .withRegistryType(RegistryType.UNSUPPORTED)
-                .withApplicationId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
                 .build();
 

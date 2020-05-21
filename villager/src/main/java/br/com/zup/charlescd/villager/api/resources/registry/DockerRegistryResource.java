@@ -19,6 +19,7 @@ package br.com.zup.charlescd.villager.api.resources.registry;
 import br.com.zup.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import br.com.zup.charlescd.villager.api.handlers.impl.ListDockerRegistryRequestHandler;
 import br.com.zup.charlescd.villager.api.handlers.impl.ListDockerRegistryTagsRequestHandler;
+import br.com.zup.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
 import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
 import br.com.zup.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
 import br.com.zup.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
@@ -37,20 +38,25 @@ public class DockerRegistryResource {
     private ListDockerRegistryInteractor listDockerRegistryInteractor;
     private ListDockerRegistryTagsInteractor listDockerRegistryTagsInteractor;
     private SaveDockerRegistryConfigurationInteractor saveDockerRegistryConfigurationInteractor;
+    private DeleteDockerRegistryConfigurationInteractor deleteDockerRegistryConfigurationInteractor;
 
     @Inject
-    public DockerRegistryResource(ListDockerRegistryInteractor listDockerRegistryInteractor, ListDockerRegistryTagsInteractor listDockerRegistryTagsInteractor, SaveDockerRegistryConfigurationInteractor saveDockerRegistryConfigurationInteractor) {
+    public DockerRegistryResource(ListDockerRegistryInteractor listDockerRegistryInteractor,
+                                  ListDockerRegistryTagsInteractor listDockerRegistryTagsInteractor,
+                                  SaveDockerRegistryConfigurationInteractor saveDockerRegistryConfigurationInteractor,
+                                  DeleteDockerRegistryConfigurationInteractor deleteDockerRegistryConfigurationInteractor) {
         this.listDockerRegistryInteractor = listDockerRegistryInteractor;
         this.listDockerRegistryTagsInteractor = listDockerRegistryTagsInteractor;
         this.saveDockerRegistryConfigurationInteractor = saveDockerRegistryConfigurationInteractor;
+        this.deleteDockerRegistryConfigurationInteractor = deleteDockerRegistryConfigurationInteractor;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@HeaderParam(Constants.X_APPLICATION_ID) String applicationId, @Valid CreateDockerRegistryConfigurationRequest request) {
+    public Response create(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId, @Valid CreateDockerRegistryConfigurationRequest request) {
 
-        var requestHandler = new CreateDockerRegistryRequestHandler(applicationId, request);
+        var requestHandler = new CreateDockerRegistryRequestHandler(workspaceId, request);
 
         return Response
                 .status(Response.Status.CREATED)
@@ -60,8 +66,8 @@ public class DockerRegistryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DockerRegistryListRepresentation list(@HeaderParam(Constants.X_APPLICATION_ID) String applicationId) {
-        var requestHandler = new ListDockerRegistryRequestHandler(applicationId);
+    public DockerRegistryListRepresentation list(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId) {
+        var requestHandler = new ListDockerRegistryRequestHandler(workspaceId);
 
         return new DockerRegistryListRepresentation(
                 this.listDockerRegistryInteractor.execute(requestHandler.handle())
@@ -73,13 +79,13 @@ public class DockerRegistryResource {
     @GET
     @Path("/{registryConfigurationId}/components/{componentName}/tags")
     @Produces(MediaType.APPLICATION_JSON)
-    public RegistryTagsListRepresentation tagsList(@HeaderParam(Constants.X_APPLICATION_ID) String applicationId,
+    public RegistryTagsListRepresentation tagsList(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
                                                    @PathParam("registryConfigurationId") String registryConfigurationId,
                                                    @PathParam("componentName") String componentName,
                                                    @QueryParam("max") Integer max,
                                                    @QueryParam("last") String last) {
 
-        var requestHandler = new ListDockerRegistryTagsRequestHandler(applicationId, registryConfigurationId, componentName, max, last);
+        var requestHandler = new ListDockerRegistryTagsRequestHandler(workspaceId, registryConfigurationId, componentName, max, last);
 
         return new RegistryTagsListRepresentation(
                 this.listDockerRegistryTagsInteractor.execute(requestHandler.handle())
@@ -88,4 +94,10 @@ public class DockerRegistryResource {
                         .collect(Collectors.toList()));
     }
 
+    @DELETE
+    @Path("/{id}")
+    public void delete(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
+                       @PathParam("id") String registryConfigurationId) {
+        deleteDockerRegistryConfigurationInteractor.execute(registryConfigurationId, workspaceId);
+    }
 }

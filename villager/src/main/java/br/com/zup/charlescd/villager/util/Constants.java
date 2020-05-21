@@ -17,5 +17,5 @@
 package br.com.zup.charlescd.villager.util;
 
 public abstract class Constants {
-    public static final String X_APPLICATION_ID = "x-application-id";
+    public static final String X_WORKSPACE_ID = "x-workspace-id";
 }

@@ -62,7 +62,7 @@ public class ListDockerRegistryTagsInteractorTest {
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
-                .withApplicationId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
+                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
                 .withArtifactRepositoryConfigurationId("123")
                 .withMax(10)
                 .withLast("test")
@@ -104,7 +104,7 @@ public class ListDockerRegistryTagsInteractorTest {
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
-                .withApplicationId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
+                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
                 .withArtifactRepositoryConfigurationId("123")
                 .withMax(10)
                 .withLast("test")
@@ -145,7 +145,7 @@ public class ListDockerRegistryTagsInteractorTest {
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
-                .withApplicationId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
+                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
                 .withArtifactRepositoryConfigurationId("123")
                 .withMax(10)
                 .withLast("test")
@@ -173,7 +173,7 @@ public class ListDockerRegistryTagsInteractorTest {
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
-                .withApplicationId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
+                .withWorkspaceId("1a3d413d-2255-4a1b-94ba-82e7366e4342")
                 .withArtifactRepositoryConfigurationId("123")
                 .withMax(10)
                 .withLast("test")
@@ -199,7 +199,7 @@ public class ListDockerRegistryTagsInteractorTest {
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
-                .withApplicationId("123")
+                .withWorkspaceId("123")
                 .withArtifactRepositoryConfigurationId("123")
                 .withMax(10)
                 .withLast("test")
@@ -221,7 +221,7 @@ public class ListDockerRegistryTagsInteractorTest {
         entity.id = "123";
         entity.name = "Testing";
         entity.type = RegistryType.AZURE;
-        entity.applicationId = "1a3d413d-2255-4a1b-94ba-82e7366e4342";
+        entity.workspaceId = "1a3d413d-2255-4a1b-94ba-82e7366e4342";
         entity.createdAt = LocalDateTime.now();
         entity.connectionData = new DockerRegistryConfigurationEntity
                 .AzureDockerRegistryConnectionData("http://test.org", "usertest", "userpass");
