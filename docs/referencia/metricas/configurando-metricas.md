@@ -1,13 +1,13 @@
 # Configurando as métricas
 
-O Charles hoje disponibiliza duas maneiras de você realizar a configuração das métricas: a primeira delas usando o **Istio** e a segunda com o seu **próprio provedor**. Vamos detalhar cada uma delas abaixo. 
+A configuração de métricas no Charles é realiza em duas partes, a primeira delas é feita no  **Istio** e a segunda no seu **próprio provedor**. Vamos detalhar cada uma delas abaixo. 
 
 ### Configurando Istio
 
 As métricas relacionadas às requisições de cada círculo podem ser quantificadas e expostas pelo Istio. 
 
 {% hint style="info" %}
-Antes, recomendamos que consulte a [doc oficial](https://istio.io/docs/tasks/observability/metrics/) do Istio caso queira entender mais sobre a telemetria deles.
+Antes, caso queira entender mais sobre telemetria no Istio, recomendamos que consulte a [doc oficial](https://istio.io/docs/tasks/observability/metrics/).
 {% endhint %}
 
 #### **Parte** 1: Habilitando o Istio
