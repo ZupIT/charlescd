@@ -24,6 +24,8 @@ A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree
 Qualquer caso de sucesso ou erro estará refletido no estado do cartão da release.
 {% endhint %}
 
+**\[GIT DE CASOS DE SUCESSOS, ERROS E ANDAMENTO DE BUILDS\]**
+
 ## Como buscar uma release existente?
 
 Caso a release tenha sido gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) ****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**. 
