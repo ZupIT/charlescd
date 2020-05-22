@@ -40,6 +40,8 @@
         <logback.version>1.1.7</logback.version>
         <sdk.aws.version>1.11.375</sdk.aws.version>
         <jacoco.version>0.8.4</jacoco.version>
+        <springfox.swagger.version>2.9.2</springfox.swagger.version>
+        <springfox.swagger.ui.version>2.9.2</springfox.swagger.ui.version>
     </properties>
 
     <dependencyManagement>
@@ -63,7 +65,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client</artifactId>
@@ -136,6 +137,16 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ecr</artifactId>
             <version>${sdk.aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.swagger.ui.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

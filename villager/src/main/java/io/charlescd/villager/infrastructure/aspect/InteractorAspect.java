@@ -29,7 +29,7 @@ public class InteractorAspect {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InteractorAspect.class);
 
-    @AfterThrowing(pointcut = "execution(* br.com.zup.darwin.villager.interactor..*.*(..))", throwing = "ex")
+    @AfterThrowing(pointcut = "execution(* io.charlescd..villager.interactor..*.*(..))", throwing = "ex")
     public void afterThrowing(Exception ex) throws JsonProcessingException {
 
         LOGGER.error(RequestContext.getTag(), new ObjectMapper().writeValueAsString(ex));

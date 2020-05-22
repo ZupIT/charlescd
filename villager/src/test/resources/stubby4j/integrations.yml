@@ -61,7 +61,7 @@
 
 - request:
     method: GET
-    url: ^/v2/darwin-notifications/tags/list$
+    url: ^/v2/charles-notifications/tags/list$
 
   response:
     status: 200
@@ -70,24 +70,24 @@
       authorization-basic: "user:password"
     body: >
       {
-          "name": "darwin-notifications",
+          "name": "charles-notifications",
           "tags": [
               "builder",
-              "darwin-crud-notifications",
-              "darwin-crud-notifications-db-auth",
-              "darwin-crud-notifications-fixed",
-              "darwin-events",
-              "darwin-feature-notifications",
-              "darwin-mark-all-as-read",
-              "darwin-notification-application",
-              "darwin-notifications-all",
-              "darwin-notifications-all-final",
-              "darwin-notifications-front-back",
-              "darwin-notifications-helm",
-              "darwin-reference-fields",
-              "darwin-teste-teste",
-              "darwin-teste-teste-iti",
-              "darwin-version-notification-app",
+              "charles-crud-notifications",
+              "charles-crud-notifications-db-auth",
+              "charles-crud-notifications-fixed",
+              "charles-events",
+              "charles-feature-notifications",
+              "charles-mark-all-as-read",
+              "charles-notification-application",
+              "charles-notifications-all",
+              "charles-notifications-all-final",
+              "charles-notifications-front-back",
+              "charles-notifications-helm",
+              "charles-reference-fields",
+              "charles-teste-teste",
+              "charles-teste-teste-iti",
+              "charles-version-notification-app",
               "latest"
           ]
       }
