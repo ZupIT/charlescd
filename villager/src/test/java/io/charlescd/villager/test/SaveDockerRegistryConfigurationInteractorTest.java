@@ -186,9 +186,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
                 .build();
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            interactor.execute(input);
-        });
+        Exception exception = assertThrows(IllegalStateException.class, () -> interactor.execute(input));
 
         // Check
         assertThat(exception.getMessage(), Matchers.is("Registry type not supported!"));
