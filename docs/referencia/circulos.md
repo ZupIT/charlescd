@@ -69,7 +69,7 @@ O único operador lógico suportado até o momento nesta segmentação é o OR.
 
 Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
-![](../.gitbook/assets/17.png)
+![](../.gitbook/assets/17-03-03-03-03-1-.png)
 
 Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(**`App1`**\) - como no login, por exemplo - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
 
@@ -106,7 +106,7 @@ Além disso, existe uma versão default \(v1\) para usuários que não se encaix
 
 Suponha que, ao realizar a requisição para identificação do usuário, seja retornado o id 8756. Com isso, essa informação deverá ser repassada nas próximas interações com serviços através do header `x-circle-id`. A imagem abaixo retrata como que, internamente, o Charles utiliza os recursos para rotear para a release correta:
 
-![](../.gitbook/assets/20%20%281%29.png)
+![](../.gitbook/assets/screen_shot_2020-05-22_at_10.08.35.png)
 
 Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Entretanto, para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura abaixo:
 
@@ -116,6 +116,4 @@ Ao realizar a implantação de uma versão em um círculo, o Charles realiza tod
 4. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
 
 Caso o `x-circle-id` não seja informado, existe uma regra definida no _Virtual Service_ que irá encaminhar para a versão padrão \(v1\).
-
-![](https://lh3.googleusercontent.com/lDpIwX99uSkIyT08s5R5d5wakyTpDjgc2NUmERB2M5HK2QVSXRsitpB5QXyMHTGUXtXGgG5Ib4xCO2WW1rn2Rhf5Jihuc7vZKT4A_5GLImUtwkS3fBw1EqbGafbIQgIKyQHLz_1t)
 
