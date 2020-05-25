@@ -2,13 +2,13 @@
 
 Um grupo de usuários pode representar um time ou até mesmo um subconjunto de pessoas baseado em suas habilidades. 
 
-Por exemplo, em um time muito grande, as permissões de acesso ao Charles iriam se diferenciar de acordo com sua posição, poderíamos ter os seguintes grupos:
+Por exemplo, em um time muito grande, as permissões de acesso ao Charles poderiam se diferenciar de acordo com a posição de seus membros, iríamos ter os seguintes grupos:
 
 * _Desenvolvedores do Produto X._
 * _QAs do Produto X._
 * _Data Analysts do Produto X._
 
-Caso contrário, se todos do time tiverem a mesma permissão, poderíamos criar apenas um grupo com os usuários pertencentes:
+Mas, se todos do time tiverem a mesma permissão, podemos criar apenas um grupo com todos os usuários:
 
 * _Time do Produto X._
 

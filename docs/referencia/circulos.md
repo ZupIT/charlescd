@@ -1,6 +1,6 @@
 # Círculo
 
-Os círculos são o principal diferencial do [**novo conceito de deploy**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) trazido pelo Charles. Isso porque ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
+Os círculos são o principal diferencial do [**novo conceito de deploy**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) trazido pelo Charles. Ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
 
 ![Representa&#xE7;&#xE3;o dos c&#xED;rculos gerados no Charles](../.gitbook/assets/circles_bg_white.jpg)
 
@@ -10,13 +10,13 @@ Uma vez escolhidas as pessoas certas para terem acesso à sua release associada 
 
 ## Círculos ativos e inativos
 
-O que define se um círculo é ativo ou não, é a existência de releases, isto é, de versões implantadas para aquela segmentação de usuários. Logo, os círculos ativos são aqueles que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma delas.
+O que define se um círculo é ativo ou não, é a existência de releases, isto é, de versões implantadas para aquela segmentação de usuários. Por isso, os círculos ativos são os que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma.
 
-![Alternando o filtro de estado do c&#xED;rculo entre ATIVO e INATIVO.](../.gitbook/assets/chrome-capture-2-.gif)
+![ Filtro de estado do c&#xED;rculo entre Ativo e Inativo.](../.gitbook/assets/chrome-capture-2-.gif)
 
 ## Como criar círculos?
 
-Para você criar um círculo, basta fazer o seguinte passo a passo:
+Para você criar um círculo, siga os seguintes passos:
 
 **1.** Clique em **Create Circle**.  
 **2.** Dê um nome ao seu círculo.  
@@ -49,70 +49,72 @@ Vamos a alguns exemplos:
 
 ![](../.gitbook/assets/chrome-capture-1-.jpg)
 
-### **Segmentação por importação de csv**
+### **Segmentação por importação de CSV**
 
-Nesta segmentação, é utilizada apenas a primeira coluna do csv para criar as regras. ****Sendo assim, a primeira linha da primeira coluna deve conter o nome da chave e a mesma deve ser informada no campo _key._
+Nesta segmentação, é utilizada apenas a primeira coluna do CSV para criar as regras. ****Sendo assim, a primeira linha da primeira coluna deve conter o nome da chave e a mesma deve ser informada no campo _key._
 
 ![](../.gitbook/assets/image%20%282%29.png)
 
-Uma vez feito o upload do arquivo e salvado as configurações, será um overview aparecerá demonstrando como está sua segmentação:
+Depois de ter feito o upload do arquivo e salvado as configurações, aparecerá um overview demonstrando como está sua segmentação:
 
 ![](../.gitbook/assets/image%20%281%29.png)
 
-Na prática, essa modalidade permite que você possa, por exemplo, extrair de uma base externa de IDs dos clientes com um perfil específico e importá-los direto na plataforma do Charles. 
+Essa modalidade permite, por exemplo, extrair de uma base externa de IDs dos clientes um perfil específico e importá-los direto na plataforma do Charles. 
 
 {% hint style="warning" %}
-O único operador lógico suportado até o momento nesta segmentação é o OR.
+O único operador lógico suportado nesta segmentação é o OR.
 {% endhint %}
 
 ## Como integrar círculos com serviços?
 
-Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
+Uma vez detectado o [**círculo ao qual o usuário pertence**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
 ![](../.gitbook/assets/17-03-03-03-03-1-.png)
 
-Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(**`App1`**\) - como no login, por exemplo - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
+Na prática, em algum momento durante a interação do usuário com a sua aplicação \(**`App1`**\) -  por exemplo, o login - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
 
-Com isso, o ID deve ser repassado como valor no parâmetro **`x-circle-id`** localizado no header de todas as próximas chamadas dos seus serviços \(**`App2`**\). O Charles é responsável por propagar essa informação que, quando recebida no Kubernetes, será utilizada para redirecionar a requisição para a versão correspondente à release associada ao círculo.
+Com isso, o ID deve ser repassado como valor no parâmetro **`x-circle-id`** localizado no header de todas as próximas chamadas dos seus serviços \(**`App2`**\). O Charles é responsável por propagar essa informação porque quando recebida no Kubernetes, será utilizada para redirecionar a requisição para a versão correspondente à release associada ao círculo.
 
-Caso o **`x-circle-id`** não seja repassado, todas as requisições serão redirecionadas para versões _Default_, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
+Caso o **`x-circle-id`** não seja repassado, todas as requisições serão redirecionadas para versões **Default**, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
 
 ### **Mescla de serviços com versões diferentes na minha release**
 
-Para facilitar seu entendimento, vamos exemplificar com um cenário onde o seu ambiente possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
+Para facilitar o entendimento, vamos exemplificar com um cenário onde o seu ambiente possui dois serviços: **Aplicação A** e **Aplicação B** e os seus círculos devem fazer o uso das seguintes versões:
 
 ![](../.gitbook/assets/18.png)
 
-Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`** ``será:
+Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`**será:
 
-1. O usuário envia no header: `x-circle-id=”Círculo QA”`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
+1. O usuário envia no header: `x-circle-id="Círculo QA"`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
 2. O usuário envia no header: `x-circle-id=”Circulo Dev”`. Nesse círculo, a chamada será redirecionada para a **versão Z** do serviço **Aplicação A e a versão Z** do serviço **Aplicação B.**
 
 ![](../.gitbook/assets/19.png)
 
 ## Como rotear círculos com cluster de Kubernetes?
 
-Para entendermos melhor como o **Charles** envolve o [Kubernetes](https://kubernetes.io/docs/home/) e o [Istio](https://istio.io/docs/) no roteamento de tráfego, considere o seguinte cenário onde existem dois círculos:
+O **Charles** envolve o [**Kubernetes**](https://kubernetes.io/docs/home/) ****e o [**Istio**](https://istio.io/docs/) ****no roteamento de tráfego, considere o seguinte cenário onde existe dois círculos:
 
 * Moradores de Campinas \(identificado pelo ID 1234\);
 * Moradores de Belo Horizonte \(identificado pelo ID 8746\).
 
-Em ambos círculos foram implantadas releases do serviço chamado "application", entretanto com versões diferentes:
+Em ambos os círculos foram implantadas releases do serviço chamado "**application**", mas com versões diferentes:
 
 * Moradores de Campinas \(1234\): utiliza a versão v2.
 * Moradores de Belo Horizonte \(8746\): utiliza a versão v3.
 
 Além disso, existe uma versão default \(v1\) para usuários que não se encaixam em algum círculo específico.
 
-Suponha que, ao realizar a requisição para identificação do usuário, seja retornado o id 8756. Com isso, essa informação deverá ser repassada nas próximas interações com serviços através do header `x-circle-id`. A imagem abaixo retrata como que, internamente, o Charles utiliza os recursos para rotear para a release correta:
+Suponha que, ao realizar a requisição para identificação do usuário, seja retornado o id 8756. Com isso, essa informação deverá ser repassada nas próximas interações com serviços através do header `x-circle-id`. A imagem abaixo retrata como o Charles utiliza internamente os recursos para rotear a release correta: 
 
 ![](../.gitbook/assets/screen_shot_2020-05-22_at_10.08.35.png)
 
-Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Entretanto, para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura abaixo:
+Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura abaixo:
+
+**\[Figura?\]**
 
 1. A requisição será recebida pela Ingress, que realiza o controle do tráfego para a malha de serviços.  
-2. Uma vez permitida a entrada da requisição, o Virtual Service consulta o conjunto de regras de roteamento de tráfego a serem aplicadas no host endereçado. Nesse caso, a avaliação acontece através da especificação do header `x-circle-id`, de maneira que o tráfego corresponda ao serviço "application".  
-3. Além do serviço, também é necessário saber qual subconjunto definido no registro. Essa verificação é feita no _Destination Rules_.  
+2. Uma vez permitida a entrada da requisição, o Virtual Service consulta o conjunto de regras de roteamento de tráfego a serem aplicadas no host endereçado. Nesse caso, a avaliação acontece através da especificação do header `x-circle-id`de maneira que o tráfego corresponda ao serviço "**application**".  
+3. Além do serviço, também é necessário saber qual subconjunto definido no registro. Essa verificação é feita no __**Destination Rules.**  
 4. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
 
 Caso o `x-circle-id` não seja informado, existe uma regra definida no _Virtual Service_ que irá encaminhar para a versão padrão \(v1\).

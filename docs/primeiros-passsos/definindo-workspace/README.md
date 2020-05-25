@@ -3,7 +3,7 @@
 O workspace permite que você segmente o uso do CharlesCD dentro da sua empresa ou do seu time. Com ele se define as **permissões personalizadas dos usuários**, o que garante mais segurança para o seu projeto.
 
 {% hint style="info" %}
-Com apenas uma instalação, vários times podem utilizar o Charles com configurações distintas ou, se preferir, criar um workspace para representar ambientes de desenvolvimento diferentes como, por exemplo, de homologação, produção, etc. 
+Com apenas uma instalação, vários times podem utilizar o Charles com configurações distintas ou, se preferir, criar um workspace para representar diferentes ambientes de desenvolvimento como, por exemplo, homologação, produção, etc. 
 {% endhint %}
 
 Cada workspace possui as seguintes configurações:

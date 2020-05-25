@@ -91,10 +91,8 @@ Depois de preencher as variáveis você deverá aplicar esse JOB no seu cluster 
 ```text
 ```
 
-kubectl apply -f PATH/job.yaml --namespace=NAMESPACE
-
 ```text
-
+kubectl apply -f PATH/job.yaml --namespace=NAMESPACE
 ```
 
 Você verá que, após o JOB, seis novos deployments e services foram criados:
@@ -103,8 +101,9 @@ Você verá que, após o JOB, seis novos deployments e services foram criados:
 2. **`Darwin-circle-matcher`**
 3. **`Darwin-deploy`**
 4. **`Darwin-notifications`**
-5. **`Darwin-ui`**
-6. **`Darwin-villager`**
+5. **`Darwin-ui-legacy`**
+6. **`Darwin-ui-new`**
+7. **`Darwin-villager`**
 
 ## **Casos Especiais**
 

@@ -2,7 +2,7 @@
 
 A partir do momento em que você começa a fazer seus deploys, o próximo passo é [**criar os primeiros círculos**](https://docs.charlescd.io/referencia-1/circles) para melhor segmentação das suas aplicações. 
 
-Para isso, basta seguir os seguintes passos: 
+Para isso, siga os seguintes passos: 
 
 1. Instalar e configurar o ****[**Circle Matcher**](https://docs.charlescd.io/referencia-1/circle-matcher) no [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace)**;** 
 2. Criar círculo _\(incluir um exemplo técnico\)_; 

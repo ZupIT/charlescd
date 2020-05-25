@@ -8,7 +8,7 @@ Existem duas categorias de cadastros que podem ser feitas pelo workspace; GitHub
 
 * **Nome**: esse nome representará sua configuração no Charles. 
 * **URL**: se você tiver um domínio personalizado, preencha aqui. Caso contrário, informe o valor padrão: [https://github.com](https://github.com) \(sem a barra no final\). 
-* **Token**: **ao** [**gerar esse token**](https://help.github.com/pt/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), é necessário que ele tenha acesso completo ao item "**repo**".
+* **Token**: ao ****[**gerar esse token**](https://help.github.com/pt/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), é necessário que ele tenha acesso completo ao item **repo**.
 
 ### GitLab
 
