@@ -1,12 +1,12 @@
 # Criando seu Primeiro Módulo
 
-Uma vez criado e configurado o seu [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace), também é necessário adicionar os módulos. 
+Uma vez criado e configurado o seu [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace), agora é necessário adicionar os módulos. 
 
 {% hint style="info" %}
-Um **módulo** nada mais é que a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](definindo-workspace/github.md).
+Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](definindo-workspace/github.md).
 {% endhint %}
 
-Para isso, basta acessar o menu _Modules_ no _workspace_ desejado, e __seguir os seguintes passos:
+Para adicioná-los, acesse o menu **Modules** __no **workspace** desejado, e __siga os seguintes passos:
 
 * **Nome**: o nome do módulo deve ser o mesmo nome do seu repositório. 
 * **Git URL**: informe a URL do seu repositório. Por exemplo: [https://github.com/ZupIT/charlescd](https://github.com/ZupIT/charlescd).
@@ -19,7 +19,7 @@ Caso seu repositório tenha várias aplicações, as cadastre como componentes i
 ## Componentes 
 
 {% hint style="info" %}
-Componentes são abstrações das aplicações. Dentro do seu repositório, caso ele tenha múltiplas aplicações, cada componente corresponderá à uma delas.
+Componentes são abstrações das aplicações. Se dentro do seu repositório há múltiplas aplicações, cada componente corresponderá a uma delas.
 {% endhint %}
 
 ### Métricas de saúde
