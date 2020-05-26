@@ -3,16 +3,16 @@
 * [Overview](README.md)
 * [Principais Conceitos](principais-conceitos.md)
 
-## Primeiros Passos <a id="primeiros-passsos"></a>
+## Primeiros Passos
 
-* [Instalando o Charles](primeiros-passsos/untitled.md)
-* [Definindo um Workspace](primeiros-passsos/definindo-workspace/README.md)
-  * [Docker Registry](primeiros-passsos/definindo-workspace/docker-registry.md)
-  * [Configurando seu Cluster](primeiros-passsos/definindo-workspace/configuracoes-de-deploy.md)
-  * [Credenciais do Git](primeiros-passsos/definindo-workspace/github.md)
-* [Criando seu Primeiro Módulo](primeiros-passsos/criando-modulos.md)
-* [Primeiro Deploy](primeiros-passsos/primeiro-deploy.md)
-* [Usando Círculos](primeiros-passsos/usando-circulos.md)
+* [Instalando o Charles](primeiros-passos/instalando-charles.md)
+* [Definindo um Workspace](primeiros-passos/definindo-workspace/README.md)
+  * [Docker Registry](primeiros-passos/definindo-workspace/docker-registry.md)
+  * [Configurando seu Cluster](primeiros-passos/definindo-workspace/configuracoes-de-deploy.md)
+  * [Credenciais do Git](primeiros-passos/definindo-workspace/github.md)
+* [Criando seu Primeiro Módulo](primeiros-passos/criando-modulos.md)
+* [Primeiro Deploy](primeiros-passos/primeiro-deploy.md)
+* [Usando Círculos](primeiros-passos/usando-circulos.md)
 
 ## Referência
 
