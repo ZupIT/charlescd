@@ -108,14 +108,13 @@ Suponha que, ao realizar a requisição para identificação do usuário, seja r
 
 ![](../.gitbook/assets/screen_shot_2020-05-22_at_10.08.35.png)
 
-Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura abaixo:
+Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura acima. 
 
-**\[Figura?\]**
+A requisição será recebida pela Ingress, que realiza o controle do tráfego para a malha de serviços. 
 
-1. A requisição será recebida pela Ingress, que realiza o controle do tráfego para a malha de serviços.  
-2. Uma vez permitida a entrada da requisição, o Virtual Service consulta o conjunto de regras de roteamento de tráfego a serem aplicadas no host endereçado. Nesse caso, a avaliação acontece através da especificação do header `x-circle-id`de maneira que o tráfego corresponda ao serviço "**application**".  
-3. Além do serviço, também é necessário saber qual subconjunto definido no registro. Essa verificação é feita no __**Destination Rules.**  
-4. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
+1. Uma vez permitida a entrada da requisição, o Virtual Service consulta o conjunto de regras de roteamento de tráfego a serem aplicadas no host endereçado. Nesse caso, a avaliação acontece através da especificação do header `x-circle-id`de maneira que o tráfego corresponda ao serviço "**application**".  
+2. Além do serviço, também é necessário saber qual subconjunto definido no registro. Essa verificação é feita no __**Destination Rules.**  
+3. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
 
 Caso o `x-circle-id` não seja informado, existe uma regra definida no _Virtual Service_ que irá encaminhar para a versão padrão \(v1\).
 
