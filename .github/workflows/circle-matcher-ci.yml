@@ -38,5 +38,5 @@ jobs:
       with:
         host: http://qualitygate.charlescd.io
         projectBaseDir: ./circle-matcher
-        login: ${{secrets.CHARLESCD_QUALITY_GATE_TOKEN}}
+        login: ${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
         password: ' '
