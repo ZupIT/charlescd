@@ -4,13 +4,13 @@ Um grupo de usuários pode representar um time ou até mesmo um subconjunto de p
 
 Por exemplo, em um time muito grande, as permissões de acesso ao Charles poderiam se diferenciar de acordo com a posição de seus membros, iríamos ter os seguintes grupos:
 
-* _Desenvolvedores do Produto X._
-* _QAs do Produto X._
-* _Data Analysts do Produto X._
+* Desenvolvedores do Produto X.
+* QAs do Produto X.
+* Data Analysts do Produto X.
 
-Mas, se todos do time tiverem a mesma permissão, podemos criar apenas um grupo com todos os usuários:
+Porém, se todos do time tiverem a mesma permissão, podemos criar apenas um grupo com todos os usuários:
 
-* _Time do Produto X._
+* Time do Produto X.
 
 ## Permissões para o Grupo de Usuários no Workspace
 
