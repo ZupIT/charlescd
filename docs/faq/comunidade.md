@@ -1,8 +1,8 @@
 # Comunidade
 
-### **Você tem alguma ideia para melhorar o Charles? Compartilhe conosco!**
+### **Você tem alguma ideia para melhorar o Charles?** 
 
-### Quais são os repositórios open source do Charles?
+Conheça nossas ****[**políticas e informações de contribuição**](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md) ****no Github.
 
 
 
