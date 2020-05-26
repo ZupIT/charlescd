@@ -33,12 +33,12 @@ Você pode saber mais sobre a **configuração do Spinnaker e do Octopipe** na s
 
 Esta é a instalação mais recomendada para quem nunca usou o Charles antes e já quer ter o **primeiro contato em um ambiente de testes,** sem olhar ainda para escalabilidade ou segurança.
 
-Nestes casos, você deve: 
+Neste caso, você irá utilizar: 
 
 * Utilizar um arquivo yaml com todos os **componentes**
 * Usar um Load Balancer pré-configurado. 
 
-Em seguida, basta executar os arquivos em algum cluster pré-configurado, como minikube, GKE, EKS, etc. Os passos a serem executados são estes:
+Para criar esta estrutura, basta executar os arquivos em algum cluster pré-configurado, como minikube, GKE, EKS, etc. Os passos a serem executados são estes:
 
 ```text
 kubectl create namespace charles
@@ -76,7 +76,7 @@ Essa instalação pode ser usada tanto para testes quanto para ambiente produtiv
 
 ### Caso 3: Instalação Terraform
 
-Esta é a instalação é muito específica, pois é indicada somente para quem utiliza o Terraform para criar e versionar sua infraestrutura. 
+Esta é a uma forma de instalação é muito específica, indicada somente para quem utiliza o Terraform para criar e versionar sua infraestrutura. 
 
 Para esses casos, temos atualmente suporte para GCP e AWS e estamos no processo de adicionar a AZURE. 
 
