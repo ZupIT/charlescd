@@ -24,7 +24,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.2.RELEASE</version>
-        <relativePath/>
     </parent>
     <groupId>io.charlescd.circlematcher</groupId>
     <artifactId>circle-matcher</artifactId>
