@@ -5,8 +5,7 @@
 
 ## Primeiros Passos <a id="primeiros-passsos"></a>
 
-* [Instalando o Charles](primeiros-passsos/instalando-charles.md)
-* [Instalando o Charles \(v2\)](primeiros-passsos/untitled.md)
+* [Instalando o Charles](primeiros-passsos/untitled.md)
 * [Definindo um Workspace](primeiros-passsos/definindo-workspace/README.md)
   * [Docker Registry](primeiros-passsos/definindo-workspace/docker-registry.md)
   * [Configurando seu Cluster](primeiros-passsos/definindo-workspace/configuracoes-de-deploy.md)

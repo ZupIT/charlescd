@@ -1,35 +1,44 @@
-# Instalando o Charles \(v2\)
+# Instalando o Charles
 
-Pensamos e desenvolvemos a instalação do produto visando alguns casos de uso, para cada caso aconselhamos um método, porém, caso sua necessidade fuja desses casos temos os helm charts isolados para customização.
+{% hint style="info" %}
+O processo de instalação foi criado considerando alguns casos de uso em que, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD de outra maneira, sugerimos conferir a seção de **customização** com os helm charts isolados. 
+{% endhint %}
 
-## Componentes
+## Pré-requisitos
 
-A instalação do Charles no final consiste nos seguintes componentes:
+### Componentes
 
-* Sete módulos específicos do Charles, sendo eles:
-  * Darwin-application
-  * Darwin-circle-matcher
-  * Darwin-deploy
-  * Darwin-notifications
-  * Darwin-ui-legacy
-  * Darwin-ui-new
-  * Darwin-villager
-* Um banco Postgres para os módulos de back-end\(application, circle-matcher, deploy e villager\) e Keycloak
-* Um Redis para uso do Circle Matcher.
-* Keycloak, usado para autenticação e autorização no produto
+A instalação do CharlesCD consiste nos seguintes componentes:
 
-Hoje temos suporte para duas plataformas de continuous delivery
+1. Sete módulos específicos da [**arquitetura do Charles**](https://docs.charlescd.io/#arquitetura-do-sistema)**;** 
+2. **Keycloak**, usado para autenticação e autorização no produto;
 
-* Spinnaker, plataforma largamente usada e com boa documentação, caso você já tenha o seu spinnaker configurado você pode reutilizar com nossa instalação.
-* Octopipe, plataforma gerada pela nossa equipe do Charles, veio da necessidade de ter uma alternativa nativa ao produto, onde o usuário não precisa configurar nada, além de ter um consumo de recursos muito menor que o spinnaker.
+3. Um **banco PostgreSQL** para os módulos de back-end\( `charles-application`, `charles-circle-matcher`, deploy e villager\) e do Keycloak; 
+4. Um **Redis** para uso do [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher). 
 
-Agora vamos aprofundar nos casos de uso e a forma de instalação mais adequada para cada um desses.
+### Plataforma de Continuous Delivery 
 
-### Caso 1 - Instalação de testes
+Atualmente, o Charles tem suporte para duas plataformas de Continuous Delivery \(CD\):
 
-Em um cenário onde você nunca usou o Charles e quer ter o primeiro contato em um ambiente de testes, sem grandes preocupações de escalabilidade ou segurança, temos a instalação utilizando um arquivo yaml com todos os componentes e também com um Load Balancer pré configurado. Basta executar em algum cluster pré configurado \(minikube, GKE, EKS, etc.\)
+* **Spinnaker:** caso você já tenha o seu spinnaker configurado, você pode reutilizar com nossa instalação. 
+* **Octopipe:** plataforma nativa, criada pela equipe do Charles para possibilitar uma instalação sem configuração prévia
 
-Execute os seguintes passos:
+{% hint style="info" %}
+Você pode saber mais sobre a **configuração do Spinnaker e do Octopipe** na seção [**Configuração de CD**](https://docs.charlescd.io/referencia/configuracao-cd).
+{% endhint %}
+
+## Principais casos de instalação 
+
+### Caso 1: Instalação de testes
+
+Esta é a instalação mais recomendada para quem nunca usou o Charles antes e já quer ter o **primeiro contato em um ambiente de testes,** sem olhar ainda para escalabilidade ou segurança.
+
+Nestes casos, você deve: 
+
+* Utilizar um arquivo yaml com todos os **componentes**
+* Usar um Load Balancer pré-configurado. 
+
+Em seguida, basta executar os arquivos em algum cluster pré-configurado, como minikube, GKE, EKS, etc. Os passos a serem executados são estes:
 
 ```text
 kubectl create namespace charles
@@ -37,36 +46,56 @@ kubectl create namespace charles
 kubectl apply -f arquivo.yaml
 ```
 
-No final do processo você terá dentro do namespace Charles todos os módulos do produto mais suas dependências instaladas da forma mais simples possível. E por isso não recomendamos essa forma de instalação para ambientes produtivos, o Postgres, Redis e Nginx foram pensados nessa instalação para serem leves e fáceis de serem aplicados. Então não cuidamos de backups do banco, alta disponibilidade, etc.
+Ao final do processo, você terá dentro do namespace Charles todos os módulos do produto e suas dependências instalados da forma mais simples possível. 
 
-### Caso 2 - Instalação customizada
+**\[GIF DO NAMESPACE CRIADO\]** 
 
-Aqui temos um cenário onde você pode customizar alguns campos da instalação para adequar ao seu uso, toda a customização é feita através do nosso cli e um arquivo de configuração contendo todos os campos possíveis de serem editados.
+{% hint style="danger" %}
+Como essa instalação serve apenas para o uso em ambiente de testes, não recomendamos esse caso de instalação para ambientes produtivos porque ele não inclui cuidados de backups do banco de dados, alta disponibilidade, entre outros.
+{% endhint %}
 
-Aqui abrimos a opção de você usar um banco gerenciado, adicionar novas credenciais de clusters, mudar a versão do Charles, utilizar um spinnaker já instalado previamente e habilitar ou não o load balancer padrão, entre outras coisas.
+### 
 
-Essa forma de instalação pode ser usada tanto para testes quanto para ambiente produtivos, dependendo dos valores que você definir no arquivo de configuração. Caso você não altere nada terá o mesmo resultado da instalação com arquivo único.
+### Caso 2: Instalação customizada
 
-Para utilizar nosso CLI basta acessar [link](https://google.com.br).
+Nesta forma de instalação, é possível customizar alguns campos por meio do **nosso CLI** e de um arquivo de configuração que contém todos os campos disponíveis para edição. 
 
-### Caso 3 - Instalação Terraform
+Customizando o arquivo, você tem algumas opção, como: 
 
-Algumas empresas utilizam o terraform para criar e versionar sua infraestrutura, para esses casos deixamos um estrutura pronta para ser utilizada. Hoje temos suporte para GCP e AWS, e estamos trabalhando para adicionar suporte a AZURE, nesse [repo](https://google.com.br) deixamos prontos os resources de banco e Redis, além da execução de helm releases dos nossos módulos já consumindo os valores gerados pelos outros resources, tudo separado por cloud.
+* Usar um banco de dados gerenciado; 
+* Adicionar novas credenciais de clusters;
+* Mudar a versão do CharlesCD;
+* Utilizar um Spinnaker já instalado previamente;
+* Habilitar \(ou não\) o load balancer padrão.
 
-Essa instalação é pensada para casos muito específicos, então veja se os outros métodos não são mais adequados para você.
+**\[GIF/IMAGEM QUE MOSTRE ESSE ARQUIVO OU TELA DURANTE INSTALAÇÃO\]**
+
+Essa instalação pode ser usada tanto para testes quanto para ambiente produtivos, tudo vai depender dos valores que você definir no arquivo de configuração. Caso você não altere nada, terá o mesmo resultado da instalação com arquivo único.
+
+### 
+
+### Caso 3: Instalação Terraform
+
+Esta é a instalação é muito específica, pois é indicada somente para quem utiliza o Terraform para criar e versionar sua infraestrutura. 
+
+Para esses casos, temos atualmente suporte para GCP e AWS e estamos no processo de adicionar a AZURE. 
+
+Nesse **repositório**, você encontra todos os recursos de banco de dados e Redis, além da execução de helm releases dos nossos módulos já consumindo os valores gerados pelos outros resources. Tudo isso separado por cloud.
+
+**\[GIF/IMAGEM DO REPOSITÓRIO, TELA DE INSTALAÇÃO, ETC\]**
 
 ## Customização total
 
-Caso você queira entender um pouco mais do processo ou queira editar mais campos dos que os disponibilizados pelo CLI, ou queria instalar módulos a parte para testes recomendamos os Charts puros do produto, disponíveis nesse [link](https://link.com.br).
+Recomendamos este tipo de instalação caso você queira editar mais campos dos que os disponibilizados pelo CLI ou ainda instalar módulos à parte para testes. Nesses casos, você pode acessar direto os **charts puros do produto**.
 
 ### Especificidades
 
-Aqui vamos colocar algumas informações essenciais caso você queria customizar sua instalação.
+Se você optar pela customização total, é preciso ter em mente algumas especificações:
 
-#### Ordem
+#### **Ordem**
 
-Os módulos do charles não tem dependem um do outro para subir, ou seja, você pode subir qualquer módulo em qualquer ordem ou subir todos de uma vez. Porém alguns módulos dependem de alguma coisas já configuradas:
+Apesar dos módulos do charles serem independentes entre si, existem casos em são necessárias algumas pré-configurações. Abaixo, descrevemos melhor cada uma delas: 
 
-* Charles-move: precisa do keycloak configurado para funcionar, dentro das variáveis de ambiente você pode customizar a URL do keycloak, assim como o client e client-secret, se você usou a instalação com o CLI ou arquivo único isso não será problema, já em casos mais customizados é importante ter um cuidado a mais com isso.
-* Charles-circle-matcher: Precisa de um redis para funcionar, e existem formas diferentes de se instalar o redis, então caso você use uma configuração diferente
+* `Charles-moove`: este módulo exige que o keycloak esteja configurado para funcionar. Nessa configuração, você pode customizar a URL do keycloak, assim como o client e client-secret. Caso tenha instalado com CLI ou arquivo único, não será necessário seguir esses passos.  
+* `Charles-circle-matcher`: este módulo exige um redis instalado para funcionar.
 
