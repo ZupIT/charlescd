@@ -1,11 +1,16 @@
 # Instalação e Uso
 
+## Como faço para instalar o Charles? 
 
+Atualmente, é possível instalar o Charles considerando alguns casos de uso. São eles:
 
-* **Em qual linguagem o Charles foi programado?**
-* **Em qual tecnologia o Charles foi estruturado?**
-* **Qual a arquitetura do Charles?**
-* **Como o Charles executa o código para uma aplicação mobile Android?**
-* **Como o Charles executa o código para uma aplicação mobile iOS?**
-* **Como o Charles executa o código para uma aplicação web?**
+* Instalação para testes
+* Instalação customizada
+* Instalação por Terraform
+
+Você pode obter informações mais detalhadas de cada um dos casos na seção [**Instalando o Charles.**](https://docs.charlescd.io/primeiros-passos/instalando-charles) ****
+
+\*\*\*\*
+
+\*\*\*\*
 

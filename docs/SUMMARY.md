@@ -26,10 +26,6 @@
   * [Configurando as métricas](referencia/metricas/configurando-metricas.md)
   * [Cadastrando o provedor de métricas](referencia/metricas/provedor-metrica.md)
 
-## API
-
-* [TBD](api/untitled.md)
-
 ## FAQ
 
 * [Sobre o Charles](faq/o-que-e-deploy-em-circulos.md)

@@ -37,7 +37,7 @@ A metodologia implementada pelo Charles traz várias vantagens, como:
 
 A plataforma foi construída utilizando a abordagem de microsserviços e possui os seguintes módulos:
 
-![](.gitbook/assets/arquitetura-flat-2-.png)
+![Imagem com a arquitetura do sistema](.gitbook/assets/arquitetura-nova-charles.jpg)
 
 * `charlescd-ui:` responsável por espelhar, no front, as configurações de workspaces, usuários, módulos, hipóteses e boards, ou seja, toda interface gráfica da plataforma. 
 * `charlescd-moove:` responsável pelo gerenciamento de workspaces, usuários, módulos, hipóteses e boards, ou seja, de toda estrutura da plataforma.  
