@@ -4,7 +4,7 @@
 O processo de instalação foi criado considerando alguns casos de uso em que, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD de outra maneira, sugerimos conferir a seção de **customização** com os helm charts isolados. 
 {% endhint %}
 
-## Pré-requisitos
+## Introdução
 
 ### Componentes
 
