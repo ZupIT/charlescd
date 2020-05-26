@@ -4,7 +4,12 @@ Releases são as versões de uma aplicação. Diferente de outras formas de depl
 
 ## Como criar releases pelo Charles?
 
-Existem **duas maneiras de criar releases** no Charles. A primeira delas oferece todo o potencial de uso do produto, pois trabalha com o conceito de teste de hipóteses durante todo o ciclo de desenvolvimento. Já a segunda oferece a flexibilidade necessária para casos em que é desejado que toda a parte de desenvolvimento e geração de artefatos estejam apartadas do CharlesCD.
+Existem **duas maneiras de criar releases** no Charles. São elas: 
+
+1. Por meio de quadro de hipóteses;
+2. Por imagens existentes no docker registry.
+
+A primeira delas oferece todo o potencial de uso do produto, pois trabalha com o conceito de teste de hipóteses durante todo o ciclo de desenvolvimento. Já a segunda oferece a flexibilidade necessária para casos em que é desejado que toda a parte de desenvolvimento e geração de artefatos estejam apartadas do CharlesCD.
 
 ### Release por meio do quadro de hipóteses
 
