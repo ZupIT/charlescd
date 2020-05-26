@@ -1,14 +1,18 @@
-# O que é deploy em círculos?
+# Sobre o Charles
 
-## **Como realizar o deploy das aplicações de forma eficiente e com menor impacto possível ao error budget?**
+## O que é o Charles? 
 
-O deployment em círculos foi criado com objetivo de sanar esse problema. Isto porque, ao criar círculos com grupos específicos de usuários, os desenvolvedores conseguem implantar releases que podem ser testadas e validadas simultaneamente, antecipando a identificação de erros antes que a release vá para ambiente de produção, trazendo assim mais segurança para aplicação.
+O Charles é uma ferramenta open source de continuous deployment que realiza deploys de forma ágil, contínua e segura, permitindo que sejam feitas, de forma simultânea, validações de hipóteses com grupos específicos de usuários.
 
-Quando analisamos a confiabilidade de um site, ou o Site Reliability Engineering \(SRE\), um dos indicadores mais importantes é o percentual de tolerância de erros que esse sistema deve apresentar, mais conhecido como error budget. Em geral, o valor médio deste error budget é 0,01%
+## O que é deploy em círculos? 
 
-Na prática, isso significa que os times de desenvolvimento e de operações têm um espaço cada vez menor para instabilidades ou falhas no sistema.
+O deploy em círculos é um conceito pioneiro trazido pelo Charles. Graças a ele, é possível que você realize o deploy de uma mesma aplicação para diferentes segmentações de usuários ao mesmo tempo. 
 
-Por isso que um dos principais desafios é:
+## Qual diferencial do Charles? 
+
+Diferente de outras modalidades de deploy, o Charles possibilita a realização simultânea de segmentações de usuários por meio de círculos. 
+
+\*\*\*\*
 
 \*\*\*\*
 

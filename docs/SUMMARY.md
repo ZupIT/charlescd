@@ -32,8 +32,8 @@
 
 ## FAQ
 
-* [O que é deploy em círculos?](faq/o-que-e-deploy-em-circulos.md)
-* [Qual a diferença entre deploy em círculos e deploy tradicional?](faq/deploy-em-circulos-e-deploy-tradicional.md)
-* [Qual a diferença entre deploy em círculos e blue-green deploy?](faq/deploy-em-circulos-e-blue-green.md)
-* [Qual a diferença entre deploy em círculos e canary releases?](faq/deploy-em-circulos-e-canary-release.md)
+* [Sobre o Charles](faq/o-que-e-deploy-em-circulos.md)
+* [Charles x Outros deploys](faq/charles-x-outros-deploys.md)
+* [Instalação e Uso](faq/instalacao-e-uso.md)
+* [Comunidade](faq/comunidade.md)
 
