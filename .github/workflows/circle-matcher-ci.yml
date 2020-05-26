@@ -33,6 +33,8 @@ jobs:
       working-directory: ./circle-matcher
     - name: SonarQube Scan
       uses: kitabisa/sonarqube-action@v0.0.1
+      env:
+        JAVA_HOME: ''
       with:
         host: qualitygate.charlescd.io
         projectBaseDir: ./circle-matcher
