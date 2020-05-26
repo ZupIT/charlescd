@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "9b675243-4fed-41fc-b95c-80a63cbbe1e9",
+		"name": "CharlesCD Villager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Build",
+			"item": [
+				{
+					"name": "Create Build",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Circle-Id",
+								"value": "{{x-circle-id}}",
+								"type": "text",
+								"equals": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tagName\": \"String\",\n    \"callbackUrl\": \"String\",\n    \"modules\": [\n        {\n            \"id\": \"UUID\",\n            \"name\": \"String\",\n            \"registryConfigurationId\": \"String\",\n            \"components\": [\n                {\n                    \"tagName\": \"String\",\n                    \"name\": \"String\"\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-path}}/build",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"build"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Registry",
+			"item": [
+				{
+					"name": "Create AZURE Registry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Workspace-Id",
+								"value": "{{x-workspace-id}}",
+								"type": "text",
+								"equals": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"String\",\n    \"address\": \"String\",\n    \"authorId\": \"String\",\n    \"provider\": \"Azure\",\n    \"username\": \"String\",\n    \"password\": \"String\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-path}}/registry",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create AWS Registry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Workspace-Id",
+								"value": "{{x-workspace-id}}",
+								"type": "text",
+								"equals": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"String\",\n    \"address\": \"String\",\n    \"authorId\": \"String\",\n    \"provider\": \"AWS\",\n    \"accessKey\": \"String\",\n    \"secretKey\": \"String\",\n    \"region\": \"String\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-path}}/registry",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Registries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Workspace-Id",
+								"value": "{{x-workspace-id}}",
+								"type": "text",
+								"equals": true
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base-path}}/registry",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Registry Component Tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Workspace-Id",
+								"value": "{{x-workspace-id}}",
+								"type": "text",
+								"equals": true
+							},
+							{
+								"key": "max",
+								"value": "10",
+								"type": "text"
+							},
+							{
+								"key": "last",
+								"value": "true",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base-path}}/registry/{{registryConfigurationId}}/components/{{componentName}}/tags",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"registry",
+								"{{registryConfigurationId}}",
+								"components",
+								"{{componentName}}",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Registry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Workspace-Id",
+								"value": "{{x-workspace-id}}",
+								"type": "text",
+								"equals": true
+							}
+						],
+						"url": {
+							"raw": "{{base-path}}/registry/{{registryConfigurationId}}",
+							"host": [
+								"{{base-path}}"
+							],
+							"path": [
+								"registry",
+								"{{registryConfigurationId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
