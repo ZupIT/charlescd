@@ -1,7 +1,7 @@
 # Instalando o Charles
 
 {% hint style="info" %}
-O processo de instalação foi criado considerando alguns casos de uso em que, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD de outra maneira, sugerimos conferir a seção de **customização** com os helm charts isolados. 
+O processo de instalação foi criado considerando alguns casos de uso em que, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD de outra maneira, sugerimos conferir a seção de [**customização**](https://docs.charlescd.io/primeiros-passos/instalando-charles#customizacao-total) com os helm charts isolados. 
 {% endhint %}
 
 ## Introdução
@@ -35,7 +35,7 @@ Esta é a instalação mais recomendada para quem nunca usou o Charles antes e j
 
 Neste caso, você irá utilizar: 
 
-* Utilizar um arquivo yaml com todos os **componentes**
+* Utilizar um arquivo yaml com todos os [**componentes**](https://docs.charlescd.io/primeiros-passos/instalando-charles#componentes);
 * Usar um Load Balancer pré-configurado. 
 
 Para criar esta estrutura, basta executar os arquivos em algum cluster pré-configurado, como minikube, GKE, EKS, etc. Os passos a serem executados são estes:
@@ -81,8 +81,6 @@ Esta é a uma forma de instalação é muito específica, indicada somente para 
 Para esses casos, temos atualmente suporte para GCP e AWS e estamos no processo de adicionar a AZURE. 
 
 Nesse **repositório**, você encontra todos os recursos de banco de dados e Redis, além da execução de helm releases dos nossos módulos já consumindo os valores gerados pelos outros resources. Tudo isso separado por cloud.
-
-**\[GIF/IMAGEM DO REPOSITÓRIO, TELA DE INSTALAÇÃO, ETC\]**
 
 ## Customização total
 
