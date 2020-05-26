@@ -39,5 +39,4 @@ jobs:
       run: sonar-scanner
            -Dsonar.login=${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
            -Dsonar.host.url=http://qualitygate.charlescd.io/
-           -Dsonar.projectKey=ZupIT_charlescd-circle-matcher
       working-directory: ./circle-matcher
