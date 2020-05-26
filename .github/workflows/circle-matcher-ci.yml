@@ -31,11 +31,9 @@ jobs:
     - name: Build with Maven
       run: mvn -B package
       working-directory: ./circle-matcher
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONARCLOUD_KEY }}
-        JAVA_HOME: ''
+    - name: SonarQube Scan
+      uses: kitabisa/sonarqube-action@v0.0.1
       with:
+        host: 34.125.204.181
         projectBaseDir: ./circle-matcher
+        login: ${{secrets.CHARLESCD_QUALITY_GATE_TOKEN}}
