@@ -40,5 +40,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
         SONARCLOUD_URL: http://qualitygate.charlescd.io/
+        JAVA_HOME: ''
       with:
         projectBaseDir: ./villager
