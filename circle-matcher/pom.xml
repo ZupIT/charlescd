@@ -30,7 +30,7 @@
     <artifactId>circle-matcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>circle-matcher</name>
-    <description>Charles CD Circle Matcher Project</description>
+    <description>CharlesCD Circle Matcher Project</description>
 
     <properties>
         <java.version>11</java.version>
