@@ -31,12 +31,14 @@ jobs:
     - name: Build with Maven
       run: mvn -B package
       working-directory: ./circle-matcher
-    - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@v0.0.1
+    - name: Setup sonarqube
+      uses: warchant/setup-sonar-scanner@v1
+    - name: Run sonarqube
       env:
-        JAVA_HOME: ''
-      with:
-        host: http://qualitygate.charlescd.io
-        projectBaseDir: ./circle-matcher
-        login: ${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
-        password: ' '
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: sonar-scanner
+           -Dsonar.login=${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
+           -Dsonar.organization=ZupIT
+           -Dsonar.host.url=http://qualitygate.charlescd.io/
+           -Dsonar.projectKey=ZupIT_charlescd-circle-matcher
+      working-directory: ./circle-matcher
