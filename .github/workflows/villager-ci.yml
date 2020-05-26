@@ -34,3 +34,12 @@ jobs:
     - name: Build with Maven
       run: mvn -B package
       working-directory: ./villager
+    - name: Setup sonarqube
+      uses: warchant/setup-sonar-scanner@v1
+    - name: Run sonarqube
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: sonar-scanner
+           -Dsonar.login=${{ secrets.CHARLESCD_QUALITY_GATE_TOKEN }}
+           -Dsonar.host.url=http://qualitygate.charlescd.io/
+      working-directory: ./villager
