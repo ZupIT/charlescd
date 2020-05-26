@@ -123,3 +123,7 @@ kubectl create clusterrolebinding default-admin --clusterrole=admin --serviceacc
 
 Feito isso, na sequência use a `SERVICEACCOUNT` no arquivo job.yaml
 
+
+
+
+
