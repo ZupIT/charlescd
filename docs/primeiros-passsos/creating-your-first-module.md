@@ -3,7 +3,7 @@
 After creating and configuring your workspace, it is necessary to add the modules. _Depois de criar e configurar o seu workspace, agora é necessário adicionar os módulos._ 
 
 {% hint style="info" %}
-A **module** is your application stored in a Git repository, previously registered. Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](definindo-workspace/github.md).
+A **module** is your application stored in a Git repository, previously registered. Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](defining-a-workspace/github.md).
 {% endhint %}
 
 To add it, access the menu Modules on your workspace and follow the steps: _Para adicioná-los, acesse o menu **Modules** no **workspace** desejado, e siga os seguintes passos:_

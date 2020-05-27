@@ -5,18 +5,18 @@
 
 ## GET STARTED <a id="primeiros-passsos"></a>
 
-* [Installing Charles](primeiros-passsos/instalando-charles.md)
-* [Defining a Workspace](primeiros-passsos/definindo-workspace/README.md)
-  * [Docker Registry](primeiros-passsos/definindo-workspace/docker-registry.md)
-  * [Setting a Cluster](primeiros-passsos/definindo-workspace/configuracoes-de-deploy.md)
-  * [Git Credentials](primeiros-passsos/definindo-workspace/github.md)
-* [Creating your First Module](primeiros-passsos/criando-modulos.md)
-* [First Deploy](primeiros-passsos/primeiro-deploy.md)
-* [Using Circles](primeiros-passsos/usando-circulos.md)
+* [Installing Charles](primeiros-passsos/installing-charles.md)
+* [Defining a Workspace](primeiros-passsos/defining-a-workspace/README.md)
+  * [Docker Registry](primeiros-passsos/defining-a-workspace/docker-registry.md)
+  * [Setting a Cluster](primeiros-passsos/defining-a-workspace/configuracoes-de-deploy.md)
+  * [Git Credentials](primeiros-passsos/defining-a-workspace/github.md)
+* [Creating your First Module](primeiros-passsos/creating-your-first-module.md)
+* [First Deploy](primeiros-passsos/first-deploy.md)
+* [Using Circles](primeiros-passsos/using-circles.md)
 
 ## REFERENCES <a id="referencia-1"></a>
 
-* [Circles](referencia-1/circulos.md)
+* [Circles](referencia-1/circles.md)
 * [Circle Matcher](referencia-1/circle-matcher.md)
 * [CD Configuration](referencia-1/configuracao-cd.md)
 * [Users Group](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
