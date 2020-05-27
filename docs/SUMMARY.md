@@ -29,11 +29,6 @@
 ## FAQ
 
 * [About Charles](faq/about-charles.md)
-* [What is Charles?](faq/what-is-charles.md)
-* [What is circle deploy?](faq/what-is-circle-deploy.md)
-* [What is the main difference on Charles?](faq/what-is-the-main-difference-on-charles.md)
-* [What is Charles' architecture?](what-is-charles-architecture.md)
-* [Community](community.md)
-* [What is Charles' repository?](what-is-charles-repository.md)
-* [How can I report a bug or suggest an improvement?](how-can-i-report-a-bug-or-suggest-an-improvement.md)
+* [Circle deploy x Other deploys](faq/circle-deploy-x-other-deploys.md)
+* [Community](faq/community.md)
 
