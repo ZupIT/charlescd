@@ -1,3 +1,9 @@
+---
+description: >-
+  Nesta seção, você encontra as principais informações sobre como contribuir com
+  nossa comunidade.
+---
+
 # Comunidade
 
 ### **Qual repositório do Charles?**
