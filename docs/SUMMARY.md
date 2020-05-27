@@ -28,7 +28,7 @@
 
 ## FAQ
 
-* [Sobre o Charles](faq/o-que-e-deploy-em-circulos.md)
-* [Deploy em círculos x Outros deploys](faq/charles-x-outros-deploys.md)
+* [Sobre o Charles](faq/sobre-charles.md)
+* [Deploy em círculos x Outros deploys](faq/deploy-em-circulos-e-outros-deploys.md)
 * [Comunidade](faq/comunidade.md)
 
