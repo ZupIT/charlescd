@@ -4,13 +4,7 @@ It is necessary to register cluster ****[**Kubernetes**](https://kubernetes.io/)
 
 Octopipe was developed by Charles' team, it is light, low cost and it is able to make cluster Kubernetes deploys.
 
-_Essas configurações são específicas para cada uma das ferramentas de Continuous Deployment \(CD\) que são integradas ao Charles, que até o momento são_ [_**Spinnaker**_](https://www.spinnaker.io/) _e Octopipe._ 
-
-_O Octopipe foi desenvolvido pela equipe do Charles, é mais leve, de baixo custo e consegue fazer deploys em clusters Kubernetes._
-
-_Segue abaixo o exemplo de como realizar seu deploy usando o mesmo cluster de instalação:_ 
-
-Find below the example on how to perform your deploy using the same installation cluster:
+Find the example below on how to perform your deploy using the same installation cluster:
 
 1. On Charles front page, select **Settings** on the bottom left corner; 
 2. Click on **Credentials**;
