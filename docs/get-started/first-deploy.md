@@ -1,12 +1,8 @@
 # First Deploy
 
-After you have created your first **module** and registered your **cluster crendentials**, you have finished all the steps needed to make your first deploy. Now, it is necessary to create a **release** and provide it on the configured cluster. 
+After you have created your first [**module**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module) and registered your [**cluster crendentials**](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace/configuracoes-de-deploy), you have finished all the steps needed to make your first deploy. Now, it is necessary to create a [**release** ](https://docs.charlescd.io/v/v0.2.1-en/reference/release)and provide it on the configured cluster. 
 
-Charles offers two alternatives to create a release: use the **hypothesis** flow chart or create with docker images already available on your configured **registry**. 
-
-_Após criar o seu primeiro_ [_**módulo**_](https://docs.charlescd.io/primeiros-passsos/criando-modulos) _****e cadastrar as_ [_**credenciais do seu cluster**_](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/configuracoes-de-deploy)_, você completou todos os passos de configuração necessários para a realização do seu primeiro deploy. Agora, é necessário criar uma_ [_**release**_](https://docs.charlescd.io/referencia/release) _****e disponibilizá-la no cluster configurado._
-
-_No Charles, oferecemos duas alternativas para a criação de uma release: Utilizar o fluxo de um quadro de_ [_**hipótese**_](https://docs.charlescd.io/referencia/hipotese) _****ou criá-la a partir de imagens docker já disponíveis no_ [_**registry**_](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry) _****configurado._ 
+Charles offers two alternatives to create a release: use the [**hypothesis**](https://docs.charlescd.io/v/v0.2.1-en/reference/hyphotesis) flow chart or create with docker images already available on your configured [**registry**.](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace/docker-registry) 
 
 Here we will focus on the first approach with the following steps: 
 
@@ -31,6 +27,4 @@ Now, just follow the next steps to the [**Open Sea**](https://app.gitbook.com/@z
 5. Type the release name created above and click on **Deploy**.
 
 After that, Charles will provide the created release on cluster in the open sea. The deploy status will be show and updated along the process. 
-
-_Depois disso, o Charles se encarregará de disponibilizar a release criada no cluster configurado em mar aberto. O status do deploy será exibido e atualizado conforme o progresso._
 
