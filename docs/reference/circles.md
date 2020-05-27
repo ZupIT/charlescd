@@ -58,7 +58,7 @@ Na prática, essa modalidade permite que você possa, por exemplo, extrair de um
 
 Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro x-circle-id no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
-![](../.gitbook/assets/17.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
 
 Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(App1\) - como no login, por exemplo - o `charles-circle-matcher` \(_Circle\_Matcher_\) **-** deverá ser acionado para obter o círculo.
 
@@ -70,14 +70,14 @@ Caso o x-circle-id não seja repassado, todas as requisições serão redirecion
 
 Para facilitar seu entendimento, vamos exemplificar com um um cenário onde a sua stack possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
 
-![](../.gitbook/assets/18.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release.png)
 
 Sendo assim, a lógica de redirecionamento utilizando o x-circle-id será:
 
 1. O usuário envia no header: `x-circle-id=”Círculo QA”`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
 2. O usuário envia no header: `x-circle-id=”Circulo Dev”`. Nesse círculo, a chamada será redirecionada para a **versão Z** do serviço **Aplicação A e a versão Z** do serviço **Aplicação B.**
 
-![](../.gitbook/assets/19.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_ii%20%282%29.png)
 
 ## How to route your circles with Kubernetes Clusters? 
 
