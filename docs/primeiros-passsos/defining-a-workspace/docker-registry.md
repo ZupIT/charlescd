@@ -2,11 +2,7 @@
 
 To configure your workspace, you have to register on the docker registry where your application's images are stored. This access is important because CharlesCD can watch new generated images and list the ones already saved in your registry to implement them. 
 
-Durante a configuração do seu workspace, é necessário cadastrar o registry onde as imagens das suas aplicações estão armazenadas. Esse acesso é importante, pois uma vez configurado, o CharlesCD pode **observar novas imagens sendo geradas e listar as imagens já salvas no seu registry** para implantá-las.
-
 There are two configuration registry categories that can be done in your workspace. You choose one and add the following information:
-
-Existem duas categorias de cadastros de configuração que podem ser feitas pelo workspace. Você pode escolher e adicionar as seguintes informações:
 
 ### AWS
 
