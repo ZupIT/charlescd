@@ -1,19 +1,13 @@
 # Circle Matcher
 
-Circle Matcher is a HTTP service that allows you validade and or identify through defined logic rules during segmentations creation, if your circles are able to find the users you want them to. 
+Circle Matcher is a HTTP service that allows you validade and/or identify, through defined logic rules during segmentations creation, if your circles are able to find the users you want them to. 
 
 There are two ways to validade segmentation through Circle Matcher:
-
-_O Circle Matcher é um serviço HTTP que permite você validar e/ou identificar, por meio de regras lógicas definidas durante a criação de segmentações, se os seus círculos estão realmente encontrando os usuários que você quer._ 
-
-_Existem duas formas de você validar as segmentações através do Circle Matcher. São elas:_
 
 1. **Default:** it is the manual validation where you will add up all the keys that defines the predetermined characteristic to a circle. _-- é a validação manual, em que você vai adicionando todas as chaves que definem as características pré-determinadas para_ círculo.   
 2. **JSON:** it is a validation which goes straight to the JSON on your production environment and inserts a field on the paylod so it will make the try. _a validação na qual você vai direto no JSON do seu ambiente produtivo e insere no campo de payload para, em seguida, fazer o try._
 
 If you pass an attribute that is out of the configured conditions on the circles, the system will return that specific user is in [**open sea**](https://docs.charlescd.io/principais-conceitos#mar-aberto), which means, it is in the general circle segmentation. 
-
-Caso aconteça de você passar um atributo que esteja fora das condições configuradas nos círculos, o sistema irá retornar que aquele usuário está em [**"mar aberto"**](https://docs.charlescd.io/principais-conceitos#mar-aberto)**,** ou seja, no círculo de segmentação geral.
 
 ## Circles identification
 

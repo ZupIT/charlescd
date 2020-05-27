@@ -1,18 +1,12 @@
 # Circles
 
-Circles are the main approach related to the **new deploy concept** that Charles brings. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users. 
+Circles are the main approach related to the **new deploy concept** brought by Charles. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users. 
 
-_Os círculos são o principal diferencial do_ [_**novo conceito de deploy**_](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) _trazido pelo Charles. Isso porque ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários._
-
-![Representa&#xE7;&#xE3;o dos c&#xED;rculos gerados no Charles](../.gitbook/assets/circles_bg_white.jpg)
+![Circle generation with Charles deployments](../.gitbook/assets/circles_bg_white.jpg)
 
  Circles indicate client segmentation and also support the version management created for a specific audience. 
 
-_Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público._
-
-Once the right people are chosen to have access to your release associated to a circle, Charles will generate a series of business or performance metrics. This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
-
-Uma vez escolhidas as pessoas certas para terem acesso à sua release associada ao círculo, o Charles irá gerar uma [**série de métricas**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Freferencia-1%2Fmetricas) ****de negócio ou desempenho. Essas informações te darão maior visibilidade dos resultados de uma hipótese ou feature em análise, possibilitando testes mais assertivos**.**
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 ## Active and inactive circles
 
@@ -20,12 +14,12 @@ O que define se um círculo é ativo ou não é a existência de releases, isto 
 
 ## How to create circles?
 
-Para você criar um círculo, basta fazer o seguinte passo a passo:
+To create a circle, you just have to follow these steps:
 
-**1.** Clique em Create Circle.  
-**2.** Dê um nome ao seu círculo.  
-**3.** Defina uma segmentação.  
-**4.** \[Opcional\] Implante uma release.
+**1.** Click on Create Circle.  
+**2.** Give a name to your circle.  
+**3.** Define a segmentation.  
+**4.** \[Optional\] Implement a release.
 
 ![Exemplo de como criar um c&#xED;rculo](../.gitbook/assets/criar-circulo.gif)
 
