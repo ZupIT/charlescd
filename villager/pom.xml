@@ -24,6 +24,8 @@
     <groupId>io.charlescd.villager</groupId>
     <artifactId>charlescd-villager</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>charlescd-villager</name>
+    <description>CharlesCD Villager</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
