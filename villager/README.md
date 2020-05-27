@@ -38,10 +38,10 @@ Please check the [Charles Documentation].
 
 Please check our [Contributing Guide].
 
-[Java 11]: (https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
-[Docker]: (https://docs.docker.com/get-docker/)
-[Docker Compose]: (https://docs.docker.com/compose/)
-[Maven]: (https://maven.apache.org/)
+[Java 11]: https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+[Docker]: https://docs.docker.com/get-docker/
+[Docker Compose]: https://docs.docker.com/compose/
+[Maven]: https://maven.apache.org/
 [Charles Documentation]: https://docs.charlescd.io/
 [Swagger API Documentation]: http://localhost:8080/swagger-ui.html
 [Postman Collection]: data/postman/CharlesCD_Villager.postman_collection.json
