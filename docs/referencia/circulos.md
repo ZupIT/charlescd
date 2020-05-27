@@ -69,7 +69,7 @@ O único operador lógico suportado nesta segmentação é o OR.
 
 Uma vez detectado o [**círculo ao qual o usuário pertence**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
-![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos%20%281%29.png)
 
 Na prática, em algum momento durante a interação do usuário com a sua aplicação \(**`App1`**\) -  por exemplo, o login - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
 
@@ -81,7 +81,7 @@ Caso o **`x-circle-id`** não seja repassado, todas as requisições serão redi
 
 Para facilitar o entendimento, vamos exemplificar com um cenário onde o seu ambiente possui dois serviços: **Aplicação A** e **Aplicação B** e os seus círculos devem fazer o uso das seguintes versões:
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release%20%281%29.png)
 
 Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`**será:
 
@@ -117,4 +117,8 @@ A requisição será recebida pela Ingress, que realiza o controle do tráfego p
 3. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
 
 Caso o `x-circle-id` não seja informado, existe uma regra definida no _Virtual Service_ que irá encaminhar para a versão padrão \(v1\).
+
+
+
+![](https://lh3.googleusercontent.com/lDpIwX99uSkIyT08s5R5d5wakyTpDjgc2NUmERB2M5HK2QVSXRsitpB5QXyMHTGUXtXGgG5Ib4xCO2WW1rn2Rhf5Jihuc7vZKT4A_5GLImUtwkS3fBw1EqbGafbIQgIKyQHLz_1t)
 
