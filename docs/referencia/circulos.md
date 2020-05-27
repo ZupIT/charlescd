@@ -69,7 +69,7 @@ O único operador lógico suportado nesta segmentação é o OR.
 
 Uma vez detectado o [**círculo ao qual o usuário pertence**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
-![](../.gitbook/assets/17-03-03-03-03-1-.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
 
 Na prática, em algum momento durante a interação do usuário com a sua aplicação \(**`App1`**\) -  por exemplo, o login - o serviço **`Identify`** do **`charles-moove`** deverá ser acionado para obter o círculo.
 
@@ -81,14 +81,14 @@ Caso o **`x-circle-id`** não seja repassado, todas as requisições serão redi
 
 Para facilitar o entendimento, vamos exemplificar com um cenário onde o seu ambiente possui dois serviços: **Aplicação A** e **Aplicação B** e os seus círculos devem fazer o uso das seguintes versões:
 
-![](../.gitbook/assets/18.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release.png)
 
 Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`**será:
 
 1. O usuário envia no header: `x-circle-id="Círculo QA"`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
 2. O usuário envia no header: `x-circle-id=”Circulo Dev”`. Nesse círculo, a chamada será redirecionada para a **versão Z** do serviço **Aplicação A e a versão Z** do serviço **Aplicação B.**
 
-![](../.gitbook/assets/19.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_ii.png)
 
 ## Como rotear círculos com cluster de Kubernetes?
 
@@ -106,7 +106,7 @@ Além disso, existe uma versão default \(v1\) para usuários que não se encaix
 
 Suponha que, ao realizar a requisição para identificação do usuário, seja retornado o id 8756. Com isso, essa informação deverá ser repassada nas próximas interações com serviços através do header `x-circle-id`. A imagem abaixo retrata como o Charles utiliza internamente os recursos para rotear a release correta: 
 
-![](../.gitbook/assets/screen_shot_2020-05-22_at_10.08.35.png)
+![](../.gitbook/assets/cluster_de_kubernetes%20%281%29.png)
 
 Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura acima. 
 
