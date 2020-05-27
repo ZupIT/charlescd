@@ -10,7 +10,7 @@ description: >-
 
 Nos deploys tradicionais, é comum que a aplicação precise passar por diversos ambientes até chegar à produção. Já com o Charles, o sistema de deploys em círculos funciona somente em um ambiente de produção. A validação por release é fragmentada de acordo com os círculos selecionados, ou seja, você pode ir ampliando gradativamente o acesso à release a mais e mais círculos.
 
-![Processo de deploy tradicional](../.gitbook/assets/captura-de-tela-2020-05-26-a-s-15.44.08.png)
+![](../.gitbook/assets/deploy-tradicional.png)
 
 ![Processo de deploy em c&#xED;rculos ](../.gitbook/assets/circles_bg_white.jpg)
 

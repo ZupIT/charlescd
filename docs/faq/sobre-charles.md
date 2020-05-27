@@ -23,9 +23,9 @@ Atualmente, o Charles apresenta sua arquitetura estruturada em microsserviços c
 * `charlescd-ui:` responsável por espelhar, no front, as configurações de workspaces, usuários, módulos, hipóteses e boards, ou seja, toda interface gráfica da plataforma. 
 * `charlescd-moove:` responsável pelo gerenciamento de workspaces, usuários, módulos, hipóteses e boards, ou seja, de toda estrutura da plataforma.  
 * `charlescd-butler:` responsável por orquestrar e gerenciar as releases e deploys realizados. 
-* `charlescd-circle-matcher:`gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características. 
+* `charlescd-circle-matcher:`gerencia todos os círculos criados, além de indicar a qual círculo um usuário pertence, com base em um conjunto de características.
 
-![](../.gitbook/assets/arquitetura-nova-charles%20%281%29.jpg)
+![](../.gitbook/assets/arquitetura-charles-nova%20%281%29.png)
 
 \*\*\*\*
 
