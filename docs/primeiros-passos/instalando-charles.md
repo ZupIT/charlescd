@@ -48,8 +48,6 @@ kubectl apply -f arquivo.yaml
 
 Ao final do processo, você terá dentro do namespace Charles todos os módulos do produto e suas dependências instalados da forma mais simples possível. 
 
-**\[GIF DO NAMESPACE CRIADO\]** 
-
 {% hint style="danger" %}
 Como essa instalação serve apenas para o uso em ambiente de testes, não recomendamos esse caso de instalação para ambientes produtivos porque ele não inclui cuidados de backups do banco de dados, alta disponibilidade, entre outros.
 {% endhint %}
@@ -67,8 +65,6 @@ Customizando o arquivo, você tem algumas opção, como:
 * Mudar a versão do CharlesCD;
 * Utilizar um Spinnaker já instalado previamente;
 * Habilitar \(ou não\) o load balancer padrão.
-
-**\[GIF/IMAGEM QUE MOSTRE ESSE ARQUIVO OU TELA DURANTE INSTALAÇÃO\]**
 
 Essa instalação pode ser usada tanto para testes quanto para ambiente produtivos, tudo vai depender dos valores que você definir no arquivo de configuração. Caso você não altere nada, terá o mesmo resultado da instalação com arquivo único.
 
@@ -94,6 +90,11 @@ Se você optar pela customização total, é preciso ter em mente algumas especi
 
 Apesar dos módulos do charles serem independentes entre si, existem casos em são necessárias algumas pré-configurações. Abaixo, descrevemos melhor cada uma delas: 
 
-* `Charles-moove`: este módulo exige que o keycloak esteja configurado para funcionar. Nessa configuração, você pode customizar a URL do keycloak, assim como o client e client-secret. Caso tenha instalado com CLI ou arquivo único, não será necessário seguir esses passos.  
+* `Charles-moove`: este módulo exige que o keycloak esteja configurado para funcionar. Nessa configuração, você pode customizar a URL do keycloak, assim como o client e client-secret. 
+
+{% hint style="info" %}
+Caso tenha instalado com CLI ou arquivo único, não será necessário seguir esses passos. 
+{% endhint %}
+
 * `Charles-circle-matcher`: este módulo exige um redis instalado para funcionar.
 

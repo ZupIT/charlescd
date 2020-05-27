@@ -6,6 +6,7 @@
 ## Primeiros Passos
 
 * [Instalando o Charles](primeiros-passos/instalando-charles.md)
+* [Installing Charles \(draft\)](primeiros-passos/installing-charles-draft.md)
 * [Definindo um Workspace](primeiros-passos/definindo-workspace/README.md)
   * [Docker Registry](primeiros-passos/definindo-workspace/docker-registry.md)
   * [Configurando seu Cluster](primeiros-passos/definindo-workspace/configurando-cluster.md)
