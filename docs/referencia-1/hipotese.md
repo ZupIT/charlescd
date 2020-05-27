@@ -8,7 +8,7 @@ Imagine uma situação na qual duas equipes trabalham no mesmo produto e têm id
 
  O Charles possibilita que as duas equipes criem duas hipóteses distintas. Assim, cada uma, poderá conduzir o desenvolvimento através um board que é gerado automaticamente. A partir daí, cada equipe poderá selecionar, de forma independente, os círculos com usuários distintos para validar os resultados de cada uma das hipóteses.
 
-## Como criar hipóteses?
+## How to create hypothesis?
 
 Ao cadastrar uma hipótese dentro do Charles, a sua requisição será encaminhada ao `charles-application`. Ao final desse processo, o sistema irá gerar automaticamente um quadro \(board\) no qual é possível criar e gerenciar cartões com as releases e ações necessárias para testar as hipóteses levantadas.
 
@@ -21,7 +21,7 @@ Esses cartões podem ser de dois tipos:
 
 Quando um cartão de feature é adicionado, o Charles cria uma nova branch no git do cliente que, por sua vez, é armazenada diretamente no SCM utilizado, seja ele Git ou Bitbucket por exemplo.
 
-## Gestão do Board
+## Board management
 
 Organizado com base em conceitos da metodologia ágil, o Board é estruturado para que, a partir de tarefas do backlog, você possa priorizar o que será feito \(to do\) e indicar o que está em andamento \(doing\).
 

@@ -26,14 +26,14 @@
   * [Setting your metrics](referencia-1/metricas/configurando-metricas.md)
   * [Registering a metrics provider](referencia-1/metricas/provedor-metrica.md)
 
-## API
-
-* [TBD](api/untitled.md)
-
 ## FAQ
 
-* [What is circle deploy?](faq/o-que-e-deploy-em-circulos.md)
-* [What's the difference between circle deploy and traditional deploy?](faq/deploy-em-circulos-e-deploy-tradicional.md)
-* [What's the difference between circle deploy and blue-green deploy?](faq/deploy-em-circulos-e-blue-green.md)
-* [What's the difference between circle deploy and canary release?](faq/deploy-em-circulos-e-canary-release.md)
+* [About Charles](faq/about-charles.md)
+* [What is Charles?](faq/what-is-charles.md)
+* [What is circle deploy?](faq/what-is-circle-deploy.md)
+* [What is the main difference on Charles?](faq/what-is-the-main-difference-on-charles.md)
+* [What is Charles' architecture?](what-is-charles-architecture.md)
+* [Community](community.md)
+* [What is Charles' repository?](what-is-charles-repository.md)
+* [How can I report a bug or suggest an improvement?](how-can-i-report-a-bug-or-suggest-an-improvement.md)
 

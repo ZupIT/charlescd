@@ -5,7 +5,7 @@ description: >-
   blue-green deployments.
 ---
 
-# What's the difference between circle deploy and blue-green deploy?
+# What is circle deploy?
 
 ## Blue-green deployments
 

@@ -1,18 +1,24 @@
 # Circles
 
-Os círculos são o principal diferencial do [**novo conceito de deploy**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) trazido pelo Charles. Isso porque ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
+Circles are the main approach related to the **new deploy concept** that Charles brings. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users. 
+
+_Os círculos são o principal diferencial do_ [_**novo conceito de deploy**_](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) _trazido pelo Charles. Isso porque ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários._
 
 ![Representa&#xE7;&#xE3;o dos c&#xED;rculos gerados no Charles](../.gitbook/assets/circles_bg_white.jpg)
 
- Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público.
+ Circles indicate client segmentation and also support the version management created for a specific audience. 
+
+_Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público._
+
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a series of business or performance metrics. This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 Uma vez escolhidas as pessoas certas para terem acesso à sua release associada ao círculo, o Charles irá gerar uma [**série de métricas**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Freferencia-1%2Fmetricas) ****de negócio ou desempenho. Essas informações te darão maior visibilidade dos resultados de uma hipótese ou feature em análise, possibilitando testes mais assertivos**.**
 
-## Círculos ativos e inativos
+## Active and inactive circles
 
 O que define se um círculo é ativo ou não é a existência de releases, isto é, de versões implantadas para aquele segmentação de usuários. Logo, os círculos ativos são aqueles que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma delas.
 
-## Como criar círculos?
+## How to create circles?
 
 Para você criar um círculo, basta fazer o seguinte passo a passo:
 
@@ -27,7 +33,7 @@ As segmentações são um conjunto de características que você define para agr
 
 Uma grande vantagem de utilizar as segmentações é porque, com elas, é possível fazer combinações lógicas entre vários atributos para criar diferentes tipos de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “profissão” e “região”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
 
-### **Segmentação manual**
+### **Manual segmentation**
 
 Neste tipo de segmentação, você define as lógicas que o círculo deve seguir para compor um match com usuários que atendam às características pré-determinadas.
 
@@ -48,13 +54,13 @@ Vamos a alguns exemplos:
 
 ![Exemplo de segmenta&#xE7;&#xE3;o manual](https://lh6.googleusercontent.com/5hg_2ZW34hb69J69-MtDNctjLJX5-gwBP9kgN6Bto9_tm2tK9DL-rgmvTleoVihRft37P2QmcA6MzBc3Uj_vguGM9VQVc9fhKEpittLr8LXxvThC3dewpNGsEYSHXp6KfhX8GGx_)
 
-### **Segmentação por importação de csv**
+### **Segmentation by CSV importation**
 
 Neste tipo de segmentação, é utilizada apenas a primeira coluna do csv para criar as regras. O único operador lógico suportado até o momento é o OR.
 
 Na prática, essa modalidade permite que você possa, por exemplo, extrair de uma database externa os IDs dos clientes com um perfil específico e importá-los direto na plataforma do Charles.
 
-## Como integrar círculos com serviços?
+## How to integrate circle with services?
 
 Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro x-circle-id no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
@@ -66,7 +72,7 @@ Com isso, o ID deve ser repassado como valor no parâmetro x-circle-id localizad
 
 Caso o x-circle-id não seja repassado, todas as requisições serão redirecionadas para versões de “Mar Aberto”, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
 
-### **Mescla de serviços com versões diferentes na minha release**
+### **Mix of services with different versions of my release** 
 
 Para facilitar seu entendimento, vamos exemplificar com um um cenário onde a sua stack possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
 
@@ -79,7 +85,7 @@ Sendo assim, a lógica de redirecionamento utilizando o x-circle-id será:
 
 ![](../.gitbook/assets/19.png)
 
-## Como rotear círculos com cluster de Kubernetes?
+## How to route your circles with Kubernetes Clusters? 
 
 Para entendermos melhor como o **Charles** envolve o [Kubernetes](https://kubernetes.io/docs/home/) e o [Istio](https://istio.io/docs/) no roteamento de tráfego, considere o seguinte cenário onde existem dois círculos:
 

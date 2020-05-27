@@ -1,25 +1,28 @@
 # Users Group
 
-Um grupo de usuários pode representar um time ou até mesmo um subconjunto de pessoas baseado em suas habilidades. 
+A user group can represent a team or even a subset of people based on their skills. 
 
-Por exemplo, em um time muito grande, as permissões de acesso ao Charles iriam se diferenciar de acordo com sua posição, poderíamos ter os seguintes grupos:
+For example, a big team would have different Charles access permissions according to their job position, we could have these groups: 
 
-* _Desenvolvedores do Produto X._
-* _QAs do Produto X._
-* _Data Analysts do Produto X._
+* _Product X developers; Desenvolvedores do Produto X._
+* _Product X QAs;_
+* _Product X Data Analysts._
 
-Caso contrário, se todos do time tiverem a mesma permissão, poderíamos criar apenas um grupo com os usuários pertencentes:
+However, if everyone in a team have the same permission, we are able to create only one group with its users.
 
-* _Time do Produto X._
+* _Product X Team._
 
-## Permissões para o Grupo de Usuários no Workspace
+## Permissions for user groups in your workspace
 
-As permissões do Charles são dadas aos grupos de usuários quando você os associa a um workspace.
+Charles permissions are given to a user group when you associate them to a workspace. 
 
-Atualmente, os seguintes perfis são suportados:
+The following profiles are available: 
 
-* **Mantenedor**: pode acessar e editar todas as configurações do workspace. Ele pode realizar implantações, e também tem a permissão para criar, editar e deletar círculos, módulos e hipóteses.
-* **Desenvolvedor**: possui acesso para realizar implantações e também pode criar, editar, deletar círculos, módulos e hipóteses. 
-* **Analista**: possui permissão para criar, editar e deletar círculos, módulos e hipóteses. E também pode visualizar as configurações dos módulos.
-* **Leitor**: pode visualizar círculos, hipóteses e módulos.
+* **Maintainer**: can access and edit all workspace configuration. They can do implementations and create, edit and delete circles, hypothesis and modules. 
+* **Developer**: they have access to do implementations
+
+   and also create, edit and delete circles, modules and hypothesis. 
+
+* **Analyst**: they have permission to edit and delete circles, modules and hypothesis. And also view the modules configuration. 
+* **Reader**: is able to view circles, hypothesis and modules.
 

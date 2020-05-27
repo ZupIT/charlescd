@@ -9,7 +9,7 @@ Existem duas formas de você validar as segmentações através do Circle Matche
 
 Caso aconteça de você passar um atributo que esteja fora das condições configuradas nos círculos, o sistema irá retornar que aquele usuário está em [**"mar aberto"**](https://docs.charlescd.io/principais-conceitos#mar-aberto)**,** ou seja, no círculo de segmentação geral.
 
-## Identificação de círculos
+## Circles identification
 
 Se após a criação do círculo for necessária a utilização do Circle Matcher para testar suas regras de segmentação, você pode integrar nas suas aplicações o recurso Identify do módulo `charles-circle-matcher` para detectar os círculos aos quais o seu usuário pertence.
 
@@ -37,19 +37,19 @@ Workspace's ID
 {% endapi-method-path-parameters %}
 
 {% api-method-body-parameters %}
-{% api-method-parameter name="Estado" type="string" required=false %}
+{% api-method-parameter name="State" type="string" required=false %}
 NY
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="Profissão" type="string" required=false %}
+{% api-method-parameter name="Job Title" type="string" required=false %}
 Lawyer 
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="Idade " type="number" required=false %}
+{% api-method-parameter name="Age" type="number" required=false %}
 46 
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="Cidade" type="string" required=false %}
+{% api-method-parameter name="City" type="string" required=false %}
 Stony Brook
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
@@ -90,7 +90,7 @@ Outro ponto é que, quando o usuário não se enquadra em nenhuma segmentação,
 
 {% api-method method="get" host="https://" path="api.charles-circle-matcher.com/identify" %}
 {% api-method-summary %}
-Mar Aberto
+Open Sea
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -106,11 +106,11 @@ Workspace's ID
 {% endapi-method-headers %}
 
 {% api-method-body-parameters %}
-{% api-method-parameter name="Idade " type="number" required=false %}
+{% api-method-parameter name="Age" type="number" required=false %}
 46
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="Cidade" type="string" required=false %}
+{% api-method-parameter name="City" type="string" required=false %}
 Stony Brook
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
@@ -119,7 +119,7 @@ Stony Brook
 {% api-method-response %}
 {% api-method-response-example httpCode=200 %}
 {% api-method-response-example-description %}
-Listagem de todos os círculos aos quais o usuário pertence 
+List with all circles a user belongs to 
 {% endapi-method-response-example-description %}
 
 ```

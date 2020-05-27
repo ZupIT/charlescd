@@ -1,126 +1,99 @@
 # Installing Charles
 
-Antes de iniciar a instalação do Charles, certifique-se de que você já configurou as seguintes [**dependências**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/usando-o-charles/configuracao-de-dependencias):
+{% hint style="info" %}
+The installing process foi created considering some use cases, in which of them there is a specific tutorial. If you need to install CharlesCD in a different way, we suggest to check the **custom** section with isolated helm charts. 
+{% endhint %}
 
-* Vault
-* Spinnaker \(versão 1.17.3\)
-* Keycloak
-* Tyk
-* Kubernetes
-* Istio \(1.3\)
+## Introduction
 
-Feito isso, o próximo passo é criar dois recursos na sua infraestrutura. São eles:
+### Components
 
-1. Quatro banco de dados PostgreSQL
-2. Um Redis
+The CharlesCD installation consider these components: 
 
-Depois de garantir todos os recursos necessários, você deverá pegar o arquivo job.yaml na raiz do repositório do produto \(ou copiar o conteúdo abaixo\) e editar os campos de variável de ambiente com os valores necessários:
+1. Seven specific modules of **Charles' architecture;** 
+2. **Keycloak**, used for product authentication and authorization;
 
-```yaml
-```yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: darwin-install
-spec:
-  template:
-    metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
-    spec:
-      containers:
-      - name: darwin-install
-        image: realwavelab.azurecr.io/darwin-builder:v1
-        imagePullPolicy: Always
-        command: ["./main"]
-        env:
-          - name: NAMESPACE
-            value: "namespace"
-          - name: VAULT_URI
-            value: "http://HOSTVAULT:8200"
-          - name: APPLICATION_CONSUL
-            value: "http://HOSTCONSUL:8500"
-          - name: DEPLOY_DATABASE_HOST
-            value: "HOSTPOSTGRESQLDEPLOY"
-          - name: DEPLOY_DATABASE_PASS
-            value: "PASSWORDPOSTGRESQLDEPLOY"
-          - name: DEPLOY_DATABASE_USER
-            value: "USERDPOSTGRESQLDEPLOY"
-          - name: DEPLOY_DATABASE_NAME
-            value: "DBNAMEPOSTGRESQLDEPLOY"
-          - name: DEPLOY_DATABASE_PORT
-            value: "PORTPOSTGRESQLDEPLOY",
-          - name: DEPLOY_MOOVE_URL
-            value: "http://darwin-application:8080"
-          - name: DEPLOY_NOTIFICATION_CALLBACK
-            value: "http://darwin-deploy.darwin.svc.cluster.local:3000/notifications"
-          - name: DEPLOY_UNDEPLOYMENT_CALLBACK
-            value: "http://darwin-deploy.darwin.svc.cluster.local:3000/notifications/undeployment"
-          - name: DEPLOY_DEPLOYMENT_CALLBACK
-            value: "http://darwin-deploy.darwin.svc.cluster.local:3000/notifications/deployment"
-          - name: DEPLOY_SPINNAKER_URL
-            value: "SPINNAKER-GATE-URL"
-          - name: DEPLOY_SPINNAKER_GITHUB_ACCOUNT
-            value: "ACCOUNT-GITHUB-SPINNAKER"
-          - name: VILLAGER_DB_HOST
-            value: "jdbc:postgresql://HOSTVILLAGER+PORTVILLAGER+DBNAMEVILLAGER"
-          - name: VILLAGER_DB_USERNAME
-            value: "USERNAMEVILLAGER"
-          - name: VILLAGER_DB_PASSWORD
-            value: "PASSVILLAGER"
-          - name: NOTIFICATIONS_DB_URL
-            value: "jdbc:postgresql://HOSTNOTIFICATIONS+PORTNOTIFICATIONS+DBNAMENOTIFICATIONS"
-          - name: NOTIFICATIONS_DB_USERNAME
-            value: "USERNAMENOTIFICATIONS"
-          - name: NOTIFICATIONS_DB_PASSWORD
-            value: "PASSWORDNOTIFICATIONS"
-          - name: CIRCLE_MATCHER_NODES
-            value: "REDISHOST+REDISPORT"
-          - name: CIRCLE_MATCHER_REDIS_PASSWORD
-            value: "REDISPASSWORD"
-      restartPolicy: Never
-      serviceAccountName: SERVICEACCOUNT OR DEFAULT
-      imagePullSecrets:
-        - name: realwavelab-registry
-  backoffLimit: 2
-```
+3. A **PostgreSQL bank** for backend modules \( `charles-application`, `charles-circle-matcher`, deploy and villager\) and Keycloak; 
+4. A **Redis** to use the [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher). 
+
+### Continuous Delivery Platform
+
+At this moment, Charles can support two Continuous Delivery \(CD\) platforms:
+
+* **Spinnaker:** if you have your spinnaker already configured, you can proceed with our installation.  
+* **Octopipe:** a native platform created by our team to make easier an installation without previous configurations. 
+
+{% hint style="info" %}
+If you want more information about how to configure Spinnaker ir Octopipe, check the section **CD Configuration.**
+{% endhint %}
+
+## Main install cases
+
+### Case \#1: Installation for tests
+
+This installation is recommended for those who never used Charles before and just want a **first contact in testing environment**, ****without looking for scalability or security. 
+
+In this case, you will have to: 
+
+* Use a yaml file with all the **components**;
+* Use a Load Balancer previously configured.
+
+To create this structure, you have to execute the files in a configured cluster, such as minikube, GKE, EKS, etc. The steps to be executed are these:
 
 ```text
-Depois de preencher as variáveis você deverá aplicar esse JOB no seu cluster com o seguinte comando.
+kubectl create namespace charles
 
-```text
+kubectl apply -f arquivo.yaml
 ```
 
-kubectl apply -f PATH/job.yaml --namespace=NAMESPACE
+At the end of the process, you will have inside of a namespace Charles all the modules of the product, as well as your dependencies installed in a simpler way. 
 
-```text
+{% hint style="danger" %}
+Como essa instalação serve apenas para o uso em ambiente de testes, não recomendamos esse caso de instalação para ambientes produtivos porque ele não inclui cuidados de backups do banco de dados, alta disponibilidade, entre outros.
+{% endhint %}
 
-```
+### Case \#2: Customized installation
 
-Você verá que, após o JOB, seis novos deployments e services foram criados:
+In this installation case, it's possible to customize some ~~information~~ through **our CLI** and a configuration file that contains all the available ~~information~~ to be edited. 
 
-1. **`Darwin-application`**
-2. **`Darwin-circle-matcher`**
-3. **`Darwin-deploy`**
-4. **`Darwin-notifications`**
-5. **`Darwin-ui`**
-6. **`Darwin-villager`**
+With this custom file, you have the option to:  
 
-## **Casos Especiais**
+* Use a managed database; 
+* Add news credentials to your clusters;
+* Change the CharlesCD version;
+* Use a previously installed Spinnaker;
+* Enable \(or not\) a standard load balancer.
 
-Caso seu cluster use alguma RBAC você precisará usar uma ServiceAccount com poderes de admin para que o job possa criar os deployments e services.
-
-Para fazer isso basta aplicar:
-
-```text
-kubectl create clusterrolebinding default-admin --clusterrole=admin --serviceaccount=NAMESPACE:SERVICEACCOUNT
-```
+This installation can be used for tests or production environments, depending on which values you'll define in the configuration file. In case you decide not to change this file at all, you'll have the same result as if you install with a unique file.    
 
 
+### Case \#3: Installation with Terraform
 
-```text
+This installation case is very specific and it's indicated only for those who use Terraform to create and manage your infrastructure versions. 
 
-```
+For this cases, we can support GCP and AWS and we're working on add AZURE. 
 
-Feito isso, na sequência use a `SERVICEACCOUNT` no arquivo job.yaml
+On this **repository**, you will find all the data and Redi resources, and also the helm releases execution of these modules already consumed the values from other resources. All of this separated by cloud. 
+
+
+
+## Total Customization
+
+We recommend this type of installation in case you want to edit all the ~~information~~ available on our CLI or even in a context of installing the modules by yourself. In both cases, you can directly access the **pure charts of the product.** 
+
+### Specifications 
+
+When you decide to follow the total customization, it's necessary to keep in mind some specifications:
+
+#### **Order**
+
+Even though the Charles modules are independent, there are some cases in which are needed some previous configurations. Some of them are:
+
+* `Charles-moove`: this module demands that your keycloak is already configured to work. To guarantee that, you can custom the keycloak URL, as wall as client e client-secret. 
+
+{% hint style="info" %}
+In case of installation with our CLI or a unique file, these steps won't be necessary. 
+{% endhint %}
+
+* `Charles-circle-matcher`: this module demands a configured redis to work.
 

@@ -1,26 +1,26 @@
 # CD Configuration
 
-Seguindo com as configurações, é necessário cadastrar um CD configuration vinculado ao seu docker. Para isso, basta realizar os seguintes passos:
+It is necessary to register a CD configuration linked to your docker. To be able to do that, follow the next steps: 
 
-1. Clique no seu nome, no canto inferior esquerdo e, em seguida, selecione **Settings**.
-2. Clique em **Credentials**. _\*\*_
-3. Clique em **Add CD Configuration**. \*\*
-4. Selecione as opções **Octopipe** ou **Spinnaker**, dependendo do sistema que utilize.
+1. Click on your name on the left bottom corner and then select **Settings;**
+2. Click on **Credentials;**
+3. Click on **Add CD Configuration;**
+4. Select the option **Octopipe** or **Spinnaker**, which will depend on which system you use. 
 
-## Utilizando Octopipe
+## Using Octopipe
 
-1. Defina um **nome** para o CD Configuration.
-2. Defina um **namespace**.
-3. Defina um **git provider**.
-4. Insira o **token** do seu git. 
+1. Define a **name** for the CD Configuration;
+2. Define a **namespace;**
+3. Define a **git provider;**
+4. Insert a git **token;**
 5. Por fim, selecione um **manager** para associar à CD Configuration. 
 
-## Utilizando Spinnaker
+## Using Spinnaker
 
-1. Defina um **nome** para o CD Configuration.
-2. Defina um **namespace**.
-3. Insira o **token** do seu git. 
-4. Por fim, selecione um **manager** para associar à CD Configuration. 
+1. Define a **name** for the CD Configuration;
+2. Define a **namespace**.
+3. Insert a git **token;**
+4. Select a **manager** to associate with the CD Configuration. 
 
 ![](../.gitbook/assets/cd-configuration-2%20%281%29.gif)
 

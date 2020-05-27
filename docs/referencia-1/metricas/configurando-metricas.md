@@ -1,24 +1,32 @@
 # Setting your metrics
 
-## Cadastrando provedor de métricas
+## Register your metrics provider
 
-### Configurando Istio
+### Istio Configuration
 
-As métricas relacionadas às requisições de cada círculo são quantificadas e expostas pelo Istio, por isso é necessário configurá-lo para que se tenha informações referentes à cada círculo.
+Metrics are related to circle requests, they are quantified and exposed by Istio, so it is necessary configure it to get information about each circle.
+
+_As métricas relacionadas às requisições de cada círculo são quantificadas e expostas pelo Istio, por isso é necessário configurá-lo para que se tenha informações referentes à cada círculo._
 
 {% hint style="info" %}
-Se deseja entender um pouco mais sobre a telemetria do Istio, recomendamos que consulte a [doc oficial](https://istio.io/docs/tasks/observability/metrics/).
+If you want to learn more about Istio's telemetry, check out their [**documentation**](https://istio.io/docs/tasks/observability/metrics/)**.**
+
+  Se deseja entender um pouco mais sobre a telemetria do Istio, recomendamos que consulte a [doc oficial](https://istio.io/docs/tasks/observability/metrics/).
 {% endhint %}
 
-Para configurar seu Istio é necessário habilitá-lo para expor métricas, e configurá-lo para expor as métricas do charles.
+To configure your Istio, it is necessary to enable it, so it will be able to show metrics and then you have to configure to show Charles' metrics. 
 
-Se seu Istio não está habilitado para expor métricas, siga os seguintes passos:
+If your Istio is not enabled to show metrics, follow the next steps:
+
+ _Para configurar seu Istio é necessário habilitá-lo para expor métricas, e configurá-lo para expor as métricas do charles._
+
+_Se seu Istio não está habilitado para expor métricas, siga os seguintes passos:_
 
 {% hint style="warning" %}
-As configurações abaixo são referentes a versão 1.5 do Istio.
+The configuration below refers to Istio's 1.5 version.
 {% endhint %}
 
-Crie um arquivo chamado **telemetry.yaml** com o conteúdo:
+Create a file named  **telemetry.yaml  with the following content:** 
 
 ```yaml
 apiVersion: install.istio.io/v1alpha2
@@ -34,27 +42,27 @@ spec:
         enabled: false
 ```
 
-Execute o comando abaixo:
+Run the command below:
 
 ```bash
 $ istioctl manifest apply -f telemetry.yaml
 ```
 
 {% hint style="warning" %}
-Para executar o comando acima é necessário ter configurado o istioctl, caso não tenha, clique [aqui](https://istio.io/docs/setup/getting-started/#download).
+To run the command above, it is necessary to have configured the **istioctl**, if you haven't click [**here**](https://istio.io/docs/setup/getting-started/#download). 
 {% endhint %}
 
-Para expor as métricas relacionadas ao Charles, é preciso executar o comando.
+To show the metrics related to Charles, you have to run the command: 
 
 ```bash
 $ kubectl apply -f path/your-metrics-config.yaml
 ```
 
 {% hint style="warning" %}
-O arquivo your-metrics-config.yaml que está sendo usado deve ser referente à ferramenta que você utiliza.
+The file **your-metrics-config.yaml** that has been used must refer to the tool you use.
 {% endhint %}
 
-Os arquivos para configuração podem ser encontrados abaixo.
+The files for configuration can be found below: 
 
 {% tabs %}
 {% tab title="Prometheus" %}
@@ -162,34 +170,44 @@ spec:
 {% endtab %}
 {% endtabs %}
 
-### Configurando sua ferramenta de métricas
+### Configuring your metrics tool
 
-Após feita a configuração do Istio é preciso configurar sua ferramenta para ser capaz de ler as métricas expostas.
+After you finish your Istio configuration it is necessary configure your metrics tool.
 
-O primeiro passo é selecionar qual das ferramentas aceitas pelo Charles que você utiliza.
+The first step is select the right tool, so Charles will be able to read. 
+
+_Após feita a configuração do Istio é preciso configurar sua ferramenta para ser capaz de ler as métricas expostas._
+
+_O primeiro passo é selecionar qual das ferramentas aceitas pelo Charles que você utiliza._
 
 {% hint style="danger" %}
-Atualmente o Charles da suporte apenas  ao Prometheus como ferramenta de métricas, estamos trabalhando para trazer suporte a outras ferramentas no futuro.
+Charles until this moment only supports Prometheus as a metric tool, we are working on to bring others along the way.
 {% endhint %}
 
 {% hint style="info" %}
-Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [sugerir para nós](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [contribua conosco](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais. 
+If the tool you use it isn't accepted yet, feel free to [**make a suggestion**](https://github.com/ZupIT/charlescd/issues) or make your own implementation and [**contribute with us**](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Make our community grow more each day.
+
+_Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de_ [_sugerir para nós_](https://github.com/ZupIT/charlescd/issues)_, ou faça sua implementação e_ [_contribua conosco_](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md)_. Faça nossa comunidade crescer cada vez mais._ 
 {% endhint %}
 
 {% tabs %}
 {% tab title="Prometheus" %}
-Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas. Sendo a principal recomendação para monitoramento do [Cloud Native Computing Foundation](https://cncf.io/), é uma das principais ferramentas do mercado.
+Prometheus is an open-source systems monitoring and alerting toolkit. It is the main monitoring recommendation on [Cloud Native Computing Foundation](https://cncf.io/).
 
 {% hint style="info" %}
-Se quiser saber mais, é só dar uma olhada na [doc oficial](https://prometheus.io/).
+If you want to know more about Prometheus, check it out [their documentation](https://prometheus.io/).
 {% endhint %}
 
-Para o Prometheus conseguir ler e armazenar os dados das métricas que configuramos à pouco, é preciso configurá-lo.
+In order to Prometheus to be able to read and store metrics data, we must configure it. 
 
-É preciso adicionar o job abaixo para que ele consiga ler as métricas geradas pelo Istio.
+It is necessary to add the job below so it will read Istio's generated metrics. 
+
+_Para o Prometheus conseguir ler e armazenar os dados das métricas que configuramos à pouco, é preciso configurá-lo._
+
+_É preciso adicionar o job abaixo para que ele consiga ler as métricas geradas pelo Istio._
 
 {% hint style="warning" %}
-É importante lembrar que essas configurações consideram que seu Prometheus está no mesmo cluster Kubernetes que o Istio e o restante das suas aplicações.
+It is important to remember that all these configuration considers that your Prometheus is on the same Kubernete cluster as your Istio and the rest of your applications. 
 {% endhint %}
 
 ```yaml
@@ -217,7 +235,7 @@ scrape_configs:
 ```
 
 {% hint style="warning" %}
-Fique atento à configuração "namespaces", o valor configurado deve ser o mesmo o qual foi instalado seu Istio.
+Stay tuned about the configuration **namespaces**, the configured value must be the same installed on your Istio.
 {% endhint %}
 {% endtab %}
 {% endtabs %}
