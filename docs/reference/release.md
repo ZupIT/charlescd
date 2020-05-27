@@ -38,7 +38,7 @@ _Assim que a criação de uma release é acionada, uma branch com o prefixo **re
 {% hint style="warning" %}
 Triggering the pipeline of your CI tool through release-darwin prefix, it is expected that it will generate a image of your application and make the push for your **registry**.
 
-Ao acionar o pipeline da sua ferramenta de CI através do prefixo **release-darwin**, é esperado que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](../primeiros-passsos/defining-a-workspace/docker-registry.md).
+Ao acionar o pipeline da sua ferramenta de CI através do prefixo **release-darwin**, é esperado que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](../get-started/defining-a-workspace/docker-registry.md).
 {% endhint %}
 
 Now, the [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) will watch your registry to search for the generated release. Hold on until you card status is changed to **Built**. 

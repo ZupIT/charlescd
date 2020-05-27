@@ -3,28 +3,28 @@
 * [Overview](README.md)
 * [Key Concepts](key-concepts.md)
 
-## GET STARTED <a id="primeiros-passsos"></a>
+## GET STARTED
 
-* [Installing Charles](primeiros-passsos/installing-charles.md)
-* [Defining a Workspace](primeiros-passsos/defining-a-workspace/README.md)
-  * [Docker Registry](primeiros-passsos/defining-a-workspace/docker-registry.md)
-  * [Setting a Cluster](primeiros-passsos/defining-a-workspace/configuracoes-de-deploy.md)
-  * [Git Credentials](primeiros-passsos/defining-a-workspace/github.md)
-* [Creating your First Module](primeiros-passsos/creating-your-first-module.md)
-* [First Deploy](primeiros-passsos/first-deploy.md)
-* [Using Circles](primeiros-passsos/using-circles.md)
+* [Installing Charles](get-started/installing-charles.md)
+* [Defining a Workspace](get-started/defining-a-workspace/README.md)
+  * [Docker Registry](get-started/defining-a-workspace/docker-registry.md)
+  * [Setting a Cluster](get-started/defining-a-workspace/configuracoes-de-deploy.md)
+  * [Git Credentials](get-started/defining-a-workspace/github.md)
+* [Creating your First Module](get-started/creating-your-first-module.md)
+* [First Deploy](get-started/first-deploy.md)
+* [Using Circles](get-started/using-circles.md)
 
-## REFERENCES <a id="referencia-1"></a>
+## REFERENCE
 
-* [Circles](referencia-1/circles.md)
-* [Circle Matcher](referencia-1/circle-matcher.md)
-* [CD Configuration](referencia-1/cd-configuration.md)
-* [Users Group](referencia-1/users-group.md)
-* [Hypothesis](referencia-1/hyphotesis.md)
-* [Release](referencia-1/release.md)
-* [Metrics](referencia-1/metrics/README.md)
-  * [Setting your metrics](referencia-1/metrics/setting-your-metrics.md)
-  * [Registering a metrics provider](referencia-1/metrics/register-metrics-provider.md)
+* [Circles](reference/circles.md)
+* [Circle Matcher](reference/circle-matcher.md)
+* [CD Configuration](reference/cd-configuration.md)
+* [Users Group](reference/users-group.md)
+* [Hypothesis](reference/hyphotesis.md)
+* [Release](reference/release.md)
+* [Metrics](reference/metrics/README.md)
+  * [Setting your metrics](reference/metrics/setting-your-metrics.md)
+  * [Registering a metrics provider](reference/metrics/register-metrics-provider.md)
 
 ## FAQ
 
