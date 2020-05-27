@@ -1,5 +1,7 @@
 ---
-description: This section you will help you find all the basic information about Charles.
+description: >-
+  In this section, you will help you find all the basic information about
+  Charles.
 ---
 
 # Overview
