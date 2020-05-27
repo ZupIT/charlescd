@@ -29,7 +29,6 @@
 ## FAQ
 
 * [Sobre o Charles](faq/o-que-e-deploy-em-circulos.md)
-* [Charles x Outros deploys](faq/charles-x-outros-deploys.md)
-* [Instalação e Uso](faq/instalacao-e-uso.md)
+* [Deploy em círculos x Outros deploys](faq/charles-x-outros-deploys.md)
 * [Comunidade](faq/comunidade.md)
 

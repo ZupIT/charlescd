@@ -4,9 +4,9 @@ description: >-
   do Charles com outras formas de deployments comuns no mercado.
 ---
 
-# Charles x Outros deploys
+# Deploy em círculos x Outros deploys
 
-## Círculos x Deploy tradicional 
+## Deploy em círculos x Deploy tradicional 
 
 Nos deploys tradicionais, é comum que a aplicação precise passar por diversos ambientes até chegar à produção. Já com o Charles, o sistema de deploys em círculos funciona somente em um ambiente de produção. A validação por release é fragmentada de acordo com os círculos selecionados, ou seja, você pode ir ampliando gradativamente o acesso à release a mais e mais círculos.
 
@@ -14,7 +14,7 @@ Nos deploys tradicionais, é comum que a aplicação precise passar por diversos
 
 ![Processo de deploy em c&#xED;rculos ](../.gitbook/assets/circles_bg_white.jpg)
 
-## Círculos x Blue-green deploys
+## Deploy em círculos x Blue-green deploys
 
 No blue-green deployment, ou implantação azul-verde, são criados dois ambientes idênticos na infraestrutura, porém com diferentes versões de uma aplicação implantados em cada um. Dessa forma, é possível testar suas hipóteses que, uma vez confirmadas, podem migrar de uma versão para outra. 
 
@@ -22,7 +22,7 @@ O principal benefício desta técnica é que o downtime é zero, trazendo mais s
 
 No caso do Charles, o deploy em círculos oferece ao time mais confiança e rapidez no lançamento de novas versões, com downtime zero e sem custos adicionais de infraestrutura. Além disso, é possível refinar através dos círculos quem serão os usuários que farão a validação da sua nova versão.
 
-## Círculos x Canary releases
+## Deploy em círculos x Canary releases
 
 No canary release, ou implantação canário, é feita a publicação gradual da nova versão de um software a partir de um roteamento dentro da infraestrutura. À medida em que a versão é testada e se torna mais confiável, seu acesso é expandido a mais usuários da base.
 
