@@ -21,7 +21,7 @@ After registering a **hypothesis** on Charles, you can use the board that is aut
 
 This boards shows two cards categories: **the blue one represents a feature coding** and **the gray one a action that does not involve implementation.** 
 
-_Após o cadastro de uma_ [_**hipótese**_](hipotese.md#como-criar-hipoteses) _dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese._
+_Após o cadastro de uma_ [_**hipótese**_](hyphotesis.md#como-criar-hipoteses) _dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese._
 
 _Neste quadro, temos duas categorias de cartões: o **azul que representa a codificação de uma feature** e o **cinza que caracteriza às ações que não envolvem implementação**._
 
@@ -75,7 +75,7 @@ _Após o deploy desta nova release, ela estará disponível para utilização em
 
 If the release was generated through hypothesis board on your workspace, when you create a circle deploy, you are able to search for it on '**Search for existing releases**'.
 
-_Se a release foi gerada através do_ [_**quadro de hipóteses**_](hipotese.md#gestao-do-board) _****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**._ 
+_Se a release foi gerada através do_ [_**quadro de hipóteses**_](hyphotesis.md#gestao-do-board) _****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**._ 
 
 **\[GIF PROCURANDO UMA RELEASE ATRAVÉS DO DEPLOY NO CÍRCULO\]**
 

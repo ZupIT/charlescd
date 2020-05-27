@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Key Concepts](principais-conceitos.md)
+* [Key Concepts](key-concepts.md)
 
 ## GET STARTED <a id="primeiros-passsos"></a>
 
@@ -18,13 +18,13 @@
 
 * [Circles](referencia-1/circles.md)
 * [Circle Matcher](referencia-1/circle-matcher.md)
-* [CD Configuration](referencia-1/configuracao-cd.md)
-* [Users Group](referencia-1/permissionamento-dos-grupos-de-usuarios.md)
-* [Hypothesis](referencia-1/hipotese.md)
+* [CD Configuration](referencia-1/cd-configuration.md)
+* [Users Group](referencia-1/users-group.md)
+* [Hypothesis](referencia-1/hyphotesis.md)
 * [Release](referencia-1/release.md)
-* [Metrics](referencia-1/metricas/README.md)
-  * [Setting your metrics](referencia-1/metricas/configurando-metricas.md)
-  * [Registering a metrics provider](referencia-1/metricas/provedor-metrica.md)
+* [Metrics](referencia-1/metrics/README.md)
+  * [Setting your metrics](referencia-1/metrics/setting-your-metrics.md)
+  * [Registering a metrics provider](referencia-1/metrics/register-metrics-provider.md)
 
 ## FAQ
 
