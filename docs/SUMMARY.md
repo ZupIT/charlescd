@@ -29,6 +29,6 @@
 ## FAQ
 
 * [About Charles](faq/about-charles.md)
-* [Circle deploy x Other deploys](faq/circle-deploy-x-other-deploys.md)
+* [Circle deploy x Other deploys](faq/circle-deploy-and-other-deploys.md)
 * [Community](faq/community.md)
 
