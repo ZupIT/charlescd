@@ -178,7 +178,7 @@ If the tool you use it isn't accepted yet, feel free to [**make a suggestion**](
 
 {% tabs %}
 {% tab title="Prometheus" %}
-Prometheus is an open-source systems monitoring and alerting toolkit. It is the main monitoring recommendation on [Cloud Native Computing Foundation](https://cncf.io/).
+Prometheus is an open source system for monitoring and alerting toolkit. It is the main monitoring recommendation on [Cloud Native Computing Foundation](https://cncf.io/).
 
 {% hint style="info" %}
 If you want to know more about Prometheus, check it out [their documentation](https://prometheus.io/).
@@ -186,14 +186,10 @@ If you want to know more about Prometheus, check it out [their documentation](ht
 
 In order to Prometheus to be able to read and store metrics data, we must configure it. 
 
-It is necessary to add the job below so it will read Istio's generated metrics. 
-
-_Para o Prometheus conseguir ler e armazenar os dados das métricas que configuramos à pouco, é preciso configurá-lo._
-
-_É preciso adicionar o job abaixo para que ele consiga ler as métricas geradas pelo Istio._
+To do so, it's necessary to add the job below so it will read Istio's generated metrics. 
 
 {% hint style="warning" %}
-It is important to remember that all these configuration considers that your Prometheus is on the same Kubernete cluster as your Istio and the rest of your applications. 
+It is important to remember that all these configuration considers that your Prometheus is on the same Kubernetes cluster as your Istio and the rest of your applications. 
 {% endhint %}
 
 ```yaml
