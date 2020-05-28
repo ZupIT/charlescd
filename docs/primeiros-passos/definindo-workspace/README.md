@@ -13,6 +13,8 @@ Cada workspace possui as seguintes configurações:
 * Personalização do [**Circle Matcher**](../../referencia/circle-matcher.md).
 * Registro do[ **Provedor de Métricas**](../../referencia/metricas/) das suas aplicações.
 
+![Tela de workspace](../../.gitbook/assets/settings_-_workspace_-_11.4_-_add_group_permissions2x.png)
+
 {% hint style="warning" %}
 A criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem também ser feitas pelos usuários associados ao workspace com perfil de **mantenedor**.
 {% endhint %}
