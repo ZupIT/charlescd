@@ -17,7 +17,7 @@ Esses cartões podem ser de dois tipos:
 1. **Action:** são os cartões que envolvem codificação, como a implementação de novas funcionalidades \(features\) ou ajustes em partes do projeto. 
 2. **Feature:** são os cartões que indicam uma ação a ser feita, como por exemplo, realizar um teste de campo com os usuários. 
 
-![](https://lh5.googleusercontent.com/1I3yXY8rsLsu3HgoIOOxH77NrMts42tKz30upnLI3qfRO9Ui6cD1NP-ZgtcSHZfji8kvN97DRfzSGj1fLjPCVg86lQVmVrHb-9gZaf2r4ymLdcIfEI_WrteXRJr9HUU0meFIFSyF)
+![](../.gitbook/assets/ref-hipoteses2%20%281%29.png)
 
 Quando um cartão de feature é adicionado, o Charles cria uma nova branch no git do cliente que, por sua vez, é armazenada diretamente no SCM utilizado, seja ele Git ou Bitbucket.
 
@@ -38,7 +38,7 @@ Depois que esse processo termina e todos os códigos são mesclados, uma nova ra
 
 * **Releases Deployed:** os cartões nessa coluna mostram de onde estão implantados os builds da hipótese.
 
-![](https://lh6.googleusercontent.com/da5Jdg51wg8EAIJaGTvt9VsAzdn00RIBNJxieqhSVsPVzdS_bo066rGVvk_Olne6O-Jk_oaVT88EFbqPUvtsKdEZ_7mnreLadEmM2_R1Sm2GV3-tuWMXkW0EGZwpjJ3BytFKGwsI)
+![](../.gitbook/assets/ref-hipoteses.png)
 
 Quando uma hipótese é movida para coluna **Ready To Go**, você indica ao sistema que aquele cartão pode passar pelo processo de **Generate Release Candidate**, ou seja, a hipótese se transformará em uma release branch da release master presente no seu git.
 
