@@ -17,7 +17,6 @@
 package io.charlescd.circlematcher.domain;
 
 import io.charlescd.circlematcher.infrastructure.OpUtils;
-
 import java.util.List;
 
 public enum Condition {
