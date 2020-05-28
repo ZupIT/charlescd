@@ -1,17 +1,16 @@
 # Hypothesis
 
-Hypothesis are registered alternatives on the platform to solve some issue or validate application changes you have integrated on Charles. 
+Hypothesis are **registered alternatives** on the platform to solve some issues or to validate changes of applications that you have integrated on CharlesCD. 
 
-It is possible that hypothesis may have one or more features that are directly related to modules or/and projects that were registered before in your workspace. 
+Its possible that one hypothesis may have one or more features that are directly related to modules or/and projects that were registered before in your workspace. 
 
 Imagine a situation in which two teams work on the same product and have different ideas to raise the client conversion rate. Team A suggests adding a button on the page, meanwhile Team B believes that include a ‘selling suggestion’ box will be more assertive.   
   
-Charles makes it possible for both teams to create different hypothesis. So each team is able to lead the development through a board that is automatically created and then they also can independently select different users circles to validate the results of each hypothesis.   
-
+Charles makes it possible for both teams to create different hypothesis, so each team is able to lead the development through a board that is automatically created and then they also can independently select different users circles to validate the results of each hypothesis. 
 
 ## How to create hypothesis?
 
-When you register a hypothesis on Charles, your request will be fowarded to `charlescd-moove`. At the end of this process, the system will create a board and you will be able to manage and create release cards with the necessary actions to test all your hypothesis. 
+When you register a hypothesis on Charles, your request will be forwarded to `charlescd-moove`. At the end of this process, the system will create a board and you will be able to manage and create release cards with the necessary actions to test all your hypothesis. 
 
 There are two types of cards:
 
