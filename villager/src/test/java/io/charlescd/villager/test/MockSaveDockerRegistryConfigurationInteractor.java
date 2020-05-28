@@ -19,7 +19,6 @@ package io.charlescd.villager.test;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.quarkus.test.Mock;
-
 import javax.enterprise.context.ApplicationScoped;
 
 @Mock

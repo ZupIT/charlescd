@@ -18,7 +18,6 @@ package io.charlescd.villager.scheduler;
 
 import io.charlescd.villager.interactor.build.RetryBuildStatusNotificationInteractor;
 import io.quarkus.scheduler.Scheduled;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -28,7 +27,8 @@ public class RetryBuildStatusNotificationScheduler {
     private RetryBuildStatusNotificationInteractor retryBuildStatusNotificationInteractor;
 
     @Inject
-    public RetryBuildStatusNotificationScheduler(RetryBuildStatusNotificationInteractor retryBuildStatusNotificationInteractor) {
+    public RetryBuildStatusNotificationScheduler(
+            RetryBuildStatusNotificationInteractor retryBuildStatusNotificationInteractor) {
         this.retryBuildStatusNotificationInteractor = retryBuildStatusNotificationInteractor;
     }
 

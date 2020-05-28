@@ -22,7 +22,6 @@ import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -51,16 +50,22 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
         return entity.id;
     }
 
-    private DockerRegistryConfigurationEntity.DockerRegistryConnectionData convertToConnectionData(DockerRegistryConfigurationInput input) {
+    private DockerRegistryConfigurationEntity.DockerRegistryConnectionData convertToConnectionData(
+            DockerRegistryConfigurationInput input) {
         DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData;
         switch (input.getRegistryType()) {
             case AWS:
                 var awsRegistryAuth = ((AWSDockerRegistryAuth) input.getAuth());
-                connectionData = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(input.getAddress(), awsRegistryAuth.getAccessKey(), awsRegistryAuth.getSecretKey(), awsRegistryAuth.getRegion());
+                connectionData =
+                        new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(input.getAddress(),
+                                awsRegistryAuth.getAccessKey(), awsRegistryAuth.getSecretKey(),
+                                awsRegistryAuth.getRegion());
                 break;
             case AZURE:
                 var azureRegistryAuth = ((AzureDockerRegistryAuth) input.getAuth());
-                connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData(input.getAddress(), azureRegistryAuth.getUsername(), azureRegistryAuth.getPassword());
+                connectionData =
+                        new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData(input.getAddress(),
+                                azureRegistryAuth.getUsername(), azureRegistryAuth.getPassword());
                 break;
             default:
                 throw new IllegalStateException("Registry type not supported!");

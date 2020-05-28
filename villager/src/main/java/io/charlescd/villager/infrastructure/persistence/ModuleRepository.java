@@ -17,10 +17,9 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
+import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ModuleRepository implements PanacheRepository<ModuleEntity> {
@@ -30,7 +29,8 @@ public class ModuleRepository implements PanacheRepository<ModuleEntity> {
     }
 
     public Optional<ModuleEntity> findByNameAndTagNameAndStatus(String name, String tagName, ModuleBuildStatus status) {
-        return Optional.ofNullable(find("name = ?1 and tagName = ?2 and status = ?3", name, tagName, status).firstResult());
+        return Optional
+                .ofNullable(find("name = ?1 and tagName = ?2 and status = ?3", name, tagName, status).firstResult());
     }
 
     public List<ModuleEntity> findModulesByStatus(ModuleBuildStatus status) {

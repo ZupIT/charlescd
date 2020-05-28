@@ -24,13 +24,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.2.RELEASE</version>
-        <relativePath/>
     </parent>
     <groupId>io.charlescd.circlematcher</groupId>
-    <artifactId>circle-matcher</artifactId>
+    <artifactId>charlescd-circle-matcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>circle-matcher</name>
-    <description>Charles CD Circle Matcher Project</description>
+    <name>charlescd-circle-matcher</name>
+    <description>CharlesCD Circle Matcher</description>
 
     <properties>
         <java.version>11</java.version>
@@ -109,7 +108,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>charles-circle-matcher</finalName>
+        <finalName>charlescd-circle-matcher</finalName>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/main/groovy</testSourceDirectory>
         <plugins>
@@ -151,5 +150,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

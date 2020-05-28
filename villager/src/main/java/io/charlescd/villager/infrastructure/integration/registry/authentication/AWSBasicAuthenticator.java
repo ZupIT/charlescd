@@ -24,13 +24,13 @@ import com.amazonaws.services.ecr.AmazonECRClientBuilder;
 import com.amazonaws.services.ecr.model.GetAuthorizationTokenRequest;
 import com.amazonaws.services.ecr.model.GetAuthorizationTokenResult;
 
-public class AWSBasicAuthenticator extends AbstractBasicAuthenticator {
+public final class AWSBasicAuthenticator extends AbstractBasicAuthenticator {
 
     private String region;
     private String accessKey;
     private String secretKey;
 
-    public AWSBasicAuthenticator(String region, String accessKey, String secretKey) {
+    public AWSBasicAuthenticator(final String region, final String accessKey, final String secretKey) {
         this.region = region;
         this.accessKey = accessKey;
         this.secretKey = secretKey;

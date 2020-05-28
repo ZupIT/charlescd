@@ -17,14 +17,14 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 public interface RegistryClient {
 
-    void configureAuthentication(RegistryType type, DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
+    void configureAuthentication(RegistryType type,
+                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
 
     Optional<Response> getImage(String name, String tagName);
 

@@ -18,7 +18,6 @@ package io.charlescd.villager.scheduler;
 
 import io.charlescd.villager.interactor.build.UpdateBuildInfoInteractor;
 import io.quarkus.scheduler.Scheduled;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

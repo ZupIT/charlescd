@@ -21,7 +21,7 @@ import java.util.Map;
 public class ModuleConfigs {
 
     private CredentialId credentialId;
-    private Map<String,String> value;
+    private Map<String, String> value;
 
     public Map<String, String> getValue() {
         return value;

@@ -16,11 +16,14 @@
 
 package io.charlescd.villager.infrastructure.integration.moove;
 
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient
 public interface ConfigurationClient {
@@ -28,6 +31,7 @@ public interface ConfigurationClient {
     @GET
     @Path("/credentials/{service}/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    Response getModuleConfigurations(@HeaderParam("X-organization") String org, @PathParam("service") String service, @PathParam("id") String id);
+    Response getModuleConfigurations(@HeaderParam("X-organization") String org, @PathParam("service") String service,
+                                     @PathParam("id") String id);
 
 }

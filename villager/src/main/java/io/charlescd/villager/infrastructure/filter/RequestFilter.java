@@ -16,10 +16,10 @@
 
 package io.charlescd.villager.infrastructure.filter;
 
+import java.util.UUID;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
-import java.util.UUID;
 
 @Provider
 public class RequestFilter implements ContainerRequestFilter {

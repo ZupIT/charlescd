@@ -16,13 +16,12 @@
 
 package io.charlescd.villager.test;
 
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
 import io.quarkus.test.Mock;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
+import javax.enterprise.context.ApplicationScoped;
 
 @Mock
 @ApplicationScoped

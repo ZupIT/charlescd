@@ -16,6 +16,16 @@
 
 package io.charlescd.villager.test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
@@ -25,22 +35,16 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
 import io.charlescd.villager.interactor.registry.impl.ListDockerRegistryTagsInteractorImpl;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class ListDockerRegistryTagsInteractorTest {
@@ -58,7 +62,8 @@ public class ListDockerRegistryTagsInteractorTest {
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
         when(registryClient.listImageTags("name", 10, "test")).thenThrow(new IOException("Testing"));
 
-        var interactor = new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+        var interactor =
+                new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
@@ -100,7 +105,8 @@ public class ListDockerRegistryTagsInteractorTest {
 
         });
 
-        var interactor = new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+        var interactor =
+                new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
@@ -141,7 +147,8 @@ public class ListDockerRegistryTagsInteractorTest {
 
         });
 
-        var interactor = new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+        var interactor =
+                new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
@@ -169,7 +176,8 @@ public class ListDockerRegistryTagsInteractorTest {
 
         when(registryClient.listImageTags("name", 10, "test")).thenReturn(null);
 
-        var interactor = new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+        var interactor =
+                new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")
@@ -195,7 +203,8 @@ public class ListDockerRegistryTagsInteractorTest {
 
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
-        var interactor = new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+        var interactor =
+                new ListDockerRegistryTagsInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
 
         ListDockerRegistryTagsInput input = ListDockerRegistryTagsInput.builder()
                 .withArtifactName("name")

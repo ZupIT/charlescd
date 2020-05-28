@@ -21,12 +21,11 @@ import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
 import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
-
-import javax.persistence.LockModeType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import javax.persistence.LockModeType;
 
 class MockBasePanacheQuery<T> implements PanacheQuery<T> {
     @Override
@@ -145,7 +144,8 @@ class MockBasePanacheQuery<T> implements PanacheQuery<T> {
 
         private List<ModuleEntity> list = new ArrayList<>();
 
-        public void add(String id, String externalId, String name, String tagName, String buildId, String registryConfigurationId, String registryUrl) {
+        public void add(String id, String externalId, String name, String tagName, String buildId,
+                        String registryConfigurationId, String registryUrl) {
             var module = ModuleEntity.create(externalId, name, tagName, buildId, registryConfigurationId, registryUrl);
             module.id = id;
             list.add(module);

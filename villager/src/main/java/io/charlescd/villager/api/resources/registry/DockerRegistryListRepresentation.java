@@ -17,7 +17,6 @@
 package io.charlescd.villager.api.resources.registry;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.List;
 
 public class DockerRegistryListRepresentation {

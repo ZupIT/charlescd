@@ -20,11 +20,10 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.DockerRegistryDTO;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryInput;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class ListDockerRegistryInteractorImpl implements ListDockerRegistryInteractor {
@@ -32,7 +31,8 @@ public class ListDockerRegistryInteractorImpl implements ListDockerRegistryInter
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
 
     @Inject
-    public ListDockerRegistryInteractorImpl(DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository) {
+    public ListDockerRegistryInteractorImpl(
+            DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository) {
         this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
     }
 

@@ -22,13 +22,12 @@ import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
 import io.charlescd.villager.interactor.build.RetryBuildStatusNotificationInteractor;
 import io.charlescd.villager.service.BuildNotificationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class RetryBuildStatusNotificationInteractorImpl implements RetryBuildStatusNotificationInteractor {
@@ -40,7 +39,9 @@ public class RetryBuildStatusNotificationInteractorImpl implements RetryBuildSta
     private BuildNotificationService notificationService;
 
     @Inject
-    public RetryBuildStatusNotificationInteractorImpl(BuildRepository buildRepository, ModuleRepository moduleRepository, BuildNotificationService notificationService) {
+    public RetryBuildStatusNotificationInteractorImpl(BuildRepository buildRepository,
+                                                      ModuleRepository moduleRepository,
+                                                      BuildNotificationService notificationService) {
         this.buildRepository = buildRepository;
         this.moduleRepository = moduleRepository;
         this.notificationService = notificationService;

@@ -17,11 +17,14 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 
 @Entity(name = "build")
 public class BuildEntity extends PanacheEntityBase {
@@ -65,8 +68,12 @@ public class BuildEntity extends PanacheEntityBase {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         BuildEntity that = (BuildEntity) o;
         return id.equals(that.id);
     }

@@ -17,9 +17,8 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDateTime;
+import org.apache.commons.lang3.StringUtils;
 
 public class DockerRegistryConfigurationEntity {
 
