@@ -22,7 +22,9 @@ Nesta seção de passos iremos focar a primeira abordagem:
 8. Digite o nome da release a ser criada e clique em **Generate**. Neste momento uma branch com o prefixo "**release-darwin" será criada no repositório do módulo, disparando assim a ferramenta de CI configurada**;
 9. Um card com o status **Building** aparecerá na coluna **Builds**. Aguarde até que o status dele passe para **Built.**
 
-Depois que você realizou o processo acima, sua release está pronta para o deploy. 
+Depois que você realizou o processo acima, sua release está pronta para o deploy. No exemplo abaixo, é a release em destaque: 
+
+![Exemplo de release criada e pronta para deploy](../.gitbook/assets/primeiro_deploy-1-.png)
 
 Agora siga os seguintes passos para o deploy em [**mar aberto**](https://docs.charlescd.io/principais-conceitos#mar-aberto-open-sea)**:**
 
