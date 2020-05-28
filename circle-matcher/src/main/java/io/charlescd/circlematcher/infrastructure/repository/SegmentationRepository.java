@@ -16,13 +16,12 @@
 
 package io.charlescd.circlematcher.infrastructure.repository;
 
-import io.charlescd.circlematcher.domain.Segmentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.charlescd.circlematcher.domain.Segmentation;
+import java.util.Optional;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class SegmentationRepository implements RedisRepository {

@@ -21,12 +21,15 @@ import io.charlescd.circlematcher.domain.service.ScriptManagerService;
 import io.charlescd.circlematcher.infrastructure.Constants;
 import io.charlescd.circlematcher.infrastructure.OpUtils;
 import io.charlescd.circlematcher.infrastructure.ResourceUtils;
+import java.util.Map;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.script.*;
-import java.util.Map;
 
 @Service
 public class ScriptManagerServiceImpl implements ScriptManagerService {

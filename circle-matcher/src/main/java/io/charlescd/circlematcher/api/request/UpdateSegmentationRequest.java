@@ -17,7 +17,6 @@
 package io.charlescd.circlematcher.api.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.validation.constraints.NotBlank;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
