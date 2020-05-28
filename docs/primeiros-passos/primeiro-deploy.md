@@ -24,7 +24,7 @@ Nesta seção de passos iremos focar a primeira abordagem:
 
 Depois que você realizou o processo acima, sua release está pronta para o deploy. 
 
-Agora siga os seguintes passos para o deploy em [**mar aberto**](https://app.gitbook.com/@zup-products/s/charles/~/drafts/-M7mMkLvHe-UHjeaIu9l/principais-conceitos)**:**
+Agora siga os seguintes passos para o deploy em [**mar aberto**](https://docs.charlescd.io/principais-conceitos#mar-aberto-open-sea)**:**
 
 1. Na tela inicial do Charles, clique em **Circles**;
 2. Clique no círculo **Default** \(Este representa o mar aberto\);
