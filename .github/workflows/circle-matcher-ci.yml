@@ -31,6 +31,6 @@ jobs:
     - name: Build with Maven
       run: mvn -B package
       working-directory: ./circle-matcher
-    - name: Checking Code Style
+    - name: Check Code Style
       run: mvn checkstyle:checkstyle
       working-directory: ./circle-matcher
