@@ -16,19 +16,18 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.IOException;
+import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.util.Optional;
 
 @ApplicationScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
@@ -40,12 +39,15 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         this.client = ClientBuilder.newClient();
     }
 
-    public void configureAuthentication(RegistryType type, DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
+    public void configureAuthentication(RegistryType type,
+                                        DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
         this.baseAddress = config.address;
         switch (type) {
             case AWS:
                 var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
-                this.client.register(new AWSBasicAuthenticator(awsConfig.region, awsConfig.accessKey, awsConfig.secretKey));
+                this.client
+                        .register(
+                                new AWSBasicAuthenticator(awsConfig.region, awsConfig.accessKey, awsConfig.secretKey));
                 break;
             case AZURE:
                 var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;

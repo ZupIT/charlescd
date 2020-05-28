@@ -16,11 +16,40 @@
 
 package io.charlescd.villager.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.infrastructure.persistence.*;
+import io.charlescd.villager.infrastructure.persistence.BuildEntity;
+import io.charlescd.villager.infrastructure.persistence.BuildRepository;
+import io.charlescd.villager.infrastructure.persistence.BuildStatus;
+import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
+import io.charlescd.villager.infrastructure.persistence.ComponentRepository;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
+import io.charlescd.villager.infrastructure.persistence.ModuleBuildStatus;
+import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
+import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
 import io.charlescd.villager.interactor.build.impl.UpdateBuildInfoInteractorImpl;
 import io.charlescd.villager.service.BuildNotificationService;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -29,17 +58,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.InvalidUseOfMatchersException;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.ws.rs.core.Response;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateBuildInfoInteractorTest {
@@ -75,7 +93,9 @@ public class UpdateBuildInfoInteractorTest {
             entity.type = RegistryType.AZURE;
             entity.name = "Docker Registry";
             entity.createdAt = LocalDateTime.now();
-            entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test", "usertest", "passtest");
+            entity.connectionData =
+                    new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test",
+                            "usertest", "passtest");
             return Optional.of(entity);
         });
 
@@ -89,10 +109,14 @@ public class UpdateBuildInfoInteractorTest {
         when(buildRepository.findById(anyString())).thenReturn(build1, build2);
 
         // Mock - Modules
-        ModuleEntity module1 = ModuleEntity.create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module1 = ModuleEntity
+                .create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId,
+                        "http://registry/test");
         module1.id = "274fead7-6334-4d58-9834-d1bfa57fd1ef";
 
-        ModuleEntity module2 = ModuleEntity.create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module2 = ModuleEntity
+                .create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId,
+                        "http://registry/test");
         module2.id = "84066c5c-a6e9-4343-8713-1f0b864c92cb";
 
         mockModulesByStatus(module1, module2);
@@ -124,7 +148,8 @@ public class UpdateBuildInfoInteractorTest {
         when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.of(Response.ok().build()));
 
         // Execute
-        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository, buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
+        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
+                buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
         interactor.execute();
 
         // Check
@@ -135,7 +160,8 @@ public class UpdateBuildInfoInteractorTest {
         verify(componentRepository, times(1)).findByModuleId(module1.id);
         verify(componentRepository, times(1)).findByModuleId(module2.id);
 
-        verify(buildNotificationService, times(2)).notify(buildEntityArgumentCaptor.capture(), listModuleEntityArgumentCaptor.capture());
+        verify(buildNotificationService, times(2))
+                .notify(buildEntityArgumentCaptor.capture(), listModuleEntityArgumentCaptor.capture());
         var buildEntityArgumentCaptorValues = buildEntityArgumentCaptor.getAllValues();
         assertThat(buildEntityArgumentCaptorValues.get(0).id, is(build1.id));
         assertThat(buildEntityArgumentCaptorValues.get(0).status, is(BuildStatus.SUCCESS));
@@ -184,7 +210,9 @@ public class UpdateBuildInfoInteractorTest {
             entity.type = RegistryType.AZURE;
             entity.name = "Docker Registry";
             entity.createdAt = LocalDateTime.now();
-            entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test", "usertest", "passtest");
+            entity.connectionData =
+                    new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test",
+                            "usertest", "passtest");
             return Optional.of(entity);
         });
 
@@ -197,20 +225,24 @@ public class UpdateBuildInfoInteractorTest {
 
         when(buildRepository.findById(anyString())).thenAnswer(invocationOnMock -> {
             var buildId = invocationOnMock.getArgument(0);
-            if(buildId.equals(build1.id)) {
+            if (buildId.equals(build1.id)) {
                 return build1;
             }
-            if(buildId.equals(build2.id)) {
+            if (buildId.equals(build2.id)) {
                 return build2;
             }
             throw new InvalidUseOfMatchersException(String.format("Build id %s does not match", buildId));
         });
 
         // Mock - Modules
-        ModuleEntity module1 = ModuleEntity.create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module1 = ModuleEntity
+                .create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId,
+                        "http://registry/test");
         module1.id = "274fead7-6334-4d58-9834-d1bfa57fd1ef";
 
-        ModuleEntity module2 = ModuleEntity.create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module2 = ModuleEntity
+                .create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId,
+                        "http://registry/test");
         module2.id = "84066c5c-a6e9-4343-8713-1f0b864c92cb";
         module2.createdAt = LocalDateTime.of(2020, 01, 01, 01, 01);
 
@@ -243,17 +275,17 @@ public class UpdateBuildInfoInteractorTest {
         when(registryClient.getImage(anyString(), anyString())).thenAnswer(invocationOnMock -> {
             var name = invocationOnMock.getArgument(0);
             var tagName = invocationOnMock.getArgument(1);
-            if(componentEntity1.name.equals(name) && componentEntity1.tagName.equals(tagName) ||
+            if (componentEntity1.name.equals(name) && componentEntity1.tagName.equals(tagName) ||
                     componentEntity2.name.equals(name) && componentEntity2.tagName.equals(tagName)) {
                 return Optional.of(Response.ok().build());
-            }
-            else {
+            } else {
                 return Optional.empty();
             }
         });
 
         // Execute
-        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository, buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
+        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
+                buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
         interactor.execute();
 
         // Check
@@ -263,7 +295,8 @@ public class UpdateBuildInfoInteractorTest {
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
 
-        verify(buildNotificationService, times(2)).notify(buildEntityArgumentCaptor.capture(), listModuleEntityArgumentCaptor.capture());
+        verify(buildNotificationService, times(2))
+                .notify(buildEntityArgumentCaptor.capture(), listModuleEntityArgumentCaptor.capture());
         var buildEntityArgumentCaptorValues = buildEntityArgumentCaptor.getAllValues();
         assertThat(buildEntityArgumentCaptorValues.get(0).id, is(build1.id));
         assertThat(buildEntityArgumentCaptorValues.get(0).status, is(BuildStatus.SUCCESS));
@@ -303,7 +336,9 @@ public class UpdateBuildInfoInteractorTest {
             entity.type = RegistryType.AZURE;
             entity.name = "Docker Registry";
             entity.createdAt = LocalDateTime.now();
-            entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test", "usertest", "passtest");
+            entity.connectionData =
+                    new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test",
+                            "usertest", "passtest");
             return Optional.of(entity);
         });
 
@@ -315,10 +350,14 @@ public class UpdateBuildInfoInteractorTest {
         build2.id = "ecbb5bb9-f56e-45e6-abdf-d0676647e9ed";
 
         // Mock - Modules
-        ModuleEntity module1 = ModuleEntity.create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module1 = ModuleEntity
+                .create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build1.id, registryConfigurationId,
+                        "http://registry/test");
         module1.id = "274fead7-6334-4d58-9834-d1bfa57fd1ef";
 
-        ModuleEntity module2 = ModuleEntity.create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId, "http://registry/test");
+        ModuleEntity module2 = ModuleEntity
+                .create("5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", build2.id, registryConfigurationId,
+                        "http://registry/test");
         module2.id = "84066c5c-a6e9-4343-8713-1f0b864c92cb";
 
         mockModulesByStatus(module1, module2);
@@ -350,7 +389,8 @@ public class UpdateBuildInfoInteractorTest {
         when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.empty());
 
         // Execute
-        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository, buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
+        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
+                buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
         interactor.execute();
 
         // Check
@@ -376,7 +416,9 @@ public class UpdateBuildInfoInteractorTest {
             var moduleEntity = mockData.keySet().stream()
                     .filter(k -> k.id.equals(moduleId))
                     .findFirst()
-                    .orElseThrow(() -> new InvalidUseOfMatchersException(String.format("Module id %s does not match", moduleId)));
+                    .orElseThrow(
+                            () -> new InvalidUseOfMatchersException(
+                                    String.format("Module id %s does not match", moduleId)));
             return mockData.get(moduleEntity);
         });
     }
@@ -387,7 +429,9 @@ public class UpdateBuildInfoInteractorTest {
             var buildEntity = mockData.keySet().stream()
                     .filter(k -> k.id.equals(buildId))
                     .findFirst()
-                    .orElseThrow(() -> new InvalidUseOfMatchersException(String.format("Build id %s does not match", buildId)));
+                    .orElseThrow(
+                            () -> new InvalidUseOfMatchersException(
+                                    String.format("Build id %s does not match", buildId)));
             return mockData.get(buildEntity);
         });
     }

@@ -19,9 +19,8 @@ package io.charlescd.villager.api.resources.registry;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.hibernate.validator.constraints.URL;
-
 import javax.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

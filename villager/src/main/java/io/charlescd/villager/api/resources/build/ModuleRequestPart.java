@@ -16,14 +16,13 @@
 
 package io.charlescd.villager.api.resources.build;
 
-import io.charlescd.villager.api.resources.registry.ComponentRequestPart;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import io.charlescd.villager.api.resources.registry.ComponentRequestPart;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 class ModuleRequestPart {
 

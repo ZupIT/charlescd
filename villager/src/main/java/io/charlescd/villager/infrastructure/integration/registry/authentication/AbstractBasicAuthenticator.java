@@ -16,8 +16,8 @@
 
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
-import javax.ws.rs.client.ClientRequestContext;
 import java.util.Arrays;
+import javax.ws.rs.client.ClientRequestContext;
 
 public abstract class AbstractBasicAuthenticator implements BasicAuthenticator {
 

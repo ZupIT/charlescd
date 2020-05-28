@@ -17,12 +17,11 @@
 package io.charlescd.villager.interactor.build;
 
 import io.charlescd.villager.api.resources.registry.ComponentRequestPart;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 public class CreateBuildInput {
     @NotEmpty
@@ -62,7 +61,8 @@ public class CreateBuildInput {
         private Builder() {
         }
 
-        public Builder withModule(String id, String name, String registryConfigurationId, Set<ComponentRequestPart> components) {
+        public Builder withModule(String id, String name, String registryConfigurationId,
+                                  Set<ComponentRequestPart> components) {
             Module module = new Module(
                     id,
                     name,

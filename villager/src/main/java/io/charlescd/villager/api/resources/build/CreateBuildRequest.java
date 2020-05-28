@@ -16,13 +16,12 @@
 
 package io.charlescd.villager.api.resources.build;
 
-import io.charlescd.villager.interactor.build.CreateBuildInput;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import io.charlescd.villager.interactor.build.CreateBuildInput;
+import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import java.util.Set;
 
 public final class CreateBuildRequest {
 

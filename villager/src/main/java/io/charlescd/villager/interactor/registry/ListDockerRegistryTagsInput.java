@@ -23,7 +23,8 @@ public class ListDockerRegistryTagsInput {
     private Integer max;
     private String last;
 
-    private ListDockerRegistryTagsInput(String artifactName, String workspaceId, String artifactRepositoryConfigurationId, Integer max, String last) {
+    private ListDockerRegistryTagsInput(String artifactName, String workspaceId,
+                                        String artifactRepositoryConfigurationId, Integer max, String last) {
         this.artifactName = artifactName;
         this.workspaceId = workspaceId;
         this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
@@ -53,7 +54,7 @@ public class ListDockerRegistryTagsInput {
     }
 
     public static ListDockerRegistryTagsInputBuilder builder() {
-        return ListDockerRegistryTagsInputBuilder.aListDockerRegistryTagsInput();
+        return ListDockerRegistryTagsInputBuilder.newBuilder();
     }
 
     public static final class ListDockerRegistryTagsInputBuilder {
@@ -66,7 +67,7 @@ public class ListDockerRegistryTagsInput {
         private ListDockerRegistryTagsInputBuilder() {
         }
 
-        private static ListDockerRegistryTagsInputBuilder aListDockerRegistryTagsInput() {
+        private static ListDockerRegistryTagsInputBuilder newBuilder() {
             return new ListDockerRegistryTagsInputBuilder();
         }
 
@@ -80,7 +81,8 @@ public class ListDockerRegistryTagsInput {
             return this;
         }
 
-        public ListDockerRegistryTagsInputBuilder withArtifactRepositoryConfigurationId(String artifactRepositoryConfigurationId) {
+        public ListDockerRegistryTagsInputBuilder withArtifactRepositoryConfigurationId(
+                String artifactRepositoryConfigurationId) {
             this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
             return this;
         }
@@ -96,7 +98,8 @@ public class ListDockerRegistryTagsInput {
         }
 
         public ListDockerRegistryTagsInput build() {
-            return new ListDockerRegistryTagsInput(artifactName, workspaceId, artifactRepositoryConfigurationId, max, last);
+            return new ListDockerRegistryTagsInput(artifactName, workspaceId, artifactRepositoryConfigurationId, max,
+                    last);
         }
     }
 }

@@ -17,9 +17,8 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
+import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class BuildRepository implements PanacheRepository<BuildEntity> {

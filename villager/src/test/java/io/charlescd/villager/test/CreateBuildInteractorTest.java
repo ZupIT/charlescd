@@ -16,30 +16,45 @@
 
 package io.charlescd.villager.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
 import io.charlescd.villager.api.resources.registry.ComponentRequestPart;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.infrastructure.persistence.*;
+import io.charlescd.villager.infrastructure.persistence.BuildEntity;
+import io.charlescd.villager.infrastructure.persistence.BuildRepository;
+import io.charlescd.villager.infrastructure.persistence.BuildStatus;
+import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
+import io.charlescd.villager.infrastructure.persistence.ComponentRepository;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
+import io.charlescd.villager.infrastructure.persistence.ModuleBuildStatus;
+import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
+import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
 import io.charlescd.villager.interactor.build.CreateBuildInput;
 import io.charlescd.villager.interactor.build.NewBuildDTO;
 import io.charlescd.villager.interactor.build.impl.CreateBuildInteractorImpl;
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateBuildInteractorTest {
@@ -85,10 +100,12 @@ public class CreateBuildInteractorTest {
             return null;
         }).when(moduleRepository).persist(any(ModuleEntity.class));
 
-        when(dockerRegistryConfigurationRepository.findById(registryConfigurationId)).thenReturn(generateDockerRegistryConfigurationEntity(registryConfigurationId));
+        when(dockerRegistryConfigurationRepository.findById(registryConfigurationId))
+                .thenReturn(generateDockerRegistryConfigurationEntity(registryConfigurationId));
 
         // Call
-        var useCase = new CreateBuildInteractorImpl(buildRepository, componentRepository, moduleRepository, dockerRegistryConfigurationRepository);
+        var useCase = new CreateBuildInteractorImpl(buildRepository, componentRepository, moduleRepository,
+                dockerRegistryConfigurationRepository);
 
         var module1ComponentsPartSet = new LinkedHashSet<ComponentRequestPart>();
         module1ComponentsPartSet.add(new ComponentRequestPart("tag_1", "component_1"));
@@ -178,10 +195,12 @@ public class CreateBuildInteractorTest {
 
         doThrow(new RuntimeException("Testing")).when(moduleRepository).persist(any(ModuleEntity.class));
 
-        when(dockerRegistryConfigurationRepository.findById(registryConfigurationId)).thenReturn(generateDockerRegistryConfigurationEntity(registryConfigurationId));
+        when(dockerRegistryConfigurationRepository.findById(registryConfigurationId))
+                .thenReturn(generateDockerRegistryConfigurationEntity(registryConfigurationId));
 
         // Call
-        var useCase = new CreateBuildInteractorImpl(buildRepository, componentRepository, moduleRepository, dockerRegistryConfigurationRepository);
+        var useCase = new CreateBuildInteractorImpl(buildRepository, componentRepository, moduleRepository,
+                dockerRegistryConfigurationRepository);
 
         var module1ComponentsPartSet = new LinkedHashSet<ComponentRequestPart>();
         module1ComponentsPartSet.add(new ComponentRequestPart("tag_1", "component_1"));

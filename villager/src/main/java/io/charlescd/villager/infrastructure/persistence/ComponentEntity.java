@@ -17,11 +17,10 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.*;
 
 @Entity(name = "component")
 public class ComponentEntity extends PanacheEntityBase {

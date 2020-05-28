@@ -16,6 +16,16 @@
 
 package io.charlescd.villager.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
@@ -23,6 +33,8 @@ import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,15 +42,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SaveDockerRegistryConfigurationInteractorTest {
@@ -90,8 +93,12 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.createdAt, is(createdAt));
         assertThat(entityCaptured.connectionData.address, is("http://test.org"));
         assertThat(entityCaptured.connectionData.host, is("test.org"));
-        assertThat(((DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) entityCaptured.connectionData).username, is("usertest"));
-        assertThat(((DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) entityCaptured.connectionData).password, is("userpass"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) entityCaptured.connectionData).username,
+                is("usertest"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) entityCaptured.connectionData).password,
+                is("userpass"));
 
     }
 
@@ -136,9 +143,15 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         assertThat(entityCaptured.createdAt, is(createdAt));
         assertThat(entityCaptured.connectionData.address, is("http://test.org"));
         assertThat(entityCaptured.connectionData.host, is("test.org"));
-        assertThat(((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).accessKey, is("accesskeytest"));
-        assertThat(((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).secretKey, is("secretkeytest"));
-        assertThat(((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).region, is("regiontest"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).accessKey,
+                is("accesskeytest"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).secretKey,
+                is("secretkeytest"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) entityCaptured.connectionData).region,
+                is("regiontest"));
 
         verify(dockerRegistryConfigurationRepository, times(1)).save(any());
 

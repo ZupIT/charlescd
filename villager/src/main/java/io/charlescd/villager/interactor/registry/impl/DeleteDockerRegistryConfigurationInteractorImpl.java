@@ -3,7 +3,6 @@ package io.charlescd.villager.interactor.registry.impl;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.DeleteDockerRegistryConfigurationInteractor;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

@@ -17,10 +17,13 @@
 package io.charlescd.villager.api.resources.build;
 
 import io.charlescd.villager.interactor.build.CreateBuildInteractor;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/build")
@@ -36,7 +39,9 @@ public class BuildResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public NewBuildRepresentation createBuild(@Valid CreateBuildRequest request, @HeaderParam("X-Circle-Id") String circleId) {
-        return NewBuildRepresentation.toRepresentation(this.createBuildInteractor.execute(request.toCreateBuildInput(), circleId));
+    public NewBuildRepresentation createBuild(@Valid CreateBuildRequest request,
+                                              @HeaderParam("X-Circle-Id") String circleId) {
+        return NewBuildRepresentation
+                .toRepresentation(this.createBuildInteractor.execute(request.toCreateBuildInput(), circleId));
     }
 }

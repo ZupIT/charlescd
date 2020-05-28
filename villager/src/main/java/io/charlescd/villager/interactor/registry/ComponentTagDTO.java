@@ -22,7 +22,7 @@ public class ComponentTagDTO {
     private String artifact;
 
     public ComponentTagDTO(String name, String artifact) {
-        this.name =  name;
+        this.name = name;
         this.artifact = artifact;
     }
 

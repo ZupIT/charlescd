@@ -27,7 +27,8 @@ public class ListDockerRegistryTagsRequestHandler implements RequestHandler<List
     private Integer max;
     private String last;
 
-    public ListDockerRegistryTagsRequestHandler(String workspaceId, String registryConfigurationId, String componentName, Integer max, String last) {
+    public ListDockerRegistryTagsRequestHandler(String workspaceId, String registryConfigurationId,
+                                                String componentName, Integer max, String last) {
         this.workspaceId = workspaceId;
         this.registryConfigurationId = registryConfigurationId;
         this.componentName = componentName;

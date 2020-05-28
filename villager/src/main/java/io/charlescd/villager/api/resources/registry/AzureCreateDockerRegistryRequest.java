@@ -18,7 +18,6 @@ package io.charlescd.villager.api.resources.registry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotEmpty;
 
 public class AzureCreateDockerRegistryRequest extends CreateDockerRegistryConfigurationRequest {
@@ -27,7 +26,8 @@ public class AzureCreateDockerRegistryRequest extends CreateDockerRegistryConfig
 
     @JsonCreator
     public AzureCreateDockerRegistryRequest(@JsonProperty("name") String name, @JsonProperty("address") String address,
-                                            @JsonProperty("username") String username, @JsonProperty("password") String password) {
+                                            @JsonProperty("username") String username,
+                                            @JsonProperty("password") String password) {
         this.name = name;
         this.address = address;
         this.username = username;

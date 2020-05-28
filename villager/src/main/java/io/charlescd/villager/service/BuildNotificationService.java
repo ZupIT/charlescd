@@ -18,7 +18,6 @@ package io.charlescd.villager.service;
 
 import io.charlescd.villager.infrastructure.persistence.BuildEntity;
 import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
-
 import java.util.List;
 
 public interface BuildNotificationService {

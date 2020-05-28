@@ -18,20 +18,23 @@ package io.charlescd.villager.service.impl;
 
 import io.charlescd.villager.infrastructure.integration.GenericRestClient;
 import io.charlescd.villager.infrastructure.integration.callback.CallbackPayload;
-import io.charlescd.villager.infrastructure.persistence.*;
+import io.charlescd.villager.infrastructure.persistence.BuildEntity;
+import io.charlescd.villager.infrastructure.persistence.CallbackStatus;
+import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
+import io.charlescd.villager.infrastructure.persistence.ComponentRepository;
+import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.charlescd.villager.service.BuildNotificationService;
-import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class BuildNotificationServiceImpl implements BuildNotificationService {

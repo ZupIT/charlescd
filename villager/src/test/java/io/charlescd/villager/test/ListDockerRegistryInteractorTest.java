@@ -16,24 +16,24 @@
 
 package io.charlescd.villager.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
+
+
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryInput;
 import io.charlescd.villager.interactor.registry.impl.ListDockerRegistryInteractorImpl;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ListDockerRegistryInteractorTest {
@@ -103,7 +103,10 @@ public class ListDockerRegistryInteractorTest {
         entity.authorId = "456337ed-7af2-4f0d-9dfb-6e285ad00ee0";
         entity.workspaceId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
         entity.createdAt = LocalDateTime.now();
-        entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test", "usertest", "passtest");
+        entity.connectionData =
+                new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData("http://registry/test",
+                        "usertest",
+                        "passtest");
         return entity;
     }
 
@@ -115,7 +118,10 @@ public class ListDockerRegistryInteractorTest {
         entity.authorId = "456337ed-7af2-4f0d-9dfb-6e285ad00ee0";
         entity.workspaceId = "6eef9a19-f83e-43d1-8f00-eb8f12d4f116";
         entity.createdAt = LocalDateTime.now();
-        entity.connectionData = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData("http://registry/test", "accesskey", "secretkey", "br");
+        entity.connectionData =
+                new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData("http://registry/test",
+                        "accesskey",
+                        "secretkey", "br");
         return entity;
     }
 

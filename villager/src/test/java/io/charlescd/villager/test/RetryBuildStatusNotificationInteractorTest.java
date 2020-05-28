@@ -16,9 +16,26 @@
 
 package io.charlescd.villager.test;
 
-import io.charlescd.villager.infrastructure.persistence.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.when;
+
+
+import io.charlescd.villager.infrastructure.persistence.BuildEntity;
+import io.charlescd.villager.infrastructure.persistence.BuildRepository;
+import io.charlescd.villager.infrastructure.persistence.CallbackStatus;
+import io.charlescd.villager.infrastructure.persistence.ModuleBuildStatus;
+import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
+import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
 import io.charlescd.villager.interactor.build.impl.RetryBuildStatusNotificationInteractorImpl;
 import io.charlescd.villager.service.BuildNotificationService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,13 +43,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.exceptions.misusing.InvalidUseOfMatchersException;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RetryBuildStatusNotificationInteractorTest {
@@ -53,9 +63,11 @@ public class RetryBuildStatusNotificationInteractorTest {
     @Test
     public void testBuildWithoutFailureStatus() {
         when(buildRepository.findBuildsToNotify()).thenCallRealMethod();
-        when(buildRepository.find("callback_status = ?1", CallbackStatus.FAILURE.name())).thenReturn(new MockBasePanacheQuery.MockBuildPanacheQuery());
+        when(buildRepository.find("callback_status = ?1", CallbackStatus.FAILURE.name()))
+                .thenReturn(new MockBasePanacheQuery.MockBuildPanacheQuery());
 
-        var interactor = new RetryBuildStatusNotificationInteractorImpl(buildRepository, moduleRepository, notificationService);
+        var interactor =
+                new RetryBuildStatusNotificationInteractorImpl(buildRepository, moduleRepository, notificationService);
 
         interactor.execute();
 
@@ -78,31 +90,38 @@ public class RetryBuildStatusNotificationInteractorTest {
         mockBuildPanacheQuery.add("tag_2", "http://callback/test_2", "3ab17a5b-a7ae-497f-a644-05cb63980d07", buildId2);
 
         when(buildRepository.findBuildsToNotify()).thenCallRealMethod();
-        when(buildRepository.find("callback_status = ?1", CallbackStatus.FAILURE.name())).thenReturn(mockBuildPanacheQuery);
+        when(buildRepository.find("callback_status = ?1", CallbackStatus.FAILURE.name()))
+                .thenReturn(mockBuildPanacheQuery);
 
         when(moduleRepository.findByBuildId(anyString())).thenCallRealMethod();
         when(moduleRepository.find(eq("build_id = ?1"), anyString())).thenAnswer(invocationOnMock -> {
             var buildId = invocationOnMock.getArguments()[1];
             if (buildId.equals(buildId1)) {
                 var mockModulePanacheQuery = new MockBasePanacheQuery.MockModulePanacheQuery();
-                mockModulePanacheQuery.add(moduleId1, "4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", buildId1, registryConfigurationId, "http://registry/test");
+                mockModulePanacheQuery
+                        .add(moduleId1, "4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", buildId1,
+                                registryConfigurationId, "http://registry/test");
                 return mockModulePanacheQuery;
             }
             if (buildId.equals(buildId2)) {
                 var mockModulePanacheQuery = new MockBasePanacheQuery.MockModulePanacheQuery();
-                mockModulePanacheQuery.add(moduleId2, "5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", buildId2, registryConfigurationId, "http://registry/test");
+                mockModulePanacheQuery
+                        .add(moduleId2, "5ffa9132-0569-4216-9037-824f9d0f2755", "module_2", "tag_2", buildId2,
+                                registryConfigurationId, "http://registry/test");
                 return mockModulePanacheQuery;
             }
             throw new InvalidUseOfMatchersException(String.format("Build id %s does not match", buildId));
         });
 
-        var interactor = new RetryBuildStatusNotificationInteractorImpl(buildRepository, moduleRepository, notificationService);
+        var interactor =
+                new RetryBuildStatusNotificationInteractorImpl(buildRepository, moduleRepository, notificationService);
 
         interactor.execute();
 
         verify(buildRepository, times(1)).find("callback_status = ?1", CallbackStatus.FAILURE.name());
         verify(moduleRepository, times(2)).find(eq("build_id = ?1"), anyString());
-        verify(notificationService, times(2)).notify(buildEntityArgumentCaptor.capture(), modulesListArgumentCaptor.capture());
+        verify(notificationService, times(2))
+                .notify(buildEntityArgumentCaptor.capture(), modulesListArgumentCaptor.capture());
 
         var buildEntityArgumentCaptorAllValues = buildEntityArgumentCaptor.getAllValues();
         assertThat(buildEntityArgumentCaptorAllValues.get(0).id, is(buildId1));
@@ -121,16 +140,20 @@ public class RetryBuildStatusNotificationInteractorTest {
         assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).name, is("module_1"));
         assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).tagName, is("tag_1"));
         assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).buildEntityId, is(buildId1));
-        assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).externalId, is("4f94780e-ebe1-4d4c-8a97-e3b01997492a"));
-        assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).registryConfigurationId, is(registryConfigurationId));
+        assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).externalId,
+                is("4f94780e-ebe1-4d4c-8a97-e3b01997492a"));
+        assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).registryConfigurationId,
+                is(registryConfigurationId));
         assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).registry, is("http://registry/test"));
         assertThat(modulesListArgumentCaptorAllValues.get(0).get(0).status, is(ModuleBuildStatus.CREATED));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).id, is(moduleId2));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).name, is("module_2"));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).tagName, is("tag_2"));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).buildEntityId, is(buildId2));
-        assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).externalId, is("5ffa9132-0569-4216-9037-824f9d0f2755"));
-        assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).registryConfigurationId, is(registryConfigurationId));
+        assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).externalId,
+                is("5ffa9132-0569-4216-9037-824f9d0f2755"));
+        assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).registryConfigurationId,
+                is(registryConfigurationId));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).registry, is("http://registry/test"));
         assertThat(modulesListArgumentCaptorAllValues.get(1).get(0).status, is(ModuleBuildStatus.CREATED));
 

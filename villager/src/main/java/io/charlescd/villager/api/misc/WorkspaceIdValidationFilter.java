@@ -18,13 +18,12 @@ package io.charlescd.villager.api.misc;
 
 import io.charlescd.villager.infrastructure.filter.RequestContext;
 import io.charlescd.villager.util.Constants;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class WorkspaceIdValidationFilter implements ContainerRequestFilter {

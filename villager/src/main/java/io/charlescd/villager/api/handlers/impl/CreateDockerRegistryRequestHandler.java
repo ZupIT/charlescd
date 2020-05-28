@@ -17,13 +17,13 @@
 package io.charlescd.villager.api.handlers.impl;
 
 import io.charlescd.villager.api.handlers.RequestHandler;
-import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
+import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
@@ -46,7 +46,7 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
 
         if (this.request instanceof AzureCreateDockerRegistryRequest) {
             toAzure(inputBuilder);
-        } else if(this.request instanceof AWSCreateDockerRegistryRequest) {
+        } else if (this.request instanceof AWSCreateDockerRegistryRequest) {
             toAWS(inputBuilder);
         } else {
             throw new IllegalArgumentException("The request has a invalid format.");
@@ -59,7 +59,8 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         var awsRequest = (AWSCreateDockerRegistryRequest) request;
         inputBuilder
                 .withRegistryType(RegistryType.AWS)
-                .withAuth(new AWSDockerRegistryAuth(awsRequest.getAccessKey(), awsRequest.getSecretKey(), awsRequest.getRegion()));
+                .withAuth(new AWSDockerRegistryAuth(awsRequest.getAccessKey(), awsRequest.getSecretKey(),
+                        awsRequest.getRegion()));
     }
 
     private void toAzure(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {

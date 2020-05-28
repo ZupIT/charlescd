@@ -17,10 +17,13 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 
 @Entity(name = "module")
 public class ModuleEntity extends PanacheEntityBase {
@@ -59,7 +62,8 @@ public class ModuleEntity extends PanacheEntityBase {
     @Column(name = "registry")
     public String registry;
 
-    public static ModuleEntity create(String externalId, String name, String tagName, String buildEntityId, String registryConfigurationId, String registry) {
+    public static ModuleEntity create(String externalId, String name, String tagName, String buildEntityId,
+                                      String registryConfigurationId, String registry) {
         ModuleEntity moduleEntity = new ModuleEntity();
         moduleEntity.id = UUID.randomUUID().toString();
         moduleEntity.externalId = externalId;

@@ -51,7 +51,7 @@ public class DockerRegistryConfigurationInput {
     }
 
     public static RegistryConfigurationInputBuilder builder() {
-        return RegistryConfigurationInputBuilder.aRegistryConfigurationInput();
+        return RegistryConfigurationInputBuilder.newBuilder();
     }
 
     public static final class RegistryConfigurationInputBuilder {
@@ -65,7 +65,7 @@ public class DockerRegistryConfigurationInput {
         private RegistryConfigurationInputBuilder() {
         }
 
-        private static RegistryConfigurationInputBuilder aRegistryConfigurationInput() {
+        private static RegistryConfigurationInputBuilder newBuilder() {
             return new RegistryConfigurationInputBuilder();
         }
 

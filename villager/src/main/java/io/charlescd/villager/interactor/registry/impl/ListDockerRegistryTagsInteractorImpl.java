@@ -23,15 +23,14 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class ListDockerRegistryTagsInteractorImpl implements ListDockerRegistryTagsInteractor {
@@ -42,7 +41,9 @@ public class ListDockerRegistryTagsInteractorImpl implements ListDockerRegistryT
     private RegistryClient registryClient;
 
     @Inject
-    public ListDockerRegistryTagsInteractorImpl(DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository, RegistryClient registryClient) {
+    public ListDockerRegistryTagsInteractorImpl(
+            DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository,
+            RegistryClient registryClient) {
         this.dockerRegistryConfigurationRepository = dockerRegistryConfigurationRepository;
         this.registryClient = registryClient;
     }
@@ -50,11 +51,15 @@ public class ListDockerRegistryTagsInteractorImpl implements ListDockerRegistryT
     @Override
     public List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input) {
 
-        var optionalEntity = this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
-        var entity = optionalEntity.orElseThrow(() -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
+        var optionalEntity =
+                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
+        var entity = optionalEntity
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
-        if(!entity.workspaceId.equals(input.getWorkspaceId())) {
-            throw new IllegalAccessResourceException("This docker registry does not belongs to the request application id.");
+        if (!entity.workspaceId.equals(input.getWorkspaceId())) {
+            throw new IllegalAccessResourceException(
+                    "This docker registry does not belongs to the request application id.");
         }
 
         this.registryClient.configureAuthentication(entity.type, entity.connectionData);
@@ -63,7 +68,8 @@ public class ListDockerRegistryTagsInteractorImpl implements ListDockerRegistryT
             var response = this.registryClient.listImageTags(input.getArtifactName(), input.getMax(), input.getLast());
 
             return response != null ? response.getTags().stream()
-                    .map(tag -> new ComponentTagDTO(tag, entity.connectionData.host + "/" + input.getArtifactName() + ":" + tag))
+                    .map(tag -> new ComponentTagDTO(tag,
+                            entity.connectionData.host + "/" + input.getArtifactName() + ":" + tag))
                     .collect(Collectors.toList()) : Collections.emptyList();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

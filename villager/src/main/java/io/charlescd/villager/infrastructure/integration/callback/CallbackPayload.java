@@ -105,7 +105,7 @@ public class CallbackPayload {
         }
     }
 
-    public static  class ComponentPart{
+    public static class ComponentPart {
 
         private String name;
         private String tagName;
@@ -157,8 +157,8 @@ public class CallbackPayload {
     public enum BuildStatus {
         SUCCESS, TIME_OUT;
 
-        public static BuildStatus of(String status){
-            if (io.charlescd.villager.infrastructure.persistence.BuildStatus.SUCCESS.name().equals(status)){
+        public static BuildStatus of(String status) {
+            if (io.charlescd.villager.infrastructure.persistence.BuildStatus.SUCCESS.name().equals(status)) {
                 return BuildStatus.SUCCESS;
             }
 

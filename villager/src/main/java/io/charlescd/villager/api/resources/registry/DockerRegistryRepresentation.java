@@ -34,7 +34,8 @@ public class DockerRegistryRepresentation {
     }
 
     public static DockerRegistryRepresentation toRepresentation(DockerRegistryDTO registryDTO) {
-        return new DockerRegistryRepresentation(registryDTO.getId(), registryDTO.getName(), registryDTO.getProvider(), registryDTO.getAuthorId());
+        return new DockerRegistryRepresentation(registryDTO.getId(), registryDTO.getName(), registryDTO.getProvider(),
+                registryDTO.getAuthorId());
     }
 
     public String getId() {
