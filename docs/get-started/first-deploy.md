@@ -18,6 +18,10 @@ Here we will focus on the first approach with the following steps:
 
 After you have done the whole process above, your release will be ready to deploy. 
 
+![Example of release created and ready to deploy](../.gitbook/assets/primeiro_deploy-1-.png)
+
+
+
 Now, just follow the next steps to the [**Open Sea**](https://app.gitbook.com/@zup-products/s/charles/~/drafts/-M7mMkLvHe-UHjeaIu9l/principais-conceitos) deploy: 
 
 1. On Charles homepage, click on **Circles**; 
@@ -27,4 +31,6 @@ Now, just follow the next steps to the [**Open Sea**](https://app.gitbook.com/@z
 5. Type the release name created above and click on **Deploy**.
 
 After that, Charles will provide the created release on cluster in the open sea. The deploy status will be show and updated along the process. 
+
+![Example of how to make your first deploy in open sea](../.gitbook/assets/default-override-release%20%281%29.gif)
 

@@ -17,7 +17,7 @@ There are two types of cards:
 1. **Action:** cards that involve coding like the new features implementation or fixes on the project. 
 2. **Feature:** cards that indicate an action to be done, for example, perform a field test with the users. 
 
-![](https://lh5.googleusercontent.com/1I3yXY8rsLsu3HgoIOOxH77NrMts42tKz30upnLI3qfRO9Ui6cD1NP-ZgtcSHZfji8kvN97DRfzSGj1fLjPCVg86lQVmVrHb-9gZaf2r4ymLdcIfEI_WrteXRJr9HUU0meFIFSyF)
+![](../.gitbook/assets/ref-hipoteses2.png)
 
 When a feature card is added, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Bitbucket, for example. 
 
@@ -38,7 +38,7 @@ After this process is finished and the codes are mixed, a new release ramificati
 
 * **Releases Deployed:** the cards on this column show where the hypothesis builds are implemented.
 
-![](https://lh6.googleusercontent.com/da5Jdg51wg8EAIJaGTvt9VsAzdn00RIBNJxieqhSVsPVzdS_bo066rGVvk_Olne6O-Jk_oaVT88EFbqPUvtsKdEZ_7mnreLadEmM2_R1Sm2GV3-tuWMXkW0EGZwpjJ3BytFKGwsI)
+![](../.gitbook/assets/ref-hipoteses%20%281%29.png)
 
 When a hypothesis is moved to the **Ready to Go** column, you indicate to the system that a specific card can go through a **Generate Release Candidate** process, which means the hypothesis will transform into a branch release of the master release on your git.   
 
