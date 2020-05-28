@@ -20,6 +20,10 @@ In traditional deploys, it's common that the application has to pass into differ
 
 At blue-green deployment, it's possible to create two identical environments in your infrastructure, but with different versions of an application implemented in each other. In this way, it's possible to test your hypothesis that, once confirmed, can be migrated to one version to another. 
 
+The main benefit is that the downtime is zero, which brings more safety for the transition process. Despite this, it represents a higher cost because this deployment demands the double of infrastructure to be executed.
+
+With Charles, the circle deploy offers to teams more confidence and agility on launching new versions, with zero downtime and no additional costs on infrastructure. Besides, it's possible to filter, through circles, which users will validate your new application version.
+
 ![Process of blue-green deploy](../.gitbook/assets/blue_green%20%281%29.png)
 
 
