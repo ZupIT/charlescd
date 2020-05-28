@@ -1,44 +1,46 @@
 # Hypothesis
 
-As hipóteses são as alternativas cadastradas na plataforma para resolver algum problema ou validar uma ou mais mudanças nas aplicações que você integrou ao Charles. 
+Hypothesis are registered alternatives on the platform to solve some issue or validate application changes you have integrated on Charles. 
 
-É possível que uma hipótese contenha uma ou mais features, que estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente ao seu workspace.
+It is possible that hypothesis may have one or more features that are directly related to modules or/and projects that were registered before in your workspace. 
 
-Imagine uma situação na qual duas equipes trabalham no mesmo produto e têm ideias diferentes para aumentar a taxa de conversão de clientes. A equipe A sugere adicionar um botão na página, enquanto a equipe B acredita que incluir um box de "sugestão de venda" será mais assertivo.
+Imagine a situation in which two teams work on the same product and have different ideas to raise the client conversion rate. Team A suggests adding a button on the page, meanwhile Team B believes that include a ‘selling suggestion’ box will be more assertive.   
+  
+Charles makes it possible for both teams to create different hypothesis. So each team is able to lead the development through a board that is automatically created and then they also can independently select different users circles to validate the results of each hypothesis.   
 
- O Charles possibilita que as duas equipes criem duas hipóteses distintas. Assim, cada uma, poderá conduzir o desenvolvimento através um board que é gerado automaticamente. A partir daí, cada equipe poderá selecionar, de forma independente, os círculos com usuários distintos para validar os resultados de cada uma das hipóteses.
 
 ## How to create hypothesis?
 
-Ao cadastrar uma hipótese dentro do Charles, a sua requisição será encaminhada ao `charles-application`. Ao final desse processo, o sistema irá gerar automaticamente um quadro \(board\) no qual é possível criar e gerenciar cartões com as releases e ações necessárias para testar as hipóteses levantadas.
+When you register a hypothesis on Charles, your request will be fowarded to `charlescd-moove`. At the end of this process, the system will create a board and you will be able to manage and create release cards with the necessary actions to test all your hypothesis. 
 
-Esses cartões podem ser de dois tipos:
+There are two types of cards:
 
-1. **Action:** são os cards que envolvem codificação, como a implementação de novas funcionalidades \(features\) ou ajustes em partes do projeto. 
-2. **Feature:** são os cards que, como o nome sugere, indicam uma ação a ser feita. Por exemplo, realizar um teste de campo com os usuários. 
+1. **Action:** cards that involve coding like the new features implementation or fixes on the project. 
+2. **Feature:** cards that indicate an action to be done, for example, perform a field test with the users. 
 
 ![](https://lh5.googleusercontent.com/1I3yXY8rsLsu3HgoIOOxH77NrMts42tKz30upnLI3qfRO9Ui6cD1NP-ZgtcSHZfji8kvN97DRfzSGj1fLjPCVg86lQVmVrHb-9gZaf2r4ymLdcIfEI_WrteXRJr9HUU0meFIFSyF)
 
-Quando um cartão de feature é adicionado, o Charles cria uma nova branch no git do cliente que, por sua vez, é armazenada diretamente no SCM utilizado, seja ele Git ou Bitbucket por exemplo.
+When a feature card is added, Charles creates a new git branch for the client that is directly stored in the used SCM, Git or Bitbucket, for example. 
 
 ## Board management
 
-Organizado com base em conceitos da metodologia ágil, o Board é estruturado para que, a partir de tarefas do backlog, você possa priorizar o que será feito \(to do\) e indicar o que está em andamento \(doing\).
+The board is organized and structured based on Agile methodology, so you are able to create a backlog with tasks and prioritize what is going to be done \(to do\) and indicate which ones are in progress \(doing\).   
+  
+As the hypothesis development evolves, the tasks are moved on the moove column. The status for each activity are:
 
-À medida que o desenvolvimento da hipótese evolui, as tarefas vão avançando nas colunas do moove. Os possíveis status de cada atividade são:
+* **To Do:** tasks that are prioritized and need to be done;
+* **Doing:** tasks in progress;
+* **Ready to go:** finished tasks, if it is a feature card, it is possible to generate a build.
+* **Builds:** all builds are generated here, after a combination with the features on the previous column. You can expand the cards to have more information. 
 
-* **To Do:** as tarefas foram priorizadas e precisam ser feitas. _\*\*_
-* **Doing:** as tarefas estão em andamento. _\*\*_
-* **Ready to go:** as atividades finalizadas. Caso seja do tipo feature card, é possível gerar um build. _\*\*_
-* **Builds:** nesta coluna estão representados todos os builds gerados a partir da combinação de feature cards na coluna anterior \(Ready to go\). É possível expandir o cartão para ter mais informações.
+Charles is responsible to orchestrate the merges resolution, especially if several same modules cards appears, but with different git ramifications. 
 
-Vale esclarecer que o Charles é responsável pela orquestração da resolução dos merges, principalmente caso surjam vários cartões que envolvam módulos iguais, porém com ramificações diferentes no git.
+After this process is finished and the codes are mixed, a new release ramification is created and the card state is changed to build.
 
-Depois que esse processo termina e todos os códigos são mesclados, uma nova ramificação de release é criada e o estado do cartão é alterado para "build".
-
-* **Releases Deployed:** os cartões nessa coluna dão visibilidade de onde estão implantados os builds da hipótese.
+* **Releases Deployed:** the cards on this column show where the hypothesis builds are implemented.
 
 ![](https://lh6.googleusercontent.com/da5Jdg51wg8EAIJaGTvt9VsAzdn00RIBNJxieqhSVsPVzdS_bo066rGVvk_Olne6O-Jk_oaVT88EFbqPUvtsKdEZ_7mnreLadEmM2_R1Sm2GV3-tuWMXkW0EGZwpjJ3BytFKGwsI)
 
-Quando uma hipótese é movida para coluna Ready To Go, você indica ao sistema que aquele cartão pode passar pelo processo de Generate Release Candidate. Em outras palavras, a hipótese se transformará em uma release branch da release master presente no seu git.
+When a hypothesis is moved to the **Ready to Go** column, you indicate to the system that a specific card can go through a **Generate Release Candidate** process, which means the hypothesis will transform into a branch release of the master release on your git.   
+
 
