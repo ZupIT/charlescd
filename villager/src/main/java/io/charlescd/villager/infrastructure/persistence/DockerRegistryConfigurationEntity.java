@@ -30,7 +30,7 @@ public class DockerRegistryConfigurationEntity {
     public DockerRegistryConnectionData connectionData;
     public LocalDateTime createdAt;
 
-    public static abstract class DockerRegistryConnectionData {
+    public abstract static class DockerRegistryConnectionData {
         public String address;
         public String host;
 
