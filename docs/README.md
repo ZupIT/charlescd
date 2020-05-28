@@ -37,7 +37,7 @@ The methodology implemented by Charles brings a lot of advantages such as:
 
 The plataform was built using a microservice approach and it has the following modules:
 
-![Charles architecture](.gitbook/assets/charles_c.d_v3.png)
+![Charles architecture](.gitbook/assets/arquitetura-charles-nova%20%283%29.png)
 
 * `charlescd-ui:`  mirrors on front-end the workspace configuration, users, modules, hypothesis and boards, it is the plataform graphic interface.  
 * `charles-moove:` manages workspace, users, modules, hypothesis and boards, it is the whole plataform structure.   
