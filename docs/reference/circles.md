@@ -4,7 +4,7 @@ Circles are the main approach related to the **new deploy concept** brought by C
 
 ![Circle generation with Charles deployments](../.gitbook/assets/circles_bg_white.jpg)
 
- Circles indicate client segmentation and also support the version management created for a specific audience. 
+Circles indicate clients segmentation and also support the version management created for a specific audience. 
 
 Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
@@ -31,16 +31,16 @@ The segmentations are a subset of characteristics that you define to put all you
 
 
 {% hint style="info" %}
-**The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north and another one with engineers from the southeast and a third one with all brazilian engineers. 
+**The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and, in this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north region, another one with engineers from the southeast and a third one with all brazilian engineers.
 {% endhint %}
 
 
 
 ### **Manual segmentation**
 
-On this kind of segmentation, you define the logic which the circle will follow to build a match with predetermined characteristics.
+On this kind of segmentation, you define the logic the circle will follow to build a match with predetermined characteristics.
 
-This characteristics can be defined based on the following logic:
+This characteristics can be defined based on the following logics:
 
 * Equal to
 * Not Equal
@@ -53,21 +53,19 @@ This characteristics can be defined based on the following logic:
 
 Let’s see more examples:
 
-![Exemplo de segmenta&#xE7;&#xE3;o manual](https://lh6.googleusercontent.com/5hg_2ZW34hb69J69-MtDNctjLJX5-gwBP9kgN6Bto9_tm2tK9DL-rgmvTleoVihRft37P2QmcA6MzBc3Uj_vguGM9VQVc9fhKEpittLr8LXxvThC3dewpNGsEYSHXp6KfhX8GGx_)
+![Example of manual segmentation](https://lh6.googleusercontent.com/5hg_2ZW34hb69J69-MtDNctjLJX5-gwBP9kgN6Bto9_tm2tK9DL-rgmvTleoVihRft37P2QmcA6MzBc3Uj_vguGM9VQVc9fhKEpittLr8LXxvThC3dewpNGsEYSHXp6KfhX8GGx_)
 
 ### **Segmentation by CSV importation**
 
-This segmentation is used only in the first CSV column to create rules. So, the first line in the first column must contain the key name and the same one must be informed on the key field.  
+This segmentation is used only in the first CSV column to create rules. The first line in the first column must contain the key name and the same one must be informed on the key field.  
 
 
-![](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rS51dpK-0mabN_xP4%2Fimage.png?alt=media&token=10e21e5d-48bd-496a-bbac-dac677732fd2)
+![Example of CSV importation](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rS51dpK-0mabN_xP4%2Fimage.png?alt=media&token=10e21e5d-48bd-496a-bbac-dac677732fd2)
 
-After you have finished the file upload and saved the configuration, an overview will show up demonstrating how your segmentation is. 
-
-  
+After you have finished the file upload and saved the configuration, an overview will show up demonstrating how your segmentation is.   
 
 
-![overview](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rTw1eEWjh8orNB-pS%2Fimage.png?alt=media&token=a9ac51d8-985b-4b67-9f98-5ffa276faee6)
+![Overview of CSV importation](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rTw1eEWjh8orNB-pS%2Fimage.png?alt=media&token=a9ac51d8-985b-4b67-9f98-5ffa276faee6)
 
 This way allows you to extract from an external client’s IDs base, a specific profile and import them directly on Charles.   
 
@@ -78,14 +76,14 @@ OR is the only logic operator supported on this segmentation.
 
 ## How to integrate circle with services?
 
-Once the circle which the user belongs to is detected, this information must be passed on to all next requests through the x-circle-id parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward, lets see the example below:   
+Once the circle which the user belongs to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. CharlesCD detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below:   
 
 
 ![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
 
-At some point during the interaction of the user and your application **\(App1\)**, for example,  the login - the Identify service of `charles-moove` must be triggered to get the circle. 
+At some point during the interaction of the user and your application **\(App1\)**, for example,  the login - the Identify service of `charles-moove` - must be triggered to get the circle. 
 
-By that, the ID must be passed on as value in the `x-circle-id` parameter located on the header of all next requests of your services **\(`App2`\).** Charles is responsible to disseminate this information because when it is received on Kubernetes, it will be used to redirect the request to a corresponding release version associated with a circle.   
+By that, the ID must be passed on as value in the `x-circle-id` parameter located on the header of all next requests of your services **\(`App2`\).** Charles is responsible to disseminate this information because when it's received on Kubernetes, it will be used to redirect the request to a corresponding release version associated with a circle.   
   
 If the `x-circle-id` is not passed on, all the requests will be redirected to **Default** versions, which means it will use the standard releases of your applications, without a specific segmentation. 
 
@@ -93,30 +91,31 @@ If the `x-circle-id` is not passed on, all the requests will be redirected to **
 
 We will give an example of a specific scenario where your environment has two services: **Application A** and **Application B** and your circles must use the following versions:
 
-![Circle versions](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M4VCcZvw3TLso5XevrY%2F-M4VGlWPbiUYxICumXSx%2F18.png?alt=media&token=9d73af71-a87f-49e9-839a-d4ef37cf1fcd)
+![Circle versions](../.gitbook/assets/versoes_diferentes_na_minha_release%20%282%29.png)
 
+  
 So, the redirect logic using **`x-circle-id`** will be:
 
 1. The user sends to the header:  `x-circle-id="Círculo QA"`. On this circle, the request will be redirect to a **X version** of the service on **Application A** and the **Y version** of the service on **Application B**. 
 2. The user sends to the header:  `x-circle-id=”Circulo Dev”`. On this circle, the request will be redirect to the **Z version** of the service on **Application A** and **Z version** of the service on **Application B.** 
 
-![Example: Application A and Application B](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M4VCcZvw3TLso5XevrY%2F-M4VGrTnQVuiolC4x9NK%2F19.png?alt=media&token=d4eacbfe-7fdd-4cc7-89d5-54fd7653986c)
+![Example of Application A and Application B](../.gitbook/assets/versoes_diferentes_na_minha_release_ii%20%283%29.png)
 
 ## How to route your circles with Kubernetes Clusters? 
 
-**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) ****and [**Istio**](https://istio.io/docs/) ****on traffic routing, think about a scenario where there are two circles:
+**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) ****and [**Istio**](https://istio.io/docs/) ****on traffic routing. Let's think about a scenario where there are two circles:
 
 * Campinas residents \(identify by ID 1234\);
-* Belo Horizonte residents \(identify by ID 8746\).
+* Belo Horizonte's residents \(identify by ID 8746\).
 
 Both circles were implemented with service releases called **'application'**, but with different versions:
 
-* Campinas residents \(1234\): version 2, v2.
-* Belo Horizonte residents \(8746\): version 3, v3.
+* Campinas' residents \(1234\): version 2, v2.
+* Belo Horizonte's residents \(8746\): version 3, v3.
 
 Besides that, there is a default \(v1\) version for users that don't fit in any specific circle.
 
-Let's supposed that, to make a request to identify a user, an id 8756 is returned. This information will be passed by the next service interaction through the header `x-circle-id`. The image below shows how Charles uses the internal resources to route the correct release. 
+Let's supposed that, to make a request to identify a user, an ID 8756 is returned. This information will be passed by the next service interaction through the header `x-circle-id`. The image below shows how Charles uses the internal resources to route the correct release. 
 
 ![](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7yHDr-VbK_tS0wCwGh%2F-M7yIFBInQf9HruABKEt%2FScreen_Shot_2020-05-22_at_10.08.35.png?alt=media&token=7b73c615-db6c-438e-a142-e4c131b6d606)
 
@@ -127,6 +126,5 @@ The request will be received by Ingress, which performs all the routing control 
 1. Once the request entry is allowed, Virtual Service inquiries the traffic routing rules to be applied on the addressed host. In this case, the evaluation happens through`x-circle-id` header specification, in a way that the traffic corresponds to the **application** service. 
 2. Besides the service, it is also necessary to know which subset is defined on the register. This verification is made on **Destination rules**. 
 3. The traffic redirect is peformed based on previous information, until it gets to the service version. 
-
-If the `x-circle-id` is not informed, there is a rule defined by Virtual Service that will forward to the default version \(v1\). 
+4. If the `x-circle-id` is not informed, there is a rule defined by Virtual Service that will forward to the default version \(v1\). 
 
