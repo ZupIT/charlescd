@@ -19,15 +19,20 @@ package io.charlescd.circlematcher.domain.service.impl;
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest;
 import io.charlescd.circlematcher.api.request.SegmentationRequest;
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest;
-import io.charlescd.circlematcher.domain.*;
+import io.charlescd.circlematcher.domain.Condition;
+import io.charlescd.circlematcher.domain.KeyMetadata;
+import io.charlescd.circlematcher.domain.LogicalOperatorType;
+import io.charlescd.circlematcher.domain.Node;
+import io.charlescd.circlematcher.domain.NodeType;
+import io.charlescd.circlematcher.domain.Segmentation;
+import io.charlescd.circlematcher.domain.SegmentationType;
 import io.charlescd.circlematcher.domain.service.SegmentationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SegmentationServiceImpl implements SegmentationService {
@@ -35,7 +40,8 @@ public class SegmentationServiceImpl implements SegmentationService {
     private SegmentationRepository segmentationRepository;
     private KeyMetadataRepository keyMetadataRepository;
 
-    public SegmentationServiceImpl(SegmentationRepository segmentationRepository, KeyMetadataRepository keyMetadataRepository) {
+    public SegmentationServiceImpl(SegmentationRepository segmentationRepository,
+                                   KeyMetadataRepository keyMetadataRepository) {
         this.segmentationRepository = segmentationRepository;
         this.keyMetadataRepository = keyMetadataRepository;
     }
@@ -121,22 +127,22 @@ public class SegmentationServiceImpl implements SegmentationService {
     }
 
     private void recursiveNodeExtraction(Node node, List<Node> nodes) {
-        if (NodeType.CLAUSE.equals(node.getType()) &&
-                LogicalOperatorType.AND.equals(node.getLogicalOperator()) ||
-                NodeType.RULE.equals(node.getType())) {
+        if (NodeType.CLAUSE.equals(node.getType())
+                && LogicalOperatorType.AND.equals(node.getLogicalOperator())
+                || NodeType.RULE.equals(node.getType())) {
 
             nodes.add(node);
 
-        } else if (NodeType.CLAUSE.equals(node.getType()) &&
-                node.getLogicalOperator().equals(LogicalOperatorType.OR)) {
+        } else if (NodeType.CLAUSE.equals(node.getType())
+                && node.getLogicalOperator().equals(LogicalOperatorType.OR)) {
             node.getClauses().forEach(item -> recursiveNodeExtraction(item, nodes));
         }
     }
 
     private boolean isItConvertibleToKv(Node node) {
-        return NodeType.RULE.equals(node.getType()) &&
-                node.getContent() != null &&
-                Condition.EQUAL.name().equals(node.getContent().getCondition());
+        return NodeType.RULE.equals(node.getType())
+                && node.getContent() != null
+                && Condition.EQUAL.name().equals(node.getContent().getCondition());
     }
 
     private boolean shouldDecompose(SegmentationRequest segmentationRequest) {

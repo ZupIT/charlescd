@@ -19,12 +19,11 @@ package io.charlescd.circlematcher.api.resource;
 import io.charlescd.circlematcher.api.request.IdentificationRequest;
 import io.charlescd.circlematcher.api.response.IdentificationResponse;
 import io.charlescd.circlematcher.domain.service.IdentificationService;
+import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @RestController
 public class IdentificationResource {
