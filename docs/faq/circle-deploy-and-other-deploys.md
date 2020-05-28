@@ -20,6 +20,8 @@ In traditional deploys, it's common that the application has to pass into differ
 
 At blue-green deployment, it's possible to create two identical environments in your infrastructure, but with different versions of an application implemented in each other. In this way, it's possible to test your hypothesis that, once confirmed, can be migrated to one version to another. 
 
+![Process of blue-green deploy](../.gitbook/assets/blue_green.png)
+
 
 
 ![Process of circle deploy](../.gitbook/assets/deploy_em_circulos%20%281%29.png)
