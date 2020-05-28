@@ -91,7 +91,7 @@ If the `x-circle-id` is not passed on, all the requests will be redirected to **
 
 We will give an example of a specific scenario where your environment has two services: **Application A** and **Application B** and your circles must use the following versions:
 
-![Circle versions](../.gitbook/assets/versoes_diferentes_na_minha_release%20%282%29.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_eng.png)
 
   
 So, the redirect logic using **`x-circle-id`** will be:
@@ -99,7 +99,7 @@ So, the redirect logic using **`x-circle-id`** will be:
 1. The user sends to the header:  `x-circle-id="Círculo QA"`. On this circle, the request will be redirect to a **X version** of the service on **Application A** and the **Y version** of the service on **Application B**. 
 2. The user sends to the header:  `x-circle-id=”Circulo Dev”`. On this circle, the request will be redirect to the **Z version** of the service on **Application A** and **Z version** of the service on **Application B.** 
 
-![Example of Application A and Application B](../.gitbook/assets/versoes_diferentes_na_minha_release_ii%20%283%29.png)
+![Example of Application 1 and Application 2](../.gitbook/assets/versoes_diferentes_na_minha_release_ii_eng.png)
 
 ## How to route your circles with Kubernetes Clusters? 
 
