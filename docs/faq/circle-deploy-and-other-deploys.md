@@ -12,11 +12,17 @@ In traditional deploys, it's common that the application has to pass into differ
 
 ![Process of traditional deploy ](../.gitbook/assets/deploy-tradicional.png)
 
-![Processo of circle deploy](../.gitbook/assets/circles_bg_white.jpg)
+![Process of circle deploy](../.gitbook/assets/deploy_em_circulos%20%283%29.png)
+
+
 
 ## Circle deploy x Blue-green deploys
 
 At blue-green deployment, it's possible to create two identical environments in your infrastructure, but with different versions of an application implemented in each other. In this way, it's possible to test your hypothesis that, once confirmed, can be migrated to one version to another. 
+
+
+
+![Process of circle deploy](../.gitbook/assets/deploy_em_circulos%20%281%29.png)
 
 ## Circle deploy x Canary release 
 
@@ -28,9 +34,9 @@ With Charles, the circle deploy logic follows a pattern similar to parallel chan
 
 The main difference of Charles is that, if you find any error ou you have a hypothesis alredy validated, the reverse is easily done: you can take users off the circle or make a deploy of another version with that group or even bring a version of your application to [**open sea**](https://docs.charlescd.io/v/v0.2.1-en/key-concepts#open-sea). 
 
-![Processo canary release deploy](../.gitbook/assets/deploys-em-circulos-vs.-canary-release%20%284%29.png)
+![Process of Canary Release](../.gitbook/assets/deploy_em_circulos_x_canary_releases.png)
 
-![Process of circle deploy](../.gitbook/assets/circles_bg_white.jpg)
+![Process of circle deploy](../.gitbook/assets/deploy_em_circulos.png)
 
 
 
