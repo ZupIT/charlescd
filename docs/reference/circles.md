@@ -10,7 +10,11 @@ Once the right people are chosen to have access to your release associated to a 
 
 ## Active and inactive circles
 
-O que define se um círculo é ativo ou não é a existência de releases, isto é, de versões implantadas para aquele segmentação de usuários. Logo, os círculos ativos são aqueles que possuem releases implantadas, enquanto os círculos inativos ainda não possuem nenhuma delas.
+The existence of releases defines if a circle is active or not, which is the implemented versions for users segmentation. Therefore, active circles have implemented releases while the inactive circle doesn't have any.
+
+ 
+
+![Active and Inactive circle filter](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rKxDdQhwf1rfMyili%2F-M7rMicKEB9xYtEJ-28B%2Fchrome-capture%20%282%29.gif?alt=media&token=04dfdbc0-4976-489e-aee4-44ec4946640f)
 
 ## How to create circles?
 
@@ -21,17 +25,22 @@ To create a circle, you just have to follow these steps:
 **3.** Define a segmentation.  
 **4.** \[Optional\] Implement a release.
 
-![Exemplo de como criar um c&#xED;rculo](../.gitbook/assets/criar-circulo.gif)
+![  How to create a circle](../.gitbook/assets/criar-circulo.gif)
 
-As segmentações são um conjunto de características que você define para agrupar seus usuários nos círculos do Charles. Para realizar essa ação, é possível segmentar seus usuários através do preenchimento de informações de forma manual ou por meio da importação de um arquivo csv.
+The segmentations are a subset of characteristics that you define to put all your users together in a circle. To make this happen, it is possible to segment your users by **filling in information manually** or through a **CVS file importation**.   
 
-Uma grande vantagem de utilizar as segmentações é porque, com elas, é possível fazer combinações lógicas entre vários atributos para criar diferentes tipos de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “profissão” e “região”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
+
+{% hint style="info" %}
+**The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north and another one with engineers from the southeast and a third one with all brazilian engineers. 
+{% endhint %}
+
+
 
 ### **Manual segmentation**
 
-Neste tipo de segmentação, você define as lógicas que o círculo deve seguir para compor um match com usuários que atendam às características pré-determinadas.
+On this kind of segmentation, you define the logic which the circle will follow to build a match with predetermined characteristics.
 
-Essas características podem ser definidas com base nas lógicas de:
+This characteristics can be defined based on the following logic:
 
 * Equal to
 * Not Equal
@@ -42,69 +51,82 @@ Essas características podem ser definidas com base nas lógicas de:
 * Between
 * Starts With
 
-Isso significa que, ao setar na plataforma do Charles uma segmentação considerando um dessas variáveis acima, o sistema irá retornar com um círculo cuja base será composta por estes usuários.
-
-Vamos a alguns exemplos:
+Let’s see more examples:
 
 ![Exemplo de segmenta&#xE7;&#xE3;o manual](https://lh6.googleusercontent.com/5hg_2ZW34hb69J69-MtDNctjLJX5-gwBP9kgN6Bto9_tm2tK9DL-rgmvTleoVihRft37P2QmcA6MzBc3Uj_vguGM9VQVc9fhKEpittLr8LXxvThC3dewpNGsEYSHXp6KfhX8GGx_)
 
 ### **Segmentation by CSV importation**
 
-Neste tipo de segmentação, é utilizada apenas a primeira coluna do csv para criar as regras. O único operador lógico suportado até o momento é o OR.
+This segmentation is used only in the first CSV column to create rules. So, the first line in the first column must contain the key name and the same one must be informed on the key field.  
 
-Na prática, essa modalidade permite que você possa, por exemplo, extrair de uma database externa os IDs dos clientes com um perfil específico e importá-los direto na plataforma do Charles.
+
+![](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rS51dpK-0mabN_xP4%2Fimage.png?alt=media&token=10e21e5d-48bd-496a-bbac-dac677732fd2)
+
+After you have finished the file upload and saved the configuration, an overview will show up demonstrating how your segmentation is. 
+
+  
+
+
+![overview](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rTw1eEWjh8orNB-pS%2Fimage.png?alt=media&token=a9ac51d8-985b-4b67-9f98-5ffa276faee6)
+
+This way allows you to extract from an external client’s IDs base, a specific profile and import them directly on Charles.   
+
+
+{% hint style="warning" %}
+OR is the only logic operator supported on this segmentation. 
+{% endhint %}
 
 ## How to integrate circle with services?
 
-Uma vez detectado o [círculo ao qual o usuário pertence](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro x-circle-id no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
+Once the circle which the user belongs to is detected, this information must be passed on to all next requests through the x-circle-id parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward, lets see the example below:   
+
 
 ![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
 
-Na prática, em algum momento durante a iteração do usuário com a sua aplicação \(App1\) - como no login, por exemplo - o `charles-circle-matcher` \(_Circle\_Matcher_\) **-** deverá ser acionado para obter o círculo.
+At some point during the interaction of the user and your application **\(App1\)**, for example,  the login - the Identify service of `charles-moove` must be triggered to get the circle. 
 
-Com isso, o ID deve ser repassado como valor no parâmetro x-circle-id localizado no header da requisição das próximas chamadas \(App2\). O Charles é responsável por propagar essa informação que, quando recebida no Kubernetes, seja utilizada para redirecionar a requisição para a versão correspondente ao deploy realizado no círculo.
-
-Caso o x-circle-id não seja repassado, todas as requisições serão redirecionadas para versões de “Mar Aberto”, ou seja, para releases padrões das suas aplicações sem uma segmentação específica.
+By that, the ID must be passed on as value in the `x-circle-id` parameter located on the header of all next requests of your services **\(`App2`\).** Charles is responsible to disseminate this information because when it is received on Kubernetes, it will be used to redirect the request to a corresponding release version associated with a circle.   
+  
+If the `x-circle-id` is not passed on, all the requests will be redirected to **Default** versions, which means it will use the standard releases of your applications, without a specific segmentation. 
 
 ### **Mix of services with different versions of my release** 
 
-Para facilitar seu entendimento, vamos exemplificar com um um cenário onde a sua stack possui dois serviços: **Aplicação A** e **Aplicação B,** e os seus círculos devem fazer o uso das seguintes versões:
+We will give an example of a specific scenario where your environment has two services: **Application A** and **Application B** and your circles must use the following versions:
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release.png)
+![Circle versions](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M4VCcZvw3TLso5XevrY%2F-M4VGlWPbiUYxICumXSx%2F18.png?alt=media&token=9d73af71-a87f-49e9-839a-d4ef37cf1fcd)
 
-Sendo assim, a lógica de redirecionamento utilizando o x-circle-id será:
+So, the redirect logic using **`x-circle-id`** will be:
 
-1. O usuário envia no header: `x-circle-id=”Círculo QA”`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
-2. O usuário envia no header: `x-circle-id=”Circulo Dev”`. Nesse círculo, a chamada será redirecionada para a **versão Z** do serviço **Aplicação A e a versão Z** do serviço **Aplicação B.**
+1. The user sends to the header:  `x-circle-id="Círculo QA"`. On this circle, the request will be redirect to a **X version** of the service on **Application A** and the **Y version** of the service on **Application B**. 
+2. The user sends to the header:  `x-circle-id=”Circulo Dev”`. On this circle, the request will be redirect to the **Z version** of the service on **Application A** and **Z version** of the service on **Application B.** 
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release_ii%20%282%29.png)
+![Example: Application A and Application B](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M4VCcZvw3TLso5XevrY%2F-M4VGrTnQVuiolC4x9NK%2F19.png?alt=media&token=d4eacbfe-7fdd-4cc7-89d5-54fd7653986c)
 
 ## How to route your circles with Kubernetes Clusters? 
 
-Para entendermos melhor como o **Charles** envolve o [Kubernetes](https://kubernetes.io/docs/home/) e o [Istio](https://istio.io/docs/) no roteamento de tráfego, considere o seguinte cenário onde existem dois círculos:
+**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) ****and [**Istio**](https://istio.io/docs/) ****on traffic routing, think about a scenario where there are two circles:
 
-* Moradores de Campinas \(identificado pelo ID 1234\);
-* Moradores de Belo Horizonte \(identificado pelo ID 8746\).
+* Campinas residents \(identify by ID 1234\);
+* Belo Horizonte residents \(identify by ID 8746\).
 
-Em ambos círculos foram implantadas releases do serviço chamado "application", entretanto com versões diferentes:
+Both circles were implemented with service releases called **'application'**, but with different versions:
 
-* Moradores de Campinas \(1234\): utiliza a versão v2.
-* Moradores de Belo Horizonte \(8746\): utiliza a versão v3.
+* Campinas residents \(1234\): version 2, v2.
+* Belo Horizonte residents \(8746\): version 3, v3.
 
-Além disso, existe uma versão default \(v1\) para usuários que não se encaixam em algum círculo específico.
+Besides that, there is a default \(v1\) version for users that don't fit in any specific circle.
 
-Suponha que, ao realizar a requisição para identificação do usuário, seja retornado o id 8756. Com isso, essa informação deverá ser repassada nas próximas interações com serviços através do header x-circle-id. A imagem abaixo retrata como que, internamente, o Charles utiliza os recursos para rotear para a release correta:
+Let's supposed that, to make a request to identify a user, an id 8756 is returned. This information will be passed by the next service interaction through the header `x-circle-id`. The image below shows how Charles uses the internal resources to route the correct release. 
 
-![](../.gitbook/assets/20%20%281%29.png)
+![](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7yHDr-VbK_tS0wCwGh%2F-M7yIFBInQf9HruABKEt%2FScreen_Shot_2020-05-22_at_10.08.35.png?alt=media&token=7b73c615-db6c-438e-a142-e4c131b6d606)
 
-Ao realizar a implantação de uma versão em um círculo, o Charles realiza todas as configurações para que o roteamento seja feito da maneira correta. Entretanto, para entender melhor como ele acontece, vamos utilizar um cenário onde uma requisição vem de um serviço fora da stack, como mostra na figura abaixo:
+When performing a version implementation in a circle, Charles makes all the configuration so that the routing is correctly done. To understand better how this works, let's use a scenario where a request comes from a service outside the stack, see the image above.
 
-1. A requisição será recebida pela Ingress, que realiza o controle do tráfego para a malha de serviços.  
-2. Uma vez permitida a entrada da requisição, o Virtual Service consulta o conjunto de regras de roteamento de tráfego a serem aplicadas no host endereçado. Nesse caso, a avaliação acontece através da especificação do header x-circle-id, de maneira que o tráfego corresponda ao serviço "application".  
-3. Além do serviço, também é necessário saber qual subconjunto definido no registro. Essa verificação é feita no Destination Rules.  
-4. O redirecionamento do tráfego é realizado com base nas informações anteriores, chegando então à versão do serviço.  
+The request will be received by Ingress, which performs all the routing control to the service mesh.
 
-Caso o x-circle-id não seja informado, existe uma regra definida no Virtual Service que irá encaminhar para a versão padrão \(v1\).
+1. Once the request entry is allowed, Virtual Service inquiries the traffic routing rules to be applied on the addressed host. In this case, the evaluation happens through`x-circle-id` header specification, in a way that the traffic corresponds to the **application** service. 
+2. Besides the service, it is also necessary to know which subset is defined on the register. This verification is made on **Destination rules**. 
+3. The traffic redirect is peformed based on previous information, until it gets to the service version. 
 
-![](https://lh3.googleusercontent.com/lDpIwX99uSkIyT08s5R5d5wakyTpDjgc2NUmERB2M5HK2QVSXRsitpB5QXyMHTGUXtXGgG5Ib4xCO2WW1rn2Rhf5Jihuc7vZKT4A_5GLImUtwkS3fBw1EqbGafbIQgIKyQHLz_1t)
+If the `x-circle-id` is not informed, there is a rule defined by Virtual Service that will forward to the default version \(v1\). 
 

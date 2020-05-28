@@ -11,13 +11,15 @@ If you pass an attribute that is out of the configured conditions on the circles
 
 ## Circles identification
 
-Se após a criação do círculo for necessária a utilização do Circle Matcher para testar suas regras de segmentação, você pode integrar nas suas aplicações o recurso Identify do módulo `charles-circle-matcher` para detectar os círculos aos quais o seu usuário pertence.
+If after the circle creation you notice it is necessary the use of the Circle Matcher to test your segmentation rules, you can integrate to your application the `charles-circle-matcher` module Identify resource, so you will be able to detect circles which your user belongs to.
 
-Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
+For example, if you use the following parameters to segment:  
+
 
 ![](https://lh6.googleusercontent.com/q573-961WtpntVK8NfXXvPgzSPrxLwxjx3QXRqM3vBlHFM8nAoDkpn1KD26Zfw3_wJtjnhVldYcwRUUzhbveEvqJz6n16NQFkxi0S3hh8rk6Y7OUmWtnBOl_qJekzoymQ64mFF8k)
 
-Ao realizar a requisição de identificação com as seguintes informações, círculos compatíveis serão retornados:
+When performing the identification request with the following information, compatible circles will return.   
+
 
 {% api-method method="get" host="https:" path="//api.charles-circle-matcher.com/identify" %}
 {% api-method-summary %}
@@ -41,7 +43,7 @@ Workspace's ID
 NY
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="Job Title" type="string" required=false %}
+{% api-method-parameter name="Profession" type="string" required=false %}
 Lawyer 
 {% endapi-method-parameter %}
 
@@ -78,15 +80,17 @@ Stony Brook
 {% endapi-method-spec %}
 {% endapi-method %}
 
-Como no nosso exemplo existem círculos correspondentes com as informações sobre o usuário, o charles-circle-matcher está retornando uma lista com eles. Neste caso, dois círculos se encaixaram: NY Lawyers e Stony Brook’s Citizens.
+As our example shows circles with corresponding information about a user, charles-circle-matcher is returning a list with them. In this case, two circles fit in to: NY Lawyers e Stony Brook’s Citizens.
 
-Nessa requisição, apenas o parâmetro x-application-id é obrigatório. O body é totalmente flexível, porém vale lembrar que as chaves devem ter a mesma nomenclatura definida nas regras de segmentação do círculo. Veja no caso a seguir:
+**‌**On this request only the x-application-id is required. The body is totally flexible, however it is important to remember the keys must have the same defined name on the segmentation circle rules. Check this next example:  
+
 
 ![](https://lh3.googleusercontent.com/FdPVIHDFeYJCkC_6Y1P3ZOBSqmNlGkl9q2_XyIayNKQo2Mp9IXBY7PzvpzW0Mej1P9Ox8AG12QiA1H0w5uozWP1UYWafcfwXLKBOf3G-ObIVoPHtYGOlWd5Ju01uLuScqtCn8qQ1)
 
-O círculo “Stony Brook’s Citizens” foi criado para a identificar usuários que tenham como característica a chave “city” e o exato valor “Stony Brook”. Sendo assim, ele não estará na listagem ao realizar uma requisição para o Identify caso seja informado o body como no exemplo abaixo.
+The Stony Brook’s Citizens circle was created to identify users that have the same characteristic key ‘city’. Thus, it will not be on the list when making a request to Identify, if the body is informed like in the example below:
 
-Outro ponto é que, quando o usuário não se enquadra em nenhuma segmentação, o sistema retorna indicando que ele se encaixa no “Mar Aberto”, isto é, em uma espécie de segmentação geral que inclui todos os usuários que estão fora de um círculo específico:
+When the user doesnt fit to any segmentation, the system returns indicating that it fits in the open sea, which means a general segmentation that includes all users out of a specific circle.   
+
 
 {% api-method method="get" host="https://" path="api.charles-circle-matcher.com/identify" %}
 {% api-method-summary %}
@@ -141,5 +145,6 @@ List with all circles a user belongs to
 {% endapi-method-spec %}
 {% endapi-method %}
 
-Uma boa prática é realizar essa identificação sempre que o usuário faz login na aplicação. Entretanto, isso pode ser alterado de acordo com a necessidade da sua regra de negócio.
+It is a good thing to always make this identification when the user logs in the application. Anyhow, this can be altered according to your business rules.  
+
 
