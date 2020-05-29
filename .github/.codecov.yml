@@ -7,6 +7,20 @@ coverage:
         flags: 
           - villager
         if_ci_failed: error
+    patch:
+      default: off
+      villager:
+        target: 50%
+        flags: 
+          - villager
+        if_ci_failed: error
+    changes:
+      default: off
+      villager:
+        target: 50%
+        flags: 
+          - villager
+        if_ci_failed: error
 
 flags:
   villager:
