@@ -32,5 +32,5 @@ Now, just follow the next steps to the [**Open Sea**](https://app.gitbook.com/@z
 
 After that, Charles will provide the created release on cluster in the open sea. The deploy status will be show and updated along the process. 
 
-![Example of how to make your first deploy in open sea](../.gitbook/assets/default-override-release%20%281%29.gif)
+![Example of a deploy in open sea](../.gitbook/assets/primeiro-deploy%20%281%29.gif)
 
