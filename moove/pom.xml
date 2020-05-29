@@ -38,7 +38,7 @@
         <zup.tracing.version>0.0.7</zup.tracing.version>
         <jboss.resteasy.version>3.1.4.Final</jboss.resteasy.version>
         <snakeyaml.version>1.25</snakeyaml.version>
-        <keycloak.version>7.0.0</keycloak.version>
+        <keycloak.version>9.0.0</keycloak.version>
         <csv.validator.version>1.1</csv.validator.version>
     </properties>
 
