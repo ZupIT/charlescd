@@ -88,7 +88,7 @@ Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`**será:
 1. O usuário envia no header: `x-circle-id="Círculo QA"`. Nesse círculo, a chamada será redirecionada para a **versão X** do serviço **Aplicação A** e a **versão Y** do serviço **Aplicação B**. 
 2. O usuário envia no header: `x-circle-id=”Circulo Dev”`. Nesse círculo, a chamada será redirecionada para a **versão Z** do serviço **Aplicação A e a versão Z** do serviço **Aplicação B.**
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release_ii.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_ii-1-.png)
 
 ## Como rotear círculos com cluster de Kubernetes?
 
