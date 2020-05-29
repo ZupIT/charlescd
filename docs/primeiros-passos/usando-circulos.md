@@ -5,7 +5,7 @@ A partir do momento em que você começa a fazer seus deploys, o próximo passo 
 Para isso, siga os seguintes passos: 
 
 {% hint style="info" %}
-Certifique-se de que você já tenha instalado e configurado o o ****[**Circle Matcher**](https://docs.charlescd.io/referencia-1/circle-matcher) no [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace) ****antes de iniciar os passos abaixo. 
+Certifique-se de que você já tenha instalado e configurado o ****[**Circle Matcher**](https://docs.charlescd.io/referencia-1/circle-matcher) no [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace) ****antes de iniciar os passos abaixo. 
 {% endhint %}
 
 1. Criar círculo _\(incluir um exemplo técnico\)_; 
