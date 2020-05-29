@@ -162,6 +162,10 @@ databaseChangeLog:
   - include:
       file: db/changelog/includes/20200330160000_change_modules_git_configuration_foreign_key.yaml
   - include:
+      file: db/changelog/includes/20200402091100_alter_table_applications_add_status.yaml
+  - include:
+      file: db/changelog/includes/20200402110300_alter_table_applications_add_created_at.yaml
+  - include:
       file: db/changelog/includes/20200403034500_change_helm_repository_and_module_address_size_from_module_snapshots.yaml
   - include:
       file: db/changelog/includes/20200403034700_drop_table_modules_git_configurations.yaml
@@ -169,3 +173,71 @@ databaseChangeLog:
       file: db/changelog/includes/20200403100000_drop_foreign_key_constraint_from_git_configuration_id.yaml
   - include:
       file: db/changelog/includes/20200403110000_alter_table_artifact_snapshot_change_column_length.yaml
+  - include:
+      file: db/changelog/includes/20200406151900_alter_table_applications_add_git_configurations_id.yaml
+  - include:
+      file: db/changelog/includes/20200407134900_alter_table_applications_add_registry_configuration_id.yaml
+  - include:
+      file: db/changelog/includes/20200409140000_alter_table_applications_add_circle_matcher_url.yaml
+  - include:
+      file: db/changelog/includes/20200415110300_alter_table_circles_add_columns.yaml
+  - include:
+      file: db/changelog/includes/20200415170000_create_table_user_groups.yaml
+  - include:
+      file: db/changelog/includes/20200415171000_create_table_user_groups_users.yaml
+  - include:
+      file: db/changelog/includes/20200420163000_create_table_roles.yaml
+  - include:
+      file: db/changelog/includes/20200420163500_seeding_charles_rules.yaml
+  - include:
+      file: db/changelog/includes/20200422175000_create_workspaces_user_groups_table.yaml
+  - include:
+      file: db/changelog/includes/20200423144300_alter_table_applications_add_cd_configuration_id.yaml
+  - include:
+      file: db/changelog/includes/20200428110300_alter_table_modules_remove_columns.yaml
+  - include:
+      file: db/changelog/includes/20200428110400_drop_table_module_configurations.yaml
+  - include:
+      file: db/changelog/includes/20200428110500_drop_table_artifacts.yaml
+  - include:
+      file: db/changelog/includes/20200428110600_drop_table_hypotheses_circles.yaml
+  - include:
+      file: db/changelog/includes/20200428110700_alter_table_components_remove_columns.yaml
+  - include:
+      file: db/changelog/includes/20200428140000_drop_table_users_applications.yaml
+  - include:
+      file: db/changelog/includes/20200428140100_alter_table_modules_remove_not_null_constraints.yaml
+  - include:
+      file: db/changelog/includes/20200428150000_alter_table_components_add_threshold_columns.yaml
+  - include:
+      file: db/changelog/includes/20200428075700_rename_columns_application_id_to_workspace_id.yaml
+  - include:
+      file: db/changelog/includes/20200429180100_create_table_metric_configurations.yaml
+  - include:
+      file: db/changelog/includes/20200429235300_alter_table_workspaces_add_metric_configuration_id.yaml
+  - include:
+      file: db/changelog/includes/20200430202500_alter_table_module_snapshots_remove_columns.yaml
+  - include:
+      file: db/changelog/includes/20200430203000_alter_table_component_snapshots_remove_columns.yaml
+  - include:
+      file: db/changelog/includes/20200501215000_alter_table_users_add_is_root.yaml
+  - include:
+      file: db/changelog/includes/20200502215000_drop_table_problem.yaml
+  - include:
+      file: db/changelog/includes/20200505215000_add_not_null_constraints_to_modules_table.yaml
+  - include:
+      file: db/changelog/includes/20200507215000_admin-user-seed.yaml
+  - include:
+      file: db/changelog/includes/20200508150000_rename_table_roles_to_permissions.yaml
+  - include:
+      file: db/changelog/includes/20200508150500_create_table_roles_for_permissioning_profiles.yaml
+  - include:
+      file: db/changelog/includes/20200508151000_create_table_roles_permissions.yaml
+  - include:
+      file: db/changelog/includes/20200508151500_seed_table_roles.yaml
+  - include:
+      file: db/changelog/includes/20200508152000_seed_table_role_permissions.yaml
+  - include:
+      file: db/changelog/includes/20200508152500_rename_column_roles_from_workspace_associations.yaml
+  - include:
+      file: db/changelog/includes/20200513160800_alter_analyst_roles_and_description.yaml

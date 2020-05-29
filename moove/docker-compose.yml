@@ -11,9 +11,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=darwin
-      - POSTGRES_USER=darwin
-      - POSTGRES_PASSWORD=darwin
+      - POSTGRES_DB=charles
+      - POSTGRES_USER=charles
+      - POSTGRES_PASSWORD=charles
       - MAX_CONNECTIONS=300
     networks:
       - custom

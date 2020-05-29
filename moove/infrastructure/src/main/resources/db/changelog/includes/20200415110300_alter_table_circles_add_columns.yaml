@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200415110300-1
+      author: adauto.paula
+      comment: "Delete all records from table circles"
+      changes:
+        - sql:
+            sql: delete from circles
+
+  - changeSet:
+      id: 20201504110300-2
+      author: adauto.paula
+      comment: "Add default and workspace_id columns to circles table"
+      changes:
+        - addColumn:
+            tableName: circles
+            columns:
+              - column:
+                  name: default_circle
+                  type: boolean
+              - column:
+                  name: workspace_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_circle_workspace_id
+                    references: applications(id)
+                    nullable: false

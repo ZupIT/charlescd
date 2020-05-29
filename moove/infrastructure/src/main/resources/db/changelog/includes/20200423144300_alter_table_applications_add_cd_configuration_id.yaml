@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200423144300-1
+      author: monica.ribeiro
+      comment: "Add cd_configuration_id column on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: cd_configuration_id
+                  type: varchar(36)
