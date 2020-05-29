@@ -28,7 +28,18 @@ public class ModuleNameUtils {
         if (nameArray.length > 1) {
             return nameArray[1];
         }
+        this.thisMethodDoesNothing();
         return name;
     }
 
+    private void thisMethodDoesNothing(){
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+        System.out.println("I do nothing");
+    }
+    
 }
