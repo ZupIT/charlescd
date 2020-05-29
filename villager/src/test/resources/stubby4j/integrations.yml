@@ -70,7 +70,7 @@
       authorization-basic: "user:password"
     body: >
       {
-          "name": "charles-notifications",
+          "name": "charlescd-notifications",
           "tags": [
               "builder",
               "charles-crud-notifications",
