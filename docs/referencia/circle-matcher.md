@@ -65,16 +65,18 @@ UUID
 {% endapi-method-response-example-description %}
 
 ```
-[
-  {
-    "id": "6577ae92-648c-11ea-bc55-0242ac130003",
-    "name": "NY Lawyers"
-  },
-  {
-    "id": "6577b112-648c-11ea-bc55-0242ac130003",
-    "name": "Stony Brook's Citizens"
-  }
-]
+{
+  "circles": [
+    {
+      "id": "6577ae92-648c-11ea-bc55-0242ac130003",
+      "name": "NY Lawyers"
+    },
+    {
+      "id": "6577b112-648c-11ea-bc55-0242ac130003",
+      "name": "Stony Brook's Citizens"
+    }
+  ]
+}
 ```
 {% endapi-method-response-example %}
 {% endapi-method-response %}
@@ -118,12 +120,14 @@ Listagem de todos os círculos aos quais o usuário pertence
 {% endapi-method-response-example-description %}
 
 ```
-[
-  {
-    "id": "6577ae92-648c-11ea-bc55-0242ac130003",
-    "name": "Default"
-  }
-]
+{
+  "circles": [
+    {
+      "id": "6577ae92-648c-11ea-bc55-0242ac130003",
+      "name": "Default"
+    }
+  ]
+}
 ```
 {% endapi-method-response-example %}
 {% endapi-method-response %}
