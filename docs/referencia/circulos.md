@@ -69,7 +69,7 @@ O único operador lógico suportado nesta segmentação é o OR.
 
 Uma vez detectado o [**círculo ao qual o usuário pertence**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
-![](../.gitbook/assets/circle-matcher.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy.png)
 
 Na prática, em algum momento durante a interação do usuário com a sua aplicação \(**`App1`**\) -  por exemplo, o login - o serviço **`Identify`** do **`charles-circle-matcher`** deverá ser acionado para obter o círculo.
 
