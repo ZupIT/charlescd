@@ -16,6 +16,8 @@ Se seu repositório tem várias aplicações, cadastre-as como componentes e inf
 * **Nome**: o nome da aplicação, conforme está no repositório.
 * **Métricas**: latência \(ms\) e erro HTTP \(%\). Em ambos os casos, deve-se informar um valor de risco que você gostaria de ser alertado caso seu componente alcançasse ou ultrapassasse.
 
+![Tela de cria&#xE7;&#xE3;o de m&#xF3;dulo](../.gitbook/assets/criac-a-o-de-modulo%20%281%29.png)
+
 ## Componentes 
 
 {% hint style="info" %}
