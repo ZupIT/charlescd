@@ -36,7 +36,7 @@ Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
 
 Ao realizar a requisição de identificação com as seguintes informações, círculos compatíveis serão retornados.
 
-{% api-method method="post" host="https:" path="//api.charles-circle-matcher.com/identify" %}
+{% api-method method="post" host="https:" path="//api.charlescd-circle-matcher.com/identify" %}
 {% api-method-summary %}
 Identify
 {% endapi-method-summary %}
@@ -81,7 +81,7 @@ UUID
 {% endapi-method-spec %}
 {% endapi-method %}
 
-Como nesse exemplo existem círculos correspondentes com as informações sobre o usuário, o **`charles-moove`**retorna uma lista com eles. Aqui, dois círculos se encaixaram: NY Lawyers e Stony Brook’s Citizens.
+Como nesse exemplo existem círculos correspondentes com as informações sobre o usuário, o **`charlescd-circle-matcher`**retorna uma lista com eles. Aqui, dois círculos se encaixaram: NY Lawyers e Stony Brook’s Citizens.
 
 Nessa requisição, apenas o parâmetro **`X-Workspace-Id`** é obrigatório. O corpo da requisição é totalmente flexível, porém vale lembrar que as chaves devem ter a mesma nomenclatura definida nas regras de segmentação do círculo. Veja no caso a seguir:
 
@@ -89,7 +89,7 @@ Nessa requisição, apenas o parâmetro **`X-Workspace-Id`** é obrigatório. O 
 
 O círculo **Stony Brook’s Citizens** foi criado para a identificar usuários que tenham como característica a chave **`city`** e o exato valor **`Stony Brook`**. Sendo assim, ele não estará na listagem ao realizar uma requisição para o **`Identify`** caso seja informado o corpo da requisição como no exemplo abaixo:
 
-{% api-method method="post" host="https://" path="api.charles-circle-matcher.com/identify" %}
+{% api-method method="post" host="https://" path="api.charlescd-circle-matcher.com/identify" %}
 {% api-method-summary %}
 Identify
 {% endapi-method-summary %}
