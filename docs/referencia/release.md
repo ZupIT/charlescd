@@ -33,7 +33,7 @@ A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree
 Qualquer caso de sucesso ou erro será mostrado no estado do cartão da release.
 {% endhint %}
 
-**\[GIF DE CASOS DE SUCESSOS, ERROS E ANDAMENTO DE BUILDS\]**
+![Exemplo de como aparecem os status das releases](../.gitbook/assets/builts.png)
 
 ### **Releases por meio de imagens existentes no Docker Registry configurado**
 
