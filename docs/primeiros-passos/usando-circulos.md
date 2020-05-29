@@ -8,9 +8,9 @@ Para isso, siga os seguintes passos:
 Certifique-se de que você já tenha instalado e configurado o ****[**Circle Matcher**](https://docs.charlescd.io/referencia-1/circle-matcher) no [**workspace**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace) ****antes de iniciar os passos abaixo. 
 {% endhint %}
 
-1. Criar círculo _\(incluir um exemplo técnico\)_; 
-2. Utilizar circle matcher para verificar se as regras lógicas criadas para as segmentações estão identificando corretamente os usuários; 
-3. Fazer deploy no círculo criado anteriormente. 
+1. [**Crie seu círculo**](https://docs.charlescd.io/referencia/circulos)**.** 
+2. Utilize circle matcher para verificar se as regras lógicas criadas para as segmentações estão identificando corretamente os usuários; 
+3. Faça o deploy no círculo criado anteriormente. 
 
 ![](../.gitbook/assets/usando-circulos%20%281%29.gif)
 
