@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package execution
 
 import (
@@ -53,7 +69,7 @@ func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
 	opts := &options.FindOptions{
 		Sort: sort,
 	}
-	cur, err := executionManager.DB.FindAll(collection, context.TODO(), map[string]string{}, opts)
+	cur, err := executionManager.DB.FindAll(context.TODO(), collection, map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +97,7 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 	}
 
 	filter := bson.M{"_id": objectID}
-	err = executionManager.DB.FindOne(collection, context.TODO(), filter).Decode(&execution)
+	err = executionManager.DB.FindOne(context.TODO(), collection, filter).Decode(&execution)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +113,7 @@ func (executionManager *ExecutionManager) Create() (*primitive.ObjectID, error) 
 	}
 
 	newExecution.ID = primitive.NewObjectID()
-	result, err := executionManager.DB.Create(collection, context.TODO(), newExecution)
+	result, err := executionManager.DB.Create(context.TODO(), collection, newExecution)
 	if err != nil {
 		log.Println("ERROR", err)
 		return nil, err
@@ -124,7 +140,7 @@ func (executionManager *ExecutionManager) CreateExecutionStep(
 			"steps": newExecutionStep,
 		},
 	}
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +158,7 @@ func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}
@@ -169,7 +185,7 @@ func (executionManager *ExecutionManager) ExecutionFinished(executionID *primiti
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}
@@ -189,7 +205,7 @@ func (executionManager *ExecutionManager) UpdateExecutionStepStatus(executionID 
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}
