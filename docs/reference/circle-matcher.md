@@ -3,12 +3,12 @@
 Circle Matcher is a resource that allows you to validate if your [**circles**](https://docs.charlescd.io/v/v0.2.1-en/reference/circles) are in coherent segmentations. You can also use it in your applications to determine in which circle your users fit better. 
 
 {% hint style="info" %}
-One good practice is to realize this identification always when a user logs in the application. However, this can be changed according to your business needs. .
+One good practice is to always make this identification  when a user logs in the application. However, this can be changed according to your business needs. 
 {% endhint %}
 
-## Identifying circles through Circle ID
+## Identifying circles through CharlesCD
 
-Once you start using the interface, it's possible to notice that there are two ways to realize the circle identification. For that, access the **Circles** menu inside a **workspace** and select the icon indicated below: 
+Once you start using the interface, it's possible to notice that there are two ways to perform the circle identification. For that, access the **Circles** menu inside a **workspace** and select the icon indicated below: 
 
 ![Identifica&#xE7;&#xE3;o do &#xED;cone do Circle Matcher](../.gitbook/assets/chrome-capture.jpg)
 
@@ -18,23 +18,23 @@ The two ways to make this validation are:
 
 ![Circle identification with Default option.](../.gitbook/assets/circle-matcher-default.gif)
 
-* **JSON:** similar to the default option, with the difference that here you can copy and paste in **payload camp** a **JSON** of your productive environment instead of add manually. 
+* **JSON:** similar to the default option, with the difference that here you can copy and paste in **payload field** a **JSON** of your productive environment instead of adding manually. 
 
 ![Circle identification with JSON option. ](../.gitbook/assets/circle-matcher-json.gif)
 
 {% hint style="warning" %}
-If you pass informations that are off the preconfigured logic conditions in the circles, the system will return indicating that the user is on _Default_ circle, on the standard version of your application. 
+If you pass some information that are off the preconfigured logic conditions in the circles, the system will return indicating that the user is on _Default_ circle, on the standard version of your application. 
 {% endhint %}
 
 ## Circle identification through API
 
-You can integrate in your applications the **Identify** resource on the [`charle-moove`](https://github.com/ZupIT/charlescd/tree/master/moove) module to detect the circles the user belongs to.
+You can integrate in your applications the **Identify** resource on the [`charles-circle-matcher`](https://github.com/ZupIT/charlescd/tree/master/circle-matcher) module to detect the circles the user belongs to.
 
 For example, considering the use of the parameters below to segment: 
 
 ![](https://lh6.googleusercontent.com/q573-961WtpntVK8NfXXvPgzSPrxLwxjx3QXRqM3vBlHFM8nAoDkpn1KD26Zfw3_wJtjnhVldYcwRUUzhbveEvqJz6n16NQFkxi0S3hh8rk6Y7OUmWtnBOl_qJekzoymQ64mFF8k)
 
-Once you realize the requisition of identification with theses informations, compatible circles will be returned.
+Once you send the identification request with some information, compatible circles will be returned.
 
 {% api-method method="post" host="https:" path="//api.charles-moove.com/identify" %}
 {% api-method-summary %}
@@ -89,13 +89,13 @@ UUID
 {% endapi-method-spec %}
 {% endapi-method %}
 
-As the example above shows, there are correspondents circles with the given informations of the user, which means that **`charlescd-circle-matchere`** will return a list with all the circles. Here, there are two circles that fit with this description: NY Lawyers e Stony Brook’s Citizens.
+As the example above shows, there are correspondents circles with the given informations of the user, which means that **`charlescd-circle-matcher`** will return a list with all the circles. Here, there are two circles that fit with this description: NY Lawyers e Stony Brook’s Citizens.
 
-In this requisition, only the parameter **`X-Workspace-Id`** is mandatory. The requisition body is totally flexible, but it's good to remember that the keys must have the same nomenclature defined by segmentation's rules of the circle. Let's see the case below:
+In this request, only the parameter **`X-Workspace-Id`** is mandatory. The requisition body is totally flexible, but it's good to remember that the keys must have the same nomenclature defined by segmentation's rules of the circle. Let's see the case below:
 
 ![](https://lh3.googleusercontent.com/FdPVIHDFeYJCkC_6Y1P3ZOBSqmNlGkl9q2_XyIayNKQo2Mp9IXBY7PzvpzW0Mej1P9Ox8AG12QiA1H0w5uozWP1UYWafcfwXLKBOf3G-ObIVoPHtYGOlWd5Ju01uLuScqtCn8qQ1)
 
-The **Stony Brook’s Citizens** circle was created to identify users that contains as one of its characteristics the key **`city`** and the exact value **`Stony Brook`**. That means that this user won't be listed if you realize a requisition to **`Identify`** in case you inform on the requisition body the information presented on the example below:  
+The **Stony Brook’s Citizens** circle was created to identify users that contains as one of its characteristics the key **`city`** and the exact value **`Stony Brook`**. That means that this user won't be listed if you send a request to **`Identify`** and inform on the requisition body the information presented on the example below:  
 
 {% api-method method="post" host="https:// api.charlescd-circle-matcher.com/identify " path="" %}
 {% api-method-summary %}
