@@ -6,7 +6,7 @@ Charles offers two alternatives to create a release: use the [**hypothesis**](ht
 
 Here we will focus on the first approach with the following steps: 
 
-1. Click on **Hypotheses** in the homepage left side bar; 
+1. Click on **Hypothesis** in the homepage left side bar; 
 2.  Fill the name with the new hypothesis on the **Create new hypothesis** field, at the bottom of the hypothesis list and press enter.
 3. At the new created hypothesis board, click on **+Card** at the bottom of the **To do** list column;
 4. Type the name of your new card and press **enter**; 
@@ -22,7 +22,7 @@ After you have done the whole process above, your release will be ready to deplo
 
 
 
-Now, just follow the next steps to the [**Open Sea**](https://app.gitbook.com/@zup-products/s/charles/~/drafts/-M7mMkLvHe-UHjeaIu9l/principais-conceitos) deploy: 
+Now, just follow the next steps to the [**Open Sea**](https://docs.charlescd.io/v/v0.2.1-en/key-concepts) deploy: 
 
 1. On Charles homepage, click on **Circles**; 
 2. Click on the Default circle \( it represents the open sea\) 

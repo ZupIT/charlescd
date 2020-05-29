@@ -1,6 +1,6 @@
 # Using Circles
 
-From the moment you start to create your deploys, the next step is to [**create you first circles**](https://docs.charlescd.io/referencia/circulos) to make your applications segmentation better. 
+From the moment you start to create your deploys, the next step is to [**create you first circles**](https://docs.charlescd.io/v/v0.2.1-en/reference/circles) to make your applications segmentation better. 
 
 Follow the next steps: 
 

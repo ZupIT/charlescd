@@ -1,9 +1,9 @@
 # Creating your First Module
 
-After creating and configuring your workspace, it is necessary to add the modules. _Depois de criar e configurar o seu workspace, agora é necessário adicionar os módulos._ 
+After creating and configuring your workspace, it is necessary to add the modules. 
 
 {% hint style="info" %}
-A **module** is your application stored in a Git repository, previously registered. Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](defining-a-workspace/github.md).
+A **module** is your application stored in a [**Git repository, previously registered**](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace). 
 {% endhint %}
 
 To add it, access the menu Modules on your workspace and follow the steps:

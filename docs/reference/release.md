@@ -1,6 +1,6 @@
 # Release
 
-Releases are application versions. It is different from other ways of deploy that releases generally go through lots of environments until they reach production, with CharlesCD it is possible that the same release will be published for different ****[**circles**](https://docs.charlescd.io/referencia/circulos).
+Releases are application versions. It is different from other ways of deploy that releases generally go through lots of environments until they reach production, with CharlesCD it is possible that the same release will be published for different ****[**circles**](https://docs.charlescd.io/v/v0.2.1-en/reference/circles).
 
 ## How to create releases with Charles?
 
