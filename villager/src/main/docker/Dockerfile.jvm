@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/charles-villager-jvm .
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/charlescd-villager-jvm .
 #
 # Then run the container using:
 #
