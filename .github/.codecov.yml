@@ -3,21 +3,21 @@ coverage:
     project:
       default: off
       villager:
-        target: 50%
+        target: 80%
         flags: 
           - villager
         if_ci_failed: error
     patch:
       default: off
       villager:
-        target: 50%
+        target: 80%
         flags: 
           - villager
         if_ci_failed: error
     changes:
       default: off
       villager:
-        target: 50%
+        target: 80%
         flags: 
           - villager
         if_ci_failed: error
