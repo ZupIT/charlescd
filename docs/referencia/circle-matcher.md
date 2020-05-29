@@ -28,7 +28,7 @@ Se você passar informações que estejam fora das condições lógicas configur
 
 ## Identificação de círculos através da API
 
-Você pode integrar nas suas aplicações o recurso **Identify** do módulo [`charle-moove`](https://github.com/ZupIT/charlescd/tree/master/moove) para detectar os círculos que o seu usuário pertence.
+Você pode integrar nas suas aplicações o recurso **Identify** do módulo [`charle-circle-matcher`](https://github.com/ZupIT/charlescd/tree/master/circle-matcher) para detectar os círculos que o seu usuário pertence.
 
 Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
 
@@ -36,7 +36,7 @@ Por exemplo, dada a utilização dos seguintes parâmetros ao segmentar:
 
 Ao realizar a requisição de identificação com as seguintes informações, círculos compatíveis serão retornados.
 
-{% api-method method="post" host="https:" path="//api.charles-moove.com/identify" %}
+{% api-method method="post" host="https:" path="//api.charles-circle-matcher.com/identify" %}
 {% api-method-summary %}
 Identify
 {% endapi-method-summary %}
@@ -47,27 +47,13 @@ Método utilizado para identificar círculos, baseado em características de um 
 
 {% api-method-spec %}
 {% api-method-request %}
-{% api-method-path-parameters %}
-{% api-method-parameter name="X-Workspace-Id" type="string" required=true %}
-Workspace's ID
-{% endapi-method-parameter %}
-{% endapi-method-path-parameters %}
-
 {% api-method-body-parameters %}
-{% api-method-parameter name="state" type="string" required=false %}
-NY
+{% api-method-parameter name="requestData" type="object" required=false %}
+{ "state": "NY", "profession": "Lawyer", "age": 46, "city": "Stony Brook"
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="profession" type="string" required=false %}
-Lawyer 
-{% endapi-method-parameter %}
-
-{% api-method-parameter name="age" type="number" required=false %}
-46 
-{% endapi-method-parameter %}
-
-{% api-method-parameter name="city" type="string" required=false %}
-Stony Brook
+{% api-method-parameter name="workspaceId" type="string" required=false %}
+UUID
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
 {% endapi-method-request %}
@@ -114,19 +100,13 @@ Método utilizado para identificar círculos, baseado em características de um 
 
 {% api-method-spec %}
 {% api-method-request %}
-{% api-method-headers %}
-{% api-method-parameter name="X-Workspace-Id" type="string" required=true %}
-Workspace's ID 
-{% endapi-method-parameter %}
-{% endapi-method-headers %}
-
 {% api-method-body-parameters %}
-{% api-method-parameter name="aGEee" type="number" required=false %}
-46
+{% api-method-parameter name="requestData" type="object" required=false %}
+{ "aGEee": 46, "city": "Stony Brook" }
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="city" type="string" required=false %}
-Stony Brook
+{% api-method-parameter name="workspaceId" type="string" required=false %}
+UUID
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
 {% endapi-method-request %}
