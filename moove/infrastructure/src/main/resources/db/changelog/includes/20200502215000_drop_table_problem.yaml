@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200502215000-1
+      author: adauto.paula
+      comment: "Drop column problem_id from table hypotheses"
+      changes:
+        - dropColumn:
+            tableName: hypotheses
+            columnName: problem_id
+            cascadeConstraints: true
+
+  - changeSet:
+      id: 20200502215000-2
+      author: adauto.paula
+      comment: "Drop table problem"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: problems

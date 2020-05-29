@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200409140000-1
+      author: monica.ribeiro
+      comment: "Add circle_matcher_url column on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: circle_matcher_url
+                  type: varchar(255)
