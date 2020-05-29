@@ -19,7 +19,7 @@ Neste quadro, temos duas categorias de cartões: o **azul que representa a codif
 
 Para gerar novas releases, os cartões azuis, que representam as features, são os que importam. Quando eles estão na coluna **Ready to Go**,  você seleciona apenas um ou um conjunto deles para construir a release.
 
-**\[GIF DA SELEÇÃO DOS CARDS\]**
+![Exemplo de sele&#xE7;&#xE3;o de cards](../.gitbook/assets/gerando-release-board.gif)
 
 Assim que a criação de uma release é acionada, uma branch com o prefixo **release-darwin** será criada no **repositório do módulo, disparando a ferramenta de CI configurada**. Além disso, um novo cartão com o estado "**Building**" aparecerá na coluna **Builds** __para representar o processo em andamento.
 
@@ -43,13 +43,13 @@ Caso o círculo esteja sendo criado neste momento, clique em **Insert release** 
 
 Na tela de criação de releases, preencha o nome e selecione um módulo e sua componente. No campo ao lado, todas as imagens disponíveis daquela componente serão listadas no registry. Selecione uma e se for necessário adicione mais módulos a release, clique em **Add modules** e repita o processo anterior. Quando todos os seus módulos estiverem cadastrados, clique em **deploy**.
 
-**\[GIF DA CRIAÇAO DE RELEASE A PARTIR DE IMAGENS EXISTENTES\]**
+**\[GIF\]** 
 
 Após o deploy desta nova release, ela estará disponível para utilização em outros círculos a partir da opção **"Search for existing releases".**
 
 ## Como buscar uma release existente?
 
-Se a release foi gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) ****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**. 
+Se a release foi gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) ****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**.
 
-**\[GIF PROCURANDO UMA RELEASE ATRAVÉS DO DEPLOY NO CÍRCULO\]**
+![Exemplo de pesquisa de release pelo deploy no c&#xED;rculo](../.gitbook/assets/usando-circulos%20%281%29.gif)
 
