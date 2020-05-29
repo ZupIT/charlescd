@@ -4,10 +4,15 @@ From the moment you start to create your deploys, the next step is to [**create 
 
 Follow the next steps: 
 
-1. Install and configure your [_**workspace**_](https://docs.charlescd.io/primeiros-passsos/definindo-workspace) [_**Circle Matcher**_](https://docs.charlescd.io/referencia-1/circle-matcher)_**;**_ 
-2. Create a circle; Criar círculo _\(incluir um exemplo técnico\)_; 
-3. Use circle matcher to verify if the logic rules created for the segmentation are correctly identifying the users.  _para verificar se as regras lógicas criadas para as segmentações estão identificando corretamente os usuários;_ 
-4. Make your deploy on the circle created before. 
+{% hint style="info" %}
+Before you follow the steps, make sure you have already installed and configured [_**Circle Matcher**_](https://docs.charlescd.io/v/v0.2.1-en/reference/circle-matcher) _****on your ****_[_**workspace**_](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace)_**.**_
+{% endhint %}
+
+1. Create a circle \(_incluir um exemplo técnico\)_;
+
+2. Use circle matcher to verify if the logic rules created for the segmentation are correctly identifying the users.
+
+3.  Make your deploy on the circle created before. 
 
 ![](../.gitbook/assets/usando-circulos.gif)
 

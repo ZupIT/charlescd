@@ -45,7 +45,7 @@ If you are creating the circle at this moment, click on **Insert release** and t
 
 On the release creation screen, fill the name and select one module and its component. On the field beside, all available images on that component will be listed on the registry. Select one and, if it's necessary, add more modules to the release, clicking on **Add module** and repeat the previous process. When all your modules are registered, click on **deploy**.
 
-**\[GIF DA CRIAÇAO DE RELEASE A PARTIR DE IMAGENS EXISTENTES\]**
+![Exemple of release creation by Registry images](../.gitbook/assets/releases-por-meio-de-imagens-existentes%20%281%29.gif)
 
 After deploying this new release, it will be available to use in other circles, just look into '**Search for existing releases'** option. 
 
