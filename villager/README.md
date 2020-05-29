@@ -6,7 +6,7 @@ Villager is a tool that abstracts multiple cloud providers in order to provide a
 
 * Villager has a pluggable architecture that enables the integration with Container Registries of different cloud providers.
 * It abstracts every cloud provider API implementations.
-* Provide a unique API to search for tags in your registry, or listen to your registry to check if a given image is being uploaded.
+* Provides a unique API to search for tags, or listen to your registry to check if a given image is being uploaded.
 
 ## How to use
 
