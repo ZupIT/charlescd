@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/darwin-villager .
+# docker build -f src/main/docker/Dockerfile.native -t quarkus/charlescd-villager .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/darwin-villager
+# docker run -i --rm -p 8080:8080 quarkus/charlescd-villager
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal
