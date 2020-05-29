@@ -1,12 +1,12 @@
 # Círculo
 
-Os círculos são o principal diferencial do [**novo conceito de deploy**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Ffaq-1%2Fconceito-de-deploy-em-circulos) trazido pelo Charles. Ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
+Os círculos são o principal diferencial do [**novo conceito de deploy**](https://docs.charlescd.io/faq/sobre-charles#o-que-e-deploy-em-circulos) trazido pelo Charles. Ele possibilita a criação de grupos de usuários a partir de diversas características e, dessa forma, promove testes simultâneos de aplicações para o maior número possível de usuários.
 
 ![Representa&#xE7;&#xE3;o dos c&#xED;rculos gerados no Charles](../.gitbook/assets/deploy_em_circulos%20%288%29.png)
 
 Além de indicar as segmentações de clientes, os círculos também auxiliam na gestão de versões implantadas para este público.
 
-Uma vez escolhidas as pessoas certas para terem acesso à sua release associada ao círculo, o Charles irá gerar uma [**série de métricas**](https://meet.google.com/linkredirect?authuser=0&dest=https%3A%2F%2Fdocs.charlescd.io%2Freferencia-1%2Fmetricas) ****de negócio ou desempenho. Essas informações te darão maior visibilidade dos resultados de uma hipótese ou feature em análise, possibilitando testes mais assertivos**.**
+Uma vez escolhidas as pessoas certas para terem acesso à sua release associada ao círculo, o Charles irá gerar uma [**série de métricas**](https://docs.charlescd.io/referencia/metricas) ****de negócio ou desempenho. Essas informações te darão maior visibilidade dos resultados de uma hipótese ou feature em análise, possibilitando testes mais assertivos**.**
 
 ## Círculos ativos e inativos
 
@@ -67,7 +67,7 @@ O único operador lógico suportado nesta segmentação é o OR.
 
 ## Como integrar círculos com serviços?
 
-Uma vez detectado o [**círculo ao qual o usuário pertence**](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/como-identificar-os-circulos), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
+Uma vez detectado o [**círculo ao qual o usuário pertence**](https://docs.charlescd.io/referencia/circle-matcher#identificando-circulos-atraves-do-charlescd), essa informação deve ser repassada para todas as próximas requisições através do parâmetro **`x-circle-id`** no header. Isso acontece porque o Charles detecta pelo ID do círculo para qual versão da aplicação uma determinada requisição deve ser encaminhada. Vejamos o exemplo abaixo:
 
 ![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy.png)
 

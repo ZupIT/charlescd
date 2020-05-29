@@ -1,6 +1,6 @@
 # Circle Matcher
 
-O Circle Matcher é um recurso que permite você validar se os seus [**círculos**](circulos.md#como-criar-circulos) estão com segmentações coerentes. Você também pode utilizá-lo em suas aplicações para determinar em qual círculo os seus usuários se encaixam.
+O Circle Matcher é um recurso que permite você validar se os seus [**círculos**](https://docs.charlescd.io/referencia/circulos) estão com segmentações coerentes. Você também pode utilizá-lo em suas aplicações para determinar em qual círculo os seus usuários se encaixam.
 
 {% hint style="info" %}
 Uma boa prática é realizar essa identificação sempre que o usuário faz login na aplicação. Porém, isso pode ser alterado de acordo com a necessidade da sua regra de negócio.

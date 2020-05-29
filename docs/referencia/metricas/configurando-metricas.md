@@ -7,7 +7,7 @@ A configuração de métricas no Charles é realiza em duas partes, a primeira d
 As métricas relacionadas às requisições de cada círculo podem ser quantificadas e expostas pelo Istio. 
 
 {% hint style="info" %}
-Antes, caso queira entender mais sobre telemetria no Istio, recomendamos que consulte a [doc oficial](https://istio.io/docs/tasks/observability/metrics/).
+Antes, caso queira entender mais sobre telemetria no Istio, recomendamos que consulte a [**doc oficial**](https://istio.io/docs/tasks/observability/metrics/).
 {% endhint %}
 
 #### **Parte** 1: Habilitando o Istio
@@ -39,7 +39,7 @@ spec:
 **Passo 2:** Execute o comando abaixo. 
 
 {% hint style="warning" %}
-É necessário ter configurado o istioctl para executar o comando caso não tenha, clique [aqui](https://istio.io/docs/setup/getting-started/#download).
+É necessário ter configurado o istioctl para executar o comando caso não tenha, clique [**aqui**](https://istio.io/docs/setup/getting-started/#download).
 {% endhint %}
 
 ```bash
@@ -177,17 +177,17 @@ Depois de habilitar o Istio, você precisa configurar sua ferramenta para que el
 O primeiro passo é selecionar qual das **ferramentas aceitas pelo Charles** que você utiliza.
 
 {% hint style="info" %}
-Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [sugerir para nós](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [contribua conosco](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais. 
+Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [**sugerir para nós**](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [**contribua conosco**](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais. 
 {% endhint %}
 
 Abaixo, você confere detalhes da ferramenta compatível com Charles. 
 
 {% tabs %}
 {% tab title="Prometheus" %}
-O Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas. É considerada a principal recomendação para monitoramento do [Cloud Native Computing Foundation](https://cncf.io/), além de uma das principais ferramentas do mercado.
+O Prometheus é uma ferramenta de código aberto focada em monitoramento e alertas. É considerada a principal recomendação para monitoramento do [**Cloud Native Computing Foundation**](https://cncf.io/), além de uma das principais ferramentas do mercado.
 
 {% hint style="info" %}
-Se quiser saber mais, sugerimos a [doc oficial](https://prometheus.io/).
+Se quiser saber mais, sugerimos a [**doc oficial**](https://prometheus.io/).
 {% endhint %}
 
 É preciso configurar o Prometheus para que ele consiga ler e armazenar os dados das métricas que habilitamos, conforme o tutorial que explicamos no início. 
