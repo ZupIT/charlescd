@@ -6,9 +6,9 @@ description: >-
 
 # Primeiro Deploy
 
-Após criar o seu primeiro [**módulo**](https://docs.charlescd.io/primeiros-passsos/criando-modulos) ****e cadastrar as [**credenciais do seu cluster**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/configuracoes-de-deploy), você completou todos os passos de configuração necessários para a realização do seu primeiro deploy. Agora, é necessário criar uma [**release**](https://docs.charlescd.io/referencia/release) ****e disponibilizá-la no cluster configurado.
+Após criar o seu primeiro [**módulo**](https://docs.charlescd.io/primeiros-passos/criando-modulos) ****e cadastrar as [**credenciais do seu cluster**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/configurando-cluster), você completou todos os passos de configuração necessários para a realização do seu primeiro deploy. Agora, é necessário criar uma[ **release** ](https://docs.charlescd.io/referencia/release)e disponibilizá-la no cluster configurado.
 
-No CharlesCD, oferecemos duas alternativas para a criação de uma release: utilizar o fluxo de um quadro de [**hipótese**](https://docs.charlescd.io/referencia/hipotese) ****ou criá-la a partir de imagens docker já disponíveis no [**registry**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry) ****configurado. 
+No CharlesCD, oferecemos duas alternativas para a criação de uma release: utilizar o fluxo de um quadro de [**hipótese**](https://docs.charlescd.io/referencia/hipotese) ****ou criá-la a partir de imagens docker já disponíveis no [**registry**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/docker-registry) ****configurado. 
 
 Nesta seção de passos iremos focar a primeira abordagem:
 

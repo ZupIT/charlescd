@@ -3,7 +3,7 @@
 Depois de criar e configurar o seu workspace, agora é necessário adicionar os módulos. 
 
 {% hint style="info" %}
-Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](definindo-workspace/github.md).
+Um **módulo** é a sua aplicação que está armazenada em um repositório do ****[**Git cadastrado anteriormente**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/github).
 {% endhint %}
 
 Para adicioná-los, acesse o menu **Modules** __no **workspace** desejado, e __siga os seguintes passos:

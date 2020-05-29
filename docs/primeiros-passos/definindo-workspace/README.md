@@ -9,9 +9,9 @@ Com apenas uma instalação, vários times podem utilizar o Charles com configur
 Cada workspace possui as seguintes configurações:
 
 * Definição dos acessos e [**permissões dos grupos de usuários**](../../referencia/grupos-de-usuarios.md).
-* Cadastros de credenciais do [**Docker Registry**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/docker-registry), [**Git**](https://docs.charlescd.io/primeiros-passsos/definindo-workspace/github) ****e de ****[**Continuous Deployment \(CD\)**](https://docs.charlescd.io/referencia/configuracao-cd).
-* Personalização do [**Circle Matcher**](../../referencia/circle-matcher.md).
-* Registro do[ **Provedor de Métricas**](../../referencia/metricas/) das suas aplicações.
+* Cadastros de credenciais do [**Docker Registry**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/docker-registry), [**Git**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/github) ****e de ****[**Continuous Deployment \(CD\)**](https://docs.charlescd.io/referencia/configuracao-cd).
+* Personalização do [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher).
+* Registro do [**Provedor de Métricas**](https://docs.charlescd.io/referencia/metricas/provedor-metrica) das suas aplicações.
 
 ![Tela de workspace](../../.gitbook/assets/settings_-_workspace_-_11.4_-_add_group_permissions2x.png)
 

@@ -9,19 +9,19 @@ description: >-
 
 ### **Círculos**
 
-[**Círculos**](https://docs.charlescd.io/referencia-1/circulos) ****são grupos de usuários criados a partir de características específicas dentro de um mesmo ambiente na plataforma do Charles. Dessa forma, o desenvolvedor pode segmentar os usuários de acordo com as regras \(AND ou OR\) que mais fizerem sentido para testar aquela release. 
+\*\*\*\*[**Círculos**](https://docs.charlescd.io/referencia/circulos) ****são grupos de usuários criados a partir de características específicas dentro de um mesmo ambiente na plataforma do Charles. Dessa forma, o desenvolvedor pode segmentar os usuários de acordo com as regras \(AND ou OR\) que mais fizerem sentido para testar aquela release. 
 
-Por exemplo, é possível [**criar um círculo**](https://docs.charlescd.io/referencia-1/circles) ****de engenheiros da região Norte do Brasil, outro de engenheiros do sudeste e um terceiro contendo todos os engenheiros brasileiros. Baseado nessa segmentação de clientes, pode-se elaborar diversas lógicas de deploy.
+Por exemplo, é possível [**criar um círculo**](https://docs.charlescd.io/referencia/circulos) ****de engenheiros da região Norte do Brasil, outro de engenheiros do sudeste e um terceiro contendo todos os engenheiros brasileiros. Baseado nessa segmentação de clientes, pode-se elaborar diversas lógicas de deploy.
 
 ### **Hipóteses**
 
-[**São as alternativas cadastradas**](https://docs.charlescd.io/referencia-1/hipotese) ****na plataforma para resolver algum problema ou validar uma ou mais mudanças nas aplicações que você integrou ao Charles.
+\*\*\*\*[**São as alternativas cadastradas**](https://docs.charlescd.io/referencia/hipotese) ****na plataforma para resolver algum problema ou validar uma ou mais mudanças nas aplicações que você integrou ao Charles.
 
-As hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente ao seu **workspace**.
+As hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente ao seu [**workspace**](https://docs.charlescd.io/primeiros-passos/definindo-workspace).
 
 ### **Circle Matcher**
 
-Trata-se de um serviço HTTP que permite você identificar a qual segmentação a aplicação pertence, a partir de regras lógicas previamente definidas. Para isso, o ****[**Circle Matcher** ](https://docs.charlescd.io/referencia-1/circle-matcher)recebe na requisição um JSON com os atributos do usuário ou qualquer atributo relevante, além do identificador do círculo ao qual aquele usuário pertence.
+Trata-se de um serviço HTTP que permite você identificar a qual segmentação a aplicação pertence, a partir de regras lógicas previamente definidas. Para isso, o ****[**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher) ****recebe na requisição um JSON com os atributos do usuário ou qualquer atributo relevante, além do identificador do círculo ao qual aquele usuário pertence.
 
 ### **Componentes**
 
