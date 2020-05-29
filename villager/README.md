@@ -1,6 +1,6 @@
 # CharlesCD Villager
 
-Villager is a tool that abstracts many cloud providers and provides a unique API to integrate with container registries.
+Villager is a tool that abstracts multiple cloud providers in order to provide a unique API to integrate with container registries.
 
 ## How Villager works
 
