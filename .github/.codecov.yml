@@ -1,6 +1,3 @@
-codecov:
-  require_ci_to_pass: yes
-  
 coverage:
   status:
     project:
@@ -9,6 +6,7 @@ coverage:
         target: 50%
         flags: 
           - villager
+        if_ci_failed: error
 
 flags:
   villager:
