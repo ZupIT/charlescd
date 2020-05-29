@@ -1,0 +1,85 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200508152000-1
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles_permissions where role_id = 'abf2ac96-e25b-4b82-8828-d7ef2b013ade';"
+      comment: "Seeding permissions for Maintainer profile"
+      changes:
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '09ae6a9a-45d6-44de-8b3a-5a00d15e98af');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '7cc71f53-2054-4193-836d-6177fa9bbb48');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '70f30948-d8fc-448a-9e3e-050c16a4eb46');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', 'd138ff33-0fb8-4ebf-8c8c-20d61067b183');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '7f0952e1-a347-4481-879d-4de5a9835299');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '7bec8317-fa2a-4543-8be7-1fd1a0bf43c0');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '6cbf2482-2f26-4672-9a9a-d94fc1675597');"
+        - sql:
+            sql: "insert into roles_permissions values ('abf2ac96-e25b-4b82-8828-d7ef2b013ade', '9c3d4e7a-384e-49ff-8e25-c610427eee59');"
+  - changeSet:
+      id: 20200508152000-2
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles_permissions where role_id = '822a87d4-2bba-4d2a-b21c-b2b8533f9cc1';"
+      comment: "Seeding permissions for Developer profile"
+      changes:
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '7cc71f53-2054-4193-836d-6177fa9bbb48');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '70f30948-d8fc-448a-9e3e-050c16a4eb46');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', 'd138ff33-0fb8-4ebf-8c8c-20d61067b183');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '7f0952e1-a347-4481-879d-4de5a9835299');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '7bec8317-fa2a-4543-8be7-1fd1a0bf43c0');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '6cbf2482-2f26-4672-9a9a-d94fc1675597');"
+        - sql:
+            sql: "insert into roles_permissions values ('822a87d4-2bba-4d2a-b21c-b2b8533f9cc1', '9c3d4e7a-384e-49ff-8e25-c610427eee59');"
+  - changeSet:
+      id: 20200508152000-3
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles_permissions where role_id = 'da59c62b-5498-4e65-b311-01cb5c5279ef';"
+      comment: "Seeding permissions for Analyst profile"
+      changes:
+        - sql:
+            sql: "insert into roles_permissions values ('da59c62b-5498-4e65-b311-01cb5c5279ef', '70f30948-d8fc-448a-9e3e-050c16a4eb46');"
+        - sql:
+            sql: "insert into roles_permissions values ('da59c62b-5498-4e65-b311-01cb5c5279ef', 'd138ff33-0fb8-4ebf-8c8c-20d61067b183');"
+        - sql:
+            sql: "insert into roles_permissions values ('da59c62b-5498-4e65-b311-01cb5c5279ef', '6cbf2482-2f26-4672-9a9a-d94fc1675597');"
+        - sql:
+            sql: "insert into roles_permissions values ('da59c62b-5498-4e65-b311-01cb5c5279ef', '9c3d4e7a-384e-49ff-8e25-c610427eee59');"
+  - changeSet:
+      id: 20200508152000-4
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles_permissions where role_id = '52c22f91-5320-4760-a013-701c31611aed';"
+      comment: "Seeding permissions for Reader profile"
+      changes:
+        - sql:
+            sql: "insert into roles_permissions values ('52c22f91-5320-4760-a013-701c31611aed', '70f30948-d8fc-448a-9e3e-050c16a4eb46');"
+        - sql:
+            sql: "insert into roles_permissions values ('52c22f91-5320-4760-a013-701c31611aed', '7f0952e1-a347-4481-879d-4de5a9835299');"
+        - sql:
+            sql: "insert into roles_permissions values ('52c22f91-5320-4760-a013-701c31611aed', '6cbf2482-2f26-4672-9a9a-d94fc1675597');"

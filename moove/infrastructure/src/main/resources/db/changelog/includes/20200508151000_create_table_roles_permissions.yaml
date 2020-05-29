@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200508151000-1
+      author: mateus.cruz
+      comment: "Create table roles_permissions"
+      changes:
+        - createTable:
+            tableName: roles_permissions
+            columns:
+              - column:
+                  name: role_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    foreignKeyName: fk_role_id_roles_permissions
+                    references: roles(id)
+                    nullable: false
+              - column:
+                  name: permission_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_permission_id_roles_permissions
+                    references: permissions(id)
+                    nullable: false
+        - addUniqueConstraint:
+            columnNames: role_id, permission_id
+            constraintName: roles_permissions_row_uniqueness
+            tableName: roles_permissions

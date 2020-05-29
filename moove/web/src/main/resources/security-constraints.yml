@@ -1,0 +1,220 @@
+---
+constraints:
+  - pattern: /builds/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/builds/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /cards/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /features/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /hypotheses/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /labels/**
+    roles:
+      hypothesis_read:
+        - GET
+      hypothesis_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /circles/**
+    roles:
+      circles_read:
+        - GET
+      circles_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/circles/**
+    roles:
+      circles_read:
+        - GET
+      circles_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /config/**
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/configurations/**
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /deployments/**
+    roles:
+      circles_read:
+        - GET
+      deploy_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/deployments/**
+    roles:
+      circles_read:
+        - GET
+      deploy_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /modules/**
+    roles:
+      modules_read:
+        - GET
+      modules_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /v2/modules/**
+    roles:
+      hypothesis_write:
+        - GET
+      modules_read:
+        - GET
+      modules_write:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+
+  - pattern: /users/**
+    roles:
+      hypothesis_read:
+        - GET
+
+  - pattern: /metrics/**
+    roles:
+      circles_read:
+        - GET
+
+      circles_write:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+
+  - pattern: /v2/roles/**
+    roles:
+      maintenance_write:
+        - GET
+
+  - pattern: /v2/workspaces/**
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+
+  - pattern: /v2/workspaces/users
+    roles:
+      hypothesis_write:
+        - GET
+
+  - pattern: /v2/user-groups/**
+    roles:
+      maintenance_write:
+        - GET
+
+publicConstraints:
+  - pattern: /credentials/{service}/{id}
+    methods:
+      - GET
+
+  - pattern: /callback/**
+    methods:
+      - POST
+
+  - pattern: /users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/deployments/{id:.+}/callback
+    methods:
+      - POST
+
+  - pattern: /v2/builds/{id:.+}/callback
+    methods:
+      - POST
+
+  - pattern: /actuator/health
+    methods:
+      - GET
