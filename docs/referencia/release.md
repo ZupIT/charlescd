@@ -43,7 +43,7 @@ Caso o círculo esteja sendo criado neste momento, clique em **Insert release** 
 
 Na tela de criação de releases, preencha o nome e selecione um módulo e sua componente. No campo ao lado, todas as imagens disponíveis daquela componente serão listadas no registry. Selecione uma e se for necessário adicione mais módulos a release, clique em **Add modules** e repita o processo anterior. Quando todos os seus módulos estiverem cadastrados, clique em **deploy**.
 
-**\[GIF\]** 
+![Exemplo de cria&#xE7;&#xE3;o de release por imagens do Registry](../.gitbook/assets/releases-por-meio-de-imagens-existentes.gif)
 
 Após o deploy desta nova release, ela estará disponível para utilização em outros círculos a partir da opção **"Search for existing releases".**
 
