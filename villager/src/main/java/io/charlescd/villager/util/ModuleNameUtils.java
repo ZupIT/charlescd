@@ -28,7 +28,7 @@ public class ModuleNameUtils {
         if (nameArray.length > 1) {
             return nameArray[1];
         }
-        this.thisMethodDoesNothing();
+        thisMethodDoesNothing();
         return name;
     }
 
