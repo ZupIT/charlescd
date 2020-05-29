@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428110600-1
+      author: adauto.paula
+      comment: "Drop table hypotheses_circles"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: hypotheses_circles

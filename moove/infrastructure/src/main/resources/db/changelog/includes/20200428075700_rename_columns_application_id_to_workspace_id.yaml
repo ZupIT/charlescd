@@ -1,0 +1,95 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428075700-1
+      author: monica.ribeiro
+      comment: "Renaming columns and constraints that contains application id."
+      changes:
+        - sql:
+            comment: "Renaming constraints at applications table."
+            splitStatements: true
+            sql: ALTER TABLE applications RENAME CONSTRAINT applications_pkey TO workspaces_pkey;
+                 ALTER TABLE applications RENAME CONSTRAINT fk_applications_git_configuration_id TO fk_workspaces_git_configuration_id;
+                 ALTER TABLE applications RENAME CONSTRAINT application_user_id_fk TO fk_workspaces_user_id;
+
+        - sql:
+            comment: "Renaming constraints at builds table."
+            splitStatements: true
+            sql: ALTER TABLE builds RENAME CONSTRAINT fk_builds_application_id TO fk_builds_workspace_id;
+                 ALTER TABLE builds RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at card_columns table."
+            splitStatements: true
+            sql: ALTER TABLE card_columns RENAME COLUMN application_id TO workspace_id;
+                 ALTER TABLE card_columns ADD CONSTRAINT fk_workspace_id_card_column FOREIGN KEY (workspace_id) REFERENCES applications(id);
+
+        - sql:
+            comment: "Renaming constraints and application id column at cards table."
+            splitStatements: true
+            sql: ALTER TABLE cards RENAME CONSTRAINT fk_cards_application_id TO fk_cards_workspace_id;
+                 ALTER TABLE cards RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at components table."
+            splitStatements: true
+            sql: ALTER TABLE components RENAME CONSTRAINT fk_components_application_id TO fk_components_workspace_id;
+                 ALTER TABLE components RENAME COLUMN application_id TO workspace_id;
+                 ALTER TABLE components RENAME CONSTRAINT module_applications_pkey TO components_pkey;
+
+        - sql:
+            comment: "Renaming constraints and application id column at component_snapshots table."
+            splitStatements: true
+            sql: ALTER TABLE component_snapshots RENAME CONSTRAINT fk_ms_application_id TO fk_ms_workspace_id;
+                 ALTER TABLE component_snapshots RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at credential_configurations table."
+            splitStatements: true
+            sql: ALTER TABLE credential_configurations RENAME CONSTRAINT fk_credential_configurations_application_id TO fk_credential_configurations_workspace_id;
+                 ALTER TABLE credential_configurations RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at features table."
+            splitStatements: true
+            sql: ALTER TABLE features RENAME CONSTRAINT fk_features_application_id TO fk_features_workspace_id;
+                 ALTER TABLE features RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at git_configurations table."
+            splitStatements: true
+            sql: ALTER TABLE git_configurations RENAME CONSTRAINT fk_git_configurations_applications TO fk_git_configurations_workspace_id;
+                 ALTER TABLE git_configurations RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at hypotheses table."
+            splitStatements: true
+            sql: ALTER TABLE hypotheses RENAME CONSTRAINT fk_hypotheses_application_id TO fk_hypotheses_workspace_id;
+                 ALTER TABLE hypotheses RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at modules table."
+            splitStatements: true
+            sql: ALTER TABLE modules RENAME CONSTRAINT fk_modules_application_id TO fk_modules_workspace_id;
+                 ALTER TABLE modules RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at module_snapshots table."
+            splitStatements: true
+            sql: ALTER TABLE module_snapshots RENAME CONSTRAINT fk_ms_application_id TO fk_ms_workspace_id;
+                 ALTER TABLE module_snapshots RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at problems table."
+            splitStatements: true
+            sql: ALTER TABLE problems RENAME CONSTRAINT fk_problems_application_id TO fk_problems_workspace_id;
+                 ALTER TABLE problems RENAME COLUMN application_id TO workspace_id;
+
+        - sql:
+            comment: "Renaming constraints and application id column at deployments table."
+            splitStatements: true
+            sql: ALTER TABLE deployments RENAME CONSTRAINT fk_deployments_application_id TO fk_deployments_workspace_id;
+              ALTER TABLE deployments RENAME COLUMN application_id TO workspace_id;
+
+        - renameTable:
+            oldTableName: applications
+            newTableName: workspaces

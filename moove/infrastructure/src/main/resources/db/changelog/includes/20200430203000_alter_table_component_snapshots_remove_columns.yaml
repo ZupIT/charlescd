@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200430203000-1
+      author: mateus.cruz
+      comment: "Remove columns context_path,health_check and port from table component_snapshots"
+      changes:
+        - dropColumn:
+            tableName: component_snapshots
+            columns:
+              - column:
+                  name: context_path
+              - column:
+                  name: health_check
+              - column:
+                  name: port
