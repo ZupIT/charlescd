@@ -1,4 +1,8 @@
 coverage:
+  precision: 2
+  round: nearest
+  range: 50...60
+  
   status:
     project:
       default: off
