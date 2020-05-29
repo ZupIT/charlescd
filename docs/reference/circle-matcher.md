@@ -42,32 +42,18 @@ Identify
 {% endapi-method-summary %}
 
 {% api-method-description %}
-Method used to identify circles based on the user's characteristics.
+Method used to identify circles based on the user's characteristics
 {% endapi-method-description %}
 
 {% api-method-spec %}
 {% api-method-request %}
-{% api-method-path-parameters %}
-{% api-method-parameter name="X-Workspace-Id" type="string" required=true %}
-Workspace's ID
-{% endapi-method-parameter %}
-{% endapi-method-path-parameters %}
-
 {% api-method-body-parameters %}
-{% api-method-parameter name="state" type="string" required=false %}
-NY
+{% api-method-parameter name="requestData" type="object" required=false %}
+{ "state": "NY", "profession": "Lawyer", "age": 46, "city": "Stony Brook"
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="profession" type="string" required=false %}
-Lawyer 
-{% endapi-method-parameter %}
-
-{% api-method-parameter name="age" type="number" required=false %}
-46 
-{% endapi-method-parameter %}
-
-{% api-method-parameter name="city" type="string" required=false %}
-Stony Brook
+{% api-method-parameter name="workspaceId" type="string" required=false %}
+UUID
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
 {% endapi-method-request %}
@@ -79,23 +65,31 @@ Stony Brook
 {% endapi-method-response-example-description %}
 
 ```
-[
-  {
-    "id": "6577ae92-648c-11ea-bc55-0242ac130003",
-    "name": "NY Lawyers"
-  },
-  {
-    "id": "6577b112-648c-11ea-bc55-0242ac130003",
-    "name": "Stony Brook's Citizens"
-  }
-]
+{
+  "circles": [
+    {
+      "id": "6577ae92-648c-11ea-bc55-0242ac130003",
+      "name": "NY Lawyers"
+    },
+    {
+      "id": "6577b112-648c-11ea-bc55-0242ac130003",
+      "name": "Stony Brook's Citizens"
+    }
+  ]
+}
+
+
+
+
+
+
 ```
 {% endapi-method-response-example %}
 {% endapi-method-response %}
 {% endapi-method-spec %}
 {% endapi-method %}
 
-As the example above shows, there are correspondents circles with the given informations of the user, which means that **`charles-moove`** will return a list with all the circles. Here, there are two circles that fit with this description: NY Lawyers e Stony Brook’s Citizens.
+As the example above shows, there are correspondents circles with the given informations of the user, which means that **`charlescd-circle-matchere`** will return a list with all the circles. Here, there are two circles that fit with this description: NY Lawyers e Stony Brook’s Citizens.
 
 In this requisition, only the parameter **`X-Workspace-Id`** is mandatory. The requisition body is totally flexible, but it's good to remember that the keys must have the same nomenclature defined by segmentation's rules of the circle. Let's see the case below:
 
@@ -103,30 +97,24 @@ In this requisition, only the parameter **`X-Workspace-Id`** is mandatory. The r
 
 The **Stony Brook’s Citizens** circle was created to identify users that contains as one of its characteristics the key **`city`** and the exact value **`Stony Brook`**. That means that this user won't be listed if you realize a requisition to **`Identify`** in case you inform on the requisition body the information presented on the example below:  
 
-{% api-method method="post" host="https://" path="api.charles-circle-matcher.com/identify" %}
+{% api-method method="post" host="https:// api.charlescd-circle-matcher.com/identify " path="" %}
 {% api-method-summary %}
 Identify
 {% endapi-method-summary %}
 
 {% api-method-description %}
-Method used to identify circles based on the user's characteristics. 
+
 {% endapi-method-description %}
 
 {% api-method-spec %}
 {% api-method-request %}
-{% api-method-headers %}
-{% api-method-parameter name="X-Workspace-Id" type="string" required=true %}
-Workspace's ID 
-{% endapi-method-parameter %}
-{% endapi-method-headers %}
-
 {% api-method-body-parameters %}
-{% api-method-parameter name="aGEee" type="number" required=false %}
-46
+{% api-method-parameter name="requestData" type="object" required=false %}
+{"aGEee": 46, "city": "Stony Brook"}
 {% endapi-method-parameter %}
 
-{% api-method-parameter name="city" type="string" required=false %}
-Stony Brook
+{% api-method-parameter name="workspaceId" type="string" required=false %}
+UUID
 {% endapi-method-parameter %}
 {% endapi-method-body-parameters %}
 {% endapi-method-request %}
@@ -134,23 +122,21 @@ Stony Brook
 {% api-method-response %}
 {% api-method-response-example httpCode=200 %}
 {% api-method-response-example-description %}
-Listagem de todos os círculos aos quais o usuário pertence 
+List of all circle the users belong to
 {% endapi-method-response-example-description %}
 
 ```
-[
-  {
-    "id": "6577ae92-648c-11ea-bc55-0242ac130003",
-    "name": "Default"
-  }
-]
+{
+  "circles": [
+    {
+      "id": "6577ae92-648c-11ea-bc55-0242ac130003",
+      "name": "Default"
+    }
+  ]
+}
 ```
 {% endapi-method-response-example %}
 {% endapi-method-response %}
 {% endapi-method-spec %}
 {% endapi-method %}
-
-
-
-
 
