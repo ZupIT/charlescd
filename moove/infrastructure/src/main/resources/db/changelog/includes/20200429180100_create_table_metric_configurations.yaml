@@ -1,0 +1,45 @@
+databaseChangeLog:
+- changeSet:
+    id: 20200429180100-1
+    author: monica.ribeiro
+    comment: "Create table metric configurations."
+    changes:
+      - createTable:
+          tableName: metric_configurations
+          columns:
+          - column:
+              name: id
+              type: varchar(36)
+              autoIncrement: false
+              constraints:
+                primaryKey: true
+                nullable: false
+          - column:
+              name: provider
+              type: varchar(64)
+              constraints:
+                nullable: false
+          - column:
+              name: url
+              type: varchar(2083)
+              constraints:
+                nullable: false
+          - column:
+              name: created_at
+              type: datetime
+              constraints:
+                nullable: false
+          - column:
+              name: user_id
+              type: varchar(36)
+              constraints:
+                nullable: false
+                foreignKeyName: fk_metric_configurations_user_id
+                references: users(id)
+          - column:
+              name: workspace_id
+              type: varchar(36)
+              constraints:
+                nullable: false
+                foreignKeyName: fk_metric_configurations_workspace_id
+                references: workspaces(id)
