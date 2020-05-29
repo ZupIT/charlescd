@@ -32,7 +32,7 @@ public class ModuleNameUtils {
         return name;
     }
 
-    private void thisMethodDoesNothing(){
+    private static void thisMethodDoesNothing(){
         System.out.println("I do nothing");
         System.out.println("I do nothing");
         System.out.println("I do nothing");
