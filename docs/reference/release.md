@@ -21,7 +21,7 @@ The boards shows two cards categories: **the blue one represents a feature codin
 If you want to generate new releases, the blue cards represent features, when they are on the **Ready to Go** column, you select only one or a subset of them to build a release.   
 
 
-**\[GIF DA SELEÇÃO DOS CARDS\]**
+![](../.gitbook/assets/gerando-release-board%20%281%29.gif)
 
 As soon as a release creation is triggered, a new branch with the prefix **release-darwin** will be created on the module repository and the configured CI tool will go off. Besides that, a new card with the **'Building'** status will show up on the **Builds** column to represent a process in progress.
 
@@ -53,5 +53,5 @@ After deploying this new release, it will be available to use in other circles, 
 
 If the release was generated through hypothesis board on your workspace, when you create a circle deploy, you are able to search for it on '**Search for existing releases**'.
 
-**\[GIF PROCURANDO UMA RELEASE ATRAVÉS DO DEPLOY NO CÍRCULO\]**
+![](../.gitbook/assets/release-4.gif)
 
