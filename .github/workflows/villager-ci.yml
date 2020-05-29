@@ -38,7 +38,7 @@ jobs:
       uses: codecov/codecov-action@v1.0.7
       with:
         file: ./villager/target/site/jacoco/jacoco.xml
-        flags: unittests
+        flags: villager-unittests
         fail_ci_if_error: true
     - name: Check Code Style
       run: mvn checkstyle:checkstyle
