@@ -1,0 +1,13 @@
+coverage:
+  status:
+    project:
+      default: off
+      villager:
+        target: 50%
+        flags: 
+          - villager
+
+flags:
+  villager:
+    paths:
+      - villager/
