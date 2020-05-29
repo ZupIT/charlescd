@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/charles-villager .
+# docker build -f src/main/docker/Dockerfile.native -t quarkus/charlescd-villager .
 #
 # Then run the container using:
 #
