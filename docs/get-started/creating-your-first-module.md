@@ -16,7 +16,9 @@ If you have a lot of applications on your repository, register them with the com
 * **Name**: application's name, the same on your repository;
 * **Metrics**: latency \(ms\) and HTTP error \(%\). Both cases you must add a risk value that you want to receive an alert for if your component reaches or surpasses the rate. 
 
-_In both cases, you need to inform the risk value you'd like to be alerted in case your component reach it or overtake it._ 
+In both cases, you need to inform the risk value you'd like to be alerted in case your component reach it or overtake it. 
+
+![Creating a module screen](../.gitbook/assets/criac-a-o-de-modulo.png)
 
 ## Components
 
