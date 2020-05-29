@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200513160800-1
+      author: monica.ribeiro
+      changes:
+      - sql:
+          comment: "Updating analyst description at table roles."
+          sql: "update roles set description = 'Can view modules. Can create, edit and delete: circles and hypotheses.' where id = 'da59c62b-5498-4e65-b311-01cb5c5279ef'"
+      - sql:
+          comment: "Adding module_view role for Analyst"
+          sql: "insert into roles_permissions (role_id, permission_id) values ('da59c62b-5498-4e65-b311-01cb5c5279ef', '7f0952e1-a347-4481-879d-4de5a9835299')"
