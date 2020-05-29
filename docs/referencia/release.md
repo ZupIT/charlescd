@@ -19,7 +19,7 @@ Neste quadro, temos duas categorias de cartões: o **azul que representa a codif
 
 Para gerar novas releases, os cartões azuis, que representam as features, são os que importam. Quando eles estão na coluna **Ready to Go**,  você seleciona apenas um ou um conjunto deles para construir a release.
 
-![Exemplo de sele&#xE7;&#xE3;o de cards](../.gitbook/assets/gerando-release-board.gif)
+![Exemplo de sele&#xE7;&#xE3;o de cards](../.gitbook/assets/gerando-release-board-1-%20%281%29.gif)
 
 Assim que a criação de uma release é acionada, uma branch com o prefixo **release-darwin** será criada no **repositório do módulo, disparando a ferramenta de CI configurada**. Além disso, um novo cartão com o estado "**Building**" aparecerá na coluna **Builds** __para representar o processo em andamento.
 
@@ -51,5 +51,7 @@ Após o deploy desta nova release, ela estará disponível para utilização em 
 
 Se a release foi gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) ****no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"**.
 
-![Exemplo de pesquisa de release pelo deploy no c&#xED;rculo](../.gitbook/assets/usando-circulos%20%281%29.gif)
+![Exemplo de pesquisa de release pelo deploy no c&#xED;rculo](../.gitbook/assets/may-29-2020_17-21-33.gif)
+
+
 
