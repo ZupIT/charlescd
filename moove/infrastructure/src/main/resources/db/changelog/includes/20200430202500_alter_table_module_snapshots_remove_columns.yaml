@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200430202500-1
+      author: mateus.cruz
+      comment: "Remove columns cd_configuration_id,git_configuration_id,registry_configuration_id from table module_snapshots"
+      changes:
+        - dropColumn:
+            tableName: module_snapshots
+            columns:
+              - column:
+                  name: cd_configuration_id
+              - column:
+                  name: git_configuration_id
+              - column:
+                  name: registry_configuration_id
