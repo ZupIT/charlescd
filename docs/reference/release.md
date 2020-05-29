@@ -21,7 +21,7 @@ The boards shows two cards categories: **the blue one represents a feature codin
 If you want to generate new releases, the blue cards represent features, when they are on the **Ready to Go** column, you select only one or a subset of them to build a release.   
 
 
-![](../.gitbook/assets/gerando-release-board%20%281%29.gif)
+![Example of cards selection ](../.gitbook/assets/gerando-release-board-1-%20%282%29.gif)
 
 As soon as a release creation is triggered, a new branch with the prefix **release-darwin** will be created on the module repository and the configured CI tool will go off. Besides that, a new card with the **'Building'** status will show up on the **Builds** column to represent a process in progress.
 
@@ -35,7 +35,7 @@ Once you made it, the [**Villager**](https://github.com/ZupIT/charlescd/tree/mas
 Any cases of success or error will be shown on your release card.
 {% endhint %}
 
-![Example of builts, error and success](../.gitbook/assets/release-2.png)
+![Example of release status](../.gitbook/assets/release-2.png)
 
 ### **Releases through existing images on configured Docker Registry** 
 
@@ -53,5 +53,5 @@ After deploying this new release, it will be available to use in other circles, 
 
 If the release was generated through hypothesis board on your workspace, when you create a circle deploy, you are able to search for it on '**Search for existing releases**'.
 
-![](../.gitbook/assets/release-4.gif)
+![Example of release search by circle deploy  ](../.gitbook/assets/may-29-2020_17-21-33%20%281%29.gif)
 
