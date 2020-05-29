@@ -76,10 +76,9 @@ OR is the only logic operator supported on this segmentation.
 
 ## How to integrate circle with services?
 
-Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below:   
+Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below: 
 
-
-![](../.gitbook/assets/como_integrar_circulos_com_servicos.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy.png)
 
 At some point during the interaction of the user and your application **\(App1\)**, for example,  the login - the **`Identify`** service of **`charles-circle-matcher`** - must be triggered to get the circle. 
 
