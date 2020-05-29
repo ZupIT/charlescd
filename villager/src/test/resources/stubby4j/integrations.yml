@@ -61,7 +61,7 @@
 
 - request:
     method: GET
-    url: ^/v2/charles-notifications/tags/list$
+    url: ^/v2/charlescd-notifications/tags/list$
 
   response:
     status: 200
