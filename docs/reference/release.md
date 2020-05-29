@@ -32,10 +32,10 @@ Triggering the pipeline of your CI tool through **release-darwin** prefix, it is
 Once you made it, the [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) will watch your registry to search for the generated release. Hold on until you card status is changed to **Built**. 
 
 {% hint style="info" %}
-Any cases of success or failure will be shown on your release card.
+Any cases of success or error will be shown on your release card.
 {% endhint %}
 
-**\[GIF DE CASOS DE SUCESSOS, ERROS E ANDAMENTO DE BUILDS\]**
+![Example of builts, error and success](../.gitbook/assets/release-2.png)
 
 ### **Releases through existing images on configured Docker Registry** 
 
