@@ -30,17 +30,23 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Build
         working-directory: ./octopipe
         run: go build -o dist/octopipe ./cmd/octopipe/*.go
+
       - name: Run Unit tests
         working-directory: ./octopipe
         run: |
-          go test -race -covermode atomic -coverprofile=profile.cov ./...
-      - name: Send coverage
+          go test -race -covermode atomic -coverprofile=coverage.cov ./...
+
+      - name: Tests coverage
+          uses: codecov/codecov-action@v1.0.7
+          with:
+            file: ./octopipe/coverage.cov
+            flags: octopipe
+            fail_ci_if_error: true
+
+      - name: Code style
+        run: revive -config revive.toml ./...
         working-directory: ./octopipe
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          GO111MODULE=off go get github.com/mattn/goveralls
-          $(go env GOPATH)/bin/goveralls -coverprofile=profile.cov -service=github
