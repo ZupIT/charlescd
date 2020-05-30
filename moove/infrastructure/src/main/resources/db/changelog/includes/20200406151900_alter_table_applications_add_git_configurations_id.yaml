@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200406151900-1
+      author: monica.ribeiro
+      comment: "Add git_configuration_id column on applications table"
+      changes:
+        - addColumn:
+            tableName: applications
+            column:
+              name: git_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_applications_git_configuration_id
+                references: git_configurations(id)

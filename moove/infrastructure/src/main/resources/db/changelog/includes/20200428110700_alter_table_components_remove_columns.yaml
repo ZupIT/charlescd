@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428110700-1
+      author: adauto.paula
+      comment: "Remove columns context_path,health_check and port from table modules"
+      changes:
+        - dropColumn:
+            tableName: components
+            columns:
+              - column:
+                  name: context_path
+              - column:
+                  name: health_check
+              - column:
+                  name: port

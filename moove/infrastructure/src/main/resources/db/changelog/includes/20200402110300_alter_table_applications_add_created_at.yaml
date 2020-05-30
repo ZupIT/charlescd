@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200402110300-1
+      author: monica.ribeiro
+      comment: "Add created_at on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp

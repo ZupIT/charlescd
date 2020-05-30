@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200501215000-1
+      author: mateus.cruz
+      comment: "Add field is_boolean on table users"
+      changes:
+        - addColumn:
+            tableName: users
+            column:
+              name: is_root
+              type: boolean
+              defaultValue: false

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200429235300-1
+      author: monica.ribeiro
+      comment: "Add metric_configuration_id column on workspaces table"
+      changes:
+        - addColumn:
+            tableName: workspaces
+            column:
+              name: metric_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_workspaces_metric_configuration_id
+                references: metric_configurations(id)
