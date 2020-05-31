@@ -12,7 +12,7 @@ coverage:
         flags: villager
       circle-matcher:
         target: 90%
-        flags: circle-matcher
+        flags: circlematcher
     patch:
       default:
         target: 100%
@@ -25,12 +25,12 @@ coverage:
         flags: villager
       circle-matcher:
         target: 100%
-        flags: circle-matcher     
+        flags: circlematcher     
       
 flags:
   villager:
     paths:
       - villager/
-  circle-matcher:
+  circlematcher:
     paths:
       - circle-matcher/
