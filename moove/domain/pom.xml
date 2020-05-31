@@ -2,14 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>charlescd</artifactId>
-        <groupId>br.com.zup.charles</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>domain</artifactId>
+    <parent>
+        <groupId>io.charlescd.moove</groupId>
+        <artifactId>charlescd-moove</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
 
+    <artifactId>domain</artifactId>
 
 </project>
