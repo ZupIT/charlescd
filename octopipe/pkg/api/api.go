@@ -20,7 +20,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type API struct {
+type Api struct {
 	router *gin.Engine
 	v1     *gin.RouterGroup
 }
@@ -29,18 +29,18 @@ const (
 	v1Path = "/api/v1"
 )
 
-func NewAPI() *API {
+func NewAPI() *Api {
 	router := gin.Default()
 
 	v1 := router.Group(v1Path)
 	v1.GET("/health", health)
-	return &API{router, v1}
+	return &Api{router, v1}
 }
 
 func health(context *gin.Context) {
 	context.JSON(200, "is alive")
 }
 
-func (api *API) Start() {
+func (api *Api) Start() {
 	api.router.Run(":8080")
 }

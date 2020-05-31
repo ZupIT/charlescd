@@ -28,7 +28,7 @@ type ExecutionAPI struct {
 	executionMain execution.ManagerUseCases
 }
 
-func (api *API) NewExecutionAPI(executionMain execution.ManagerUseCases) {
+func (api *Api) NewExecutionAPI(executionMain execution.ManagerUseCases) {
 	path := "/executions"
 
 	executionAPI := ExecutionAPI{executionMain}
