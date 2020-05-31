@@ -17,10 +17,9 @@
 package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.domain.Node;
-
+import java.util.Map;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import java.util.Map;
 
 public interface ScriptManagerService {
 

@@ -16,9 +16,8 @@
 
 package io.charlescd.circlematcher.api.response;
 
-import io.charlescd.circlematcher.domain.Circle;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import io.charlescd.circlematcher.domain.Circle;
 import java.util.Set;
 import java.util.stream.Collectors;
 

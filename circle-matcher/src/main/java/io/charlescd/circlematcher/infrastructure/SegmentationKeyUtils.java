@@ -18,7 +18,6 @@ package io.charlescd.circlematcher.infrastructure;
 
 import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.Segmentation;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
