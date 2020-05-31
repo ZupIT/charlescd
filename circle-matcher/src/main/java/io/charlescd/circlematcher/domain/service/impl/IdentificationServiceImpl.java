@@ -25,11 +25,15 @@ import io.charlescd.circlematcher.domain.service.IdentificationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.paukov.combinatorics3.Generator;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class IdentificationServiceImpl implements IdentificationService {
@@ -122,8 +126,8 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private boolean isMatched(IdentificationRequest request, Segmentation item) {
-        return item.getType().equals(SegmentationType.SIMPLE_KV) ||
-                this.scriptManagerService.isMatch(item.getNode(), request.getRequestData());
+        return item.getType().equals(SegmentationType.SIMPLE_KV)
+                || this.scriptManagerService.isMatch(item.getNode(), request.getRequestData());
     }
 
     private Circle createDefaultCircleFrom(List<KeyMetadata> metadata) {
