@@ -26,9 +26,9 @@
         <version>2.2.2.RELEASE</version>
     </parent>
     <groupId>io.charlescd.circlematcher</groupId>
-    <artifactId>circle-matcher</artifactId>
+    <artifactId>charlescd-circle-matcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>circle-matcher</name>
+    <name>charlescd-circle-matcher</name>
     <description>CharlesCD Circle Matcher</description>
 
     <properties>

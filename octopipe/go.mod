@@ -18,10 +18,15 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
+	github.com/mattn/go-colorable v0.1.6 // indirect
+	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/mgechev/revive v1.0.2 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/sjson v1.1.1
 	go.mongodb.org/mongo-driver v1.3.1
+	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
+	golang.org/x/tools v0.0.0-20200529162854-d859f6780395 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
