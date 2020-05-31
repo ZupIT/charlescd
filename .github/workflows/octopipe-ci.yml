@@ -48,6 +48,8 @@ jobs:
           flags: octopipe
           fail_ci_if_error: true
 
-      - name: Code style
-        run: revive -config revive.toml ./...
-        working-directory: ./octopipe
+      - name: Code Style
+        uses: docker://morphy/revive-action:v1
+        with:
+          config: ./octopipe/revive.toml
+          path: "./octopipe/..."
