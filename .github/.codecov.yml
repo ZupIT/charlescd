@@ -1,4 +1,5 @@
-coverage:  
+coverage: 
+  bot: ricardorames
   status:
     project:
       default:
