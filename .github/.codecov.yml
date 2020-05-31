@@ -4,7 +4,7 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        base: pr 
+        base: auto
         flags: 
           - villager
       villager:
@@ -14,7 +14,7 @@ coverage:
       default:
         target: 100%
         threshold: 0%
-        base: pr 
+        base: auto 
         flags: 
           - villager
       villager:
