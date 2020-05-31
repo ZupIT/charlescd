@@ -1,5 +1,7 @@
-coverage: 
+codecov:
   bot: ricardorames
+  
+coverage:
   status:
     project:
       default:
