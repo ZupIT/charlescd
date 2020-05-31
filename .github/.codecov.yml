@@ -4,7 +4,7 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        base: parent
+        only_pulls: true
         flags: 
           - villager
       villager:
@@ -13,8 +13,7 @@ coverage:
     patch:
       default:
         target: 100%
-        threshold: 0%
-        base: parent 
+        only_pulls: true
         flags: 
           - villager
       villager:
