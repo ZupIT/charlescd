@@ -7,6 +7,7 @@ coverage:
         only_pulls: true
         flags: 
           - villager
+          - circlematcher
       villager:
         target: 30%
         flags:
@@ -22,6 +23,7 @@ coverage:
         only_pulls: true
         flags: 
           - villager
+          - circlematcher
       villager:
         target: 100%
         flags:
