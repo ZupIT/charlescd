@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200415171000-1
+      author: mateus.cruz
+      comment: "Create table user_groups_users"
+      changes:
+        - createTable:
+            tableName: user_groups_users
+            columns:
+              - column:
+                  name: user_group_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    foreignKeyName: fk_user_groups_users_user_group_id
+                    references: user_groups(id)
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_user_groups_users_user_id
+                    references: users(id)
+                    nullable: false

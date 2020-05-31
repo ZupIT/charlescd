@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200422175000-1
+      author: mateus.cruz
+      comment: "Create table workspaces_user_groups"
+      changes:
+        - createTable:
+            tableName: workspaces_user_groups
+            columns:
+              - column:
+                  name: workspace_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    foreignKeyName: fk_workspace_id_workspaces_user_groups
+                    references: applications(id)
+                    nullable: false
+              - column:
+                  name: user_group_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_user_group_id_workspaces_user_groups
+                    references: user_groups(id)
+                    nullable: false
+              - column:
+                  name: roles
+                  type: JSONB
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            columnNames: workspace_id, user_group_id, roles
+            constraintName: workspaces_user_groups_row_uniqueness
+            tableName: workspaces_user_groups
