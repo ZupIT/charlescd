@@ -1,7 +1,6 @@
 coverage:  
   status:
     project:
-      default: off
       villager:
         target: 80%
         paths:
@@ -10,7 +9,6 @@ coverage:
           - villager
         if_ci_failed: error
     patch:
-      default: off
       villager:
         target: 80%
         paths:
