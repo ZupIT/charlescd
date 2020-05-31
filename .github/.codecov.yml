@@ -31,6 +31,8 @@ flags:
   villager:
     paths:
       - villager/
+    carryforward: true
   circlematcher:
     paths:
       - circle-matcher/
+    carryforward: true
