@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428140100-1
+      author: adauto.paula
+      comment: "Remove not null constraints from table modules"
+      changes:
+        - dropNotNullConstraint:
+            columnName: helm_repository
+            tableName: modules
+        - dropNotNullConstraint:
+            columnName: git_repository_address
+            tableName: modules

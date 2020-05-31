@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200402091100-1
+      author: monica.ribeiro
+      comment: "Add status on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: status
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
