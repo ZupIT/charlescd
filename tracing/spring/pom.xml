@@ -25,7 +25,7 @@
     <groupId>io.charlescd</groupId>
     <artifactId>charlescd-tracing-spring</artifactId>
     <name>charlescd-tracing-spring</name>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <description>CharlesCD distributed tracing library</description>
 
     <properties>
@@ -203,7 +203,7 @@
         <connection>scm:git:git://github.com/ZupIT/charlescd.git</connection>
         <developerConnection>scm:git:git@github.com:ZupIT/charlescd.git</developerConnection>
         <url>https://github.com/ZupIT/charlescd/tracing/spring</url>
-        <tag>charlescd-tracing-spring-1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
