@@ -25,7 +25,7 @@
     <groupId>io.charlescd</groupId>
     <artifactId>charlescd-tracing-spring</artifactId>
     <name>charlescd-tracing-spring</name>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <description>CharlesCD distributed tracing library</description>
 
     <properties>
