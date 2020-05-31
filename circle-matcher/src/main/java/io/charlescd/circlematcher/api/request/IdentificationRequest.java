@@ -16,9 +16,9 @@
 
 package io.charlescd.circlematcher.api.request;
 
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 public class IdentificationRequest {
 
