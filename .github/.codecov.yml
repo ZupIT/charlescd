@@ -8,7 +8,7 @@ coverage:
         flags: 
           - villager
       villager:
-        target: 80%
+        target: 30%
         flags: villager
     patch:
       default:
