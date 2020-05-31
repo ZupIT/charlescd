@@ -7,7 +7,6 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        only_pulls: true
         flags: 
           - villager
           - circlematcher
@@ -23,18 +22,9 @@ coverage:
       default:
         target: 100%
         threshold: 0%
-        only_pulls: true
         flags: 
           - villager
           - circlematcher
-      villager:
-        target: 100%
-        flags:
-          - villager
-      circle-matcher:
-        target: 100%
-        flags:
-          - circlematcher     
       
 flags:
   villager:
