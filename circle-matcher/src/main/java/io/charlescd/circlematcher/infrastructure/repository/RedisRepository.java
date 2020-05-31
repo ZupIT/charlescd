@@ -16,11 +16,10 @@
 
 package io.charlescd.circlematcher.infrastructure.repository;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.Cursor;
-
-import java.io.IOException;
 
 public interface RedisRepository {
 

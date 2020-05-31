@@ -16,10 +16,9 @@
 
 package io.charlescd.circlematcher.infrastructure;
 
-import org.springframework.util.FileCopyUtils;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.springframework.util.FileCopyUtils;
 
 public class ResourceUtils {
 
