@@ -1,29 +1,36 @@
 coverage:  
   status:
     project:
-      default: off
-      villager:
-        target: 80%
+      default:
+        target: auto
+        threshold: 0%
+        only_pulls: true
         flags: 
           - villager
-        if_ci_failed: error
+      villager:
+        target: 30%
+        flags: villager
+      circle-matcher:
+        target: 90%
+        flags: circle-matcher
     patch:
-      default: off
-      villager:
-        target: 80%
+      default:
+        target: 100%
+        threshold: 0%
+        only_pulls: true
         flags: 
           - villager
-        if_ci_failed: error
-    changes:
-      default: off
       villager:
-        target: 80%
-        flags: 
-          - villager
-        if_ci_failed: error
-
+        target: 100%
+        flags: villager
+      circle-matcher:
+        target: 100%
+        flags: circle-matcher     
+      
 flags:
   villager:
     paths:
       - villager/
-    carryforward: true
+  circle-matcher:
+    paths:
+      - circle-matcher/
