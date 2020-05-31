@@ -27,7 +27,7 @@ type PipelineAPI struct {
 	mozart mozart.MozartUseCases
 }
 
-func (api *Api) NewPipelineAPI(mozart mozart.MozartUseCases) {
+func (api *API) NewPipelineAPI(mozart mozart.MozartUseCases) {
 	path := "/pipelines"
 	controller := PipelineAPI{mozart}
 
