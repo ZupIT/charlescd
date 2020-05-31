@@ -1,0 +1,26 @@
+coverage:  
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0%
+        base: pr 
+        flags: 
+          - villager
+      villager:
+        target: 80%
+        flags: villager
+    patch:
+      default:
+        target: 100%
+        threshold: 0%
+        base: pr 
+        flags: 
+          - villager
+      villager:
+        target: 100%
+        flags: villager
+flags:
+  villager:
+    paths:
+      - villager/
