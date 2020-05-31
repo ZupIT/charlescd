@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200507215000-1
+      author: adauto.paula
+      comment: "Add admin user seed"
+      changes:
+        - sql:
+            sql: "insert into users(id, name, photo_url, email, created_at, is_root) values('c7e6dafe-aa7a-4536-be1b-34eaad4c2915', 'Charles Admin', null, 'charlesadmin@zup.com.br', now(), true);"
