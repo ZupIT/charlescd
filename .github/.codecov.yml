@@ -4,20 +4,10 @@ coverage:
       default: off
       villager:
         target: 80%
-        flags: 
-          - villager
+        flags: villager
         if_ci_failed: error
-    patch:
-      default: off
-      villager:
-        target: 80%
-        flags: 
-          - villager
-        if_ci_failed: error
-    changes: off
 
 flags:
   villager:
     paths:
       - villager/
-    carryforward: true
