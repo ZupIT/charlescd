@@ -49,3 +49,5 @@ jobs:
         with:
           config: ./octopipe/revive.toml
           path: "./octopipe/..."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
