@@ -1,26 +1,37 @@
-coverage:  
+codecov:
+  bot: ricardorames
+  
+coverage:
   status:
     project:
       default:
         target: auto
         threshold: 0%
-        only_pulls: true
         flags: 
           - villager
+          - circlematcher
       villager:
         target: 30%
-        flags: villager
+        flags:
+          - villager
+      circle-matcher:
+        target: 90%
+        flags:
+          - circlematcher
     patch:
       default:
         target: 100%
-        threshold: 1%
-        only_pulls: true
+        threshold: 0%
         flags: 
           - villager
-      villager:
-        target: 100%
-        flags: villager
+          - circlematcher
+      
 flags:
   villager:
     paths:
       - villager/
+    carryforward: true
+  circlematcher:
+    paths:
+      - circle-matcher/
+    carryforward: true

@@ -18,12 +18,7 @@ package io.charlescd.circlematcher.utils
 
 import io.charlescd.circlematcher.api.request.CreateSegmentationRequest
 import io.charlescd.circlematcher.api.request.UpdateSegmentationRequest
-import io.charlescd.circlematcher.domain.Content
-import io.charlescd.circlematcher.domain.LogicalOperatorType
-import io.charlescd.circlematcher.domain.Node
-import io.charlescd.circlematcher.domain.NodeType
-import io.charlescd.circlematcher.domain.Segmentation
-import io.charlescd.circlematcher.domain.SegmentationType
+import io.charlescd.circlematcher.domain.*
 
 class TestUtils {
 

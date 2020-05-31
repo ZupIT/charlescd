@@ -16,12 +16,7 @@
 
 package io.charlescd.circlematcher.infrastructure
 
-
-import io.charlescd.circlematcher.domain.Content
-import io.charlescd.circlematcher.domain.LogicalOperatorType
-import io.charlescd.circlematcher.domain.Node
-import io.charlescd.circlematcher.domain.NodeType
-import io.charlescd.circlematcher.domain.SegmentationType
+import io.charlescd.circlematcher.domain.*
 import io.charlescd.circlematcher.utils.TestUtils
 import spock.lang.Specification
 

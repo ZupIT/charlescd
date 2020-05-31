@@ -16,9 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
-import io.charlescd.circlematcher.infrastructure.Constants;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import io.charlescd.circlematcher.infrastructure.Constants;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -77,9 +76,9 @@ public class Node {
             return stringBuilder.append(Constants.END_EXPRESSION)
                     .toString();
         } else {
-            return Constants.START_EXPRESSION +
-                    this.content.expression() +
-                    Constants.END_EXPRESSION;
+            return Constants.START_EXPRESSION
+                    + this.content.expression()
+                    + Constants.END_EXPRESSION;
         }
     }
 
