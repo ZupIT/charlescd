@@ -1,6 +1,3 @@
-codecov:
-  bot: ricardorames
-  
 coverage:
   status:
     project:
