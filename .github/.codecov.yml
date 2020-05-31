@@ -11,10 +11,14 @@ coverage:
         target: 30%
         flags:
           - villager
-      circle-matcher:
-        target: 90%
+      circlematcher:
+        target: 70%
         flags:
           - circlematcher
+      octopipe:
+        target: 70%
+        flags:
+          - octopipe
     patch:
       default:
         target: 100%
@@ -22,6 +26,7 @@ coverage:
         flags: 
           - villager
           - circlematcher
+          - octopipe
       
 flags:
   villager:
@@ -31,4 +36,8 @@ flags:
   circlematcher:
     paths:
       - circle-matcher/
+    carryforward: true
+  octopipe:
+    paths:
+      - octopipe/
     carryforward: true
