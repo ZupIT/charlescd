@@ -16,14 +16,13 @@
 
 package io.charlescd.circlematcher.infrastructure.repository;
 
-import io.charlescd.circlematcher.domain.KeyMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.charlescd.circlematcher.domain.KeyMetadata;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class KeyMetadataRepository implements RedisRepository {

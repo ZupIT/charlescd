@@ -16,9 +16,8 @@
 
 package io.charlescd.circlematcher.domain;
 
-import io.charlescd.circlematcher.infrastructure.OpUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import io.charlescd.circlematcher.infrastructure.OpUtils;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

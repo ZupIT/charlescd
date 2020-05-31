@@ -38,11 +38,15 @@ public class Circle {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Circle)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Circle)) {
+            return false;
+        }
         Circle circle = (Circle) o;
-        return getId().equals(circle.getId()) &&
-                getName().equals(circle.getName());
+        return getId().equals(circle.getId())
+                && getName().equals(circle.getName());
     }
 
     @Override
