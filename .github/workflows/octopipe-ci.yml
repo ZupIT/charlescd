@@ -14,33 +14,40 @@ on:
       - 'octopipe/**'
 
 jobs:
-  static_code_analysis:
-    name: StaticCodeAnalysis
-    strategy:
-      matrix:
-        go-version: [1.14.x]
-        platform: [ubuntu-latest]
-    runs-on: ${{ matrix.platform }}
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
 
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: Build
-        working-directory: ./octopipe
-        run: go build -o dist/octopipe ./cmd/octopipe/*.go
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.2'
+
       - name: Run Unit tests
         working-directory: ./octopipe
         run: |
-          go test -race -covermode atomic -coverprofile=profile.cov ./...
-      - name: Send coverage
-        working-directory: ./octopipe
+          go test -race -covermode atomic -coverprofile=coverage.cov ./...
+
+      - name: Tests coverage
+        uses: codecov/codecov-action@v1.0.7
+        with:
+          file: ./octopipe/coverage.cov
+          flags: octopipe
+          fail_ci_if_error: true
+
+      - name: Code Style
+        uses: docker://morphy/revive-action:v1
+        with:
+          config: ./octopipe/revive.toml
+          path: "./octopipe/..."
         env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          GO111MODULE=off go get github.com/mattn/goveralls
-          $(go env GOPATH)/bin/goveralls -coverprofile=profile.cov -service=github
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
