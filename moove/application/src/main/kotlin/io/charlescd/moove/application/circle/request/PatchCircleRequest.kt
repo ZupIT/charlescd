@@ -53,4 +53,3 @@ data class PatchCircleRequest(override val patches: List<PatchOperation>) : Base
         }
     }
 }
-

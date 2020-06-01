@@ -32,18 +32,22 @@ data class SearchMetric(val name: String) {
     fun forPeriod(period: Period) = apply { this.period = period }
 }
 
-data class SearchMetricFilter(val attribute: String,
-                              val values: List<String>,
-                              val kind: FilterKind)
+data class SearchMetricFilter(
+    val attribute: String,
+    val values: List<String>,
+    val kind: FilterKind
+)
 
 enum class FilterKind(val symbol: String) {
     EQUAL("="), NOT_EQUAL("!="), REGEX_MATCH("=~"), REGEX_NOT_MATCH("!~")
 }
 
-data class Period(val value: Int,
-                  val unit: PeriodUnit,
-                  val sliceValue: Int,
-                  val sliceUnit: PeriodUnit)
+data class Period(
+    val value: Int,
+    val unit: PeriodUnit,
+    val sliceValue: Int,
+    val sliceUnit: PeriodUnit
+)
 
 enum class PeriodUnit(val unitValue: String) {
     SECONDS("s"), MINUTES("m"), HOURS("h")

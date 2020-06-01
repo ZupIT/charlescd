@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
-data class ComponentTagsResponse(
+data class FindComponentTagsResponse(
     val tags: List<ComponentTag>
 ) {
     data class ComponentTag(

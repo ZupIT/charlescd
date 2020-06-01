@@ -26,5 +26,4 @@ interface ComponentRepository {
     fun findById(componentId: String): Optional<Component>
 
     fun findAllDeployedAtCircle(circleId: String, workspaceID: String): List<Component>
-
 }

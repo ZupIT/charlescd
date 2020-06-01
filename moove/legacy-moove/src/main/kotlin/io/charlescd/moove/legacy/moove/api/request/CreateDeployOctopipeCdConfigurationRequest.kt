@@ -27,7 +27,6 @@ data class CreateDeployOctopipeCdConfigurationRequest(
     val authorId: String
 ) : CreateDeployCdConfigurationRequest()
 
-
 enum class GitProvidersEnum {
     GITHUB,
     GITLAB

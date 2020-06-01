@@ -67,5 +67,4 @@ data class Build(
     fun canBeUpdated(): Boolean = this.status == BuildStatus.BUILDING
 
     fun canBeDeployed(): Boolean = this.status == BuildStatus.BUILT || this.status == BuildStatus.VALIDATED
-
 }

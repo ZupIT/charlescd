@@ -22,5 +22,4 @@ import io.charlescd.moove.application.deployment.response.DeploymentResponse
 interface CreateDeploymentInteractor {
 
     fun execute(request: CreateDeploymentRequest, workspaceId: String): DeploymentResponse
-
 }

@@ -25,5 +25,4 @@ import io.charlescd.moove.domain.PageRequest
 interface FindGitConfigurationsInteractor {
 
     fun execute(workspaceId: String, pageRequest: PageRequest): ResourcePageResponse<GitConfigurationResponse>
-
 }

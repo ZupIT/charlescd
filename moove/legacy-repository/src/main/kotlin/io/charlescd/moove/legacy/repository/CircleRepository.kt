@@ -55,5 +55,4 @@ interface CircleRepository : JpaRepository<Circle, String> {
                 " WHERE D.STATUS NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED') AND LOWER(C.NAME) LIKE ('%' || LOWER(:name) || '%')"
     )
     fun findActiveCirclesByName(@Param("name") name: String, page: Pageable): Page<Circle>
-
 }
