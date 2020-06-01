@@ -7,4 +7,4 @@ services:
     ports:
       - '6379:6379'
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=matcher

@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200407134900-1
+      author: monica.ribeiro
+      comment: "Add registry_configuration_id column on table applications"
+      changes:
+        - addColumn:
+            tableName: applications
+            columns:
+              - column:
+                  name: registry_configuration_id
+                  type: varchar(36)

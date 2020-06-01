@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200505215000-1
+      author: adauto.paula
+      comment: "Add not null constraints to modules table"
+      changes:
+        - addNotNullConstraint:
+            tableName: modules
+            columnName: git_repository_address
+        - addNotNullConstraint:
+            tableName: modules
+            columnName: helm_repository
+
+

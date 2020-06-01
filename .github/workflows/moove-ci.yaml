@@ -1,0 +1,39 @@
+name: build moove
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'moove/**'
+    tags: 
+      - '!*'
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'moove/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Build
+      run: mvn -B package
+      working-directory: ./moove
+    - name: Tests coverage
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        file: ./moove/target/site/jacoco/jacoco.xml
+        flags: moove
+        fail_ci_if_error: true

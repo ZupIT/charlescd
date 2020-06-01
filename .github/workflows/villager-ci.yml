@@ -31,6 +31,15 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-    - name: Build with Maven
+    - name: Build
       run: mvn -B package
+      working-directory: ./villager
+    - name: Tests coverage
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        file: ./villager/target/site/jacoco/jacoco.xml
+        flags: villager
+        fail_ci_if_error: true
+    - name: Code style
+      run: mvn checkstyle:checkstyle
       working-directory: ./villager

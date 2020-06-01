@@ -1,0 +1,107 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200420163500-1
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles;"
+      comment: "Seeding default roles on Charles"
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "09ae6a9a-45d6-44de-8b3a-5a00d15e98af"
+              - column:
+                  name: name
+                  value: "maintenance_write"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "7cc71f53-2054-4193-836d-6177fa9bbb48"
+              - column:
+                  name: name
+                  value: "deploy_write"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "70f30948-d8fc-448a-9e3e-050c16a4eb46"
+              - column:
+                  name: name
+                  value: "circles_read"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "d138ff33-0fb8-4ebf-8c8c-20d61067b183"
+              - column:
+                  name: name
+                  value: "circles_write"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "7f0952e1-a347-4481-879d-4de5a9835299"
+              - column:
+                  name: name
+                  value: "modules_read"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "7bec8317-fa2a-4543-8be7-1fd1a0bf43c0"
+              - column:
+                  name: name
+                  value: "modules_write"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "6cbf2482-2f26-4672-9a9a-d94fc1675597"
+              - column:
+                  name: name
+                  value: "hypothesis_read"
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "9c3d4e7a-384e-49ff-8e25-c610427eee59"
+              - column:
+                  name: name
+                  value: "hypothesis_write"
+              - column:
+                  name: created_at
+                  value: now()
