@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200508151500-1
+      author: mateus.cruz
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from roles;"
+      comment: "Seeding default roles on Charles"
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "abf2ac96-e25b-4b82-8828-d7ef2b013ade"
+              - column:
+                  name: name
+                  value: "Maintainer"
+              - column:
+                  name: description
+                  value: "Can access and edit this workspace's settings. Can deploy. Can also create, edit and delete: circles, modules and hypotheses."
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "822a87d4-2bba-4d2a-b21c-b2b8533f9cc1"
+              - column:
+                  name: name
+                  value: "Developer"
+              - column:
+                  name: description
+                  value: "Can deploy. Can also create, edit and delete: circles, modules and hypotheses."
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "da59c62b-5498-4e65-b311-01cb5c5279ef"
+              - column:
+                  name: name
+                  value: "Analyst"
+              - column:
+                  name: description
+                  value: "Can create, edit and delete: circles and hypotheses."
+              - column:
+                  name: created_at
+                  value: now()
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: "52c22f91-5320-4760-a013-701c31611aed"
+              - column:
+                  name: name
+                  value: "Reader"
+              - column:
+                  name: description
+                  value: "Can view circles, hypotheses and modules."
+              - column:
+                  name: created_at
+                  value: now()

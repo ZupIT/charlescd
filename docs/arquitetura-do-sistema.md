@@ -2,7 +2,7 @@
 
 A plataforma, construída utilizando a abordagem de microsserviços, possui os seguintes módulos:
 
-![](.gitbook/assets/nova-arquitetura-charles.png)
+![](.gitbook/assets/nova-arquitetura-charles-2.png)
 
 * `charles-application:` responsável pelo gerenciamento de usuários, módulos, hipóteses e boards.  
 * `charles-notification:` realiza a gestão todas as notificações dentro da plataforma. 
