@@ -244,11 +244,13 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox.swagger.ui.version}</version>
             </dependency>
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
                 <version>${spring.jdbc.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
