@@ -26,6 +26,7 @@ import io.charlescd.moove.commons.integration.git.factory.GitHubClientFactoryLeg
 import io.charlescd.moove.commons.integration.git.model.CompareResult
 import io.charlescd.moove.legacy.repository.entity.GitCredentials
 import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
+import java.util.*
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.RepositoryId
 import org.eclipse.egit.github.core.client.GitHubClient
@@ -35,7 +36,6 @@ import org.eclipse.egit.github.core.service.DataService
 import org.eclipse.egit.github.core.service.RepositoryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFactoryLegacy) : GitServiceLegacy() {
@@ -172,7 +172,6 @@ class GitHubServiceLegacy(private val gitHubClientFactoryLegacy: GitHubClientFac
             log.error("error trying to delete branch: $branchName from GitHub repository: $repository")
             handleResponseError(e, branchName, repository)
         }
-
     }
 
     override fun compareBranches(

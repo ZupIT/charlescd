@@ -20,23 +20,23 @@ import io.charlescd.moove.metrics.api.ProjectionType
 import io.charlescd.moove.metrics.api.response.*
 
 data class Metric(
-        val name: String,
-        val result: List<MetricResult>
+    val name: String,
+    val result: List<MetricResult>
 )
 
 data class MetricResult(
-        val labels: Map<String, String>,
-        val data: List<MetricData>
+    val labels: Map<String, String>,
+    val data: List<MetricData>
 )
 
 data class MetricData(
-        val time: Long,
-        val value: Double
+    val time: Long,
+    val value: Double
 )
 
 fun Metric.toCircleMetricRepresentation(
-        period: ProjectionType,
-        type: MetricType
+    period: ProjectionType,
+    type: MetricType
 ) = CircleMetricRepresentation(
         period = period,
         type = type,
@@ -47,9 +47,9 @@ fun Metric.toCircleMetricRepresentation(
 )
 
 fun toMetricRepresentation(
-        period: ProjectionType,
-        type: MetricType,
-        components: List<ComponentRepresentation>
+    period: ProjectionType,
+    type: MetricType,
+    components: List<ComponentRepresentation>
 ) = ComponentMetricRepresentation(
         period = period,
         type = type,
@@ -57,8 +57,8 @@ fun toMetricRepresentation(
 )
 
 fun MetricResult.toComponentRepresentation(
-        module: String,
-        name: String
+    module: String,
+    name: String
 ) = ComponentRepresentation(
         name = name,
         module = module,
@@ -75,8 +75,10 @@ fun Metric.toCircleRequestsRepresentation(unit: String) = CircleRequestsRepresen
         unit = unit
 )
 
-fun MetricResult.toCircleComponentHealthRepresentation(threshold: Int,
-                                                       name: String) = CircleComponentHealthRepresentation(
+fun MetricResult.toCircleComponentHealthRepresentation(
+    threshold: Int,
+    name: String
+) = CircleComponentHealthRepresentation(
         name = name,
         threshold = threshold,
         value = this.data.firstOrNull()?.value ?: 0.0,

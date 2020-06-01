@@ -48,8 +48,8 @@ class PrometheusService(
         val filter = metricFilter(searchMetric.filters)
         val finalFilter = if (filter.isBlank()) "response_status=~\"^5.*\$\"" else "$filter, response_status=~\"^5.*\$\""
 
-        val query = "round((sum(irate(${searchMetric.name}{${finalFilter}}[1m])) by(${groupBy(searchMetric.groupBy)}) / " +
-                        "scalar(sum(irate(${searchMetric.name}{${filter}}[1m])) " +
+        val query = "round((sum(irate(${searchMetric.name}{$finalFilter}[1m])) by(${groupBy(searchMetric.groupBy)}) / " +
+                        "scalar(sum(irate(${searchMetric.name}{$filter}[1m])) " +
                         "by(${groupBy(searchMetric.groupBy)})) * 100), 0.01)${metricPeriod(searchMetric.period)}"
 
         return this.prometheusApi.executeQuery(URI.create(url), query).toMetric(searchMetric.name)

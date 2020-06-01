@@ -23,9 +23,9 @@ import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.Role
 import io.charlescd.moove.domain.repository.RoleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.RoleExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcRoleRepository(
@@ -132,5 +132,4 @@ class JdbcRoleRepository(
         return statement
             .appendln("AND roles.id IN(${ids.joinToString(separator = ",") { "'$it'" }})")
     }
-
 }

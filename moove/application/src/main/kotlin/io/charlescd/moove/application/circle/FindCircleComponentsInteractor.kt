@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.charlescd.moove.application.circle
 
 import io.charlescd.moove.application.circle.response.CircleComponentResponse
@@ -22,5 +21,4 @@ import io.charlescd.moove.application.circle.response.CircleComponentResponse
 interface FindCircleComponentsInteractor {
 
     fun execute(id: String, workspaceId: String): List<CircleComponentResponse>
-
 }

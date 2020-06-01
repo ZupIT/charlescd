@@ -21,5 +21,4 @@ import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
 interface PatchWorkspaceInteractor {
 
     fun execute(workspaceId: String, request: PatchWorkspaceRequest)
-
 }

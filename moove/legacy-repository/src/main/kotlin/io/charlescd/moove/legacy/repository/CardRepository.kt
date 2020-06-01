@@ -17,12 +17,12 @@
 package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Card
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
-import java.util.*
 
 interface CardRepository : JpaRepository<Card, String> {
 
@@ -43,5 +43,4 @@ interface CardRepository : JpaRepository<Card, String> {
         nativeQuery = true
     )
     fun deleteMembersRelationship(cardId: String)
-
 }

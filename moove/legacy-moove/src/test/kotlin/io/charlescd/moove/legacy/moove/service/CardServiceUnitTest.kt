@@ -34,17 +34,17 @@ import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.junit.Before
-import org.junit.Test
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import org.junit.Before
+import org.junit.Test
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 
 class CardServiceUnitTest {
 
@@ -184,7 +184,6 @@ class CardServiceUnitTest {
                 feature.branchName
             )
         } returns Optional.of(feature.branchName)
-
 
         val createdCard = cardService.create(cardRequest, workspaceId)
 
@@ -326,7 +325,6 @@ class CardServiceUnitTest {
             MooveErrorCodeLegacy.GIT_ERROR_DUPLICATED_BRANCH
         )
         every { gitService.deleteBranch(gitCredential, module1.name, feature.branchName) } answers {}
-
 
         val e = assertFailsWith<BusinessExceptionLegacy> { cardService.create(cardRequest, workspaceId) }
 
@@ -639,7 +637,6 @@ class CardServiceUnitTest {
         assertEquals(hypothesisId, updatedCard.hypothesisId)
         assertEquals(0, updatedCard.members.size)
         assertEquals(0, updatedCard.index)
-
     }
 
     @Test
@@ -711,7 +708,6 @@ class CardServiceUnitTest {
         assertEquals(hypothesisId, updatedCard.hypothesisId)
         assertEquals(0, updatedCard.members.size)
         assertEquals(0, updatedCard.index)
-
     }
 
     @Test
@@ -738,7 +734,6 @@ class CardServiceUnitTest {
         assertEquals(0, cardFound.comments.size)
         assertEquals(0, cardFound.members.size)
         assertEquals(0, cardFound.index)
-
     }
 
     @Test
@@ -974,7 +969,6 @@ class CardServiceUnitTest {
             workspaceId
         )
 
-
     private fun buildCredentialConfig(type: CredentialConfigurationType): CredentialConfiguration =
         CredentialConfiguration(UUID.randomUUID().toString(), "name", type, LocalDateTime.now(), user, workspaceId)
 
@@ -988,7 +982,6 @@ class CardServiceUnitTest {
             listOf(module1, module2),
             workspaceId
         )
-
 
     private fun buildGitConfiguration(gitConfigurationId: String): GitConfiguration =
         GitConfiguration(

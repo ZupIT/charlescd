@@ -33,8 +33,7 @@ fun RepositoryService.mergeBranches(
             "base" to baseBranch,
             "head" to headBranch,
             "commit_message" to commitMessage
-        )
-        , JsonObject::class.java
+        ), JsonObject::class.java
     )
 }
 
@@ -59,7 +58,6 @@ fun RepositoryService.createRelease(
         ), JsonObject::class.java
     )
 
-
 fun RepositoryService.findReleaseByTagName(
     repository: String,
     releaseName: String
@@ -68,7 +66,6 @@ fun RepositoryService.findReleaseByTagName(
         uri = "/repos/${RepositoryId.createFromId(repository)}/releases/tags/$releaseName"
     }
         .apply { type = JsonObject::class.java }).body as JsonObject
-
 
 fun RepositoryService.deleteBranch(
     repository: String,

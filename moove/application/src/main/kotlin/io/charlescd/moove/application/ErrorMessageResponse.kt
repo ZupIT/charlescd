@@ -37,6 +37,5 @@ data class ErrorMessageResponse(
         fun of(code: MooveErrorCode, fields: Map<String, List<String>>): ErrorMessageResponse {
             return ErrorMessageResponse(code.name, null, fields)
         }
-
     }
 }

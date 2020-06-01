@@ -16,9 +16,9 @@
 
 package io.charlescd.moove.legacy.repository.entity
 
-import org.hibernate.annotations.ColumnTransformer
 import java.time.LocalDateTime
 import javax.persistence.*
+import org.hibernate.annotations.ColumnTransformer
 
 @Entity
 @Table(name = "git_configurations")

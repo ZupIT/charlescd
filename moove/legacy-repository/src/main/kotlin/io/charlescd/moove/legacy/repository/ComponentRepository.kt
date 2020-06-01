@@ -17,13 +17,12 @@
 package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Component
-import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
+import org.springframework.data.jpa.repository.JpaRepository
 
 interface ComponentRepository : JpaRepository<Component, String> {
 
     fun findByModuleId(moduleId: String): List<Component>
 
     fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Component>
-
 }

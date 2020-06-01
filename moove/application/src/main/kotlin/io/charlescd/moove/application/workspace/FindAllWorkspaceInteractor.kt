@@ -25,5 +25,4 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllWorkspaceInteractor {
 
     fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<WorkspaceResponse>
-
 }

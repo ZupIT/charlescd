@@ -22,9 +22,9 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.UserGroupRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserGroupExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.WorkspacePermissionsExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcUserGroupRepository(
@@ -202,5 +202,4 @@ class JdbcUserGroupRepository(
         val permissionsFromAssociation = this.jdbcTemplate.query(statement, arrayOf(workspaceId, userGroupId), workspacePermissionsExtractor)
         return permissionsFromAssociation?.get(workspaceId) ?: emptyList()
     }
-
 }
