@@ -1,45 +1,34 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Principais conceitos](glossario-tecnico.md)
-* [Arquitetura do sistema](arquitetura-do-sistema.md)
+* [Principais Conceitos](principais-conceitos.md)
 
-## PRIMEIROS PASSOS <a id="usando-o-charles"></a>
+## Primeiros Passos
 
-* [Instalação do Charles](usando-o-charles/instalacao-do-charles.md)
-* [Configuração de dependências](usando-o-charles/configuracao-de-dependencias/README.md)
-  * [Github](usando-o-charles/configuracao-de-dependencias/github.md)
-  * [Kubernetes](usando-o-charles/configuracao-de-dependencias/kubernetes.md)
-  * [CD Configuration](usando-o-charles/configuracao-de-dependencias/cd-configuration.md)
-  * [Registry](usando-o-charles/configuracao-de-dependencias/registry.md)
-  * [Módulos](usando-o-charles/configuracao-de-dependencias/modulos.md)
+* [Instalando o Charles](primeiros-passos/instalando-charles.md)
+* [Definindo um Workspace](primeiros-passos/definindo-workspace/README.md)
+  * [Docker Registry](primeiros-passos/definindo-workspace/docker-registry.md)
+  * [Configurando seu Cluster](primeiros-passos/definindo-workspace/configurando-cluster.md)
+  * [Credenciais do Git](primeiros-passos/definindo-workspace/github.md)
+* [Criando seu Primeiro Módulo](primeiros-passos/criando-modulos.md)
+* [Primeiro Deploy](primeiros-passos/primeiro-deploy.md)
+* [Usando Círculos](primeiros-passos/usando-circulos.md)
 
-## CÍRCULOS
+## Referência
 
-* [O que são círculos?](circulos/o-que-sao-circulos.md)
-* [Como segmentar e identificar os círculos?](circulos/segmentacoes-dos-circulos.md)
-* [Outras configurações](circulos/como-integrar-circulos-com-servicos.md)
-* [Circle Matcher](circulos/circle-matcher.md)
+* [Círculo](referencia/circulos.md)
+* [Circle Matcher](referencia/circle-matcher.md)
+* [Configuração de CD](referencia/configuracao-cd.md)
+* [Grupo de Usuários](referencia/grupos-de-usuarios.md)
+* [Hipótese](referencia/hipotese.md)
+* [Release](referencia/release.md)
+* [Métricas](referencia/metricas/README.md)
+  * [Configurando as métricas](referencia/metricas/configurando-metricas.md)
+  * [Cadastrando o provedor de métricas](referencia/metricas/provedor-metrica.md)
 
-## HIPÓTESES
+## FAQ
 
-* [O que são e como criar hipóteses?](hipoteses/o-que-sao-hipoteses.md)
-* [Gestão do board](hipoteses/gestao-do-board.md)
-
-## RELEASES
-
-* [O que são e como criar releases?](releases/o-que-sao-releases.md)
-
-## RECURSOS <a id="apis"></a>
-
-* [APIs](apis/apis/README.md)
-  * [Collection Postman](https://documenter.getpostman.com/view/4745449/SzRw1WTS)
-* [FAQ](apis/faq.md)
-
-## CHARLES x OUTROS DEPLOYMENTS <a id="charles-outros-deployments"></a>
-
-* [Conceito de deploy em círculos](charles-outros-deployments/conceito-de-deploy-em-circulos.md)
-* [Deploys em círculos x deploys tradicionais](charles-outros-deployments/deploy-tradicional-vs-deploy-em-circulos.md)
-* [Deploys em círculos x blue-green deployments](charles-outros-deployments/bluegreen-vs-deploy-em-circulos.md)
-* [Deploys em círculos x canary releases](charles-outros-deployments/canary-release-vs-deploy-em-circulos.md)
+* [Sobre o Charles](faq/sobre-charles.md)
+* [Deploy em círculos x Outros deploys](faq/deploy-em-circulos-e-outros-deploys.md)
+* [Comunidade](faq/comunidade.md)
 
