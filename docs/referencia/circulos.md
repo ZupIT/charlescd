@@ -31,6 +31,14 @@ As segmentações são um conjunto de características que você define para agr
 Uma **grande vantagem de utilizar as segmentações** é a possibilidade fazer combinações lógicas entre vários atributos para criar diferentes categorias de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “_profissão_” e “_região_”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
 {% endhint %}
 
+### Como obter o identificador do meu círculo?
+
+Assim que seu círculo é criado, mesmo sem a definição das configurações, ele já possui um identificador único. 
+
+Para obter essa informação, selecione o círculo, clique em default e, no menu à esquerda, clique em **Copy ID**: 
+
+![](../.gitbook/assets/circuloid.gif)
+
 ### **Segmentação manual**
 
 Nesta segmentação, você define as lógicas que o círculo deve seguir para compor um match com usuários que atendam às características pré-determinadas.
