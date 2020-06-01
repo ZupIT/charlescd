@@ -1,9 +1,24 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package execution
 
 import (
 	"context"
 	"log"
-	"octopipe/pkg/database"
 	"octopipe/pkg/pipeline"
 	"time"
 
@@ -13,22 +28,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-type UseCases interface {
-	FindAll() (*[]Execution, error)
-	FindByID(id string) (*Execution, error)
-	Create() (*primitive.ObjectID, error)
-	CreateExecutionStep(
-		executionID *primitive.ObjectID, step *pipeline.Step,
-	) (*primitive.ObjectID, error)
-	ExecutionError(executionID *primitive.ObjectID, pipelineError error) error
-	ExecutionFinished(executionID *primitive.ObjectID) error
-	UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error
-}
-
-type ExecutionManager struct {
-	DB database.UseCases
-}
 
 const (
 	ExecutionRunning  = "RUNNING"
@@ -64,17 +63,13 @@ const (
 	collection = "executions"
 )
 
-func NewExecutionManager(db database.UseCases) UseCases {
-	return &ExecutionManager{db}
-}
-
 func (executionManager *ExecutionManager) FindAll() (*[]Execution, error) {
 	executions := []Execution{}
 	sort := map[string]int{"starttime": -1}
 	opts := &options.FindOptions{
 		Sort: sort,
 	}
-	cur, err := executionManager.DB.FindAll(collection, context.TODO(), map[string]string{}, opts)
+	cur, err := executionManager.DB.FindAll(context.TODO(), collection, map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +97,7 @@ func (executionManager *ExecutionManager) FindByID(id string) (*Execution, error
 	}
 
 	filter := bson.M{"_id": objectID}
-	err = executionManager.DB.FindOne(collection, context.TODO(), filter).Decode(&execution)
+	err = executionManager.DB.FindOne(context.TODO(), collection, filter).Decode(&execution)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +113,7 @@ func (executionManager *ExecutionManager) Create() (*primitive.ObjectID, error) 
 	}
 
 	newExecution.ID = primitive.NewObjectID()
-	result, err := executionManager.DB.Create(collection, context.TODO(), newExecution)
+	result, err := executionManager.DB.Create(context.TODO(), collection, newExecution)
 	if err != nil {
 		log.Println("ERROR", err)
 		return nil, err
@@ -145,7 +140,7 @@ func (executionManager *ExecutionManager) CreateExecutionStep(
 			"steps": newExecutionStep,
 		},
 	}
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +158,7 @@ func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}
@@ -171,16 +166,26 @@ func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.
 	return nil
 }
 
-func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID) error {
+func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error {
+	var status string
+	var pipelineErrorMessage string
+	if pipelineError != nil {
+		status = ExecutionFailed
+		pipelineErrorMessage = pipelineError.Error()
+	} else {
+		status = ExecutionFinished
+		pipelineErrorMessage = ""
+	}
 	query := bson.M{"_id": executionID}
 	updateData := bson.M{
 		"$set": bson.M{
-			"status":     ExecutionFinished,
+			"status":     status,
 			"finishtime": time.Now(),
+			"error":      pipelineErrorMessage,
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}
@@ -200,7 +205,7 @@ func (executionManager *ExecutionManager) UpdateExecutionStepStatus(executionID 
 		},
 	}
 
-	_, err := executionManager.DB.UpdateOne(collection, context.TODO(), query, updateData)
+	_, err := executionManager.DB.UpdateOne(context.TODO(), collection, query, updateData)
 	if err != nil {
 		return err
 	}

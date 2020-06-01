@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428140000-1
+      author: adauto.paula
+      comment: "Drop table users_applications"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: users_applications

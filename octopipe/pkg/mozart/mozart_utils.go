@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package mozart
 
 import (
@@ -22,24 +38,23 @@ func getStages(deployment *deployment.Deployment) [][]*pipeline.Step {
 }
 
 func getDeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*pipeline.Step {
-	return getStepsByVersions(deployment, deployment.Versions, deployer.DeployAction, deployer.UndeployAction)
+	return getStepsByVersions(deployment, deployment.Versions, deployer.DeployAction)
 }
 
 func getUndeployedVersionsStepsByDeployment(deployment *deployment.Deployment) []*pipeline.Step {
-	return getStepsByVersions(deployment, deployment.UnusedVersions, deployer.UndeployAction, deployer.DeployAction)
+	return getStepsByVersions(deployment, deployment.UnusedVersions, deployer.UndeployAction)
 }
 
 func getStepsByVersions(
-	deployment *deployment.Deployment, versions []*deployment.Version, action string, rollbackAction string,
+	deployment *deployment.Deployment, versions []*deployment.Version, action string,
 ) []*pipeline.Step {
 	steps := []*pipeline.Step{}
 	for _, version := range versions {
 		steps = append(steps, &pipeline.Step{
-			Name:        	version.Version,
-			ModuleName:  	deployment.Name,
-			Namespace:   	deployment.Namespace,
-			Action:      	action,
-			RollbackAction: rollbackAction,
+			Name:        version.Version,
+			ModuleName:  deployment.Name,
+			Namespace:   deployment.Namespace,
+			Action:      action,
 			Webhook:     deployment.Webhook,
 			ForceUpdate: false,
 			Git: &pipeline.Git{
@@ -82,14 +97,4 @@ func getIstioComponentsSteps(deployment *deployment.Deployment) []*pipeline.Step
 	}
 
 	return steps
-}
-
-func convertToRollbackSteps(steps []*pipeline.Step) []*pipeline.Step {
-	var rollbackSteps []*pipeline.Step
-	for _, step := range steps {
-		rollbackStep := *step
-		rollbackStep.Action, rollbackStep.RollbackAction = step.RollbackAction, step.Action
-		rollbackSteps = append(rollbackSteps, &rollbackStep)
-	}
-	return rollbackSteps
 }
