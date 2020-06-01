@@ -1,4 +1,4 @@
-# O que são e como funcionam os círculos?
+# Círculos
 
 Os círculos são a base para o **novo conceito de deploy** criado pelo Charles. Ao criá-los, é preciso definir um grupo de usuários e uma release.
 

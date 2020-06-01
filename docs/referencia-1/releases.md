@@ -1,4 +1,4 @@
-# O que são e como funcionam as releases?
+# Release
 
 {% hint style="warning" %}
 Releases são as versões de uma aplicação. 

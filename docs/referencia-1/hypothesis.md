@@ -1,4 +1,4 @@
-# O que são e como funcionam as hipóteses?
+# Hipótese
 
 As hipóteses são alternativas para resolver algum problema relacionado às aplicações que você integrou ao Charles. Elas podem ser compostas por uma ou mais features, que estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente ao seu workspace.
 

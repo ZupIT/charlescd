@@ -4,9 +4,9 @@ description: >-
   círculos da plataforma do Charles em relação aos deploys tradicionais.
 ---
 
-# Deploys em círculos x deploys tradicionais
+# Qual a diferença entre deploy em círculos e deploy tradicional?
 
-## Deploys tradicionais
+## Deploy tradicional
 
 Enquanto que nos deploys em círculos você trabalha em um só ambiente, segmentando os usuários pelos círculos, na forma tradicional o desenvolvedor opera com uma série de ambientes configurados distintos e que geralmente são definidos como:
 
