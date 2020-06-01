@@ -1,7 +1,5 @@
 ![CharlesCD Logo](/images/logo.png)
 
-[![codecov](https://codecov.io/gh/ZupIT/charlescd/branch/master/graph/badge.svg)](https://codecov.io/gh/ZupIT/charlescd)
-
 # About
 CharlesCD is an open source project that deploys quickly, continuously and securely, allowing development teams to simultaneously perform hypothesis validations with specific groups of users.
 

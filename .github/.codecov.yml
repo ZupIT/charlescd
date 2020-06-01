@@ -1,10 +1,9 @@
-coverage:  
+coverage:
   status:
     project:
       default:
         target: auto
         threshold: 0%
-        only_pulls: true
         flags: 
           - villager
           - circlematcher
@@ -12,26 +11,22 @@ coverage:
         target: 30%
         flags:
           - villager
-      circle-matcher:
-        target: 90%
+      circlematcher:
+        target: 70%
         flags:
           - circlematcher
+      octopipe:
+        target: 70%
+        flags:
+          - octopipe
     patch:
       default:
         target: 100%
         threshold: 0%
-        only_pulls: true
         flags: 
           - villager
           - circlematcher
-      villager:
-        target: 100%
-        flags:
-          - villager
-      circle-matcher:
-        target: 100%
-        flags:
-          - circlematcher     
+          - octopipe
       
 flags:
   villager:
@@ -41,4 +36,8 @@ flags:
   circlematcher:
     paths:
       - circle-matcher/
+    carryforward: true
+  octopipe:
+    paths:
+      - octopipe/
     carryforward: true
