@@ -25,5 +25,5 @@ Assim que seu workspace é criado, mesmo sem a definição das configurações, 
 
 Para obter essa informação, selecione o workspace desejado e no menu à esquerda, clique em **Copy ID**:
 
-\[GIF/PRINT\]
+![](../../.gitbook/assets/workspaceid.gif)
 
