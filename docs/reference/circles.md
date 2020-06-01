@@ -37,7 +37,7 @@ After you have created your circle, it already has a single identifier.
 
 To get this information, select your **circle, default** and on the left menu, click on **Copy ID**, like the example below: 
 
-![](../.gitbook/assets/circuloid.gif)
+![](../.gitbook/assets/circuloid%20%281%29.gif)
 
 ### **Manual segmentation**
 
