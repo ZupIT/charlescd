@@ -23,7 +23,7 @@ A criação do workspace pode ser feita apenas pelo usuário **root**. Entretant
 
 Assim que seu workspace é criado, mesmo sem a definição das configurações, ele já possui um identificador único. 
 
-Para obter essa informação, selecione o workspace desejado e no menu à esquerda, clique em **Copy ID**:
+Para obter essa informação, selecione o workspace desejado e, no menu à esquerda, clique em **Copy ID**:
 
 ![](../../.gitbook/assets/workspaceid.gif)
 
