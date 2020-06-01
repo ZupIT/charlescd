@@ -33,7 +33,7 @@
         <java.version>1.8</java.version>
         <kotlin.version>1.3.41</kotlin.version>
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
-        <zup.tracing.version>0.0.7</zup.tracing.version>
+        <charlescd.tracing.version>1.0</charlescd.tracing.version>
         <jboss.resteasy.version>3.1.4.Final</jboss.resteasy.version>
         <snakeyaml.version>1.25</snakeyaml.version>
         <keycloak.version>9.0.0</keycloak.version>
@@ -331,7 +331,7 @@
                         <phase>verify</phase>
                         <configuration>
                             <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="false"
                                       classname="com.pinterest.ktlint.Main" classpathref="maven.plugin.classpath">
                                     <arg value="src/**/*.kt"/>
                                 </java>
@@ -343,7 +343,7 @@
                         <id>ktlint-format</id>
                         <configuration>
                             <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="false"
                                       classname="com.pinterest.ktlint.Main" classpathref="maven.plugin.classpath">
                                     <arg value="-F"/>
                                     <arg value="src/**/*.kt"/>
