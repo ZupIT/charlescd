@@ -34,6 +34,6 @@ jobs:
     - name: Tests coverage
       uses: codecov/codecov-action@v1.0.7
       with:
-        file: ./moove/**/target/site/jacoco/jacoco.xml
+        file: ./moove/target/site/jacoco/jacoco.xml
         flags: moove
         fail_ci_if_error: true
