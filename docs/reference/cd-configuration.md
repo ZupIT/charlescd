@@ -1,6 +1,6 @@
 # CD Configuration
 
-It is necessary to register a CD configuration linked to your docker. To be able to do that, follow the next steps: 
+It is necessary to register a CD configuration linked to your docker. To be able to do that, follow the next steps:
 
 1. Click on your name on the left bottom corner and then select **Settings;**
 2. Click on **Credentials;**
@@ -22,5 +22,5 @@ It is necessary to register a CD configuration linked to your docker. To be able
 3. Insert a git **token;**
 4. Select a **manager** to associate with the CD Configuration. 
 
-![](../.gitbook/assets/cd-configuration-2%20%281%29.gif)
+![](../.gitbook/assets/cd-configuration-2%20%281%29%20%281%29.gif)
 
