@@ -8,19 +8,19 @@ Uma boa prática é realizar essa identificação sempre que o usuário faz logi
 
 ### Identificando círculos através do CharlesCD
 
-Ao utilizar a interface é possível perceber que existem duas formas de realizar a identificação dos círculos. Para isto, acesse o menu **Circles** dentro de um **workspace** e selecione o ícone indicado abaixo: 
+Ao utilizar a interface é possível perceber que existem duas formas de realizar a identificação dos círculos. Para isto, acesse o menu **Circles** dentro de um **workspace** e selecione o ícone indicado abaixo:
 
-![Identifica&#xE7;&#xE3;o do &#xED;cone do Circle Matcher](../.gitbook/assets/chrome-capture.jpg)
+![Identifica&#xE7;&#xE3;o do &#xED;cone do Circle Matcher](../.gitbook/assets/chrome-capture%20%281%29.jpg)
 
 As duas formas de realizar essa validação são:
 
 * **Default:** nessa opção, você adiciona manualmente chaves e valores que definem as características de um usuário de teste. E, com base nisso, ao executar o **Try**, você receberá todos os círculos que ele se encaixa.  
 
-![Identifica&#xE7;&#xE3;o dos seus c&#xED;rculos com a op&#xE7;&#xE3;o Default.](../.gitbook/assets/circle-matcher-default.gif)
+![Identifica&#xE7;&#xE3;o dos seus c&#xED;rculos com a op&#xE7;&#xE3;o Default.](../.gitbook/assets/circle-matcher-default%20%281%29.gif)
 
 * **JSON:** é similar à opção anterior, só que aqui você pode copiar e colar no **campo de payload** um **JSON** do seu ambiente produtivo ao invés de adicionar manualmente.
 
-![Identifica&#xE7;&#xE3;o dos seus c&#xED;rculos com a op&#xE7;&#xE3;o JSON.](../.gitbook/assets/circle-matcher-json.gif)
+![Identifica&#xE7;&#xE3;o dos seus c&#xED;rculos com a op&#xE7;&#xE3;o JSON.](../.gitbook/assets/circle-matcher-json%20%281%29.gif)
 
 {% hint style="warning" %}
 Se você passar informações que estejam fora das condições lógicas configuradas nos círculos, o sistema irá retornar que aquele usuário está no círculo _Default_, ou seja, na versão padrão da sua aplicação.
@@ -64,7 +64,7 @@ UUID
 
 {% endapi-method-response-example-description %}
 
-```
+```text
 {
   "circles": [
     {
@@ -116,10 +116,10 @@ UUID
 {% api-method-response %}
 {% api-method-response-example httpCode=200 %}
 {% api-method-response-example-description %}
-Listagem de todos os círculos aos quais o usuário pertence 
+Listagem de todos os círculos aos quais o usuário pertence
 {% endapi-method-response-example-description %}
 
-```
+```text
 {
   "circles": [
     {
@@ -133,6 +133,4 @@ Listagem de todos os círculos aos quais o usuário pertence
 {% endapi-method-response %}
 {% endapi-method-spec %}
 {% endapi-method %}
-
-
 

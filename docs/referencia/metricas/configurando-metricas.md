@@ -1,16 +1,16 @@
 # Configurando as métricas
 
-A configuração de métricas no Charles é realiza em duas partes, a primeira delas é feita no  **Istio** e a segunda no seu **próprio provedor**. Vamos detalhar cada uma delas abaixo. 
+A configuração de métricas no Charles é realiza em duas partes, a primeira delas é feita no **Istio** e a segunda no seu **próprio provedor**. Vamos detalhar cada uma delas abaixo.
 
-### Configurando Istio
+## Configurando Istio
 
-As métricas relacionadas às requisições de cada círculo podem ser quantificadas e expostas pelo Istio. 
+As métricas relacionadas às requisições de cada círculo podem ser quantificadas e expostas pelo Istio.
 
 {% hint style="info" %}
 Antes, caso queira entender mais sobre telemetria no Istio, recomendamos que consulte a [**doc oficial**](https://istio.io/docs/tasks/observability/metrics/).
 {% endhint %}
 
-#### **Parte** 1: Habilitando o Istio
+### **Parte** 1: Habilitando o Istio
 
 Para começar, é necessário primeiro garantir que você já tem o seu **Istio habilitado para expor métricas**. Feito isso, você deve configurá-lo para expor as métricas dentro do Charles.
 
@@ -36,7 +36,7 @@ spec:
         enabled: false
 ```
 
-**Passo 2:** Execute o comando abaixo. 
+**Passo 2:** Execute o comando abaixo.
 
 {% hint style="warning" %}
 É necessário ter configurado o istioctl para executar o comando caso não tenha, clique [**aqui**](https://istio.io/docs/setup/getting-started/#download).
@@ -48,9 +48,9 @@ $ istioctl manifest apply -f telemetry.yaml
 
 \*\*\*\*
 
-#### **Parte 2: Adicionando as métricas do Charles no Istio** 
+### **Parte 2: Adicionando as métricas do Charles no Istio**
 
-Uma vez feita a habilitação do Istio, você precisa executar o comando abaixo para configurar a opção de expor as métricas relacionadas ao Charles: 
+Uma vez feita a habilitação do Istio, você precisa executar o comando abaixo para configurar a opção de expor as métricas relacionadas ao Charles:
 
 ```bash
 $ kubectl apply -f your-metrics-config.yaml
@@ -168,19 +168,17 @@ Atualmente, o Charles oferece suporte apenas o Prometheus como ferramenta de mé
 {% endtab %}
 {% endtabs %}
 
-
-
-### Configurando sua própria ferramenta de métricas
+## Configurando sua própria ferramenta de métricas
 
 Depois de habilitar o Istio, você precisa configurar sua ferramenta para que ela possa ler as métricas expostas.
 
 O primeiro passo é selecionar qual das **ferramentas aceitas pelo Charles** que você utiliza.
 
 {% hint style="info" %}
-Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [**sugerir para nós**](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [**contribua conosco**](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais. 
+Caso a ferramenta que você utilize não seja aceita ainda, fique à vontade de [**sugerir para nós**](https://github.com/ZupIT/charlescd/issues), ou faça sua implementação e [**contribua conosco**](https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md). Faça nossa comunidade crescer cada vez mais.
 {% endhint %}
 
-Abaixo, você confere detalhes da ferramenta compatível com Charles. 
+Abaixo, você confere detalhes da ferramenta compatível com Charles.
 
 {% tabs %}
 {% tab title="Prometheus" %}
@@ -190,13 +188,13 @@ O Prometheus é uma ferramenta de código aberto focada em monitoramento e alert
 Se quiser saber mais, sugerimos a [**doc oficial**](https://prometheus.io/).
 {% endhint %}
 
-É preciso configurar o Prometheus para que ele consiga ler e armazenar os dados das métricas que habilitamos, conforme o tutorial que explicamos no início. 
+É preciso configurar o Prometheus para que ele consiga ler e armazenar os dados das métricas que habilitamos, conforme o tutorial que explicamos no início.
 
 {% hint style="warning" %}
 É importante lembrar que, para que essas configurações funcionem, é necessário que seu Prometheus esteja no mesmo cluster de Kubernetes que o Istio e o restante das suas aplicações.
 {% endhint %}
 
-Basta adicionar o job abaixo para realizar a configuração. Só fique atento para que a configuração `namespaces`, pois o valor configurado deve ser igual ao que foi instalado no seu Istio. 
+Basta adicionar o job abaixo para realizar a configuração. Só fique atento para que a configuração `namespaces`, pois o valor configurado deve ser igual ao que foi instalado no seu Istio.
 
 ```yaml
 global:
@@ -223,8 +221,4 @@ scrape_configs:
 ```
 {% endtab %}
 {% endtabs %}
-
-## 
-
-
 

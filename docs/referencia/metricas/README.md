@@ -1,10 +1,10 @@
 # Métricas
 
-As métricas são os indicadores que permitem você quantificar o **desempenho e o status de suas aplicações** a partir da análise de dados expostos pelas próprias aplicações e pelas ferramentas de infraestrutura. 
+As métricas são os indicadores que permitem você quantificar o **desempenho e o status de suas aplicações** a partir da análise de dados expostos pelas próprias aplicações e pelas ferramentas de infraestrutura.
 
-Com o Charles, você pode obter métricas de cada um dos seus círculos, possibilitando assim análises sobre a [**saúde**](https://docs.charlescd.io/primeiros-passos/criando-modulos#metricas-de-saude) ****e o **desempenho dos círculos**. 
+Com o Charles, você pode obter métricas de cada um dos seus círculos, possibilitando assim análises sobre a [**saúde**](https://docs.charlescd.io/primeiros-passos/criando-modulos#metricas-de-saude) **\*\*e o** desempenho dos círculos\*\*.
 
-![Painel de m&#xE9;tricas no Charles ](../../.gitbook/assets/metricas.png)
+![Painel de m&#xE9;tricas no Charles ](../../.gitbook/assets/metricas%20%281%29.png)
 
 ## Quais as métricas disponíveis no Charles?
 
@@ -30,6 +30,4 @@ Na tabela abaixo, estão algumas metainformações existentes nas métricas do C
 | circle\_id | Header "x-circle-id" que é passado nas requisições ou "unknown" se o header não estiver presente | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
 | circle\_source | Header "x-circle-source" que é colocado pelo filtro do Envoy na interceptação de cada requisição | Texto | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
 | response\_status | O status HTTP da resposta daquela requisição | Número | istio\_charles\_request\_total, istio\_charles\_request\_duration\_seconds |
-
-
 
