@@ -4,13 +4,7 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
+        if_not_found: success
       villager:
         target: 30%
         flags:
@@ -34,7 +28,7 @@ coverage:
       butler:
         target: 30%
         flags:
-          - ui
+          - ui  
     patch:
       default:
         target: 100%
