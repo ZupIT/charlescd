@@ -1,44 +1,16 @@
 package questions
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
+	"quiz_app/internal/repositories"
+	"quiz_app/internal/types"
 )
 
-type Questions struct {
-	Questions	[]Question `json:"questions"`
-}
-
-type Question struct {
-	Id			string		`json:"id"`
-	Title		string		`json:"title"`
-	Answers		[]Answer 	`json:"answers"`
-}
-
-type Answer struct {
-	Id			string	`json:"id"`
-	Title		string	`json:"title"`
-	IsCorrect	bool	`json:"isCorrect"`
-}
-
-func GetQuestions() ([]Question, error) {
-	var questions Questions
-
-	jsonFile, err := os.Open("assets/v1/questions.json")
+func GetQuestions() ([]types.Question, error) {
+	questions, err := repositories.GetQuestions()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	err = json.Unmarshal(byteValue, &questions)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-
-	return questions.Questions, nil
+	return questions, nil
 }
