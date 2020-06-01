@@ -7,6 +7,8 @@ coverage:
         flags: 
           - villager
           - circlematcher
+          - octopipe
+          - moove
       villager:
         target: 30%
         flags:
@@ -16,11 +18,11 @@ coverage:
         flags:
           - circlematcher
       octopipe:
-        target: 70%
+        target: 30%
         flags:
           - octopipe
       moove:
-        target: 70%
+        target: 50%
         flags:
           - moove
     patch:
