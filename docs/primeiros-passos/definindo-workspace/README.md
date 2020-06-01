@@ -19,3 +19,11 @@ Cada workspace possui as seguintes configurações:
 A criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem também ser feitas pelos usuários associados ao workspace com perfil de **mantenedor**.
 {% endhint %}
 
+### Como obter o identificador do meu workspace?
+
+Assim que seu workspace é criado, mesmo sem a definição das configurações, ele já possui um identificador único. 
+
+Para obter essa informação, selecione o workspace desejado e no menu à esquerda, clique em **Copy ID**:
+
+\[GIF/PRINT\]
+
