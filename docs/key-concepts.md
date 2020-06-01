@@ -10,12 +10,12 @@ description: >-
 
 **Circles** are groups of users created from specific characteristics inside the same environment on Charles platform. The developer is able to segment users according to the rules AND/OR that will make more sense to test that release later. 
 
-For example, it is possible to [**create a circle**](https://docs.charlescd.io/v/v0.2.1-en/referencia-1/circles) of engineers from north of Brazil and another one from the southeast, and a third one with all brazilian engineers. Based on this client segmentation, it is possible to make a variety of deployment logics.   
+For example, it is possible to [**create a circle**](https://docs.charlescd.io/v/v0.2.1-en/reference/circles) of engineers from north of Brazil and another one from the southeast, and a third one with all brazilian engineers. Based on this client segmentation, it is possible to make a variety of deployment logics.   
 
 
 ### **Hypothesis**
 
-They are [**registred alternatives**](https://docs.charlescd.io/v/v0.2.1-en/referencia-1/hipotese) on the platform to solve a problem or to validate changes on the application you have integrated on Charles. 
+They are [**registred alternatives** ](https://docs.charlescd.io/v/v0.2.1-en/reference/hyphotesis)on the platform to solve a problem or to validate changes on the application you have integrated on Charles. 
 
 Hypothesis can have features that are directly related to modules and/or projects that were previously registered in your workspace.   
 
@@ -26,7 +26,7 @@ It is a HTPP service that allows you to identify which segmentation the applicat
 
 ### **Components**
 
-Components are part of the [**modules**](https://docs.charlescd.io/v/v0.2.1-en/primeiros-passsos/creating-your-first-module) you create on Charles. They work as an application abstraction, which means that they have their own configuration and every part of it belongs to a module application you are working on it.   
+Components are part of the [**modules**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module) you create on Charles. They work as an application abstraction, which means that they have their own configuration and every part of it belongs to a module application you are working on it.   
 
 
 ### Open Sea
