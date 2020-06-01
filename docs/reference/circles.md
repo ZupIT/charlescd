@@ -31,6 +31,14 @@ The segmentations are a subset of characteristics that you define to put all you
 **The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and, in this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north region, another one with engineers from the southeast and a third one with all brazilian engineers.
 {% endhint %}
 
+### How to get an identifier in **circles**?
+
+After you have created your circle, it already has a single identifier.
+
+To get this information, select your **circle, default** and on the left menu, click on **Copy ID**, like the example below: 
+
+![](../.gitbook/assets/circuloid.gif)
+
 ### **Manual segmentation**
 
 On this kind of segmentation, you define the logic the circle will follow to build a match with predetermined characteristics.
