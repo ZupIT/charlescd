@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M6.75,14.25 C6.558,14.25 6.366,14.1765 6.21975,14.03025 L2.46975,10.28025 C2.1765,9.987 2.1765,9.513 2.46975,9.21975 C2.763,8.9265 3.237,8.9265 3.53025,9.21975 L6.75,12.4395 L14.46975,4.71975 C14.763,4.4265 15.237,4.4265 15.53025,4.71975 C15.8235,5.013 15.8235,5.487 15.53025,5.78025 L7.28025,14.03025 C7.134,14.1765 6.942,14.25 6.75,14.25" id="path-checkmark"></path>
+    </defs>
+    <g id="Checkmark" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-checkmark"></use>
+        </mask>
+        <use id="Icon-Checkmark" fill="currentColor" xlink:href="#path-checkmark"></use>
+    </g>
+</svg>
