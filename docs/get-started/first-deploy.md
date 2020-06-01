@@ -7,7 +7,7 @@ Charles offers two alternatives to create a release: use the [**hypothesis**](ht
 Here we will focus on the first approach with the following steps: 
 
 1. Click on **Hypothesis** in the homepage left side bar; 
-2.  Fill the name with the new hypothesis on the **Create new hypothesis** field, at the bottom of the hypothesis list and press enter.
+2.  Fill the name with the new hypothesis on the **Create new hypothesis** field, at the bottom of the hypotheses list and press enter.
 3. At the new created hypothesis board, click on **+Card** at the bottom of the **To do** list column;
 4. Type the name of your new card and press **enter**; 
 5.  Left-click on the card and associate it to a Module previously created. After this, a **branch with the name of the card will be created in the configured repository**; 
@@ -30,7 +30,7 @@ Now, just follow the next steps to the [**Open Sea**](https://docs.charlescd.io/
 4. Click on **Search for ready releases**;
 5. Type the release name created above and click on **Deploy**.
 
-After that, Charles will provide the created release on cluster in the open sea. The deploy status will be show and updated along the process. 
+After that, Charles will provide the created release on cluster in the open sea. The deploy status will be shown and updated along the process. 
 
 ![Example of a deploy in open sea](../.gitbook/assets/primeiro-deploy%20%281%29.gif)
 

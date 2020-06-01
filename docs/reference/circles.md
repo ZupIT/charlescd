@@ -6,11 +6,11 @@ Circles are the main approach related to the **new deploy concept** brought by C
 
 Circles indicate clients segmentation and also support the version management created for a specific audience. 
 
-Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypotheses results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 ## Active and inactive circles
 
-The existence of releases defines if a circle is active or not, which is the implemented versions for users segmentation. Therefore, active circles have implemented releases while the inactive circle doesn't have any.
+The existence of releases defines if a circle is active or not, which are the implemented versions for users segmentation. Therefore, active circles have implemented releases while the inactive circle doesn't have any.
 
  
 
@@ -67,7 +67,7 @@ After you have finished the file upload and saved the configuration, an overview
 
 ![Overview of CSV importation](https://gblobscdn.gitbook.com/assets%2F-LzaqMnnQTjZO7P6hApv%2F-M7rONJV5n28i7pTtM-C%2F-M7rTw1eEWjh8orNB-pS%2Fimage.png?alt=media&token=a9ac51d8-985b-4b67-9f98-5ffa276faee6)
 
-This way allows you to extract from an external client’s IDs base, a specific profile and import them directly on Charles.   
+This way it allows you to extract from an external client’s IDs base, a specific profile and import them directly on Charles.   
 
 
 {% hint style="warning" %}
@@ -76,7 +76,7 @@ OR is the only logic operator supported on this segmentation.
 
 ## How to integrate circle with services?
 
-Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below: 
+Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on the example below: 
 
 ![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy.png)
 
