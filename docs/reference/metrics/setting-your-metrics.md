@@ -10,7 +10,7 @@ Metrics are related to circle requests are quantified and exposed by Istio, so i
 If you want to learn more about Istio's telemetry, check out their [**documentation**](https://istio.io/docs/tasks/observability/metrics/)**.**
 {% endhint %}
 
-To configure your Istio, it is necessary to enable it, so it will be able to show metrics and then you have to configure to show Charles' metrics. 
+To configure your Istio, it is necessary to enable it, so it will be able to show metrics and then you have to configure to show Charles' metrics.
 
 If your Istio is not enabled to show metrics, follow the next steps:
 
@@ -18,7 +18,7 @@ If your Istio is not enabled to show metrics, follow the next steps:
 The configuration below refers to Istio's 1.5 version.
 {% endhint %}
 
-Create a file named **telemetry.yaml  with the following content:** 
+Create a file named **telemetry.yaml with the following content:**
 
 ```yaml
 apiVersion: install.istio.io/v1alpha2
@@ -41,10 +41,10 @@ $ istioctl manifest apply -f telemetry.yaml
 ```
 
 {% hint style="warning" %}
-To run the command above, it is necessary to have configured the **istioctl**, if you haven't done that, please click [**here**](https://istio.io/docs/setup/getting-started/#download). 
+To run the command above, it is necessary to have configured the **istioctl**, if you haven't done that, please click [**here**](https://istio.io/docs/setup/getting-started/#download).
 {% endhint %}
 
-To show the metrics related to Charles, you have to run the command: 
+To show the metrics related to Charles, you have to run the command:
 
 ```bash
 $ kubectl apply -f path/your-metrics-config.yaml
@@ -54,7 +54,7 @@ $ kubectl apply -f path/your-metrics-config.yaml
 The file **your-metrics-config.yaml** that has been used mostly to refer the tool you use.
 {% endhint %}
 
-The files for configuration can be found below: 
+The files for configuration can be found below:
 
 {% tabs %}
 {% tab title="Prometheus" %}
@@ -166,7 +166,7 @@ spec:
 
 After you finish your Istio configuration it is necessary configure your metrics tool.
 
-The first step is select the right tool, so Charles will be able to read. 
+The first step is select the right tool, so Charles will be able to read.
 
 {% hint style="danger" %}
 At this moment, Charles only supports Prometheus as a metric tool. We are working on to bring others along the way.
@@ -184,12 +184,12 @@ Prometheus is an open source system for monitoring and alerting toolkit. It is t
 If you want to know more about Prometheus, check it out [their documentation](https://prometheus.io/).
 {% endhint %}
 
-In order to Prometheus to be able to read and store metrics data, we must configure it. 
+In order to Prometheus to be able to read and store metrics data, we must configure it.
 
-To do so, it's necessary to add the job below so it will read Istio's generated metrics. 
+To do so, it's necessary to add the job below so it will read Istio's generated metrics.
 
 {% hint style="warning" %}
-It is important to remember that all these configuration considers that your Prometheus is on the same Kubernetes cluster as your Istio and the rest of your applications. 
+It is important to remember that all these configuration considers that your Prometheus is on the same Kubernetes cluster as your Istio and the rest of your applications.
 {% endhint %}
 
 ```yaml
@@ -221,8 +221,4 @@ Stay tuned about the configuration **namespaces**, the configured value must be 
 {% endhint %}
 {% endtab %}
 {% endtabs %}
-
-## 
-
-
 

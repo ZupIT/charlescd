@@ -10,7 +10,7 @@ The circle deploy is the pioneer concept created by Charles. Thanks to it, it's 
 
 ## What is the main difference on Charles?
 
-Unlike other ways of deploy, Charles allows developers to perform simultaneous segmentation and agroupment of user with circles. 
+Unlike other ways of deploy, Charles allows developers to perform simultaneous segmentation and agroupment of user with circles.
 
 With the tool, the delivery process in traditionals environments occurs in longer frequencies - weekly, biweekly or even monthly - gains a new rhythm. The feedback cycle of your product becomes faster and effective, which means that you can manage your timing in a more intelligent and assertive way. ‌
 
@@ -25,5 +25,5 @@ The architecture is structured on microservices whose modules are:
 * `charles-butler`: orchestrates and manages releases and deploys. 
 * `charles-circle-matcher`: manages all created circles, and also points out which circle the user belongs based on their characteristics.
 
-![Charles&apos; architecture](../.gitbook/assets/arquitetura-charles-nova%20%282%29.png)
+![Charles&apos; architecture](../.gitbook/assets/arquitetura-charles-nova%20%282%29%20%281%29.png)
 
