@@ -7,7 +7,7 @@ type Questions struct {
 type Question struct {
 	Id			string				`json:"id"`
 	Title		string				`json:"title"`
-	Answers		[]QuestionOption 	`json:"answers"`
+	Answers		[]QuestionOption	`json:"answers"`
 }
 
 type QuestionOption struct {
