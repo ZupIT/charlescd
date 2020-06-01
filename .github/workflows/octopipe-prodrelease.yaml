@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_push_prerelease:
+  build_and_push_release:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
