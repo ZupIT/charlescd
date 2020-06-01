@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -11,7 +27,7 @@ import { CdConfigurationEntity } from '../../configurations/entity'
 import { CdConfigurationsRepository } from '../../configurations/repository'
 import {
     CircleDeploymentEntity, ComponentDeploymentEntity, ComponentUndeploymentEntity,
-    DeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+    DeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity, QueuedIstioDeploymentEntity
 } from '../entity'
 import { ComponentUndeploymentsRepository } from '../repository'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
@@ -100,6 +116,43 @@ export class PipelineDeploymentsService {
         }
     }
 
+    public async triggerIstioDefaultDeployment(
+        componentDeployment: ComponentDeploymentEntity,
+        component: ComponentEntity,
+        deployment: DeploymentEntity,
+        queuedIstioDeployment: QueuedIstioDeploymentEntity,
+    ): Promise<void> {
+        try {
+            this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
+            await this.setComponentPipelineDefaultCircle(componentDeployment, component)
+            const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
+            await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
+            this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
+        } catch (error) {
+            this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', error)
+            throw error
+        }
+    }
+
+    public async triggerIstioDeployment(
+        componentDeployment: ComponentDeploymentEntity,
+        component: ComponentEntity,
+        deployment: DeploymentEntity,
+        queuedIstioDeployment: QueuedIstioDeploymentEntity,
+        circle: CircleDeploymentEntity
+    ): Promise<void> {
+        try {
+            this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
+            await this.setComponentPipelineCircle(componentDeployment, circle, component)
+            const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
+            await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
+            this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
+        } catch (error) {
+            this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEPLOYMENT', error)
+            throw error
+        }
+    }
+
     private async setComponentPipelineCircle(
         componentDeployment: ComponentDeploymentEntity,
         circle: CircleDeploymentEntity,
@@ -109,6 +162,7 @@ export class PipelineDeploymentsService {
             component.setPipelineCircle(circle, componentDeployment)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -122,6 +176,7 @@ export class PipelineDeploymentsService {
             component.setPipelineDefaultCircle(componentDeployment)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -134,6 +189,7 @@ export class PipelineDeploymentsService {
             component.unsetPipelineCircle(circle)
             await this.componentsRepository.save(component)
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_COMPONENT_PIPELINE', error)
             throw new InternalServerErrorException('Could not update component pipeline')
         }
     }
@@ -146,6 +202,10 @@ export class PipelineDeploymentsService {
         return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
     }
 
+    private getIstioDeploymentCallbackUrl(queuedIstioDeploymentId: number): string {
+        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedIstioDeploymentId=${queuedIstioDeploymentId}`
+    }
+
     private async triggerComponentDeployment(
         componentEntity: ComponentEntity,
         deploymentEntity: DeploymentEntity,
@@ -153,17 +213,19 @@ export class PipelineDeploymentsService {
         pipelineCallbackUrl: string
     ): Promise<void> {
 
-        if (!componentEntity.module.cdConfigurationId) {
-            throw new NotFoundException(`Module does not have configuration id`)
+        if (!deploymentEntity.cdConfigurationId) {
+            throw new NotFoundException(`Deployment does not have cd configuration id`)
         }
+        this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
         const cdConfiguration =
-            await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
+            await this.cdConfigurationsRepository.findDecrypted(deploymentEntity.cdConfigurationId)
 
         if (!cdConfiguration) {
-            throw new NotFoundException(`Configuration not found - id: ${componentEntity.module.cdConfigurationId}`)
+            throw new NotFoundException(`Configuration not found - id: ${deploymentEntity.cdConfigurationId}`)
         }
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             deploymentEntity.circleId, pipelineCallbackUrl
@@ -178,19 +240,46 @@ export class PipelineDeploymentsService {
         componentDeployment: ComponentDeploymentEntity,
         pipelineCallbackUrl: string
     ): Promise<void> {
-        if (!componentEntity.module.cdConfigurationId) {
-            throw new NotFoundException(`Module does not have configuration id`)
+        if (!undeploymentEntity.deployment.cdConfigurationId) {
+            throw new NotFoundException(`Deployment does not have cd configuration id`)
         }
+        this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
         const cdConfiguration =
-            await this.cdConfigurationsRepository.findDecrypted(componentEntity.module.cdConfigurationId)
+            await this.cdConfigurationsRepository.findDecrypted(undeploymentEntity.deployment.cdConfigurationId)
 
         const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
 
+        this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
             undeploymentEntity.circleId, pipelineCallbackUrl
         )
-        await cdService.createDeployment(connectorConfiguration)
+        await cdService.createUndeployment(connectorConfiguration)
+    }
+
+    private async triggerIstioComponentDeployment(
+        componentEntity: ComponentEntity,
+        deploymentEntity: DeploymentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+        pipelineCallbackUrl: string
+    ): Promise<void> {
+        if (!deploymentEntity.cdConfigurationId) {
+            throw new NotFoundException(`Deployment does not have cd configuration id`)
+        }
+        const cdConfiguration =
+            await this.cdConfigurationsRepository.findDecrypted(deploymentEntity.cdConfigurationId)
+
+        if (!cdConfiguration) {
+            throw new NotFoundException(`Configuration not found - id: ${deploymentEntity.cdConfigurationId}`)
+        }
+        const cdService = this.cdStrategyFactory.create(cdConfiguration.type)
+
+        const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
+            componentEntity, cdConfiguration, componentDeployment,
+            deploymentEntity.circleId, pipelineCallbackUrl
+        )
+
+        await cdService.createIstioDeployment(connectorConfiguration)
     }
 
     private getConnectorConfiguration(

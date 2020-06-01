@@ -1,0 +1,211 @@
+const istioPipeline = {
+  appConfig: {},
+  application: 'application-name',
+  name: 'pipeline-name',
+  expectedArtifacts: [
+    {
+      defaultArtifact: {
+        artifactAccount: 'github-acc',
+        id: 'template-app-name-default-artifact',
+        name: 'template-app-name',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name-darwin.tgz',
+        type: 'github/file',
+        version: 'master'
+      },
+      displayName: 'template',
+      id: 'template - app-name',
+      matchArtifact: {
+        artifactAccount: 'github-artifact',
+        id: 'useless-template',
+        name: 'template-app-name',
+        type: 'github/file'
+      },
+      useDefaultArtifact: true,
+      usePriorArtifact: false
+    },
+    {
+      defaultArtifact: {
+        artifactAccount: 'github-acc',
+        id: 'value-app-name-default-artifact',
+        name: 'value-app-name',
+        reference: 'https://api.github.com/repos/org/repo/contents/app-name/app-name.yaml',
+        type: 'github/file',
+        version: 'master'
+      },
+      displayName: 'value',
+      id: 'value - app-name',
+      matchArtifact: {
+        artifactAccount: 'github-artifact',
+        id: 'useless-value',
+        name: 'value-app-name',
+        type: 'github/file'
+      },
+      useDefaultArtifact: true,
+      usePriorArtifact: false
+    }
+  ],
+  keepWaitingPipelines: false,
+  lastModifiedBy: 'anonymous',
+  limitConcurrent: true,
+  stages: [
+    {
+      stageEnabled: {
+        expression: '',
+        type: 'expression'
+      },
+      account: 'account',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'app-name',
+            namespace: 'app-namespace'
+          },
+          spec: {
+            host: 'app-name',
+            subsets: [
+              {
+                labels: {
+                  version: 'app-name-v1'
+                },
+                name: 'v1'
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'account'
+      },
+      name: 'Deploy Destination Rules',
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest',
+      refId: '1',
+      requisiteStageRefIds: []
+    },
+    {
+      stageEnabled: {
+        expression: '${ #stage(\'Deploy Destination Rules\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
+      account: 'account',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'VirtualService',
+          metadata: {
+            name: 'app-name',
+            namespace: 'app-namespace'
+          },
+          spec: {
+            hosts: [
+              'app-name'
+            ],
+            http: [
+              {
+                route: [
+                  {
+                    destination: {
+                      host: 'app-name',
+                      subset: 'v3'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                route: [
+                  {
+                    destination: {
+                      host: 'app-name',
+                      subset: 'v4'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'account'
+      },
+      name: 'Deploy Virtual Service',
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest',
+      refId: '2',
+      requisiteStageRefIds: [
+        '1'
+      ]
+    },
+    {
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      customHeaders: {
+        'x-circle-id': 'circle-id'
+      },
+      failPipeline: false,
+      method: 'POST',
+      name: 'Trigger webhook',
+      payload: {
+        status: '${#stage( \'Deploy Virtual Service\' ).status.toString()}'
+      },
+      refId: '3',
+      requisiteStageRefIds: [
+        '2'
+      ],
+      statusUrlResolution: 'getMethod',
+      type: 'webhook',
+      url: 'webhook.uri'
+    }
+  ],
+  triggers: [
+    {
+      enabled: true,
+      payloadConstraints: {},
+      source: 'pipeline-name',
+      type: 'webhook'
+    }
+  ],
+  updateTs: '1573212638000'
+}
+
+export default istioPipeline

@@ -4,7 +4,7 @@ node {
 
   try {
 
-    def projectName = "darwin-deploy"
+    def projectName = "charlescd-butler"
 
     buildWithMakefile {
       dockerRepositoryName = projectName
