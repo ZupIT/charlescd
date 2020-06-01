@@ -4,8 +4,10 @@ Hypothesis are **registered alternatives** on the platform to solve some issues 
 
 Its possible that one hypothesis may have one or more features that are directly related to modules or/and projects that were registered before in your workspace. 
 
-Imagine a situation in which two teams work on the same product and have different ideas to raise the client conversion rate. Team A suggests adding a button on the page, meanwhile Team B believes that include a ‘selling suggestion’ box will be more assertive.   
-  
+Imagine a situation in which two teams work on the same product and have different ideas to raise the client conversion rate. Team A suggests adding a button on the page, meanwhile Team B believes that include a ‘selling suggestion’ box will be more assertive. 
+
+![](../.gitbook/assets/hypothesis.png)
+
 Charles makes it possible for both teams to create different hypothesis, so each team is able to lead the development through a board that is automatically created and then they also can independently select different users circles to validate the results of each hypothesis. 
 
 ## How to create hypothesis?
