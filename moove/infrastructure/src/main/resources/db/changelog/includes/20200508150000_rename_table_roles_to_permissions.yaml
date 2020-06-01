@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200508150000-1
+      author: mateus.cruz
+      comment: "Rename table roles to permissions"
+      changes:
+        - renameTable:
+            oldTableName: roles
+            newTableName: permissions
+        - dropPrimaryKey:
+            constraintName: roles_pkey
+            dropIndex: true
+            tableName: permissions
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: permissions_pkey
+            tableName: permissions

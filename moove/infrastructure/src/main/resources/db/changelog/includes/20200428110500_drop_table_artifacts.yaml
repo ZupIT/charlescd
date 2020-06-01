@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20202804110500-1
+      author: adauto.paula
+      comment: "Drop table artifacts"
+      changes:
+        - dropTable:
+            cascadeConstraints: true
+            tableName: artifacts

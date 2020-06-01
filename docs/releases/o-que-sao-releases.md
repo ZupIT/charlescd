@@ -1,7 +1,7 @@
-# O que são e como criar releases?
+# O que são e como funcionam as releases?
 
 {% hint style="warning" %}
-Releases são as versões de uma aplicação.
+Releases são as versões de uma aplicação. 
 {% endhint %}
 
 Dependendo da modalidade de deployment adotada pelo time de desenvolvimento, as releases podem passar por diversos ambientes até chegar em produção. No caso do Charles, você pode publicar a mesma release em diversos [círculos](https://app.gitbook.com/@zup-products/s/charles/v/v1.6/circulos/o-que-sao-circulos).

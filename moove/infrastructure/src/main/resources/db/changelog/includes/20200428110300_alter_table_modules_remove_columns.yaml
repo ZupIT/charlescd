@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200428110300-1
+      author: adauto.paula
+      comment: "Remove columns cd_configuration_id,git_configuration_id,registry_configuration_id from table modules"
+      changes:
+        - dropColumn:
+            tableName: modules
+            columns:
+              - column:
+                  name: cd_configuration_id
+              - column:
+                  name: git_configuration_id
+              - column:
+                  name: registry_configuration_id

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pipeline
 
 import (
@@ -66,7 +82,7 @@ func (executionManager *PipelineManager) FindAll() (*[]Pipeline, error) {
 	opts := &options.FindOptions{
 		Sort: sort,
 	}
-	cur, err := executionManager.DB.FindAll(collection, context.TODO(), map[string]string{}, opts)
+	cur, err := executionManager.DB.FindAll(context.TODO(), collection, map[string]string{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +110,7 @@ func (executionManager *PipelineManager) FindByID(id string) (*Pipeline, error) 
 	}
 
 	filter := bson.M{"_id": objectID}
-	err = executionManager.DB.FindOne(collection, context.TODO(), filter).Decode(&pipeline)
+	err = executionManager.DB.FindOne(context.TODO(), collection, filter).Decode(&pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +124,7 @@ func (executionManager *PipelineManager) Create(pipeline *Pipeline) (*primitive.
 	}
 
 	newPipeline.ID = primitive.NewObjectID()
-	result, err := executionManager.DB.Create(collection, context.TODO(), newPipeline)
+	result, err := executionManager.DB.Create(context.TODO(), collection, newPipeline)
 	if err != nil {
 		log.Println("ERROR", err)
 		return nil, err
