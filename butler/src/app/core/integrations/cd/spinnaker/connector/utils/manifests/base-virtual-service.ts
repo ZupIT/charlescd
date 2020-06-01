@@ -1,6 +1,21 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { IPipelineCircle } from '../../../../../../../api/components/interfaces'
 import { ConfigurationConstants, DefaultCircleId } from '../../../../../../constants/application/configuration.constants'
-import { ISpinnakerPipelineConfiguration } from '../../../interfaces'
 import {
   HttpMatcherUnion,
   IBaseVirtualService,
@@ -163,7 +178,7 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts?: string[]) => {
+export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts?: string[]) : IBaseVirtualService => {
   const newVirtualService = baseVirtualService(appName, appNamespace)
   const matchers = createHttpMatchers(circles, appName)
   if (hosts) {

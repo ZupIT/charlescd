@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import {
     ComponentDeploymentsRepositoryStub,
@@ -5,7 +21,8 @@ import {
     DeploymentsRepositoryStub,
     ModuleDeploymentsRepositoryStub,
     ModuleUndeploymentsRepositoryStub,
-    UndeploymentsRepositoryStub
+    UndeploymentsRepositoryStub,
+    QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
@@ -19,7 +36,8 @@ import {
 } from '../../../app/api/deployments/entity'
 import {
     ComponentDeploymentsRepository,
-    ComponentUndeploymentsRepository
+    ComponentUndeploymentsRepository,
+    QueuedIstioDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { Repository } from 'typeorm'
 import {
@@ -30,6 +48,8 @@ import { DeploymentsRepository } from '../../../app/api/deployments/repository/d
 import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
+import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerServiceStub } from '../../stubs/services'
 
 describe('PipelinesService', () => {
 
@@ -64,7 +84,9 @@ describe('PipelinesService', () => {
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
                 { provide: ModuleUndeploymentsRepository, useClass: ModuleUndeploymentsRepositoryStub },
-                { provide: UndeploymentsRepository, useClass: UndeploymentsRepositoryStub }
+                { provide: UndeploymentsRepository, useClass: UndeploymentsRepositoryStub },
+                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
+                { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
             ]
         }).compile()
 
@@ -100,7 +122,8 @@ describe('PipelinesService', () => {
             'dummy-callback-url',
             circle,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         moduleDeployment.deployment = deployment
@@ -143,7 +166,8 @@ describe('PipelinesService', () => {
             'dummy-callback-url',
             circle,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         undeployment = new UndeploymentEntity(

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Inject, Injectable } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
 import { IPipelineCircle } from '../../../../api/components/interfaces'
@@ -30,6 +46,18 @@ export class OctopipeService implements ICdServiceStrategy {
     await this.deploy(payload)
   }
 
+  public async createIstioDeployment(configuration: IConnectorConfiguration): Promise<void> {
+
+    const payload: IOctopipePayload = this.createIstioPipelineConfigurationObject(configuration)
+    await this.deploy(payload)
+  }
+
+  public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
+
+    const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
+    await this.deploy(payload)
+  }
+
   public async deploy(
     octopipeConfiguration: IOctopipePayload
   ): Promise<AxiosResponse> {
@@ -38,7 +66,7 @@ export class OctopipeService implements ICdServiceStrategy {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
       return await this.octopipeApiService.deploy(octopipeConfiguration).toPromise()
     } catch (error) {
-      this.consoleLoggerService.error(error)
+      this.consoleLoggerService.error('ERROR:DEPLOY_OCTOPIPE_PIPELINE', error)
       throw error
     } finally {
       this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
@@ -46,6 +74,66 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
+    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT', configuration)
+    const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
+    let payload = {
+      appName: configuration.componentName,
+      appNamespace: deploymentConfiguration.namespace,
+      git: {
+        provider: deploymentConfiguration.gitProvider,
+        token: deploymentConfiguration.gitToken
+      },
+      helmUrl: configuration.helmRepository,
+      istio: { virtualService: {}, destinationRules: {} },
+      unusedVersions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineUnusedVersions, configuration.componentName),
+      versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
+      webHookUrl: configuration.pipelineCallbackUrl,
+      circleId: configuration.callbackCircleId
+    }
+    payload = this.addK8sConfig(payload, deploymentConfiguration)
+
+    this.consoleLoggerService.log('FINISH:CREATE_PIPELINE_CONFIGURATION_OBJECT', payload)
+    return payload
+  }
+
+  public createIstioPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
+    const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
+    let payload = {
+      appName: configuration.componentName,
+      appNamespace: deploymentConfiguration.namespace,
+      git: {
+        provider: deploymentConfiguration.gitProvider,
+        token: deploymentConfiguration.gitToken
+      },
+      unusedVersions: [{}],
+      versions: [{}],
+      helmUrl: configuration.helmRepository,
+      istio: { virtualService: {}, destinationRules: {} },
+      webHookUrl: configuration.pipelineCallbackUrl,
+      circleId: configuration.callbackCircleId
+    }
+    payload = this.addK8sConfig(payload, deploymentConfiguration)
+
+    payload.istio.virtualService = this.buildVirtualServices(
+      configuration.componentName,
+      deploymentConfiguration.namespace,
+      configuration.pipelineCirclesOptions.pipelineCircles,
+      [configuration.componentName],
+      configuration.pipelineCirclesOptions.pipelineVersions
+    )
+
+    payload.istio.destinationRules = createDestinationRules(
+      configuration.componentName,
+      deploymentConfiguration.namespace,
+      configuration.pipelineCirclesOptions.pipelineCircles,
+      configuration.pipelineCirclesOptions.pipelineVersions
+    )
+
+    return payload
+  }
+
+  public createUndeployPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
+    this.consoleLoggerService.log('START:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -77,7 +165,7 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions
     )
-
+    this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 

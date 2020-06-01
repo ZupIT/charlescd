@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
     EntityRepository,
     InsertResult,
@@ -25,22 +41,22 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
                 configurationData: this.setConfigurationData(cdConfig.configurationData),
                 name: cdConfig.name,
                 authorId: cdConfig.authorId,
-                applicationId: cdConfig.applicationId
+                workspaceId: cdConfig.workspaceId
             })
-            .returning('id, type, name, user_id, application_id, created_at')
+            .returning('id, type, name, user_id, workspace_id, created_at')
             .execute()
 
         return plainToClass(CdConfigurationEntity, queryResult.generatedMaps[0])
     }
 
-    public async findAllByApplicationId(applicationId: string): Promise<CdConfigurationEntity[]> {
+    public async findAllByWorkspaceId(workspaceId: string): Promise<CdConfigurationEntity[]> {
 
-        const queryResult: object[] = await this.createQueryBuilder('cd_configurations')
+        const queryResult: Record<string, unknown>[] = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
-            .addSelect('application_id', 'applicationId')
+            .addSelect('workspace_id', 'workspaceId')
             .addSelect('created_at', 'createdAt')
-            .where('cd_configurations.application_id = :applicationId', { applicationId })
+            .where('cd_configurations.workspace_id = :workspaceId', { workspaceId })
             .getRawMany()
 
         return queryResult.map(configuration => plainToClass(CdConfigurationEntity, configuration))
@@ -51,7 +67,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
             .select('id, type, name')
             .addSelect('user_id', 'authorId')
-            .addSelect('application_id', 'applicationId')
+            .addSelect('workspace_id', 'workspaceId')
             .addSelect('created_at', 'createdAt')
             .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
             .where('cd_configurations.id = :id', { id })
@@ -72,7 +88,7 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
         const stringConfigurationData = JSON.stringify(
             this.trimObject(configurationData)
         )
-        return () => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
+        return () : string => `PGP_SYM_ENCRYPT('${stringConfigurationData}', '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`
     }
 
     private trimObject(configurationData: ICdConfigurationData) {
