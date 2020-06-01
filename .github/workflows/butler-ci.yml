@@ -8,7 +8,7 @@ on:
     branches: [ master ]
     paths:
       - 'butler/**'
-    tags: 
+    tags:
       - '!*'
   pull_request:
     branches: [ master ]
@@ -36,6 +36,10 @@ jobs:
     - run: npm ci
       working-directory: ./butler
     - run: npm run build --if-present
+      working-directory: ./butler
+    - run: npm run test
+      working-directory: ./butler
+    - run: npm run lint
       working-directory: ./butler
       env:
         CI: true
