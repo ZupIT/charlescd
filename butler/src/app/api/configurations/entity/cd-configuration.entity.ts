@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
     BaseEntity,
     Column,
@@ -27,8 +43,8 @@ export class CdConfigurationEntity extends BaseEntity {
     @Column({ name: 'user_id' })
     public authorId: string
 
-    @Column({ name: 'application_id' })
-    public applicationId: string
+    @Column({ name: 'workspace_id' })
+    public workspaceId: string
 
     @Column({ name: 'created_at'})
     public createdAt!: Date
@@ -38,7 +54,7 @@ export class CdConfigurationEntity extends BaseEntity {
         configurationData: ICdConfigurationData,
         name: string,
         authorId: string,
-        applicationId: string
+        workspaceId: string
     ) {
         super()
         this.id = uuidv4()
@@ -46,7 +62,7 @@ export class CdConfigurationEntity extends BaseEntity {
         this.configurationData = configurationData
         this.name = name
         this.authorId = authorId
-        this.applicationId = applicationId
+        this.workspaceId = workspaceId
     }
 
     public toReadDto(): ReadCdConfigurationDto {
@@ -54,7 +70,7 @@ export class CdConfigurationEntity extends BaseEntity {
             this.id,
             this.name,
             this.authorId,
-            this.applicationId,
+            this.workspaceId,
             this.createdAt
         )
     }

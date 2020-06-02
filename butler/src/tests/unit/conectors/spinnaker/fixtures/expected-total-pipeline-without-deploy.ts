@@ -1,4 +1,18 @@
-import { ConfigurationConstants, DefaultCircleId } from '../../../../../app/core/constants/application/configuration.constants'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 const expectedPipelineWithoutDeployments = {
   appConfig: {},
@@ -51,111 +65,6 @@ const expectedPipelineWithoutDeployments = {
   limitConcurrent: true,
   stages: [
     {
-      stageEnabled: {
-        expression: '',
-        type: 'expression'
-      },
-      account: 'account',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'DestinationRule',
-          metadata: {
-            name: 'app-name',
-            namespace: 'app-namespace'
-          },
-          spec: {
-            host: 'app-name',
-            subsets: []
-          }
-        }
-      ],
-      moniker: {
-        app: 'account'
-      },
-      name: 'Deploy Destination Rules',
-      skipExpressionEvaluation: false,
-      source: 'text',
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest',
-      refId: '1',
-      requisiteStageRefIds: []
-    },
-    {
-      stageEnabled: {
-        expression: '${ #stage(\'Deploy Destination Rules\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
-      account: 'account',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifests: [
-        {
-          apiVersion: 'networking.istio.io/v1alpha3',
-          kind: 'VirtualService',
-          metadata: {
-            name: 'app-name',
-            namespace: 'app-namespace'
-          },
-          spec: {
-            hosts: [
-              'unreachable-app-name'
-            ],
-            http: [
-              {
-                match: [
-                  {
-                    headers: {
-                      'unreachable-cookie-name': {
-                        exact: 'unreachable-cookie - value'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'unreachable-app-name'
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ],
-      moniker: {
-        app: 'account'
-      },
-      name: 'Deploy Virtual Service',
-      skipExpressionEvaluation: false,
-      source: 'text',
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest',
-      refId: '2',
-      requisiteStageRefIds: [
-        '1'
-      ]
-    },
-    {
       account: 'account',
       cloudProvider: 'kubernetes',
       kinds: [
@@ -190,12 +99,12 @@ const expectedPipelineWithoutDeployments = {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       failPipeline: false,
-      refId: '3',
+      refId: '1',
       requisiteStageRefIds: [
-        '2'
+        ''
       ],
       stageEnabled: {
-        expression: '${ #stage(\'Deploy Virtual Service\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       type: 'deleteManifest'
@@ -212,9 +121,9 @@ const expectedPipelineWithoutDeployments = {
       payload: {
         status: '${#stage( \'Delete Deployments\' ).status.toString()}'
       },
-      refId: '4',
+      refId: '2',
       requisiteStageRefIds: [
-        '3'
+        '1'
       ],
       statusUrlResolution: 'getMethod',
       type: 'webhook',
