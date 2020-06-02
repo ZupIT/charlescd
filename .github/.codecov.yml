@@ -3,6 +3,7 @@ coverage:
     project:
       default:
         target: auto
+        if_not_found: success
         threshold: 0%
         flags: 
           - villager
@@ -11,6 +12,7 @@ coverage:
           - moove
           - butler
           - ui
+          - docs
 
       villager:
         target: 30%
@@ -45,6 +47,7 @@ coverage:
     patch:
       default:
         target: 70%
+        if_not_found: success
         threshold: 0%
         flags: 
           - villager
