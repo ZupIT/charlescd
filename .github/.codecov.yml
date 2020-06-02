@@ -41,35 +41,33 @@ coverage:
         target: 80%
         threshold: 0%
         if_not_found: success
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
       
 flags:
   villager:
     paths:
       - villager/
     carryforward: true
+  
   circlematcher:
     paths:
       - circle-matcher/
     carryforward: true
+  
   octopipe:
     paths:
       - octopipe/
     carryforward: true
+  
   moove:
     paths:
       - moove/
     carryforward: true
+  
   butler:
     paths:
       - butler/
     carryforward: true
+  
   ui:
     paths:
       - ui/
