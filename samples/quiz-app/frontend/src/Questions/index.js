@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactComponent as CorrectIcon } from '../svg/correct.svg';
 import { ReactComponent as IncorrectIcon } from '../svg/incorrect.svg';
 import { ReactComponent as FinalIcon } from '../svg/final.svg';
+import { ReactComponent as Loading } from '../svg/loading.svg';
+import { useQuestions } from './hook';
 
-function Questions({ questions, onRestart }) {
+function Questions({ onRestart }) {
   const [questID, setQuestID] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [correctAnswer, setCorrectAnswer] = useState();
   const [countCorrect, setCountCorrect] = useState(0);
   const isCorrect = correctAnswer === selectedAnswer;
+  const { getQuestions, questions, status } = useQuestions();
+
+  useEffect(() => {
+    getQuestions();
+  }, [getQuestions]);
 
   const nextQuestion = () => {
     const nextID = questID + 1;
@@ -28,7 +35,7 @@ function Questions({ questions, onRestart }) {
   }
 
   const selectAnswer = (question, answer) => {
-    const correctAnswer = question.answers.find(({ isCorrect }) => isCorrect);
+    const correctAnswer = question.answers.find(({ isCorrect }) => isCorrect) || {};
 
     if (correctAnswer.id === answer.id && countCorrect < questions.length) {
       const count = countCorrect + 1;
@@ -86,7 +93,8 @@ function Questions({ questions, onRestart }) {
     <>
       <section className="question">
         <h4 className="practice-text">Practice Quiz for Darwin and Natural Selection</h4>
-        {renderQuestion()}
+        {status === 'pending' && <Loading />}
+        {status === 'resolved' && renderQuestion()}
       </section>
     </>
   );
