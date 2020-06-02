@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import { ReceiveDeploymentCallbackUsecase } from '../../../app/api/notifications/use-cases'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
@@ -47,7 +63,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let pipelineQueuesService: PipelineQueuesService
     let pipelineErrorHandlerService: PipelineErrorHandlerService
-    let statusManagementService: StatusManagementService
     beforeEach(async () => {
 
         const module = await Test.createTestingModule({
@@ -60,6 +75,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
                 { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
                 { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub }
             ]
         }).compile()
@@ -69,7 +85,6 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
         failedFinishDeploymentDto = new FinishDeploymentDto('FAILED')
         queuedDeployment = new QueuedDeploymentEntity(
@@ -105,7 +120,8 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
         componentDeployment.moduleDeployment = moduleDeployment
         moduleDeployment.deployment = deployment

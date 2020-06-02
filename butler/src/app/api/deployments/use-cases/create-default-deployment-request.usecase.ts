@@ -1,7 +1,22 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
     Injectable,
-    InternalServerErrorException,
-    NotFoundException
+    InternalServerErrorException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -24,10 +39,12 @@ import {
     QueuedDeploymentsRepository
 } from '../repository'
 import {
+    ModulesService,
     PipelineDeploymentsService,
     PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../services'
+import { IConstraintError } from '../interfaces/errors.interface'
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -46,10 +63,14 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
-        private readonly pipelineErrorHandlerService: PipelineErrorHandlerService
+        private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
+        private readonly modulesService: ModulesService
     ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+        const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
+        await this.modulesService.createModules(modules)
+
         this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
         const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
 
@@ -72,6 +93,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         try {
             return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
+            this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_DEPLOYMENT', error)
             throw new InternalServerErrorException('Could not save deployment')
         }
     }
@@ -106,12 +128,12 @@ export class CreateDefaultDeploymentRequestUsecase {
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, status)
             )
         } catch (error) {
-            return this.handleUniqueRunningConstraint(error, componentDeployment)
+            return this.handleUniqueRunningConstraint(error as IConstraintError, componentDeployment)
         }
     }
 
     private handleUniqueRunningConstraint(
-        error: any,
+        error: IConstraintError,
         componentDeployment: ComponentDeploymentEntity,
     ): Promise<QueuedDeploymentEntity> {
 
@@ -120,6 +142,7 @@ export class CreateDefaultDeploymentRequestUsecase {
                 new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
             )
         }
+        this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_QUEUED_DEPLOYMENT', error)
         throw new InternalServerErrorException('Could not save queued deployment')
     }
 }

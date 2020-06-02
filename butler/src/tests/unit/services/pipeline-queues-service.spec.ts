@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import {
     PipelineDeploymentsService,
@@ -18,12 +34,14 @@ import {
     ModulesRepositoryStub,
     QueuedDeploymentsRepositoryStub,
     QueuedUndeploymentsRepositoryStub,
-    UndeploymentsRepositoryStub
+    UndeploymentsRepositoryStub,
+    QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     ComponentDeploymentsRepository,
     ComponentUndeploymentsRepository,
-    QueuedDeploymentsRepository
+    QueuedDeploymentsRepository,
+    QueuedIstioDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import {
@@ -41,38 +59,27 @@ import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { ComponentEntity } from '../../../app/api/components/entity'
-import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('PipelineQueuesService', () => {
 
     let pipelineQueuesService: PipelineQueuesService
-    let queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>
     let componentDeploymentsRepository: ComponentDeploymentsRepository
     let queuedDeploymentsRepository: QueuedDeploymentsRepository
     let queuedUndeployment: QueuedUndeploymentEntity
-    let queuedDeployment: QueuedDeploymentEntity
     let nextQueuedDeployments: QueuedDeploymentEntity[]
     let circle: CircleDeploymentEntity
     let deployment: DeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
-    let statusManagementService: StatusManagementService
-    let mooveService: MooveService
-    let deploymentWithRelations: DeploymentEntity
-    let moduleDeploymentWithRelations: ModuleDeploymentEntity
-    let moduleDeploymentsList: ModuleDeploymentEntity[]
-    let componentDeploymentsList: ComponentDeploymentEntity[]
     let undeploymentComponentDeployments: ComponentDeploymentEntity[]
     let undeploymentModuleDeployments: ModuleDeploymentEntity[]
     let undeploymentDeployment: DeploymentEntity
     let undeployment: UndeploymentEntity
     let queuedUndeployments: QueuedUndeploymentEntity[]
-    let componentUndeploymentsRepository: ComponentUndeploymentsRepository
     let componentUndeployment: ComponentUndeploymentEntity
     let moduleUndeployment: ModuleUndeploymentEntity
     let componentsRepository: Repository<ComponentEntity>
     let componentEntity: ComponentEntity
-    let moduleEntity: ModuleEntity
 
     beforeEach(async () => {
 
@@ -90,17 +97,14 @@ describe('PipelineQueuesService', () => {
                 { provide: MooveService, useClass: MooveServiceStub },
                 { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
                 { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
-                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub }
+                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
+                { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub },
             ]
         }).compile()
 
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-        queuedUndeploymentsRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
-        mooveService = module.get<MooveService>(MooveService)
-        componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
         componentsRepository = module.get<Repository<ComponentEntity>>('ComponentEntityRepository')
 
         queuedUndeployment = new QueuedUndeploymentEntity(
@@ -108,12 +112,6 @@ describe('PipelineQueuesService', () => {
             'dummy-component-deployment-id',
             QueuedPipelineStatusEnum.RUNNING,
             'dummy-component-undeployment-id'
-        )
-
-        queuedDeployment = new QueuedDeploymentEntity(
-            'dummy-component-id',
-            'dummy-component-deployment-id',
-            QueuedPipelineStatusEnum.RUNNING,
         )
 
         nextQueuedDeployments = [
@@ -162,42 +160,12 @@ describe('PipelineQueuesService', () => {
             'dummy-callback-url',
             circle,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         moduleDeployment.deployment = deployment
         componentDeployment.moduleDeployment = moduleDeployment
-
-        componentDeploymentsList = [
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag'
-            )
-        ]
-
-        moduleDeploymentWithRelations = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            componentDeploymentsList
-        )
-
-        moduleDeploymentsList = [
-            moduleDeploymentWithRelations
-        ]
-
-        deploymentWithRelations = new DeploymentEntity(
-            'dummy-deployment-id',
-            'dummy-valueflow-id',
-            moduleDeploymentsList,
-            'dummy-author-id',
-            'dummy-description',
-            'dummy-callback-url',
-            circle,
-            false,
-            'dummy-circle-id'
-        )
 
         undeploymentComponentDeployments = [
             new ComponentDeploymentEntity(
@@ -231,7 +199,8 @@ describe('PipelineQueuesService', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         undeployment = new UndeploymentEntity(
@@ -268,12 +237,6 @@ describe('PipelineQueuesService', () => {
         moduleUndeployment.undeployment = undeployment
 
         componentUndeployment.moduleUndeployment = moduleUndeployment
-
-        moduleEntity = new ModuleEntity(
-            'module-id',
-            null,
-            []
-        )
 
         componentEntity = new ComponentEntity(
             'component-id'

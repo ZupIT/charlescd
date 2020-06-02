@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "99f23536-c82a-42b6-a36f-b6f2dd9a4c6b",
-		"name": "Darwin Deploy",
+		"name": "Charles Butler",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -14,12 +14,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"id": "a3abb15e-14d8-439a-9d2d-9444692e24c3",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
-									""
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"postman.setGlobalVariable('moduleId', uuid.v4());"
 								],
 								"type": "text/javascript"
 							}
@@ -27,11 +31,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"id": "32097b27-ef02-488f-939a-d1ebb7d25064",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('workspaceId', uuid.v4());",
 									"postman.setGlobalVariable('authorId', uuid.v4());",
 									""
 								],
@@ -43,8 +47,8 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "x-application-id",
-								"value": "{{applicationId}}",
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
 								"type": "text"
 							}
 						],
@@ -77,12 +81,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"id": "5077ad3a-26dd-44cd-b0f1-d4ad1a5fd23a",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
-									""
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"postman.setGlobalVariable('moduleId', uuid.v4());"
 								],
 								"type": "text/javascript"
 							}
@@ -90,11 +98,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"id": "e6efc2b4-cc75-4a22-a6a7-b677a306e9e5",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('workspaceId', uuid.v4());",
 									"postman.setGlobalVariable('authorId', uuid.v4());",
 									""
 								],
@@ -106,9 +114,9 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "x-application-id",
+								"key": "x-workspace-id",
 								"type": "text",
-								"value": "{{applicationId}}"
+								"value": "{{workspaceId}}"
 							}
 						],
 						"body": {
@@ -140,12 +148,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"id": "71c47939-a6c8-4089-a5ad-ada3e555e111",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
-									""
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"postman.setGlobalVariable('moduleId', uuid.v4());"
 								],
 								"type": "text/javascript"
 							}
@@ -153,11 +165,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"id": "f95317d6-4596-4047-940e-1a8fdebe76cf",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('workspaceId', uuid.v4());",
 									"postman.setGlobalVariable('authorId', uuid.v4());",
 									""
 								],
@@ -169,9 +181,9 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "x-application-id",
+								"key": "x-workspace-id",
 								"type": "text",
-								"value": "{{applicationId}}"
+								"value": "{{workspaceId}}"
 							}
 						],
 						"body": {
@@ -203,12 +215,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bcae68a4-7adc-4a38-abad-5d5ee76b78d0",
+								"id": "258a2aad-93d6-42e0-a7e7-27909160607f",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
-									""
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"postman.setGlobalVariable('moduleId', uuid.v4());"
 								],
 								"type": "text/javascript"
 							}
@@ -216,11 +232,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c63f6733-b34a-4d81-a99c-a9f90b695857",
+								"id": "593213fa-b8f0-45df-8804-469da6da9e91",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
-									"postman.setGlobalVariable('applicationId', uuid.v4());",
+									"postman.setGlobalVariable('workspaceId', uuid.v4());",
 									"postman.setGlobalVariable('authorId', uuid.v4());",
 									""
 								],
@@ -232,9 +248,9 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "x-application-id",
+								"key": "x-workspace-id",
 								"type": "text",
-								"value": "{{applicationId}}"
+								"value": "{{workspaceId}}"
 							}
 						],
 						"body": {
@@ -262,12 +278,28 @@
 				},
 				{
 					"name": "Get configurations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9803f5f9-300b-4fd5-96b7-53dd716e2fff",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
 							{
-								"key": "x-application-id",
-								"value": "{{applicationId}}",
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
 								"type": "text"
 							}
 						],
@@ -284,6 +316,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete configurations",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/configurations/cd/{{cdConfigurationId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd",
+								"{{cdConfigurationId}}"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -292,51 +350,21 @@
 			"name": "Modules",
 			"item": [
 				{
-					"name": "Create module",
-					"event": [
+					"name": "Get Modules",
+					"events": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
-								"id": "159bd805-716b-451e-ab37-04fb69a2b5c5",
+								"id": "9803f5f9-300b-4fd5-96b7-53dd716e2fff",
 								"exec": [
-									"var uuid = require('uuid');",
-									"",
-									"postman.setGlobalVariable('moduleId', uuid.v4());",
-									"postman.setGlobalVariable('componentId', uuid.v4());",
-									""
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"id\": \"{{moduleId}}\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"components\": [\n    \t{\n    \t\t\"id\": \"{{componentId}}\"\n    \t}\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/modules",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"modules"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Modules",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -356,6 +384,20 @@
 				},
 				{
 					"name": "Get Module by Id",
+					"events": [
+							{
+								"listen": "test",
+								"script": {
+									"id": "b13de781-ac3f-44ec-a35f-68b70419512d",
+									"exec": [
+										"pm.test(\"Status ok\", function() {",
+										"    pm.response.to.have.status(200)",
+										"})"
+									],
+									"type": "text/javascript"
+								}
+							}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -386,7 +428,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2be80835-9e66-4f72-80e5-ed9dd5396149",
+								"id": "42fea2d6-f0e3-4896-b4d6-c19c331cbeaf",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -395,7 +437,7 @@
 									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
 									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);",
 									"",
-									"pm.test(\"Status ok\", function() {",
+									"pm.test(\"Status created\", function() {",
 									"    pm.response.to.have.status(201)",
 									"})"
 								],
@@ -405,7 +447,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "921ac85e-b7d6-46b3-912d-e219bd89d770",
+								"id": "c8411b9c-7c05-4089-937f-310c9f05bc09",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -427,7 +469,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\" \n     \n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/default",
@@ -450,7 +492,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1d9a4ca2-1106-4a14-9998-cca9237b2b0f",
+								"id": "a9a7cc0f-c8e2-491d-97fe-23f61d46a148",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -459,7 +501,7 @@
 									"postman.setGlobalVariable(\"moduleId\", response[\"modulesDeployments\"][0][\"moduleId\"]);",
 									"postman.setGlobalVariable(\"componentId\", response[\"modulesDeployments\"][0][\"componentsDeployments\"][0][\"componentId\"]);",
 									"",
-									"pm.test(\"Status ok\", function() {",
+									"pm.test(\"Status created\", function() {",
 									"    pm.response.to.have.status(201)",
 									"})"
 								],
@@ -469,7 +511,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "0a0314ec-116f-44dc-9142-026c59e31ad3",
+								"id": "03a5d2de-7664-43ce-b1e4-f82b8ff6ca11",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -491,7 +533,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\",\n    \"circles\": [\n        {\n            \"headerValue\": \"val1\"\n        },\n        {\n        \t\"headerValue\": \"val2\"\n        }\n    ]\n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"applicationName\": \"{{applicationName}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"header-value\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"{{componentId}}\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"description\": \"\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\"    \n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/deployments/circle",
@@ -514,7 +556,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "12b278d4-eab4-4ab8-99c4-a0e117227b21",
+								"id": "5b18735c-4a79-41c1-96c5-b7908c890c3a",
 								"exec": [
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
@@ -547,7 +589,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "915409fc-32eb-4292-9708-ab14f69589ca",
+								"id": "a2b49f39-bb39-442e-8910-acfcb7ddaf9e",
 								"exec": [
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
@@ -576,14 +618,28 @@
 					"response": []
 				},
 				{
-					"name": "Create Undeploymentt",
+					"name": "Create Undeployment",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "53e645b7-a035-47fb-9e99-a14e479ab5e4",
+								"id": "f7f96a76-1a29-41d5-9693-71d9f8615e8f",
 								"exec": [
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e4b51446-225d-4372-bd62-28922e9cc2b2",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})"
 								],
 								"type": "text/javascript"
 							}
@@ -629,7 +685,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0902a943-c2c9-4f07-bc52-9fb184ae3fab",
+								"id": "c304c465-1ef5-4dbe-b022-f48ae27bd8f9",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -675,9 +731,9 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "60e0ee88-2dd6-4a04-9f01-f1e5255bad4d",
+								"id": "fb29b85c-fccb-4c44-90c6-3c61c9c39502",
 								"exec": [
-									"pm.test(\"Status ok\", function() {",
+									"pm.test(\"Status no content\", function() {",
 									"    pm.response.to.have.status(204)",
 									"})"
 								],
@@ -711,6 +767,55 @@
 							"query": [
 								{
 									"key": "queuedDeploymentId",
+									"value": "{{componentQueueId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Notify Undeployment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fb29b85c-fccb-4c44-90c6-3c61c9c39502",
+								"exec": [
+									"pm.test(\"Status no content\", function() {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"SUCCEEDED\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/notifications/undeployment?queuedUndeploymentId={{componentQueueId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"notifications",
+								"undeployment"
+							],
+							"query": [
+								{
+									"key": "queuedUndeploymentId",
 									"value": "{{componentQueueId}}"
 								}
 							]
