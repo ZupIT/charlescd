@@ -25,9 +25,9 @@ import io.charlescd.moove.legacy.moove.service.CredentialConfigurationService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Credential Configuration Endpoints", tags = ["Credential Configuration"])
 @RestController

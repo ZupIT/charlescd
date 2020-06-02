@@ -48,7 +48,6 @@ class BusinessException : RuntimeException {
         fun of(errorCode: MooveErrorCode, message: String): BusinessException {
             return BusinessException(errorCode, message)
         }
-
     }
 
     fun withParameters(vararg params: String): BusinessException {

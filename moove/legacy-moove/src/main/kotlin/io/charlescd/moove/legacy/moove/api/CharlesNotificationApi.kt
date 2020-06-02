@@ -36,5 +36,4 @@ interface CharlesNotificationApi {
     )
     @ResponseBody
     fun create(@RequestBody createNotificationRequest: CreateNotificationRequest)
-
 }

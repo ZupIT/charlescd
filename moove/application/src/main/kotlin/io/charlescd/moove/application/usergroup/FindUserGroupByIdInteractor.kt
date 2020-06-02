@@ -21,5 +21,4 @@ import io.charlescd.moove.application.usergroup.response.UserGroupResponse
 interface FindUserGroupByIdInteractor {
 
     fun execute(id: String): UserGroupResponse
-
 }

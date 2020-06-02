@@ -18,8 +18,8 @@ package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
-import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
+import org.springframework.data.jpa.repository.JpaRepository
 
 interface CredentialConfigurationRepository : JpaRepository<CredentialConfiguration, String> {
 
@@ -31,5 +31,4 @@ interface CredentialConfigurationRepository : JpaRepository<CredentialConfigurat
         type: CredentialConfigurationType,
         workspaceId: String
     ): List<CredentialConfiguration>
-
 }

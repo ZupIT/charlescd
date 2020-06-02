@@ -30,10 +30,10 @@ import io.charlescd.moove.legacy.moove.service.CardService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Card Endpoints", tags = ["Card"])
 @RestController
@@ -83,7 +83,8 @@ class CardController(private val service: CardService) {
     @PutMapping("/{id}")
     fun update(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable id: String, @Valid @RequestBody updateCardRequest: UpdateCardRequest
+        @PathVariable id: String,
+        @Valid @RequestBody updateCardRequest: UpdateCardRequest
     ) =
         service.update(id, updateCardRequest, workspaceId)
 
@@ -107,7 +108,8 @@ class CardController(private val service: CardService) {
     @ResponseStatus(HttpStatus.CREATED)
     fun addComment(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable id: String, @Valid @RequestBody addCommentRequest: AddCommentRequest
+        @PathVariable id: String,
+        @Valid @RequestBody addCommentRequest: AddCommentRequest
     ) =
         service.addComment(id, addCommentRequest, workspaceId)
 
@@ -117,7 +119,8 @@ class CardController(private val service: CardService) {
     @ResponseStatus(HttpStatus.CREATED)
     fun addMembers(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable id: String, @Valid @RequestBody addMemberRequest: AddMemberRequest
+        @PathVariable id: String,
+        @Valid @RequestBody addMemberRequest: AddMemberRequest
     ) =
         service.addMembers(id, addMemberRequest, workspaceId)
 
@@ -126,7 +129,8 @@ class CardController(private val service: CardService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeMember(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable id: String, @PathVariable memberId: String
+        @PathVariable id: String,
+        @PathVariable memberId: String
     ) {
         service.removeMember(id, memberId, workspaceId)
     }

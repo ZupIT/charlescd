@@ -21,9 +21,9 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.GitProviderService
 import io.charlescd.moove.domain.service.GitService
 import io.charlescd.moove.infrastructure.mapper.GitServiceMapper
+import java.util.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GitHubProviderService(

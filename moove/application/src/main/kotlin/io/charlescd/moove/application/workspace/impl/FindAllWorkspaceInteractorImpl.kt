@@ -46,5 +46,4 @@ class FindAllWorkspaceInteractorImpl @Inject constructor(
             totalPages = page.totalPages()
         )
     }
-
 }

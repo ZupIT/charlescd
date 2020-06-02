@@ -24,5 +24,4 @@ data class ComponentTagsResponse(
         val name: String,
         val artifact: String
     )
-
 }

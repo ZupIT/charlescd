@@ -31,5 +31,4 @@ class MetricServiceFactoryImpl(val context: ApplicationContext) : MetricServiceF
             String = when (providerEnum) {
         MetricConfiguration.ProviderEnum.PROMETHEUS -> "prometheus"
     }
-
 }

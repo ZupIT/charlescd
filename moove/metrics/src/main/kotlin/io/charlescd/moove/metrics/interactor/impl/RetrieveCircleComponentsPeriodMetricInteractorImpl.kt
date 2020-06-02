@@ -33,19 +33,23 @@ import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetri
 import org.springframework.stereotype.Service
 
 @Service
-class RetrieveCircleComponentsPeriodMetricInteractorImpl(private val serviceFactory: MetricServiceFactory,
-                                                         private val componentRepository: ComponentRepository,
-                                                         private val moduleRepository: ModuleRepository,
-                                                         private val metricConfigurationRepository: MetricConfigurationRepository) : RetrieveCircleComponentsPeriodMetricInteractor {
+class RetrieveCircleComponentsPeriodMetricInteractorImpl(
+    private val serviceFactory: MetricServiceFactory,
+    private val componentRepository: ComponentRepository,
+    private val moduleRepository: ModuleRepository,
+    private val metricConfigurationRepository: MetricConfigurationRepository
+) : RetrieveCircleComponentsPeriodMetricInteractor {
 
     private companion object {
         private const val COMPONENT_LABEL = "destination_component"
     }
 
-    override fun execute(circleId: String,
-                         projectionType: ProjectionType,
-                         metricType: MetricType,
-                         workspaceId: String): ComponentMetricRepresentation {
+    override fun execute(
+        circleId: String,
+        projectionType: ProjectionType,
+        metricType: MetricType,
+        workspaceId: String
+    ): ComponentMetricRepresentation {
 
         val metricConfiguration = this.metricConfigurationRepository.findByWorkspaceId(workspaceId)
                 .orElseThrow { NotFoundException("metric configuration for workspace", workspaceId) }
@@ -59,11 +63,13 @@ class RetrieveCircleComponentsPeriodMetricInteractorImpl(private val serviceFact
         return getMetricValues(components, metricConfiguration, circleId, metricType, projectionType)
     }
 
-    private fun getMetricValues(components: List<Component>,
-                                metricConfiguration: MetricConfiguration,
-                                circleId: String,
-                                metricType: MetricType,
-                                projectionType: ProjectionType): ComponentMetricRepresentation {
+    private fun getMetricValues(
+        components: List<Component>,
+        metricConfiguration: MetricConfiguration,
+        circleId: String,
+        metricType: MetricType,
+        projectionType: ProjectionType
+    ): ComponentMetricRepresentation {
 
         val modules = moduleRepository.findByIds(components.map { it.moduleId }).associateBy { it.id }
 
@@ -95,14 +101,15 @@ class RetrieveCircleComponentsPeriodMetricInteractorImpl(private val serviceFact
         return toMetricRepresentation(projectionType, metricType, componentsRepresentation)
     }
 
-    private fun buildComponentRepresentation(component: Component,
-                                             componentMetric: MetricResult?,
-                                             module: Module?): ComponentRepresentation {
+    private fun buildComponentRepresentation(
+        component: Component,
+        componentMetric: MetricResult?,
+        module: Module?
+    ): ComponentRepresentation {
 
         val moduleName = module?.name ?: ""
 
         return componentMetric?.toComponentRepresentation(moduleName, component.name)
                 ?: ComponentRepresentation(component.name, moduleName, emptyList())
     }
-
 }

@@ -28,10 +28,10 @@ import io.charlescd.moove.legacy.moove.service.HypothesisServiceLegacy
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Hypothesis Endpoints", tags = ["Hypothesis"])
 @RestController
@@ -113,7 +113,8 @@ class HypothesisController(private val hypothesisService: HypothesisServiceLegac
     @ResponseStatus(HttpStatus.OK)
     fun removeLabel(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathVariable id: String, @PathVariable labelId: String
+        @PathVariable id: String,
+        @PathVariable labelId: String
     ) {
         this.hypothesisService.removeLabel(id, labelId, workspaceId)
     }
@@ -167,5 +168,4 @@ class HypothesisController(private val hypothesisService: HypothesisServiceLegac
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable id: String
     ) = this.hypothesisService.getBoardActiveEvents(id, workspaceId)
-
 }

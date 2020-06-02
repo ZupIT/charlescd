@@ -63,5 +63,4 @@ class UpdateComponentInteractorImpl @Inject constructor(private val moduleServic
             throw NotFoundException("component", componentId)
         }
     }
-
 }

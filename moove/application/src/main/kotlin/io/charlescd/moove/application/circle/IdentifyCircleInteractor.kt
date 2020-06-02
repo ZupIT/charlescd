@@ -21,5 +21,4 @@ import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
 interface IdentifyCircleInteractor {
 
     fun execute(workspaceId: String, request: Map<String, Any>): List<IdentifyCircleResponse>
-
 }

@@ -34,7 +34,6 @@ class GitCredentials(
     fun isValidCredentials(): Boolean {
         return !this.username.isNullOrBlank() && !this.password.isNullOrBlank()
     }
-
 }
 
 enum class GitServiceProvider {

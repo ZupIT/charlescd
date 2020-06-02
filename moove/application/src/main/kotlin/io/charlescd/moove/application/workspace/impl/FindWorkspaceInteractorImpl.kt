@@ -62,5 +62,4 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             metricConfiguration
         )
     }
-
 }

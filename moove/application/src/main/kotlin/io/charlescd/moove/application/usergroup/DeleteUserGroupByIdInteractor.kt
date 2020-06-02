@@ -19,5 +19,4 @@ package io.charlescd.moove.application.usergroup
 interface DeleteUserGroupByIdInteractor {
 
     fun execute(id: String)
-
 }

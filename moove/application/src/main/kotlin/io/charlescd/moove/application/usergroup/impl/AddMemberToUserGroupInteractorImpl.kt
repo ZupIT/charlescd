@@ -47,5 +47,4 @@ class AddMemberToUserGroupInteractorImpl @Inject constructor(
             keycloakService.associatePermissionsToNewUsers(member, workspaceAndPermissionsMapping)
         }
     }
-
 }
