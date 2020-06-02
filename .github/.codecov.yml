@@ -4,12 +4,7 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        if_no_uploads: success
-        flags:
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
+        if_not_found: success
       
       villager:
         target: 30%
@@ -35,7 +30,7 @@ coverage:
       default:
         target: 80%
         threshold: 0%
-        if_no_uploads: success
+        if_not_found: success
         flags:
           - villager
           - circlematcher
@@ -62,3 +57,8 @@ flags:
     paths:
       - moove/
     carryforward: true
+
+ignore:
+  - "docs/"
+  - ".github/"
+  - "images/"
