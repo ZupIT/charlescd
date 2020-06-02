@@ -1,8 +1,0 @@
-.idea
-.DS_Store
-.vscode
-dist
-coverage
-node_modules
-yarn-error.log
-.yalc
