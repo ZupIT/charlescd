@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M12,1 C18.065,1 23,5.935 23,12 C23,18.065 18.065,23 12,23 C5.935,23 1,18.065 1,12 C1,5.935 5.935,1 12,1 Z M16.4195988,4.16179734 L13.7270454,9.5482881 C14.4965448,10.0919719 15,10.9883462 15,12 C15,13.6540909 13.6540909,15 12,15 C10.3459091,15 9,13.6540909 9,12 C9,10.9879118 9.50388762,10.0912021 10.2739459,9.54758797 L7.5808454,4.16179734 C4.84842636,5.70860749 3,8.6428196 3,12 C3,16.963 7.038,21 12,21 C16.963,21 21,16.963 21,12 C21,8.6428196 19.1520314,5.70860749 16.4195988,4.16179734 Z M12,5 C11.4486364,5 11,5.44863636 11,6 C11,6.55136364 11.4486364,7 12,7 C12.5513636,7 13,6.55136364 13,6 C13,5.44863636 12.5513636,5 12,5 Z" id="path-circle-matcher"></path>
+    </defs>
+    <g id="Settings-circle-matcher" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings-circle-matcher---Workspace---11.4---Add-group-permissions" transform="translate(-470.000000, -744.000000)">
+            <g id="Group-circle-matcher-13" transform="translate(469.000000, 92.000000)">
+                <g id="Group-circle-matcher-7" transform="translate(0.000000, 651.000000)">
+                    <g id="Icon-circle-matcher/User/Release">
+                        <mask id="mask-circle-matcher" fill="white">
+                            <use xlink:href="#path-circle-matcher"></use>
+                        </mask>
+                        <use id="Combined-Shape" fill="currentColor" xlink:href="#path-circle-matcher"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

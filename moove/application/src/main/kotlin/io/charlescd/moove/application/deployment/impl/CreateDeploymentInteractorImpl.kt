@@ -25,9 +25,9 @@ import io.charlescd.moove.application.deployment.response.DeploymentResponse
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.DeployService
-import org.springframework.transaction.annotation.Transactional
 import javax.inject.Inject
 import javax.inject.Named
+import org.springframework.transaction.annotation.Transactional
 
 @Named
 open class CreateDeploymentInteractorImpl @Inject constructor(

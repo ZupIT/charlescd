@@ -44,5 +44,4 @@ class FindAllUserGroupsInteractorImpl @Inject constructor(
             totalPages = page.totalPages()
         )
     }
-
 }

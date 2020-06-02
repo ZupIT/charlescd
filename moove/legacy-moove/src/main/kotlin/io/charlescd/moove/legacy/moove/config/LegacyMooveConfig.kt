@@ -16,10 +16,10 @@
 
 package io.charlescd.moove.legacy.moove.config
 
+import javax.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.context.annotation.Configuration
-import javax.annotation.PostConstruct
 
 @Configuration
 @EnableFeignClients(basePackages = ["io.charlescd.moove.legacy.moove.api"])

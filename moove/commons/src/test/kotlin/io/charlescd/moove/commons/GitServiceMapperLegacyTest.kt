@@ -24,9 +24,9 @@ import io.charlescd.moove.commons.integration.git.mapper.GitServiceMapperLegacy
 import io.charlescd.moove.commons.integration.git.service.GitHubServiceLegacy
 import io.charlescd.moove.commons.integration.git.service.GitLabServiceLegacy
 import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import org.junit.Test
 
 class GitServiceMapperLegacyTest {
 

@@ -22,5 +22,4 @@ import io.charlescd.moove.application.build.response.BuildResponse
 interface CreateComposedBuildInteractor {
 
     fun execute(request: CreateComposedBuildRequest, workspaceId: String): BuildResponse
-
 }

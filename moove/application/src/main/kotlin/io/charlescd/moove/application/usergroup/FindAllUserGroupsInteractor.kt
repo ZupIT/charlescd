@@ -23,5 +23,4 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllUserGroupsInteractor {
 
     fun execute(pageRequest: PageRequest): ResourcePageResponse<UserGroupResponse>
-
 }

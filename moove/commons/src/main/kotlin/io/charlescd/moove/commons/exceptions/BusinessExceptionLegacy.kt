@@ -46,7 +46,6 @@ class BusinessExceptionLegacy : RuntimeException {
         fun of(errorCode: MooveErrorCodeLegacy, message: String): BusinessExceptionLegacy {
             return BusinessExceptionLegacy(errorCode, message)
         }
-
     }
 
     fun withParameters(vararg params: String): BusinessExceptionLegacy {
@@ -60,5 +59,4 @@ class BusinessExceptionLegacy : RuntimeException {
     fun getParameters(): Array<String>? {
         return this.parameters
     }
-
 }

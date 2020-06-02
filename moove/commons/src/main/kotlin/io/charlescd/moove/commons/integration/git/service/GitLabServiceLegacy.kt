@@ -22,6 +22,7 @@ import io.charlescd.moove.commons.integration.git.factory.GitLabClientFactoryLeg
 import io.charlescd.moove.commons.integration.git.model.CompareResult
 import io.charlescd.moove.legacy.repository.entity.GitCredentials
 import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
+import java.util.*
 import org.gitlab4j.api.Constants
 import org.gitlab4j.api.GitLabApi
 import org.gitlab4j.api.GitLabApiException
@@ -29,7 +30,6 @@ import org.gitlab4j.api.models.MergeRequest
 import org.gitlab4j.api.models.MergeRequestFilter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFactoryLegacy) : GitServiceLegacy() {
@@ -50,7 +50,6 @@ class GitLabServiceLegacy(private val gitLabClientFactoryLegacy: GitLabClientFac
                 sourceBranch = headBranch
                 targetBranch = baseBranch
                 state = Constants.MergeRequestState.OPENED
-
             })
             if (mergeRequests.isEmpty()) {
                 val mergeRequest = client.mergeRequestApi.createMergeRequest(

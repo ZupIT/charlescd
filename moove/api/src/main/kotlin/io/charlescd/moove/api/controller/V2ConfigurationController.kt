@@ -27,9 +27,9 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Configuration Endpoints", tags = ["Configuration"])
 @RestController
@@ -106,9 +106,9 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.OK)
     fun updateGitConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @Valid @PathVariable("id") id: String, @RequestBody request: UpdateGitConfigurationRequest
+        @Valid @PathVariable("id") id: String,
+        @RequestBody request: UpdateGitConfigurationRequest
     ): GitConfigurationResponse {
         return this.updateGitConfigurationInteractor.execute(id, workspaceId, request)
     }
-
 }

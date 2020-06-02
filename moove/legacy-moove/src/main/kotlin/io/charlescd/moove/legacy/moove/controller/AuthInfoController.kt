@@ -23,9 +23,9 @@ import io.charlescd.moove.legacy.moove.service.KeycloakService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Auth Info Endpoints", tags = ["Auth Info"])
 @RestController
@@ -97,5 +97,4 @@ class AuthInfoController(private val keycloakService: KeycloakService) {
     @GetMapping("/groups/{id}/roles")
     @ResponseStatus(HttpStatus.OK)
     fun findGroupRolesById(@PathVariable id: String) = keycloakService.findGroupRolesById(groupId = id)
-
 }
