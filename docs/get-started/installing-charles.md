@@ -78,7 +78,7 @@ So, don't forget to customize your fields if you want something manageable.
 To install, you have to run the following commands after customizing the fields: 
 
 ```text
-// customize tudo que precisa no arquivo values.yaml antes de executar o seguinte comando
+// customize all you need in the file values.yaml before running the following commands
 helm install charlescd <repo-folder> -n <namespace>
 ```
 
