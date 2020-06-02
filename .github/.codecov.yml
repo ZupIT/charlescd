@@ -4,7 +4,6 @@ coverage:
       default:
         target: auto
         threshold: 0%
-        if_not_found: success
       
       villager:
         target: 30%
@@ -25,22 +24,11 @@ coverage:
         target: 50%
         flags:
           - moove
-      
-      butler:
-        target: 70%
-        flags:
-          - butler
-      
-      ui:
-        target: 30%
-        flags:
-          - ui
     
     patch:
       default:
         target: 80%
         threshold: 0%
-        if_not_found: success
       
 flags:
   villager:
@@ -61,14 +49,4 @@ flags:
   moove:
     paths:
       - moove/
-    carryforward: true
-  
-  butler:
-    paths:
-      - butler/
-    carryforward: true
-  
-  ui:
-    paths:
-      - ui/
     carryforward: true
