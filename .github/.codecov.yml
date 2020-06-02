@@ -31,12 +31,27 @@ coverage:
         target: 80%
         threshold: 0%
         if_not_found: success
+        
+      villager:
+        target: 30%
         flags:
           - villager
-          - circlematcher
-          - octopipe
-          - moove
       
+      circlematcher:
+        target: 70%
+        flags:
+          - circlematcher
+      
+      octopipe:
+        target: 30%
+        flags:
+          - octopipe
+      
+      moove:
+        target: 50%
+        flags:
+          - moove
+
 flags:
   villager:
     paths:
@@ -59,6 +74,9 @@ flags:
     carryforward: true
 
 ignore:
-  - "docs/"
-  - ".github/"
-  - "images/"
+  - "docs/**/*"
+  - ".github/**/*"
+  - "images/**/*"
+  - "butler/**/*"
+  - "ui/**/*"
+  - "tracing/**/*"
