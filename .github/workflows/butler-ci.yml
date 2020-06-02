@@ -37,7 +37,7 @@ jobs:
       working-directory: ./butler
     - run: npm run build --if-present
       working-directory: ./butler
-    - run: npm run test
+    - run: npm run test:cov
       working-directory: ./butler
     - run: npm run lint
       working-directory: ./butler
