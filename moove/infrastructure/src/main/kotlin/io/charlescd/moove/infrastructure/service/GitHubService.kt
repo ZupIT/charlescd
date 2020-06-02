@@ -23,6 +23,7 @@ import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.GitService
+import java.util.*
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.RepositoryId
 import org.eclipse.egit.github.core.client.GitHubClient
@@ -33,7 +34,6 @@ import org.eclipse.egit.github.core.service.DataService
 import org.eclipse.egit.github.core.service.RepositoryService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitService() {
@@ -314,8 +314,7 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
                 "base" to baseBranch,
                 "head" to headBranch,
                 "commit_message" to commitMessage
-            )
-            , JsonObject::class.java
+            ), JsonObject::class.java
         )
     }
 
@@ -350,7 +349,6 @@ class GitHubService(private val gitHubClientFactory: GitHubClientFactory) : GitS
             uri = "/repos/${RepositoryId.createFromId(repository)}/releases/tags/$releaseName"
         }
             .apply { type = JsonObject::class.java }).body as JsonObject
-
 
     private fun deleteBranch(
         repositoryService: RepositoryService,

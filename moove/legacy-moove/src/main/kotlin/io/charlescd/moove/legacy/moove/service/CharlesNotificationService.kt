@@ -32,19 +32,19 @@ class CharlesNotificationService(
 ) {
 
     fun addMembersCard(card: Card, author: User, memberIds: List<String>) {
-        //TODO implement
+        // TODO implement
     }
 
     fun addCommentCard(card: Card, comment: Comment) {
-        //TODO implement
+        // TODO implement
     }
 
     fun newRelease(build: Build) {
-        //TODO implement
+        // TODO implement
     }
 
     fun createDeployment(deployment: Deployment) {
-        //TODO implement
+        // TODO implement
     }
 
     private fun createNotification(
@@ -95,4 +95,3 @@ class CharlesNotificationService(
         )
     }
 }
-

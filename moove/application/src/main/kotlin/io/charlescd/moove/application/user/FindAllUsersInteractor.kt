@@ -25,5 +25,4 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllUsersInteractor {
 
     fun execute(name: String?, email: String?, pageRequest: PageRequest): ResourcePageResponse<UserResponse>
-
 }

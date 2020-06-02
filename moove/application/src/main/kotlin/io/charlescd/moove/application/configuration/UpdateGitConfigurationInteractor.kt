@@ -22,5 +22,4 @@ import io.charlescd.moove.application.configuration.response.GitConfigurationRes
 interface UpdateGitConfigurationInteractor {
 
     fun execute(id: String, workspaceId: String, request: UpdateGitConfigurationRequest): GitConfigurationResponse
-    
 }

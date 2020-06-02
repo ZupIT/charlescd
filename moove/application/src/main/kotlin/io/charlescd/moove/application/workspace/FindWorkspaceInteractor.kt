@@ -21,5 +21,4 @@ import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 interface FindWorkspaceInteractor {
 
     fun execute(workspaceId: String): WorkspaceResponse
-
 }

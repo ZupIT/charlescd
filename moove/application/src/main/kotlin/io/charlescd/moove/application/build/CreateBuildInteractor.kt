@@ -16,12 +16,10 @@
 
 package io.charlescd.moove.application.build
 
-
 import io.charlescd.moove.application.build.request.CreateBuildRequest
 import io.charlescd.moove.application.build.response.BuildResponse
 
 interface CreateBuildInteractor {
 
     fun execute(request: CreateBuildRequest, workspaceId: String): BuildResponse
-
 }

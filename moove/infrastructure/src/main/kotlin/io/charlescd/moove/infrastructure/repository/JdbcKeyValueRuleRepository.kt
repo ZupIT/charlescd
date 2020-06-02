@@ -18,10 +18,10 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.KeyValueRule
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 import java.sql.PreparedStatement
 import java.sql.Types
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcKeyValueRuleRepository(private val jdbcTemplate: JdbcTemplate) : KeyValueRuleRepository {

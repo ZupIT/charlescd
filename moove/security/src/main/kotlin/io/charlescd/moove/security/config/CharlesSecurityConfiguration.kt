@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.security.config
 
+import javax.annotation.PostConstruct
 import org.keycloak.OAuth2Constants
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.KeycloakBuilder
@@ -25,7 +26,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import javax.annotation.PostConstruct
 
 @Configuration
 @ConditionalOnProperty(value = ["security.enabled"], matchIfMissing = true)
@@ -60,5 +60,4 @@ class CharlesSecurityConfiguration {
             .clientId(clientId)
             .clientSecret(secretId)
             .build()
-
 }

@@ -19,9 +19,9 @@ package io.charlescd.moove.legacy.repository.entity
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import javax.persistence.*
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import javax.persistence.*
 
 @Entity
 @Table(name = "key_value_rules")

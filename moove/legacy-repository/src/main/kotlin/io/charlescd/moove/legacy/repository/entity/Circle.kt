@@ -18,10 +18,10 @@ package io.charlescd.moove.legacy.repository.entity
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
-import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
 import javax.persistence.*
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 
 @Entity
 @Table(name = "circles")
@@ -50,4 +50,3 @@ data class Circle(
 
     val importedAt: LocalDateTime? = null
 )
-

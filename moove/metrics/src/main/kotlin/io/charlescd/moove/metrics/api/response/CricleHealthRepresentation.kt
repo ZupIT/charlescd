@@ -18,18 +18,25 @@ package io.charlescd.moove.metrics.api.response
 
 import io.charlescd.moove.metrics.domain.HealthStatus
 
+data class CircleHealthRepresentation(
+    val requests: CircleRequestsRepresentation,
+    val latency: CircleHealthTypeRepresentation,
+    val errors: CircleHealthTypeRepresentation
+)
 
-data class CircleHealthRepresentation(val requests: CircleRequestsRepresentation,
-                                      val latency: CircleHealthTypeRepresentation,
-                                      val errors: CircleHealthTypeRepresentation)
+data class CircleRequestsRepresentation(
+    val value: Long,
+    val unit: String
+)
 
-data class CircleRequestsRepresentation(val value: Long,
-                                        val unit: String)
+data class CircleHealthTypeRepresentation(
+    val unit: String,
+    val circleComponents: List<CircleComponentHealthRepresentation>
+)
 
-data class CircleHealthTypeRepresentation(val unit: String,
-                                          val circleComponents: List<CircleComponentHealthRepresentation>)
-
-data class CircleComponentHealthRepresentation(val name: String,
-                                               val threshold: Int,
-                                               val value: Double,
-                                               val status: HealthStatus)
+data class CircleComponentHealthRepresentation(
+    val name: String,
+    val threshold: Int,
+    val value: Double,
+    val status: HealthStatus
+)

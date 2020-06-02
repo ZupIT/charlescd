@@ -22,5 +22,4 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 interface AddComponentInteractor {
 
     fun execute(id: String, workspaceId: String, request: ComponentRequest): ComponentResponse
-
 }

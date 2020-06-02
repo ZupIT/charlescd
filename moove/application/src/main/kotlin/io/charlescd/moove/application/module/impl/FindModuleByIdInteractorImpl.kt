@@ -27,5 +27,4 @@ class FindModuleByIdInteractorImpl(private val moduleService: ModuleService) : F
     override fun execute(id: String, workspaceId: String): ModuleResponse {
         return ModuleResponse.from(moduleService.find(id, workspaceId))
     }
-
 }

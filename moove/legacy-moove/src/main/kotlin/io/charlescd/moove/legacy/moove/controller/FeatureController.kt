@@ -27,10 +27,10 @@ import io.charlescd.moove.legacy.moove.service.FeatureService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @Api(value = "Features Endpoints", tags = ["Feature"])
 @RestController
@@ -96,5 +96,4 @@ class FeatureController(private val service: FeatureService) {
     ) {
         service.delete(id, workspaceId)
     }
-
 }

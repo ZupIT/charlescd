@@ -17,8 +17,8 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.*
-import org.springframework.jdbc.core.ResultSetExtractor
 import java.sql.ResultSet
+import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component as SpringComponent
 
 @SpringComponent

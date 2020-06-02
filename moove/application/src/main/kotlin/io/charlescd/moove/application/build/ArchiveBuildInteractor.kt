@@ -19,5 +19,4 @@ package io.charlescd.moove.application.build
 interface ArchiveBuildInteractor {
 
     fun execute(id: String, workspaceId: String)
-
 }

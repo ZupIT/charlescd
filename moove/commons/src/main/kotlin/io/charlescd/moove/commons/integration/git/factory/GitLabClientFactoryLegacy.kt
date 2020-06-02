@@ -30,5 +30,4 @@ class GitLabClientFactoryLegacy {
             GitLabApi.oauth2Login(gitCredentials.address, gitCredentials.username, gitCredentials.password)
         }
     }
-
 }

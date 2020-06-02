@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.GitConfiguration
 import io.charlescd.moove.domain.GitCredentials
 import io.charlescd.moove.domain.User
-import org.springframework.stereotype.Component
 import java.sql.ResultSet
+import org.springframework.stereotype.Component
 
 @Component
 class GitConfigurationMapper(private val objectMapper: ObjectMapper) {
