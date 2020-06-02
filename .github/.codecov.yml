@@ -7,6 +7,10 @@ coverage:
         flags: 
           - villager
           - circlematcher
+          - octopipe
+          - moove
+          - butler
+          - ui
       villager:
         target: 30%
         flags:
@@ -16,28 +20,58 @@ coverage:
         flags:
           - circlematcher
       octopipe:
-        target: 70%
+        target: 30%
         flags:
           - octopipe
+      moove:
+        target: 50%
+        flags:
+          - moove
+      butler:
+        target: 70%
+        flags:
+          - butler
+      ui:
+        target: 30%
+        flags:
+          - ui
     patch:
       default:
-        target: 100%
+        target: 80%
         threshold: 0%
         flags: 
           - villager
           - circlematcher
           - octopipe
+          - moove
+          - butler
+          - ui
       
 flags:
   villager:
     paths:
-      - villager/
+      - villager/src/main/java/
     carryforward: true
   circlematcher:
     paths:
-      - circle-matcher/
+      - circle-matcher/src/main/java/
     carryforward: true
   octopipe:
     paths:
       - octopipe/
     carryforward: true
+  moove:
+    paths:
+      - moove/
+    carryforward: true
+  butler:
+    paths:
+      - butler/
+    carryforward: true
+  ui:
+    paths:
+      - ui/
+    carryforward: true
+
+ignore:
+  - ".github/**/*"

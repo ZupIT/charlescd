@@ -1,0 +1,10 @@
+[
+  {
+    "id": "4046f193-9479-48b5-ac29-01f419b64cb5",
+    "workspaceId": "7af831f6-2206-4ab0-866b-f47bc7f91e7e",
+    "type": "OCTOPIPE",
+    "configurationData": "\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c",
+    "name": "config-name",
+    "authorId": "author"
+  }
+]

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M6,0.5 C9.0325,0.5 11.5,2.9675 11.5,6 C11.5,9.0325 9.0325,11.5 6,11.5 C2.9675,11.5 0.5,9.0325 0.5,6 C0.5,2.9675 2.9675,0.5 6,0.5 Z M6,1.5 C3.519,1.5 1.5,3.519 1.5,6 C1.5,8.4815 3.519,10.5 6,10.5 C8.4815,10.5 10.5,8.4815 10.5,6 C10.5,3.519 8.4815,1.5 6,1.5 Z M4.1465,4.1465 C4.342,3.951 4.658,3.951 4.8535,4.1465 L4.8535,4.1465 L6,5.293 L7.1465,4.1465 C7.342,3.951 7.658,3.951 7.8535,4.1465 C8.049,4.342 8.049,4.658 7.8535,4.8535 L7.8535,4.8535 L6.707,6 L7.8535,7.1465 C8.049,7.342 8.049,7.658 7.8535,7.8535 C7.756,7.951 7.628,8 7.5,8 C7.372,8 7.244,7.951 7.1465,7.8535 L7.1465,7.8535 L6,6.707 L4.8535,7.8535 C4.756,7.951 4.628,8 4.5,8 C4.372,8 4.244,7.951 4.1465,7.8535 C3.951,7.658 3.951,7.342 4.1465,7.1465 L4.1465,7.1465 L5.293,6 L4.1465,4.8535 C3.951,4.658 3.951,4.342 4.1465,4.1465 Z" id="path-undeploy"></path>
+    </defs>
+    <g id="Circles---Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---3.0---Expand---3-circles---Options" transform="translate(-961.000000, -83.000000)">
+            <g id="Group-10" transform="translate(952.000000, 39.000000)">
+                <g id="Menu-lateral" transform="translate(9.000000, 12.000000)">
+                    <g id="Archive-Copy" transform="translate(0.000000, 31.000000)">
+                        <g id="Icon/Controls/Cancel/Circle" transform="translate(0.000000, 1.000000)">
+                            <mask id="mask-undeploy" fill="white">
+                                <use xlink:href="#path-undeploy"></use>
+                            </mask>
+                            <use id="Icon-Cancel-Circle" fill="#98989E" fill-rule="evenodd" xlink:href="#path-undeploy"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
