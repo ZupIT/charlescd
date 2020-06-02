@@ -21,6 +21,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v1
@@ -37,9 +52,10 @@ jobs:
       working-directory: ./butler
     - run: npm run build --if-present
       working-directory: ./butler
-    - run: npm run test:cov
+    - run: npm run test:all:cov
       env:
         CI: true
+        DATABASE_HOST: postgres
       working-directory: ./butler
     - run: npm run lint
       working-directory: ./butler
