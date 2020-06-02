@@ -31,12 +31,12 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
-        path: ./samples/quiz_app/backend
+        path: ./samples/quiz-app/backend
         username: ${{secrets.DOCKER_REGISTRY_USERNAME}}
         password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
         registry: realwavelab.azurecr.io
-        repository: quiz_app-backend
-        dockerfile: ./samples/quiz_app/backend/cmd/quiz_app/Dockerfile
+        repository: quiz-app-backend
+        dockerfile: ./samples/quiz-app/backend/cmd/quiz_app/Dockerfile
         tags: ${{steps.substring.outputs.value}}
         tag_with_ref: false
         tag_with_sha: false
