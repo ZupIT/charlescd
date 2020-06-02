@@ -35,6 +35,6 @@ jobs:
         password: ${{secrets.DOCKERHUB_PASSWORD}}
         repository: zupcharles/charlescd-octopipe
         dockerfile: ./octopipe/cmd/octopipe/Dockerfile
-        tags: zupcharles/charlescd-octopipe:latest,zupcharles/charlescd-octopipe:${{ steps.get_version.outputs.VERSION }}
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
         tag_with_ref: false
         tag_with_sha: false
