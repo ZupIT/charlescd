@@ -49,9 +49,9 @@
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
         <dependency>
-            <groupId>br.com.zup.tracing</groupId>
-            <artifactId>zup-tracing</artifactId>
-            <version>${zup.tracing.version}</version>
+            <groupId>io.charlescd</groupId>
+            <artifactId>charlescd-tracing-spring</artifactId>
+            <version>${charlescd.tracing.version}</version>
         </dependency>
     </dependencies>
 

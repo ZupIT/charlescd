@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { FinishUndeploymentDto } from '../dto'
 import {
@@ -56,7 +72,8 @@ export class ReceiveUndeploymentCallbackUsecase {
         this.consoleLoggerService.log('FINISH:FINISH_UNDEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
-      return Promise.reject({ error })
+      this.consoleLoggerService.error('ERROR:', error)
+      throw error
     }
   }
 
@@ -77,7 +94,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
-    this.consoleLoggerService.log('START:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
+    this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
   }
 
   private async notifyMooveIfUndeploymentFinished(
@@ -87,6 +104,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     const componentUndeployment: ComponentUndeploymentEntity | undefined =
       await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
     if (!componentUndeployment) {
+      this.consoleLoggerService.error('ERROR:COMPONENT_UNDEPLOYMENT_NOT_FOUND', componentUndeploymentId)
       throw new NotFoundException(`ComponentUndeploymentEntity not found - id: ${componentUndeploymentId}`)
     }
     const { moduleUndeployment: { undeployment } } = componentUndeployment
@@ -95,7 +113,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     if (undeployment.hasSucceedeed()) {
       await this.mooveService.notifyDeploymentStatus(
         deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId
-      ).toPromise()
+      )
     }
   }
 

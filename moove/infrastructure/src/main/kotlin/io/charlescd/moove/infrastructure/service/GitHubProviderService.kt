@@ -48,7 +48,8 @@ class GitHubProviderService(
 
         createFinalReleaseBranches(modules, build, credentials, intermediaryBranches, releaseBranches)
 
-        createReleaseCandidates(modules, credentials, releaseBranches)
+        // TODO: check need to create release on Github
+        // createReleaseCandidates(modules, credentials, releaseBranches)
 
         deleteIntermediaryBranches(modules, credentials, intermediaryBranches)
     }

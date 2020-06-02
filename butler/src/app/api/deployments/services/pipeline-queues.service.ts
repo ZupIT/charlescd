@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { forwardRef, Inject, Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -8,13 +24,15 @@ import {
   ComponentUndeploymentEntity,
   QueuedDeploymentEntity,
   QueuedUndeploymentEntity,
-  UndeploymentEntity
+  UndeploymentEntity,
+  QueuedIstioDeploymentEntity
 } from '../entity'
 import { QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../enums'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
-  QueuedDeploymentsRepository
+  QueuedDeploymentsRepository,
+  QueuedIstioDeploymentsRepository
 } from '../repository'
 import { PipelineDeploymentsService } from './'
 
@@ -37,6 +55,8 @@ export class PipelineQueuesService {
     private readonly pipelineDeploymentsService: PipelineDeploymentsService,
     @InjectRepository(UndeploymentEntity)
     private readonly undeploymentsRepository: Repository<UndeploymentEntity>,
+    @InjectRepository(QueuedIstioDeploymentsRepository)
+    private readonly queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository,
 
   ) { }
 
@@ -51,6 +71,34 @@ export class PipelineQueuesService {
         await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
       await this.setQueuedDeploymentStatus(nextQueuedDeployment, QueuedPipelineStatusEnum.RUNNING)
     }
+  }
+
+  public async triggerAllIstioDeployments(deploymentId: string): Promise<void> {
+    const istioQueuedDeployments: QueuedIstioDeploymentEntity[] = await this.queuedIstioDeploymentsRepository.find({
+      where: { deploymentId },
+    })
+
+    await Promise.all(istioQueuedDeployments?.map(
+      istioDeployment => this.triggerQueuedIstioDeployment(istioDeployment)
+    ))
+  }
+
+  private async triggerQueuedIstioDeployment(queuedIstioDeployment: QueuedIstioDeploymentEntity): Promise<void> {
+    const componentDeployment: ComponentDeploymentEntity =
+      await this.componentDeploymentsRepository.getOneWithRelations(queuedIstioDeployment.componentDeploymentId)
+
+    const component: ComponentEntity =
+      await this.componentsRepository.findOneOrFail({ id: componentDeployment.componentId }, { relations: ['module'] })
+
+    const { moduleDeployment: { deployment } } = componentDeployment
+
+    await this.queuedIstioDeploymentsRepository.update(
+      { id: queuedIstioDeployment.id }, { status: QueuedPipelineStatusEnum.RUNNING }
+    )
+
+    !deployment.circle ?
+      await this.pipelineDeploymentsService.triggerIstioDefaultDeployment(componentDeployment, component, deployment, queuedIstioDeployment) :
+      await this.pipelineDeploymentsService.triggerIstioDeployment(componentDeployment, component, deployment, queuedIstioDeployment, deployment.circle)
   }
 
   private async triggerQueuedDeployment(queuedDeployment: QueuedDeploymentEntity): Promise<void> {
@@ -75,8 +123,12 @@ export class PipelineQueuesService {
       await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
     const { moduleDeployment: { deployment } } = componentDeployment
-    const undeployment = await this.undeploymentsRepository.findOneOrFail({ where: { id: componentUndeployment.moduleUndeployment.undeployment.id} })
+    const undeployment = await this.undeploymentsRepository.findOneOrFail(
+      { id: componentUndeployment.moduleUndeployment.undeployment.id },
+      { relations: ['deployment'] }
+    )
     if (!deployment.circle) {
+      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', deployment)
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
     await this.pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, component, queuedUndeployment, deployment.circle)
@@ -88,6 +140,7 @@ export class PipelineQueuesService {
         { id: queuedDeployment.id }, { status }
       )
     } catch (error) {
+      this.consoleLoggerService.error('ERROR:COULD_NOT_UPDATE_QUEUED_DEPLOYMENT_STATUS', error)
       throw new InternalServerErrorException('Could not update queued deployment status')
     }
   }
@@ -99,6 +152,12 @@ export class PipelineQueuesService {
   public async setQueuedDeploymentStatusFinished(queuedDeploymentId: number): Promise<void> {
     await this.queuedDeploymentsRepository.update(
       { id: queuedDeploymentId }, { status: QueuedPipelineStatusEnum.FINISHED }
+    )
+  }
+
+  public async setQueuedIstioDeploymentStatusFinished(queuedIstioDeploymentId: number): Promise<void> {
+    await this.queuedIstioDeploymentsRepository.update(
+      { id: queuedIstioDeploymentId }, { status: QueuedPipelineStatusEnum.FINISHED }
     )
   }
 
