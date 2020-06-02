@@ -12,7 +12,7 @@ Antes, caso queira entender mais sobre telemetria no Istio, recomendamos que con
 
 ### **Parte** 1: Habilitando o Istio
 
-Para começar, é necessário primeiro garantir que você já tem o seu **Istio habilitado para expor métricas**. Feito isso, você deve configurá-lo para expor as métricas dentro do Charles.
+Para começar, é necessário primeiro garantir que você já tem o seu **Istio habilitado para expor métricas**. Feito isso, você deve configurá-lo para expor as métricas do Charles.
 
 Caso você já tenha feito essa habilitação, pode seguir direto para segunda parte. Se este não for o seu caso, siga os seguintes passos:
 
