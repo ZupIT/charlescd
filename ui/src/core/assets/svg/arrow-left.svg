@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="14px" viewBox="0 0 18 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M15.7124,5.7075 C15.5124,5.8975 15.2624,5.9975 15.0024,5.9975 C14.7424,5.9975 14.4924,5.8975 14.2924,5.7075 L10.0024,1.4075 L10.0024,14.9975 C10.0024,15.5475 9.5524,15.9975 9.0024,15.9975 C8.4524,15.9975 8.0024,15.5475 8.0024,14.9975 L8.0024,1.4075 L3.7124,5.7075 C3.3224,6.0975 2.6824,6.0975 2.2924,5.7075 C1.9024,5.3175 1.9024,4.6775 2.2924,4.2875 L8.2924,-1.7125 C8.3824,-1.8025 8.4924,-1.8725 8.6124,-1.9225 C8.6624,-1.9425 8.7024,-1.9625 8.7524,-1.9625 C8.9124,-2.0125 9.0924,-2.0125 9.2524,-1.9625 C9.3024,-1.9625 9.3424,-1.9425 9.3924,-1.9225 C9.5124,-1.8725 9.6224,-1.8025 9.7124,-1.7125 L15.7124,4.2875 C16.1024,4.6775 16.1024,5.3175 15.7124,5.7075" id="path-arrow-left"></path>
+    </defs>
+    <g id="Workspaces-arrow-left" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---2.0---Add-git-arrow-left" transform="translate(-516.000000, -97.000000)">
+            <g id="Group-arrow-left" transform="translate(513.000000, 92.000000)">
+                <g id="Icon/User/Circle-arrow-left" transform="translate(3.000000, 5.000000)">
+                    <mask id="mask-arrow-left" fill="white">
+                        <use xlink:href="#path-arrow-left"></use>
+                    </mask>
+                    <use id="Icon-Arrow-Left" fill="currentColor" transform="translate(9.002400, 6.998750) rotate(-90.000000) translate(-9.002400, -6.998750) " xlink:href="#path-arrow-left"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

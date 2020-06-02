@@ -35,5 +35,4 @@ class GitHubClientFactory {
             else -> throw IllegalArgumentException("Invalid auth type")
         }
     }
-
 }

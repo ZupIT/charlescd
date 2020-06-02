@@ -27,12 +27,12 @@ import io.charlescd.moove.legacy.repository.LabelRepository
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.Label
 import io.charlescd.moove.legacy.repository.entity.User
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
 @Service
 class LabelService(
@@ -76,8 +76,7 @@ class LabelService(
         userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
-    private fun updateModelData(updateLabelRequest: UpdateLabelRequest): (Label) -> Label =
-        { label ->
+    private fun updateModelData(updateLabelRequest: UpdateLabelRequest): (Label) -> Label = { label ->
             label.copy(
                 name = updateLabelRequest.name,
                 hexColor = updateLabelRequest.hexColor,

@@ -19,14 +19,15 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.Component
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.ComponentExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
-class JdbcComponentRepository(private val jdbcTemplate: JdbcTemplate,
-                              private val componentExtractor: ComponentExtractor) : ComponentRepository {
-
+class JdbcComponentRepository(
+    private val jdbcTemplate: JdbcTemplate,
+    private val componentExtractor: ComponentExtractor
+) : ComponentRepository {
 
     override fun findById(componentId: String): Optional<Component> {
         val findByIdQuery = """

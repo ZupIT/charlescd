@@ -23,5 +23,4 @@ import io.charlescd.moove.domain.Feature
 interface FeatureRepository {
 
     fun findAllById(featureIds: List<String>): List<Feature>
-
 }

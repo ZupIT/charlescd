@@ -21,5 +21,4 @@ import io.charlescd.moove.application.build.response.BuildResponse
 interface FindBuildByIdInteractor {
 
     fun execute(id: String, workspaceId: String): BuildResponse
-
 }

@@ -27,14 +27,14 @@ import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.junit.Test
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
+import org.junit.Test
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 
 class HypothesisServiceTest {
 
@@ -260,7 +260,6 @@ class HypothesisServiceTest {
         assertEquals(2, listOfAll.content.size)
         assertEquals(hypothesis.id, listOfAll.content[0].id)
         assertEquals(hypothesis2.name, listOfAll.content[1].name)
-
     }
 
     @Test
@@ -277,7 +276,6 @@ class HypothesisServiceTest {
 
         assertNotNull(listOfAll)
         assertEquals(0, listOfAll.content.size)
-
     }
 
     @Test
@@ -376,7 +374,6 @@ class HypothesisServiceTest {
         verify(exactly = 1) { hypothesisRepository.save(updatedHypothesis) }
         assertNotNull(testOfUpdateHypotese)
         assertNotEquals(hypothesis.name, testOfUpdateHypotese.name)
-
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)
@@ -421,7 +418,6 @@ class HypothesisServiceTest {
                 hypothesis.workspaceId
             )
         }
-
     }
 
     @Test
@@ -464,7 +460,6 @@ class HypothesisServiceTest {
 
         assertNotNull(hypothesisCreated)
         assertEquals(hypothesis.id, hypothesisCreated.id)
-
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)
@@ -515,7 +510,6 @@ class HypothesisServiceTest {
         verify(exactly = 1) { hypothesisRepository.delete(hypothesis) }
         verify(exactly = 1) { hypothesisRepository.delete(hypothesis) }
         assertNotNull(deletedAnswer)
-
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)
@@ -802,7 +796,6 @@ class HypothesisServiceTest {
         )
     }
 
-
     private fun getGitConfiguration(): GitConfiguration = GitConfiguration(
         "ID", "Git Credential Name", LocalDateTime.now(), user, "workspaceId",
         GitCredentials(
@@ -811,5 +804,3 @@ class HypothesisServiceTest {
         )
     )
 }
-
-

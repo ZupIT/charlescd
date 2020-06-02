@@ -180,10 +180,10 @@ class VillagerClientServiceTest extends Specification {
         def registryConfigurationId = "7477194c-2214-46a7-b4de-d232b34640e9"
         def workspaceId = "34eb6535-02ef-4756-af22-459d004d9121"
 
-        def componentTagsResponse = new ComponentTagsResponse(
+        def componentTagsResponse = new FindComponentTagsResponse(
                 [
-                        new ComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.0"),
-                        new ComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.1")
+                        new FindComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.0"),
+                        new FindComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.1")
                 ]
         )
 

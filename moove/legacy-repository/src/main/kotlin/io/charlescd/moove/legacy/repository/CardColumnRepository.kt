@@ -18,8 +18,8 @@ package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.CardColumn
 import io.charlescd.moove.legacy.repository.entity.Hypothesis
-import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
+import org.springframework.data.jpa.repository.JpaRepository
 
 interface CardColumnRepository : JpaRepository<CardColumn, String> {
 
@@ -28,5 +28,4 @@ interface CardColumnRepository : JpaRepository<CardColumn, String> {
     fun findAllByHypothesisIdAndWorkspaceId(hypothesisId: String, workspaceId: String): List<CardColumn>
 
     fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<CardColumn>
-
 }

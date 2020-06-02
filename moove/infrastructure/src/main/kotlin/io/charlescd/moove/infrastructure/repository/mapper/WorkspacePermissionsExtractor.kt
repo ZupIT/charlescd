@@ -19,10 +19,10 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.charlescd.moove.domain.Permission
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.util.*
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.stereotype.Component
 
 @Component
 class WorkspacePermissionsExtractor(private val objectMapper: ObjectMapper) : ResultSetExtractor<Map<String, List<Permission>>> {

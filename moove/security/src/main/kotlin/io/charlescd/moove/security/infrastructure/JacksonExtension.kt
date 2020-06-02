@@ -30,7 +30,6 @@ object JacksonExtension {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .registerModule(KotlinModule())
     }
-
 }
 
 fun <T> String.jsonToArrayListObject(t: Class<T>): ArrayList<T> {

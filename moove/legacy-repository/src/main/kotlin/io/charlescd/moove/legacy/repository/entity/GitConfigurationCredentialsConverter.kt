@@ -26,7 +26,6 @@ class GitConfigurationCredentialsConverter : AttributeConverter<GitCredentials, 
     override fun convertToDatabaseColumn(gitCredentials: GitCredentials): String? {
 
         return jacksonObjectMapper().writeValueAsString(gitCredentials)
-
     }
 
     override fun convertToEntityAttribute(gitCredentials: String): GitCredentials? {
@@ -36,6 +35,5 @@ class GitConfigurationCredentialsConverter : AttributeConverter<GitCredentials, 
         }
 
         return jacksonObjectMapper().readValue(gitCredentials, GitCredentials::class.java)
-
     }
 }

@@ -27,12 +27,12 @@ import io.charlescd.moove.commons.representation.*
 import io.charlescd.moove.legacy.moove.request.hypothesis.*
 import io.charlescd.moove.legacy.repository.*
 import io.charlescd.moove.legacy.repository.entity.*
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 
 @Service
 class HypothesisServiceLegacy(
@@ -269,9 +269,9 @@ class HypothesisServiceLegacy(
 
     private fun getBuildsAccordingToDeployedReleasesColumnRules(hypothesis: Hypothesis): List<Build> {
         return hypothesis.builds.filter { build ->
-            (build.status == BuildStatus.BUILT || build.status == BuildStatus.VALIDATED)
-                    && !build.deployments.isNullOrEmpty()
-                    && checkIfBuildContainsDeploymentsWithDeployedStatus(build)
+            (build.status == BuildStatus.BUILT || build.status == BuildStatus.VALIDATED) &&
+                    !build.deployments.isNullOrEmpty() &&
+                    checkIfBuildContainsDeploymentsWithDeployedStatus(build)
         }
     }
 

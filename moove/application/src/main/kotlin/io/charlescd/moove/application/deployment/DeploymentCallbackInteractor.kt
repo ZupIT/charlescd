@@ -21,5 +21,4 @@ import io.charlescd.moove.application.deployment.request.DeploymentCallbackReque
 interface DeploymentCallbackInteractor {
 
     fun execute(id: String, request: DeploymentCallbackRequest)
-
 }

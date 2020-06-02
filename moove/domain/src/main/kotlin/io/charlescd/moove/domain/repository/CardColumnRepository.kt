@@ -24,5 +24,4 @@ import java.util.*
 interface CardColumnRepository {
 
     fun findByNameAndHypothesis(name: String, hypothesisId: String): Optional<Column>
-
 }

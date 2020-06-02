@@ -22,9 +22,9 @@ import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcDeploymentRepository(

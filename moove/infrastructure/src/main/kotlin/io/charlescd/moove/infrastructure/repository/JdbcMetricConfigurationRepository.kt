@@ -21,14 +21,14 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.infrastructure.repository.mapper.MetricConfigurationExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcMetricConfigurationRepository(
-        private val jdbcTemplate: JdbcTemplate,
-        private val metricConfigurationExtractor: MetricConfigurationExtractor
+    private val jdbcTemplate: JdbcTemplate,
+    private val metricConfigurationExtractor: MetricConfigurationExtractor
 ) : MetricConfigurationRepository {
 
     companion object {
@@ -115,8 +115,8 @@ class JdbcMetricConfigurationRepository(
     }
 
     private fun findByIdAndWorkspaceId(
-            metricConfigurationId: String,
-            workspaceId: String
+        metricConfigurationId: String,
+        workspaceId: String
     ): Optional<MetricConfiguration> {
         val statement = StringBuilder(BASE_QUERY_STATEMENT)
                 .appendln("AND workspace_id = ?")
