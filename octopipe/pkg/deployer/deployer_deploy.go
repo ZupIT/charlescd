@@ -40,23 +40,15 @@ func NewDeploy(resource *Resource) *Deploy {
 
 func (deploy *Deploy) Do() error {
 	if deploy.ForceUpdate {
-		return deploy.createOrUpdateResource()
+		return deploy.updateResource()
 	}
 
-	return deploy.createResource()
-}
-
-func (deploy *Deploy) createOrUpdateResource() error {
 	err := deploy.createResource()
 	if err != nil && k8sErrors.IsAlreadyExists(err) {
-		err = deploy.updateResource()
+		return nil
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (deploy *Deploy) updateResource() error {
@@ -72,11 +64,11 @@ func (deploy *Deploy) updateResource() error {
 
 	resource, err := k8sResource.Namespace(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
-		return err
+		return deploy.createResource()
 	}
 
 	mergo.Merge(&resource.Object, deploy.Manifest.Object, mergo.WithOverride)
-	_, err = client.Resource(resourceSchema).Update(deploy.Manifest, metav1.UpdateOptions{})
+	_, err = client.Resource(resourceSchema).Namespace(namespace).Update(resource, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}
@@ -95,9 +87,6 @@ func (deploy *Deploy) createResource() error {
 	resource := k8sResource.Namespace(deploy.Namespace)
 
 	_, err = resource.Create(deploy.Manifest, metav1.CreateOptions{})
-	if err != nil && k8sErrors.IsAlreadyExists(err) {
-		return nil
-	}
 
 	err = deploy.newResourceVerification(resource, resourceSchema)
 	if err != nil {
