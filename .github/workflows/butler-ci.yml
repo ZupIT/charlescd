@@ -57,16 +57,16 @@ jobs:
       with:
         node-version: 12.x
     - run: npm ci
-      working-directory: ./butler
+      working-directory: ~/app/./butler
     - run: npm run build --if-present
-      working-directory: ./butler
+      working-directory: ~/app/./butler
     - run: npm run test:all:cov
       env:
         CI: true
         DATABASE_HOST: postgres
-      working-directory: ./butler
+      working-directory: ~/app/./butler
     - run: npm run lint
-      working-directory: ./butler
+      working-directory: ~/app/./butler
     - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
