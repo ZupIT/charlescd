@@ -45,7 +45,7 @@ jobs:
     - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
-        file: ./butler/coverage/clover.xml
+        file: ./butler/coverage/lcov.info
         flags: butler
       env:
         CI: true
