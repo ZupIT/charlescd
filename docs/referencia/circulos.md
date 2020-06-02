@@ -33,9 +33,7 @@ Uma **grande vantagem de utilizar as segmentações** é a possibilidade fazer c
 
 ### Como obter o identificador do meu círculo?
 
-Assim que seu círculo é criado, mesmo sem a definição das configurações, ele já possui um identificador único. 
-
-Para obter essa informação, selecione o círculo, clique em default e, no menu à esquerda, clique em **Copy ID**: 
+Assim que seu círculo é criado, mesmo sem a definição das configurações, ele já possui um identificador único. Para obter essa informação, selecione o círculo, clique em default e, no menu à esquerda, clique em **Copy ID**: 
 
 ![](../.gitbook/assets/circuloid.gif)
 
@@ -59,7 +57,7 @@ Vamos a alguns exemplos:
 
 ### **Segmentação por importação de CSV**
 
-Nesta segmentação, é utilizada apenas a primeira coluna do CSV para criar as regras. _\*\*_Sendo assim, a primeira linha da primeira coluna deve conter o nome da chave e a mesma deve ser informada no campo _key._
+Nesta segmentação, é utilizada apenas a primeira coluna do CSV para criar as regras. Sendo assim, a primeira linha da primeira coluna deve conter o nome da chave e a mesma deve ser informada no campo _key._
 
 ![](../.gitbook/assets/image%20%282%29%20%281%29.png)
 
@@ -100,7 +98,7 @@ Sendo assim, a lógica de redirecionamento utilizando o **`x-circle-id`**será:
 
 ## Como rotear círculos com cluster de Kubernetes?
 
-O **Charles** envolve o [**Kubernetes**](https://kubernetes.io/docs/home/) **\*\*e o \[**Istio**\]\(**[https://istio.io/docs/](https://istio.io/docs/)**\) \*\***no roteamento de tráfego, considere o seguinte cenário onde existe dois círculos:
+O **Charles** envolve o [**Kubernetes**](https://kubernetes.io/docs/home/) ****e o ****[**Istio**](https://istio.io/docs/) ****no roteamento de tráfego, considere o seguinte cenário onde existe dois círculos:
 
 * Moradores de Campinas \(identificado pelo ID 1234\);
 * Moradores de Belo Horizonte \(identificado pelo ID 8746\).
