@@ -17,7 +17,7 @@ Para começar, é necessário primeiro garantir que você já tem o seu **Istio 
 Caso você já tenha feito essa habilitação, pode seguir direto para segunda parte. Se este não for o seu caso, siga os seguintes passos:
 
 {% hint style="warning" %}
-Antes, vale reforçar que as configurações abaixo se referem à versão 1.5 do Istio.
+Antes, vale reforçar que as configurações abaixo se referem à versões superiores à 1.5 do Istio.
 {% endhint %}
 
 **Passo 1:** Crie um arquivo chamado **telemetry.yaml** com o conteúdo abaixo.
