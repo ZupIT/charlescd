@@ -1,0 +1,20 @@
+{{- if .Values.moove.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.moove.name }}
+    service: {{ .Values.moove.name }}
+  name: {{ .Values.moove.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    {{ range $i, $var := .Values.moove.service.ports -}}
+    - name: {{ $var.name }}
+      port: {{ $var.port }}
+      targetPort: {{ $var.port }}
+    {{ end }}
+  selector:
+    app: {{ .Values.moove.name }}
+  type: {{ .Values.moove.service.type}}
+{{- end}}

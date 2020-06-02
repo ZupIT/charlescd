@@ -1,0 +1,86 @@
+{{- if .Values.butler.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.butler.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.butler.name }}
+    version: {{ .Values.butler.name }}
+spec:
+  replicas: {{ .Values.butler.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.butler.name }}
+      version: {{ .Values.butler.name }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
+      labels:
+        app: {{ .Values.butler.name }}
+        version: {{ .Values.butler.name }}
+    spec:
+      containers:
+        - name: {{ .Values.butler.name }}
+          image: {{ .Values.butler.image.name }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthcheck
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthcheck
+              port: 3000
+              scheme: HTTP  
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1   
+          imagePullPolicy: {{ .Values.butler.image.pullPolicy }}
+          env:
+            - name: DATABASE_HOST
+              value: {{ .Values.butler.database.host}}
+            - name: DATABASE_PORT
+              value: "{{ .Values.butler.database.port}}"
+            - name: DATABASE_USER
+              value: {{ .Values.butler.database.user}}
+            - name: DATABASE_PASS
+              value: {{ .Values.butler.database.password}}
+            - name: DATABASE_NAME
+              value: {{ .Values.butler.database.name}}
+            - name: MOOVE_URL
+              value: "http://charlescd-moove:8080"
+            - name: DARWIN_NOTIFICATION_URL
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
+            - name: DARWIN_UNDEPLOYMENT_CALLBACK
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/undeployment"
+            - name: DARWIN_DEPLOYMENT_CALLBACK
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/deployment"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: deploy-aes256-key
+                  key: encryption-key
+          resources:
+{{ toYaml .Values.butler.resources | indent 12 }}
+    {{- with .Values.butler.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.butler.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.butler.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end}}
