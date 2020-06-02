@@ -54,7 +54,7 @@ Como essa instalação serve **apenas para o uso em ambiente de testes**, não r
 
 ### 
 
-### Caso 1: Instalação com helm charts
+### Caso 2: Instalação com helm charts
 
 Esta é a instalação indicada para quem possui uma infraestrutura já montada devido a um ambiente mais complexo ou possua algumas limitações de segurança e/ou escalabilidade, exigindo uma **customização mais completa da instalação** do CharlesCD.
 
