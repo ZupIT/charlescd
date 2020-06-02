@@ -111,8 +111,9 @@ class IdentifyCircleInteractorImplTest extends Specification {
                 LocalDateTime.now(),
                 [],
                 WorkspaceStatusEnum.COMPLETE,
+                null
+                ,
                 "http://circle-matcher.com",
-                null,
                 null,
                 null,
                 null
