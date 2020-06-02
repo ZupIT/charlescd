@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>Icon/Controls/Cancel/Cancel</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M19,11 L13,11 L13,5 C13,4.448 12.552,4 12,4 C11.448,4 11,4.448 11,5 L11,11 L5,11 C4.448,11 4,11.448 4,12 C4,12.552 4.448,13 5,13 L11,13 L11,19 C11,19.553 11.448,20 12,20 C12.552,20 13,19.553 13,19 L13,13 L19,13 C19.553,13 20,12.552 20,12 C20,11.448 19.553,11 19,11" id="path-close"></path>
+    </defs>
+    <g id="Icon/Controls/Cancel/Cancel" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-close" fill="white">
+            <use xlink:href="#path-close"></use>
+        </mask>
+        <use id="Icon-close" fill="white" transform="translate(12.000000, 12.000000) rotate(45.000000) translate(-12.000000, -12.000000) " xlink:href="#path-close"></use>
+    </g>
+</svg>
