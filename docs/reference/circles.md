@@ -23,7 +23,7 @@ To create a circle, you just have to follow these steps:
 **3.** Define a segmentation.  
 **4.** \[Optional\] Implement a release.
 
-![ How to create a circle](../.gitbook/assets/criar-circulo%20%282%29.gif)
+![ How to create a circle](../.gitbook/assets/create-circle-newww.gif)
 
 The segmentations are a subset of characteristics that you define to put all your users together in a circle. To make this happen, it is possible to segment your users by **filling in information manually** or through a **CVS file importation**.
 
