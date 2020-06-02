@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import {
   BaseEntity,
@@ -11,7 +27,6 @@ import { ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity } from './circle-deployment.entity'
 import { plainToClass } from 'class-transformer'
 import { DeploymentStatusEnum } from '../enums'
-import { ComponentDeploymentEntity } from './component-deployment.entity'
 
 @Entity('deployments')
 export class DeploymentEntity extends BaseEntity {
@@ -23,7 +38,7 @@ export class DeploymentEntity extends BaseEntity {
   public applicationName: string
 
   @OneToMany(
-    type => ModuleDeploymentEntity,
+    () => ModuleDeploymentEntity,
     moduleDeployment => moduleDeployment.deployment,
     { cascade: true }
   )
@@ -51,7 +66,9 @@ export class DeploymentEntity extends BaseEntity {
     type: 'jsonb',
     name: 'circle',
     transformer: {
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       from: circle => plainToClass(CircleDeploymentEntity, circle),
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       to: circle => circle
     }
   })
@@ -63,6 +80,9 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
+  @Column({ name: 'cd_configuration_id', type: 'varchar'})
+  public cdConfigurationId!: string
+
   constructor(
     deploymentId: string,
     applicationName: string,
@@ -72,7 +92,8 @@ export class DeploymentEntity extends BaseEntity {
     callbackUrl: string,
     circle: CircleDeploymentEntity | null,
     defaultCircle: boolean,
-    circleId: string
+    circleId: string,
+    cdConfigurationId: string
   ) {
     super()
     this.id = deploymentId
@@ -85,6 +106,7 @@ export class DeploymentEntity extends BaseEntity {
     this.defaultCircle = defaultCircle
     this.status = DeploymentStatusEnum.CREATED
     this.circleId = circleId
+    this.cdConfigurationId = cdConfigurationId
   }
 
   public toReadDto(): ReadDeploymentDto {
@@ -99,7 +121,6 @@ export class DeploymentEntity extends BaseEntity {
       this.defaultCircle,
       this.createdAt,
       this.circle ? this.circle.toReadDto() : undefined
-
     )
   }
 

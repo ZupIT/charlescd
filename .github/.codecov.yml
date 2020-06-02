@@ -30,8 +30,8 @@ coverage:
       butler:
         target: 70%
         flags:
-          - moove
-      butler:
+          - butler
+      ui:
         target: 30%
         flags:
           - ui
@@ -50,11 +50,11 @@ coverage:
 flags:
   villager:
     paths:
-      - villager/
+      - villager/src/main/java/
     carryforward: true
   circlematcher:
     paths:
-      - circle-matcher/
+      - circle-matcher/src/main/java/
     carryforward: true
   octopipe:
     paths:

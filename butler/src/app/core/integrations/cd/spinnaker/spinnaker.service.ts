@@ -1,4 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Injectable } from '@nestjs/common'
 import { of, throwError, Observable } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { ISpinnakerConfigurationData } from '../../../../api/configurations/interfaces'
@@ -9,6 +25,7 @@ import TotalPipeline from './connector'
 import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
 import { ICreateSpinnakerApplication, ISpinnakerPipelineConfiguration } from './interfaces'
 import { SpinnakerApiService } from './spinnaker-api.service'
+import { PipelineTypeEnum } from './connector/pipelines/enums/pipeline-type.enum'
 
 @Injectable()
 export class SpinnakerService implements ICdServiceStrategy {
@@ -26,9 +43,27 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log('START:PROCESS_SPINNAKER_DEPLOYMENT', configuration)
     const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
     await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
-    await this.createSpinnakerPipeline(spinnakerConfiguration)
+    await this.createSpinnakerPipeline(spinnakerConfiguration, PipelineTypeEnum.DEFAULT)
     await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
     this.consoleLoggerService.log('FINISH:PROCESS_SPINNAKER_DEPLOYMENT', spinnakerConfiguration)
+  }
+
+  public async createIstioDeployment(configuration: IConnectorConfiguration): Promise<void> {
+    this.consoleLoggerService.log('START:PROCESS_SPINNAKER_ISTIO_DEPLOYMENT', configuration)
+    const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
+    await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    await this.createSpinnakerPipeline(spinnakerConfiguration, PipelineTypeEnum.ISTIO)
+    await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    this.consoleLoggerService.log('FINISH:PROCESS_SPINNAKER_ISTIO_DEPLOYMENT', spinnakerConfiguration)
+  }
+
+  public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
+    this.consoleLoggerService.log('START:PROCESS_SPINNAKER_UNDEPLOYMENT', configuration)
+    const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
+    await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    await this.createSpinnakerPipeline(spinnakerConfiguration, PipelineTypeEnum.UNDEPLOYED)
+    await this.deploySpinnakerPipeline(spinnakerConfiguration.pipelineName, spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
+    this.consoleLoggerService.log('FINISH:PROCESS_SPINNAKER_UNDEPLOYMENT', spinnakerConfiguration)
   }
 
   private getSpinnakerConfiguration(configuration: IConnectorConfiguration): ISpinnakerPipelineConfiguration {
@@ -61,6 +96,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     this.consoleLoggerService.log(`FINISH:DEPLOY_SPINNAKER_PIPELINE ${pipelineName}`)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getDeployRetryCondition(deployError: Observable<any>) {
 
     return deployError.pipe(
@@ -72,6 +108,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getDeployRetryPipe(error: any, attempts: number) {
 
     return of(error).pipe(
@@ -80,24 +117,43 @@ export class SpinnakerService implements ICdServiceStrategy {
     )
   }
 
-  private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration): Promise<void> {
+  private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineType: PipelineTypeEnum): Promise<void> {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
-    const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
+    const spinnakerPipeline: IBaseSpinnakerPipeline = this.getTotalPipelineByPipelineType(spinnakerConfiguration, pipelineType)
     const { data: { id: pipelineId } } =
       await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
         spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
 
     pipelineId ?
-      await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId) :
+      await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId, pipelineType) :
       await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerConfiguration.url).toPromise()
 
     this.consoleLoggerService.log('FINISH:CREATE_SPINNAKER_PIPELINE')
   }
 
-  private async updateSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineId: string): Promise<void> {
+  private getTotalPipelineByPipelineType(
+    spinnakerConfiguration: ISpinnakerPipelineConfiguration,
+    pipelineType: PipelineTypeEnum
+  ) {
+    if (pipelineType === PipelineTypeEnum.ISTIO) {
+      return new TotalPipeline(spinnakerConfiguration).buildIstioPipeline()
+    }
+
+    if (pipelineType === PipelineTypeEnum.UNDEPLOYED) {
+      return new TotalPipeline(spinnakerConfiguration).buildUndeploymentPipeline()
+    }
+
+    return new TotalPipeline(spinnakerConfiguration).buildPipeline()
+  }
+
+  private async updateSpinnakerPipeline(
+    spinnakerConfiguration: ISpinnakerPipelineConfiguration,
+    pipelineId: string,
+    pipelineType: PipelineTypeEnum,
+  ): Promise<void> {
 
     this.consoleLoggerService.log('START:UPDATE_SPINNAKER_PIPELINE', { pipelineId })
-    const spinnakerPipeline: IBaseSpinnakerPipeline = new TotalPipeline(spinnakerConfiguration).buildPipeline()
+    const spinnakerPipeline: IBaseSpinnakerPipeline = this.getTotalPipelineByPipelineType(spinnakerConfiguration, pipelineType)
     const updatedSpinnakerPipeline = this.createUpdatePipelineObject(pipelineId, spinnakerConfiguration, spinnakerPipeline)
     await this.spinnakerApiService.updatePipeline(updatedSpinnakerPipeline, spinnakerConfiguration.url).toPromise()
     this.consoleLoggerService.log('FINISH:UPDATE_SPINNAKER_PIPELINE')

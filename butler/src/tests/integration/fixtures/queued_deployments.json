@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "componentId": "68335d19-ce03-4cf8-84b4-5574257c982e",
+    "componentDeploymentId": "88a33b0c-c974-4ed7-8c49-c5fa342744af",
+    "status": "RUNNING",
+    "type": "QueuedDeploymentEntity"
+  },
+  {
+    "id": 2,
+    "componentId": "5acefbad-2864-4bc7-97e6-e3c3c9ef6fd9",
+    "componentDeploymentId": "8f6dc70d-e49e-4fb9-b92e-0d9cd3018428",
+    "status": "RUNNING",
+    "type": "QueuedDeploymentEntity"
+  }
+]
