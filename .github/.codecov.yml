@@ -4,6 +4,11 @@ coverage:
       default:
         target: auto
         threshold: 0%
+        flags:
+          - villager
+          - circlematcher
+          - octopipe
+          - moove
       
       villager:
         target: 30%
@@ -29,6 +34,11 @@ coverage:
       default:
         target: 80%
         threshold: 0%
+        flags:
+          - villager
+          - circlematcher
+          - octopipe
+          - moove
       
 flags:
   villager:
