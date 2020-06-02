@@ -35,12 +35,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
       stubby4j:
         image: sandokandias/stubby4j-docker
         env:
           STUBBY_PORT: 8883
         options: -v ${{ github.workspace }}/src/app/resources/stubby/integrations.yml:/usr/local/stubby.yml --name stubby4j
+        ports:
+          - 8883:8883
 
     steps:
     - uses: actions/checkout@v2
