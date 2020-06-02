@@ -1,10 +1,12 @@
+codecov:
+  if_not_found: success
+
 coverage:
   status:
     project:
       default:
         target: auto
         threshold: 0%
-        if_not_found: success
       
       villager:
         target: 30%
@@ -30,7 +32,6 @@ coverage:
       default:
         target: 80%
         threshold: 0%
-        if_not_found: success
         
       villager:
         target: 30%
