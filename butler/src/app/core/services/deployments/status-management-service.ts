@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
@@ -10,16 +26,19 @@ import {
 } from '../../../api/deployments/entity'
 import {
     DeploymentStatusEnum,
-    UndeploymentStatusEnum
+    UndeploymentStatusEnum,
+    QueuedPipelineStatusEnum
 } from '../../../api/deployments/enums'
 import {
     ComponentDeploymentsRepository,
-    ComponentUndeploymentsRepository
+    ComponentUndeploymentsRepository,
+    QueuedIstioDeploymentsRepository
 } from '../../../api/deployments/repository'
 import { UndeploymentsRepository } from '../../../api/deployments/repository/undeployments.repository'
 import { ModuleUndeploymentsRepository } from '../../../api/deployments/repository/module-undeployments.repository'
 import { DeploymentsRepository } from '../../../api/deployments/repository/deployments.repository'
 import { ModuleDeploymentsRepository } from '../../../api/deployments/repository/module-deployments.repository'
+import { ConsoleLoggerService } from '../../logs/console'
 
 @Injectable()
 export class StatusManagementService {
@@ -35,11 +54,14 @@ export class StatusManagementService {
         private readonly componentUndeploymentsRepository: ComponentUndeploymentsRepository,
         @InjectRepository(ModuleUndeploymentsRepository)
         private readonly moduleUndeploymentsRepository: ModuleUndeploymentsRepository,
+        @InjectRepository(QueuedIstioDeploymentsRepository)
+        private readonly queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository,
         @InjectRepository(UndeploymentsRepository)
         private readonly undeploymentsRepository: UndeploymentsRepository,
+        private readonly consoleLoggerService: ConsoleLoggerService
     ) {}
 
-    public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) {
+    public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[][]>{
         await this.undeploymentsRepository.updateStatus(undeployment.id, status)
         if (!undeployment.moduleUndeployments) {
             undeployment.moduleUndeployments =
@@ -51,7 +73,7 @@ export class StatusManagementService {
         return Promise.all(undeployment.moduleUndeployments.map(m => this.deepUpdateModuleUndeploymentStatus(m, status)))
     }
 
-    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) {
+    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]>{
         await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id, status)
         return Promise.all(
             moduleUndeployment.componentUndeployments
@@ -59,7 +81,7 @@ export class StatusManagementService {
         )
     }
 
-    public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) {
+    public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) : Promise<void[][]>{
         await this.deploymentsRepository.updateStatus(deployment.id, status)
         if (!deployment.modules) {
             deployment.modules =
@@ -70,7 +92,7 @@ export class StatusManagementService {
         return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
     }
 
-    public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) {
+    public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) : Promise<void[]> {
         await this.moduleDeploymentRepository.updateStatus(module.id, status)
         return Promise.all(
             module.components.map(component => this.componentDeploymentsRepository.updateStatus(component.id, status))
@@ -89,21 +111,32 @@ export class StatusManagementService {
     public async setComponentDeploymentStatusAsFinished(
         componentDeploymentId: string
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', { componentDeploymentId })
         const componentDeploymentEntity: ComponentDeploymentEntity =
             await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
 
         await this.updateComponentDeploymentStatus(componentDeploymentId, DeploymentStatusEnum.SUCCEEDED)
         await this.propagateSuccessStatusChange(componentDeploymentEntity)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', componentDeploymentEntity)
     }
 
     public async setComponentUndeploymentStatusAsFailed(componentUndeploymentId: string): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_UNDEPLOYMENT_STATUS_FAILED', { componentUndeploymentId })
         const componentUndeployment: ComponentUndeploymentEntity =
             await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
         await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.FAILED)
         await this.propagateFailedUndeploymentStatusChange(componentUndeployment)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_UNDEPLOYMENT_STATUS_FAILED', componentUndeployment)
+    }
+
+    public async hasAllFinishedModules(deploymentId: string): Promise<boolean> {
+        const deployment: DeploymentEntity =
+            await this.getDeploymentEntity(deploymentId)
+        const finishedModules: ModuleDeploymentEntity[] =
+            this.getDeploymentFinishedModules(deployment)
+
+        return finishedModules.length === deployment.modules.length
     }
 
     private async propagateFailedUndeploymentStatus(
@@ -131,12 +164,13 @@ export class StatusManagementService {
     public async setComponentUndeploymentStatusAsFinished(
         componentUndeploymentId: string
     ): Promise<void> {
-
+        this.consoleLoggerService.log('START:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', { componentUndeploymentId })
         const componentUndeploymentEntity: ComponentUndeploymentEntity =
             await this.componentUndeploymentsRepository.getOneWithRelations(componentUndeploymentId)
 
         await this.updateComponentUndeploymentStatus(componentUndeploymentId, UndeploymentStatusEnum.SUCCEEDED)
         await this.propagateUndeploymentSuccessStatusChange(componentUndeploymentEntity)
+        this.consoleLoggerService.log('FINISH:SET_COMPONENT_DEPLOYMENT_STATUS_FINISHED', componentUndeploymentEntity)
     }
 
     private async updateComponentUndeploymentStatus(
@@ -246,6 +280,7 @@ export class StatusManagementService {
         await this.undeploymentsRepository.updateStatus(undeploymentId, status)
     }
     private getDeploymentFinishedModules(
+
         deployment: DeploymentEntity
     ): ModuleDeploymentEntity[] {
 
@@ -292,9 +327,19 @@ export class StatusManagementService {
         const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
 
-        if (finishedModules.length === deployment.modules.length) {
+        if (finishedModules.length === deployment.modules.length && await this.isQueuedIstiodeploymentHasFinished(deployment.id)) {
             await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.SUCCEEDED)
         }
+    }
+
+    private async isQueuedIstiodeploymentHasFinished(deploymentId: string): Promise<boolean> {
+        const allQueuedIstioDeployments = await this.queuedIstioDeploymentsRepository.find({
+            where: {deploymentId}
+        })
+
+        return allQueuedIstioDeployments.every(
+            deployment => deployment.status === QueuedPipelineStatusEnum.FINISHED
+        )
     }
 
     private async updateModuleDeploymentStatus(

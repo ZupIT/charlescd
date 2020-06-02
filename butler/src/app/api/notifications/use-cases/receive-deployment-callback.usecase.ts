@@ -1,13 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Injectable } from '@nestjs/common'
 import { FinishDeploymentDto } from '../dto'
 import {
   ComponentDeploymentEntity,
-  DeploymentEntity,
   QueuedDeploymentEntity
 } from '../../deployments/entity'
-import { NotificationStatusEnum } from '../enums'
 import { ConsoleLoggerService } from '../../../core/logs/console'
-import { MooveService } from '../../../core/integrations/moove'
 import {
   PipelineErrorHandlerService,
   PipelineQueuesService
@@ -17,9 +30,7 @@ import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository
 } from '../../deployments/repository'
-import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../core/services/deployments'
-
 
 @Injectable()
 export class ReceiveDeploymentCallbackUsecase {
@@ -27,15 +38,12 @@ export class ReceiveDeploymentCallbackUsecase {
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private readonly pipelineErrorHandlerService: PipelineErrorHandlerService,
-    private readonly mooveService: MooveService,
     private readonly statusManagementService: StatusManagementService,
     private readonly pipelineQueuesService: PipelineQueuesService,
     @InjectRepository(QueuedDeploymentsRepository)
     private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
     @InjectRepository(ComponentDeploymentsRepository)
     private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
-    @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>
   ) { }
 
   public async execute(
@@ -54,7 +62,8 @@ export class ReceiveDeploymentCallbackUsecase {
         this.consoleLoggerService.log('FINISH:FINISH_DEPLOYMENT_NOTIFICATION')
       }
     } catch (error) {
-      return Promise.reject({ error })
+      this.consoleLoggerService.error('ERROR:FINISH_DEPLOYMENT_NOTIFICATION', error)
+      throw error
     }
   }
 
@@ -69,28 +78,22 @@ export class ReceiveDeploymentCallbackUsecase {
       await this.componentDeploymentsRepository.getOneWithRelations(queuedDeployment.componentDeploymentId)
 
     const { moduleDeployment: { deployment } } = componentDeployment
-    if (!deployment.circle) {
-      throw new NotFoundException(`Deployment dont have a circle`)
-    }
 
     await this.pipelineErrorHandlerService.handleComponentDeploymentFailure(componentDeployment, queuedDeployment, deployment.circle)
     await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_FAILURE_WEBHOOK', { queuedDeploymentId })
   }
 
-  private async notifyMooveIfDeploymentFinished(
+  private async triggerIstioPipelines(
     componentDeploymentId: string
   ): Promise<void> {
-
     const componentDeployment: ComponentDeploymentEntity =
       await this.componentDeploymentsRepository.getOneWithRelations(componentDeploymentId)
-
     const { moduleDeployment: { deployment } } = componentDeployment
+    const isAllModuleFinished: boolean = await this.statusManagementService.hasAllFinishedModules(deployment.id)
 
-    if (deployment.hasSucceeded()) {
-      await this.mooveService.notifyDeploymentStatus(
-        deployment.id, NotificationStatusEnum.SUCCEEDED, deployment.callbackUrl, deployment.circleId
-      ).toPromise()
+    if (isAllModuleFinished) {
+      await this.pipelineQueuesService.triggerAllIstioDeployments(deployment.id)
     }
   }
 
@@ -105,9 +108,8 @@ export class ReceiveDeploymentCallbackUsecase {
 
     await this.pipelineQueuesService.setQueuedDeploymentStatusFinished(queuedDeploymentId)
 
-    this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
     await this.statusManagementService.setComponentDeploymentStatusAsFinished(componentDeployment.id)
-    await this.notifyMooveIfDeploymentFinished(componentDeployment.id)
+    await this.triggerIstioPipelines(componentDeployment.id)
     this.consoleLoggerService.log('FINISH:DEPLOYMENT_SUCCESS_WEBHOOK', { queuedDeploymentId })
   }
 }
