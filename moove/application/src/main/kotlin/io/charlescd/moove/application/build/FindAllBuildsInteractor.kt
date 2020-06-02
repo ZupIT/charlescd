@@ -29,5 +29,4 @@ interface FindAllBuildsInteractor {
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<BuildResponse>
-
 }

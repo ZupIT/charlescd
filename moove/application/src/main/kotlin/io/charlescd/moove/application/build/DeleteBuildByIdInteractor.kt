@@ -19,5 +19,4 @@ package io.charlescd.moove.application.build
 interface DeleteBuildByIdInteractor {
 
     fun execute(id: String, workspaceId: String)
-
 }

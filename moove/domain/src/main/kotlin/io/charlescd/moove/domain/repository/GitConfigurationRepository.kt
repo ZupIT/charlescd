@@ -36,5 +36,4 @@ interface GitConfigurationRepository {
     fun exists(workspaceId: String, id: String): Boolean
 
     fun delete(id: String)
-
 }

@@ -20,9 +20,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.Role
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class RoleExtractor : ResultSetExtractor<Set<Role>> {
@@ -47,8 +47,8 @@ class RoleExtractor : ResultSetExtractor<Set<Role>> {
 
     private fun createPermissions(resultSet: ResultSet, permissions: HashMap<String, HashSet<Permission>>) {
         if (resultSet.getString("role_permission_id") != null) {
-            permissions[resultSet.getString("role_id")]?.add(mapPermission(resultSet)) ?:
-            permissions.put(resultSet.getString("role_id"), hashSetOf(mapPermission(resultSet)))
+            permissions[resultSet.getString("role_id")]?.add(mapPermission(resultSet))
+            ?: permissions.put(resultSet.getString("role_id"), hashSetOf(mapPermission(resultSet)))
         }
     }
 
@@ -69,5 +69,4 @@ class RoleExtractor : ResultSetExtractor<Set<Role>> {
             createdAt = resultSet.getTimestamp("role_permission_created_at").toLocalDateTime()
         )
     }
-
 }

@@ -47,7 +47,7 @@ class AssociateUserGroupToWorkspaceInteractorImpl @Inject constructor(
         val permissionsToBeAdded = role.permissions
         userGroup.users.forEach { user ->
             val userPermissionsFlatten = workspaceService.findUserPermissions(workspaceId, user).values.flatten().distinct()
-            if(!userPermissionsFlatten.containsAll(permissionsToBeAdded)) {
+            if (!userPermissionsFlatten.containsAll(permissionsToBeAdded)) {
                 keycloakService.addPermissionsToUser(workspace.id, user, permissionsToBeAdded.minus(userPermissionsFlatten))
             }
         }

@@ -28,5 +28,4 @@ open class DeleteModuleByIdInteractorImpl(private val moduleService: ModuleServi
     override fun execute(id: String, workspaceId: String) {
         moduleService.delete(moduleService.find(id, workspaceId))
     }
-
 }
