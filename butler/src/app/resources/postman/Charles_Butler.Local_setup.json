@@ -1,0 +1,248 @@
+{
+  "info": {
+    "_postman_id": "2c51e20e-c6ca-4002-96e9-763249ccdeaa",
+    "name": "Charles Butler Local Setup",
+    "description": "Charles Butler local setup",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+      {
+        "name": "Create Octopipe CD Configuration Generic Cluster",
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "6b7fe6a1-9c70-4bfe-a3a9-efe4e7636c14",
+              "exec": [
+                "var uuid = require('uuid');",
+                "postman.setGlobalVariable('workspaceId', uuid.v4());",
+                "postman.setGlobalVariable(\"authorId\", uuid.v4());"
+
+              ],
+              "type": "text/javascript"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "d06f6924-7211-463b-8bdf-0f9ce8326707",
+              "exec": [
+                "const response = JSON.parse(responseBody);",
+                "postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+                "postman.setGlobalVariable('moduleId', uuid.v4());"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "type": "text",
+              "value": "application/json"
+            },
+            {
+              "key": "x-workspace-id",
+              "type": "text",
+              "value": "{{workspaceId}}"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"name\": \"config-name\",\n    \"authorId\": \"{{authorId}}\",\n    \"type\": \"OCTOPIPE\",\n    \"configurationData\": {\n        \"gitProvider\": \"GITHUB\",\n        \"provider\": \"GENERIC\",\n        \"clientCertificate\": \"cert-data\",\n        \"host\": \"https://kube.cluster.com\",\n        \"gitToken\": \"githubtoken\", \n        \"namespace\": \"charles\"\n   }\n}"
+          },
+          "url": {
+            "raw": "{{butler-base-path}}/configurations/cd",
+            "host": [
+              "{{butler-base-path}}"
+            ],
+            "path": [
+              "configurations",
+              "cd"
+            ]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Create Octopipe CD Configuration EKS Cluster",
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "6b7fe6a1-9c70-4bfe-a3a9-efe4e7636c14",
+              "exec": [
+                "var uuid = require('uuid');",
+                "postman.setGlobalVariable(\"authorId\", uuid.v4());",
+                "postman.setGlobalVariable(\"workspaceId\", uuid.v4());"
+              ],
+              "type": "text/javascript"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "d06f6924-7211-463b-8bdf-0f9ce8326707",
+              "exec": [
+                "const response = JSON.parse(responseBody);",
+                "postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+                "postman.setGlobalVariable('moduleId', uuid.v4());"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "type": "text",
+              "value": "application/json"
+            },
+            {
+              "key": "x-workspace-id",
+              "type": "text",
+              "value": "{{workspaceId}}"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"name\": \"config-name\",\n    \"authorId\": \"{{authorId}}\",\n    \"type\": \"OCTOPIPE\",\n    \"configurationData\": {\n        \"gitProvider\": \"GITHUB\",\n        \"provider\": \"EKS\",\n        \"caData\": \"ca-data\",\n        \"awsSId\": \"aws-sid\",\n        \"awsSecret\": \"aws-secret\",\n        \"awsRegion\": \"aws-region\",\n        \"awsClusterName\": \"cluster-name\",\n        \"gitToken\": \"githubtoken\", \n        \"namespace\": \"charles\"\n   }\n}"
+          },
+          "url": {
+            "raw": "{{butler-base-path}}/configurations/cd",
+            "host": [
+              "{{butler-base-path}}"
+            ],
+            "path": [
+              "configurations",
+              "cd"
+            ]
+          }
+        },
+        "response": []
+      },
+    {
+      "name": "Create Octopipe CD Configuration Default Cluster",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "6b7fe6a1-9c70-4bfe-a3a9-efe4e7636c14",
+            "exec": [
+              "var uuid = require('uuid');",
+              "postman.setGlobalVariable(\"authorId\", uuid.v4());",
+              "postman.setGlobalVariable(\"workspaceId\", uuid.v4());"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "d06f6924-7211-463b-8bdf-0f9ce8326707",
+            "exec": [
+              "const response = JSON.parse(responseBody);",
+              "postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+              "postman.setGlobalVariable('moduleId', uuid.v4());"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          },
+          {
+            "key": "x-workspace-id",
+            "type": "text",
+            "value": "{{workspaceId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"config-name\",\n    \"authorId\": \"{{authorId}}\",\n    \"type\": \"OCTOPIPE\",\n    \"configurationData\": {\n        \"gitProvider\": \"GITHUB\",\n        \"provider\": \"DEFAULT\",\n        \"gitToken\": \"git-token\",\n        \"namespace\": \"namespace\"\n   }\n}"
+        },
+        "url": {
+          "raw": "{{butler-base-path}}/configurations/cd",
+          "host": [
+            "{{butler-base-path}}"
+          ],
+          "path": [
+            "configurations",
+            "cd"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Spinnaker CD Configuration",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "6b7fe6a1-9c70-4bfe-a3a9-efe4e7636c14",
+            "exec": [
+              "var uuid = require('uuid');",
+              "postman.setGlobalVariable(\"authorId\", uuid.v4());",
+              "postman.setGlobalVariable(\"workspaceId\", uuid.v4());"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "d06f6924-7211-463b-8bdf-0f9ce8326707",
+            "exec": [
+              "const response = JSON.parse(responseBody);",
+              "postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+              "postman.setGlobalVariable('moduleId', uuid.v4());"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "type": "text",
+            "value": "application/json"
+          },
+          {
+            "key": "x-workspace-id",
+            "type": "text",
+            "value": "{{workspaceId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"config-name\",\n    \"account\": \"some-account\",\n     \"namespace\": \"some-namespace\",\n     \"authorId\": \"{{authorId}}\",\n     \"type\": \"SPINNAKER\",\n     \"configurationData\": {\n        \"account\": \"account\",\n        \"gitAccount\": \"gitaccount\",\n        \"url\": \"http://localhost:8883/spinnaker\",\n        \"namespace\": \"namespace\"\n   }\n}"
+        },
+        "url": {
+          "raw": "{{butler-base-path}}/configurations/cd",
+          "host": [
+            "{{butler-base-path}}"
+          ],
+          "path": [
+            "configurations",
+            "cd"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+

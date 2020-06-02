@@ -8,7 +8,7 @@ on:
     branches: [ master ]
     paths:
       - 'butler/**'
-    tags: 
+    tags:
       - '!*'
   pull_request:
     branches: [ master ]
@@ -37,5 +37,17 @@ jobs:
       working-directory: ./butler
     - run: npm run build --if-present
       working-directory: ./butler
+    - run: npm run test:cov
       env:
         CI: true
+      working-directory: ./butler
+    - run: npm run lint
+      working-directory: ./butler
+    - uses: actions/checkout@master
+      env:
+        CI: true
+    - uses: codecov/codecov-action@v1.0.7
+      with:
+        fail_ci_if_error: true
+        file: ./butler/coverage/coverage-final.json
+        flags: butler

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
 import {
@@ -10,15 +26,12 @@ import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { AxiosResponse } from 'axios'
 import { HttpService } from '@nestjs/common'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
 import {
-  CircleDeploymentEntity,
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
   ModuleUndeploymentEntity,
-  QueuedDeploymentEntity,
   QueuedUndeploymentEntity,
   UndeploymentEntity
 } from '../../../app/api/deployments/entity'
@@ -32,13 +45,7 @@ import { ICdConfigurationData } from '../../../app/api/configurations/interfaces
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
   let spinnakerApiService: SpinnakerApiService
-  let defaultAxiosGetResponse: AxiosResponse
-  let defaultAxiosPostResponse: AxiosResponse
   let pipelineOptions: IPipelineOptions
-  let deploymentConfiguration: IDeploymentConfiguration
-  let deployment: DeploymentEntity
-  let circle: CircleDeploymentEntity
-  let queuedDeployment: QueuedDeploymentEntity
   let undeploymentComponentDeployments: ComponentDeploymentEntity[]
   let undeploymentModuleDeployments: ModuleDeploymentEntity[]
   let undeploymentDeployment: DeploymentEntity
@@ -47,8 +54,6 @@ describe('Spinnaker Service', () => {
   let componentUndeployment: ComponentUndeploymentEntity
   let moduleUndeployment: ModuleUndeploymentEntity
   let connectorConfiguration: IConnectorConfiguration
-  let moduleDeployment: ModuleDeploymentEntity
-  let componentDeployment: ComponentDeploymentEntity
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -64,68 +69,7 @@ describe('Spinnaker Service', () => {
     spinnakerService = module.get<SpinnakerService>(SpinnakerService)
     spinnakerApiService = module.get<SpinnakerApiService>(SpinnakerApiService)
 
-    defaultAxiosGetResponse = {
-      data: {
-        id: 'some-pipeline-id',
-      },
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
-
-    defaultAxiosPostResponse = {
-      data: {
-        id: 'some-pipeline-id',
-      },
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
-
     pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
-
-    deploymentConfiguration = {
-      account: 'some-account',
-      pipelineName: 'some-pipeline-name',
-      applicationName: 'some-application-name',
-      appName: 'some-app-name',
-      appNamespace: 'some-app-namespace'
-    }
-
-    circle = new CircleDeploymentEntity('dummy-circle')
-
-    componentDeployment = new ComponentDeploymentEntity(
-      'dummy-id',
-      'dummy-name',
-      'dummy-img-url',
-      'dummy-img-tag'
-    )
-
-    moduleDeployment = new ModuleDeploymentEntity(
-      'dummy-id',
-      'helm-repository',
-      [componentDeployment]
-    )
-
-    deployment = new DeploymentEntity(
-      'dummy-deployment-id',
-      'dummy-application-name',
-      [moduleDeployment],
-      'dummy-author-id',
-      'dummy-description',
-      'dummy-callback-url',
-      circle,
-      false,
-      'dummy-circle-id'
-    )
-
-    queuedDeployment = new QueuedDeploymentEntity(
-      'dummy-component-id',
-      'dummy-component-deployment-id3',
-      QueuedPipelineStatusEnum.QUEUED,
-    )
 
     undeploymentComponentDeployments = [
       new ComponentDeploymentEntity(
@@ -176,7 +120,8 @@ describe('Spinnaker Service', () => {
       'dummy-callback-url',
       null,
       false,
-      'dummy-circle-id'
+      'dummy-circle-id',
+      'cd-configuration-id'
     )
 
     undeployment = new UndeploymentEntity(
