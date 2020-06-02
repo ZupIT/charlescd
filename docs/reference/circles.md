@@ -23,13 +23,21 @@ To create a circle, you just have to follow these steps:
 **3.** Define a segmentation.  
 **4.** \[Optional\] Implement a release.
 
-![ How to create a circle](../.gitbook/assets/criar-circulo%20%282%29.gif)
+![ How to create a circle](../.gitbook/assets/create-circle-newww.gif)
 
 The segmentations are a subset of characteristics that you define to put all your users together in a circle. To make this happen, it is possible to segment your users by **filling in information manually** or through a **CVS file importation**.
 
 {% hint style="info" %}
 **The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and, in this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north region, another one with engineers from the southeast and a third one with all brazilian engineers.
 {% endhint %}
+
+### How to get an identifier in **circles**?
+
+After you have created your circle, it already has a single identifier.
+
+To get this information, select your **circle, default** and on the left menu, click on **Copy ID**, like the example below: 
+
+![](../.gitbook/assets/circuloid%20%281%29.gif)
 
 ### **Manual segmentation**
 
