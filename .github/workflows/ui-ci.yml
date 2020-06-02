@@ -30,7 +30,13 @@ jobs:
         node-version: 12.x
     - run: npm install
       working-directory: ./ui
-    - run: npm run test
+    - run: npm run test:coverage
       working-directory: ./ui
       env:
         CI: true
+    - name: Tests coverage
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        file: ./ui/coverage/lcov.info
+        flags: ui
+        fail_ci_if_error: true
