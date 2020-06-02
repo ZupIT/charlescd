@@ -19,5 +19,4 @@ package io.charlescd.moove.application.usergroup
 interface RemoveMemberFromUserGroupInteractor {
 
     fun execute(id: String, memberId: String)
-
 }

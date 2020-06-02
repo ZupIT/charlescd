@@ -36,5 +36,4 @@ class V2RoleController(private val findAllRolesInteractor: FindAllRolesInteracto
     fun findAll(pageable: PageRequest): ResourcePageResponse<RoleResponse> {
         return this.findAllRolesInteractor.execute(pageable)
     }
-
 }

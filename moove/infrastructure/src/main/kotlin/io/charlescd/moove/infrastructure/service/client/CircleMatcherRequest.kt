@@ -57,4 +57,3 @@ data class IdentifyRequest(
     val workspaceId: String,
     val requestData: Map<String, Any>
 )
-

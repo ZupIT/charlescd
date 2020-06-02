@@ -18,10 +18,10 @@ package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Build
 import io.charlescd.moove.legacy.repository.entity.BuildStatus
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
 
 interface BuildRepository : JpaRepository<Build, String> {
 
@@ -39,5 +39,4 @@ interface BuildRepository : JpaRepository<Build, String> {
     fun findAllByWorkspaceId(workspaceId: String, page: Pageable): Page<Build>
 
     fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Build>
-
 }

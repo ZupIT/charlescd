@@ -20,9 +20,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.User
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class MetricConfigurationExtractor : ResultSetExtractor<Set<MetricConfiguration>> {

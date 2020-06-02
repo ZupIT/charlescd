@@ -30,5 +30,4 @@ interface RoleRepository {
     fun findByIds(ids: List<String>): List<Role>
 
     fun findById(id: String): Optional<Role>
-
 }

@@ -25,12 +25,11 @@ import org.springframework.web.bind.annotation.PostMapping
 class SecurityControllerTest {
 
     @GetMapping("/api/circle/{circle}")
-    fun get(@PathVariable(value = "circle") circleId: String): String = "SUCCESS for cicle ${circleId}"
+    fun get(@PathVariable(value = "circle") circleId: String): String = "SUCCESS for cicle $circleId"
 
     @PostMapping("/api/circle/{circle}")
-    fun post(@PathVariable(value = "circle") circleId: String): String = "SUCCESS for cicle ${circleId}"
+    fun post(@PathVariable(value = "circle") circleId: String): String = "SUCCESS for cicle $circleId"
 
     @GetMapping("/api/rectangle")
     fun getRectangle(): String = "SUCCESS"
-
 }

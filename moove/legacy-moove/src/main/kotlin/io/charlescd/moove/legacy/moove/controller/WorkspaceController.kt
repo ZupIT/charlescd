@@ -40,5 +40,4 @@ class WorkspaceController(private val service: V1WorkspaceService) {
     @ResponseStatus(HttpStatus.OK)
     fun findAll(pageable: Pageable): ResourcePageRepresentation<WorkspaceRepresentation> =
         service.findAll(pageable)
-
 }

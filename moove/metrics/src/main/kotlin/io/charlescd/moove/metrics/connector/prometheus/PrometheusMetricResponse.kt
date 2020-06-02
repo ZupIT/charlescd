@@ -24,27 +24,33 @@ import io.charlescd.moove.metrics.domain.MetricData
 import io.charlescd.moove.metrics.domain.MetricResult
 
 data class PrometheusMetricResponse(
-        val status: String,
-        val data: PrometheusMetricData)
+    val status: String,
+    val data: PrometheusMetricData
+)
 
 @JsonDeserialize(using = PrometheusResponseDeserializer::class)
 data class PrometheusMetricData(
-        val resultType: String,
-        val result: List<PrometheusResult>)
+    val resultType: String,
+    val result: List<PrometheusResult>
+)
 
 abstract class PrometheusResult
 
 data class PrometheusMatrixResult(
-        val metric: Map<String, String>,
-        val values: List<PrometheusMetricValue>) : PrometheusResult()
+    val metric: Map<String, String>,
+    val values: List<PrometheusMetricValue>
+) : PrometheusResult()
 
 data class PrometheusVectorResult(
-        val metric: Map<String, String>,
-        val value: PrometheusMetricValue) : PrometheusResult()
+    val metric: Map<String, String>,
+    val value: PrometheusMetricValue
+) : PrometheusResult()
 
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
-data class PrometheusMetricValue(@JsonPropertyOrder("0") val timeStamp: Long,
-                                 @JsonPropertyOrder("1") val value: String)
+data class PrometheusMetricValue(
+    @JsonPropertyOrder("0") val timeStamp: Long,
+    @JsonPropertyOrder("1") val value: String
+)
 
 fun PrometheusMetricResponse.toMetric(name: String) = Metric(
         name = name,

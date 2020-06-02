@@ -27,13 +27,17 @@ import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteracto
 import org.springframework.stereotype.Service
 
 @Service
-class RetrieveCirclePeriodMetricInteractorImpl(private val serviceFactory: MetricServiceFactory,
-                                               private val metricConfigurationRepository: MetricConfigurationRepository) : RetrieveCirclePeriodMetricInteractor {
+class RetrieveCirclePeriodMetricInteractorImpl(
+    private val serviceFactory: MetricServiceFactory,
+    private val metricConfigurationRepository: MetricConfigurationRepository
+) : RetrieveCirclePeriodMetricInteractor {
 
-    override fun execute(circleId: String,
-                         projectionType: ProjectionType,
-                         metricType: MetricType,
-                         workspaceId: String): CircleMetricRepresentation {
+    override fun execute(
+        circleId: String,
+        projectionType: ProjectionType,
+        metricType: MetricType,
+        workspaceId: String
+    ): CircleMetricRepresentation {
 
         val metricConfiguration = this.metricConfigurationRepository.findByWorkspaceId(workspaceId)
                 .orElseThrow { NotFoundException("metric configuration for workspace", workspaceId) }

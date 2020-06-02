@@ -22,12 +22,12 @@ import io.charlescd.moove.commons.extension.toJsonNode
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.User
-import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
+import org.jetbrains.annotations.NotNull
 
 class CreateCircleRequest(
 

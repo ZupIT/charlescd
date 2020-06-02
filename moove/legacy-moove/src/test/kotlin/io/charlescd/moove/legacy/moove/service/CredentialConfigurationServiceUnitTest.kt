@@ -41,10 +41,10 @@ import io.charlescd.moove.legacy.repository.entity.User
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.junit.Test
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
+import org.junit.Test
 
 class CredentialConfigurationServiceUnitTest {
 
@@ -273,7 +273,6 @@ class CredentialConfigurationServiceUnitTest {
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
         assertEquals(expectedResponse.author, credentialConfiguration.author)
-
     }
 
     @Test
@@ -327,7 +326,6 @@ class CredentialConfigurationServiceUnitTest {
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
         assertEquals(expectedResponse.author, credentialConfiguration.author)
-
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)
@@ -349,7 +347,6 @@ class CredentialConfigurationServiceUnitTest {
         } returns Optional.empty()
 
         credentialConfigurationService.createRegistryConfig(request, workspaceId)
-
     }
 
     @Test

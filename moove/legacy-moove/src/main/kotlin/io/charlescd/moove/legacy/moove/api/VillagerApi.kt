@@ -24,11 +24,11 @@ import io.charlescd.moove.legacy.moove.api.response.BuildResponse
 import io.charlescd.moove.legacy.moove.api.response.ComponentTagsResponse
 import io.charlescd.moove.legacy.moove.api.response.CreateVillagerRegistryConfigurationResponse
 import io.charlescd.moove.legacy.moove.api.response.GetVillagerRegistryConfigurationsResponse
+import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @FeignClient(name = "villagerApi", url = "\${charlescd.villager.url}")
 interface VillagerApi {
@@ -82,5 +82,4 @@ interface VillagerApi {
     fun getRegistryConfigurations(
         @RequestHeader("x-workspace-id") workspaceId: String
     ): List<GetVillagerRegistryConfigurationsResponse>
-
 }

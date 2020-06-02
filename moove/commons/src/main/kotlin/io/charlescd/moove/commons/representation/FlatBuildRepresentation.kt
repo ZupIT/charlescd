@@ -16,5 +16,7 @@
 
 package io.charlescd.moove.commons.representation
 
-data class FlatBuildRepresentation(val id: String,
-                                   val tag: String)
+data class FlatBuildRepresentation(
+    val id: String,
+    val tag: String
+)
