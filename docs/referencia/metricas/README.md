@@ -2,7 +2,7 @@
 
 As métricas são os indicadores que permitem você quantificar o **desempenho e o status de suas aplicações** a partir da análise de dados expostos pelas próprias aplicações e pelas ferramentas de infraestrutura.
 
-Com o Charles, você pode obter métricas de cada um dos seus círculos, possibilitando assim análises sobre a [**saúde**](https://docs.charlescd.io/primeiros-passos/criando-modulos#metricas-de-saude) **\*\*e o** desempenho dos círculos\*\*.
+Com o Charles, você pode obter métricas de cada um dos seus círculos, possibilitando assim análises sobre a [**saúde**](https://docs.charlescd.io/primeiros-passos/criando-modulos#metricas-de-saude) ****de cada um deles.
 
 ![Painel de m&#xE9;tricas no Charles ](../../.gitbook/assets/metricas%20%281%29.png)
 
