@@ -45,6 +45,7 @@ jobs:
     - uses: codecov/codecov-action@v1
       with:
         fail_ci_if_error: true
-        working-directory: ./butler
+        file: ./butler/coverage/clover.xml
+        flags: butler
       env:
         CI: true
