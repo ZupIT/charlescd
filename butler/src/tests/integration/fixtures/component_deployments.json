@@ -1,0 +1,56 @@
+[
+  {
+    "id": "88a33b0c-c974-4ed7-8c49-c5fa342744af",
+    "moduleDeployment": "97449a4b-e8e2-4bba-9b9c-909853056fa8",
+    "componentId":  "68335d19-ce03-4cf8-84b4-5574257c982e",
+    "buildImageUrl": "build-image-url",
+    "buildImageTag": "build-image-tag",
+    "componentName": "componentName",
+    "status": "CREATED"
+  },
+  {
+    "id": "2c9ceee0-2737-40ab-b684-6f003e5ba323",
+    "moduleDeployment": "86526956-0a9e-49d6-89ce-55c1416d8071",
+    "componentId":  "c41f029d-186c-4097-ad43-1b344b2e8041",
+    "buildImageUrl": "build-image-url",
+    "buildImageTag": "build-image-tag",
+    "componentName": "componentName",
+    "status": "CREATED"
+  },
+  {
+    "id": "27558405-087f-4248-9221-10ee882ddb70",
+    "moduleDeployment": "5f046a8a-e138-4d2d-8dc2-5cc9927ffcae",
+    "componentId":  "f4c4bcbe-58a9-41cc-ad8b-7177121905de",
+    "buildImageUrl": "build-image-url",
+    "buildImageTag": "build-image-tag",
+    "componentName": "componentName",
+    "status": "CREATED"
+  },
+  {
+    "id": "7f53dac7-c80f-49c2-bec8-75af38afd6fe",
+    "moduleDeployment": "5f046a8a-e138-4d2d-8dc2-5cc9927ffcae",
+    "componentId":  "800c681f-fee0-4846-b2f7-d9c23252c213",
+    "buildImageUrl": "build-image-url2",
+    "buildImageTag": "build-image-tag2",
+    "componentName": "componentName2",
+    "status": "CREATED"
+  },
+  {
+    "id": "7fd0b01f-9873-4eb5-9e57-99fd55395451",
+    "moduleDeployment": "5f046a8a-e138-4d2d-8dc2-5cc9927ffcae",
+    "componentId":  "68335d19-ce03-4cf8-84b4-5574257c982e",
+    "buildImageUrl": "build-image-url",
+    "buildImageTag": "build-image-tag",
+    "componentName": "componentName",
+    "status": "CREATED"
+  },
+  {
+    "id": "8f6dc70d-e49e-4fb9-b92e-0d9cd3018428",
+    "moduleDeployment": "6d5879d9-8035-43ab-8da0-84cb0d02ed87",
+    "componentId":  "5acefbad-2864-4bc7-97e6-e3c3c9ef6fd9",
+    "buildImageUrl": "build-image-url3",
+    "buildImageTag": "build-image-tag3",
+    "componentName": "componentName3",
+    "status": "CREATED"
+  }
+]

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import { ComponentEntity } from '../../../app/api/components/entity'
 import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
@@ -18,7 +34,6 @@ import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('Pipeline Deployments Service', () => {
   let pipelineDeploymentsService: PipelineDeploymentsService
-  let cdStrategyFactory: CdStrategyFactory
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
@@ -34,19 +49,15 @@ describe('Pipeline Deployments Service', () => {
     }).compile()
 
     pipelineDeploymentsService = module.get<PipelineDeploymentsService>(PipelineDeploymentsService)
-    cdStrategyFactory = module.get<CdStrategyFactory>(CdStrategyFactory)
-
   })
 
   it('triggers deployment without error', async () => {
     const moduleEntity = new ModuleEntity(
       'module-id',
-      null,
       []
     )
     const componentEntity = new ComponentEntity('component-id')
     componentEntity.module = moduleEntity
-    componentEntity.module.cdConfigurationId = 'cd-config-id'
 
     const componentDeployment = new ComponentDeploymentEntity(
       'dummy-id',
@@ -72,7 +83,8 @@ describe('Pipeline Deployments Service', () => {
       'callback-url',
       circle,
       false,
-      'incoming-circle-id'
+      'incoming-circle-id',
+        'cd-configuration-id'
     )
     moduleDeployment.deployment = deploymentEntity
     componentDeployment.moduleDeployment = moduleDeployment

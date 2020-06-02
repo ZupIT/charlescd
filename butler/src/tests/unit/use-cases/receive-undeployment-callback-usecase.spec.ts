@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import { ReceiveUndeploymentCallbackUsecase } from '../../../app/api/notifications/use-cases'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
@@ -38,7 +54,7 @@ import {
 import { Repository } from 'typeorm'
 import { QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
 
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums';
+import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
 
 describe('ReceiveUndeploymentCallbackUsecase', () => {
 
@@ -134,7 +150,8 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
             'dummy-callback-url',
             null,
             false,
-            'another-circle-id'
+            'another-circle-id',
+            'cd-configuration-id'
         )
 
         undeployment = new UndeploymentEntity(
@@ -144,7 +161,6 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
         )
         undeployment.deployment = deployment
         undeployment.status  = UndeploymentStatusEnum.SUCCEEDED
-
 
         componentUndeployment = new ComponentUndeploymentEntity(
             componentDeployments[0]
@@ -219,7 +235,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
                 1234,
                 successfulFinishUndeploymentDto
             )
-            expect(mooveSpy).toHaveBeenCalledWith(deployment.id,NotificationStatusEnum.UNDEPLOYED,deployment.callbackUrl,undeployment.circleId)
+            expect(mooveSpy).toHaveBeenCalledWith(deployment.id, NotificationStatusEnum.UNDEPLOYED, deployment.callbackUrl, undeployment.circleId)
         })
     })
 })

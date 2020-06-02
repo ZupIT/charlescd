@@ -1,5 +1,20 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { HttpService, Inject, Injectable } from '@nestjs/common'
-import { AxiosResponse } from 'axios'
 import { Observable, of, throwError } from 'rxjs'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { AppConstants } from '../../constants'
@@ -17,29 +32,30 @@ export class MooveService {
     private readonly envConfiguration: IEnvConfiguration
   ) { }
 
-  public notifyDeploymentStatus(
+  public async notifyDeploymentStatus(
     deploymentId: string,
     status: string,
     callbackUrl: string,
     circleId: string
-  ): Observable<AxiosResponse> {
+  ): Promise<void> {
 
     try {
       this.consoleLoggerService.log('START:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
-      return this.httpService.post(
+      await this.httpService.post(
         callbackUrl,
         { deploymentStatus: status },
         { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
       ).pipe(
         map(response => response),
         retryWhen(error => this.getNotificationRetryCondition(error))
-      )
-      this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS')
+      ).toPromise()
+      this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
       throw error
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getNotificationRetryCondition(deployError: Observable<any>) {
 
     return deployError.pipe(
@@ -51,6 +67,7 @@ export class MooveService {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getNotificationRetryPipe(error: Observable<any>, attempts: number) {
 
     return of(error).pipe(
