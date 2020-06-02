@@ -1,4 +1,4 @@
-name: quiz_app-backend dev-release
+name: quiz-app-backend dev-release
 
 on:
   push:
