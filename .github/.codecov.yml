@@ -5,7 +5,6 @@ coverage:
         target: auto
         threshold: 0%
         if_not_found: success
-        if_no_uploads: success
         flags: 
           - villager
           - circlematcher
@@ -40,10 +39,9 @@ coverage:
           - ui
     patch:
       default:
-        target: 100%
+        target: 70%
         threshold: 0%
         if_not_found: success
-        if_no_uploads: success
         flags: 
           - villager
           - circlematcher
