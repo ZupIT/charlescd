@@ -37,7 +37,7 @@ coverage:
           - ui
     patch:
       default:
-        target: 100%
+        target: 80%
         threshold: 0%
         flags: 
           - villager
@@ -72,3 +72,6 @@ flags:
     paths:
       - ui/
     carryforward: true
+
+ignore:
+  - ".github/**/*"
