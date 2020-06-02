@@ -36,6 +36,11 @@ coverage:
         target: 30%
         flags:
           - ui
+      docs:
+        target: 0%
+        if_not_found: success
+        flags:
+          - docs
     patch:
       default:
         target: 70%
@@ -47,6 +52,7 @@ coverage:
           - moove
           - butler
           - ui
+          - docs
       
 flags:
   villager:
@@ -71,5 +77,8 @@ flags:
     carryforward: true
   ui:
     paths:
-      - ui/
+      - ui/ 
+  docs:
+    paths:
+      - docs/
     carryforward: true
