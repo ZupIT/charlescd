@@ -8,25 +8,21 @@ coverage:
         
       villager:
         target: 30%
-        if_not_found: success
         flags:
           - villager
       
       circlematcher:
         target: 70%
-        if_not_found: success
         flags:
           - circlematcher
       
       octopipe:
         target: 30%
-        if_not_found: success
         flags:
           - octopipe
       
       moove:
         target: 50%
-        if_not_found: success
         flags:
           - moove
       
@@ -77,7 +73,7 @@ flags:
     carryforward: true 
 
 ignore:
-  - "docs"
-  - ".github"
-  - "images"
-  - "tracing"
+  - "docs/"
+  - ".github/"
+  - "images/"
+  - "tracing/"
