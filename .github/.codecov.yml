@@ -30,8 +30,7 @@ coverage:
           - moove
     patch:
       default:
-        target: 70%
-        if_not_found: success
+        target: 80%
         threshold: 0%
         flags: 
           - villager
