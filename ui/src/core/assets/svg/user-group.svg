@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="13px" viewBox="0 0 12 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 64 (101010) - https://sketch.com -->
+    <title>245B3344-FF50-4FD6-ACEC-8AC50C9F1E98</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-8.6%" y="-22.3%" width="117.1%" height="144.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.320886145 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <path d="M10.125,6.081 C11.2285,6.366 11.9995,7.361 11.9999978,8.4995 L11.9999978,9.5 C11.9999978,9.7765 11.7765,10 11.4999978,10 C11.2235,10 10.9999978,9.7765 10.9999978,9.5 L10.9999978,8.5 C10.9995,7.817 10.537,7.22 9.875,7.049 C9.6075,6.98 9.447,6.707 9.516,6.44 C9.585,6.1725 9.8575,6.01 10.125,6.081 Z M6.5,6 C7.8785,6 9,7.1215 9,8.5 L9,9.5 C9,9.7765 8.7765,10 8.5,10 C8.2235,10 8,9.7765 8,9.5 L8,8.5 C8,7.673 7.327,7 6.5,7 L2.5,7 C1.673,7 1,7.673 1,8.5 L1,9.5 C1,9.7765 0.776,10 0.5,10 C0.224,10 0,9.7765 0,9.5 L0,8.5 C0,7.1215 1.1215,6 2.5,6 L6.5,6 Z M4.5,0 C5.8785,0 7,1.1215 7,2.5 C7,3.8785 5.8785,5 4.5,5 C3.1215,5 2,3.8785 2,2.5 C2,1.1215 3.1215,0 4.5,0 Z M8.124,0.08045 C9.4595,0.42245 10.2675,1.78695 9.926,3.12245 C9.699,4.00745 9.009,4.69795 8.124,4.92445 C8.0825,4.93495 8.0405,4.93995 7.9995,4.93995 C7.777,4.93995 7.573,4.78995 7.5155,4.56395 C7.4475,4.29645 7.6085,4.02395 7.876,3.95545 C8.4065,3.81945 8.8215,3.40545 8.957,2.87445 C9.162,2.07345 8.677,1.25445 7.876,1.04945 C7.6085,0.98095 7.4475,0.70845 7.5155,0.44095 C7.584,0.17345 7.8575,0.01145 8.124,0.08045 Z M4.5,1 C3.673,1 3,1.673 3,2.5 C3,3.327 3.673,4 4.5,4 C5.327,4 6,3.327 6,2.5 C6,1.673 5.327,1 4.5,1 Z" id="path-user-group"></path>
+    </defs>
+    <g id="Workspaces" stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
+        <g id="Settings---Workspace---11.0---Add-group-permissions" transform="translate(-521.000000, -253.000000)">
+            <g id="Group-10" transform="translate(514.000000, 239.000000)">
+                <g id="Menu-lateral" transform="translate(7.000000, 12.000000)">
+                    <g id="History">
+                        <g id="Icon/Controls/Rotate/Left" transform="translate(0.000000, 3.000000)">
+                            <mask id="mask-user-group" fill="currentColor">
+                                <use xlink:href="#path-user-group"></use>
+                            </mask>
+                            <use id="Icon-User-Group" fill="currentColor" fill-rule="evenodd" xlink:href="#path-user-group"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

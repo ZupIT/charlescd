@@ -1,6 +1,0 @@
-HOST=https://darwin-api.itiaws.dev/moove
-NOTIFICATION=https://darwin-api.itiaws.dev
-CONSUL=https://consul-darwin.apirealwave.io
-APM=https://darwin-apm-manager-consumer.itiaws.dev
-KEYCLOAK=https://darwin-keycloak.itiaws.dev
-CIRCLE_MATCHER=https://darwin-api.itiaws.dev/darwin-circle-matcher
