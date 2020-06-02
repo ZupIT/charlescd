@@ -8,8 +8,8 @@ Um **módulo** é a sua aplicação que está armazenada em um repositório do *
 
 Para adicioná-los, acesse o menu **Modules** __no **workspace** desejado, e __siga os seguintes passos:
 
-* **Nome**: o nome do módulo deve ser o mesmo nome do seu repositório. 
-* **Git URL**: informe a URL do seu repositório. Por exemplo: [https://github.com/ZupIT/charlescd](https://github.com/ZupIT/charlescd).
+* **Nome**: o nome deverá ser a junção da organização e a do módulo, como está no git. Por exemplo: `ZupIt/charlescd`.
+* **Git URL**: informe a URL do seu repositório. Por exemplo: [https://github.com](https://github.com/ZupIT/charlescd).
 
 Se seu repositório tem várias aplicações, cadastre-as como componentes e informe: 
 
