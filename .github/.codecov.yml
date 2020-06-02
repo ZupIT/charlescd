@@ -72,3 +72,6 @@ flags:
     paths:
       - ui/
     carryforward: true
+
+ignore:
+  - ".github/**/*"
