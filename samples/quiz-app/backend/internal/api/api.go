@@ -8,11 +8,18 @@ import (
 	"quiz_app/internal/types"
 )
 
+const (
+	path = "/v1"
+)
+
 func StartAPI() {
 	router := gin.Default()
-	router.GET("/healthcheck", healthCheckHandler)
-	router.GET("/questions", getQuestions)
-	router.POST("/answers", setAnswers)
+
+	apiPath := router.Group(path)
+	apiPath.GET("/healthcheck", healthCheckHandler)
+	apiPath.GET("/questions", getQuestions)
+	apiPath.POST("/answers", setAnswers)
+
 	router.Run(":8080")
 }
 
