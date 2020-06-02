@@ -77,7 +77,7 @@ Você encontra aqui toda a **documentação dos campos editáveis**.
 Por isso, não deixe de customizar os campos caso queira algo gerenciável. 
 {% endhint %}
 
-Para realizar instalar, basta executar o comando abaixo: 
+Para realizar a instalação, basta executar o comando abaixo depois de customizar os campos:
 
 ```text
 // customize tudo que precisa no arquivo values.yaml antes de executar o seguinte comando
