@@ -30,5 +30,4 @@ interface FindAllWorkspaceUsersInteractor {
         email: String?,
         pageRequest: PageRequest
     ): ResourcePageResponse<UserResponse>
-
 }

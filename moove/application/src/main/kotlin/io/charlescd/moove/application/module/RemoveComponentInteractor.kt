@@ -19,5 +19,4 @@ package io.charlescd.moove.application.module
 interface RemoveComponentInteractor {
 
     fun execute(moduleId: String, componentId: String, workspaceId: String)
-
 }

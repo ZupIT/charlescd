@@ -40,5 +40,4 @@ class UpdateGitConfigurationInteractorImpl(private val gitConfigurationService: 
         )
         return GitConfigurationResponse.from(updatedGitConfiguration)
     }
-
 }

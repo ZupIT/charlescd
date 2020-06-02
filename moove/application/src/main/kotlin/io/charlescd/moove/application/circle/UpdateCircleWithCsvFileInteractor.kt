@@ -22,5 +22,4 @@ import io.charlescd.moove.application.circle.response.CircleResponse
 interface UpdateCircleWithCsvFileInteractor {
 
     fun execute(request: UpdateCircleWithCsvRequest, workspaceId: String): CircleResponse
-
 }

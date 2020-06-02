@@ -20,9 +20,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.UserGroup
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class UserGroupExtractor : ResultSetExtractor<Set<UserGroup>> {
@@ -98,5 +98,4 @@ class UserGroupExtractor : ResultSetExtractor<Set<UserGroup>> {
             createdAt = resultSet.getTimestamp("user_group_user_created_at").toLocalDateTime()
         )
     }
-
 }

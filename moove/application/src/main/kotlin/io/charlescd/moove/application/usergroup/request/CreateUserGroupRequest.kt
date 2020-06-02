@@ -39,5 +39,4 @@ data class CreateUserGroupRequest(
             createdAt = LocalDateTime.now()
         )
     }
-
 }

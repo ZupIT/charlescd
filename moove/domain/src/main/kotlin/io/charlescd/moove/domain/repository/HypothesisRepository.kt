@@ -26,5 +26,4 @@ interface HypothesisRepository {
     fun save(hypothesis: Hypothesis): Hypothesis
 
     fun findById(id: String): Optional<Hypothesis>
-
 }

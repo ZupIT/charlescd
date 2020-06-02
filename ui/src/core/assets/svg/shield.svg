@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 64 (101010) - https://sketch.com -->
+    <title>FEB6027D-4755-46BA-A43C-0A7572802626</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <path d="M2.125,2.988125 L2.125,7.5 C2.125,10.343125 5.49375,12.4675 6.499375,13.039375 C7.504375,12.466875 10.875,10.335 10.875,7.5 L10.875,2.988125 L6.5,1.894375 L2.125,2.988125 Z M6.5,14.375 C6.404375,14.375 6.308125,14.353125 6.220625,14.309375 C6.0025,14.2 0.875,11.589375 0.875,7.5 L0.875,2.5 C0.875,2.213125 1.070625,1.963125 1.348125,1.89375 L6.348125,0.64375 C6.448125,0.61875 6.551875,0.61875 6.651875,0.64375 L11.65125,1.89375 C11.93,1.963125 12.125,2.213125 12.125,2.5 L12.125,7.5 C12.125,11.589375 6.9975,14.2 6.779375,14.309375 C6.691875,14.353125 6.595625,14.375 6.5,14.375 L6.5,14.375 Z" id="shield"></path>
+    </defs>
+    <g id="User-group" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Root---User-group---1.2" transform="translate(-469.000000, -13.000000)">
+            <rect fill="#1C1C1E" x="0" y="0" width="1920" height="1241"></rect>
+            <g id="Header" transform="translate(438.000000, 0.000000)">
+                <g id="Group">
+                    <rect id="Rectangle" fill="#2C2C2E" x="0" y="0" width="660" height="41"></rect>
+                    <rect id="Rectangle-Copy-2" fill="#3A3A3C" x="0" y="0" width="233" height="41"></rect>
+                    <g id="name-circle-" transform="translate(31.000000, 13.000000)">
+                        <g id="Icon/User/Circle-Copy" transform="translate(1.000000, 0.000000)">
+                            <mask id="mask-2" fill="white">
+                                <use xlink:href="#shield"></use>
+                            </mask>
+                            <use id="Icon-Shield" fill="currentColor" xlink:href="#shield"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

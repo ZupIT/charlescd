@@ -19,5 +19,4 @@ package io.charlescd.moove.legacy.repository.entity
 enum class DeploymentStatus {
 
     NOT_DEPLOYED, DEPLOYING, DEPLOYED, DEPLOY_FAILED, UNDEPLOYING
-
 }

@@ -69,5 +69,4 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
             }
         }
     }
-
 }

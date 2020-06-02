@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 15 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M2.5,1.5 C2.155625,1.5 1.875,1.780625 1.875,2.125 L1.875,10.875 C1.875,11.22 2.155625,11.5 2.5,11.5 L12.5,11.5 C12.845,11.5 13.125,11.22 13.125,10.875 L13.125,4 C13.125,3.655625 12.845,3.375 12.5,3.375 L6.875,3.375 C6.66625,3.375 6.47125,3.270625 6.355,3.096875 L5.290625,1.5 L2.5,1.5 Z M12.5,12.75 L2.5,12.75 C1.46625,12.75 0.625,11.90875 0.625,10.875 L0.625,2.125 C0.625,1.09125 1.46625,0.25 2.5,0.25 L5.625,0.25 C5.83375,0.25 6.02875,0.354375 6.145,0.528125 L7.209375,2.125 L12.5,2.125 C13.53375,2.125 14.375,2.96625 14.375,4 L14.375,10.875 C14.375,11.90875 13.53375,12.75 12.5,12.75 L12.5,12.75 Z" id="path-folder"></path>
+    </defs>
+    <g id="Hypothesis-folder" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Hypotheses-folder---8.0---Card-aberto" transform="translate(-1274.000000, -348.000000)">
+            <g id="Group-folder-19" transform="translate(384.000000, 80.000000)">
+                <g id="Group-folder-22" transform="translate(890.000000, 86.000000)">
+                    <g id="Group-folder-21-Copy" transform="translate(0.000000, 181.000000)">
+                        <g id="Icon/Miscellaneous/Folder" transform="translate(0.000000, 1.000000)">
+                            <mask-folder id="mask-folder-2" fill="white">
+                                <use xlink:href="#path-folder"></use>
+                            </mask-folder>
+                            <use id="Icon-Folder" fill="currentColor" xlink:href="#path-folder"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

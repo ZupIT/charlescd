@@ -24,12 +24,12 @@ import io.charlescd.moove.commons.extension.toSimpleRepresentation
 import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
-import org.junit.Test
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import org.junit.Test
 
 class MaestroToRepresentationTest {
 
@@ -44,7 +44,6 @@ class MaestroToRepresentationTest {
         val deployment = createDeployment(user, circle, build)
         val secondDeployment = createDeployment(user, circle, build)
         val representation = circle.toManyDeploymentsRepresentation(deployments = listOf(deployment, secondDeployment))
-
 
         assertNotNull(representation)
         assertEquals(representation.deployments[0]?.id, deployment.id)
@@ -129,7 +128,6 @@ class MaestroToRepresentationTest {
         val module = createModule(user)
         val argumentRepresentation = module.toSimpleRepresentation()
 
-
         assertNotNull(argumentRepresentation)
         assertEquals(argumentRepresentation.id, module.id)
         assertEquals(argumentRepresentation.name, module.name)
@@ -148,7 +146,6 @@ class MaestroToRepresentationTest {
         every { mockComponent.module } returns mockModule
         val module = createModule(user)
         val argumentRepresentation = module.toRepresentation()
-
 
         assertNotNull(argumentRepresentation)
         assertEquals(argumentRepresentation.id, module.id)
@@ -171,7 +168,6 @@ class MaestroToRepresentationTest {
         assertNotNull(simpleRepresentation)
         assertEquals(simpleRepresentation.id, component.id)
         assertEquals(simpleRepresentation.name, component.name)
-
     }
 
     @Test
@@ -196,12 +192,10 @@ class MaestroToRepresentationTest {
     fun `should convert feature to simple representation`() {
         val user = createUser()
 
-
         val component = mockkClass(Component::class)
         every { component.id } returns "component-id"
         every { component.name } returns "component-name"
         every { component.createdAt } returns LocalDateTime.now()
-
 
         val feature = createFeature(user)
         val simpleRepresentation = feature.toSimpleRepresentation()

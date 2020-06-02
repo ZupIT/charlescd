@@ -19,11 +19,11 @@
 package io.charlescd.moove.legacy.moove.api
 
 import io.charlescd.moove.legacy.moove.api.request.NodeRequest
+import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @FeignClient(value = "charlesMatcherApi", url = "\${charlescd.matcher.url}", path = "\${charlescd.matcher.path}")
 interface CharlesMatcherApi {
@@ -64,5 +64,4 @@ interface CharlesMatcherApi {
         consumes = [(MediaType.APPLICATION_JSON_UTF8_VALUE)]
     )
     fun importCreate(@RequestBody @Valid request: List<NodeRequest>)
-
 }

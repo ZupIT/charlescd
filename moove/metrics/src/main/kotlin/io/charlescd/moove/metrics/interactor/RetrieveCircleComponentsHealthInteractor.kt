@@ -18,9 +18,7 @@ package io.charlescd.moove.metrics.interactor
 
 import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
 
-
 interface RetrieveCircleComponentsHealthInteractor {
 
     fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation
-
 }

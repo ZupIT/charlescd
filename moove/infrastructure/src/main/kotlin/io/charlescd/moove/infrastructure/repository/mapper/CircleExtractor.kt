@@ -22,9 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.User
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class CircleExtractor : ResultSetExtractor<Set<Circle>> {

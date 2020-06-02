@@ -19,5 +19,4 @@ package io.charlescd.moove.application.configuration
 interface DeleteGitConfigurationByIdInteractor {
 
     fun execute(workspaceId: String, id: String)
-
 }
