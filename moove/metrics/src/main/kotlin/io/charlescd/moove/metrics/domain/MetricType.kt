@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.metrics.domain
 
-enum class MetricType(val unit: String){
+enum class MetricType(val unit: String) {
     REQUESTS_BY_CIRCLE("req/s"),
     REQUESTS_ERRORS_BY_CIRCLE("%"),
     REQUESTS_LATENCY_BY_CIRCLE("ms")

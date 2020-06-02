@@ -17,15 +17,14 @@
 package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Hypothesis
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
 
 interface HypothesisRepository : JpaRepository<Hypothesis, String> {
 
     fun findAllByWorkspaceId(workspaceId: String, pageable: Pageable): Page<Hypothesis>
 
     fun findByIdAndWorkspaceId(id: String, workspaceId: String): Optional<Hypothesis>
-
 }

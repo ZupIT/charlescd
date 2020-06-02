@@ -219,8 +219,9 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric with filter, group and period'() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{circle_source="circle-id", response_status=~"^5.*\$"}[1m])) by(destination_component)
-                        / scalar(sum(irate(istio_charles_request_total{circle_source="circle-id"}[1m])) by(destination_component)) * 100), 0.01)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_total{circle_source=\"circle-id\", response_status=~\"^5.*\$\"}[1m])) by(destination_component) " +
+                "/ scalar(sum(irate(istio_charles_request_total{circle_source=\"circle-id\"}[1m])) by(destination_component)) * 100), 0.01)[5m:15s]"
+
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
                 .groupingBy(Collections.singletonList("destination_component"))
@@ -249,8 +250,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric with filter, period and no grouping'() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{circle_source="circle-id", response_status=~"^5.*\$"}[1m])) by()
-                        / scalar(sum(irate(istio_charles_request_total{circle_source="circle-id"}[1m])) by()) * 100), 0.01)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_total{circle_source=\"circle-id\", response_status=~\"^5.*\$\"}[1m])) by() / scalar(sum(irate(istio_charles_request_total{circle_source=\"circle-id\"}[1m])) by()) * 100), 0.01)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
@@ -277,8 +277,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric with filter, but without period and grouping'() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{circle_source="circle-id", response_status=~"^5.*\$"}[1m])) by()
-                        / scalar(sum(irate(istio_charles_request_total{circle_source="circle-id"}[1m])) by()) * 100), 0.01)"""
+        def query = "round((sum(irate(istio_charles_request_total{circle_source=\"circle-id\", response_status=~\"^5.*\$\"}[1m])) by() / scalar(sum(irate(istio_charles_request_total{circle_source=\"circle-id\"}[1m])) by()) * 100), 0.01)"
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
 
@@ -304,8 +303,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric grouped by, with period and no filter'() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{response_status=~"^5.*\$"}[1m])) by(destination_component)
-                        / scalar(sum(irate(istio_charles_request_total{}[1m])) by(destination_component)) * 100), 0.01)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_total{response_status=~\"^5.*\$\"}[1m])) by(destination_component) / scalar(sum(irate(istio_charles_request_total{}[1m])) by(destination_component)) * 100), 0.01)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .groupingBy(Collections.singletonList("destination_component"))
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
@@ -333,8 +331,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric grouped by without period and filter'() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{response_status=~"^5.*\$"}[1m])) by(destination_component)
-                        / scalar(sum(irate(istio_charles_request_total{}[1m])) by(destination_component)) * 100), 0.01)"""
+        def query = "round((sum(irate(istio_charles_request_total{response_status=~\"^5.*\$\"}[1m])) by(destination_component) / scalar(sum(irate(istio_charles_request_total{}[1m])) by(destination_component)) * 100), 0.01)"
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .groupingBy(Collections.singletonList("destination_component"))
 
@@ -361,8 +358,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric with no filter, no group, but with period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{response_status=~"^5.*\$"}[1m])) by()
-                        / scalar(sum(irate(istio_charles_request_total{}[1m])) by()) * 100), 0.01)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_total{response_status=~\"^5.*\$\"}[1m])) by() / scalar(sum(irate(istio_charles_request_total{}[1m])) by()) * 100), 0.01)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_total")
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
 
@@ -388,8 +384,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get requests error metric with no filter, no group and no period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_total{response_status=~"^5.*\$"}[1m])) by()
-                        / scalar(sum(irate(istio_charles_request_total{}[1m])) by()) * 100), 0.01)"""
+        def query = "round((sum(irate(istio_charles_request_total{response_status=~\"^5.*\$\"}[1m])) by() / scalar(sum(irate(istio_charles_request_total{}[1m])) by()) * 100), 0.01)"
         def searchMetric = new SearchMetric("istio_charles_request_total")
 
         def prometheusResponse = new PrometheusMetricResponse("success",
@@ -414,8 +409,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric with filter, group and latency '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source="circle-id"}[1m])) by(destination_component)
-                        / sum(irate(istio_charles_request_duration_seconds_count{circle_source="circle-id"}[1m])) by(destination_component)) * 1000)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source=\"circle-id\"}[1m])) by(destination_component) / sum(irate(istio_charles_request_duration_seconds_count{circle_source=\"circle-id\"}[1m])) by(destination_component)) * 1000)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
                 .groupingBy(Collections.singletonList("destination_component"))
@@ -444,8 +438,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric with filter and period, but not grouped '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source="circle-id"}[1m])) by()
-                        / sum(irate(istio_charles_request_duration_seconds_count{circle_source="circle-id"}[1m])) by()) * 1000)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source=\"circle-id\"}[1m])) by() / sum(irate(istio_charles_request_duration_seconds_count{circle_source=\"circle-id\"}[1m])) by()) * 1000)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
@@ -472,8 +465,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric with filter, but not grouped and without period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source="circle-id"}[1m])) by()
-                        / sum(irate(istio_charles_request_duration_seconds_count{circle_source="circle-id"}[1m])) by()) * 1000)"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{circle_source=\"circle-id\"}[1m])) by() / sum(irate(istio_charles_request_duration_seconds_count{circle_source=\"circle-id\"}[1m])) by()) * 1000)"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .filteringBy(Collections.singletonList(new SearchMetricFilter("circle_source", Collections.singletonList("circle-id"), FilterKind.EQUAL)))
 
@@ -499,8 +491,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric grouped by, with period, bit without filter '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by(destination_component)
-                        / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by(destination_component)) * 1000)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by(destination_component) / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by(destination_component)) * 1000)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .groupingBy(Collections.singletonList("destination_component"))
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
@@ -528,8 +519,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric grouped by, without filter or period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by(destination_component)
-                        / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by(destination_component)) * 1000)"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by(destination_component) / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by(destination_component)) * 1000)"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .groupingBy(Collections.singletonList("destination_component"))
 
@@ -556,8 +546,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric with no filter and no group, but with period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by()
-                        / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by()) * 1000)[5m:15s]"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by() / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by()) * 1000)[5m:15s]"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
                 .forPeriod(new Period(5, PeriodUnit.MINUTES, 15, PeriodUnit.SECONDS))
 
@@ -583,8 +572,7 @@ class PrometheusServiceUnitTest extends Specification {
 
     def 'should get latency metric with no filter, no group and no period '() {
         given:
-        def query = """round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by()
-                        / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by()) * 1000)"""
+        def query = "round((sum(irate(istio_charles_request_duration_seconds_sum{}[1m])) by() / sum(irate(istio_charles_request_duration_seconds_count{}[1m])) by()) * 1000)"
         def searchMetric = new SearchMetric("istio_charles_request_duration_seconds")
 
         def prometheusResponse = new PrometheusMetricResponse("success",

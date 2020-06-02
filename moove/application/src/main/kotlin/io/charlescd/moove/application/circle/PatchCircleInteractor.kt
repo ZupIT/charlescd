@@ -21,6 +21,5 @@ import io.charlescd.moove.application.circle.response.CircleResponse
 
 interface PatchCircleInteractor {
 
-    fun execute(id: String, request: PatchCircleRequest) : CircleResponse
-
+    fun execute(id: String, request: PatchCircleRequest): CircleResponse
 }

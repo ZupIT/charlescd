@@ -44,7 +44,7 @@ class DisassociateUserGroupFromWorkspaceInteractorImpl @Inject constructor(
         workspaceService.disassociateUserGroupAndPermissions(workspace.id, userGroup.id)
         userGroup.users.forEach { user ->
             val userPermissionsFlatten = workspaceService.findUserPermissions(workspaceId, user).values.flatten().distinct()
-            if(!userPermissionsFlatten.containsAll(permissionsToBeRemoved)) {
+            if (!userPermissionsFlatten.containsAll(permissionsToBeRemoved)) {
                 keycloakService.removePermissionsFromUser(workspace.id, user, permissionsToBeRemoved.minus(userPermissionsFlatten))
             }
         }

@@ -18,9 +18,7 @@ package io.charlescd.moove.metrics.connector
 
 import io.charlescd.moove.domain.MetricConfiguration
 
-
 interface MetricServiceFactory {
 
     fun getConnector(provider: MetricConfiguration.ProviderEnum): MetricService
-
 }

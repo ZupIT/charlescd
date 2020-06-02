@@ -45,7 +45,6 @@ abstract class GitService {
         baseBranchName: String = BASE_BRANCH
     ): Optional<String>
 
-
     abstract fun createRelease(
         gitCredentials: GitCredentials,
         repository: String,

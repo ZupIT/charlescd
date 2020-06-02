@@ -17,9 +17,9 @@
 package io.charlescd.moove.legacy.moove.api.request
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.jetbrains.annotations.NotNull
 import javax.validation.Valid
 import javax.validation.constraints.Size
+import org.jetbrains.annotations.NotNull
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class NodeRequest(
