@@ -29,7 +29,7 @@ Você pode saber mais sobre a **configuração do Spinnaker e do Octopipe** na s
 
 ## Principais casos de instalação 
 
-### Caso 1: Instalação para testes
+### Caso 1: Instalação rápida 
 
 Esta é a instalação mais recomendada para quem nunca usou o CharlesCD antes e já quer ter o **primeiro contato em um ambiente de testes,** sem olhar ainda para escalabilidade ou segurança.
 
@@ -52,45 +52,37 @@ Ao final do processo, você terá dentro do namespace `charles` todos os módulo
 Como essa instalação serve **apenas para o uso em ambiente de testes**, não recomendamos esse caso de instalação para ambientes produtivos porque ele não inclui cuidados como: backups do banco de dados, alta disponibilidade, entre outros.
 {% endhint %}
 
-### Caso 2: Instalação customizada
+### 
 
-Nesta forma de instalação, é possível customizar alguns campos por meio do **nosso CLI** e de um arquivo de configuração que contém todos os campos disponíveis para edição. 
+### Caso 1: Instalação com helm charts
 
-Customizando o arquivo, você tem algumas opções, como:
+Esta é a instalação indicada para quem possui uma infraestrutura já montada devido a um ambiente mais complexo ou possua algumas limitações de segurança e/ou escalabilidade, exigindo uma **customização mais completa da instalação** do CharlesCD.
 
-* Usar um banco de dados gerenciado.
-* Adicionar novas credenciais de clusters.
-* Alterar a versão do CharlesCD.
-* Utilizar um Spinnaker já instalado previamente.
-* Habilitar \(ou não\) o Load Balancer padrão.
+### Pré-requisitos 
 
-Essa instalação pode ser usada t**anto para testes quanto para ambiente produtivos**, tudo vai depender dos valores que você definir no arquivo de configuração. Caso você não altere nada, terá o mesmo resultado da instalação citada anteriormente - para testes -.
+Para realizar o processo, é necessário ter os seguintes programas: 
 
-### Caso 3: Instalação com Terraform
+* Kubectl
+* Helm 
 
-Esta forma de instalação é muito específica, indicada somente para quem já utiliza o Terraform para criar e versionar sua infraestrutura. 
+### Como funciona
 
-Para esse caso, temos atualmente suporte para **GCP** e **AWS,** e estamos no processo de adicionar a **AZURE**. 
+Neste tipo de instalação, o principal diferencial é a customização. Para isso, disponibilizamos um **template helm** com todos os campos disponíveis para alteração, incluindo os de banco de dados e recursos consumidos. 
 
-Nesse **repositório**, você encontra todos os recursos de banco de dados \(_PostgreSQL e Redis_\), além da execução de _helm releases_ dos nossos módulos já consumindo os valores gerados pelos outros resources. Tudo isso separado por cloud.
-
-### Caso 4: Customização total
-
-Recomendamos este tipo de instalação caso você queira editar mais campos dos que os disponibilizados pelo CLI ou ainda instalar módulos à parte para testes. Nesses casos, você pode acessar direto os **charts puros do produto**.
-
-### Especificidades
-
-Se você optar pela customização total, é preciso ter em mente algumas especificações:
-
-#### **Ordem**
-
-Apesar dos módulos do charles serem independentes entre si, existem casos em são necessárias algumas pré-configurações. Abaixo, descrevemos melhor cada uma delas: 
-
-* `charlescd-moove`: este módulo exige um banco de dados \(_PostgreSQL_\) e que o _Keycloak_ esteja configurado. Nessa configuração, você pode customizar a **URL** do _Keycloak_, assim como o _client_ e _client-secret_. 
+Você encontra aqui toda a **documentação dos campos editáveis**. 
 
 {% hint style="info" %}
-Caso tenha instalado com o caso para testes ou com a customização do CLI, não será necessário seguir esses passos. 
+É importante lembrar que, caso não seja feita nenhuma customização, o resultado final será igual ao do **caso 1** em que, por padrão, instalamos o PostgreSQL, Redis, Keycloak e Octopipe. 
+
+Por isso, não deixe de customizar os campos caso queira algo gerenciável. 
 {% endhint %}
 
-* `charlescd-circle-matcher`: este módulo exige um redis instalado para funcionar.
+Para realizar instalar, basta executar o comando abaixo: 
+
+```text
+// customize tudo que precisa no arquivo values.yaml antes de executar o seguinte comando
+helm install charlescd <repo-folder> -n <namespace>
+```
+
+
 
