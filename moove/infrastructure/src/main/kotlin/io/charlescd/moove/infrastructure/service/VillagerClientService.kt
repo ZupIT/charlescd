@@ -106,7 +106,7 @@ class VillagerClientService(private val villagerClient: VillagerClient) : Villag
 
     private fun createBuildRequest(build: Build, registryConfigurationId: String): VillagerBuildRequest {
         return VillagerBuildRequest(
-            tagName = createTagName(build),
+            tagName = build.tag,
             callbackUrl = createCallbackUrl(build),
             modules = createModuleParts(build, registryConfigurationId)
         )
@@ -130,13 +130,9 @@ class VillagerClientService(private val villagerClient: VillagerClient) : Villag
         return module.components.map { component ->
             BuildModuleComponentPart(
                 component.name,
-                createTagName(build)
+                build.tag
             )
         }
-    }
-
-    private fun createTagName(build: Build): String {
-        return build.tag.removePrefix("release-")
     }
 
     private fun createCallbackUrl(build: Build): String {
