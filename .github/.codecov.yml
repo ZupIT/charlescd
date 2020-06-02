@@ -1,8 +1,7 @@
 coverage:
   status:
-    change: off
     project:
-       default:	
+      default:	
         target: auto	
         threshold: 0%
         if_not_found: success
@@ -41,7 +40,7 @@ coverage:
           - ui
 
     patch:
-     default:	
+      default:	
         target: 80%
         if_not_found: success
         threshold: 0%
@@ -68,17 +67,17 @@ flags:
     carryforward: true
     
   butler:
-   paths:
-     - butler/
-   carryforward: true
+    paths:
+      - butler/
+    carryforward: true
    
   ui:
-   paths:
+    paths:
      - ui/
-   carryforward: true 
+    carryforward: true 
 
 ignore:
-  - "docs/**/*"
-  - ".github/**/*"
-  - "images/**/*"
-  - "tracing/**/*"
+  - "docs"
+  - ".github"
+  - "images"
+  - "tracing"
