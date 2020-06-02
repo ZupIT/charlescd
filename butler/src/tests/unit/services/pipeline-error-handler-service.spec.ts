@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import {
     PipelineErrorHandlerService,
@@ -35,7 +51,6 @@ import {
     QueuedPipelineStatusEnum,
     UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
-import { ModuleEntity } from '../../../app/api/modules/entity'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
 
 describe('Pipeline Error Handler Service specs', () => {
@@ -44,7 +59,6 @@ describe('Pipeline Error Handler Service specs', () => {
     let pipelineQueuesService: PipelineQueuesService
     let deploymentsRepository: Repository<DeploymentEntity>
     let moduleDeploymentsRepository: Repository<ModuleDeploymentEntity>
-    let statusManagementService: StatusManagementService
     let mooveService: MooveService
     let deployment: DeploymentEntity
     let undeploymentDeployment: DeploymentEntity
@@ -56,8 +70,6 @@ describe('Pipeline Error Handler Service specs', () => {
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentEntity: ComponentEntity
     let componentEntityUpdated: ComponentEntity
-    let moduleEntity: ModuleEntity
-    let queuedDeploymentsRepository: QueuedDeploymentsRepository
     let componentsRepository: Repository<ComponentEntity>
     let queuedDeployment: QueuedDeploymentEntity
     let circle: CircleDeploymentEntity
@@ -84,9 +96,7 @@ describe('Pipeline Error Handler Service specs', () => {
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentsRepository')
         componentsRepository = module.get<Repository<ComponentEntity>>('ComponentEntityRepository')
-        queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         mooveService = module.get<MooveService>(MooveService)
 
         componentDeployment = new ComponentDeploymentEntity(
@@ -113,7 +123,8 @@ describe('Pipeline Error Handler Service specs', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         undeployment = new UndeploymentEntity(
@@ -140,7 +151,8 @@ describe('Pipeline Error Handler Service specs', () => {
             'callback-url',
             circle,
             false,
-            'incoming-circle-id'
+            'incoming-circle-id',
+            'cd-configuration-id'
         )
 
         deploymentFailed = new DeploymentEntity(
@@ -152,7 +164,8 @@ describe('Pipeline Error Handler Service specs', () => {
             'callback-url',
             null,
             true,
-            'incoming-circle-id'
+            'incoming-circle-id',
+            'cd-configuration-id'
         )
         deploymentFailed.status = DeploymentStatusEnum.FAILED
 
@@ -177,13 +190,6 @@ describe('Pipeline Error Handler Service specs', () => {
         pipelineOptionsUpdated = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
         componentEntity.pipelineOptions =  pipelineOptions
         componentEntityUpdated.pipelineOptions =  pipelineOptionsUpdated
-
-        moduleEntity = new ModuleEntity(
-            'module-id',
-            'k8s-id',
-            [componentEntity]
-        )
-
         componentDeployment = new ComponentDeploymentEntity(
             'dummy-id',
             'dummy-name',

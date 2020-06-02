@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
   BaseEntity,
   Column,
@@ -29,7 +45,7 @@ export class ComponentEntity extends BaseEntity {
   public id: string
 
   @ManyToOne(
-    type => ModuleEntity,
+    () => ModuleEntity,
     moduleEntity => moduleEntity.components
   )
   @JoinColumn({ name: 'module_id' })
@@ -41,7 +57,7 @@ export class ComponentEntity extends BaseEntity {
   })
   public pipelineOptions: IPipelineOptions
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(
@@ -61,47 +77,31 @@ export class ComponentEntity extends BaseEntity {
   }
 
   public setPipelineDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
-    try {
-      this.removeCurrentDefaultCircle()
-      this.addDefaultCircle(componentDeployment)
-      this.setUnusedVersions()
-      this.addVersion(componentDeployment)
-    } catch (error) {
-      throw error
-    }
+    this.removeCurrentDefaultCircle()
+    this.addDefaultCircle(componentDeployment)
+    this.setUnusedVersions()
+    this.addVersion(componentDeployment)
   }
 
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
-    try {
-      this.removeCurrentCircleRule(circle)
-      this.addCircleRule(circle, componentDeployment)
-      this.setUnusedVersions()
-      this.addVersion(componentDeployment)
-    } catch (error) {
-      throw error
-    }
+    this.removeCurrentCircleRule(circle)
+    this.addCircleRule(circle, componentDeployment)
+    this.setUnusedVersions()
+    this.addVersion(componentDeployment)
   }
 
   public unsetPipelineCircle(circle: CircleDeploymentEntity): void {
-    try {
-      this.removeCurrentCircleRule(circle)
-      this.setUnusedVersions()
-    } catch (error) {
-      throw error
-    }
+    this.removeCurrentCircleRule(circle)
+    this.setUnusedVersions()
   }
 
   public removePipelineCircle(circle: CircleDeploymentEntity): void {
-    try {
-      this.removeCurrentCircleRule(circle)
-    } catch (error) {
-      throw error
-    }
+    this.removeCurrentCircleRule(circle)
   }
 
   private removeCurrentCircleRule(circle: CircleDeploymentEntity): void {
     this.pipelineOptions.pipelineCircles = this.pipelineOptions.pipelineCircles.filter(
-        pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
+      pipelineCircle => !pipelineCircle.header || pipelineCircle.header.headerValue !== circle.headerValue
     )
   }
 
@@ -133,12 +133,12 @@ export class ComponentEntity extends BaseEntity {
 
   private setUnusedVersions(): void {
     const currentVersions: IDeploymentVersion[] = this.pipelineOptions.pipelineVersions.filter(pipelineVersion =>
-        !!this.pipelineOptions.pipelineCircles.find(
-            pipelineCircle => pipelineCircle.destination.version === pipelineVersion.version
-        )
+      !!this.pipelineOptions.pipelineCircles.find(
+        pipelineCircle => pipelineCircle.destination.version === pipelineVersion.version
+      )
     )
     const unusedVersions: IDeploymentVersion[] =
-        this.pipelineOptions.pipelineVersions.filter(pipelineVersion => !currentVersions.includes(pipelineVersion))
+      this.pipelineOptions.pipelineVersions.filter(pipelineVersion => !currentVersions.includes(pipelineVersion))
 
     this.pipelineOptions.pipelineVersions = currentVersions
     this.pipelineOptions.pipelineUnusedVersions = unusedVersions
@@ -146,7 +146,7 @@ export class ComponentEntity extends BaseEntity {
 
   private addVersion(componentDeployment: ComponentDeploymentEntity): void {
     this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(
-        pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
+      pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
     )
     this.pipelineOptions.pipelineVersions.push({
       versionUrl: componentDeployment.buildImageUrl,

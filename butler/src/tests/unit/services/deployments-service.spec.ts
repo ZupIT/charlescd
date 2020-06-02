@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import {
     DeploymentsService,
@@ -18,21 +34,12 @@ import {
     ModuleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import {
-    CreateCircleDeploymentDto,
-    CreateCircleDeploymentRequestDto
-} from '../../../app/api/deployments/dto'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
 
 describe('Deployments service specs', () => {
     let deploymentsService: DeploymentsService
-    let pipelineQueuesService: PipelineQueuesService
     let deploymentsRepository: Repository<DeploymentEntity>
-    let statusManagementService: StatusManagementService
-    let mooveService: MooveService
-    let createCircleDeploymentDto: CreateCircleDeploymentDto
-    let createDeploymentDto: CreateCircleDeploymentRequestDto
     let circle: CircleDeploymentEntity
     let deployment: DeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
@@ -53,23 +60,6 @@ describe('Deployments service specs', () => {
 
         deploymentsService = module.get<DeploymentsService>(DeploymentsService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-        pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
-        mooveService = module.get<MooveService>(MooveService)
-
-        createCircleDeploymentDto = new CreateCircleDeploymentDto(
-            'header-value'
-        )
-
-        createDeploymentDto = new CreateCircleDeploymentRequestDto(
-            'deployment-id',
-            'application-name',
-            [],
-            'author-id',
-            'description',
-            'callback-url',
-            createCircleDeploymentDto
-        )
 
         circle = new CircleDeploymentEntity('header-value')
 
@@ -95,7 +85,8 @@ describe('Deployments service specs', () => {
             'callback-url',
             circle,
             false,
-            'incoming-circle-id'
+            'incoming-circle-id',
+            'cd-configuration-id'
         )
     })
 

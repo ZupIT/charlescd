@@ -1,6 +1,21 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import {
-    CreateCircleDeploymentRequestUsecase,
     CreateDefaultDeploymentRequestUsecase
 } from '../../../app/api/deployments/use-cases'
 import {
@@ -15,12 +30,13 @@ import {
     QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import {
+    ModulesService,
     PipelineDeploymentsService,
     PipelineErrorHandlerService,
     PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
-    ConsoleLoggerServiceStub,
+    ConsoleLoggerServiceStub, ModulesServiceStub,
     PipelineDeploymentsServiceStub,
     PipelineErrorHandlerServiceStub,
     PipelineQueuesServiceStub
@@ -31,7 +47,6 @@ import {
     DeploymentEntity,
     ModuleDeploymentEntity,
     QueuedDeploymentEntity,
-    UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import {
     CreateCircleDeploymentDto,
@@ -45,7 +60,6 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
 
     let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
     let deploymentsRepository: Repository<DeploymentEntity>
-    let componentDeploymentsRepository: ComponentDeploymentsRepository
     let deployment: DeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
@@ -53,6 +67,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
     let createDeploymentDto: CreateCircleDeploymentRequestDto
     let queuedDeploymentsRepository: QueuedDeploymentsRepository
     let queuedDeployment: QueuedDeploymentEntity
+    let modulesService: ModulesService
 
     beforeEach(async () => {
 
@@ -68,13 +83,14 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
+                { provide: ModulesService, useClass: ModulesServiceStub}
             ]
         }).compile()
 
         createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
-        componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+        modulesService = module.get<ModulesService>(ModulesService)
 
         componentDeployments = [
             new ComponentDeploymentEntity(
@@ -108,7 +124,8 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         createCircleDeploymentDto = new CreateCircleDeploymentDto(
@@ -122,7 +139,8 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
             'author-id',
             'description',
             'callback-url',
-            createCircleDeploymentDto
+            createCircleDeploymentDto,
+            'cd-configuration-id'
         )
 
         queuedDeployment = new QueuedDeploymentEntity(
@@ -139,6 +157,8 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 .mockImplementation(() => Promise.resolve(deployment))
             jest.spyOn(queuedDeploymentsRepository, 'save')
                 .mockImplementation(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(modulesService, 'createModules')
+                .mockImplementation()
 
             expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
                 .toEqual(deployment.toReadDto())
@@ -152,6 +172,8 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 .mockImplementationOnce(
                     () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
                 ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+            jest.spyOn(modulesService, 'createModules')
+                .mockImplementation()
 
             expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
                 .toEqual(deployment.toReadDto())
