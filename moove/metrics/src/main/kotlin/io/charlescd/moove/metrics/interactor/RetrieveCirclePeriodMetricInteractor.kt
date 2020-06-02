@@ -22,8 +22,10 @@ import io.charlescd.moove.metrics.domain.MetricType
 
 interface RetrieveCirclePeriodMetricInteractor {
 
-    fun execute(circleId: String,
-                projectionType: ProjectionType,
-                metricType: MetricType,
-                workspaceId: String): CircleMetricRepresentation
+    fun execute(
+        circleId: String,
+        projectionType: ProjectionType,
+        metricType: MetricType,
+        workspaceId: String
+    ): CircleMetricRepresentation
 }

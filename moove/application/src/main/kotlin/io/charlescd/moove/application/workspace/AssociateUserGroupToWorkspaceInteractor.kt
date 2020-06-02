@@ -21,5 +21,4 @@ import io.charlescd.moove.application.workspace.request.AssociateUserGroupToWork
 interface AssociateUserGroupToWorkspaceInteractor {
 
     fun execute(workspaceId: String, request: AssociateUserGroupToWorkspaceRequest)
-
 }

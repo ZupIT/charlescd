@@ -18,10 +18,10 @@ package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Deployment
 import io.charlescd.moove.legacy.repository.entity.DeploymentStatus
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
 
 interface DeploymentRepository : JpaRepository<Deployment, String> {
 

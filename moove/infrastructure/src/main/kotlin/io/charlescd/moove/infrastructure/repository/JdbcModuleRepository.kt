@@ -24,11 +24,11 @@ import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.repository.ModuleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.ModuleExtractor
+import java.time.LocalDateTime
+import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
-import java.util.*
 
 @Repository
 class JdbcModuleRepository(

@@ -19,5 +19,4 @@ package io.charlescd.moove.legacy.repository.entity
 enum class CardStatus {
 
     ACTIVE, ARCHIVED
-
 }

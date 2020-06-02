@@ -21,10 +21,10 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.infrastructure.repository.mapper.BuildExtractor
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 import java.util.*
 import kotlin.collections.LinkedHashMap
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val buildExtractor: BuildExtractor) :

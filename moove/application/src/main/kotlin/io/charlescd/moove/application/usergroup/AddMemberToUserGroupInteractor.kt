@@ -21,5 +21,4 @@ import io.charlescd.moove.application.usergroup.request.AddMemberToUserGroupRequ
 interface AddMemberToUserGroupInteractor {
 
     fun execute(id: String, request: AddMemberToUserGroupRequest)
-
 }

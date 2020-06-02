@@ -19,5 +19,4 @@ package io.charlescd.moove.application.workspace
 interface DisassociateUserGroupFromWorkspaceInteractor {
 
     fun execute(workspaceId: String, userGroupId: String)
-
 }
