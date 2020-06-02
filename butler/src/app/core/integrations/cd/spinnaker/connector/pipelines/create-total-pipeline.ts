@@ -1,6 +1,22 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { ISpinnakerPipelineConfiguration } from '../../interfaces'
 import {
-  BaseStagesUnion, IBaseSpinnakerPipeline, IBaseVirtualService, IBuildReturn, IBuildService, ICleanIds, IDeploymentReturn, IEmptyVirtualService
+  BaseStagesUnion, IBaseSpinnakerPipeline, IBaseVirtualService, IBuildReturn, ICleanIds, IDeploymentReturn, IEmptyVirtualService
 } from '../interfaces'
 import baseStage from '../utils/base-default-stage'
 import basePipeline from '../utils/base-spinnaker-pipeline'
@@ -9,7 +25,7 @@ import webhookBaseStage from '../utils/base-webhook'
 import { createBakeStage, createPrimaryId } from '../utils/helpers/create-id-names'
 import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
-import createDestinationRules, { IDestinationRuleParams } from '../utils/manifests/base-destination-rules'
+import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 
 export default class TotalPipeline {
@@ -29,6 +45,21 @@ export default class TotalPipeline {
   }
 
   public buildPipeline(): IBaseSpinnakerPipeline {
+    this.buildDeployments()
+    this.buildDeleteDeployments()
+    this.buildWebhook()
+    this.cleanIds()
+    return this.basePipeline
+  }
+
+  public buildIstioPipeline(): IBaseSpinnakerPipeline {
+    this.buildDestinationRules()
+    this.buildVirtualService()
+    this.buildWebhook()
+    return this.basePipeline
+  }
+
+  public buildUndeploymentPipeline(): IBaseSpinnakerPipeline {
     this.buildDeployments()
     this.buildDestinationRules()
     this.buildVirtualService()
@@ -53,10 +84,12 @@ export default class TotalPipeline {
     return this.previousStages
   }
 
+  private getRequiredRefIds(refId: number) {
+    return refId > 0 ? [String(refId)] : []
+  }
+
   private buildDeployments(): IDeploymentReturn | undefined {
     if (this.contract.versions.length === 0) { return }
-
-    const preRefId = this.refId - 1
 
     this.contract.versions.forEach(version => {
       const helmStage = baseStageHelm(
@@ -75,7 +108,7 @@ export default class TotalPipeline {
         createPrimaryId('deployment', version.version),
         `Deploy ${version.version}`,
         String(this.refId),
-        [String(this.refId - 1)],
+        this.getRequiredRefIds(this.refId - 1),
         createBakeStage(version.version),
         this.contract.appName,
         this.contract.account
@@ -132,7 +165,7 @@ export default class TotalPipeline {
       stageName,
       account,
       String(this.refId),
-      [String(this.refId - 1)],
+      this.getRequiredRefIds(this.refId - 1),
       this.previousStage
     )
     this.basePipeline.stages.push(virtualServiceStage)
@@ -152,7 +185,7 @@ export default class TotalPipeline {
       const deleteDeployments = baseDeleteDeployments(
         this.contract,
         this.refId,
-        [String(this.refId - 1)],
+        this.getRequiredRefIds(this.refId - 1),
         this.previousStage
       )
       this.basePipeline.stages.push(deleteDeployments)
@@ -170,7 +203,7 @@ export default class TotalPipeline {
     const webhookStage = webhookBaseStage(
       this.contract.webhookUri,
       String(this.refId),
-      [String(this.refId - 1)],
+      this.getRequiredRefIds(this.refId - 1),
       this.previousStage,
       this.contract.circleId
     )

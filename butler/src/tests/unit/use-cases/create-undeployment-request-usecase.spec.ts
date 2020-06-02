@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
@@ -36,15 +52,12 @@ describe('CreateUndeploymentRequestUsecase', () => {
     let deploymentsRepository: Repository<DeploymentEntity>
     let undeploymentsRepository: Repository<UndeploymentEntity>
     let createUndeploymentDto: CreateUndeploymentDto
-    let componentDeploymentRepository: ComponentDeploymentsRepository
     let deployment: DeploymentEntity
     let undeployment: UndeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentDeployments: ComponentDeploymentEntity[]
     let pipelineQueuesService: PipelineQueuesService
     let queuedUndeployments: QueuedUndeploymentEntity[]
-    let statusManagementService: StatusManagementService
-    let mooveService: MooveService
     let queuedUndeploymentRepository: Repository<QueuedUndeploymentEntity>
 
     beforeEach(async () => {
@@ -71,10 +84,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
         queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
-        mooveService = module.get<MooveService>(MooveService)
-        componentDeploymentRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
 
         createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
 
@@ -110,7 +120,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
             'dummy-callback-url',
             null,
             false,
-            'dummy-circle-id'
+            'dummy-circle-id',
+            'cd-configuration-id'
         )
 
         deployment.circle = new CircleDeploymentEntity('header-value')
