@@ -57,5 +57,4 @@ open class CharlesSecurityFilterDisabledTest {
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
-
 }

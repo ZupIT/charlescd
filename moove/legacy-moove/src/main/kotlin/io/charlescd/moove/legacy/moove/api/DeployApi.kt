@@ -25,11 +25,11 @@ import io.charlescd.moove.legacy.moove.api.response.CreateDeployCdConfigurationR
 import io.charlescd.moove.legacy.moove.api.response.CreateDeployModuleResponse
 import io.charlescd.moove.legacy.moove.api.response.GetDeployCdConfigurationsResponse
 import io.charlescd.moove.legacy.moove.api.response.UndeployResponse
+import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @FeignClient(name = "deployApi", url = "\${charlescd.deploy.url}")
 interface DeployApi {

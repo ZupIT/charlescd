@@ -26,6 +26,9 @@ import io.charlescd.moove.legacy.repository.entity.GitCredentials
 import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
 import io.mockk.every
 import io.mockk.mockkClass
+import java.net.HttpURLConnection
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.eclipse.egit.github.core.Reference
 import org.eclipse.egit.github.core.RepositoryCommitCompare
 import org.eclipse.egit.github.core.RequestError
@@ -34,9 +37,6 @@ import org.eclipse.egit.github.core.client.GitHubResponse
 import org.eclipse.egit.github.core.client.RequestException
 import org.junit.Assert
 import org.junit.Test
-import java.net.HttpURLConnection
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class GitHubServiceLegacyTest {
 

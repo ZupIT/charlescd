@@ -21,5 +21,4 @@ import io.charlescd.moove.application.module.response.ModuleResponse
 interface FindModuleByIdInteractor {
 
     fun execute(id: String, workspaceId: String): ModuleResponse
-
 }

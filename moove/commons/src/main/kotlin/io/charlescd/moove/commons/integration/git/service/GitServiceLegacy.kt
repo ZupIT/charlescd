@@ -41,7 +41,6 @@ abstract class GitServiceLegacy {
         baseBranchName: String = BASE_BRANCH
     ): Optional<String>
 
-
     abstract fun createRelease(
         gitCredentials: GitCredentials,
         repository: String,
@@ -80,5 +79,4 @@ abstract class GitServiceLegacy {
     fun containsErrorMessage(e: Exception, message: String): Boolean {
         return !e.message.isNullOrEmpty() && e.message!!.contains(message)
     }
-
 }

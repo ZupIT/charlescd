@@ -27,10 +27,10 @@ import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
+import org.springframework.stereotype.Service
 
 @Service
 class UserServiceLegacy(
@@ -76,8 +76,7 @@ class UserServiceLegacy(
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
     }
 
-    private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User =
-        { user ->
+    private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User = { user ->
             user.copy(
                 name = updateUserRequest.name,
                 email = updateUserRequest.email.toLowerCase(),
@@ -117,6 +116,5 @@ class UserServiceLegacy(
             email,
             request.newPassword
         )
-
     }
 }
