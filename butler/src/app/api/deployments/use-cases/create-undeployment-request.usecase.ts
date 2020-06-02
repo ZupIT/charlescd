@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -11,6 +27,7 @@ import {
 import { QueuedPipelineStatusEnum } from '../enums'
 import { ComponentDeploymentsRepository } from '../repository'
 import { PipelineDeploymentsService, PipelineErrorHandlerService } from '../services'
+import { IConstraintError } from '../interfaces/errors.interface'
 
 @Injectable()
 export class CreateUndeploymentRequestUsecase {
@@ -35,6 +52,7 @@ export class CreateUndeploymentRequestUsecase {
     const undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, deploymentId, circleId)
 
     if (!undeployment.deployment.circle) {
+      this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', undeployment)
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
 
@@ -45,7 +63,7 @@ export class CreateUndeploymentRequestUsecase {
       this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
     } catch (error) {
-      this.consoleLoggerService.log('ERROR:CREATE_UNDEPLOYMENT', error)
+      this.consoleLoggerService.error('ERROR:CREATE_UNDEPLOYMENT', error)
       this.pipelineErrorHandlerService.handleUndeploymentFailure(undeployment)
       throw error
     }
@@ -63,6 +81,7 @@ export class CreateUndeploymentRequestUsecase {
     try {
       return await this.undeploymentsRepository.save(createUndeploymentDto.toEntity(deployment, circleId))
     } catch (error) {
+      this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_UNDEPLOYMENT', error)
       throw new InternalServerErrorException('Could not save undeployment')
     }
   }
@@ -111,12 +130,12 @@ export class CreateUndeploymentRequestUsecase {
         new QueuedUndeploymentEntity(componentDeployment.componentId, componentDeployment.id, status, componentUndeployment.id)
       )
     } catch (error) {
-      return this.handleUniqueRunningConstraint(error, componentDeployment, componentUndeployment)
+      return this.handleUniqueRunningConstraint(error as IConstraintError, componentDeployment, componentUndeployment)
     }
   }
 
   private handleUniqueRunningConstraint(
-    error: any,
+    error: IConstraintError,
     componentDeployment: ComponentDeploymentEntity,
     componentUndeployment: ComponentUndeploymentEntity
   ): Promise<QueuedUndeploymentEntity> {
@@ -129,6 +148,7 @@ export class CreateUndeploymentRequestUsecase {
       )
     }
 
+    this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_QUEUED_DEPLOYMENT', error)
     throw new InternalServerErrorException('Could not save queued undeployment')
   }
 

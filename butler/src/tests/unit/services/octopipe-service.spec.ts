@@ -1,8 +1,23 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Test } from '@nestjs/testing'
-import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { IPipelineOptions } from '../../../app/api/components/interfaces'
-import { ICdConfigurationData, OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
+import { OctopipeConfigurationData } from '../../../app/api/configurations/interfaces'
 import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
@@ -55,7 +70,8 @@ describe('Octopipe Service', () => {
         'dummy-callback-url',
         null,
         false,
-        'dummy-circle-id'
+        'dummy-circle-id',
+          'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -108,90 +124,10 @@ describe('Octopipe Service', () => {
         helmUrl: 'helm-repository',
         istio: {
           virtualService: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'VirtualService',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              hosts: [
-                'some-app-name'
-              ],
-              http: [
-                {
-                  match: [
-                    {
-                      headers: {
-                        cookie: {
-                          regex: '.*x-circle-id=dummy-value.*'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  match: [
-                    {
-                      headers: {
-                        'x-dummy-header': {
-                          exact: 'dummy-value'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+
           },
           destinationRules: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'DestinationRule',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              host: 'some-app-name',
-              subsets: [
-                {
-                  labels: {
-                    version: 'some-app-name-v1'
-                  },
-                  name: 'v1'
-                }
-              ]
-            }
+
           }
         },
         unusedVersions: [],
@@ -228,7 +164,8 @@ describe('Octopipe Service', () => {
         'dummy-callback-url',
         null,
         false,
-        'dummy-circle-id'
+        'dummy-circle-id',
+          'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -281,90 +218,10 @@ describe('Octopipe Service', () => {
         helmUrl: 'helm-repository',
         istio: {
           virtualService: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'VirtualService',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              hosts: [
-                'some-app-name'
-              ],
-              http: [
-                {
-                  match: [
-                    {
-                      headers: {
-                        cookie: {
-                          regex: '.*x-circle-id=dummy-value.*'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  match: [
-                    {
-                      headers: {
-                        'x-dummy-header': {
-                          exact: 'dummy-value'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
+
           },
           destinationRules: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'DestinationRule',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              host: 'some-app-name',
-              subsets: [
-                {
-                  labels: {
-                    version: 'some-app-name-v1'
-                  },
-                  name: 'v1'
-                }
-              ]
-            }
+
           }
         },
         unusedVersions: [],
@@ -401,7 +258,8 @@ describe('Octopipe Service', () => {
         'dummy-callback-url',
         null,
         false,
-        'dummy-circle-id'
+        'dummy-circle-id',
+          'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -442,92 +300,8 @@ describe('Octopipe Service', () => {
         },
         helmUrl: 'helm-repository',
         istio: {
-          virtualService: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'VirtualService',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              hosts: [
-                'some-app-name'
-              ],
-              http: [
-                {
-                  match: [
-                    {
-                      headers: {
-                        cookie: {
-                          regex: '.*x-circle-id=dummy-value.*'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  match: [
-                    {
-                      headers: {
-                        'x-dummy-header': {
-                          exact: 'dummy-value'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'some-app-name',
-                        subset: 'v1'
-                      },
-                      headers: {
-                        request: {
-                          set: {
-                            'x-circle-source': 'dummy-value'
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          destinationRules: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'DestinationRule',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              host: 'some-app-name',
-              subsets: [
-                {
-                  labels: {
-                    version: 'some-app-name-v1'
-                  },
-                  name: 'v1'
-                }
-              ]
-            }
-          }
+          virtualService: {},
+          destinationRules: {}
         },
         unusedVersions: [],
         versions: [
@@ -565,7 +339,8 @@ describe('Octopipe Service', () => {
         'dummy-callback-url',
         null,
         false,
-        'dummy-circle-id'
+        'dummy-circle-id',
+          'cd-configuration-id'
       )
       moduleDeployment.deployment = deployment
       componentDeployment.moduleDeployment = moduleDeployment
@@ -612,50 +387,8 @@ describe('Octopipe Service', () => {
         helmUrl: 'helm-repository',
         istio: {
           virtualService: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'VirtualService',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              hosts: [
-                'unreachable-app-name'
-              ],
-              http: [
-                {
-                  match: [
-                    {
-                      headers: {
-                        'unreachable-cookie-name': {
-                          exact: 'unreachable-cookie - value'
-                        }
-                      }
-                    }
-                  ],
-                  route: [
-                    {
-                      destination: {
-                        host: 'unreachable-app-name'
-                      }
-                    }
-                  ],
-                }
-              ]
-            }
           },
           destinationRules: {
-            apiVersion: 'networking.istio.io/v1alpha3',
-            kind: 'DestinationRule',
-            metadata: {
-              name: 'some-app-name',
-              namespace: 'some-app-namespace'
-            },
-            spec: {
-              host: 'some-app-name',
-              subsets: []
-
-            },
           },
         },
         k8s: {
