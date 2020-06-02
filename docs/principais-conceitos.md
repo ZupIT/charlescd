@@ -1,11 +1,15 @@
 ---
 description: >-
   Nesta seção, você encontra definições para os principais termos e expressões
-  utilizados na documentação e na plataforma do Charles ou ainda em discussões
+  utilizadas na documentação e na plataforma do Charles ou ainda em discussões
   dentro da comunidade de desenvolvedores.
 ---
 
 # Principais Conceitos
+
+### **Circle Matcher**
+
+Trata-se de um serviço HTTP que permite você identificar a qual segmentação o usuário pertence, a partir de regras lógicas previamente definidas. Para isso, o ****[**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher) ****recebe na requisição um JSON com os atributos sobre o usuário, e retorna uma lista de círculos.
 
 ### **Círculos**
 
@@ -13,23 +17,23 @@ description: >-
 
 Por exemplo, é possível [**criar um círculo**](https://docs.charlescd.io/referencia/circulos) ****de engenheiros da região Norte do Brasil, outro de engenheiros do sudeste e um terceiro contendo todos os engenheiros brasileiros. Baseado nessa segmentação de clientes, pode-se elaborar diversas lógicas de deploy.
 
-### **Hipóteses**
-
-\*\*\*\*[**São as alternativas cadastradas**](https://docs.charlescd.io/referencia/hipotese) ****na plataforma para resolver algum problema ou validar uma ou mais mudanças nas aplicações que você integrou ao Charles.
-
-As hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente ao seu [**workspace**](https://docs.charlescd.io/primeiros-passos/definindo-workspace).
-
-### **Circle Matcher**
-
-Trata-se de um serviço HTTP que permite você identificar a qual segmentação a aplicação pertence, a partir de regras lógicas previamente definidas. Para isso, o ****[**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher) ****recebe na requisição um JSON com os atributos do usuário ou qualquer atributo relevante, além do identificador do círculo ao qual aquele usuário pertence.
-
 ### **Componentes**
 
-Fazem parte dos [**módulos**](https://docs.charlescd.io/primeiros-passsos/modules) que você cria dentro do Charles. Os componentes funcionam como abstrações das aplicações, o que significa dizer que eles possuem suas próprias configurações e que cada parte deles corresponde a uma aplicação do módulo em que você estiver trabalhando.
+Fazem parte dos [**módulos**](https://docs.charlescd.io/primeiros-passsos/modules) que são criados dentro do Charles. Os componentes funcionam como abstrações das aplicações, o que significa dizer que eles possuem suas próprias configurações e que cada parte deles corresponde a uma aplicação do módulo em que você estiver trabalhando. Caso você trabalhe com um monorepo, cada uma das suas aplicações serão cadastradas como componentes dentro de um único módulo.
 
-### Mar Aberto \(Open Sea\)
+### **Hipóteses**
 
-O termo, cunhado com o Charles, se refere a uma segmentação genérica em que estão presentes todos os usuários, inseridos na plataforma e que não estão vinculados a um círculo. 
+Aplicando Desenvolvimento Orientado à Hipótese \(_Hypothesis-Driven Development_\) ou não, uma hipótese representará o desenvolvimento de uma nova ideia que será utilizada como experimento para alcançar um resultado esperado. Caso o resultado não seja atingido, novas hipóteses com outras abordagens podem ser criadas e mensuradas até que realmente se tenha o resultado desejado ou até mesmo se prove que a ideia não é viável.
 
-Isso significa que se, por exemplo, você adicionar 300 usuários à sua base e não especificar para qual segmentação você quer direcionar sua hipótese, o Charles irá entregar a hipótese para todos, caindo assim no mar aberto.
+No Charles, as hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos foram cadastrados anteriormente ao seu [**workspace**](https://docs.charlescd.io/primeiros-passos/definindo-workspace).
+
+### Mar Aberto \(Default\)
+
+O termo, cunhado com o Charles, se refere a uma segmentação genérica em que estão presentes todos os usuários inseridos na plataforma que não estão vinculados a um círculo. 
+
+Ou seja, nessa segmentação estará uma versão padrão da sua aplicação, onde todos os usuários, que não estão associados a um teste de hipóteses, acessarão. É nessa segmentação também que, dada uma hipótese validada, deverá ser implantada uma nova release para que todos acessem.
+
+### Módulos
+
+Módulo é a representação de um repositório no seu git. Além disso, um módulo pode conter uma ou mais aplicações, ou seja, um ou mais componentes.
 
