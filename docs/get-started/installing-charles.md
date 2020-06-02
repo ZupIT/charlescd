@@ -54,23 +54,23 @@ This installation only works for testing environments, we do not recommend this 
 
 ### Case \#2:  Installation with helm charts
 
-This installation is for you who already has the infrastructured setup due to a more complex environment or if you have some security or/and scalability limitations, which demands a more complete installation customization from CharlesCD. 
+This installation is recommended for who has already setup your infrastructure due to a more complex environment or have some security or/and scalability limitations, which demands a more complete installation customization from CharlesCD. 
 
 ### Prerequisites 
 
-To perform  the process, it is necessary to have the following programs: 
+To perform this process, it is necessary to have the following programs: 
 
 * Kubectl
 * Helm 
 
 ### How does it work?
 
-The most different thing on this installation is the customization. We will provide a **helm template** with all the available fields for modification, including the database and consumed resources. 
+The most different advantage on this installation is the customization. We will provide a **helm template** with all the available fields for modification, including the database and consumed resources. 
 
-You will find here the **documentation on all the editable fields.**
+You will find here the **documentation with all the editable fields.**
 
 {% hint style="info" %}
-It is important to remember that, if no customization is made, the result will be the same as the **use case \#1**, that follows a pattern to install PostgreSQL, Redis, Keycloak and Octopipe.
+It is important to remember that, if there is no customization, the result will be the same as in the **use case \#1**, that follows a pattern to install PostgreSQL, Redis, Keycloak and Octopipe.
 
 So, don't forget to customize your fields if you want something manageable. 
 {% endhint %}
