@@ -32,10 +32,6 @@ coverage:
         target: 70%
         flags:
           - butler
-      ui:
-        target: 30%
-        flags:
-          - ui
     patch:
       default:
         target: 70%
@@ -46,7 +42,6 @@ coverage:
           - octopipe
           - moove
           - butler
-          - ui
       
 flags:
   villager:
