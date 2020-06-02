@@ -25,10 +25,10 @@ import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
 import io.charlescd.moove.infrastructure.repository.mapper.GitConfigurationExtractor
+import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcGitConfigurationRepository(

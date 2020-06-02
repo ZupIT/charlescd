@@ -16,13 +16,13 @@
 
 package io.charlescd.moove.commons.configuration
 
+import java.time.Clock
+import javax.annotation.PostConstruct
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.time.Clock
-import javax.annotation.PostConstruct
 
 private val modelMapper = ModelMapper()
 

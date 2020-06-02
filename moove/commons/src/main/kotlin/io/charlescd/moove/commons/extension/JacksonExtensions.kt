@@ -29,7 +29,6 @@ object JacksonExtensions {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
-
 }
 
 fun <T> T.toJsonNode(): JsonNode =

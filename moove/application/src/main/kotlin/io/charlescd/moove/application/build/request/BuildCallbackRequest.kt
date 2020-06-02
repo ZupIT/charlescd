@@ -45,5 +45,3 @@ data class BuildCallbackRequest(
         SUCCESS, TIME_OUT
     }
 }
-
-

@@ -17,14 +17,11 @@
 package io.charlescd.moove.application.configuration.request
 
 import io.charlescd.moove.domain.GitConfiguration
-import io.charlescd.moove.domain.GitCredentials
-import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 data class CreateGitConfigurationRequest(
     @field:NotBlank
@@ -43,4 +40,3 @@ data class CreateGitConfigurationRequest(
         credentials = credentials.toGitCredentials()
     )
 }
-

@@ -21,22 +21,25 @@ import io.charlescd.moove.metrics.domain.Metric
 import io.charlescd.moove.metrics.domain.Period
 import io.charlescd.moove.metrics.domain.SearchMetric
 import io.charlescd.moove.metrics.domain.SearchMetricFilter
-import org.springframework.stereotype.Service
 import java.net.URI
+import org.springframework.stereotype.Service
 
 @Service("prometheus")
 class PrometheusService(
-        private val prometheusApi: PrometheusApi) : MetricService {
+    private val prometheusApi: PrometheusApi
+) : MetricService {
 
     override fun getTotalRequests(searchMetric: SearchMetric, url: String): Metric {
-        val query = """ceil(sum(irate(${searchMetric.name}{${metricFilter(searchMetric.filters)}}[1m])) by(${groupBy(searchMetric.groupBy)}))${metricPeriod(searchMetric.period)}"""
+        val query = "ceil(sum(irate(${searchMetric.name}{${metricFilter(searchMetric.filters)}}[1m])) " +
+                                "by(${groupBy(searchMetric.groupBy)}))${metricPeriod(searchMetric.period)}"
 
         return this.prometheusApi.executeQuery(URI.create(url), query).toMetric(searchMetric.name)
     }
 
     override fun getAverageLatency(searchMetric: SearchMetric, url: String): Metric {
-        val query = """round((sum(irate(${searchMetric.name}_sum{${metricFilter(searchMetric.filters)}}[1m])) by(${groupBy(searchMetric.groupBy)})
-                        / sum(irate(${searchMetric.name}_count{${metricFilter(searchMetric.filters)}}[1m])) by(${groupBy(searchMetric.groupBy)})) * 1000)${metricPeriod(searchMetric.period)}"""
+        val query = "round((sum(irate(${searchMetric.name}_sum{${metricFilter(searchMetric.filters)}}[1m])) " +
+                                "by(${groupBy(searchMetric.groupBy)}) / sum(irate(${searchMetric.name}_count{${metricFilter(searchMetric.filters)}}[1m])) " +
+                                "by(${groupBy(searchMetric.groupBy)})) * 1000)${metricPeriod(searchMetric.period)}"
 
         return this.prometheusApi.executeQuery(URI.create(url), query).toMetric(searchMetric.name)
     }
@@ -45,8 +48,9 @@ class PrometheusService(
         val filter = metricFilter(searchMetric.filters)
         val finalFilter = if (filter.isBlank()) "response_status=~\"^5.*\$\"" else "$filter, response_status=~\"^5.*\$\""
 
-        val query = """round((sum(irate(${searchMetric.name}{${finalFilter}}[1m])) by(${groupBy(searchMetric.groupBy)})
-                        / scalar(sum(irate(${searchMetric.name}{${filter}}[1m])) by(${groupBy(searchMetric.groupBy)})) * 100), 0.01)${metricPeriod(searchMetric.period)}"""
+        val query = "round((sum(irate(${searchMetric.name}{$finalFilter}[1m])) by(${groupBy(searchMetric.groupBy)}) / " +
+                        "scalar(sum(irate(${searchMetric.name}{$filter}[1m])) " +
+                        "by(${groupBy(searchMetric.groupBy)})) * 100), 0.01)${metricPeriod(searchMetric.period)}"
 
         return this.prometheusApi.executeQuery(URI.create(url), query).toMetric(searchMetric.name)
     }
@@ -72,5 +76,4 @@ class PrometheusService(
 
         return "[${period.value}${period.unit.unitValue}:${period.sliceValue}${period.sliceUnit.unitValue}]"
     }
-
 }

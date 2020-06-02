@@ -16,11 +16,11 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import java.net.URI
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import java.net.URI
 
 @FeignClient(name = "circleMatcherClient", url = "\${charlescd.matcher.url}")
 interface CircleMatcherClient {

@@ -47,5 +47,4 @@ class CreateMetricConfigurationInteractorImpl @Inject constructor(
             )
         )
     }
-
 }

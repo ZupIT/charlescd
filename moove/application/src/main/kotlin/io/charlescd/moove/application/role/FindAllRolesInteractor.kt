@@ -23,5 +23,4 @@ import io.charlescd.moove.domain.PageRequest
 interface FindAllRolesInteractor {
 
     fun execute(pageRequest: PageRequest): ResourcePageResponse<RoleResponse>
-
 }

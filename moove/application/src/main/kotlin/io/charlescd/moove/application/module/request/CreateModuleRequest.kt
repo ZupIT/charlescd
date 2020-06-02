@@ -77,4 +77,3 @@ data class ComponentRequest(
         latencyThreshold = this.latencyThreshold
     )
 }
-

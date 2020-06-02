@@ -218,6 +218,4 @@ open class CharlesSecurityFilterTest {
                 "VtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IkFkYXV0byBBZm9uc28gZGUgUGF1bGEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiO" +
                 "iJhZGF1dG8ucGF1bGFAenVwLmNvbS5iciIsImdpdmVuX25hbWUiOiJBZGF1dG8iLCJmYW1pbHlfbmFtZSI6IkFmb25zbyBkZSBQ" +
                 "YXVsYSIsImVtYWlsIjoiYWRhdXRvLnBhdWxhQHp1cC5jb20uYnIifQ.r_9nadOCYu-nj6r_NDEhySUOvE6owvUeUFoK2Xsaz-k"
-
-
 }

@@ -49,7 +49,11 @@ class KeycloakClientService(private val keycloak: Keycloak) : KeycloakService {
 
         if (workspaceAndPermissionsMapping != null) {
             actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
-            actualPermissionsMapping.add(workspaceAndPermissionsMapping.copy(permissions = workspaceAndPermissionsMapping.permissions.union(permissionsToBeAddedMapping.permissions).toList()))
+            actualPermissionsMapping.add(
+                workspaceAndPermissionsMapping.copy(
+                    permissions = workspaceAndPermissionsMapping.permissions.union(permissionsToBeAddedMapping.permissions).toList()
+                )
+            )
         } else {
             actualPermissionsMapping?.add(permissionsToBeAddedMapping)
         }
@@ -76,7 +80,9 @@ class KeycloakClientService(private val keycloak: Keycloak) : KeycloakService {
 
         if (workspaceAndPermissionsMapping != null) {
             actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
-            val updatedWorkspaceAndPermissionsMapping = workspaceAndPermissionsMapping.copy(permissions = workspaceAndPermissionsMapping.permissions.subtract(permissionsToBeRemovedMapping.permissions).toList())
+            val updatedWorkspaceAndPermissionsMapping = workspaceAndPermissionsMapping.copy(
+                permissions = workspaceAndPermissionsMapping.permissions.subtract(permissionsToBeRemovedMapping.permissions).toList()
+            )
             actualPermissionsMapping.takeIf { updatedWorkspaceAndPermissionsMapping.permissions.isNotEmpty() }?.add(updatedWorkspaceAndPermissionsMapping)
         } else {
             actualPermissionsMapping?.add(permissionsToBeRemovedMapping)
@@ -144,5 +150,4 @@ class KeycloakClientService(private val keycloak: Keycloak) : KeycloakService {
             .get(keycloakUser.id)
             .update(keycloakUser)
     }
-
 }

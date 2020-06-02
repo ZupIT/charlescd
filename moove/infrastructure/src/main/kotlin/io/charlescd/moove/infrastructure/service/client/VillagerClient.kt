@@ -77,5 +77,5 @@ interface VillagerClient {
         @PathVariable registryConfigurationId: String,
         @PathVariable componentName: String,
         @RequestHeader("x-workspace-id") workspaceId: String
-    ): ComponentTagsResponse
+    ): FindComponentTagsResponse
 }
