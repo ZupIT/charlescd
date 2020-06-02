@@ -31,6 +31,5 @@ jobs:
         registry: realwavelab.azurecr.io
         repository: octopipe
         dockerfile: ./octopipe/cmd/octopipe/Dockerfile
-        tags: ${{steps.substring.outputs.value}}
-        tag_with_ref: false
+        tag_with_ref: true
         tag_with_sha: false

@@ -34,6 +34,5 @@ jobs:
         password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
         registry: realwavelab.azurecr.io
         repository: charlescd-circle-matcher
-        tags: ${{steps.substring.outputs.value}}
-        tag_with_ref: false
+        tag_with_ref: true
         tag_with_sha: false
