@@ -1,13 +1,6 @@
-codecov:
-  if_not_found: success
-
 coverage:
   status:
     project:
-      default:
-        target: auto
-        threshold: 0%
-      
       villager:
         target: 30%
         flags:
@@ -29,10 +22,6 @@ coverage:
           - moove
     
     patch:
-      default:
-        target: 80%
-        threshold: 0%
-        
       villager:
         target: 30%
         flags:
