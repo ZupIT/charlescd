@@ -30,7 +30,11 @@ coverage:
       butler:
         target: 70%
         flags:
-          - moove
+          - butler
+      ui:
+        target: 30%
+        flags:
+          - ui
     patch:
       default:
         target: 100%
