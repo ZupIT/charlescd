@@ -64,6 +64,15 @@ jobs:
       env:
         CI: true
         DATABASE_HOST: postgres
+        MOOVE_URL: stubby4j:8883/moove
+        DARWIN_NOTIFICATION_URL: stubby4j:8883/deploy/notifications
+        DARWIN_UNDEPLOYMENT_CALLBACK: stubby4j:8883/deploy/notifications/undeployment
+        DARWIN_DEPLOYMENT_CALLBACK: stubby4j:8883/deploy/notifications/deployment
+        DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  stubby4j:8883/deploy/notifications/istio-deployment
+        SPINNAKER_URL: stubby4j:8883/spinnaker
+        HELM_TEMPLATE_URL: stubby4j:8883/helm
+        HELM_PREFIX_URL: stubby4j:8883/helm
+        OCTOPIPE_URL: stubby4j:8883/octopipe
       working-directory: ~/app/./butler
     - run: npm run lint
       working-directory: ~/app/./butler
