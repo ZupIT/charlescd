@@ -13,7 +13,7 @@ Cada workspace possui as seguintes configurações:
 * Personalização do [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher).
 * Registro do [**Provedor de Métricas**](https://docs.charlescd.io/referencia/metricas/provedor-metrica) das suas aplicações.
 
-![Tela de workspace](../../.gitbook/assets/settings_-_workspace_-_11.4_-_add_group_permissions2x.png)
+![Configura&#xE7;&#xF5;es do workspace](../../.gitbook/assets/settings_-_workspace_-_11.4_-_add_group_permissions2x.png)
 
 {% hint style="warning" %}
 A criação do workspace pode ser feita apenas pelo usuário **root**. Entretanto, o preenchimento das configurações podem também ser feitas pelos usuários associados ao workspace com perfil de **mantenedor**.

@@ -2,7 +2,7 @@
 
 Durante a configuração do seu workspace, é necessário cadastrar o registry onde as imagens das suas aplicações estão armazenadas. Esse acesso é importante, pois uma vez configurado, o CharlesCD pode **observar novas imagens sendo geradas e listar as imagens já salvas no seu registry** para implantá-las.
 
-Existem duas categorias de cadastros de configuração que podem ser feitas pelo workspace; AWS e Azure, você escolhe e adiciona as seguintes informações:
+Existem duas categorias de cadastros de configuração que podem ser feitas pelo workspace: _AWS_ e _Azure._ Você escolhe qual delas deseja seguir e adiciona as seguintes informações:
 
 ### AWS
 
