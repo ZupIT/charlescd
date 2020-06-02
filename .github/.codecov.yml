@@ -10,8 +10,6 @@ coverage:
           - circlematcher
           - octopipe
           - moove
-          - butler
-          - ui
           - docs
 
       villager:
@@ -30,20 +28,6 @@ coverage:
         target: 50%
         flags:
           - moove
-      butler:
-        target: 70%
-        flags:
-          - butler
-      ui:
-        target: 30%
-        flags:
-          - ui
-      docs:
-        target: 0%
-        if_not_found: success
-        flags:
-          - docs
-
     patch:
       default:
         target: 70%
@@ -54,8 +38,6 @@ coverage:
           - circlematcher
           - octopipe
           - moove
-          - butler
-          - ui
           - docs
       
 flags:
@@ -81,8 +63,5 @@ flags:
     carryforward: true
   ui:
     paths:
-      - ui/ 
-  docs:
-    paths:
-      - docs/
+      - ui/
     carryforward: true
