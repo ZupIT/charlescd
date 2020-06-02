@@ -25,12 +25,6 @@ jobs:
     - name: Build with Maven
       working-directory: ./circle-matcher
       run: mvn -B package
-      
-    - name: Substring branch name
-      id: substring
-      uses: ricardorames/substring-branch-name-action@v0.2.1
-      with:
-        separator: 'release-darwin-'
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
