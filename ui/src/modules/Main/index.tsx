@@ -50,7 +50,6 @@ const Main = () => {
         <React.Suspense fallback="">
           <Switch>
             <Redirect exact from={routes.main} to={routes.workspaces} />
-            <Redirect exact from={routes.v2} to={routes.workspaces} />
             <Route path={routes.workspaces} component={Workspaces} />
             <Route path={routes.account} component={Account} />
             <PrivateRoute

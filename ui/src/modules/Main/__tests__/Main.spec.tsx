@@ -37,7 +37,7 @@ beforeEach(() => {
 
   window.location = {
     ...window.location,
-    pathname: '/v2/workspaces'
+    pathname: '/workspaces'
   };
 });
 
