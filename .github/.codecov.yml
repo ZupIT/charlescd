@@ -12,7 +12,7 @@ coverage:
           - butler
           - ui
       villager:
-        target: 30%
+        target: 35%
         flags:
           - villager
       circlematcher:
@@ -32,7 +32,7 @@ coverage:
         flags:
           - butler
       ui:
-        target: 30%
+        target: 35%
         flags:
           - ui
     patch:
