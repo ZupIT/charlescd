@@ -24,7 +24,7 @@ jobs:
           
     - name: Build with Maven
       working-directory: ./circle-matcher
-      run: mvn -B package
+      run: mvn -B clean install
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
