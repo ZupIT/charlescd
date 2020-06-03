@@ -1,4 +1,4 @@
-# Users Group
+# Users Groups
 
 A user group can represent a team or even a subset of people based on their skills.
 
@@ -12,7 +12,7 @@ However, if everyone in a team have the same permission, we are able to create o
 
 * _Product X Team._
 
-![Preview of User Group &quot;Data Analysts do Produto X&quot;](../.gitbook/assets/image%20%283%29%20%282%29.png)
+![Preview of User Group &quot;Data Analysts do Produto X&quot;](../.gitbook/assets/image%20%283%29%20%282%29%20%281%29.png)
 
 ## Permissions for user groups in your workspace
 
@@ -28,5 +28,5 @@ The following profiles are available:
 * **Analyst**: they have permission to edit and delete circles, modules and hypothesis. And also view the modules configuration.
 * **Reader**: is able to view circles, hypothesis and modules.
 
-![Permission options to associate users&apos; groups on a workspace.](../.gitbook/assets/chrome-capture-3-%20%282%29.gif)
+![Permission options to associate users&apos; groups on a workspace.](../.gitbook/assets/chrome-capture-3-%20%282%29%20%281%29.gif)
 
