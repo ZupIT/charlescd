@@ -4,7 +4,7 @@
 
 Metrics are indicators that allows you to quantify the performance and the applications status based on the analysis of exposed data from the own application and by the infrastructure tools.
 
-CharlesCD allows you to get the metrics of all your circles, you will be able to see their [**health**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module#health-metrics) _\*\*_analysis and performances.
+CharlesCD allows you to get the metrics of all your circles, you will be able to see their [**health**](https://docs.charlescd.io/v/v0.2.1-en/get-started/creating-your-first-module#health-metrics) \_\*\*\_analysis and performances.
 
 ## Charles' available metrics
 
