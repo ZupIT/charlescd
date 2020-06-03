@@ -1,4 +1,4 @@
-# Creating your First Module
+# Creating your first Module
 
 After creating and configuring your workspace, it is necessary to add the modules.
 
@@ -18,7 +18,7 @@ If you have a lot of applications on your repository, register them with the com
 
 In both cases, you need to inform the minimum risk value you'd like to be alerted.
 
-![Creating a module screen](../.gitbook/assets/criac-a-o-de-modulo%20%282%29.png)
+![Creating a module screen](../.gitbook/assets/criac-a-o-de-modulo%20%282%29%20%282%29.png)
 
 ## Components
 
