@@ -1,8 +1,10 @@
-name: moove dev-release
+name: moove prod-release
 
 on:
-  push:
-    branches: [ release-darwin-* ]
+  release:
+    types:
+      - created
+    branches: [ master ]
 
 jobs:
   build_and_push_prerelease:
@@ -10,6 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
@@ -30,9 +36,10 @@ jobs:
       uses: docker/build-push-action@v1.0.1
       with:
         path: ./moove
-        username: ${{secrets.DOCKER_REGISTRY_USERNAME}}
-        password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
-        registry: realwavelab.azurecr.io
-        repository: charlescd-moove
-        tag_with_ref: true
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-moove
+        dockerfile: ./moove/Dockerfile
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
         tag_with_sha: false

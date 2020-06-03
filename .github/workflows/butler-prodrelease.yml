@@ -1,8 +1,10 @@
-name: butler dev-release
+name: butler prod-release
 
 on:
-  push:
-    branches: [ release-darwin-* ]
+  release:
+    types:
+      - created
+    branches: [ master ]
 
 jobs:
   build_and_push_prerelease:
@@ -10,6 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
     - uses: actions/cache@v1
       with:
         path: ~/.npm
@@ -34,9 +40,10 @@ jobs:
       uses: docker/build-push-action@v1.0.1
       with:
         path: ./butler
-        username: ${{secrets.DOCKER_REGISTRY_USERNAME}}
-        password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
-        registry: realwavelab.azurecr.io
-        repository: butler
-        tag_with_ref: true
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-butler
+        dockerfile: ./butler/Dockerfile
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
         tag_with_sha: false
