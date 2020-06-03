@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200220200100-1
+      author: adauto.paula
+      comment: "Drop column value_flow_id from table problems"
+      changes:
+        - dropColumn:
+            columnName: value_flow_id
+            tableName: problems

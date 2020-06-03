@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200330160000-1
+      author: mateus.cruz
+      comment: "Drop foreign key constraint fk_modules_git_configuration"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: modules
+            constraintName: fk_modules_git_configuration
+        - addForeignKeyConstraint:
+            baseColumnNames: git_configuration_id
+            baseTableName: modules
+            constraintName: fk_modules_git_configuration
+            referencedColumnNames: id
+            referencedTableName: git_configurations

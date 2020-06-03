@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190823104800-1
+      author: ismaley
+      comment: "Adds git repository address to modules table"
+      changes:
+        - addColumn:
+            tableName: modules
+            column:
+              name: git_repository_address
+              type: varchar(250)
+              defaultValue: address
+              constraints:
+                nullable: false

@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200321003000-1
+      author: mateus.cruz
+      comment: "Add column registry_configuration_id to table modules"
+      changes:
+        - addColumn:
+            tableName: modules
+            column:
+              name: registry_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: modules
+            column:
+              name: git_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_modules_git_configuration
+                references: credential_configurations(id)

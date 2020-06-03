@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/down.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/24.93c02606.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/down.66c7c353.svg\";"],"sourceRoot":""}

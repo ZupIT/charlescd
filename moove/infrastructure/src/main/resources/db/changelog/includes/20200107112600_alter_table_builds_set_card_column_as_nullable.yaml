@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200107112600-1
+      author: monica.ribeiro
+      comment: "Removing not null constraint from card_column_id at table builds."
+      changes:
+        - dropNotNullConstraint:
+            columnName: card_column_id
+            tableName: builds

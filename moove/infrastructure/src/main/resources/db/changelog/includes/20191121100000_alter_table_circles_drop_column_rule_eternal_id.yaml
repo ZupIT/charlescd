@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191121100000-1
+      author: adauto.paula
+      comment: "Drop unused column rule external id"
+      changes:
+        - dropColumn:
+            tableName: circles
+            column:
+              name: rule_external_id

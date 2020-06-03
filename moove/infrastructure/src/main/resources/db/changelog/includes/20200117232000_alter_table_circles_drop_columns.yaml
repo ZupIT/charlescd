@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200115232000-1
+      author: adauto.paula
+      comment: "Drop columns from table circles"
+      changes:
+        - dropColumn:
+            columnName: segmentations
+            tableName: circles
+        - dropColumn:
+            columnName: priority
+            tableName: circles
+        - dropColumn:
+            columnName: rule_matcher_type
+            tableName: circles

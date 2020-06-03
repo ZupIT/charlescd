@@ -1,0 +1,2 @@
+(this["webpackJsonpnew-ui"]=this["webpackJsonpnew-ui"]||[]).push([[26],{285:function(s,p,e){s.exports=e.p+"static/media/empty-workspaces.5684f8cc.svg"}}]);
+//# sourceMappingURL=26.92d54cfe.chunk.js.map

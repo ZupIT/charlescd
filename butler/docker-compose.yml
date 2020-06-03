@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:9.6-alpine
+    ports:
+    - 5432:5432
+    environment:
+    - POSTGRES_DB=darwin
+    - POSTGRES_USER=darwin
+    - POSTGRES_PASSWORD=darwin
+    - MAX_CONNECTIONS=300
+
+  stubby4j:
+    image: sandokandias/stubby4j-docker
+    depends_on:
+      - postgres
+    ports:
+    - 8883:8883
+    environment:
+      STUBBY_PORT: 8883
+    volumes:
+      - ./src/app/resources/stubby/integrations.yml:/usr/local/stubby.yml
+
+  app:
+    image: node:12.17.0-alpine3.9
+    depends_on:
+      - stubby4j
+    volumes:
+    - ./:/app
+    working_dir: /app
+    command: sh -c 'while sleep 3600; do :; done'
+    environment:
+        DATABASE_HOST: postgres
+        MOOVE_URL: http://stubby4j:8883/moove
+        DARWIN_NOTIFICATION_URL: http://stubby4j:8883/deploy/notifications
+        DARWIN_UNDEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/undeployment
+        DARWIN_DEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/deployment
+        DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  http://stubby4j:8883/deploy/notifications/istio-deployment
+        SPINNAKER_URL: http://stubby4j:8883/spinnaker
+        HELM_TEMPLATE_URL: http://stubby4j:8883/helm
+        HELM_PREFIX_URL: http://stubby4j:8883/helm
+        OCTOPIPE_URL: http://stubby4j:8883/octopipe

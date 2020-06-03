@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/copy.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/22.598fc4b0.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/copy.ca91dc04.svg\";"],"sourceRoot":""}

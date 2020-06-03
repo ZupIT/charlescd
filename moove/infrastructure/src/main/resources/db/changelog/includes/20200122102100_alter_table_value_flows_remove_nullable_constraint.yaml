@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200122102100-1
+      author: monica.ribeiro
+      comment: "Drop user_id nullable constraint from table value_flows"
+      changes:
+        - dropNotNullConstraint:
+            columnName: user_id
+            tableName: value_flows

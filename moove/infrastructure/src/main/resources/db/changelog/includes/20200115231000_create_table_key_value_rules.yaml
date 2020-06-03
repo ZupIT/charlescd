@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200112231000-1
+      author: adauto.paula
+      comment: "Create table key value rules"
+      changes:
+        - createTable:
+            tableName: key_value_rules
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rule
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: circle_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_circle_id_kvr_id
+                    references: circles(id)

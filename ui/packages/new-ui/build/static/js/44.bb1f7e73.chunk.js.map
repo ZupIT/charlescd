@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/vertical-dots.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/44.bb1f7e73.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/vertical-dots.e912b5bb.svg\";"],"sourceRoot":""}
