@@ -49,7 +49,17 @@ func getStepsByVersions(
 	deployment *deployment.Deployment, versions []*deployment.Version, action string,
 ) []*pipeline.Step {
 	steps := []*pipeline.Step{}
+
+	if versions == nil || len(versions) <= 0 {
+		return steps
+	}
+
 	for _, version := range versions {
+
+		if version == nil {
+			continue
+		}
+
 		steps = append(steps, &pipeline.Step{
 			Name:        version.Version,
 			ModuleName:  deployment.Name,
@@ -79,7 +89,17 @@ func getStepsByVersions(
 
 func getIstioComponentsSteps(deployment *deployment.Deployment) []*pipeline.Step {
 	steps := []*pipeline.Step{}
+
+	if deployment.Istio == nil || len(deployment.Istio) <= 0 {
+		return steps
+	}
+
 	for _, value := range deployment.Istio {
+
+		if value == nil {
+			continue
+		}
+
 		steps = append(steps, &pipeline.Step{
 			Name:        deployment.Name,
 			ModuleName:  deployment.Name,
