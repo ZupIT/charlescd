@@ -2,13 +2,13 @@
 
 As hipóteses são as alternativas cadastradas na plataforma para resolver algum problema ou validar mudanças nas aplicações que você integrou ao Charles. 
 
-É possível que uma hipótese contenha um ou mais features, e eles estão relacionadas diretamente aos módulos e/ou projetos que foram cadastrados anteriormente no seu workspace.
+É possível que uma hipótese contenha um ou mais features, e elas estão relacionadas diretamente aos módulos que foram cadastrados anteriormente no seu workspace.
 
-Imagine uma situação na qual duas equipes trabalham no mesmo produto e têm ideias diferentes para aumentar a taxa de conversão de clientes. A equipe A sugere adicionar um botão na página, enquanto a equipe B acredita que incluir um box de "sugestão de venda" será mais assertivo.
+Imagine uma situação na qual duas equipes trabalham no mesmo produto e têm ideias diferentes para aumentar a taxa de conversão de clientes. A equipe A sugere adicionar um botão na página, enquanto a equipe B acredita que incluir um box de "_sugestão de venda_" será mais assertivo.
 
 ![](../.gitbook/assets/hipoteses-1-.png)
 
-Dessa forma, o Charles possibilita que as duas equipes criem duas hipóteses distintas. Assim, cada uma, poderá conduzir o desenvolvimento por meio de um board gerado automaticamente. A partir disso, cada equipe poderá selecionar de forma independente, os círculos com usuários distintos para validar os resultados de cada uma das hipóteses.
+Dessa forma, o Charles possibilita que as duas equipes criem duas hipóteses distintas. Assim, cada uma, poderá conduzir o desenvolvimento através de um board gerado automaticamente. A partir disso, cada equipe poderá selecionar de forma independente, os círculos com usuários distintos para validar os resultados de cada uma das hipóteses.
 
 ## Como criar hipóteses?
 
