@@ -1,4 +1,4 @@
-# Setting your metrics
+# Setting up your metrics
 
 ## Register your metrics provider
 

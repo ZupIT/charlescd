@@ -1,4 +1,4 @@
-# Docker Registry
+# Docker registry
 
 To configure your workspace, you have to register on the docker registry where your application's images are stored. This access is important because CharlesCD can watch new generated images and list the ones already saved in your registry to implement them.
 

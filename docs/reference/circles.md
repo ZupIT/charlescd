@@ -2,7 +2,7 @@
 
 Circles are the main approach related to the **new deploy concept** brought by Charles. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users.
 
-![Circle generation with Charles deployments](../.gitbook/assets/deploy_em_circulos%20%289%29%20%281%29.png)
+![Circle generation with Charles deployments](../.gitbook/assets/deploy_em_circulos%20%289%29%20%281%29%20%282%29.png)
 
 Circles indicate clients segmentation and also support the version management created for a specific audience.
 
@@ -23,7 +23,7 @@ To create a circle, you just have to follow these steps:
 **3.** Define a segmentation.  
 **4.** \[Optional\] Implement a release.
 
-![ How to create a circle](../.gitbook/assets/criar-circulo%20%282%29.gif)
+![ How to create a circle](../.gitbook/assets/criar-circulo%20%282%29%20%281%29.gif)
 
 The segmentations are a subset of characteristics that you define to put all your users together in a circle. To make this happen, it is possible to segment your users by **filling in information manually** or through a **CVS file importation**.
 
@@ -70,7 +70,7 @@ OR is the only logic operator supported on this segmentation.
 
 Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below:
 
-![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy%20%282%29.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy%20%282%29%20%282%29.png)
 
 At some point during the interaction of the user and your application **\(App1\)**, for example, the login - the **`Identify`** service of **`charles-circle-matcher`** - must be triggered to get the circle.
 
@@ -82,14 +82,14 @@ If the **`x-circle-id`** is not passed on, all the requests will be redirected t
 
 We will give an example of a specific scenario where your environment has two services: **Application A** and **Application B** and your circles must use the following versions:
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release_eng%20%281%29.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_eng%20%281%29%20%282%29.png)
 
 So, the redirect logic using **`x-circle-id`** will be:
 
 1. The user sends to the header:  `x-circle-id="QA Circle"`. On this circle, the request will be redirect to a **X version** of the service on **Application A** and the **Y version** of the service on **Application B**. 
 2. The user sends to the header:  `x-circle-id=”Dev Circle”`. On this circle, the request will be redirect to the **Z version** of the service on **Application A** and **Z version** of the service on **Application B.** 
 
-![Example of Application 1 and Application 2](../.gitbook/assets/versoes_diferentes_na_minha_release_ii_eng%20%281%29.png)
+![Example of Application 1 and Application 2](../.gitbook/assets/versoes_diferentes_na_minha_release_ii_eng%20%281%29%20%282%29.png)
 
 ## How to route your circles with Kubernetes Clusters?
 
