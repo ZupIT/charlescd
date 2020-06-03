@@ -1,16 +1,18 @@
 coverage:
   status:
-    project:
+    patch:
       default:
+        # basic
         target: auto
         threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
+        base: auto 
+        # advanced
+        branches: 
+          - master
+        if_no_uploads: error
+        if_not_found: success
+        if_ci_failed: error
+        only_pulls: false
       villager:
         target: 30%
         flags:
@@ -34,17 +36,6 @@ coverage:
       ui:
         target: 30%
         flags:
-          - ui
-    patch:
-      default:
-        target: 80%
-        threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
           - ui
       
 flags:
