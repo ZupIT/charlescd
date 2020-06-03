@@ -54,7 +54,7 @@ function Questions() {
     return isCorrect ? <CorrectIcon /> : <IncorrectIcon />;
   }
 
-  const onRestart = () => window.location.href = "/";
+  const onRestart = () => window.location.href = "/quiz-app";
 
   const renderFinish = () => (
     <>
@@ -97,6 +97,7 @@ function Questions() {
         <h4 className="practice-text">Practice Quiz for Darwin and Natural Selection</h4>
         {status === 'pending' && <Loading />}
         {status === 'resolved' && renderQuestion()}
+        {status === 'rejected' && renderFinish()}
       </section>
     </>
   );
