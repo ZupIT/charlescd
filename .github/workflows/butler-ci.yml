@@ -21,31 +21,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      stubby4j:
-        image: sandokandias/stubby4j-docker
-        env:
-          STUBBY_PORT: 8883
-        options: -v ${{ github.workspace }}/src/app/resources/stubby/integrations.yml:/usr/local/stubby.yml --name stubby4j
-        ports:
-          - 8883:8883
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -56,27 +31,15 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: sleep 5 && npm ci
+    - name: Start docker-compose
+      run: docker-compose up -d
       working-directory: ~/app/./butler
-    - run: npm run build --if-present
-      working-directory: ~/app/./butler
-    - run: npm run test:all:cov
+    - name: Run test on docker-compose
+      run: docker-compose exec app npm ci && npm run test:all:cov
+    - name: Run lint on docker-compose
+      run: docker-compose exec app npm run lint
       env:
         CI: true
-        DATABASE_HOST: postgres
-        MOOVE_URL: http://stubby4j:8883/moove
-        DARWIN_NOTIFICATION_URL: http://stubby4j:8883/deploy/notifications
-        DARWIN_UNDEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/undeployment
-        DARWIN_DEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/deployment
-        DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  http://stubby4j:8883/deploy/notifications/istio-deployment
-        SPINNAKER_URL: http://stubby4j:8883/spinnaker
-        HELM_TEMPLATE_URL: http://stubby4j:8883/helm
-        HELM_PREFIX_URL: http://stubby4j:8883/helm
-        OCTOPIPE_URL: http://stubby4j:8883/octopipe
       working-directory: ~/app/./butler
     - run: npm run lint
       working-directory: ~/app/./butler
