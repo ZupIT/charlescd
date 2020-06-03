@@ -36,7 +36,7 @@ Keep evolving.
 * [@apucci](https://github.com/apucci)
 * [@lucasborgeszup](https://github.com/lucasborgeszup)
 * [@thallesfreitaszup](https://github.com/thallesfreitaszup)
-* [@mdcpmoreir](https://github.com/mdcpmoreir)
+* [@mdcpmoreira](https://github.com/mdcpmoreira)
 * [@katanant](https://github.com/katanant)
 * [@monicarib](https://github.com/monicarib)
 * [@jeiassoareszup](https://github.com/jeiassoareszup)
