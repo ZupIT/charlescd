@@ -29,17 +29,21 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
+
     - name: Start docker-compose
       run: docker-compose up -d
       working-directory: ./butler
+
     - name: Run test on docker-compose
       run: docker-compose exec -T app npm ci && npm run test:all:cov
       working-directory: ./butler
+
     - name: Run lint on docker-compose
-      run: docker-compose exec app npm run lint
+      run: docker-compose -T exec app npm run lint
       env:
         CI: true
       working-directory: ./butler
+
     - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
