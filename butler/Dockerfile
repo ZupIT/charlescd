@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:12.17.0-alpine3.9
 
 ENV NODE_ENV qa
 
