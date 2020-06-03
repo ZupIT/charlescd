@@ -9,7 +9,7 @@ function Identify({ onIdentify }) {
     if (status === 'resolved' || status === 'rejected') {
       onIdentify();
     }
-  }, [onIdentify, status]);
+  }, [onIdentify, status])
 
   const onSubmit = (event) => {
     event.preventDefault();
