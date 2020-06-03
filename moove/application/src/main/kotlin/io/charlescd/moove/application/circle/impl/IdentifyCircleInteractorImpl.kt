@@ -33,6 +33,7 @@ class IdentifyCircleInteractorImpl(
 ) : IdentifyCircleInteractor {
     override fun execute(workspaceId: String, request: Map<String, Any>): List<IdentifyCircleResponse> {
         val workspace = workspaceService.find(workspaceId)
+        validateWorkspace(workspace)
         return createResponseList(circleMatcherService.identify(workspace, request))
     }
 

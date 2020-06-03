@@ -1,0 +1,74 @@
+{{- if .Values.circlematcher.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.circlematcher.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.circlematcher.name }}
+    version: {{ .Values.circlematcher.name }}
+spec:
+  replicas: {{ .Values.circlematcher.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.circlematcher.name }}
+      version: {{ .Values.circlematcher.name }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
+      labels:
+        app: {{ .Values.circlematcher.name }}
+        version: {{ .Values.circlematcher.name }}
+    spec:
+      containers:
+        - name: {{ .Values.circlematcher.name }}
+          image: {{ .Values.circlematcher.image.name }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1   
+          imagePullPolicy: {{ .Values.circlematcher.image.pullPolicy }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "redis-standalone"
+            - name: SPRING_REDIS_HOST
+              value: {{ .Values.circlematcher.redis.host }}
+            - name: SPRING_REDIS_PORT
+              value: "{{ .Values.circlematcher.redis.port }}"
+            - name: SPRING_REDIS_PASSWORD
+              value: {{ .Values.circlematcher.redis.password }}
+            - name: ALLOWED_ORIGINS
+              value: {{ .Values.circlematcher.frontHost }}
+          resources:
+{{ toYaml .Values.circlematcher.resources | indent 12 }}
+    {{- with .Values.circlematcher.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.circlematcher.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.circlematcher.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
+
