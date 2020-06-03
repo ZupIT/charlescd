@@ -56,4 +56,6 @@ Keep evolving.
 * [@viniciusaparecidozup](https://github.com/viniciusaparecidozup)
 * [@jessica-tw](https://github.com/jessica-tw)
 * [@rogeriomanzan](https://github.com/rogeriomanzan)
+* [@williamokano](https://github.com/williamokano)
+* [@ismaley](https://github.com/ismaley)
 * [@adauto](https://github.com/adauto)
