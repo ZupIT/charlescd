@@ -1,9 +1,5 @@
 version: '3'
 
-#volumes:
-#  postgres_data:
-#    driver: local
-
 services:
 
   postgres:
