@@ -52,7 +52,7 @@ Keep evolving.
 * [@leticiaalcantaralima](https://github.com/leticiaalcantaralima)
 * [@cpgo](https://github.com/cpgo)
 * [@ifdouglas](https://github.com/ifdouglas)
-* [@luisaborgeszup](https://github.com/ifdouglas)
+* [@luisaborgeszup](https://github.com/luisaborgeszup)
 * [@viniciusaparecidozup](https://github.com/viniciusaparecidozup)
 * [@jessica-tw](https://github.com/jessica-tw)
 * [@rogeriomanzan](https://github.com/rogeriomanzan)
