@@ -27,7 +27,7 @@ Assim que a criação de uma release é acionada, uma branch com o prefixo **rel
 Ao acionar o pipeline da sua ferramenta de CI através do prefixo **release-darwin**, é esperado que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](https://docs.charlescd.io/primeiros-passos/definindo-workspace/docker-registry).
 {% endhint %}
 
-A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) **\*\*observará o seu registry em busca da release gerada. Aguarde até que o estado do cartão passe para** Built\*\*.
+A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) observará o seu registry em busca da release gerada. Aguarde até que o estado do cartão passe para _Built_.
 
 {% hint style="info" %}
 Qualquer caso de sucesso ou erro será mostrado no estado do cartão da release.
@@ -49,7 +49,7 @@ Após o deploy desta nova release, ela estará disponível para utilização em 
 
 ## Como buscar uma release existente?
 
-Se a release foi gerada através do [**quadro de hipóteses**](https://docs.charlescd.io/referencia/hipotese#gestao-do-board) **\*\*no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: "**Search for existing releases"\*\*.
+Se a release foi gerada através do [**quadro de hipóteses**](https://docs.charlescd.io/referencia/hipotese#gestao-do-board) no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: **"**_Search for existing releases_".
 
 ![Exemplo de pesquisa de release pelo deploy no c&#xED;rculo](../.gitbook/assets/may-29-2020_17-21-33%20%282%29.gif)
 
