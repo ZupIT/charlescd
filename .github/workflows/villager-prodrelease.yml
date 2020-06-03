@@ -1,8 +1,10 @@
-name: villager dev-release
+name: villager prod-release
 
 on:
-  push:
-    branches: [ release-darwin-* ]
+  release:
+    types:
+      - created
+    branches: [ master ]
 
 jobs:
   build_and_push_prerelease:
@@ -14,6 +16,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
+
+    - name: Get the version 
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - uses: actions/cache@v1
       with:
@@ -30,9 +36,10 @@ jobs:
       uses: docker/build-push-action@v1.0.1
       with:
         path: ./villager
-        username: ${{secrets.DOCKER_REGISTRY_USERNAME}}
-        password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
-        registry: realwavelab.azurecr.io
-        repository: charlescd-villager
-        tag_with_ref: true
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-villager
+        dockerfile: ./villager/Dockerfile
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
         tag_with_sha: false
