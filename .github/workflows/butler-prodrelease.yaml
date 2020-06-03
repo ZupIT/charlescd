@@ -1,0 +1,48 @@
+name: butler prod-release
+
+on:
+  release:
+    types:
+      - created
+    branches: [ master ]
+
+jobs:
+  build_and_push_prerelease:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: npm ci
+      working-directory: ./butler
+      
+    - run: npm run build --if-present
+      working-directory: ./butler
+      env:
+        CI: true
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        path: ./butler
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-butler
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
+        tag_with_sha: false
