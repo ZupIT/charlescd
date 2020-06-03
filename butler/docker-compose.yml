@@ -26,7 +26,8 @@ services:
   #   - ./:/app
   #   working_dir: /app
   #   command: >
-  #       sh -c "npm ci
+  #       sh -c "sleep 5
+  #       && npm ci
   #       && npm run test:all:cov"
   #   environment:
   #       DATABASE_HOST: postgres
