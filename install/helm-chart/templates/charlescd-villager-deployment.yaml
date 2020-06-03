@@ -1,0 +1,78 @@
+{{- if .Values.villager.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.villager.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.villager.name }}
+    version: {{ .Values.villager.name }}
+spec:
+  replicas: {{ .Values.villager.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.villager.name }}
+      version: {{ .Values.villager.name }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
+      labels:
+        app: {{ .Values.villager.name }}
+        version: {{ .Values.villager.name }}
+    spec:
+      containers:
+        - name: {{ .Values.villager.name }}
+          image: {{ .Values.villager.image.name }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1   
+          imagePullPolicy: {{ .Values.villager.image.pullPolicy }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: DARWIN_VILLAGER_DB_URI
+              value: "jdbc:postgresql://{{ .Values.villager.database.host}}:{{ .Values.villager.database.port }}/{{ .Values.villager.database.name}}"
+            - name: DARWIN_VILLAGER_DB_USERNAME
+              value: "{{ .Values.villager.database.user}}"
+            - name: DARWIN_VILLAGER_DB_PASSWORD
+              value: "{{ .Values.villager.database.password}}"
+            - name: DARWIN_BUILD_TIMEOUT
+              value: "15"
+            - name: DARWIN_villager_ORGANIZATION
+              value: zup
+            - name: CRYPT_KEY
+              value: pvMPbPPNNB
+          resources:
+{{ toYaml .Values.villager.resources | indent 12 }}
+    {{- with .Values.villager.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.villager.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.villager.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
+

@@ -1,0 +1,66 @@
+apiVersion: v1
+data:
+  nginx.conf: |-
+    user       nginx;
+    worker_processes  5;
+    worker_rlimit_nofile 8192;
+    events {
+        worker_connections  4096;
+    }
+
+    http {
+        index    index.html index.htm index.php;
+        default_type application/octet-stream;
+        log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+        sendfile on;
+        tcp_nopush   on;
+        server_names_hash_bucket_size 128;
+        # server {
+        #     listen 80;
+        #     server_name charles-prod.continuousplatform.com;
+        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
+        # }
+        server {
+            listen 80;
+            {{ if .Values.ui.enabled}}
+            location / {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-ui:3000;
+            }
+            {{- end}}
+            {{ if .Values.moove.enabled}}
+            location /moove {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-moove:8080/;
+            }
+            {{- end}}
+            {{ if .Values.octopipe.enabled}}
+            location /octopipe {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-octopipe:8080/;
+            }
+            {{- end}}
+            {{ if .Values.circlematcher.enabled}}
+            location /charlescd-circle-matcher {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-circle-matcher:8080/;
+            }
+            {{- end}}
+            {{ if .Values.keycloak.enabled}}
+            location ^~ /keycloak {
+                proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-For $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection ‘upgrade’;
+                proxy_set_header Host $host;
+                proxy_pass      http://charlescd-keycloak-http:8080;
+            }
+            {{- end}}
+        }
+    }
+kind: ConfigMap
+metadata:
+  name: confnginx
