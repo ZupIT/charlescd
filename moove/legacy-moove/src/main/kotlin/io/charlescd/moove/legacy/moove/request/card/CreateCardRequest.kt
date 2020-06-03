@@ -18,9 +18,11 @@ package io.charlescd.moove.legacy.moove.request.card
 
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 data class CreateCardRequest(
     @field:NotBlank
+    @field:Size(min = 1, max = 62)
     val name: String,
 
     val description: String?,
