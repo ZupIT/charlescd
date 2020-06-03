@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { ReactComponent as CorrectIcon } from '../svg/correct.svg';
 import { ReactComponent as IncorrectIcon } from '../svg/incorrect.svg';
 import { ReactComponent as FinalIcon } from '../svg/final.svg';
@@ -7,7 +6,6 @@ import { ReactComponent as Loading } from '../svg/loading.svg';
 import { useQuestions } from './hook';
 
 function Questions() {
-  const history = useHistory();
   const [questID, setQuestID] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [correctAnswer, setCorrectAnswer] = useState();
@@ -56,11 +54,13 @@ function Questions() {
     return isCorrect ? <CorrectIcon /> : <IncorrectIcon />;
   }
 
+  const onRestart = () => window.location.href = "/";
+
   const renderFinish = () => (
     <>
       <FinalIcon className="final" />
       <span className="result">You got {countCorrect} out of {questions.length}.</span>
-      <button onClick={() => history.push({ pathname: '/' })}>Restart</button>
+      <button onClick={onRestart}>Restart</button>
     </>
   )
 
