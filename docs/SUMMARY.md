@@ -10,7 +10,7 @@
   * [Docker Registry](primeiros-passos/definindo-workspace/docker-registry.md)
   * [Configurando seu Cluster](primeiros-passos/definindo-workspace/configurando-cluster.md)
   * [Credenciais do Git](primeiros-passos/definindo-workspace/github.md)
-* [Criando seu Primeiro Módulo](primeiros-passos/criando-modulos.md)
+* [Criando seu primeiro módulo](primeiros-passos/criando-modulos.md)
 * [Primeiro Deploy](primeiros-passos/primeiro-deploy.md)
 * [Usando Círculos](primeiros-passos/usando-circulos.md)
 

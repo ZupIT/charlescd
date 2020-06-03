@@ -1,4 +1,4 @@
-# Criando seu Primeiro Módulo
+# Criando seu primeiro módulo
 
 Depois de criar e configurar o seu workspace, agora é necessário adicionar os módulos. 
 
