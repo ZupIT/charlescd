@@ -40,7 +40,7 @@ function Questions() {
     setSelectedAnswer(answer.id);
   }
 
-  const onRestart = () => window.location.href = "/";
+  const onRestart = () => window.location.href = "/quiz-app";
 
   const renderFinish = () => (
     <>
@@ -86,8 +86,10 @@ function Questions() {
     <>
       <section className="question">
         <h4 className="practice-text">Practice Quiz for Darwin and Natural Selection</h4>
+        {console.log(questionsStatus)}
         {questionsStatus === 'pending' && <Loading />}
         {questionsStatus === 'resolved' && renderQuestion()}
+        {questionsStatus === 'rejected' && renderFinish()}
       </section>
     </>
   );
