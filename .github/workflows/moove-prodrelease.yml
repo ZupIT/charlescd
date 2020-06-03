@@ -35,7 +35,7 @@ jobs:
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
-        path: ./moove
+        path: ./moove/web
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_PASSWORD}}
         repository: zupcharles/charlescd-moove
