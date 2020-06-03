@@ -18,15 +18,30 @@ import { useCallback, useEffect } from 'react';
 import { create, configPath } from 'core/providers/cdConfiguration';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 import { CDConfiguration, Response } from './interfaces';
 
 export const useCDConfiguration = (): FetchProps => {
+  const dispatch = useDispatch();
   const [createData, createCDConfiguration] = useFetch<Response>(create);
   const [addData, addCDConfiguration] = useFetch(addConfig);
   const [delData, delCDConfiguration] = useFetch(delConfig);
-  const { loading: loadingSave, response: responseSave } = createData;
-  const { loading: loadingAdd, response: responseAdd } = addData;
-  const { loading: loadingRemove, response: responseRemove } = delData;
+  const {
+    loading: loadingSave,
+    response: responseSave,
+    error: errorSave
+  } = createData;
+  const {
+    loading: loadingAdd,
+    response: responseAdd,
+    error: errorAdd
+  } = addData;
+  const {
+    loading: loadingRemove,
+    response: responseRemove,
+    error: errorRemove
+  } = delData;
 
   const save = useCallback(
     (cdConfiguration: CDConfiguration) => {
@@ -39,9 +54,38 @@ export const useCDConfiguration = (): FetchProps => {
     if (responseSave) addCDConfiguration(configPath, responseSave?.id);
   }, [addCDConfiguration, responseSave]);
 
+  useEffect(() => {
+    if (errorSave) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorSave.status}] CD Configuration could not be saved.`,
+          status: 'error'
+        })
+      );
+    } else if (errorAdd) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorAdd.status}] CD Configuration could not be patched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorSave, errorAdd, dispatch]);
+
   const remove = useCallback(() => {
     delCDConfiguration(configPath);
   }, [delCDConfiguration]);
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] CD Configuration could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
 
   return {
     responseAdd,

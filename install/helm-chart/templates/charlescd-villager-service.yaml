@@ -1,0 +1,20 @@
+{{- if .Values.villager.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.villager.name }}
+    service: {{ .Values.villager.name }}
+  name: {{ .Values.villager.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    {{ range $i, $var := .Values.villager.service.ports -}}
+    - name: {{ $var.name }}
+      port: {{ $var.port }}
+      targetPort: {{ $var.port }}
+    {{ end }}
+  type: {{ .Values.villager.service.type}}
+  selector:
+    app: {{ .Values.villager.name }}
+{{- end}}
