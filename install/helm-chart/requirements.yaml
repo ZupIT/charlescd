@@ -1,0 +1,13 @@
+dependencies:
+- name: postgresql
+  condition: postgresql.enabled
+- name: redis
+  condition: redis.enabled
+- name: octopipe-charlescd
+  condition: octopipe.enabled
+- name: nginx
+  condition: nginx.enabled
+- name: mongodb
+  condition: mongodb.enabled
+- name: keycloak
+  condition: keycloak.enabled

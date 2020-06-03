@@ -1,0 +1,90 @@
+image:
+  repository: octopipe
+  tag: zupcharles/charlescd-octopipe:0.2.1
+  blueTag: latest
+  pullPolicy: Always
+
+envVars:
+  - name: APP_PORT
+    value: "8080"
+  - name: DB_URL
+    value: "mongodb://octopipe:octopipe@charlescd-mongo-mongodb:27017"
+  - name: KUBECONFIG
+    value: "IN_CLUSTER"
+  - name: TIMEOUT_RESOURCE_VERIFICATION
+    value: "300"
+
+appname: octopipe
+
+service:
+  name: octopipe
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 8080
+configmaps:
+  enabled: false
+startcommand: 
+  enabled: false
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
+ingress:
+  enabled: false
+  annotations: 
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - name: zup.lab.realwave.zup.me
+      port: http
+  tls: 
+    - secretName: lab-realwave-zupme
+      hosts:
+        - zup.lab.realwave.zup.me
+resources:
+   limits:
+    cpu: 512m
+    memory: 512Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials:
+  registry: realwavelab.azurecr.io
+  username: realwavelab
+  password: ***REMOVED***
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /api/v1/health
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /api/v1/health
+    port: 8080
+    scheme: HTTP  
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+consulnode:
+  enabled: false
+  repository: realwave-node-consul
+  path: /opt/darwin-ui/config
+
+istio:
+  enabled: true
+
+vault:
+  enabled: false
+
+serviceaccount: octopipe-service-account
