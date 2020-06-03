@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200123172300-1
+      author: monica.ribeiro
+      comment: "Deleting all cards connected to the row backlog at the table card_columns."
+      changes:
+        - sql:
+            comment: Removing all rows at cards_users table related to the cards that are at backlog column.
+            sql: DELETE FROM cards_users WHERE card_id in (SELECT id FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b');
+        - sql:
+            comment: Removing all rows at cards_comments and comments tables related to the cards that are at backlog column.
+            sql: DELETE FROM comments where id in (SELECT comment_id FROM cards_comments WHERE card_id IN (SELECT id FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b'));
+        - sql:
+            comment: Removing all rows at cards_labels table related to the cards that are at backlog column.
+            sql: DELETE FROM cards_labels where card_id in (SELECT id FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b');
+        - sql:
+            comment: Removing all rows at action_cards table related to the cards that are at backlog column.
+            sql: DELETE FROM action_cards where id in (SELECT id FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b');
+        - sql:
+            comment: Removing all rows at software_cards table related to the cards that are at backlog column.
+            sql: DELETE FROM software_cards where id in (SELECT id FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b');
+        - sql:
+            comment: Removing all rows at cards that are at backlog column.
+            sql: DELETE FROM cards WHERE card_column_id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b';
+        - sql:
+            comment: Removing backlog row from cards_columns table.
+            sql: DELETE FROM card_columns WHERE id = '21825c71-12dc-441f-ac5d-9fc05d2bda8b';

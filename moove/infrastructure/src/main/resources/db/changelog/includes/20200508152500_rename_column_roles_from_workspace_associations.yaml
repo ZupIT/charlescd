@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200508152500-1
+      author: mateus.cruz
+      comment: "Rename column roles to permissions on table workspaces_user_groups"
+      changes:
+        - renameColumn:
+            oldColumnName: roles
+            newColumnName: permissions
+            tableName: workspaces_user_groups

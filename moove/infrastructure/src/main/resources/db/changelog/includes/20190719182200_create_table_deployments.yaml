@@ -1,0 +1,42 @@
+databaseChangeLog:
+- changeSet:
+    id: 20190719140200-1
+    author: lucas.fernandes
+    comment: "Create table deployments"
+    changes:
+    - createTable:
+        tableName: deployments
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            autoIncrement: false
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: user_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+              foreignKeyName: fk_deployments_user_id
+              references: users(id)
+        - column:
+            name: created_at
+            type: datetime
+            constraints:
+              nullable: false
+        - column:
+            name: circle_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+              foreignKeyName: fk_deployments_circle_id
+              references: circles(id)
+        - column:
+            name: build_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+              foreignKeyName: fk_deployments_build_id
+              references: builds(id)

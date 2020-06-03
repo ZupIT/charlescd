@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/segments.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/40.fda9664c.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/segments.a7c0453f.svg\";"],"sourceRoot":""}

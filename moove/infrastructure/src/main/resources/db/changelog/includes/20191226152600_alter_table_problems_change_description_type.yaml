@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191226152600-1
+      author: lucas.fernandes
+      comment: "Changing description type in order to make its max length flexible"
+      changes:
+        - modifyDataType:
+            columnName: description
+            newDataType: text
+            tableName: problems

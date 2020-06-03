@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191009003425-1
+      author: adauto.paula
+      comment: "Add status column to card table"
+      changes:
+        - addColumn:
+            tableName: cards
+            column:
+              name: status
+              type: varchar(64)
+              defaultValue: ACTIVE
+              constraints:
+                nullable: false

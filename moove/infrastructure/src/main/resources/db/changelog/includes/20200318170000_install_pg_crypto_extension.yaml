@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200318170000-1
+      author: adauto.paula
+      comment: "Install pg-crypto extension"
+      changes:
+        - sql:
+            sql: create extension if not exists pgcrypto

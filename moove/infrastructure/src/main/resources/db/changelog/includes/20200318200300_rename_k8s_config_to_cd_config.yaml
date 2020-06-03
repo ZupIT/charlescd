@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200318200300-1
+      author: lucas.fernandes
+      comment: "Rename column k8s_configuration_id to cd_configuration_id on table modules"
+      changes:
+        - renameColumn:
+            newColumnName: cd_configuration_id
+            oldColumnName: k8s_configuration_id
+            tableName: modules

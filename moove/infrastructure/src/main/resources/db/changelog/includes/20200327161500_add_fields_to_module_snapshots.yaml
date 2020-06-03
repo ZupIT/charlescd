@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200327161500-1
+      author: mateus.cruz
+      comment: "Add column registry_configuration_id and cd_configuration_id to table modules_snapshot"
+      changes:
+        - addColumn:
+            tableName: module_snapshots
+            column:
+              name: registry_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: module_snapshots
+            column:
+              name: cd_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true

@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/filter.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/27.23e2cf07.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/filter.45543c5a.svg\";"],"sourceRoot":""}

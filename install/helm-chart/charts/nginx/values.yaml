@@ -1,0 +1,11 @@
+ui:
+  enabled: true
+moove:
+  enabled: true
+circlematcher:
+  enabled: true
+keycloak:
+  enabled: true
+octopipe:
+  enabled: true
+

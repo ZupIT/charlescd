@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200205160000-1
+      author: jeias.soares
+      comment: "Drop user_id nullable constraint from table circles"
+      changes:
+        - dropNotNullConstraint:
+            columnName: user_id
+            tableName: circles

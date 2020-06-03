@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190911174500-1
+      author: mateus.cruz
+      comment: "Rename column module_applications_id to component_id on table artifacts"
+      changes:
+        - renameColumn:
+            newColumnName: component_id
+            oldColumnName: module_application_id
+            tableName: artifacts

@@ -1,0 +1,33 @@
+databaseChangeLog:
+- changeSet:
+    id: 20190719140200-1
+    author: lucas.fernandes
+    comment: "Create table builds"
+    changes:
+    - createTable:
+        tableName: builds
+        columns:
+        - column:
+            name: id
+            type: varchar(36)
+            autoIncrement: false
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: user_id
+            type: varchar(36)
+            constraints:
+              nullable: false
+              foreignKeyName: fk_builds_user_id
+              references: users(id)
+        - column:
+            name: created_at
+            type: datetime
+            constraints:
+              nullable: false
+        - column:
+            name: tag
+            type: varchar(64)
+            constraints:
+              nullable: false

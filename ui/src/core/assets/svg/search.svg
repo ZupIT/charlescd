@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 63.1 (101010) - https://sketch.com -->
+    <defs>
+        <path d="M1.5,5.5625 C1.5,3.325 3.325,1.5 5.5625,1.5 C7.8,1.5 9.625,3.325 9.625,5.5625 C9.625,6.68125 9.16875,7.7 8.43125,8.43125 C7.7,9.16875 6.68125,9.625 5.5625,9.625 C3.325,9.625 1.5,7.8 1.5,5.5625 M12.56875,11.68125 L9.7375,8.85 C10.45,7.94375 10.875,6.8 10.875,5.5625 C10.875,2.63125 8.49375,0.25 5.5625,0.25 C2.63125,0.25 0.25,2.63125 0.25,5.5625 C0.25,8.49375 2.63125,10.875 5.5625,10.875 C6.8,10.875 7.94375,10.45 8.85,9.7375 L11.68125,12.56875 C11.80625,12.6875 11.9625,12.75 12.125,12.75 C12.2875,12.75 12.44375,12.6875 12.56875,12.56875 C12.8125,12.325 12.8125,11.925 12.56875,11.68125" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="menu/circles/unselected" transform="translate(-17.000000, -105.000000)">
+            <g id="list/circles/unselected-copy-7" transform="translate(0.000000, 88.000000)">
+                <g id="Group-4">
+                    <g id="Icon/Controls/Search" transform="translate(17.000000, 17.000000)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="Icon-Search" fill="currentColor" xlink:href="#path-1"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
