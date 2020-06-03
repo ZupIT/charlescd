@@ -91,7 +91,6 @@ fun Circle.toDefaultRepresentation(deployment: Deployment? = null): CircleRepres
         importedKvRecords = this.importedKvRecords
     )
 
-
 fun Circle.toManyDeploymentsRepresentation(deployments: List<Deployment?> = emptyList()): CircleManyDeploymentsRepresentation =
     CircleManyDeploymentsRepresentation(
         id = this.id,
@@ -120,7 +119,6 @@ fun Circle.toManyDeploymentsSimpleRepresentation(deployments: List<Deployment?> 
         createdAt = this.createdAt,
         deployments = deployments.map { it?.toBasicRepresentation() }
     )
-
 
 fun Build.toRepresentation(): BuildRepresentation = BuildRepresentation(
     id = this.id,
@@ -199,7 +197,6 @@ fun Feature.toSimpleRepresentation(): SimpleFeatureRepresentation = SimpleFeatur
         .map { it.gitRepositoryAddress }
         .map { "$it/tree/${this.branchName}" }
 )
-
 
 fun CredentialConfiguration.toRepresentation(): CredentialConfigurationRepresentation =
     CredentialConfigurationRepresentation(

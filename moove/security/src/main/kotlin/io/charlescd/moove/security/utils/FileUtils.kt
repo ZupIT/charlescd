@@ -17,15 +17,15 @@
 package io.charlescd.moove.security.utils
 
 import io.charlescd.moove.security.InvalidYamlException
-import org.yaml.snakeyaml.Yaml
 import java.net.URL
+import org.yaml.snakeyaml.Yaml
 
 object FileUtils {
-    fun loadFromFile(fileName: String, map: Yaml) =
+    fun loadFromFile(fileName: String) =
         this.javaClass.classLoader.getResource(fileName) ?: throw IllegalStateException("File not found: $fileName")
 
     fun <T> loadYamlFromFile(fileName: String, yamlLoader: Yaml): T =
-        loadFromFile(fileName, yamlLoader)
+        loadFromFile(fileName)
             .let { loadYaml(it, yamlLoader) }
 
     private fun <T> loadYaml(src: URL, yamlLoader: Yaml): T =

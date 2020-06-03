@@ -17,11 +17,11 @@
 package io.charlescd.moove.legacy.repository
 
 import io.charlescd.moove.legacy.repository.entity.Module
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import java.util.*
 
 interface ModuleRepository : JpaRepository<Module, String> {
 
@@ -47,5 +47,4 @@ interface ModuleRepository : JpaRepository<Module, String> {
                 " WHERE d.circle_id = :circleId "
     )
     fun findAllModulesDeployedAtCircle(circleId: String): Optional<List<Module>>
-
 }

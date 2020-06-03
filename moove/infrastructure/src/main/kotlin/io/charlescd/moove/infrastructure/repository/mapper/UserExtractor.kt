@@ -20,9 +20,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class UserExtractor(private val workspaceMapper: WorkspaceMapper) : ResultSetExtractor<Set<User>> {
@@ -66,4 +66,3 @@ class UserExtractor(private val workspaceMapper: WorkspaceMapper) : ResultSetExt
         createdAt = resultSet.getTimestamp("created_at").toLocalDateTime()
     )
 }
-

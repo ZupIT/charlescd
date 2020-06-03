@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-
 package io.charlescd.moove.application.circle
 
 interface DeleteCircleByIdInteractor {
 
     fun execute(id: String, workspaceId: String)
-
 }

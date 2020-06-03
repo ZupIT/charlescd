@@ -27,5 +27,4 @@ object ColumnConstants {
     const val BUILDS_COLUMN_NAME = "Builds"
 
     const val DEPLOYED_RELEASES_COLUMN_NAME = "Deployed Releases"
-
 }

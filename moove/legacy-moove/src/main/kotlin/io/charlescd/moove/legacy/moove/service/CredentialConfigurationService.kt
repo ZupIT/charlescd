@@ -34,9 +34,9 @@ import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.CredentialConfiguration
 import io.charlescd.moove.legacy.repository.entity.CredentialConfigurationType
 import io.charlescd.moove.legacy.repository.entity.User
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
+import org.springframework.stereotype.Service
 
 @Service
 class CredentialConfigurationService(

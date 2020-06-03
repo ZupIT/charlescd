@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 64 (101010) - https://sketch.com -->
+    <title>D7372FE2-8856-4DA5-A6B5-43D01FA1752C</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <path d="M7.5,1.875 C4.39875,1.875 1.875,4.39875 1.875,7.5 C1.875,10.601875 4.39875,13.125 7.5,13.125 C10.601875,13.125 13.125,10.601875 13.125,7.5 C13.125,4.39875 10.601875,1.875 7.5,1.875 M7.5,14.375 C3.709375,14.375 0.625,11.290625 0.625,7.5 C0.625,3.709375 3.709375,0.625 7.5,0.625 C11.290625,0.625 14.375,3.709375 14.375,7.5 C14.375,11.290625 11.290625,14.375 7.5,14.375 M6.43328125,9.81703125 L4.55828125,7.94203125 C4.31390625,7.69765625 4.31390625,7.30265625 4.55828125,7.05828125 C4.80265625,6.81390625 5.19765625,6.81390625 5.44203125,7.05828125 L6.87515625,8.49140625 L9.55828125,5.80828125 C9.80265625,5.56390625 10.1976563,5.56390625 10.4420313,5.80828125 C10.6864063,6.05265625 10.6864063,6.44765625 10.4420313,6.69203125 L7.31703125,9.81703125 C7.19515625,9.93890625 7.03515625,10.0001562 6.87515625,10.0001562 C6.71515625,10.0001562 6.55515625,9.93890625 6.43328125,9.81703125 Z" id="path-success"></path>
+    </defs>
+    <g id="User-group" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Permissions---3.5" transform="translate(-1034.000000, -1181.000000)">
+            <g id="Group-11" transform="translate(438.000000, 1171.000000)">
+                <g id="Group-8">
+                    <g id="Group-2" fill="#10AA80">
+                    </g>
+                    <g id="Group-3" transform="translate(596.000000, 10.000000)">
+                        <g id="Group-14">
+                            <g id="Icon/Miscellaneous/Placeholder">
+                                <mask id="mask-success" fill="currentColor">
+                                    <use xlink:href="#path-success"></use>
+                                </mask>
+                                <use id="Icon-checkmark" fill="currentColor" xlink:href="#path-success"></use>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

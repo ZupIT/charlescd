@@ -22,5 +22,4 @@ import io.charlescd.moove.application.module.response.ModuleResponse
 interface CreateModuleInteractor {
 
     fun execute(request: CreateModuleRequest, workspaceId: String): ModuleResponse
-
 }

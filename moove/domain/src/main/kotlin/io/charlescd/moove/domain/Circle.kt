@@ -45,4 +45,3 @@ data class SimpleCircle(
     val id: String,
     val name: String
 )
-

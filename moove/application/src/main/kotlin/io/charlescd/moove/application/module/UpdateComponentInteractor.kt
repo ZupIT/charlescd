@@ -23,6 +23,5 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 
 interface UpdateComponentInteractor {
 
-    fun execute(moduleId: String, componentId: String, workspaceId: String, request: ComponentRequest) : ComponentResponse
-
+    fun execute(moduleId: String, componentId: String, workspaceId: String, request: ComponentRequest): ComponentResponse
 }

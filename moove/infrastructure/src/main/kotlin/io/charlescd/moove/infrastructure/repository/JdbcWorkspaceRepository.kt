@@ -25,9 +25,9 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserPermissionsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.WorkspaceExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcWorkspaceRepository(
@@ -288,5 +288,4 @@ class JdbcWorkspaceRepository(
         """
         return this.jdbcTemplate.query(statement, arrayOf(workspaceId, userId), userPermissionsExtractor) ?: emptyMap()
     }
-
 }

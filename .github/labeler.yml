@@ -3,8 +3,7 @@ villager: villager/**
 moove: moove/**
 octopipe: octopipe/**
 circle-matcher: circle-matcher/**
-new-ui: ui/packages/new-ui/**
-legacy-ui: ui/packages/legacy/**
+ui: ui/**
 tracing: tracing/**
 docs: docs/**
 installer: install/**

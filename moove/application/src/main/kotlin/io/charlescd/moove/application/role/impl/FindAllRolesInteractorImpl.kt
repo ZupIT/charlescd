@@ -46,5 +46,4 @@ class FindAllRolesInteractorImpl @Inject constructor(
             totalPages = page.totalPages()
         )
     }
-
 }
