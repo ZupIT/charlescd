@@ -58,7 +58,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
   }, [configType]);
 
   const renderOthersFields = () =>
-    providerType === 'OTHERS' && (
+    providerType === 'GENERIC' && (
       <>
         <Form.Input
           ref={register({ required: true })}
