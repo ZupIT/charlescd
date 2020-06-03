@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useIdentify } from './hook';
 
-function Identify({ onIdentify }) {
+function Identify() {
   const [form, setForm] = useState({});
   const { getCircleID, status } = useIdentify();
+  const history = useHistory();
 
   useEffect(() => {
     if (status === 'resolved' || status === 'rejected') {
-      onIdentify();
+      history.push({
+        pathname: '/questions'
+      });
     }
-  }, [onIdentify, status])
+  }, [history, status])
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -44,7 +48,9 @@ function Identify({ onIdentify }) {
           What neighborhood do you reside in?
           <input type="text" name="neighborhood" onChange={handleChange} />
         </label>
-        <button type="submit">Start</button>
+        <button type="submit">
+          { status === 'pending' ? '...' : 'Start'}
+        </button>
       </form>
     </div>
   );

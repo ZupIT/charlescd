@@ -1,34 +1,21 @@
-import React, { useState, Suspense } from 'react';
+import React, { Suspense } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ReactComponent as Charles } from './svg/charles.svg';
-import Identify from './Identify';
 
 const Questions = React.lazy(() => import('./Questions'));
+const Identify = React.lazy(() => import('./Identify'));
 
 function App() {
-  const [step, setStep] = useState('IDENTIFY');
-
-  const onIdentify = () => {
-    setStep('QUESTIONS');
-  }
-
-  const onRestart = () => {
-    window.location.reload();
-  }
-
   return (
-    <>
+    <BrowserRouter>
       <Charles className="logo" />
-      { step === 'IDENTIFY' && (
-        <Identify onIdentify={onIdentify} />
-      )}
-      {
-        step === 'QUESTIONS' && (
-          <Suspense fallback="">
-            <Questions onRestart={onRestart} />
-          </Suspense>
-        )
-      }
-    </>
+      <Suspense fallback="">
+        <Switch>
+          <Route exact path="/" component={Identify} />
+          <Route exact path="/questions" component={Questions} />
+        </Switch>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
