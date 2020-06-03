@@ -47,6 +47,6 @@ export const providers: Radio[] = [
   },
   {
     name: 'Others',
-    value: 'OTHERS'
+    value: 'GENERIC'
   }
 ];
