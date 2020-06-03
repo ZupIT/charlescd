@@ -12,5 +12,5 @@ Before you follow the steps, make sure you have already installed and configured
 2. Use circle matcher to verify if the logic rules created for the segmentation are correctly identifying the users.
 3. Make your deploy on the circle created before.
 
-![](../.gitbook/assets/usando-circulos%20%282%29.gif)
+![](../.gitbook/assets/usando-circulos%20%282%29%20%282%29.gif)
 
