@@ -4,7 +4,7 @@ description: >-
   expressions used on Charles' platform and documentation.
 ---
 
-# Key Concepts
+# Key concepts
 
 ## Circles
 
