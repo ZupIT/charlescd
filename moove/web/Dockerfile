@@ -1,4 +1,4 @@
-FROM zupacr.azurecr.io/jvm-limited:latest
+FROM adoptopenjdk/openjdk11:jdk-11.0.4_11-alpine-slim
 
 ENV APP_TARGET target
 ENV APP web.jar
