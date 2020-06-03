@@ -36,12 +36,11 @@ jobs:
       working-directory: ~/app/./butler
     - name: Run test on docker-compose
       run: docker-compose exec app npm ci && npm run test:all:cov
+      working-directory: ~/app/./butler
     - name: Run lint on docker-compose
       run: docker-compose exec app npm run lint
       env:
         CI: true
-      working-directory: ~/app/./butler
-    - run: npm run lint
       working-directory: ~/app/./butler
     - uses: codecov/codecov-action@v1.0.7
       with:
