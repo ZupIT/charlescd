@@ -1,0 +1,53 @@
+name: build octopipe
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'octopipe/**'
+    tags: 
+      - '!*'
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'octopipe/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.2'
+
+      - name: Run Unit tests
+        working-directory: ./octopipe
+        run: |
+          go test -race -covermode atomic -coverprofile=coverage.cov ./...
+
+      - name: Tests coverage
+        uses: codecov/codecov-action@v1.0.7
+        with:
+          file: ./octopipe/coverage.cov
+          flags: octopipe
+          fail_ci_if_error: true
+
+      - name: Code Style
+        uses: docker://morphy/revive-action:v1
+        with:
+          config: ./octopipe/revive.toml
+          path: "./octopipe/..."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

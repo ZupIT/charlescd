@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200209180000-1
+      author: jeias.soares
+      comment: "Add helm repository column to modules table"
+      changes:
+        - addColumn:
+            tableName: modules
+            column:
+              name: helm_repository
+              type: varchar(255)

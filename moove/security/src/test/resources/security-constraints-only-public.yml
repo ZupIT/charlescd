@@ -1,0 +1,14 @@
+---
+publicConstraints:
+  - pattern: /**
+    methods:
+      - GET
+      - DELETE
+      - HEAD
+      - OPTIONS
+      - PATCH
+      - POST
+      - PUT
+      - TRACE
+      - CONNECT
+

@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200220200200-1
+      author: adauto.paula
+      comment: "Drop application_id column from card_columns table"
+      changes:
+        - dropColumn:
+            tableName: card_columns
+            columnName: application_id
+  - changeSet:
+      id: 20200220200300-2
+      author: adauto.paula
+      comment: "Add not null constraint to application_id columns"
+      changes:
+        - addNotNullConstraint:
+            tableName: builds
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: cards
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: components
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: credential_configurations
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: deployments
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: features
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: hypotheses
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: modules
+            columnName: application_id
+        - addNotNullConstraint:
+            tableName: problems
+            columnName: application_id

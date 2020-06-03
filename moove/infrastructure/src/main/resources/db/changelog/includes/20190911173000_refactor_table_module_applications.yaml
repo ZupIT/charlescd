@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190911173000-1
+      author: mateus.cruz
+      comment: "Rename table module applications to components"
+      changes:
+        - renameTable:
+            oldTableName: module_applications
+            newTableName: components
+  - changeSet:
+      id: 20190911173000-2
+      author: mateus.cruz
+      comment: "Adding new fields to components table"
+      changes:
+        - addColumn:
+            tableName: components
+            column:
+              name: context_path
+              type: varchar(128)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: components
+            column:
+              name: health_check
+              type: varchar(128)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: components
+            column:
+              name: port
+              type: int
+              constraints:
+                nullable: true

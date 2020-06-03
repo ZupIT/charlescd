@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`global style 1`] = `
+CSSStyleDeclaration {
+  "0": "display",
+  "1": "margin",
+  "2": "padding",
+  "3": "font-family",
+  "_importants": Object {
+    "display": "",
+    "font-family": "",
+    "margin": "",
+    "padding": "",
+  },
+  "_length": 4,
+  "_onChange": [Function],
+  "_values": Object {
+    "display": "block",
+    "font-family": "'Lato',sans-serif",
+    "margin": "0px",
+    "margin-bottom": "0px",
+    "margin-left": "0px",
+    "margin-right": "0px",
+    "margin-top": "0px",
+    "padding": "0px",
+    "padding-bottom": "0px",
+    "padding-left": "0px",
+    "padding-right": "0px",
+    "padding-top": "0px",
+  },
+}
+`;

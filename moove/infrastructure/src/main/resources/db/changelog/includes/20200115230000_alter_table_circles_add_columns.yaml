@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200112230000-1
+      author: adauto.paula
+      comment: "Add columns to table circles"
+      changes:
+        - addColumn:
+            tableName: circles
+            column:
+              name: matcher_type
+              type: varchar(128)
+              constraints:
+                nullable: true
+              defaultValue: REGULAR
+        - addColumn:
+            tableName: circles
+            column:
+              name: reference
+              type: varchar(64)
+              constraints:
+                nullable: true
+        - addDefaultValue:
+            tableName: circles
+            columnName: segmentations
+            defaultValue: '{}'
+        - dropNotNullConstraint:
+            columnName: segmentations
+            tableName: circles
+        - dropNotNullConstraint:
+            columnName: priority
+            tableName: circles
+        - dropNotNullConstraint:
+            columnName: rule_matcher_type
+            tableName: circles

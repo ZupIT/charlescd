@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/git.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/28.466e9747.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/git.0fc38934.svg\";"],"sourceRoot":""}

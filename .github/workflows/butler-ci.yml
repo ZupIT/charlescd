@@ -1,0 +1,51 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: build butler
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'butler/**'
+    tags:
+      - '!*'
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'butler/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Start docker-compose
+      run: docker-compose up -d
+      working-directory: ./butler
+
+    - name: Run test on docker-compose
+      run: docker-compose exec -T app npm ci && npm run test:all:cov
+      working-directory: ./butler
+
+    - name: Run lint on docker-compose
+      run: docker-compose exec -T app npm run lint
+      env:
+        CI: true
+      working-directory: ./butler
+
+    - uses: codecov/codecov-action@v1.0.7
+      with:
+        fail_ci_if_error: true
+        file: ./butler/coverage/lcov.info
+        flags: butler

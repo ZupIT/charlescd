@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/assets/svg/workspace.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/45.4d0a74bc.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/workspace.7b6aed90.svg\";"],"sourceRoot":""}

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20191104152000-1
+      author: mateus.cruz
+      comment: "Add deployed_at column to deployments table"
+      changes:
+        - addColumn:
+            tableName: deployments
+            column:
+              name: deployed_at
+              type: timestamp
+              constraints:
+                nullable: true

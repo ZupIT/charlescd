@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Release.Name }}-octopipe
+    service: {{ .Release.Name }}-octopipe
+  name: {{ .Release.Name }}-octopipe
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    {{ range $i, $var := .Values.service.ports -}}
+    - name: {{ $var.name }}
+      port: {{ $var.port }}
+      targetPort: {{ $var.port }}
+    {{ end }}
+  selector:
+    app: {{ .Release.Name }}-octopipe

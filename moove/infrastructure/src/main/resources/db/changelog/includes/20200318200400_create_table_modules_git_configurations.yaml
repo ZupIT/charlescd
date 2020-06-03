@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200318200400-1
+      author: adauto.paula
+      comment: "Create table modules_git_configurations"
+      changes:
+        - createTable:
+            tableName: modules_git_configurations
+            columns:
+              - column:
+                  name: module_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    foreignKeyName: fk_git_configs_modulos_mod_id
+                    references: modules(id)
+                    nullable: false
+              - column:
+                  name: git_configuration_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_git_configs_modulos_config_id
+                    references: git_configurations(id)
+                    nullable: false
