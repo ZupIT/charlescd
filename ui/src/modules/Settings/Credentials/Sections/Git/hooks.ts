@@ -18,15 +18,30 @@ import { useCallback, useEffect } from 'react';
 import { create, configPath } from 'core/providers/git';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
 import { Git, Response } from './interfaces';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useGit = (): FetchProps => {
+  const dispatch = useDispatch();
   const [createData, createGit] = useFetch<Response>(create);
   const [addData, addGit] = useFetch(addConfig);
   const [delData, delGit] = useFetch(delConfig);
-  const { loading: loadingSave, response: responseSave } = createData;
-  const { loading: loadingAdd, response: responseAdd } = addData;
-  const { loading: loadingRemove, response: responseRemove } = delData;
+  const {
+    loading: loadingSave,
+    response: responseSave,
+    error: errorSave
+  } = createData;
+  const {
+    loading: loadingAdd,
+    response: responseAdd,
+    error: errorAdd
+  } = addData;
+  const {
+    loading: loadingRemove,
+    response: responseRemove,
+    error: errorRemove
+  } = delData;
 
   const save = useCallback(
     (git: Git) => {
@@ -39,9 +54,38 @@ export const useGit = (): FetchProps => {
     if (responseSave) addGit(configPath, responseSave?.id);
   }, [addGit, responseSave]);
 
+  useEffect(() => {
+    if (errorSave) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorSave.status}] Git could not be saved.`,
+          status: 'error'
+        })
+      );
+    } else if (errorAdd) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorAdd.status}] Git could not be patched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorSave, errorAdd, dispatch]);
+
   const remove = useCallback(() => {
     delGit(configPath);
   }, [delGit]);
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] Git could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
 
   return {
     responseAdd,
