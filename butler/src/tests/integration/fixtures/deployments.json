@@ -1,0 +1,55 @@
+[
+  {
+    "id": "2adc7ac1-61ff-4630-8ba9-eba33c00ad24",
+    "applicationName": "application-name",
+    "authorId": "author-id",
+    "description": "fake deployment #1",
+    "callbackUrl": "callback-url",
+    "status": "CREATED",
+    "defaultCircle": false,
+    "circleId": "12345",
+    "cdConfigurationId": "4046f193-9479-48b5-ac29-01f419b64cb5",
+    "circle" : {
+      "headerValue": "header-value"
+    }
+  },
+  {
+    "id": "014742a1-34a6-46b5-a24e-1a61ce945803",
+    "applicationName": "application-name",
+    "authorId": "author-id",
+    "description": "fake deployment #2",
+    "callbackUrl": "callback-url",
+    "status": "CREATED",
+    "defaultCircle": true,
+    "cdConfigurationId": "4046f193-9479-48b5-ac29-01f419b64cb5",
+    "circleId": null
+  },
+  {
+    "id": "6a38f89c-05c0-41e0-8abc-3b1273355914",
+    "applicationName": "application-name3",
+    "authorId": "author-id",
+    "description": "fake deployment #3",
+    "callbackUrl": "callback-url3",
+    "status": "CREATED",
+    "defaultCircle": false,
+    "circleId": "123456",
+    "cdConfigurationId": "4046f193-9479-48b5-ac29-01f419b64cb5",
+    "circle": {
+      "headerValue": "header-value"
+    }
+  },
+  {
+    "id": "a17d4352-568a-4abb-a45a-a03da11c80b8",
+    "applicationName": "application-name3",
+    "authorId": "author-id",
+    "description": "fake deployment #3",
+    "callbackUrl": "callback-url3",
+    "status": "CREATED",
+    "defaultCircle": false,
+    "circleId": "123456",
+    "cdConfigurationId": "4046f193-9479-48b5-ac29-01f419b64cb5",
+    "circle" : {
+      "headerValue": "header-value"
+    }
+  }
+]

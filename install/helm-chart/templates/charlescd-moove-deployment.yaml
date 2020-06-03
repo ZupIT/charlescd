@@ -1,0 +1,87 @@
+{{- if .Values.moove.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.moove.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.moove.name }}
+    version: {{ .Values.moove.name }}
+spec:
+  replicas: {{ .Values.moove.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.moove.name }}
+      version: {{ .Values.moove.name }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
+      labels:
+        app: {{ .Values.moove.name }}
+        version: {{ .Values.moove.name }}
+    spec:
+      containers:
+        - name: {{ .Values.moove.name }}
+          image: {{ .Values.moove.image.name }}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1   
+          imagePullPolicy: {{ .Values.moove.image.pullPolicy }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: DB_URL
+              value: "jdbc:postgresql://{{ .Values.moove.database.host}}:{{ .Values.moove.database.port }}/{{ .Values.moove.database.name}}"
+            - name: DB_USERNAME
+              value: "{{ .Values.moove.database.user}}"
+            - name: DB_PASSWORD
+              value: "{{ .Values.moove.database.password}}"
+            - name: KEYCLOCK_REALM
+              value: "charlescd"
+            - name: KEYCLOAK_SERVER_URL
+              value: "http://{{ .Release.Name }}-keycloak-http/auth"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "realm-charlescd"
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
+            - name: ORIGIN_HOSTS
+              value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,{{ .Values.moove.frontHost }}"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "application-aes256-key"
+                  key: "encryption-key"
+          resources:
+{{ toYaml .Values.moove.resources | indent 12 }}
+    {{- with .Values.moove.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.moove.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.moove.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
+

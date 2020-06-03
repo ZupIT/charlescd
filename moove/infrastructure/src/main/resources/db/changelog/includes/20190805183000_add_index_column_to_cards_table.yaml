@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190805183000-1
+      author: mateus.cruz
+      comment: "Add field index on table cards"
+      changes:
+        - addColumn:
+            tableName: cards
+            column:
+              name: index
+              type: int

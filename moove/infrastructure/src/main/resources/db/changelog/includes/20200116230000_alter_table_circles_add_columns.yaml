@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200112230000-1
+      author: adauto.paula
+      comment: "Add columns to table circles"
+      changes:
+        - addColumn:
+            tableName: circles
+            column:
+              name: imported_kv_records
+              type: integer
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: circles
+            column:
+              name: imported_at
+              type: timestamp
+              constraints:
+                nullable: true

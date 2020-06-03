@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190717101800-1
+      author: mateus.cruz
+      comment: "Create table circles"
+      changes:
+        - createTable:
+            tableName: circles
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: segmentations
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(64)
+                  constraints:
+                    foreignKeyName: fk_labels_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200205170000-1
+      author: jeias.soares
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: "select count(*) from circles where id = 'f5d23a57-5607-4306-9993-477e1598cc2a';"
+      comment: "Seeding default circle"
+      changes:
+        - insert:
+            tableName: circles
+            columns:
+              - column:
+                  name: id
+                  value: "f5d23a57-5607-4306-9993-477e1598cc2a"
+              - column:
+                  name: name
+                  value: "Open Sea"
+              - column:
+                  name: segmentations
+                  value: '{}'
+              - column:
+                  name: created_at
+                  value: now()
+              - column:
+                  name: rule_matcher_type
+                  value: "DARWIN"
+              - column:
+                  name: rules
+                  value: '{}'
+              - column:
+                  name: priority
+                  value: 0
+              - column:
+                  name: matcher_type
+                  value: "REGULAR"
+
+

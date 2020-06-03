@@ -1,0 +1,171 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190722113000-1
+      author: mateus.cruz
+      comment: "Create table cards and card_columns with seeds"
+      changes:
+        - createTable:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: cards
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_column_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_cards_column
+                    references: card_columns(id)
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_labels_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: cards_labels
+            columns:
+              - column:
+                  name: card_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: label_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+        - createTable:
+            tableName: action_cards
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_action_card_id
+                    references: cards(id)
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: software_cards
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    foreignKeyName: fk_software_card_id
+                    references: cards(id)
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_software_card_feature_id
+                    references: features(id)
+                    nullable: false
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "21825c71-12dc-441f-ac5d-9fc05d2bda8b"
+              - column:
+                  name: name
+                  value: "backlog"
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "eb6dd013-3606-4da3-8324-b630406b7a64"
+              - column:
+                  name: name
+                  value: "to_do"
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "5bd86112-0900-4eb4-a673-5e71e405796f"
+              - column:
+                  name: name
+                  value: "doing"
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "dc2bfa97-e87a-49bf-95a9-72b9d77e151b"
+              - column:
+                  name: name
+                  value: "ready_to_team_validation"
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "c7884347-8c34-4f35-bd55-736b11fbf517"
+              - column:
+                  name: name
+                  value: "team_validation"
+        - insert:
+            tableName: card_columns
+            columns:
+              - column:
+                  name: id
+                  value: "75ea93c5-0632-4cd2-93cb-290f5fa1c041"
+              - column:
+                  name: name
+                  value: "validated"

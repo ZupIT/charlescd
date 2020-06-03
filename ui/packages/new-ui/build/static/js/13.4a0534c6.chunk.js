@@ -1,0 +1,2 @@
+(this["webpackJsonpnew-ui"]=this["webpackJsonpnew-ui"]||[]).push([[13],{321:function(e,n,r){"use strict";r.r(n);var t=r(1),u=r.n(t),a=r(30);function i(){var e=Object(a.a)([""]);return i=function(){return e},e}var p={Wrapper:r(14).d.div(i())};n.default=function(){return u.a.createElement(p.Wrapper,null,"Hypotheses")}}}]);
+//# sourceMappingURL=13.4a0534c6.chunk.js.map

@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:
+    id: 20200114165200-1
+    author: monica.ribeiro
+    comment: "Changing email to be unique"
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: const_email
+        tableName: users

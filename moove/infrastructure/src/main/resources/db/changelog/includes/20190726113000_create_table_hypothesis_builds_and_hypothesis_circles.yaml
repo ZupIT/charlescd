@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190726113000-1
+      author: mateus.cruz
+      comment: "Create table hypotheses_circles"
+      changes:
+        - createTable:
+            tableName: hypotheses_circles
+            columns:
+              - column:
+                  name: hypothesis_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: circle_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+  - changeSet:
+      id: 20190726113000-2
+      author: mateus.cruz
+      comment: "Add hypothesis_id to builds table"
+      changes:
+        - addColumn:
+            tableName: builds
+            columns:
+              - column:
+                  name: hypothesis_id
+                  type: varchar(36)
+  - changeSet:
+      id: 20190726113000-3
+      author: mateus.cruz
+      comment: "Add card_column to builds table"
+      changes:
+        - addColumn:
+            tableName: builds
+            columns:
+              - column:
+                  name: card_column_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_cards_column
+                    references: card_columns(id)
+                    nullable: false

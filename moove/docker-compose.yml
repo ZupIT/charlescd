@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=charles
+      - POSTGRES_USER=charles
+      - POSTGRES_PASSWORD=charles
+      - MAX_CONNECTIONS=300
+    networks:
+      - custom
+
+  stubby4j:
+    image: sandokandias/stubby4j-docker
+    ports:
+      - "8883:8883"
+    environment:
+      STUBBY_PORT: 8883
+    volumes:
+      - ./data/stubby/integrations.yml:/usr/local/stubby.yml
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.165.70.0/16

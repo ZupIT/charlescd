@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="12px" viewBox="0 0 10 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Variation Down</title>
+    <defs>
+        <path d="M10.9155667,6.24604167 C10.7989,6.356875 10.6530667,6.41520833 10.5014,6.41520833 C10.3497333,6.41520833 10.2039,6.356875 10.0872333,6.24604167 L7.58473333,3.73770833 L7.58473333,11.6652083 C7.58473333,11.9860417 7.32223333,12.2485417 7.0014,12.2485417 C6.68056667,12.2485417 6.41806667,11.9860417 6.41806667,11.6652083 L6.41806667,3.73770833 L3.91556667,6.24604167 C3.68806667,6.47354167 3.31473333,6.47354167 3.08723333,6.24604167 C2.85973333,6.01854167 2.85973333,5.64520833 3.08723333,5.41770833 L6.58723333,1.91770833 C6.63973333,1.86520833 6.7039,1.824375 6.7739,1.79520833 C6.80306667,1.78354167 6.8264,1.771875 6.85556667,1.771875 C6.9489,1.74270833 7.0539,1.74270833 7.14723333,1.771875 C7.1764,1.771875 7.19973333,1.78354167 7.2289,1.79520833 C7.2989,1.824375 7.36306667,1.86520833 7.41556667,1.91770833 L10.9155667,5.41770833 C11.1430667,5.64520833 11.1430667,6.01854167 10.9155667,6.24604167" id="path-variation-down"></path>
+    </defs>
+    <g id="Circles---Health" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon/Arrow/Straight/Down" transform="translate(-2.000000, -1.000000)">
+            <mask id="mask-variation-down" fill="currentColor">
+                <use xlink:href="#path-variation-down"></use>
+            </mask>
+            <use id="Icon-Arrow-Down" fill="currentColor" fill-rule="evenodd" transform="translate(7.001400, 6.999271) rotate(180.000000) translate(-7.001400, -6.999271) " xlink:href="#path-variation-down"></use>
+        </g>
+    </g>
+</svg>

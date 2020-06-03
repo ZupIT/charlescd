@@ -1,0 +1,33 @@
+databaseChangeLog:
+- changeSet:
+    id: 20190716144700-1
+    author: lucas.fernandes
+    comment: "Create table modules"
+    changes:
+      - createTable:
+          tableName: modules
+          columns:
+          - column:
+              name: id
+              type: varchar(36)
+              autoIncrement: false
+              constraints:
+                primaryKey: true
+                nullable: false
+          - column:
+              name: name
+              type: varchar(64)
+              constraints:
+                nullable: false
+          - column:
+              name: created_at
+              type: datetime
+              constraints:
+                nullable: false
+          - column:
+              name: user_id
+              type: varchar(36)
+              constraints:
+                nullable: false
+                foreignKeyName: fk_modules_user_id
+                references: users(id)

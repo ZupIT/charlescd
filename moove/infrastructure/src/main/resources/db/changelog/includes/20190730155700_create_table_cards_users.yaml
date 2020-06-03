@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20190730155700-1
+      author: william.okano
+      comment: "Create table cards_users"
+      changes:
+        - createTable:
+            tableName: cards_users
+            columns:
+              - column:
+                  name: card_id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_cards_users_cards
+                    references: cards(id)
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_cards_users_users
+                    references: users(id)

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200229224800-1
+      author: lucas.fernandes
+      comment: "Add column k8s_configuration_id to table modules"
+      changes:
+        - addColumn:
+            tableName: modules
+            column:
+              name: k8s_configuration_id
+              type: varchar(36)
+              constraints:
+                nullable: true

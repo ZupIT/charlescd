@@ -1,0 +1,9 @@
+---
+constraints:
+  - pattern: /api/circle/*
+    roles:
+      zup-circle-read:
+        something-wrong:
+          - GET
+      zup-circle-write:
+        - POST

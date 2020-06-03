@@ -1,0 +1,104 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200210113000-1
+      author: mateus.cruz
+      comment: "Removing ValueFlow foreign key constraint to Problem entity"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: problems
+            constraintName: value_flow_id_fk
+  - changeSet:
+      id: 20200210113000-2
+      author: mateus.cruz
+      comment: "Add application_id column to enable multi tenancy on Charles"
+      changes:
+        - addColumn:
+            tableName: builds
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_builds_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: card_columns
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_card_columns_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: cards
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_cards_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: components
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_components_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: credential_configurations
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_credential_configurations_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: deployments
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_deployments_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: features
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_features_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: hypotheses
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_hypotheses_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: modules
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_modules_application_id
+                references: applications(id)
+        - addColumn:
+            tableName: problems
+            column:
+              name: application_id
+              type: varchar(36)
+              constraints:
+                nullable: true
+                foreignKeyName: fk_problems_application_id
+                references: applications(id)
