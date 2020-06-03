@@ -1,11 +1,10 @@
 # O que é e como funciona o Circle Matcher
 
-O Circle Matcher é uma feature que permite você validar e/ou identificar se as regras lógicas definidas para criar segmentações nos seus círculos realmente estão puxando os usuários que você quer.
+O Circle Matcher é uma funcionalidade que permite validar e/ou identificar se as regras lógicas definidas para criar segmentações nos círculos realmente estão correspondendo com os usuários adequados.
 
-Nesse sentido, existem duas formas de você validar as segmentações através do Circle Matcher. São elas:
+Neste sentido, existem duas formas pelas quais podem ser validadas as segmentações através do Circle Matcher. São elas:
 
-1. **Default:** é a validação manual, em que você vai adicionando todas as chaves que definem as características pré-determinadas para círculo.  
-2. **Edit JSON:** é a validação na qual você vai direto no JSON do seu ambiente produtivo e insere no campo de payload para, em seguida, fazer o try.
+1. **Default:** é a validação manual, onde são adicionadas todas as chaves que definem as características pré-determinadas para o círculo.  
+2. **Edit JSON:** é a validação na qual é editado diretamente o JSON correspondente ao ambiente produtivo, inserindo no campo de payload para, em seguida, fazer o teste.
 
-Em ambas as maneiras, o Circle Matcher retorna para você em quais círculos se encaixam os atributos que estou pesquisando. Caso aconteça de você passar um atributo que esteja fora das condicionais configuradas nos círculos, o sistema irá retornar que aquele usuário está em "mar aberto", ou seja, no círculo default.
-
+Em ambas as formas, o Circle Matcher indica em quais círculos se encaixam os atributos que estão sendo pesquisados. Caso aconteça de ser informado um atributo que esteja fora das condicionais configuradas nos círculos, o sistema irá indicar que aquele usuário está em "mar aberto", ou seja, no círculo *default*.

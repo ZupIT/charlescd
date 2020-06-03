@@ -1,8 +1,8 @@
 # Como criar círculos?
 
-Para você criar um círculo, basta fazer o seguinte passo a passo:
+Para criar um círculo, basta seguir os seguintes passos:
 
-**1.** Clique em Create Circle.  
+**1.** Clique em *Create Circle*.  
 **2.** Dê um nome ao seu círculo.  
 **3.** Defina uma segmentação.  
 **4.** \[Opcional\] Implante uma release.
