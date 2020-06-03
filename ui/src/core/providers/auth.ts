@@ -16,12 +16,14 @@
 
 import { authRequest, unauthenticatedRequest } from './base';
 
+const clientId = window.ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
+const realm = window.ENVIRONMENT?.REACT_APP_AUTH_REALM;
+
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
-const endpoint = '/auth/realms/darwin/protocol/openid-connect/token';
+const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
-const clientId = 'darwin-client';
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
