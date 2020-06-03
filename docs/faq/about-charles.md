@@ -25,5 +25,5 @@ The architecture is structured on microservices whose modules are:
 * `charles-butler`: orchestrates and manages releases and deploys. 
 * `charles-circle-matcher`: manages all created circles, and also points out which circle the user belongs based on their characteristics.
 
-![Charles&apos; architecture](../.gitbook/assets/arquitetura-charles-nova%20%282%29%20%281%29.png)
+![Charles&apos; architecture](../.gitbook/assets/arquitetura-charles-nova%20%282%29%20%281%29%20%281%29.png)
 
