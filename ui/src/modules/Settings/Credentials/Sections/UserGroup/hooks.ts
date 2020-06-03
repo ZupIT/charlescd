@@ -14,24 +14,35 @@
  * limitations under the License.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { create, detach, findAll } from 'core/providers/userGroup';
 import { findAll as findAllRoles } from 'core/providers/roles';
 import { addConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useDispatch } from 'core/state/hooks';
 import { UserGroup, GroupRoles, Role } from './interfaces';
 
 export const useUserGroup = (): FetchProps => {
+  const dispatch = useDispatch();
   const [createData, createUserGroup] = useFetch<GroupRoles>(create);
   const [userGroupsData, getUserGroups] = useFetch<{ content: UserGroup[] }>(
     findAll
   );
   const [addData] = useFetch(addConfig);
   const [delData, detachGroup] = useFetch(detach);
-  const { loading: loadingSave, response: responseSave } = createData;
-  const { loading: loadingAll, response } = userGroupsData;
+  const {
+    loading: loadingSave,
+    response: responseSave,
+    error: errorSave
+  } = createData;
+  const { loading: loadingAll, response, error } = userGroupsData;
   const { loading: loadingAdd, response: responseAdd } = addData;
-  const { loading: loadingRemove, response: responseRemove } = delData;
+  const {
+    loading: loadingRemove,
+    response: responseRemove,
+    error: errorRemove
+  } = delData;
 
   const save = useCallback(
     (id: string, roleId: string) => {
@@ -40,9 +51,31 @@ export const useUserGroup = (): FetchProps => {
     [createUserGroup]
   );
 
+  useEffect(() => {
+    if (errorSave) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorSave.status}] User Group could not be saved.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorSave, dispatch]);
+
   const getAll = useCallback(() => {
     getUserGroups();
   }, [getUserGroups]);
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `[${error.status}] User Group could not be fetched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
 
   const remove = useCallback(
     (id: string, groupId: string) => {
@@ -50,6 +83,17 @@ export const useUserGroup = (): FetchProps => {
     },
     [detachGroup]
   );
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] User Group could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
 
   return {
     getAll,

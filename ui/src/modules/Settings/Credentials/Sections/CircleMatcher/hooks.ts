@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { configPath } from 'core/providers/circleMatcher';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { useDispatch } from 'core/state/hooks';
 
 export const useCircleMatcher = (): FetchProps => {
+  const dispatch = useDispatch();
   const [addData, addCircleMatcher] = useFetch(addConfig);
-  const [, delCircleMatcher] = useFetch(delConfig);
-  const { loading: loadingAdd, response: responseAdd } = addData;
+  const [removeData, delCircleMatcher] = useFetch(delConfig);
+  const { loading: loadingAdd, response: responseAdd, error } = addData;
+  const { error: errorRemove } = removeData;
 
   const save = useCallback(
     (url: string) => {
@@ -31,9 +35,31 @@ export const useCircleMatcher = (): FetchProps => {
     [addCircleMatcher]
   );
 
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `[${error.status}] Circle Matcher could not be saved.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
+
   const remove = useCallback(() => {
     delCircleMatcher(configPath);
   }, [delCircleMatcher]);
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] Circle Matcher could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
 
   return { responseAdd, loadingAdd, save, remove };
 };

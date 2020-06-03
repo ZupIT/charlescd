@@ -18,15 +18,26 @@ import { useCallback, useEffect } from 'react';
 import { create, configPath } from 'core/providers/registry';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
 
 export const useRegistry = (): FetchProps => {
+  const dispatch = useDispatch();
   const [createData, createRegistry] = useFetch<Response>(create);
   const [addData, addRegistry] = useFetch(addConfig);
   const [delData, delRegistry] = useFetch(delConfig);
-  const { loading: loadingSave, response: responseSave } = createData;
-  const { loading: loadingAdd, response: responseAdd } = addData;
-  const { response: responseRemove } = delData;
+  const {
+    loading: loadingSave,
+    response: responseSave,
+    error: errorSave
+  } = createData;
+  const {
+    loading: loadingAdd,
+    response: responseAdd,
+    error: errorAdd
+  } = addData;
+  const { response: responseRemove, error: errorRemove } = delData;
 
   const save = useCallback(
     (registry: Registry) => {
@@ -39,9 +50,38 @@ export const useRegistry = (): FetchProps => {
     if (responseSave) addRegistry(configPath, responseSave?.id);
   }, [addRegistry, responseSave]);
 
+  useEffect(() => {
+    if (errorSave) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorSave.status}] Registry could not be saved.`,
+          status: 'error'
+        })
+      );
+    } else if (errorAdd) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorAdd.status}] Registry could not be patched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorSave, errorAdd, dispatch]);
+
   const remove = useCallback(() => {
     delRegistry(configPath);
   }, [delRegistry]);
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] Registry could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
 
   return { responseAdd, save, responseRemove, remove, loadingSave, loadingAdd };
 };
