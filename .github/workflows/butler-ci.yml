@@ -29,20 +29,21 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: npm ci
+
+    - name: Start docker-compose
+      run: docker-compose up -d
       working-directory: ./butler
-    - run: npm run build --if-present
+
+    - name: Run test on docker-compose
+      run: docker-compose exec -T app npm ci && npm run test:all:cov
       working-directory: ./butler
-    - run: npm run test:cov
+
+    - name: Run lint on docker-compose
+      run: docker-compose exec -T app npm run lint
       env:
         CI: true
       working-directory: ./butler
-    - run: npm run lint
-      working-directory: ./butler
+
     - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
