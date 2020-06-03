@@ -39,7 +39,7 @@ jobs:
       working-directory: ./butler
 
     - name: Run lint on docker-compose
-      run: docker-compose -T exec app npm run lint
+      run: docker-compose exec -T app npm run lint
       env:
         CI: true
       working-directory: ./butler
