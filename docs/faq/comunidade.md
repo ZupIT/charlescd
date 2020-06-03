@@ -16,7 +16,7 @@ No Charles, trabalhamos com o conceito de monorepo. Logo, você encontra todos o
 * Indique para qual branch você quer atribuir o seu pull request \(PR\);
 
 {% hint style="info" %}
-É importante que, antes de abrir o PR, você confirme se a branch está correta. Para documentação em inglês é a `englishdocs`, enquanto que para a documentação em português é a `portuguesdocs`.
+É importante que, antes de abrir o PR, você confirme se a branch está correta. Para documentação em inglês é a `englishdocs`, enquanto que para a documentação em português é a `v0.2.1`.
 {% endhint %}
 
 * Enquanto estiver escrevendo, inclua a label "Docs" para identificarmos mais rapidamente que se trata de uma solicitação para nossa documentação. 
