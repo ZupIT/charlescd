@@ -18,38 +18,37 @@ import { isDevelopmentLegacyHost } from 'core/utils/development';
 
 const main = '/';
 const v1 = isDevelopmentLegacyHost();
-const v2 = '/v2';
 
-const auth = `${v2}/auth`;
+const auth = `/auth`;
 const login = `${auth}/login`;
 
-const workspaces = `${v2}/workspaces`;
+const workspaces = `/workspaces`;
 
-const users = `${v2}/users`;
-const usersComparation = `${v2}/users/compare`;
+const users = `/users`;
+const usersComparation = `/users/compare`;
 
 const usersView = `${v1}/settings/permissions/users`;
-const usersCreate = `${v2}/users/create`;
+const usersCreate = `/users/create`;
 
-const workspace = `${v2}/workspace`;
-const circles = `${v2}/circles`;
-const hypotheses = `${v2}/hypotheses`;
-const hypothesesEdit = `${v2}/hypotheses/:hypothesisId`;
-const hypothesesCard = `${v2}/hypotheses/:hypothesisId/card/:cardId`;
-const modules = `${v2}/modules`;
+const workspace = `/workspace`;
+const circles = `/circles`;
+const hypotheses = `/hypotheses`;
+const hypothesesEdit = `/hypotheses/:hypothesisId`;
+const hypothesesCard = `/hypotheses/:hypothesisId/card/:cardId`;
+const modules = `/modules`;
 const modulesComparation = `${modules}/compare`;
-const settings = `${v2}/settings`;
+const settings = `/settings`;
 const credentials = `${settings}/credentials`;
 
-const groups = `${v2}/groups`;
+const groups = `/groups`;
 const groupsShow = `${groups}/show`;
 const groupsCreate = `${groups}/create`;
 const groupsEdit = `${groups}/edit/:id`;
 
-const account = `${v2}/account`;
+const account = `/account`;
 const accountProfile = `${account}/profile`;
 
-const error = `${v2}/error`;
+const error = `/error`;
 const error403 = `${error}/403`;
 const error404 = `${error}/404`;
 
@@ -61,7 +60,6 @@ const workspacesComparation = `${workspace}/compare`;
 
 export default {
   main,
-  v2,
   auth,
   login,
   error403,
