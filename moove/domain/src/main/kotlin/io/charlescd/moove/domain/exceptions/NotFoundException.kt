@@ -18,4 +18,4 @@
 
 package io.charlescd.moove.domain.exceptions
 
-class NotFoundException (val resourceName: String, val id: String): RuntimeException("Resource not found!")
+class NotFoundException(val resourceName: String, val id: String) : RuntimeException("Resource not found!")

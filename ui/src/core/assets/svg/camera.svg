@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="26px" viewBox="0 0 26 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M9.375,0.25 C9.58375,0.25 9.77875,0.354375 9.895,0.528125 L10.959375,2.125 L13.125,2.125 C14.15875,2.125 15,2.96625 15,4 L15,10.875 C15,11.90875 14.15875,12.75 13.125,12.75 L1.875,12.75 C0.84125,12.75 0,11.90875 0,10.875 L0,4 C0,2.96625 0.84125,2.125 1.875,2.125 L4.040625,2.125 L5.105,0.528125 C5.22125,0.354375 5.41625,0.25 5.625,0.25 L9.375,0.25 Z M9.040625,1.5 L5.959375,1.5 L4.895,3.096875 C4.77875,3.270625 4.58375,3.375 4.375,3.375 L1.875,3.375 C1.530625,3.375 1.25,3.655625 1.25,4 L1.25,10.875 C1.25,11.22 1.530625,11.5 1.875,11.5 L13.125,11.5 C13.47,11.5 13.75,11.22 13.75,10.875 L13.75,4 C13.75,3.655625 13.47,3.375 13.125,3.375 L10.625,3.375 C10.41625,3.375 10.22125,3.270625 10.105,3.096875 L9.040625,1.5 Z M7.5,4 C9.223125,4 10.625,5.401875 10.625,7.125 C10.625,8.848125 9.223125,10.25 7.5,10.25 C5.776875,10.25 4.375,8.848125 4.375,7.125 C4.375,5.401875 5.776875,4 7.5,4 Z M7.5,5.25 C6.46625,5.25 5.625,6.09125 5.625,7.125 C5.625,8.15875 6.46625,9 7.5,9 C8.53375,9 9.375,8.15875 9.375,7.125 C9.375,6.09125 8.53375,5.25 7.5,5.25 Z" id="path-camera"></path>
+    </defs>
+    <g id="Settings-camera" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---16.0---Profile" transform="translate(-552.000000, -134.000000)">
+            <g id="Group-camera-13" transform="translate(438.000000, 0.000000)">
+                <g id="Avartar" transform="translate(33.000000, 94.000000)">
+                    <g id="Group-camera-12" transform="translate(38.000000, 0.000000)">
+                        <g id="Group-camera-7" transform="translate(44.000000, 41.000000)">
+                            <circle id="Oval-camera" stroke="#1C1C1E" fill="#F2F2F9" cx="12" cy="12" r="12"></circle>
+                            <g id="Icon-camera/User/Circle" transform="translate(5.000000, 6.000000)">
+                                <mask id="mask-camera" fill="white">
+                                    <use xlink:href="#path-camera"></use>
+                                </mask>
+                                <use id="Icon-camera-Camera" fill="currentColor" xlink:href="#path-camera"></use>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

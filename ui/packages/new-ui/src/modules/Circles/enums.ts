@@ -1,3 +1,0 @@
-export enum CIRCLE {
-  ID_CIRCLE_DEFAULT = 'f5d23a57-5607-4306-9993-477e1598cc2a'
-}

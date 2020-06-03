@@ -22,15 +22,15 @@ import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.commons.extension.toJsonNode
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.apache.commons.io.IOUtils
-import uk.gov.nationalarchives.csv.validator.api.java.CsvValidator
-import uk.gov.nationalarchives.csv.validator.api.java.FailMessage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.*
 import javax.inject.Named
+import org.apache.commons.io.IOUtils
+import uk.gov.nationalarchives.csv.validator.api.java.CsvValidator
+import uk.gov.nationalarchives.csv.validator.api.java.FailMessage
 
 @Named
 class CsvSegmentationService(private val objectMapper: ObjectMapper) {
@@ -104,7 +104,7 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
     }
 
     private fun createSchemaInputReader(keyName: String): InputStreamReader {
-        val schema = "version 1.0\n@totalColumns 1 ${keyName}: notEmpty"
+        val schema = "version 1.0\n@totalColumns 1 $keyName: notEmpty"
         return InputStreamReader(schema.byteInputStream())
     }
 

@@ -22,5 +22,4 @@ import io.charlescd.moove.application.usergroup.response.UserGroupResponse
 interface CreateUserGroupInteractor {
 
     fun execute(request: CreateUserGroupRequest): UserGroupResponse
-
 }

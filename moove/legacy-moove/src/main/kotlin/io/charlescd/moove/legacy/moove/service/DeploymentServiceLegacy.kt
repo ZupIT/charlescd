@@ -32,13 +32,13 @@ import io.charlescd.moove.legacy.repository.CircleRepository
 import io.charlescd.moove.legacy.repository.DeploymentRepository
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.*
+import java.time.LocalDateTime
+import java.util.*
+import javax.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
-import java.util.*
-import javax.transaction.Transactional
 
 @Component
 class DeploymentServiceLegacy(
@@ -114,4 +114,3 @@ class DeploymentServiceLegacy(
         )
     }
 }
-

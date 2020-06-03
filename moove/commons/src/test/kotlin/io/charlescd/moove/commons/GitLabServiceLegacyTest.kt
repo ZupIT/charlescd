@@ -24,12 +24,12 @@ import io.charlescd.moove.legacy.repository.entity.GitCredentials
 import io.charlescd.moove.legacy.repository.entity.GitServiceProvider
 import io.mockk.every
 import io.mockk.mockkClass
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.gitlab4j.api.GitLabApi
 import org.gitlab4j.api.GitLabApiException
 import org.gitlab4j.api.models.*
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class GitLabServiceLegacyTest {
 
@@ -153,7 +153,6 @@ class GitLabServiceLegacyTest {
         assertEquals(MooveErrorCodeLegacy.GIT_ERROR_MERGE_CONFLICT, e.getErrorCode())
     }
 
-
     @Test
     fun `should not merge branches on conflict with a new merge request`() {
         val baseBranchName = "base"
@@ -254,7 +253,6 @@ class GitLabServiceLegacyTest {
         val sourceBranch = "master"
         val releaseName = "RC-1.0.0"
         val releaseCreationMessage = "Charles create release candidate operation"
-
 
         every { gitLabClientFactory.buildGitClient(gitCredentials) } returns gitClient
         every {

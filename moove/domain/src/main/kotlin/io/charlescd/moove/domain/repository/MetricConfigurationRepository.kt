@@ -30,5 +30,4 @@ interface MetricConfigurationRepository {
     fun exists(metricConfigurationId: String, workspaceId: String): Boolean
 
     fun findByWorkspaceId(workspaceId: String): Optional<MetricConfiguration>
-
 }

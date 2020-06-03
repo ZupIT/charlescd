@@ -21,5 +21,4 @@ import io.charlescd.moove.application.build.request.BuildCallbackRequest
 interface BuildCallbackInteractor {
 
     fun execute(id: String, request: BuildCallbackRequest)
-
 }

@@ -1,7 +1,0 @@
-HOST=http://localhost:8000
-NOTIFICATION=http://localhost:8000
-CONSUL=/consul
-APM=https://darwin-apm-manager-consumer.continuousplatform.com
-RW=/rw
-KEYCLOAK=http://localhost:8000
-CIRCLE_MATCHER=/circle-matcher

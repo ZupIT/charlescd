@@ -36,5 +36,4 @@ class RoleService(private val roleRepository: RoleRepository) {
         return roleRepository.findById(id)
             .orElseThrow { NotFoundException("role", id) }
     }
-
 }

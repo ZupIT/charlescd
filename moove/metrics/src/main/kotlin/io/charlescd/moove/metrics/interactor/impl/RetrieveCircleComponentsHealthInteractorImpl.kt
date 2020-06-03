@@ -32,14 +32,15 @@ import io.charlescd.moove.metrics.domain.*
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 
 @org.springframework.stereotype.Component
-class RetrieveCircleComponentsHealthInteractorImpl(private val serviceFactory: MetricServiceFactory,
-                                                   private val componentRepository: ComponentRepository,
-                                                   private val moduleRepository: ModuleRepository,
-                                                   private val metricConfigurationRepository: MetricConfigurationRepository) : RetrieveCircleComponentsHealthInteractor {
+class RetrieveCircleComponentsHealthInteractorImpl(
+    private val serviceFactory: MetricServiceFactory,
+    private val componentRepository: ComponentRepository,
+    private val moduleRepository: ModuleRepository,
+    private val metricConfigurationRepository: MetricConfigurationRepository
+) : RetrieveCircleComponentsHealthInteractor {
 
     private companion object {
         private const val COMPONENT_LABEL = "destination_component"
-
     }
 
     override fun execute(circleId: String, workspaceId: String): CircleHealthRepresentation {
@@ -56,7 +57,6 @@ class RetrieveCircleComponentsHealthInteractorImpl(private val serviceFactory: M
         }
 
         return getHealthStatus(metricConfiguration, components, circleId)
-
     }
 
     private fun getHealthStatus(metricConfiguration: MetricConfiguration, components: List<Component>, circleId: String): CircleHealthRepresentation {
@@ -75,16 +75,17 @@ class RetrieveCircleComponentsHealthInteractorImpl(private val serviceFactory: M
                 .filteringBy(listOf(SearchMetricFilter("circle_source", listOf(circleId), FilterKind.EQUAL)))
                 .groupingBy(listOf("destination_component")), metricConfiguration.url)
 
-
         return CircleHealthRepresentation(requestsTotal.toCircleRequestsRepresentation(MetricType.REQUESTS_BY_CIRCLE.unit),
                 buildCircleHealthRepresentation(components, latency.result, modules, MetricType.REQUESTS_LATENCY_BY_CIRCLE),
                 buildCircleHealthRepresentation(components, errorsPercentage.result, modules, MetricType.REQUESTS_ERRORS_BY_CIRCLE))
     }
 
-    private fun buildCircleHealthRepresentation(components: List<Component>,
-                                                results: List<MetricResult>,
-                                                modules: Map<String, Module>,
-                                                metricType: MetricType): CircleHealthTypeRepresentation {
+    private fun buildCircleHealthRepresentation(
+        components: List<Component>,
+        results: List<MetricResult>,
+        modules: Map<String, Module>,
+        metricType: MetricType
+    ): CircleHealthTypeRepresentation {
 
         val resultMap = results.associateBy { it.labels[COMPONENT_LABEL] }
 
@@ -96,11 +97,12 @@ class RetrieveCircleComponentsHealthInteractorImpl(private val serviceFactory: M
                         .thenBy { it.name }))
     }
 
-    private fun buildComponentHealth(component: Component,
-                                     metricResult: MetricResult?,
-                                     module: Module?,
-                                     metricType: MetricType): CircleComponentHealthRepresentation {
-
+    private fun buildComponentHealth(
+        component: Component,
+        metricResult: MetricResult?,
+        module: Module?,
+        metricType: MetricType
+    ): CircleComponentHealthRepresentation {
 
         val name = module?.name?.plus("/${component.name}") ?: component.name
 
@@ -113,5 +115,4 @@ class RetrieveCircleComponentsHealthInteractorImpl(private val serviceFactory: M
         return metricResult?.toCircleComponentHealthRepresentation(threshold, name)
                 ?: CircleComponentHealthRepresentation(name, threshold, 0.0, HealthStatus.STABLE)
     }
-
 }

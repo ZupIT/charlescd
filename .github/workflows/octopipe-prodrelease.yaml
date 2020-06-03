@@ -1,0 +1,40 @@
+name: octopipe prod-release
+
+on:
+  release:
+    types:
+      - created
+    branches: [ master ]
+
+jobs:
+  build_and_push_release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.14.2'
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        path: ./octopipe
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/charlescd-octopipe
+        dockerfile: ./octopipe/cmd/octopipe/Dockerfile
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
+        tag_with_sha: false

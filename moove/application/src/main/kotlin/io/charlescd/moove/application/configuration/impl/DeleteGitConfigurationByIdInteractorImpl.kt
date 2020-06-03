@@ -34,5 +34,4 @@ class DeleteGitConfigurationByIdInteractorImpl @Inject constructor(
         gitConfigurationService.checkIfGitConfigurationExists(workspaceId, id)
         gitConfigurationRepository.delete(id)
     }
-
 }

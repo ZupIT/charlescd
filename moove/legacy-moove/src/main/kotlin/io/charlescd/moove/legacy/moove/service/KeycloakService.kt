@@ -22,16 +22,16 @@ import io.charlescd.moove.legacy.moove.request.group.CreateGroupRequest
 import io.charlescd.moove.legacy.moove.request.group.UpdateGroupRequest
 import io.charlescd.moove.legacy.moove.request.role.CreateRoleRequest
 import io.charlescd.moove.legacy.repository.UserRepository
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.GroupResource
 import org.keycloak.representations.idm.CredentialRepresentation
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import org.keycloak.representations.idm.GroupRepresentation as KeycloakGroupRepresentation
 import org.keycloak.representations.idm.RoleRepresentation as KeycloakRoleRepresentation
 import org.keycloak.representations.idm.UserRepresentation as KeycloakUserRepresentation
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 
 @Service
 class KeycloakService(private val keycloak: Keycloak, private val userRepository: UserRepository) {
@@ -193,7 +193,6 @@ class KeycloakService(private val keycloak: Keycloak, private val userRepository
             .users()
             .get(user.id)
             .update(user)
-
     }
 
     private fun assignGroupsToUser(
@@ -207,7 +206,6 @@ class KeycloakService(private val keycloak: Keycloak, private val userRepository
                 .get(user.id)
                 .joinGroup(it.id)
         }
-
     }
 
     private fun removeUserFromKeycloakGroup(userId: String, groupId: String) {
@@ -256,7 +254,6 @@ class KeycloakService(private val keycloak: Keycloak, private val userRepository
             .users()
             .get(userRepresentation.id)
             .resetPassword(credentialRepresentation)
-
     }
 
     private fun deleteUserById(userId: String) {
@@ -423,7 +420,7 @@ class KeycloakService(private val keycloak: Keycloak, private val userRepository
         membersCount = findGroupMembers(this).size
     )
 
-    private fun createGroupPath(groupName: String) = "/${groupName}"
+    private fun createGroupPath(groupName: String) = "/$groupName"
 
     private fun findUserGroupsByUsername(username: String): List<GroupRepresentation> =
         this.keycloak.realm(this.realm)

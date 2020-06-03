@@ -17,8 +17,8 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.Component
-import org.springframework.jdbc.core.ResultSetExtractor
 import java.sql.ResultSet
+import org.springframework.jdbc.core.ResultSetExtractor
 
 @org.springframework.stereotype.Component
 class ComponentExtractor : ResultSetExtractor<Set<Component>> {
@@ -42,5 +42,4 @@ class ComponentExtractor : ResultSetExtractor<Set<Component>> {
             latencyThreshold = resultSet.getInt("components_latency_threshold"),
             workspaceId = resultSet.getString("components_workspace_id")
     )
-
 }

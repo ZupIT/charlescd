@@ -1,0 +1,198 @@
+butler:
+  enabled: true
+  name: "charlescd-butler"
+  database:
+    name: charlescd_butler
+    host: charlescd-postgresql
+    port: "5432"
+    user: charlescd_butler
+    password: 3f2Yq8R4HhDCnefR
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-butler:0.2.1
+    pullPolicy: Always
+  service:
+    name: charlescd-butler
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 3000
+  resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+
+moove:
+  enabled: true
+  name: "charlescd-moove"
+  frontHost: "http://34.68.141.223"
+  database:
+    name: charlescd_moove
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_moove
+    password: 7Qs2KuM9gYzw48BS
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-moove:0.2.1
+    pullPolicy: Always
+  service:
+    name: charlescd-moove
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 8080
+  resources:
+   limits:
+    cpu: 1
+    memory: 1024Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+  
+sidecarIstio:
+  enabled: true
+
+villager:
+  enabled: true
+  name: "charlescd-villager"
+  database:
+    name: charlescd_villager
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_villager
+    password: ZkQ67Lnhs2bM3MPN
+
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-villager:0.2.2
+    pullPolicy: Always
+  service:
+    name: charlescd-villager
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 8080
+  resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi   
+
+ui:
+  enabled: true
+  name: charlescd-ui
+  apiHost: http://34.68.141.223
+  keycloakHost: http://34.68.141.223/keycloak/auth
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-ui:0.2.2
+    pullPolicy: Always
+  service:
+    name: charlescd-ui
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 3000
+  resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+
+circlematcher:
+  enabled: true
+  name: charlescd-circle-matcher
+  redis:
+    host: charlescd-redis-master
+    port: 6379
+    password: hb2Fj9MGKjBkZ6zV
+  frontHost: http://34.68.141.223
+  replicaCount: 1
+  image:
+    name: zupcharles/charlescd-circle-matcher:0.2.2
+    pullPolicy: Always
+  service:
+    name: charlescd-circle-matcher
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 8080
+  resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+
+keycloak:
+  enabled: true
+  keycloak:
+    extraEnv: |
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "true"
+        - name: DB_USER
+          value: "keycloak"
+        - name: DB_PASSWORD
+          value: "DCWYW66Mq2ca6w8u"
+        - name: DB_VENDOR
+          value: "POSTGRES"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_ADDR
+          value: "charlescd-postgresql"
+        - name: DB_DATABASE
+          value: "keycloak"
+        - name: DB_SCHEMA
+          value: "public"
+
+    replicas: 1
+    persistence:
+      deployPostgres: false
+      existingSecret: false
+
+postgresql:
+  enabled: true
+  postgresqlUsername: "postgres"
+  postgresqlPassword: "firstpassword"
+
+redis:
+  enabled: true
+  password: "hb2Fj9MGKjBkZ6zV"
+
+mongodb:
+  enabled: true
+  mongodbRootPassword: "octopipe"
+
+nginx:
+  enabled: true
+  ui:
+    enabled: true
+  moove:
+    enabled: true
+  circlematcher:
+    enabled: true
+  keycloak:
+    enabled: true
+  octopipe:
+    enabled: true
+
+octopipe:
+  enabled: true
+  envVars:
+    - name: APP_PORT
+      value: "8080"
+    - name: DB_URL
+      value: "mongodb://root:octopipe@charlescd-mongo-mongodb:27017"
+    - name: KUBECONFIG
+      value: "IN_CLUSTER"
+    - name: TIMEOUT_RESOURCE_VERIFICATION
+      value: "300"

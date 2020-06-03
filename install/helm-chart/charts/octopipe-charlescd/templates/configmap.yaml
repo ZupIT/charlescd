@@ -1,0 +1,21 @@
+{{- if .Values.configmaps.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-octopipe-data
+  namespace: {{ .Values.appnamespace }}
+  labels:
+    app: {{ .Release.Name }}-octopipe
+    version: {{ .Release.Name }}-octopipe
+{{- with .Values.ingress.annotations }}
+  annotations:
+  strategy.spinnaker.io/versioned: false
+{{ toYaml . | indent 4 }}
+{{- end }}
+data:
+{{- $files := .Files }}
+{{ range .Values.configmaps.files }}
+  {{ . }}: |
+{{ $files.Get . | indent 4 }}
+{{ end }}
+{{- end }}

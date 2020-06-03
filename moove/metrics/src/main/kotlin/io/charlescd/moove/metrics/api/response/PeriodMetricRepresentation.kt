@@ -19,17 +19,25 @@ package io.charlescd.moove.metrics.api.response
 import io.charlescd.moove.metrics.api.ProjectionType
 import io.charlescd.moove.metrics.domain.MetricType
 
-data class CircleMetricRepresentation(val period: ProjectionType,
-                                      val type: MetricType,
-                                      val data: List<MetricDataRepresentation>)
+data class CircleMetricRepresentation(
+    val period: ProjectionType,
+    val type: MetricType,
+    val data: List<MetricDataRepresentation>
+)
 
-data class ComponentMetricRepresentation(val period: ProjectionType,
-                                         val type: MetricType,
-                                         val components: List<ComponentRepresentation>)
+data class ComponentMetricRepresentation(
+    val period: ProjectionType,
+    val type: MetricType,
+    val components: List<ComponentRepresentation>
+)
 
-data class ComponentRepresentation(val name: String,
-                                   val module: String,
-                                   val data: List<MetricDataRepresentation>)
+data class ComponentRepresentation(
+    val name: String,
+    val module: String,
+    val data: List<MetricDataRepresentation>
+)
 
-data class MetricDataRepresentation(val timestamp: Long,
-                                    val value: Double)
+data class MetricDataRepresentation(
+    val timestamp: Long,
+    val value: Double
+)

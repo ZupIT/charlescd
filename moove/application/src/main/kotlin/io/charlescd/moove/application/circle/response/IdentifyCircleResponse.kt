@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.charlescd.moove.application.circle.response
 
 import io.charlescd.moove.domain.SimpleCircle

@@ -41,5 +41,4 @@ class GitConfigurationService(private val gitConfigurationRepository: GitConfigu
     fun update(gitConfiguration: GitConfiguration): GitConfiguration {
         return this.gitConfigurationRepository.update(gitConfiguration)
     }
-
 }

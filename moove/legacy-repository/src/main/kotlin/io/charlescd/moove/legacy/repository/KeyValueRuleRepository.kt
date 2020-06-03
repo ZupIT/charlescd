@@ -27,5 +27,4 @@ interface KeyValueRuleRepository : JpaRepository<KeyValueRule, String> {
     fun findByCircleId(id: String): List<KeyValueRule>
 
     fun deleteByCircleId(id: String)
-
 }
