@@ -46,7 +46,7 @@ Suggest your change in the CharlesCD developer discussion [mailing list](https:/
 
 ## Submitting Evolutions
 ### Preparing your development environment
-CharlesCD has many modules. The environment settings are different between them. Check the configuration documentation for each module (each module’s folders have their own BUILDING file, please check them). 
+CharlesCD has many modules. The environment settings are different between them. Check the configuration documentation for each module (each module’s folders have their own README file, please check them). 
 
 ### Our step-by-step making changes suggestion
 1. Click ‘Fork’ on Github, creating e.g. yourname/charlescd
