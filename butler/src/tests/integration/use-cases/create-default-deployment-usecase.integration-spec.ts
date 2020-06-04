@@ -57,9 +57,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
-
-    await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   beforeEach(async () => {
