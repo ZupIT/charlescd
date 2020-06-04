@@ -16,11 +16,15 @@
 
 export class StatusManagementServiceStub {
 
-    public async deepUpdateDeploymentStatus() {
+    public async deepUpdateDeploymentStatus(): Promise<void>{
         return
     }
 
-    public async hasAllFinishedModules() {
+    public async deepUpdateComponentStatus(): Promise<void> {
+        return
+    }
+
+    public async hasAllFinishedModules(): Promise<void> {
         return Promise.resolve()
     }
 
