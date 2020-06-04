@@ -412,7 +412,7 @@ export class StatusManagementService {
         await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
     }
 
-    public async deepUpdateComponentStatus(componentDeployment: ComponentDeploymentEntity) {
+    public async deepUpdateComponentStatus(componentDeployment: ComponentDeploymentEntity): Promise<void> {
 
         await this.updateModuleDeploymentStatus(componentDeployment.moduleDeployment.id, DeploymentStatusEnum.FAILED)
         await this.updateComponentDeploymentStatus(componentDeployment.id, DeploymentStatusEnum.FAILED)
