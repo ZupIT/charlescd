@@ -76,6 +76,7 @@ export class PipelineErrorHandlerService {
             await this.removeComponentPipelineCircle(component, circle)
         }
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
+        await this.statusManagementService.deepUpdateComponentStatus(componentDeployment)
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
         this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_DEPLOYMENT_FAILURE', componentDeployment)
     }
