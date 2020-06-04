@@ -610,7 +610,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circleId : null,
       circle : null
     }
-
     await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
