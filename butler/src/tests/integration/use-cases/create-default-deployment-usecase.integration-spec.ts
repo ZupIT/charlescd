@@ -556,8 +556,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
@@ -613,8 +612,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.CREATED)
