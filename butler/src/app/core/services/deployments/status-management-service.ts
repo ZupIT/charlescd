@@ -81,15 +81,8 @@ export class StatusManagementService {
         )
     }
 
-    public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) : Promise<void[][]>{
-        await this.deploymentsRepository.updateStatus(deployment.id, status)
-        if (!deployment.modules) {
-            deployment.modules =
-                await this.moduleDeploymentRepository.find({
-                    where: { deployment: {id: deployment.id} }
-                })
-        }
-        return Promise.all(deployment.modules.map(m => this.deepUpdateModuleStatus(m, status)))
+    public async deepUpdateDeploymentStatus(deployment: DeploymentEntity, status: DeploymentStatusEnum) : Promise<void>{
+        return await this.deploymentsRepository.updateStatus(deployment.id, status)
     }
 
     public async deepUpdateModuleStatus(module: ModuleDeploymentEntity, status: DeploymentStatusEnum) : Promise<void[]> {
@@ -417,5 +410,11 @@ export class StatusManagementService {
 
         await this.propagateFailedStatusChangeToModule(componentDeploymentEntity.moduleDeployment)
         await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
+    }
+
+    public async deepUpdateComponentStatus(componentDeployment: ComponentDeploymentEntity) {
+
+        await this.updateModuleDeploymentStatus(componentDeployment.moduleDeployment.id, DeploymentStatusEnum.FAILED)
+        await this.updateComponentDeploymentStatus(componentDeployment.id, DeploymentStatusEnum.FAILED)
     }
 }
