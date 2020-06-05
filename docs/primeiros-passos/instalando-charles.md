@@ -1,16 +1,16 @@
 # Instalando o Charles
 
 {% hint style="info" %}
-O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**](https://docs.charlescd.io/v/v0.2.1/primeiros-passos/instalando-charles#caso-2-instalacao-com-helm-charts). 
+O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**.](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/instalando-charles#caso-2-instalacao-com-helm-charts) 
 {% endhint %}
 
 ## Introdução
 
 ### Componentes
 
-A instalação do CharlesCD consiste nos seguintes [**componentes**](https://docs.charlescd.io/v/v0.2.1/primeiros-passos/instalando-charles#componentes):
+A instalação do CharlesCD consiste nos seguintes [**componentes**:](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/instalando-charles#componentes)
 
-1. Módulos específicos da [**arquitetura do Charles**](https://docs.charlescd.io/#arquitetura-do-sistema)**.** 
+1. Módulos específicos da [**arquitetura do Charles**](https://docs.charlescd.io/v/v0.2.7/#arquitetura-do-sistema)**.** 
 2. **Keycloak**, usado para autenticação e autorização no projeto.
 
 3. Um **banco PostgreSQL** que servirá os módulos de back-end \(`charlescd-moove`, `charlescd-butler` e `charlescd-villager`\) e o Keycloak. 
@@ -24,7 +24,7 @@ Atualmente, o Charles tem suporte para duas plataformas de Continuous Delivery \
 * **Octopipe:** plataforma nativa, criada pela equipe do CharlesCD para possibilitar uma instalação sem configuração prévia.
 
 {% hint style="info" %}
-Você pode saber mais sobre a **configuração do Spinnaker e do Octopipe** na seção [**Configuração de CD**](https://docs.charlescd.io/referencia/configuracao-cd).
+Você pode saber mais sobre a **configuração do Spinnaker e do Octopipe** na seção [**Configuração de CD**](https://docs.charlescd.io/v/v0.2.7/referencia/configuracao-cd).
 {% endhint %}
 
 ## Principais casos de instalação 
