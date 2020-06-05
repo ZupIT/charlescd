@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Overview](README.md)
+* [Overviews](README.md)
 * [Key concepts](key-concepts.md)
 
 ## GET STARTED
@@ -10,7 +10,7 @@
   * [Docker registry](get-started/defining-a-workspace/docker-registry.md)
   * [Setting up a Cluster](get-started/defining-a-workspace/configuracoes-de-deploy.md)
   * [Git credentials](get-started/defining-a-workspace/github.md)
-* [Creating your first Module](get-started/creating-your-first-module.md)
+* [Creating your first module](get-started/creating-your-first-module.md)
 * [First Deploy](get-started/first-deploy.md)
 * [Using Circles](get-started/using-circles.md)
 
