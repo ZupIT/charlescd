@@ -31,7 +31,7 @@ export interface Props {
 
 const Section = ({ children, name, icon, action, showAction }: Props) => {
   const renderAction = () => (
-    <Button.Rounded name="add" color="dark" onClick={action}>
+    <Button.Rounded name="section" icon="add" color="dark" onClick={action}>
       {`Add ${name}`}
     </Button.Rounded>
   );
