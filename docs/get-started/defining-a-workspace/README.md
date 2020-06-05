@@ -9,9 +9,9 @@ You need only one installation, and the teams will be able to use Charles with d
 Each workspace has the following configuration:
 
 * Access control and **user groups permissions**;
-* Register on [**Docker Registry**](https://docs.charlescd.io/get-started/defining-a-workspace/docker-registry),[ **Git**](https://docs.charlescd.io/get-started/defining-a-workspace/github) **and** [**Continuous Deployment \(CD\)**](https://docs.charlescd.io/reference/cd-configuration);
-* Customize the [**Circle Matcher**](https://docs.charlescd.io/reference/circle-matcher);
-* Register your applications [**metrics provider**](https://docs.charlescd.io/reference/metrics/register-metrics-provider). 
+* Register on [**Docker Registry**](docker-registry.md), [**Git**](github.md) **and** [**Continuous Deployment \(CD\)**;](../../reference/cd-configuration.md)
+* Customize the [**Circle Matcher**](../../reference/circle-matcher.md);
+* Register your applications [**metrics provider**](../../reference/metrics/register-metrics-provider.md). 
 
 {% hint style="warning" %}
 The **root** user gives you the permission to create a workspace. However, users with **mantainer** profile are able to configure with the necessary information as well.

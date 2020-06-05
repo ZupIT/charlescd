@@ -19,5 +19,5 @@ After these steps, fill out the next fields:
 4. **Git token:**  Insert the authentication token for your git repository. This will be used to get **Helm** templates.  
 5. Select the **Default** option.
 
-After finish your configuration, you can associate it with a module. For more information, check the [**References**](https://docs.charlescd.io/reference/cd-configuration) page.
+After finish your configuration, you can associate it with a module. For more information, check the [**References** ](../../reference/cd-configuration.md)page.
 

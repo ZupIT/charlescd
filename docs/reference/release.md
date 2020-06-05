@@ -1,6 +1,6 @@
 # Releases
 
-Releases are application versions. It is different from other ways of deploy that releases generally go through lots of environments until they reach production, with CharlesCD it is possible that the same release will be published for different [**circles**](https://docs.charlescd.io/reference/circles).
+Releases are application versions. It is different from other ways of deploy that releases generally go through lots of environments until they reach production, with CharlesCD it is possible that the same release will be published for different[ **circles**](circles.md).
 
 ## How to create releases with Charles?
 
@@ -24,7 +24,7 @@ If you want to generate new releases, the blue cards represent features, when th
 As soon as a release creation is triggered, a new branch with the prefix **release-darwin** will be created on the module repository and the configured CI tool will go off. Besides that, a new card with the **'Building'** status will show up on the **Builds** column to represent a process in progress.
 
 {% hint style="warning" %}
-Triggering the pipeline of your CI tool through **release-darwin** prefix, it is expected that it will generate a image of your application and make the push for your [**registry**](https://docs.charlescd.io/get-started/defining-a-workspace/docker-registry).
+Triggering the pipeline of your CI tool through **release-darwin** prefix, it is expected that it will generate a image of your application and make the push for your [**registry**.](../get-started/defining-a-workspace/docker-registry.md)
 {% endhint %}
 
 Once you made it, the [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) will watch your registry to search for the generated release. Hold on until you card status is changed to **Built**.
@@ -37,7 +37,7 @@ Any cases of success or error will be shown on your release card.
 
 ### **Releases through existing images on configured Docker Registry**
 
-To create a release without using the hypothesis board, it is necessary that the Docker images are already available on you [**configured registry** ](https://docs.charlescd.io/get-started/defining-a-workspace/docker-registry)for the module. If this requirement is done, just click on the [**Circles**](https://docs.charlescd.io/reference/circles) option on Charles menu and select the circle for a release deploy to be created.
+To create a release without using the hypothesis board, it is necessary that the Docker images are already available on you [**configured registry** ](../get-started/defining-a-workspace/docker-registry.md)for the module. If this requirement is done, just click on the [**circles**](circles.md) option on Charles menu and select the circle for a release deploy to be created.
 
 If you are creating the circle at this moment, click on **Insert release** and then Create release. If the circle is already created, click on **Override release** and then **Create release**.
 

@@ -1,7 +1,7 @@
 # Installing Charles
 
 {% hint style="info" %}
-The installing process was created considering some use cases, and each of them have its own specific tutorial. If you need to install CharlesCD with more customization, we suggest to check the [**customized installation section**](https://docs.charlescd.io/get-started/installing-charles#case-2-customized-installation).
+The installing process was created considering some use cases, and each of them have its own specific tutorial. If you need to install CharlesCD with more customization, we suggest to check the [**customized installation section**.](installing-charles.md#case-2-customized-installation)
 {% endhint %}
 
 ## Introduction
@@ -13,7 +13,7 @@ The CharlesCD installation considers these components:
 1. Seven specific modules of **Charles' architecture;** 
 2. **Keycloak**, used for product authentication and authorization;
 3. A **PostgreSQL database** for backend modules \( `charles-application`, `charles-circle-matcher`, `deploy` and `villager`\) and Keycloak;
-4. A **Redis**, to be used by [**Circle Matcher**](https://docs.charlescd.io/reference/circle-matcher). 
+4. A **Redis**, to be used by [**Circle Matcher**. ](../reference/circle-matcher.md)
 
 ### Continuous Delivery Platform
 
@@ -34,7 +34,7 @@ This installation is recommended for those who never used Charles before and jus
 
 In this case, you will have to:
 
-* Use an **yaml** file with all the [**components**](https://docs.charlescd.io/get-started/installing-charles#components);
+* Use an **yaml** file with all the [**components**](installing-charles.md#components);
 * Use a **Load Balancer** previously configured.
 
 To create this structure, you have to execute the files in a configured cluster, such as minikube, GKE, EKS, etc. The steps to be executed are:

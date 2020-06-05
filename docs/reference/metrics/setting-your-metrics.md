@@ -178,10 +178,10 @@ If the tool you use it isn't accepted yet, feel free to [**make a suggestion**](
 
 {% tabs %}
 {% tab title="Prometheus" %}
-Prometheus is an open source system for monitoring and alerting toolkit. It is the main monitoring recommendation on [Cloud Native Computing Foundation](https://cncf.io/).
+Prometheus is an open source system for monitoring and alerting toolkit. It is the main monitoring recommendation on [**Cloud Native Computing Foundation**](https://cncf.io/)**.**
 
 {% hint style="info" %}
-If you want to know more about Prometheus, check it out [their documentation](https://prometheus.io/).
+If you want to know more about Prometheus, check it out [**their documentation**](https://prometheus.io/)**.**
 {% endhint %}
 
 In order to Prometheus to be able to read and store metrics data, we must configure it.

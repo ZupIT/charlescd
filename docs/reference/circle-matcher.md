@@ -1,6 +1,6 @@
 # Circle Matcher
 
-Circle Matcher is a resource that allows you to validate if your [**circles**](https://docs.charlescd.io/reference/circles) are in coherent segmentations. You can also use it in your applications to determine in which circle your users fit better.
+Circle Matcher is a resource that allows you to validate if your [**circles**](circles.md) are in coherent segmentations. You can also use it in your applications to determine in which circle your users fit better.
 
 {% hint style="info" %}
 One good practice is to always make this identification when a user logs in the application. However, this can be changed according to your business needs.

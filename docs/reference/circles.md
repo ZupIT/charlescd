@@ -1,12 +1,12 @@
 # Circles
 
-Circles are the main approach related to the **new deploy concept** brought by Charles. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users.
+Circles are the main approach related to the [**new deploy concept**](../faq/about-charles.md#what-is-circle-deploy) brought by Charles. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users.
 
 ![Circle generation with Charles deployments](../.gitbook/assets/deploy_em_circulos%20%289%29%20%281%29.png)
 
 Circles indicate clients segmentation and also support the version management created for a specific audience.
 
-Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a[ **series of business or performance metrics**](metrics/#charles-available-metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 ## Active and inactive circles
 
