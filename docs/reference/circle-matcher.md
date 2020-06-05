@@ -1,6 +1,6 @@
 # Circle Matcher
 
-Circle Matcher is a resource that allows you to validate if your [**circles**](https://docs.charlescd.io/v/v0.2.1-en/reference/circles) are in coherent segmentations. You can also use it in your applications to determine in which circle your users fit better.
+Circle Matcher is a resource that allows you to validate if your [**circles**](https://docs.charlescd.io/reference/circles) are in coherent segmentations. You can also use it in your applications to determine in which circle your users fit better.
 
 {% hint style="info" %}
 One good practice is to always make this identification when a user logs in the application. However, this can be changed according to your business needs.
@@ -10,17 +10,17 @@ One good practice is to always make this identification when a user logs in the 
 
 Once you start using the interface, it's possible to notice that there are two ways to perform the circle identification. For that, access the **Circles** menu inside a **workspace** and select the icon indicated below:
 
-![Identifica&#xE7;&#xE3;o do &#xED;cone do Circle Matcher](../.gitbook/assets/chrome-capture%20%282%29%20%281%29.jpg)
+![Identifica&#xE7;&#xE3;o do &#xED;cone do Circle Matcher](../.gitbook/assets/chrome-capture%20%282%29.jpg)
 
 The two ways to make this validation are:
 
 * **Default:** in this option, you add manually keys and values to define the characteristics of a user test. And, based on that, once you execute the **Try**,  **you will receive all the circles related to these user.**  
 
-![Circle identification with Default option.](../.gitbook/assets/circle-matcher-default%20%282%29%20%281%29.gif)
+![Circle identification with Default option.](../.gitbook/assets/circle-matcher-default%20%282%29.gif)
 
 * **JSON:** similar to the default option, with the difference that here you can copy and paste in **payload field** a **JSON** of your productive environment instead of adding manually. 
 
-![Circle identification with JSON option. ](../.gitbook/assets/circle-matcher-json%20%282%29%20%281%29.gif)
+![Circle identification with JSON option. ](../.gitbook/assets/circle-matcher-json%20%282%29.gif)
 
 {% hint style="warning" %}
 If you pass some information that are off the preconfigured logic conditions in the circles, the system will return indicating that the user is on _Default_ circle, on the standard version of your application.

@@ -2,11 +2,11 @@
 
 Circles are the main approach related to the **new deploy concept** brought by Charles. It enables user groups creation with several characteristics and promotes simultaneous application tests for a great number of possible users.
 
-![Circle generation with Charles deployments](../.gitbook/assets/deploy_em_circulos%20%289%29%20%281%29%20%282%29.png)
+![Circle generation with Charles deployments](../.gitbook/assets/deploy_em_circulos%20%289%29%20%281%29.png)
 
 Circles indicate clients segmentation and also support the version management created for a specific audience.
 
-Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
+Once the right people are chosen to have access to your release associated to a circle, Charles will generate a [**series of business or performance metrics**](https://docs.charlescd.io/reference/metrics). This information will give you better hypothesis results or even a better view on a feature in analysis and that will enable more assertive tests.
 
 ## Active and inactive circles
 
@@ -23,13 +23,21 @@ To create a circle, you just have to follow these steps:
 **3.** Define a segmentation.  
 **4.** \[Optional\] Implement a release.
 
-![ How to create a circle](../.gitbook/assets/criar-circulo%20%282%29%20%281%29.gif)
+![How to create a circle](../.gitbook/assets/create-circle-3.gif)
 
 The segmentations are a subset of characteristics that you define to put all your users together in a circle. To make this happen, it is possible to segment your users by **filling in information manually** or through a **CVS file importation**.
 
 {% hint style="info" %}
 **The best advantage to use segmentation** is the possibility to combine logic with several attributes to create different audience categories and, in this way, use them on hypothesis tests. For example, using the characteristics ‘profession’ and ‘region’, you are able to create a circle with engineers from the brazilian north region, another one with engineers from the southeast and a third one with all brazilian engineers.
 {% endhint %}
+
+### How to get **my circle's identifier**?  <a id="como-obter-o-identificador-do-meu-workspace"></a>
+
+Once your circle is created, even without the configuration, it already has a single identifier. 
+
+To get this information, select the workspace you want and then on the left menu, click on **Copy ID.**
+
+![](../.gitbook/assets/circuloid%20%282%29.gif)
 
 ### **Manual segmentation**
 
@@ -70,7 +78,7 @@ OR is the only logic operator supported on this segmentation.
 
 Once the **circle which the user belongs** to is detected, this information must be passed on to all next requests through the `x-circle-id` parameter on the header. Charles detects by the circle’s ID which application version a determined request must be forward. Let's see how it woks on example below:
 
-![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy%20%282%29%20%282%29.png)
+![](../.gitbook/assets/como_integrar_circulos_com_servicos_copy%20%282%29.png)
 
 At some point during the interaction of the user and your application **\(App1\)**, for example, the login - the **`Identify`** service of **`charles-circle-matcher`** - must be triggered to get the circle.
 
@@ -82,18 +90,18 @@ If the **`x-circle-id`** is not passed on, all the requests will be redirected t
 
 We will give an example of a specific scenario where your environment has two services: **Application A** and **Application B** and your circles must use the following versions:
 
-![](../.gitbook/assets/versoes_diferentes_na_minha_release_eng%20%281%29%20%282%29.png)
+![](../.gitbook/assets/versoes_diferentes_na_minha_release_eng%20%281%29.png)
 
 So, the redirect logic using **`x-circle-id`** will be:
 
 1. The user sends to the header:  `x-circle-id="QA Circle"`. On this circle, the request will be redirect to a **X version** of the service on **Application A** and the **Y version** of the service on **Application B**. 
 2. The user sends to the header:  `x-circle-id=”Dev Circle”`. On this circle, the request will be redirect to the **Z version** of the service on **Application A** and **Z version** of the service on **Application B.** 
 
-![Example of Application 1 and Application 2](../.gitbook/assets/versoes_diferentes_na_minha_release_ii_eng%20%281%29%20%282%29.png)
+![Example of Application 1 and Application 2](../.gitbook/assets/versoes_diferentes_na_minha_release_ii_eng%20%281%29.png)
 
 ## How to route your circles with Kubernetes Clusters?
 
-**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) **\*\*and \[**Istio**\]\(**[https://istio.io/docs/](https://istio.io/docs/)**\) \*\***on traffic routing. Let's think about a scenario where there are two circles:
+**Charles** involves [**Kubernetes**](https://kubernetes.io/docs/home/) and ****[**Istio**](https://istio.io/docs/) ****on traffic routing. Let's think about a scenario where there are two circles:
 
 * Campinas residents \(identify by ID 1234\);
 * Belo Horizonte's residents \(identify by ID 8746\).

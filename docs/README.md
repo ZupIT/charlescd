@@ -4,7 +4,7 @@ description: >-
   Charles.
 ---
 
-# Overview
+# Overviews
 
 ## What is Charles?
 
@@ -37,7 +37,7 @@ The methodology implemented by Charles brings a lot of advantages such as:
 
 The platform was built using a microservice approach, and it has the following modules:
 
-![Charles architecture](.gitbook/assets/arquitetura-charles-nova%20%283%29%20%281%29%20%282%29.png)
+![Charles architecture](.gitbook/assets/arquitetura-charles-nova%20%283%29%20%281%29%20%281%29%20%281%29.png)
 
 * `charlescd-ui:`  mirrors on front-end the workspace configuration, users, modules, hypothesis and boards. It is the platform graphical interface.  
 * `charles-moove:` manages workspaces, users, modules, hypothesis and boards. It is the whole platform structure.   

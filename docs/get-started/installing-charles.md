@@ -1,7 +1,7 @@
 # Installing Charles
 
 {% hint style="info" %}
-The installing process was created considering some use cases, and each of them have its own specific tutorial. If you need to install CharlesCD in a different way, we suggest to check the **custom** section with isolated helm charts.
+The installing process was created considering some use cases, and each of them have its own specific tutorial. If you need to install CharlesCD with more customization, we suggest to check the [**customized installation section**](https://docs.charlescd.io/get-started/installing-charles#case-2-customized-installation).
 {% endhint %}
 
 ## Introduction
@@ -13,7 +13,7 @@ The CharlesCD installation considers these components:
 1. Seven specific modules of **Charles' architecture;** 
 2. **Keycloak**, used for product authentication and authorization;
 3. A **PostgreSQL database** for backend modules \( `charles-application`, `charles-circle-matcher`, `deploy` and `villager`\) and Keycloak;
-4. A **Redis**, to be used by [**Circle Matcher**](https://docs.charlescd.io/referencia/circle-matcher). 
+4. A **Redis**, to be used by [**Circle Matcher**](https://docs.charlescd.io/reference/circle-matcher). 
 
 ### Continuous Delivery Platform
 
@@ -28,13 +28,13 @@ If you want more information about how to configure Spinnaker or Octopipe, check
 
 ## Main install cases
 
-### Case \#1: Installation for tests
+### Case \#1: Quick Installation
 
 This installation is recommended for those who never used Charles before and just want a **first contact in testing environment**, without looking for scalability or security.
 
 In this case, you will have to:
 
-* Use an **yaml** file with all the **components**;
+* Use an **yaml** file with all the [**components**](https://docs.charlescd.io/get-started/installing-charles#components);
 * Use a **Load Balancer** previously configured.
 
 To create this structure, you have to execute the files in a configured cluster, such as minikube, GKE, EKS, etc. The steps to be executed are:
@@ -53,43 +53,33 @@ The purpose of this installation is only for tests. Using this for production en
 
 ### Case \#2: Customized installation
 
-In this installation method, it is possible to customize some features through **our CLI** and edit the configuration file that contains all the available components.
+This installation is recommended for those who already has an infrastructure to deal with a more complex environment or who has some limitations of security/scalability, which demands a **more complete install customization** of CharlesCD.  
 
-With this custom file, you have the options to:
+### Prerequisites 
 
-* Use a managed database; 
-* Add new credentials to your clusters;
-* Change the CharlesCD version;
-* Use a previously installed Spinnaker;
-* Enable \(or not\) a standard load balancer.
+To run the process, you must have the following programs:
 
-This installation can be used for tests or production environments, depending on which values you will define in the configuration file. In case you decide not to change this file at all, you will have the same result as if you install with an unique file.
+* Kubectl
+* Helm 
 
-### Case \#3: Installation with Terraform
+### How does it works?
 
-This installation method is very specific, and it is recommended only for those who use Terraform to create and manage the infrastructure versions.
+This installation is recommended for who has already setup your infrastructure due to a more complex environment or have some security or/and scalability limitations, which demands a **more complete installation customization** from CharlesCD.
 
-For this case, we can support GCP and AWS, and we are working on add AZURE.
-
-On this **repository**, you will find all the data and Redis resources, and the helm releases execution of these modules already consumed the values from other resources. All of this separated by cloud.
-
-### Case \#4: Total Customization
-
-We recommend this installation method in case you want to edit all the available features on our CLI or even in a context of installing the modules by yourself. In both cases, you can directly access the **pure charts of the product.**
-
-### Specifications
-
-If you decide to follow the total customization, it is necessary to keep in mind some concepts:
-
-#### **Order**
-
-Even though the Charles modules are independent, there are some cases in which are needed some previous configurations. Some of them are:
-
-* `Charles-moove`: this module demands that your keycloak is already configured to work. To guarantee that, you can customize the keycloak URL, as well `client-id` and `client-secret`. 
+You can find here all this [**documentation of editable fields.**](https://github.com/ZupIT/charlescd/blob/master/install/helm-chart/) 
 
 {% hint style="info" %}
-In case of installation with our CLI or a unique file, these steps won't be necessary.
+It's important to remember that, in case of no customization at all, the final result is the same as in case \#1 in which, for standard, we install the PostgreSQL, Redis, Keycloak and Octopipe. 
+
+So, you must not forget to customize the fields in case you want something manageable. 
 {% endhint %}
 
-* `Charles-circle-matcher`: this module demands a configured **Redis** to work.
+To execute the installation, just run the command below after you customized the charts: 
+
+```text
+// customize everything you need in the file values.yaml before you execute the following command
+helm install charlescd <repo-folder> -n <namespace>
+```
+
+
 

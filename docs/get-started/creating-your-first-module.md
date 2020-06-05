@@ -1,9 +1,9 @@
-# Creating your first Module
+# Creating your first module
 
 After creating and configuring your workspace, it is necessary to add the modules.
 
 {% hint style="info" %}
-A **module** is your application stored in a [**Git repository, previously registered**](https://docs.charlescd.io/v/v0.2.1-en/get-started/defining-a-workspace).
+A **module** is your application stored in a [**Git repository, previously registered**](https://docs.charlescd.io/get-started/defining-a-workspace).
 {% endhint %}
 
 To add it, access the **Modules** menu on your workspace and set the following properties:
@@ -18,7 +18,7 @@ If you have a lot of applications on your repository, register them with the com
 
 In both cases, you need to inform the minimum risk value you'd like to be alerted.
 
-![Creating a module screen](../.gitbook/assets/criac-a-o-de-modulo%20%282%29%20%282%29.png)
+![Creating a module screen](../.gitbook/assets/criac-a-o-de-modulo%20%282%29%20%281%29.png)
 
 ## Components
 
