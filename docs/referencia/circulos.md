@@ -25,7 +25,7 @@ Para você criar um círculo, siga os seguintes passos:
 
 As segmentações são um conjunto de características que você define para agrupar seus usuários nos círculos. Para realizar essa ação, é possível segmentar seus usuários através do **preenchimento de informações de forma manual** ou por meio da **importação de um arquivo CSV**.
 
-![Exemplo de como criar um c&#xED;rculo](../.gitbook/assets/create-circle-newww%20%281%29.gif)
+![Exemplo de como criar um c&#xED;rculo](../.gitbook/assets/create-circle-newww%20%283%29.gif)
 
 {% hint style="info" %}
 Uma **grande vantagem de utilizar as segmentações** é a possibilidade fazer combinações lógicas entre vários atributos para criar diferentes categorias de públicos e, dessa forma, utilizá-los nos testes das hipóteses. Por exemplo, a partir da características “_profissão_” e “_região_”, pode-se criar um círculo de engenheiros da região norte, outro só com engenheiros do sudeste e um terceiro contendo todos os engenheiros do Brasil.
