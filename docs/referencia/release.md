@@ -1,6 +1,6 @@
 # Release
 
-Releases são as versões de uma aplicação. Diferente de outras formas de deploy, em que as releases geralmente passam por diversos ambientes até chegar ao de produção, no CharlesCD é possível que uma mesma release seja publicada para diferentes [**círculos**](https://docs.charlescd.io/v/v0.2.7/referencia/circulos)**.**
+Releases são as versões de uma aplicação. Diferente de outras formas de deploy, em que as releases geralmente passam por diversos ambientes até chegar ao de produção, no CharlesCD é possível que uma mesma release seja publicada para diferentes [**círculos**](circulos.md)**.**
 
 ## Como criar releases pelo Charles?
 
@@ -13,7 +13,7 @@ A primeira delas oferece todo o potencial de uso do produto, pois trabalha com o
 
 ### Release por meio do quadro de hipóteses
 
-Após o cadastro de uma [**hipótese**](https://docs.charlescd.io/v/v0.2.7/referencia/hipotese) dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese.
+Após o cadastro de uma [**hipótese**](hipotese.md) dentro do Charles, você pode utilizar o quadro que é gerado automaticamente para criar e gerenciar cartões que representam o desenvolvimento da sua hipótese.
 
 Neste quadro, temos duas categorias de cartões: o **azul que representa a codificação de uma feature** e o **cinza que caracteriza às ações que não envolvem implementação**.
 
@@ -24,7 +24,7 @@ Para gerar novas releases, os cartões azuis, que representam as features, são 
 Assim que a criação de uma release é acionada, uma branch com o prefixo **release-darwin** será criada no **repositório do módulo, disparando a ferramenta de CI configurada**. Além disso, um novo cartão com o estado "**Building**" aparecerá na coluna **Builds** \_\_para representar o processo em andamento.
 
 {% hint style="warning" %}
-Ao acionar o pipeline da sua ferramenta de CI através do prefixo **release-darwin**, é esperado que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/definindo-workspace/docker-registry).
+Ao acionar o pipeline da sua ferramenta de CI através do prefixo **release-darwin**, é esperado que ela gere uma imagem da sua aplicação e faça o push para o seu [**registry**](../primeiros-passos/definindo-workspace/docker-registry.md).
 {% endhint %}
 
 A partir desse momento, o [**Villager**](https://github.com/ZupIT/charlescd/tree/master/villager) observará o seu registry em busca da release gerada. Aguarde até que o estado do cartão passe para _Built_.
@@ -37,7 +37,7 @@ Qualquer caso de sucesso ou erro será mostrado no estado do cartão da release.
 
 ### **Releases por meio de imagens existentes no Docker Registry configurado**
 
-Para criar uma release sem passar pelo quadro de hipóteses, é preciso que as imagens no Docker já estejam disponíveis no [**registry configurado**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/definindo-workspace/docker-registry) para o módulo. Se esse requisito já estiver feito, basta clicar na opção **Circles** no menu do Charles e selecionar o círculo desejado para o deploy da release a ser criada.
+Para criar uma release sem passar pelo quadro de hipóteses, é preciso que as imagens no Docker já estejam disponíveis no [**registry configurado**](../primeiros-passos/definindo-workspace/docker-registry.md) para o módulo. Se esse requisito já estiver feito, basta clicar na opção **Circles** no menu do Charles e selecionar o círculo desejado para o deploy da release a ser criada.
 
 Caso o círculo esteja sendo criado neste momento, clique em **Insert release** e logo após em **Create release**. Se o círculo já existir, clique em **Override release** e depois em **Create release.**
 

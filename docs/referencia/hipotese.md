@@ -29,9 +29,9 @@ Organizado com base em conceitos da metodologia ágil, o Board é estruturado pa
 
 A medida que o desenvolvimento da hipótese evolui, as tarefas avançam nas colunas do moove. Os possíveis status de cada atividade são:
 
-* **To Do:** as tarefas foram priorizadas e precisam ser feitas. _\*\*_
-* **Doing:** as tarefas estão em andamento. _\*\*_
-* **Ready to go:** as atividades finalizadas. Caso seja do tipo feature card, é possível gerar um build. _\*\*_
+* **To Do:** as tarefas foram priorizadas e precisam ser feitas.
+* **Doing:** as tarefas estão em andamento.
+* **Ready to go:** as atividades finalizadas. Caso seja do tipo feature card, é possível gerar um build.
 * **Builds:** aqui estão representados todos os builds gerados a partir da combinação de feature nos cartões da coluna anterior \(Ready to go\). É possível expandir o cartão para ter mais informações.
 
 O Charles é responsável pela orquestração da resolução dos merges, principalmente caso surjam vários cartões que envolvam módulos iguais, porém com ramificações diferentes no git.

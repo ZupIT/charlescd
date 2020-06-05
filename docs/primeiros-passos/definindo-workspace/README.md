@@ -8,10 +8,10 @@ Com apenas uma instalação, vários times podem utilizar o Charles com configur
 
 Cada workspace possui as seguintes configurações:
 
-* Definição dos acessos e [**permissões dos grupos de usuários**](https://docs.charlescd.io/v/v0.2.7/referencia/grupos-de-usuarios#permissoes-para-o-grupo-de-usuarios-no-workspace).
-* Cadastros de credenciais do [**Docker Registry**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/definindo-workspace/docker-registry), [**Git**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/definindo-workspace/github) ****e de ****[**Continuous Deployment \(CD\)**](https://docs.charlescd.io/v/v0.2.7/referencia/configuracao-cd).
-* Personalização do [**Circle Matcher**](https://docs.charlescd.io/v/v0.2.7/referencia/circle-matcher).
-* Registro do [**Provedor de Métricas**](https://docs.charlescd.io/v/v0.2.7/referencia/metricas/provedor-metrica) das suas aplicações.
+* Definição dos acessos e [**permissões dos grupos de usuários**.](../../referencia/grupos-de-usuarios.md#permissoes-para-o-grupo-de-usuarios-no-workspace)
+* Cadastros de credenciais do [**Docker Registry**](docker-registry.md), [**Git**](github.md) ****e de ****[**Continuous Deployment \(CD\)**](../../referencia/configuracao-cd.md).
+* Personalização do [**Circle Matcher**](../../referencia/circle-matcher.md).
+* Registro do [**Provedor de Métricas**](../../referencia/metricas/provedor-metrica.md) das suas aplicações.
 
 ![Configura&#xE7;&#xF5;es do workspace](../../.gitbook/assets/settings_-_workspace_-_11.4_-_add_group_permissions2x.png)
 
