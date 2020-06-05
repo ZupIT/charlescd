@@ -13,13 +13,13 @@ Trata-se de um serviço HTTP que permite você identificar a qual segmentação 
 
 ### **Círculos**
 
-\*\*\*\*[**Círculos** ](https://docs.charlescd.io/v/v0.2.7/referencia/circulos)são grupos de usuários criados a partir de características específicas dentro de um mesmo ambiente na plataforma do Charles. Dessa forma, o desenvolvedor pode segmentar os usuários de acordo com as regras \(AND ou OR\) que mais fizerem sentido para testar aquela release. 
+\*\*\*\*[**Círculos**](https://docs.charlescd.io/v/v0.2.7/referencia/circulos) ****são grupos de usuários criados a partir de características específicas dentro de um mesmo ambiente na plataforma do Charles. Dessa forma, o desenvolvedor pode segmentar os usuários de acordo com as regras \(AND ou OR\) que mais fizerem sentido para testar aquela release. 
 
 Por exemplo, é possível [**criar um círculo**](https://docs.charlescd.io/v/v0.2.7/referencia/circulos#como-criar-circulos) ****de engenheiros da região Norte do Brasil, outro de engenheiros do sudeste e um terceiro contendo todos os engenheiros brasileiros. Baseado nessa segmentação de clientes, pode-se elaborar diversas lógicas de deploy.
 
 ### **Componentes**
 
-Fazem parte dos [**módulos** ](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/criando-modulos)que são criados dentro do Charles. Os componentes funcionam como abstrações das aplicações, o que significa dizer que eles possuem suas próprias configurações e que cada parte deles corresponde a uma aplicação do módulo em que você estiver trabalhando. Caso você trabalhe com um monorepo, cada uma das suas aplicações serão cadastradas como componentes dentro de um único módulo.
+Fazem parte dos [**módulos**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/criando-modulos) que são criados dentro do Charles. Os componentes funcionam como abstrações das aplicações, o que significa dizer que eles possuem suas próprias configurações e que cada parte deles corresponde a uma aplicação do módulo em que você estiver trabalhando. Caso você trabalhe com um monorepo, cada uma das suas aplicações serão cadastradas como componentes dentro de um único módulo.
 
 ### **Hipóteses**
 
