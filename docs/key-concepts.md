@@ -10,11 +10,11 @@ description: >-
 
 **Circles** are groups of users created from specific characteristics, inside the same environment on Charles platform. The developer is able to segment users according to the rules "AND/OR" that will make more sense to test that release later.
 
-For example, it is possible to [**create a circle**](https://docs.charlescd.io/reference/circles) of engineers from north of Brazil, another one from the southeast, and a third one with all brazilian engineers. Based on client's segmentation, it is possible to make a variety of deployment logic.
+For example, it is possible to[ **create a circle**](reference/circles.md#how-to-create-circles) of engineers from north of Brazil, another one from the southeast, and a third one with all brazilian engineers. Based on client's segmentation, it is possible to make a variety of deployment logic.
 
 ## **Hypothesis**
 
-These are [**registered alternatives** ](https://docs.charlescd.io/reference/hyphotesis) on the platform to solve a problem or to validate changes on the application integrated on Charles.
+These are [**registered alternatives**](reference/hyphotesis.md)  on the platform to solve a problem or to validate changes on the application integrated on Charles.
 
 Hypothesis can have features that are directly related to modules and/or projects that were previously registered in the workspace.
 
@@ -24,7 +24,7 @@ It is a HTTP service which allows you to identify which segmentation the user be
 
 ## **Components**
 
-Components are part of the [**modules**](https://docs.charlescd.io/get-started/creating-your-first-module) you create on Charles. They work as an application abstraction, which means that they have their own configuration and every part of it belongs to a module application you are working on it.
+Components are part of the [**modules**](get-started/creating-your-first-module.md) you create on Charles. They work as an application abstraction, which means that they have their own configuration and every part of it belongs to a module application you are working on it.
 
 ## Open Sea
 
