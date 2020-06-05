@@ -1,14 +1,14 @@
 # Instalando o Charles
 
 {% hint style="info" %}
-O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**.](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/instalando-charles#caso-2-instalacao-com-helm-charts) 
+O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**](https://docs.charlescd.io/v/v0.2.1/primeiros-passos/instalando-charles#caso-2-instalacao-com-helm-charts). 
 {% endhint %}
 
 ## Introdução
 
 ### Componentes
 
-A instalação do CharlesCD consiste nos seguintes [**componentes**:](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/instalando-charles#componentes)
+A instalação do CharlesCD consiste nos seguintes **componentes**:
 
 1. Módulos específicos da [**arquitetura do Charles**](https://docs.charlescd.io/v/v0.2.7/#arquitetura-do-sistema)**.** 
 2. **Keycloak**, usado para autenticação e autorização no projeto.
@@ -35,7 +35,7 @@ Esta é a instalação mais recomendada para quem nunca usou o CharlesCD antes e
 
 Neste caso, você irá utilizar: 
 
-* um arquivo _yaml_ com todos os **componentes**;
+* um arquivo _yaml_ com todos os [**componentes**](https://docs.charlescd.io/v/v0.2.1/primeiros-passos/instalando-charles#componentes);
 * um _Load Balancer_ pré-configurado. 
 
 Para criar esta estrutura, basta executar os arquivos em algum cluster pré-configurado, como minikube, GKE, EKS, etc. Os passos a serem executados são estes:
