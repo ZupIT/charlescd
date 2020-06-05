@@ -49,7 +49,7 @@ Após o deploy desta nova release, ela estará disponível para utilização em 
 
 ## Como buscar uma release existente?
 
-Se a release foi gerada através do [**quadro de hipóteses** ](https://docs.charlescd.io/v/v0.2.7/referencia/hipotese#gestao-do-board)no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: **"**_Search for existing releases_".
+Se a release foi gerada através do [**quadro de hipóteses**](hipotese.md#gestao-do-board) no seu workspace, ao realizar o deploy em um círculo, você pode buscá-la através da opção: **"**_Search for existing releases_".
 
 ![Exemplo de pesquisa de release pelo deploy no c&#xED;rculo](../.gitbook/assets/may-29-2020_17-21-33%20%282%29.gif)
 

@@ -10,7 +10,7 @@ O deploy em círculos é um conceito pioneiro trazido pelo Charles. Graças a el
 
 ## Qual diferencial do Charles? 
 
-Diferente de outras modalidades de deploy, o Charles possibilita a realização simultânea de segmentações de usuários por meio de [**círculos**](https://docs.charlescd.io/referencia/circulos). 
+Diferente de outras modalidades de deploy, o Charles possibilita a realização simultânea de segmentações de usuários por meio de [**círculos**. ](../referencia/circulos.md)
 
 Utilizando a ferramenta, o processo de entrega que em ambientes tradicionais ocorre em frequências demoradas - semanal, quinzenal ou até mesmo mensal -, ganha um novo ritmo. O ciclo de feedback do seu produto se torna mais rápido e eficaz e, com isso, você consegue fazer a gestão do timing de forma mais inteligente e assertiva. 
 

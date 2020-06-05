@@ -3,7 +3,7 @@
 O cadastro do provedor de métricas é uma etapa fundamental para você usar o Charles em todo seu potencial, já que ele possibilita que você quantifique a performance de suas aplicações e acompanhe o status delas.
 
 {% hint style="warning" %}
-Antes de cadastrar o seu provedor, é necessário ter finalizado a [**configuração de métricas**](https://docs.charlescd.io/v/v0.2.7/referencia/metricas/configurando-metricas).
+Antes de cadastrar o seu provedor, é necessário ter finalizado a [**configuração de métricas**](configurando-metricas.md).
 {% endhint %}
 
 Para realizar a configuração de cadastro, basta seguir os seguintes passos:
