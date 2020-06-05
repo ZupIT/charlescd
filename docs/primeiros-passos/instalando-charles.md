@@ -1,7 +1,7 @@
 # Instalando o Charles
 
 {% hint style="info" %}
-O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**](https://docs.charlescd.io/v/v0.2.7/primeiros-passos/instalando-charles#caso-2-instalacao-com-helm-charts). 
+O processo de instalação foi criado considerando alguns casos de uso. Logo, para cada um deles, você encontrará um tutorial específico. Se for necessário instalar o CharlesCD com algumas customizações, sugerimos conferir a seção de [**instalação com helm charts**](instalando-charles.md#caso-2-instalacao-com-helm-charts). 
 {% endhint %}
 
 ## Introdução
