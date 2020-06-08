@@ -62,7 +62,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
-
   })
 
   beforeEach(async () => {
