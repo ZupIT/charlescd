@@ -25,7 +25,7 @@ Fazem parte dos [**módulos**](primeiros-passos/criando-modulos.md) que são cri
 
 Aplicando Desenvolvimento Orientado à Hipótese \(_Hypothesis-Driven Development_\) ou não, uma hipótese representará o desenvolvimento de uma nova ideia que será utilizada como experimento para alcançar um resultado esperado. Caso o resultado não seja atingido, novas hipóteses com outras abordagens podem ser criadas e mensuradas até que realmente se tenha o resultado desejado ou até mesmo se prove que a ideia não é viável.
 
-No Charles, as hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos foram cadastrados anteriormente ao seu [**workspace**.](primeiros-passos/definindo-workspace/)
+No Charles, as hipóteses podem conter uma ou mais features, que estão relacionadas diretamente aos módulos que foram cadastrados anteriormente ao seu [**workspace**.](primeiros-passos/definindo-workspace/)
 
 ### Mar Aberto \(Default\)
 
