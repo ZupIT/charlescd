@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { getProfileByKey } from 'core/utils/profile';
-import Page from 'core/components/Page';
-import Placeholder from 'core/components/Placeholder';
-import { useGlobalState } from 'core/state/hooks';
-import { isRoot, logout } from 'core/utils/auth';
-import { clearWorkspace } from 'core/utils/workspace';
-import { useWorkspace } from './hooks';
-import Menu from './Menu';
+import React, { useState, useEffect } from "react";
+import isEmpty from "lodash/isEmpty";
+import { getProfileByKey } from "core/utils/profile";
+import Page from "core/components/Page";
+import Placeholder from "core/components/Placeholder";
+import { useGlobalState } from "core/state/hooks";
+import { isRoot, logout } from "core/utils/auth";
+import { clearWorkspace } from "core/utils/workspace";
+import { useWorkspace } from "./hooks";
+import Menu from "./Menu";
 
-const Workspaces = () => {
-  const profileName = getProfileByKey('name');
-  const workspaces = getProfileByKey('workspaces');
+interface Props {
+  workspaceStatus: (status: string) => void;
+}
+
+const Workspaces = ({ workspaceStatus }: Props) => {
+  const profileName = getProfileByKey("name");
+  const workspaces = getProfileByKey("workspaces");
   const [filterWorkspace, , loading] = useWorkspace();
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   useEffect(() => {
@@ -45,6 +49,7 @@ const Workspaces = () => {
     <Page>
       <Page.Menu>
         <Menu
+          workspaceStatus={(status: string) => workspaceStatus(status)}
           items={list?.content || workspaces}
           isLoading={loading}
           onSearch={setName}

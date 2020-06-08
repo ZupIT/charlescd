@@ -38,9 +38,10 @@ import Styled from './styled';
 interface Props {
   isExpanded: boolean;
   onClickExpand: (state: ExpandClick) => void;
+  isNotAllowed: boolean
 }
 
-const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
+const Sidebar = ({ isExpanded, onClickExpand, isNotAllowed }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
@@ -89,6 +90,7 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
       <Styled.Logo name="charles" size="37px" onClick={() => handleClick()} />
 
       <MenuItems
+        isNotAllowed={isNotAllowed}
         isExpanded={isExpanded}
         expandMenu={(state: ExpandClick) => onClickExpand(state)}
       />

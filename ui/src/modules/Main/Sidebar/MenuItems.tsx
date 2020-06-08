@@ -26,11 +26,12 @@ import { getExpandIcon, getItems } from './helpers';
 import Styled from './styled';
 
 interface Props {
+  isNotAllowed: boolean;
   isExpanded: boolean;
   expandMenu: (state: ExpandClick) => void;
 }
 
-const MenuItems = ({ isExpanded, expandMenu }: Props) => {
+const MenuItems = ({ isExpanded, expandMenu, isNotAllowed }: Props) => {
   const subMenuRef = useRef<HTMLDivElement>();
   const activeMenuId = getActiveMenuId();
   const isActive = (id: string) => startsWith(activeMenuId, id);
