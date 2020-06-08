@@ -50,11 +50,11 @@ coverage:
 flags:
   villager:
     paths:
-      - villager/src/main/java/
+      - villager/
     carryforward: true
   circlematcher:
     paths:
-      - circle-matcher/src/main/java/
+      - circle-matcher/
     carryforward: true
   octopipe:
     paths:
