@@ -22,10 +22,11 @@ test('render ButtonIconRounded default component', async () => {
 	const click = jest.fn();
 	const props = {
 		name: 'add',
+		icon: 'add',
 		children: 'button'
 	};
 	const { getByTestId } = render(
-		<ButtonIconRounded onClick={click} name={props.name}>
+		<ButtonIconRounded onClick={click} name={props.name} icon={props.icon}>
 			{props.children}
 		</ButtonIconRounded>
 	);
