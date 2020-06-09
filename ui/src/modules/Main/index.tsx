@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-import React, { lazy, useState } from "react";
-import isUndefined from "lodash/isUndefined";
-import { Switch, Route, Redirect } from "react-router-dom";
-import Sidebar from "modules/Main/Sidebar";
-import Footer from "modules/Main/Footer";
-import { setExpandMode, getExpandMode } from "core/utils/sidebar";
-import PrivateRoute from "core/components/PrivateRoute";
-import routes from "core/constants/routes";
-import { ExpandClick } from "./Sidebar/Types";
-import Styled from "./styled";
+import React, { lazy, useState } from 'react';
+import isUndefined from 'lodash/isUndefined';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import Sidebar from 'modules/Main/Sidebar';
+import Footer from 'modules/Main/Footer';
+import { setExpandMode, getExpandMode } from 'core/utils/sidebar';
+import PrivateRoute from 'core/components/PrivateRoute';
+import routes from 'core/constants/routes';
+import { ExpandClick } from './Sidebar/Types';
+import Styled from './styled';
 
-const Workspaces = lazy(() => import("modules/Workspaces"));
-const Users = lazy(() => import("modules/Users"));
-const Groups = lazy(() => import("modules/Groups"));
-const Account = lazy(() => import("modules/Account"));
-const Hypotheses = lazy(() => import("modules/Hypotheses"));
-const Circles = lazy(() => import("modules/Circles"));
-const Modules = lazy(() => import("modules/Modules"));
-const Settings = lazy(() => import("modules/Settings"));
+const Workspaces = lazy(() => import('modules/Workspaces'));
+const Users = lazy(() => import('modules/Users'));
+const Groups = lazy(() => import('modules/Groups'));
+const Account = lazy(() => import('modules/Account'));
+const Hypotheses = lazy(() => import('modules/Hypotheses'));
+const Circles = lazy(() => import('modules/Circles'));
+const Modules = lazy(() => import('modules/Modules'));
+const Settings = lazy(() => import('modules/Settings'));
 
 const Main = () => {
-  const [workspaceStatus, setWorkspaceStatus] = useState("");
   const [isExpanded, setSideExpanded] = useState(getExpandMode());
 
   const onClickExpand = ({ status, persist }: ExpandClick) => {
@@ -46,46 +45,42 @@ const Main = () => {
 
   return (
     <Styled.Main isSidebarExpanded={isExpanded}>
-      <Sidebar isExpanded={isExpanded} onClickExpand={onClickExpand} isNotAllowed={(workspaceStatus === "INCOMPLETE")} />
+      <Sidebar isExpanded={isExpanded} onClickExpand={onClickExpand} />
       <Styled.Content data-testid="main-content">
         <React.Suspense fallback="">
           <Switch>
             <Redirect exact from={routes.main} to={routes.workspaces} />
-            <Route path={routes.workspaces}>
-              <Workspaces
-                workspaceStatus={(status: string) => setWorkspaceStatus(status)}
-              />
-            </Route>
+            <Route path={routes.workspaces} component={Workspaces} />
             <Route path={routes.account} component={Account} />
             <PrivateRoute
               path={routes.users}
               component={Users}
-              allowedRoles={["root"]}
+              allowedRoles={['root']}
             />
             <PrivateRoute
               path={routes.groups}
               component={Groups}
-              allowedRoles={["root"]}
+              allowedRoles={['root']}
             />
             <PrivateRoute
               path={routes.hypotheses}
               component={Hypotheses}
-              allowedRoles={["hypothesis_read"]}
+              allowedRoles={['hypothesis_read']}
             />
             <PrivateRoute
               path={routes.circles}
               component={Circles}
-              allowedRoles={["circles_read"]}
+              allowedRoles={['circles_read']}
             />
             <PrivateRoute
               path={routes.modules}
               component={Modules}
-              allowedRoles={["modules_read"]}
+              allowedRoles={['modules_read']}
             />
             <PrivateRoute
               path={routes.settings}
               component={Settings}
-              allowedRoles={["maintenance_write"]}
+              allowedRoles={['maintenance_write']}
             />
             <Redirect to={routes.error404} />
           </Switch>

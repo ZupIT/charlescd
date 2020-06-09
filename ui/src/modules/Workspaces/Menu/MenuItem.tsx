@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { memo } from "react";
-import { useHistory } from "react-router-dom";
-import { saveWorkspace } from "core/utils/workspace";
-import routes from "core/constants/routes";
-import { setUserAbilities } from "core/utils/abilities";
-import Styled from "./styled";
+import React, { memo } from 'react';
+import { useHistory } from 'react-router-dom';
+import { saveWorkspace } from 'core/utils/workspace';
+import routes from 'core/constants/routes';
+import { setUserAbilities } from 'core/utils/abilities';
+import Styled from './styled';
 
 interface Props {
   id: string;
@@ -33,7 +33,7 @@ const MenuItem = ({ id, name, status }: Props) => {
     saveWorkspace({ id, name });
     setUserAbilities();
     history.push({
-      pathname: status === "COMPLETE" ? routes.circles : routes.credentials
+      pathname: status === 'COMPLETE' ? routes.circles : routes.credentials
     });
   };
 

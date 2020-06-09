@@ -14,41 +14,35 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import map from "lodash/map";
-import Text from "core/components/Text";
-import LabeledIcon from "core/components/LabeledIcon";
-import Modal from "core/components/Modal";
-import { getProfileByKey } from "core/utils/profile";
-import routes from "core/constants/routes";
-import { saveWorkspace } from "core/utils/workspace";
-import { isRoot } from "core/utils/auth";
-import { useSaveWorkspace } from "modules/Workspaces/hooks";
-import { Workspace } from "modules/Workspaces/interfaces/Workspace";
-import MenuItem from "./MenuItem";
-import Styled from "./styled";
-import Loader from "./Loaders";
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import map from 'lodash/map';
+import Text from 'core/components/Text';
+import LabeledIcon from 'core/components/LabeledIcon';
+import Modal from 'core/components/Modal';
+import { getProfileByKey } from 'core/utils/profile';
+import routes from 'core/constants/routes';
+import { saveWorkspace } from 'core/utils/workspace';
+import { isRoot } from 'core/utils/auth';
+import { useSaveWorkspace } from 'modules/Workspaces/hooks';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
+import MenuItem from './MenuItem';
+import Styled from './styled';
+import Loader from './Loaders';
 
 interface Props {
   items: Workspace[];
   onSearch: (name: string) => void;
-  workspaceStatus: (status: string) => void;
   isLoading?: boolean;
 }
 
-const WorkspaceMenu = ({
-  items,
-  onSearch,
-  isLoading,
-  workspaceStatus
-}: Props) => {
+const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
   const MAX_LENGTH_NAME = 50;
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(true);
   const { register, handleSubmit, watch } = useForm();
-  const name = watch("name");
+  const name = watch('name');
   const {
     save,
     response: saveWorkspaceResponse,
@@ -63,15 +57,14 @@ const WorkspaceMenu = ({
   }, [name, setIsDisabled]);
 
   const renderWorkspaces = () =>
-    map(items, ({ id, name, status }: Workspace) => {
-      workspaceStatus(status);
-      return <MenuItem key={id} id={id} name={name} status={status} />;
-    });
+    map(items, ({ id, name, status }: Workspace) => (
+      <MenuItem key={id} id={id} name={name} status={status} />
+    ));
 
   const openWorkspaceModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
-    const authorId = getProfileByKey("id");
+    const authorId = getProfileByKey('id');
     save({ name, authorId });
   };
 
