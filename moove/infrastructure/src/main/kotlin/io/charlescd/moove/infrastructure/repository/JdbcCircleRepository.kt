@@ -223,7 +223,7 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
 
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name,true,workspaceId)
+            createParametersArray(name, true, workspaceId)
         ) { rs, _ ->
             rs.getInt(1)
         }
@@ -252,7 +252,7 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
 
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name,false,workspaceId)
+            createParametersArray(name, false, workspaceId)
         ) { rs, _ ->
             rs.getInt(1)
         }
