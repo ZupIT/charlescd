@@ -39,6 +39,10 @@ func NewDeploy(resource *Resource) *Deploy {
 }
 
 func (deploy *Deploy) Do() error {
+	if len(deploy.Manifest.Object) == 0 || deploy.Manifest.GetName() == "" {
+		return nil
+	}
+
 	if deploy.ForceUpdate {
 		return deploy.updateResource()
 	}
