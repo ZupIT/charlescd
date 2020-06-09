@@ -1,0 +1,14 @@
+labelPRBasedOnFilePath:
+  docs:
+    - docs/**/*
+  butler:
+    - butler/**/*
+  circle-matcher:
+    - circle-matcher/**/*
+  moove:
+    - moove/**/*
+  octopipe:
+    - octopipe/**/*
+  ui:
+    - ui/**/*
+  villager:
