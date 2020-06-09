@@ -4,7 +4,7 @@ A user group can represent a team or even a subset of people based on their skil
 
 For example, a big team would have different Charles access permissions according to their job position, we could have these groups:
 
-* _Product X developers; Desenvolvedores do Produto X._
+* _Product X developers;_
 * _Product X QAs;_
 * _Product X Data Analysts._
 
