@@ -16,8 +16,8 @@ This installation is recommended for who has already setup your infrastructure d
 | butler.image.pullPolicy                      | [documentation](https://kubernetes.io/docs/concepts/containers/images/)     | Always                                            |
 | butler.service.name                          | name of service in k8s                                                      | charlescd-butler                                  |
 | butler.service.type                          | type of service                                                             | ClusterIp                                         |
-| butler.resources.limits.cpu                  | max amount of CPU that a container can use                                  | 1                                                 |
-| butler.resources.limits.memory               | max amount of memory that a container can use                               | 1526Mi                                            |
+| butler.resources.limits.cpu                  | max amount of CPU that a container can use                                  | 128m                                              |
+| butler.resources.limits.memory               | max amount of memory that a container can use                               | 256Mi                                             |
 | butler.resources.requests.cpu                | min amount of CPU that a container needs to function                        | 128m                                              |
 | butler.resources.requests.memory             | min amount of memory that a container needs to function                     | 128Mi                                             |
 | moove.enabled                                | enable moove installation                                                   | true                                              |
@@ -34,7 +34,7 @@ This installation is recommended for who has already setup your infrastructure d
 | moove.service.name                           | name of service in k8s                                                      | charlescd-moove                                   |
 | moove.service.type                           | type of service                                                             | ClusterIp                                         |
 | moove.resources.limits.cpu                   | max amount of CPU that a container can use                                  | 1                                                 |
-| moove.resources.limits.memory                | max amount of memory that a container can use                               | 1526Mi                                            |
+| moove.resources.limits.memory                | max amount of memory that a container can use                               | 1024Mi                                            |
 | moove.resources.requests.cpu                 | min amount of CPU that a container needs to function                        | 128m                                              |
 | moove.resources.requests.memory              | min amount of memory that a container needs to function                     | 128Mi                                             |
 | villager.enabled                             | enable villager installation                                                | true                                              |
@@ -49,8 +49,8 @@ This installation is recommended for who has already setup your infrastructure d
 | villager.image.pullPolicy                    | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | Always                                            |
 | villager.service.name                        | name of villager service                                                    | charlescd-villager                                |
 | villager.service.type                        | type of villager service                                                    | ClusterIP                                         |
-| villager.resources.limits.cpu                | max amount of cpu that container can use                                    | 1                                                 |
-| villager.resources.limits.memory             | max memory to be used to run                                                | 1536Mi                                            |
+| villager.resources.limits.cpu                | max amount of cpu that container can use                                    | 256m                                              |
+| villager.resources.limits.memory             | max memory to be used to run                                                | 512Mi                                             |
 | villager.resources.requests.cpu              | minimum allocated amount of cpu that container can use                      | 128m                                              |
 | villager.resources.requests.memory           | minimum allocated amount of memmory that container can use                  | 128Mi                                             |
 | ui.enabled                                   | enable UI installation                                                      | true                                              |
@@ -62,10 +62,10 @@ This installation is recommended for who has already setup your infrastructure d
 | ui.image.pullPolicy                          | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | Always                                            |
 | ui.service.name                              | name of UI service                                                          | charlescd-ui                                      |
 | ui.service.type                              | type of UI service                                                          | ClusterIP                                         |
-| ui.resources.limits.cpu                      | max amount of cpu that container can use                                    | 1                                                 |
-| ui.resources.limits.memory                   | max memory to be used to run                                                | 1536Mi                                            |
-| ui.resources.requests.cpu                    | minimum allocated amount of cpu that container can use                      | 128m                                              |
-| ui.resources.requests.memory                 | minimum allocated amount of memmory that container can use                  | 128Mi                                             |
+| ui.resources.limits.cpu                      | max amount of cpu that container can use                                    | 127m                                              |
+| ui.resources.limits.memory                   | max memory to be used to run                                                | 128Mi                                             |
+| ui.resources.requests.cpu                    | minimum allocated amount of cpu that container can use                      | 64m                                               |
+| ui.resources.requests.memory                 | minimum allocated amount of memmory that container can use                  | 64Mi                                              |
 | circlematcher.enabled                        | enable Circle Matcher installation                                          | true                                              |
 | circlematcher.name                           | deployment name for Circle Matcher                                          | charlescd-circle-matcher                          |
 | circlematcher.redis.host                     | hostname of Redis instance                                                  | charlescd-redis-master                            |
@@ -77,8 +77,8 @@ This installation is recommended for who has already setup your infrastructure d
 | circlematcher.image.pullPolicy               | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | -                                                 |
 | circlematcher.service.name                   | name of Circle Matcher service                                              | charlescd-circle-matcher                          |
 | circlematcher.service.type                   | type of Circle Matcher service                                              | ClusterIP                                         |
-| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 1                                                 |
-| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 1536Mi                                            |
+| circlematcher.resources.limits.cpu           | max amount of cpu that container can use                                    | 256m                                              |
+| circlematcher.resources.limits.memory        | max memory to be used to run                                                | 256Mi                                             |
 | circlematcher.resources.requests.cpu         | minimum allocated amount of cpu that container can use                      | 128m                                              |
 | circlematcher.resources.requests.memory      | minimum allocated amount of memmory that container can use                  | 128Mi                                             |
 | keycloak.enabled                             | enable keycloak install                                                     | true                                              |
