@@ -29,6 +29,9 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
+import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
+import {Observable, of, throwError} from 'rxjs';
+import {AppConstants} from '../../../constants';
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -60,17 +63,41 @@ export class OctopipeService implements ICdServiceStrategy {
 
   public async deploy(
     octopipeConfiguration: IOctopipePayload
-  ): Promise<AxiosResponse> {
+  ): Promise<void> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
-      return await this.octopipeApiService.deploy(octopipeConfiguration).toPromise()
+       await this.octopipeApiService.deploy(octopipeConfiguration)
+        .pipe(
+          map(response => response),
+          retryWhen(error => this.getDeployRetryCondition(error))
+        ).toPromise()
     } catch (error) {
       this.consoleLoggerService.error('ERROR:DEPLOY_OCTOPIPE_PIPELINE', error)
       throw error
     } finally {
       this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getDeployRetryCondition(deployError: Observable<any>) {
+
+    return deployError.pipe(
+      concatMap((error, attempts) => {
+        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS?
+          throwError('Reached maximum attemps.') :
+          this.getDeployRetryPipe(error, attempts)
+      })
+    )
+  }
+
+  private getDeployRetryPipe(error: any, attempts: number) {
+
+    return of(error).pipe(
+      tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+      delay(AppConstants.CD_CONNECTION_MILLISECONDS_RETRY_DELAY)
+    )
   }
 
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
