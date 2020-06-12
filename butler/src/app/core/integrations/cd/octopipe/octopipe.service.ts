@@ -63,11 +63,11 @@ export class OctopipeService implements ICdServiceStrategy {
 
   public async deploy(
     octopipeConfiguration: IOctopipePayload
-  ): Promise<void> {
+  ): Promise<AxiosResponse> {
 
     try {
       this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
-       await this.octopipeApiService.deploy(octopipeConfiguration)
+       return await this.octopipeApiService.deploy(octopipeConfiguration)
         .pipe(
           map(response => response),
           retryWhen(error => this.getDeployRetryCondition(error))
