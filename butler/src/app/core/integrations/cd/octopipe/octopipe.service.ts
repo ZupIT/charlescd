@@ -92,6 +92,7 @@ export class OctopipeService implements ICdServiceStrategy {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getDeployRetryPipe(error: any, attempts: number) {
 
     return of(error).pipe(
