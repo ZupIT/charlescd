@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "99f23536-c82a-42b6-a36f-b6f2dd9a4c6b",
+		"_postman_id": "72e283db-e808-4807-8be3-48831ff8a876",
 		"name": "Charles Butler",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,10 +14,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a3abb15e-14d8-439a-9d2d-9444692e24c3",
+								"id": "43bcfc69-50fe-499b-ad95-a38a5550d9d9",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
-									"",
+									"const uuid = require('uuid');",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
 									"",
 									"pm.test(\"Status created\", function() {",
@@ -31,7 +31,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "32097b27-ef02-488f-939a-d1ebb7d25064",
+								"id": "d7e77765-9a86-4885-8fcb-dc7e1f06b2fc",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -81,9 +81,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5077ad3a-26dd-44cd-b0f1-d4ad1a5fd23a",
+								"id": "5a3e8753-14e9-40e3-b8ef-af89bfcebb74",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
+									"const uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
 									"",
@@ -98,7 +99,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e6efc2b4-cc75-4a22-a6a7-b677a306e9e5",
+								"id": "85589534-9f46-43d0-ae5c-7230e96f77e3",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -148,9 +149,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "71c47939-a6c8-4089-a5ad-ada3e555e111",
+								"id": "4b71077b-b4d5-4c42-8feb-a7ba41a20a35",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
+									"const uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
 									"",
@@ -165,7 +167,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f95317d6-4596-4047-940e-1a8fdebe76cf",
+								"id": "71d27cf2-3181-4884-9aa1-62c9e5d43530",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -215,9 +217,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "258a2aad-93d6-42e0-a7e7-27909160607f",
+								"id": "f5debe1b-37cc-4bfb-92ef-9ed2e97200d9",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
+									"const uuid = require('uuid');",
 									"",
 									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
 									"",
@@ -232,7 +235,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "593213fa-b8f0-45df-8804-469da6da9e91",
+								"id": "90d14211-f4b5-455f-bb48-3fc3cf5b0822",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -282,10 +285,9 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9803f5f9-300b-4fd5-96b7-53dd716e2fff",
+								"id": "97a992a3-a573-4e97-8de6-7919ac405712",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
-
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
 									"})"
@@ -316,105 +318,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Delete configurations",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "x-workspace-id",
-								"type": "text",
-								"value": "{{workspaceId}}"
-							}
-						],
-						"url": {
-							"raw": "localhost:3000/configurations/cd/{{cdConfigurationId}}",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"configurations",
-								"cd",
-								"{{cdConfigurationId}}"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Modules",
-			"item": [
-				{
-					"name": "Get Modules",
-					"events": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "9803f5f9-300b-4fd5-96b7-53dd716e2fff",
-								"exec": [
-									"pm.test(\"Status ok\", function() {",
-									"    pm.response.to.have.status(200)",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/modules",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"modules"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Module by Id",
-					"events": [
-							{
-								"listen": "test",
-								"script": {
-									"id": "b13de781-ac3f-44ec-a35f-68b70419512d",
-									"exec": [
-										"pm.test(\"Status ok\", function() {",
-										"    pm.response.to.have.status(200)",
-										"})"
-									],
-									"type": "text/javascript"
-								}
-							}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/modules/{{moduleId}}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"modules",
-								"{{moduleId}}"
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -428,7 +331,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "42fea2d6-f0e3-4896-b4d6-c19c331cbeaf",
+								"id": "f8980219-4997-4214-986e-eb0583d2313a",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -447,7 +350,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "c8411b9c-7c05-4089-937f-310c9f05bc09",
+								"id": "7d50bfda-eb59-4a40-8ac9-db0ac896fe5e",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -492,7 +395,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a9a7cc0f-c8e2-491d-97fe-23f61d46a148",
+								"id": "5820666d-2154-4481-b70d-3d81cfaa03c4",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
@@ -511,7 +414,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "03a5d2de-7664-43ce-b1e4-f82b8ff6ca11",
+								"id": "dceb6c0a-5a9d-4e8c-9b1d-2df8247a7aef",
 								"exec": [
 									"var uuid = require('uuid');",
 									"",
@@ -556,7 +459,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5b18735c-4a79-41c1-96c5-b7908c890c3a",
+								"id": "43ac2087-7dd1-4238-ac09-262dde2fbf1c",
 								"exec": [
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
@@ -589,7 +492,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a2b49f39-bb39-442e-8910-acfcb7ddaf9e",
+								"id": "85a389e8-1610-489f-b0f2-9f48fc37af1f",
 								"exec": [
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
@@ -623,7 +526,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "f7f96a76-1a29-41d5-9693-71d9f8615e8f",
+								"id": "5d9dc376-91df-4d0d-b411-3cc2d163071f",
 								"exec": [
 									""
 								],
@@ -633,13 +536,15 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e4b51446-225d-4372-bd62-28922e9cc2b2",
+								"id": "404f653f-6113-4e53-88f2-3c82804a3cdd",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"pm.test(\"Status created\", function() {",
 									"    pm.response.to.have.status(201)",
-									"})"
+									"})",
+									"",
+									"postman.setGlobalVariable(\"componentDeploymentId\", response.modulesUndeployments[0].componentsUndeployments[0].componentDeployment)"
 								],
 								"type": "text/javascript"
 							}
@@ -677,6 +582,82 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "Get Modules",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "704a5e2a-117b-4af1-bfca-fe59822323f7",
+								"exec": [
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"const response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"moduleId\", response[0][\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8f9f47e-ce03-46c6-8255-e092445a204c",
+								"exec": [
+									"pm.test(\"Status ok\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/modules/{{moduleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"modules",
+								"{{moduleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Components",
 			"item": [
 				{
@@ -685,12 +666,15 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c304c465-1ef5-4dbe-b022-f48ae27bd8f9",
+								"id": "b8a1d4a0-71fe-419f-a169-f17aa56ca651",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
 									"postman.setGlobalVariable(\"componentQueueId\", response[0][\"id\"]);",
+									"const componentDeployment = postman.getGlobalVariable(\"componentDeploymentId\")",
 									"",
+									"const undeploymentId = response.filter(e => e.componentDeploymentId === componentDeployment)",
+									"postman.setGlobalVariable(\"componentUndeploymentQueueId\", undeploymentId[undeploymentId.length -1].id)",
 									"",
 									"pm.test(\"Status ok\", function() {",
 									"    pm.response.to.have.status(200)",
@@ -731,7 +715,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fb29b85c-fccb-4c44-90c6-3c61c9c39502",
+								"id": "bf340755-cce9-4e43-8bcc-c4f3ce65ea0c",
 								"exec": [
 									"pm.test(\"Status no content\", function() {",
 									"    pm.response.to.have.status(204)",
@@ -780,7 +764,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fb29b85c-fccb-4c44-90c6-3c61c9c39502",
+								"id": "0241ff24-28f0-4526-843d-00983ce65cf1",
 								"exec": [
 									"pm.test(\"Status no content\", function() {",
 									"    pm.response.to.have.status(204)",
@@ -803,7 +787,7 @@
 							"raw": "{\n\t\"status\": \"SUCCEEDED\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3000/notifications/undeployment?queuedUndeploymentId={{componentQueueId}}",
+							"raw": "http://localhost:3000/notifications/undeployment?queuedUndeploymentId={{componentUndeploymentQueueId}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -816,8 +800,122 @@
 							"query": [
 								{
 									"key": "queuedUndeploymentId",
-									"value": "{{componentQueueId}}"
+									"value": "{{componentUndeploymentQueueId}}"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Configurations Cleanup",
+			"item": [
+				{
+					"name": "Create octopipe cd configuration Generic cluster Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1982a51a-55d1-4c4e-8f87-02f47a043405",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"const uuid = require('uuid');",
+									"postman.setGlobalVariable(\"cdConfigurationId\", response[\"id\"]);",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"postman.setGlobalVariable('moduleId', uuid.v4());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3991e6f0-69ae-4ee1-bedb-8b5891cd3cfe",
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"postman.setGlobalVariable('workspaceId', uuid.v4());",
+									"postman.setGlobalVariable('authorId', uuid.v4());",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"config-name\",\n\t\"authorId\":\"{{authorId}}\",\n\t\"type\": \"OCTOPIPE\",\n\t\"configurationData\": {\n\t\t\"gitProvider\": \"GITHUB\",\n\t\t\"provider\": \"GENERIC\",\n\t\t\"clientCertificate\": \"cert-data\",\n\t\t\"host\": \"https://kube.cluster.com\",\n\t\t\"gitToken\": \"githubtoken\",\n\t\t\"namespace\": \"darwin\"\n\t}\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/configurations/cd",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete configurations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "76dbe16b-8833-4077-9578-92f48a41c089",
+								"exec": [
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/configurations/cd/{{cdConfigurationId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"configurations",
+								"cd",
+								"{{cdConfigurationId}}"
 							]
 						}
 					},
