@@ -1,6 +1,6 @@
 image:
   repository: octopipe
-  tag: zupcharles/charlescd-octopipe:0.2.1
+  tag: zupcharles/charlescd-octopipe:v0.2.11
   blueTag: latest
   pullPolicy: Always
 
@@ -42,8 +42,8 @@ ingress:
         - zup.lab.realwave.zup.me
 resources:
    limits:
-    cpu: 512m
-    memory: 512Mi
+    cpu: 256m
+    memory: 256Mi
    requests:
     cpu: 128m
     memory: 128Mi
