@@ -1355,7 +1355,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.2.2
+          image: zupcharles/charlescd-ui:latest
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1381,7 +1381,11 @@ spec:
             - name: REACT_APP_API_URI
               value: http://34.68.141.223
             - name: REACT_APP_API_AUTH
-              value: http://34.68.141.223/keycloak/auth
+              value: http://34.68.141.223/keycloak
+            - name: REACT_APP_AUTH_REALM
+              value: charlescd
+            - name: REACT_APP_AUTH_CLIENT_ID
+              value: charlescd-client
           resources:
             limits:
               cpu: 1
