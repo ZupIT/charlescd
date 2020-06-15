@@ -16,12 +16,16 @@
 
 export class StatusManagementServiceStub {
 
-    public async deepUpdateDeploymentStatus(): Promise<void>{
-        return
+    public async setComponentAndModuleStatusFailed(): Promise<void> {
+        return Promise.resolve()
     }
 
-    public async deepUpdateComponentStatus(): Promise<void> {
-        return
+    public async updateDeploymentStatus(): Promise<void> {
+        return Promise.resolve()
+    }
+
+    public async updateUndeploymentStatus(): Promise<void> {
+        return Promise.resolve()
     }
 
     public async hasAllFinishedModules(): Promise<void> {
@@ -40,11 +44,12 @@ export class StatusManagementServiceStub {
         return Promise.resolve()
     }
 
+    public async deepUpdateUndeploymentStatus(): Promise<void> {
+        return Promise.resolve()
+    }
+
     public async setComponentDeploymentStatusAsFailed(): Promise<void> {
         return Promise.resolve()
     }
 
-    public async deepUpdateUndeploymentStatus(): Promise<void> {
-        return Promise.resolve()
-    }
 }
