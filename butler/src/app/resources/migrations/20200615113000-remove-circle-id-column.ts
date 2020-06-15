@@ -19,9 +19,13 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 export class RemoveCircleIdColumn20200615113000 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner) {
+        await queryRunner.dropColumn('queued_istio_deployments', 'circle_id')
     }
 
     public async down(queryRunner: QueryRunner) {
-        await queryRunner.dropColumn('queued_istio_deployments', 'circle_id')
+        await queryRunner.addColumn('queued_istio_deployments', new TableColumn({
+            name: 'circle_id',
+            type: 'varchar',
+          }))
     }
 }
