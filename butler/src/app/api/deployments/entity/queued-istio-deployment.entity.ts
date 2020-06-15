@@ -41,9 +41,6 @@ export class QueuedIstioDeploymentEntity extends BaseEntity {
   @Column({ name: 'component_deployment_id' })
   public componentDeploymentId: string
 
-  @Column({ name: 'circle_id' })
-  public circleId: string
-
   @Column({ name: 'status' })
   public status: QueuedPipelineStatusEnum
 
@@ -54,14 +51,12 @@ export class QueuedIstioDeploymentEntity extends BaseEntity {
     deploymentId: string,
     componentId: string,
     componentDeploymentId: string,
-    circleId: string,
     status: QueuedPipelineStatusEnum
   ) {
     super()
     this.deploymentId = deploymentId
     this.componentId = componentId
     this.componentDeploymentId = componentDeploymentId
-    this.circleId = circleId
     this.status = status
   }
 
@@ -71,7 +66,6 @@ export class QueuedIstioDeploymentEntity extends BaseEntity {
       this.deploymentId,
       this.componentId,
       this.componentDeploymentId,
-      this.circleId,
       this.status,
       this.createdAt
     )
