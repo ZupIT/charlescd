@@ -48,8 +48,12 @@ spec:
           env:
             - name: REACT_APP_API_URI
               value: {{ .Values.ui.apiHost }}
-            - name: REACT_APP_API_AUTH
+            - name: REACT_APP_AUTH_URI
               value: {{ .Values.ui.keycloakHost }}
+            - name: REACT_APP_AUTH_REALM
+              value: charlescd
+            - name: REACT_APP_AUTH_CLIENT_ID
+              value: charlescd-client
           resources:
 {{ toYaml .Values.ui.resources | indent 12 }}
     {{- with .Values.ui.nodeSelector }}
