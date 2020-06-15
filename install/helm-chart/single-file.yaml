@@ -1380,7 +1380,7 @@ spec:
           env:
             - name: REACT_APP_API_URI
               value: http://34.68.141.223
-            - name: REACT_APP_API_AUTH
+            - name: REACT_APP_AUTH_URI
               value: http://34.68.141.223/keycloak
             - name: REACT_APP_AUTH_REALM
               value: charlescd

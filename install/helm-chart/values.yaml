@@ -88,7 +88,7 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://34.68.141.223
-  keycloakHost: http://34.68.141.223/keycloak/auth
+  keycloakHost: http://34.68.141.223/keycloak
   authRealm: charlescd
   authClientId: charlescd-client
   replicaCount: 1
