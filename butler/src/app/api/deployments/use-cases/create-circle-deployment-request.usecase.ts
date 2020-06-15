@@ -107,17 +107,16 @@ export class CreateCircleDeploymentRequestUsecase {
         if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
             await this.pipelineDeploymentsService.triggerCircleDeployment(componentDeployment, component, deployment, queuedDeployment, circle)
         }
-        this.scheduleIstioDeployment(deployment, component, componentDeployment, circle)
+        this.scheduleIstioDeployment(deployment, component, componentDeployment)
     }
 
     private async scheduleIstioDeployment(
         deployment: DeploymentEntity,
         component: ComponentEntity,
         componentDeployment: ComponentDeploymentEntity,
-        circle: CircleDeploymentEntity
     ): Promise<void> {
         try {
-            await this.saveQueuedIstioDeployment(deployment.id, component.id, componentDeployment.id, circle.headerValue)
+            await this.saveQueuedIstioDeployment(deployment.id, component.id, componentDeployment.id)
         } catch (error) {
             throw new InternalServerErrorException('Cold not save istio deployment')
         }
@@ -127,11 +126,10 @@ export class CreateCircleDeploymentRequestUsecase {
         deploymentId: string,
         componentId: string,
         componentDeploymentId: string,
-        circleHeaderValue: string
     ): Promise<QueuedIstioDeploymentEntity> {
         try {
             return await this.queuedIstioDeploymentsRepository.save(
-                new QueuedIstioDeploymentEntity(deploymentId, componentId, componentDeploymentId, circleHeaderValue, QueuedPipelineStatusEnum.QUEUED)
+                new QueuedIstioDeploymentEntity(deploymentId, componentId, componentDeploymentId, QueuedPipelineStatusEnum.QUEUED)
             )
         } catch (error) {
             throw new InternalServerErrorException('Could not save queued deployment')
