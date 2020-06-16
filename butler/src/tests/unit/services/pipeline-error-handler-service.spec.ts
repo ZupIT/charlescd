@@ -111,7 +111,6 @@ describe('Pipeline Error Handler Service specs', () => {
           componentDeployment
         )
 
-
         moduleDeployment = new ModuleDeploymentEntity(
             'dummy-id',
             'dummy-id',
