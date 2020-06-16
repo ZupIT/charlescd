@@ -61,18 +61,6 @@ export class StatusManagementService {
         private readonly consoleLoggerService: ConsoleLoggerService
     ) {}
 
-    public async deepUpdateUndeploymentStatus(undeployment: UndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[][]>{
-        await this.undeploymentsRepository.updateStatus(undeployment.id, status)
-        if (!undeployment.moduleUndeployments) {
-            undeployment.moduleUndeployments =
-                await this.moduleUndeploymentsRepository.find({
-                    where: { undeployment: { id: undeployment.id } },
-                    relations: ['componentUndeployments']
-                })
-        }
-        return Promise.all(undeployment.moduleUndeployments.map(m => this.deepUpdateModuleUndeploymentStatus(m, status)))
-    }
-
     public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]>{
         await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id, status)
         return Promise.all(
@@ -254,7 +242,7 @@ export class StatusManagementService {
         )
     }
 
-    private async updateUndeploymentStatus(
+    public async updateUndeploymentStatus(
         undeploymentId: string,
         status: UndeploymentStatusEnum
     ): Promise<void> {
@@ -401,9 +389,14 @@ export class StatusManagementService {
         await this.propagageFailedStatusChangeToDeployment(componentDeploymentEntity.moduleDeployment.deployment)
     }
 
-    public async setComponentAndModuleStatusFailed(componentDeployment: ComponentDeploymentEntity): Promise<void> {
+    public async setComponentAndModuleDeploymentStatusFailed(componentDeployment: ComponentDeploymentEntity): Promise<void> {
 
         await this.updateModuleDeploymentStatus(componentDeployment.moduleDeployment.id, DeploymentStatusEnum.FAILED)
         await this.updateComponentDeploymentStatus(componentDeployment.id, DeploymentStatusEnum.FAILED)
+    }
+    public async setComponentAndModuleUndeploymentStatusFailed(componentUndeployment: ComponentUndeploymentEntity): Promise<void> {
+
+        await this.updateModuleUndeploymentStatus(componentUndeployment.moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
+        await this.updateModuleUndeploymentStatus(componentUndeployment.moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
     }
 }
