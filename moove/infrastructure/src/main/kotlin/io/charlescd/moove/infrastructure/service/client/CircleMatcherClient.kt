@@ -64,7 +64,7 @@ interface CircleMatcherClient {
     fun updateImport(uri: URI, @RequestBody request: List<CircleMatcherRequest>)
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping(
+    @DeleteMapping(
         path = ["/segmentation/{reference}"],
         consumes = [(MediaType.APPLICATION_JSON_UTF8_VALUE)]
     )
