@@ -16,7 +16,10 @@
 
 export class StatusManagementServiceStub {
 
-    public async setComponentAndModuleStatusFailed(): Promise<void> {
+    public async setComponentAndModuleDeploymentStatusFailed(): Promise<void> {
+        return Promise.resolve()
+    }
+    public async setComponentAndModuleUndeploymentStatusFailed(): Promise<void> {
         return Promise.resolve()
     }
 
