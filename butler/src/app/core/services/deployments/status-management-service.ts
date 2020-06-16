@@ -398,6 +398,6 @@ export class StatusManagementService {
     public async setComponentAndModuleUndeploymentStatusFailed(componentUndeployment: ComponentUndeploymentEntity): Promise<void> {
 
         await this.updateModuleUndeploymentStatus(componentUndeployment.moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
-        await this.updateModuleUndeploymentStatus(componentUndeployment.moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
+        await this.updateComponentUndeploymentStatus(componentUndeployment.id, UndeploymentStatusEnum.FAILED)
     }
 }
