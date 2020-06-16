@@ -48,15 +48,15 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
-            - name: DARWIN_VILLAGER_DB_URI
+            - name: CHARLES_VILLAGER_DB_URI
               value: "jdbc:postgresql://{{ .Values.villager.database.host}}:{{ .Values.villager.database.port }}/{{ .Values.villager.database.name}}"
-            - name: DARWIN_VILLAGER_DB_USERNAME
+            - name: CHARLES_VILLAGER_DB_USERNAME
               value: "{{ .Values.villager.database.user}}"
-            - name: DARWIN_VILLAGER_DB_PASSWORD
+            - name: CHARLES_VILLAGER_DB_PASSWORD
               value: "{{ .Values.villager.database.password}}"
-            - name: DARWIN_BUILD_TIMEOUT
+            - name: CHARLES_BUILD_TIMEOUT
               value: "15"
-            - name: DARWIN_villager_ORGANIZATION
+            - name: CHARLES_villager_ORGANIZATION
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
