@@ -320,9 +320,9 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
         expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
         expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
         expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.FAILED)
-        expect(moduleUndeployment[0].componentUndeployments[0].status).toBe(UndeploymentStatusEnum.FAILED)
-        expect(moduleUndeployment[0].componentUndeployments[1].status).toBe(UndeploymentStatusEnum.FAILED)
-        expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.FAILED)
+        expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.CREATED)
+        expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.CREATED)
+
     })
 
     afterAll(async () => {
