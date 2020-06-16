@@ -85,9 +85,6 @@ export class ReceiveUndeploymentCallbackUsecase {
     const queuedUndeployment: QueuedUndeploymentEntity =
       await this.queuedUndeploymentsRepository.findOneOrFail({ id: queuedUndeploymentId })
 
-    const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.findOneOrFail({ id: queuedUndeployment.componentDeploymentId })
-
     const componentUndeployment: ComponentUndeploymentEntity =
       await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
