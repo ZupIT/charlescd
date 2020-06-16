@@ -21,7 +21,7 @@ import {
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import {
     CircleDeploymentEntity,
-    ComponentDeploymentEntity,
+    ComponentDeploymentEntity, ComponentUndeploymentEntity,
     DeploymentEntity,
     QueuedDeploymentEntity,
     UndeploymentEntity
@@ -76,7 +76,7 @@ export class PipelineErrorHandlerService {
             await this.removeComponentPipelineCircle(component, circle)
         }
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
-        await this.statusManagementService.setComponentAndModuleStatusFailed(componentDeployment)
+        await this.statusManagementService.setComponentAndModuleDeploymentStatusFailed(componentDeployment)
         this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
         this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_DEPLOYMENT_FAILURE', componentDeployment)
     }
@@ -84,7 +84,7 @@ export class PipelineErrorHandlerService {
     public async handleUndeploymentFailure(undeployment: UndeploymentEntity | undefined): Promise<void> {
         if (undeployment && !undeployment.hasFailed()) {
             this.consoleLoggerService.log('START:HANDLING_UNDEPLOYMENT_FAILURE', undeployment)
-            await this.statusManagementService.deepUpdateUndeploymentStatus(undeployment, UndeploymentStatusEnum.FAILED)
+            await this.statusManagementService.updateUndeploymentStatus(undeployment.id, UndeploymentStatusEnum.FAILED)
             await this.mooveService.notifyDeploymentStatus(
                 undeployment.deployment.id, NotificationStatusEnum.UNDEPLOY_FAILED,
                 undeployment.deployment.callbackUrl, undeployment.deployment.circleId
@@ -94,13 +94,14 @@ export class PipelineErrorHandlerService {
     }
 
     public async handleComponentUndeploymentFailure(
-        componentDeployment: ComponentDeploymentEntity,
+        componentUndeployment: ComponentUndeploymentEntity,
         queuedDeployment: QueuedDeploymentEntity
     ): Promise<void> {
-        this.consoleLoggerService.log('START:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE', componentDeployment)
+        this.consoleLoggerService.log('START:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE', componentUndeployment.componentDeployment)
         await this.queuedDeploymentsRepository.update({ id: queuedDeployment.id }, { status: QueuedPipelineStatusEnum.FINISHED })
-        this.pipelineQueuesService.triggerNextComponentPipeline(componentDeployment)
-        this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE', componentDeployment)
+        await this.statusManagementService.setComponentAndModuleUndeploymentStatusFailed(componentUndeployment)
+        this.pipelineQueuesService.triggerNextComponentPipeline(componentUndeployment.componentDeployment)
+        this.consoleLoggerService.log('FINISH:HANDLE_COMPONENT_UNDEPLOYMENT_FAILURE', componentUndeployment.componentDeployment)
     }
 
     private async removeComponentPipelineCircle(
