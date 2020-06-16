@@ -91,7 +91,7 @@ export class ReceiveUndeploymentCallbackUsecase {
     const componentUndeployment: ComponentUndeploymentEntity =
       await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
 
-    await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+    await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentUndeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
     this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
