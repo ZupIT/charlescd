@@ -1,6 +1,6 @@
 # Registering a metrics provider
 
-The metrics provider register is an important step to use Charles with its full pontential, once that it allows you to quantify your applications performance and follow up their status.
+The metrics provider register is an important step to use Charles with its full potential, once that it allows you to quantify your applications performance and follow up their status.
 
 {% hint style="warning" %}
 Before you register your provider, it is necessary to finish your [**metrics configuration**](https://docs.charlescd.io/v/v0.2.1-en/reference/metrics/setting-your-metrics).
