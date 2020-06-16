@@ -29,9 +29,9 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
-import {concatMap, delay, map, retryWhen, tap} from 'rxjs/operators';
-import {Observable, of, throwError} from 'rxjs';
-import {AppConstants} from '../../../constants';
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { AppConstants } from '../../../constants';
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -82,7 +82,6 @@ export class OctopipeService implements ICdServiceStrategy {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getDeployRetryCondition(deployError: Observable<any>) {
-
     return deployError.pipe(
       concatMap((error, attempts) => {
         return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS?
@@ -94,7 +93,6 @@ export class OctopipeService implements ICdServiceStrategy {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getDeployRetryPipe(error: any, attempts: number) {
-
     return of(error).pipe(
       tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
       delay(AppConstants.CD_CONNECTION_MILLISECONDS_RETRY_DELAY)
