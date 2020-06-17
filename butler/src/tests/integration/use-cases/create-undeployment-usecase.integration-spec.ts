@@ -25,18 +25,23 @@ import { Repository } from 'typeorm'
 import { QueuedDeploymentsRepository} from '../../../app/api/deployments/repository'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
-import { QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import {
+  DeploymentStatusEnum,
+  QueuedPipelineStatusEnum,
+  UndeploymentStatusEnum
+} from '../../../app/api/deployments/enums'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import {  of } from 'rxjs'
 import { PipelineErrorHandlerService } from '../../../app/api/deployments/services'
 
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
+import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     let app: INestApplication
     let fixtureUtilsService: FixtureUtilsService
-    let undeploymentsRepository: Repository<UndeploymentEntity>
+    let undeploymentsRepository: UndeploymentsRepository
     let deploymentsRepository: Repository<DeploymentEntity>
     let queuedDeploymentsRepository: QueuedDeploymentsRepository
     let moduleUndeploymentsRepository: ModuleUndeploymentsRepository
@@ -60,7 +65,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
         TestSetupUtils.seApplicationConstants()
 
         fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-        undeploymentsRepository = app.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
+        undeploymentsRepository = app.get<UndeploymentsRepository>(UndeploymentsRepository)
         deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
         moduleUndeploymentsRepository = app.get<ModuleUndeploymentsRepository>(ModuleUndeploymentsRepository)
         queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
@@ -313,15 +318,16 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
         const id = 'a17d4352-568a-4abb-a45a-a03da11c80b8'
 
         await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(500)
-        const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: id } })
-
+        const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: id, status: DeploymentStatusEnum.FAILED } })
         const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
         expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
         expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
         expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
-        expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.FAILED)
+        expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.CREATED)
         expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.CREATED)
-        expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.CREATED)
+        expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.FAILED)
+        expect(moduleUndeployment[3].status).toBe(UndeploymentStatusEnum.CREATED)
+        expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.CREATED)
 
     })
 
