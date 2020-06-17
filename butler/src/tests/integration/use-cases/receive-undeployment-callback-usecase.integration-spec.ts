@@ -20,18 +20,14 @@ import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
 import {
-    ComponentDeploymentEntity, ComponentUndeploymentEntity, ModuleUndeploymentEntity,
-    QueuedDeploymentEntity,
-    QueuedUndeploymentEntity, UndeploymentEntity
+    ComponentUndeploymentEntity, ModuleUndeploymentEntity,
+    QueuedUndeploymentEntity,
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
 import {
-    ComponentDeploymentsRepository,
     ComponentUndeploymentsRepository,
-    QueuedDeploymentsRepository
 } from '../../../app/api/deployments/repository'
-import { ComponentEntity } from '../../../app/api/components/entity'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
@@ -43,8 +39,6 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
     let fixtureUtilsService: FixtureUtilsService
     let queuedUndeploymentsRepository: Repository<QueuedUndeploymentEntity>
     let moduleUndeploymentsRepository: ModuleUndeploymentsRepository
-    let queuedDeploymentsRepository: Repository<QueuedDeploymentEntity>
-    let componentsRepository: Repository<ComponentEntity>
     let componentUndeploymentsRepository: ComponentUndeploymentsRepository
     let httpService: HttpService
     let mooveService: MooveService
@@ -63,11 +57,9 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
         TestSetupUtils.seApplicationConstants()
 
         fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-        componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
         componentUndeploymentsRepository = app.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
         queuedUndeploymentsRepository = app.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
         moduleUndeploymentsRepository = app.get<ModuleUndeploymentsRepository>(ModuleUndeploymentsRepository)
-        queuedDeploymentsRepository = app.get<Repository<QueuedDeploymentEntity>>('QueuedDeploymentsRepository')
         httpService = app.get<HttpService>(HttpService)
         mooveService = app.get<MooveService>(MooveService)
     })
