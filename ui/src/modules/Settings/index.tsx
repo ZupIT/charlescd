@@ -23,6 +23,7 @@ import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import Menu from './Menu';
 import { SettingsMenu } from './constants';
+import Modal from 'core/components/Modal';
 
 const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
@@ -31,6 +32,7 @@ const Settings = () => {
 
   return (
     <Page>
+      <Modal.Wizard />
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>

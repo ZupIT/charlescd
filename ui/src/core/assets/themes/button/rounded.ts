@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import { COLOR_BASTILLE } from 'core/assets/colors';
+import { COLOR_BASTILLE, COLOR_PURPLE_HEART } from "core/assets/colors";
 
 export const light = {};
 
 export const dark = {
-  background: COLOR_BASTILLE
+  background: {
+    default: COLOR_BASTILLE,
+    primary: COLOR_PURPLE_HEART
+  }
 };

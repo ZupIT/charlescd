@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
-const Button = styled.button`
+interface ButtonProps {
+  backgroundColor: "default" | "primary";
+  size: "small" | "default";
+}
+
+const Button = styled.button<ButtonProps>`
   border: none;
-  background: ${({ theme }) => theme.button.rounded.background};
-  border-radius: 30px;
-  height: 50px;
+  background: ${({ backgroundColor, theme }) =>
+    theme.button.rounded.background[backgroundColor]};
+  border-radius: ${({ size }) => (size === "default" ? "30px" : "15px")};
+  height: ${({ size }) => (size === "default" ? "50px" : "30px")};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 15px 33px;
+  padding: ${({ size }) => (size === "default" ? "15px 33px" : "9px 18px")};
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;

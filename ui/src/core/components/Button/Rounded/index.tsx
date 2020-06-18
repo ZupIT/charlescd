@@ -13,6 +13,8 @@ export interface Props {
   icon?: string;
   color?: PrimaryColors;
   isDisabled?: boolean;
+  backgroundColor?: "default" | "primary",
+  size?: "default" | "small"
 }
 
 const ButtonRounded = ({
@@ -24,6 +26,8 @@ const ButtonRounded = ({
   isLoading,
   className,
   isDisabled,
+  backgroundColor = "default",
+  size = "default",
   ...rest
 }: Props) => (
   <Styled.Button
@@ -32,6 +36,8 @@ const ButtonRounded = ({
     onClick={onClick}
     disabled={isLoading || isDisabled}
     className={className}
+    backgroundColor={backgroundColor}
+    size={size}
   >
     {isLoading ? (
       <Icon name="loading" size="15px" color={color} />
