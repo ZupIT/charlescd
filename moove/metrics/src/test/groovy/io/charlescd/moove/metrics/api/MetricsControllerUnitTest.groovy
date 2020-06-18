@@ -22,6 +22,7 @@ import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.impl.RetrieveDeploymentsMetricsInteractorImpl
 import spock.lang.Specification
 
 class MetricsControllerUnitTest extends Specification {
@@ -29,7 +30,8 @@ class MetricsControllerUnitTest extends Specification {
     def retrieveCircleComponentsPeriodMetric = Mock(RetrieveCircleComponentsPeriodMetricInteractor)
     def retrieveCirclePeriodMetric = Mock(RetrieveCirclePeriodMetricInteractor)
     def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
-    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth)
+    def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
+    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth, retrieveDeploymentsMetric)
 
     def circleId = "circle-id"
     def workspaceId = "workspace-id"
@@ -126,6 +128,25 @@ class MetricsControllerUnitTest extends Specification {
         response.errors.circleComponents.get(0).status == HealthStatus.WARNING
         response.errors.circleComponents.get(0).threshold == 10
         response.errors.circleComponents.get(0).value == 8D
+    }
+
+    def 'should get deployments metrics'() {
+        given:
+        def period = PeriodType.ONE_MONTH
+
+        def deploymentMetricsRepresentation = new DeploymentMetricsRepresentation(123, 12, 300)
+
+        when:
+        def response = metricsController.getDeploymentsMetrics(workspaceId, period, null)
+
+        then:
+        1 * retrieveDeploymentsMetric.execute(workspaceId, period, null) >> deploymentMetricsRepresentation
+        0 * _
+
+        response != null
+        response.successfulDeployments == 123
+        response.failedDeployments == 12
+        response.successfulDeploymentsAverageTime == 300
     }
 
 }
