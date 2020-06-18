@@ -1,7 +1,7 @@
 import random
 from locust import HttpUser, task, between
 
-class OctopipeDefaultClusterTest(HttpUser):
+class OctopipeOutOfClusterTest(HttpUser):
     wait_time = between(5, 9)
 
     @task
