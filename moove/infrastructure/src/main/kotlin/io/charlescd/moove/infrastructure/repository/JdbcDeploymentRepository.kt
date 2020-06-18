@@ -19,9 +19,11 @@
 package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentStats
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.DeploymentStatsExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -29,7 +31,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class JdbcDeploymentRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val deploymentExtractor: DeploymentExtractor
+    private val deploymentExtractor: DeploymentExtractor,
+    private val deploymentStatsExtractor: DeploymentStatsExtractor
 ) : DeploymentRepository {
 
     companion object {
@@ -230,5 +233,40 @@ class JdbcDeploymentRepository(
             arrayOf(circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
+    }
+
+    override fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(
+        workspaceId: String,
+        circlesId: List<String>,
+        numberOfDays: Int
+    ): List<DeploymentStats> {
+        var query = """
+                        SELECT 
+                            COUNT(id) AS deployment_quantity,
+	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
+	                        CASE status 
+                                WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
+		                        ELSE 'DEPLOYED'
+	                        END AS deployment_status
+                        FROM
+	                        deployments
+                        WHERE
+	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
+                            AND workspace_id = ?
+                            AND created_at <= NOW() 
+	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                        """
+
+        if (circlesId.isNotEmpty()) {
+            query += " AND circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
+        }
+        query += " GROUP BY deployment_status "
+
+        return this.jdbcTemplate.query(
+            query,
+            arrayOf(workspaceId, numberOfDays),
+            deploymentStatsExtractor
+        )?.toList()
+            ?: emptyList()
     }
 }
