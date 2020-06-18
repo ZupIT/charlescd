@@ -1054,7 +1054,7 @@ spec:
       
       containers:
         - name: octopipe
-          image: "zupcharles/charlescd-octopipe:0.2.1"
+          image: "zupcharles/charlescd-octopipe:v0.2.11"
           
           livenessProbe:
             failureThreshold: 3
@@ -1094,8 +1094,8 @@ spec:
                     
           resources:
             limits:
-              cpu: 512m
-              memory: 512Mi
+              cpu: 256m
+              memory: 256Mi
             requests:
               cpu: 128m
               memory: 128Mi
@@ -1131,7 +1131,7 @@ spec:
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.2.1
+          image: zupcharles/charlescd-butler:v0.2.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1179,8 +1179,8 @@ spec:
                   key: encryption-key
           resources:
             limits:
-              cpu: 1
-              memory: 1536Mi
+              cpu: 128m
+              memory: 256Mi
             requests:
               cpu: 128m
               memory: 128Mi
@@ -1210,7 +1210,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.2.2
+          image: zupcharles/charlescd-circle-matcher:v0.2.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1242,11 +1242,11 @@ spec:
             - name: SPRING_REDIS_PASSWORD
               value: hb2Fj9MGKjBkZ6zV
             - name: ALLOWED_ORIGINS
-              value: http://34.68.141.223
+              value: http://charles.info.example
           resources:
             limits:
-              cpu: 1
-              memory: 1536Mi
+              cpu: 256m
+              memory: 256Mi
             requests:
               cpu: 128m
               memory: 128Mi
@@ -1276,7 +1276,7 @@ spec:
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.2.1
+          image: zupcharles/charlescd-moove:v0.2.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1310,13 +1310,13 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://charlescd-keycloak-http/auth"
+              value: "http://charles.info.example/keycloak/auth"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
             - name: ORIGIN_HOSTS
-              value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://34.68.141.223"
+              value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -1355,7 +1355,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.2.2
+          image: zupcharles/charlescd-ui:v0.2.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1379,16 +1379,20 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_API_URI
-              value: http://34.68.141.223
-            - name: REACT_APP_API_AUTH
-              value: http://34.68.141.223/keycloak/auth
+              value: http://charles.info.example
+            - name: REACT_APP_AUTH_URI
+              value: http://charles.info.example/keycloak
+            - name: REACT_APP_AUTH_REALM
+              value: charlescd
+            - name: REACT_APP_AUTH_CLIENT_ID
+              value: charlescd-client
           resources:
             limits:
-              cpu: 1
-              memory: 1536Mi
-            requests:
               cpu: 128m
               memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
 ---
 # Source: Charles-CD/templates/charlescd-villager-deployment.yaml
 apiVersion: apps/v1
@@ -1415,7 +1419,7 @@ spec:
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.2.2
+          image: zupcharles/charlescd-villager:v0.2.10
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1440,22 +1444,22 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
-            - name: DARWIN_VILLAGER_DB_URI
+            - name: CHARLES_VILLAGER_DB_URI
               value: "jdbc:postgresql://charlescd-postgresql:5432/charlescd_villager"
-            - name: DARWIN_VILLAGER_DB_USERNAME
+            - name: CHARLES_VILLAGER_DB_USERNAME
               value: "charlescd_villager"
-            - name: DARWIN_VILLAGER_DB_PASSWORD
+            - name: CHARLES_VILLAGER_DB_PASSWORD
               value: "ZkQ67Lnhs2bM3MPN"
-            - name: DARWIN_BUILD_TIMEOUT
+            - name: CHARLES_BUILD_TIMEOUT
               value: "15"
-            - name: DARWIN_villager_ORGANIZATION
+            - name: CHARLES_villager_ORGANIZATION
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
           resources:
             limits:
-              cpu: 1
-              memory: 1536Mi
+              cpu: 256m
+              memory: 512Mi
             requests:
               cpu: 128m
               memory: 128Mi
