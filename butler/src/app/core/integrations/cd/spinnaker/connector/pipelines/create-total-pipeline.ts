@@ -60,7 +60,6 @@ export default class TotalPipeline {
   }
 
   public buildUndeploymentPipeline(): IBaseSpinnakerPipeline {
-    this.buildDeployments()
     this.buildDestinationRules()
     this.buildVirtualService()
     this.buildDeleteDeployments()
