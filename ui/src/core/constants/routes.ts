@@ -37,6 +37,8 @@ const hypothesesEdit = `/hypotheses/:hypothesisId`;
 const hypothesesCard = `/hypotheses/:hypothesisId/card/:cardId`;
 const modules = `/modules`;
 const modulesComparation = `${modules}/compare`;
+const metrics = `/metrics`;
+const metricsDashboard = `/metrics/dashboard/:id`;
 const settings = `/settings`;
 const credentials = `${settings}/credentials`;
 
@@ -88,5 +90,7 @@ export default {
   workspacesComparation,
   hypotheses,
   hypothesesEdit,
-  hypothesesCard
+  hypothesesCard,
+  metrics,
+  metricsDashboard
 };
