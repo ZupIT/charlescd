@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/circle-menu.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/20.981ea0c6.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/circle-menu.ca3edc24.svg\";"],"sourceRoot":""}
