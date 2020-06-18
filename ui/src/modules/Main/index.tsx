@@ -33,6 +33,7 @@ const Hypotheses = lazy(() => import('modules/Hypotheses'));
 const Circles = lazy(() => import('modules/Circles'));
 const Modules = lazy(() => import('modules/Modules'));
 const Settings = lazy(() => import('modules/Settings'));
+const Metrics = lazy(() => import('modules/Metrics'));
 
 const Main = () => {
   const [isExpanded, setSideExpanded] = useState(getExpandMode());
@@ -80,6 +81,11 @@ const Main = () => {
             <PrivateRoute
               path={routes.settings}
               component={Settings}
+              allowedRoles={['maintenance_write']}
+            />
+            <PrivateRoute
+              path={routes.metrics}
+              component={Metrics}
               allowedRoles={['maintenance_write']}
             />
             <Redirect to={routes.error404} />
