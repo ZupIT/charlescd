@@ -244,11 +244,8 @@ func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineEr
 	if err != nil {
 		return err
 	}
-
-	request, err := http.NewRequest("POST", pipeline.Webhook, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
+	attempts := 1
+	request, err := mozart.createRequest(pipeline,data,attempts)
 	request.Header.Set("x-circle-id", pipeline.CircleID)
 	request.Header.Set("Content-Type", "application/json")
 
@@ -267,3 +264,13 @@ func (mozart *Mozart) returnPipelineError(pipelineError error) {
 		utils.CustomLog("error", "returnPipelineError", err.Error())
 	}
 }
+
+func (mozart *Mozart) createRequest(pipeline *deployment.Deployment, data []byte, attempts int) (*http.Request,error) {
+	request, err := http.NewRequest("POST", pipeline.Webhook, bytes.NewBuffer(data))
+	if err != nil && attempts< 5 {
+		request,err = mozart.createRequest(pipeline, data, attempts+1)
+	}
+	return request,err
+}
+
+
