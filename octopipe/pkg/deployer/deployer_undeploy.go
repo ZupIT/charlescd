@@ -35,6 +35,10 @@ func NewUndeploy(resource *Resource) *Undeploy {
 }
 
 func (undeploy *Undeploy) Do() error {
+	if len(undeploy.Manifest.Object) == 0 || undeploy.Manifest.GetName() == "" {
+		return nil
+	}
+
 	client, err := undeploy.Config.GetClient()
 	if err != nil {
 		return err
