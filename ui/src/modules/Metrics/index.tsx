@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import React, { Suspense, useEffect, useState, lazy } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import routes from 'core/constants/routes';
 import Menu from './Menu';
-import Dashboard from './Dashboard';
 import Styled from './styled';
 
-// const Dashboard = lazy(() => import('modules/Metrics/Dashbaord'));
+const Deploys = lazy(() => import('modules/Metrics/Deploys'));
+const Modules = lazy(() => import('modules/Metrics/Modules'));
 
 const Circles = () => {
   const renderPlaceholder = () => (
@@ -43,9 +43,14 @@ const Circles = () => {
           <Route exact path={routes.metrics}>
             {renderPlaceholder()}
           </Route>
-          <Route exact path={routes.metricsDashboard}>
+          <Route exact path={routes.metricsDeploys}>
             <Styled.Scrollable>
-              <Dashboard />
+              <Deploys />
+            </Styled.Scrollable>
+          </Route>
+          <Route exact path={routes.metricsModules}>
+            <Styled.Scrollable>
+              <Modules />
             </Styled.Scrollable>
           </Route>
         </Switch>

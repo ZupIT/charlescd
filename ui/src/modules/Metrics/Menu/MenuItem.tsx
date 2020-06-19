@@ -15,36 +15,24 @@
  */
 
 import React, { memo } from 'react';
-import {
-  useHistory,
-  generatePath,
-  useLocation,
-  matchPath
-} from 'react-router-dom';
-import routes from 'core/constants/routes';
+import { useHistory } from 'react-router-dom';
+import startsWith from 'lodash/startsWith';
+import { getActiveMenuId } from 'core/utils/menu';
 import Styled from './styled';
 
 export interface Props {
   id: string;
   name: string;
+  route: string;
 }
 
-const MenuItem = ({ id, name }: Props) => {
+const MenuItem = ({ route, id, name }: Props) => {
   const history = useHistory();
-  const location = useLocation();
-
-  const path = matchPath<{ id: string }>(location.pathname, {
-    path: routes.metricsDashboard
-  });
-
-  const handleClick = (id: string) => {
-    history.push(generatePath(routes.metricsDashboard, { id }));
-  };
-
-  const isActive = path?.params?.id === id;
+  const activeMenuId = getActiveMenuId();
+  const isActive = startsWith(activeMenuId, id);
 
   return (
-    <Styled.Link onClick={() => handleClick(id)} isActive={isActive}>
+    <Styled.Link onClick={() => history.push(route)} isActive={isActive}>
       <Styled.ListItem icon="metrics" marginContent="8px" isActive={isActive}>
         <Styled.Item color="light">{name}</Styled.Item>
       </Styled.ListItem>

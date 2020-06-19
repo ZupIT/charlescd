@@ -26,7 +26,9 @@ import Styled from './styled';
 const Menu = () => {
   const [, setToggleModal] = useState(false);
   const renderItems = () =>
-    map(items, ({ id, name }) => <MenuItem key={id} id={id} name={name} />);
+    map(items, ({ id, text, to }) => (
+      <MenuItem key={id} id={id} name={text} route={to} />
+    ));
 
   return (
     <>

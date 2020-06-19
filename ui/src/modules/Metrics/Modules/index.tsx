@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Styled from './styled';
 
-const Dashboard = () => {
+const Modules = () => {
   return (
     <Styled.Content>
-      <Styled.MiniCard><span>asdf</span></Styled.MiniCard>
-      <Styled.MiniCard><span>asdf</span></Styled.MiniCard>
-      <Styled.MiniCard><span>asdf</span></Styled.MiniCard>
-      <Styled.Chart><span>asdf</span></Styled.Chart>
+      <Styled.MiniCard>
+        <span>Circle 1</span>
+      </Styled.MiniCard>
+      <Styled.MiniCard>
+        <span>Circle 2</span>
+      </Styled.MiniCard>
+      <Styled.MiniCard>
+        <span>Circle 3</span>
+      </Styled.MiniCard>
+      <Styled.Chart>
+        <span>Circle 4</span>
+      </Styled.Chart>
     </Styled.Content>
   );
 };
 
-export default Dashboard;
+export default Modules;
