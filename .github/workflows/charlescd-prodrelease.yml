@@ -260,7 +260,7 @@ jobs:
         git config --global user.name 'Charles CD'
         git config --global user.email 'charlescd@users.noreply.github.com'
         git commit -am "Automated chart update"
-        git push
+        git push origin HEAD:master
     - name: Deploy
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
