@@ -40,7 +40,7 @@ const Deploys = () => {
 
   const averageTimeSeries = [
     {
-      name: 'Deploy',
+      name: 'Elapse time',
       data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
     }
   ];
@@ -81,7 +81,9 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="dark">Deploy</Text.h2>
+        <Text.h2 color="light" weight="bold">
+          Deploy
+        </Text.h2>
         <Styled.Chart
           options={deployOptions}
           series={deploySeries}
@@ -90,7 +92,9 @@ const Deploys = () => {
         />
       </Styled.Card>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="dark">Average time</Text.h2>
+        <Text.h2 color="light" weight="bold">
+          Average time
+        </Text.h2>
         <Styled.Chart
           options={averageTimeOptions}
           series={averageTimeSeries}
