@@ -61,7 +61,7 @@ const Card = styled.div<Card>`
 `;
 
 const Chart = styled.div`
-  height: 400px;
+  width: 700px;
 `;
 
 export default {
