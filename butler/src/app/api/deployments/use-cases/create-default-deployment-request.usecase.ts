@@ -25,7 +25,7 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
 import {
-    CreateDefaultDeploymentRequestDto,
+    CreateDeploymentRequestDto,
     ReadDeploymentDto
 } from '../dto'
 import {
@@ -72,7 +72,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly modulesService: ModulesService
     ) { }
 
-    public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+    public async execute(createDefaultDeploymentRequestDto: CreateDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
         const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
         await this.modulesService.createModules(modules)
 
@@ -91,10 +91,8 @@ export class CreateDefaultDeploymentRequestUsecase {
     }
 
     private async saveDeploymentEntity(
-        createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
-        circleId: string
-    ): Promise<DeploymentEntity> {
-
+      createDefaultDeploymentRequestDto: CreateDeploymentRequestDto,
+      circleId: string): Promise<DeploymentEntity> {
         try {
             return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
