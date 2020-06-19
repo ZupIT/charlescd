@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200620103400-1
+      author: adauto.paula
+      comment: "Update admin email"
+      changes:
+        - sql:
+            sql: "update users set email = 'charlesadmin@admin' where id = 'c7e6dafe-aa7a-4536-be1b-34eaad4c2915';"
