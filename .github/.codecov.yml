@@ -1,16 +1,7 @@
 coverage:
   status:
     project:
-      default:
-        target: auto
-        threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
+      default: off
       villager:
         target: 35%
         flags:
@@ -34,17 +25,6 @@ coverage:
       ui:
         target: 35%
         flags:
-          - ui
-    patch:
-      default:
-        target: 80%
-        threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
           - ui
       
 flags:
