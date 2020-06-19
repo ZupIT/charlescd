@@ -252,7 +252,15 @@ jobs:
         mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
         cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
         echo -e "\r\nappVersion: ${{ steps.get_version.outputs.VERSION }}\r\n" >> ./install/helm-chart/Chart.yaml &&
-        cat ./install/helm-chart/Chart.yaml
+        cat ./install/helm-chart/Chart.yaml &&
+        sed -i -E "s/zupcharles\/.*:v(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
+
+    - name: Commit Chart updated
+      run: |
+        git config --global user.name 'Charles CD'
+        git config --global user.email 'charlescd@users.noreply.github.com'
+        git commit -am "Automated chart update"
+        git push
     - name: Deploy
       uses: WyriHaximus/github-action-helm3@v1
       with:
