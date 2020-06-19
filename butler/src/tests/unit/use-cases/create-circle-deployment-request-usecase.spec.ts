@@ -16,7 +16,7 @@
 
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
-import {CreateCircleDeploymentDto, CreateDeploymentRequestDto} from '../../../app/api/deployments/dto/create-deployment'
+import { CreateCircleDeploymentDto, CreateDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
