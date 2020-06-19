@@ -34,7 +34,7 @@ const Deploys = () => {
 
   const averageTimeSeries = [
     {
-      name: 'Deploy',
+      name: 'Elapse time',
       data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
     }
   ];
@@ -46,20 +46,28 @@ const Deploys = () => {
       </Styled.Card>
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Deploy</Text.h4>
+          <Text.h4 color="dark" weight="bold">
+            Deploy
+          </Text.h4>
           <Text.h1 color="light">345</Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Error</Text.h4>
+          <Text.h4 color="dark" weight="bold">
+            Error
+          </Text.h4>
           <Text.h1 color="light">12</Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Average time</Text.h4>
+          <Text.h4 color="dark" weight="bold">
+            Average time
+          </Text.h4>
           <Text.h1 color="light">3:26m</Text.h1>
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="dark">Deploy</Text.h2>
+        <Text.h2 color="light" weight="bold">
+          Deploy
+        </Text.h2>
         <Styled.Chart
           options={deployOptions}
           series={deploySeries}
@@ -68,7 +76,9 @@ const Deploys = () => {
         />
       </Styled.Card>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="dark">Average time</Text.h2>
+        <Text.h2 color="light" weight="bold">
+          Average time
+        </Text.h2>
         <Styled.Chart
           options={averageTimeOptions}
           series={averageTimeSeries}
