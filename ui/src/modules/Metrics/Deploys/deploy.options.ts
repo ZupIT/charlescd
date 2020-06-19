@@ -18,18 +18,32 @@ import dayjs from 'dayjs';
 
 export default {
   chart: {
-    height: '200px'
+    width: 1180,
+    height: 450
   },
+  colors: ['#30D158', '#FF453A'],
   stroke: {
     curve: 'straight'
   },
   theme: {
     mode: 'dark'
   },
+  grid: {
+    show: true,
+    yaxis: {
+      lines: {
+        show: true
+      }
+    },
+    padding: {
+      left: 30
+    }
+  },
   legend: {
     show: true,
     showForNullSeries: true,
-    position: 'top'
+    position: 'top',
+    horizontalAlign: 'left'
   },
   onItemClick: {
     toggleDataSeries: true
@@ -42,9 +56,10 @@ export default {
     }
   },
   yaxis: {
-    opposite: false,
+    show: true,
+    showAlways: true,
+    tickAmount: 6,
     labels: {
-      formatter: (value: number) => Number(value),
       style: {
         fontSize: '10px'
       }
@@ -52,7 +67,7 @@ export default {
   },
   xaxis: {
     type: 'numeric',
-    tickAmount: 3,
+    tickAmount: 6,
     labels: {
       style: {
         color: '#fff',
@@ -61,9 +76,6 @@ export default {
       formatter: (date: string) => {
         return dayjs(date).format('DD/MM');
       }
-    },
-    axisBorder: {
-      show: false
     }
   }
 };

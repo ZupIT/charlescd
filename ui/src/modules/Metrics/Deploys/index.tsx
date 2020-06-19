@@ -16,14 +16,10 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import { AreaChart } from 'core/components/Charts';
 import { useDeployMetric } from './hooks';
 // import Loader from '../Loaders/index';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
-// import useWorker from 'core/hooks/useWorker';
-// import metricWorker from './worker';
-// import { getChartColor } from './helpers';
 import Styled from './styled';
 import { timestampFormater } from '../helpers';
 
@@ -31,7 +27,7 @@ const Deploys = () => {
   // const [series, workerHook] = useWorker<[]>(metricWorker, []);
   const { searchDeployMetrics, response, loading } = useDeployMetric();
 
-  const series = [
+  const deploySeries = [
     {
       name: 'Deploy',
       data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
@@ -42,8 +38,12 @@ const Deploys = () => {
     }
   ];
 
-  // const colors = getChartColor(metricType, chartType);
-  // const options = { ...metricOptions, colors };
+  const averageTimeSeries = [
+    {
+      name: 'Deploy',
+      data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
+    }
+  ];
 
   const period = 'ONE_WEEK';
   const circles = 'b49ba0b3-4e8e-46cf-a526-9f7c6d46fc7b';
@@ -82,13 +82,21 @@ const Deploys = () => {
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px">
         <Text.h2 color="dark">Deploy</Text.h2>
-        <Styled.Chart>
-          <AreaChart options={deployOptions} series={series} />
-        </Styled.Chart>
+        <Styled.Chart
+          options={deployOptions}
+          series={deploySeries}
+          width={1180}
+          height={450}
+        />
       </Styled.Card>
       <Styled.Card width="1220px" height="521px">
         <Text.h2 color="dark">Average time</Text.h2>
-        <AreaChart options={averageTimeOptions} series={series} />
+        <Styled.Chart
+          options={averageTimeOptions}
+          series={averageTimeSeries}
+          width={1180}
+          height={450}
+        />
       </Styled.Card>
     </Styled.Content>
   );
