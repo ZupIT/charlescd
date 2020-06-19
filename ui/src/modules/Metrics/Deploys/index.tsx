@@ -63,9 +63,9 @@ const Deploys = () => {
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>
-          {/* <Text.h1 color="light">
+          <Text.h1 color="light">
             {response?.successfulDeploymentsQuantity}
-          </Text.h1> */}
+          </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Error</Text.h4>
