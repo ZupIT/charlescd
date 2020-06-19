@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	MAXIMUM_REQUEST_RETRY_ATTEMPTS = 5
+	MaximumRetryRequestAttempts = 5
 )
 
 type Mozart struct {
@@ -274,7 +274,7 @@ func (mozart *Mozart) returnPipelineError(pipelineError error) {
 
 func (mozart *Mozart) SendRequest(request *http.Request, client http.Client, attempts int) (*http.Response,error) {
 	response, err := client.Do(request)
-	if err != nil && attempts< MAXIMUM_REQUEST_RETRY_ATTEMPTS {
+	if err != nil && attempts< MaximumRetryRequestAttempts {
 		response, err = mozart.SendRequest(request, client, attempts+1)
 	}
 	return response, err
