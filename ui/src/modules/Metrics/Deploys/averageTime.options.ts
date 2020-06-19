@@ -18,32 +18,48 @@ import dayjs from 'dayjs';
 
 export default {
   chart: {
-    width: '100%'
+    width: 1180,
+    height: 450
   },
+  colors: ['#10AA80'],
   stroke: {
     curve: 'smooth'
   },
   theme: {
     mode: 'dark'
   },
+  grid: {
+    show: true,
+    yaxis: {
+      lines: {
+        show: true
+      }
+    },
+    padding: {
+      left: 30
+    }
+  },
   legend: {
-    show: false
+    show: true,
+    showForNullSeries: true,
+    position: 'top',
+    horizontalAlign: 'left'
+  },
+  onItemClick: {
+    toggleDataSeries: true
   },
   tooltip: {
     x: {
-      formatter: (value: number) => {
-        const UNIX_TIMESTAMP_CONVERSION = 1000;
-
-        return dayjs(new Date(value * UNIX_TIMESTAMP_CONVERSION)).format(
-          'hh:mm:ss'
-        );
+      formatter: (date: string) => {
+        return dayjs(date).format('DD/MM');
       }
     }
   },
   yaxis: {
-    opposite: false,
+    show: true,
+    showAlways: true,
+    tickAmount: 6,
     labels: {
-      formatter: (value: number) => Number(value).toFixed(2),
       style: {
         fontSize: '10px'
       }
@@ -51,22 +67,15 @@ export default {
   },
   xaxis: {
     type: 'numeric',
-    tickAmount: 3,
+    tickAmount: 6,
     labels: {
       style: {
         color: '#fff',
         fontSize: '10px'
       },
-      formatter: (value: number, timestamp: number) => {
-        const UNIX_TIMESTAMP_CONVERSION = 1000;
-
-        return dayjs(new Date(timestamp * UNIX_TIMESTAMP_CONVERSION)).format(
-          'hh:mm:ss'
-        );
+      formatter: (date: string) => {
+        return dayjs(date).format('DD/MM');
       }
-    },
-    axisBorder: {
-      show: false
     }
   }
 };
