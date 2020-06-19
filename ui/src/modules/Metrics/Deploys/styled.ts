@@ -15,6 +15,7 @@
  */
 
 import styled from 'styled-components';
+import { AreaChart } from 'core/components/Charts';
 
 const Content = styled.div`
   display: flex;
@@ -55,13 +56,18 @@ const Card = styled.div<Card>`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: ${({ height }) => height || '94px'};
   width: ${({ width }) => width || '175px'};
-  padding: 16px 20px;
+  padding: 16px 30px;
   border-radius: 4px;
   box-sizing: border-box;
 `;
 
-const Chart = styled.div`
-  width: 700px;
+const Chart = styled(AreaChart)`
+  margin-top: 20px;
+  margin-left: -15px;
+
+  .apexcharts-gridlines-horizontal > .apexcharts-gridline {
+    opacity: 0.2;
+  }
 `;
 
 export default {

@@ -23,15 +23,18 @@ export interface Props {
   series: object[];
   options?: object;
   className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
-const AreaChart = ({ className, options, series }: Props) => (
+const AreaChart = ({ className, options, series, width, height }: Props) => (
   <Styled.Chart
     className={className}
     options={defaultsDeep(options, defaultConfig.options)}
+    width={width}
+    height={height}
     series={series}
     type="area"
-    width="100%"
   />
 );
 
