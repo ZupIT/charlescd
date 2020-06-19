@@ -1,9 +1,9 @@
-name: villager prod-release
+name: charlescd-prod-update
 
 on:
   release:
     types:
-      - published
+      - released
     branches: [ master ]
 
 jobs:
