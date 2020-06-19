@@ -57,7 +57,7 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://{{ .Release.Name }}-keycloak-http/auth"
+              value: "{{ .Values.moove.keycloakHost}}"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
