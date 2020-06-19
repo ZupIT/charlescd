@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { COLOR_BASTILLE, COLOR_PURPLE_HEART } from "core/assets/colors";
+import { COLOR_BASTILLE, COLOR_PURPLE_HEART } from 'core/assets/colors';
 
 export const light = {};
 

@@ -14,54 +14,103 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState } from "react";
-import Styled from "./styled";
-import Text from "core/components/Text";
-import { WizardItems } from "./constants";
-import { map } from "lodash";
+import React, { useRef, useState, useEffect } from 'react';
+import Styled from './styled';
+import Text from 'core/components/Text';
+import { WizardItems } from './constants';
+import map from 'lodash/map';
+import indexOf from 'lodash/indexOf';
 
 interface Item {
-    icon: string;
-    title: string;
-    name: string;
-    backgroundColor: string;
-    subtitle: string
+  icon: string;
+  title: string;
+  name: string;
+  size: string;
+  backgroundColor: string;
+  subtitle: string;
 }
 
 const Wizard = () => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
+  const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
+  }, [itemSelect]);
+
+  useEffect(() => {
+    setItemSelect(WizardItems[indexOfItemSelect]);
+  }, [indexOfItemSelect]);
+
+  const handleButton = () => {
+    if (itemSelect.name !== 'metrics-provider') {
+      setIndexOfItemSelect(indexOfItemSelect + 1);
+    } else {
+      setIsOpen(false);
+    }
+  };
 
   const sideMenu = () => (
     <Styled.SideMenu>
       <Text.h3 color="light" weight="bold">
         Configure the Workspace
       </Text.h3>
-      {map(WizardItems, item => (
-        <Styled.Item onClick={() => setItemSelect(item)}>
-          <Styled.ItemText isActive={true}>{item.title}</Styled.ItemText>
-        </Styled.Item>
+      {map(WizardItems, (item, index) => (
+        <Styled.Item.Wrapper onClick={() => setItemSelect(item)}>
+          <Styled.Item.Active
+            status={
+              itemSelect.name === item.name
+                ? 'active'
+                : index > indexOfItemSelect
+                ? 'unread'
+                : 'read'
+            }
+          />
+          <Styled.Item.Text
+            status={
+              itemSelect.name === item.name
+                ? 'active'
+                : index > indexOfItemSelect
+                ? 'unread'
+                : 'read'
+            }
+          >
+            {item.title}
+          </Styled.Item.Text>
+        </Styled.Item.Wrapper>
       ))}
       <Styled.Button
         color="light"
         name="next"
-        onClick={() => console.log("next")}
+        onClick={() => handleButton()}
         backgroundColor="primary"
         size="small"
       >
-        Next
+        {itemSelect.name === 'metrics-provider' ? "Let's Start" : 'Next'}
       </Styled.Button>
     </Styled.SideMenu>
   );
 
   const Info = (item: Item) => (
-      <Styled.Container>
+    <Styled.Content.Wrapper>
+      <Styled.Content.Background backgroundColor={item.backgroundColor}>
+        <Styled.Content.Icon name={item.icon} size={item.size} />
+      </Styled.Content.Background>
+      <Styled.Info>
+        <Styled.Content.Title color="light" weight="bold">
           {item.title}
-      </Styled.Container>
-  )
+        </Styled.Content.Title>
+        <Styled.Content.Subtitle color="light">
+          {item.subtitle}
+        </Styled.Content.Subtitle>
+      </Styled.Info>
+    </Styled.Content.Wrapper>
+  );
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper isOpen={isOpen}>
       <Styled.Background className="modal-background" />
       <Styled.Dialog className="modal-dialog" ref={modalRef}>
         <Styled.Container className="modal-content">

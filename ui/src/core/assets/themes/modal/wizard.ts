@@ -27,7 +27,7 @@ import {
   COLOR_PURPLE_HEART,
   COLOR_ORANGE_PEEL,
   COLOR_SANTAS_GREY
-} from "core/assets/colors";
+} from 'core/assets/colors';
 
 export const light = {};
 

@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import styled from "styled-components";
-import Text from "core/components/Text";
-import ButtonComponent from "core/components/Button/Rounded";
+import styled from 'styled-components';
+import Text from 'core/components/Text';
+import ButtonComponent from 'core/components/Button/Rounded';
+import IconComponent from 'core/components/Icon';
 
-// ${({ isOpen }: WrapperProps) => (!isOpen ? 'none' : 'flex')};
+const Icon = styled(IconComponent)``;
 
 interface WrapperProps {
   isOpen?: boolean;
   className?: string;
 }
 
-const Wrapper = styled("div")<WrapperProps>`
-  display: flex
+const Wrapper = styled('div')<WrapperProps>`
+  display: ${({ isOpen }: WrapperProps) => (!isOpen ? 'none' : 'flex')};
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
   align-items: center;
   position: fixed;
@@ -55,8 +56,7 @@ const Background = styled.div`
   position: fixed;
   display: flex;
   justify-content: center;
-  flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
   opacity: 0.8;
 `;
@@ -64,7 +64,6 @@ const Background = styled.div`
 const Dialog = styled.div`
   position: relative;
   width: auto;
-  max-width: 500px;
   margin: 1.75rem auto;
   min-height: calc(100% - (1.75rem * 2));
 `;
@@ -75,60 +74,93 @@ const Container = styled.div`
   flex-direction: row;
   box-sizing: border-box;
   z-index: ${({ theme }) => theme.zIndex.OVER_4};
+  padding: 26px 21px 26px 30px;
   top: 15%;
   transform: translate(-50%, 0);
   text-align: left;
+  width: 784px;
 `;
 
 const SideMenu = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
   background: ${({ theme }) => theme.modal.wizard.background.menu};
   z-index: ${({ theme }) => theme.zIndex.OVER_4};
   padding: 26px 21px 26px 30px;
-  transform: translate(-50%, 0);
   text-align: left;
-`;
-
-const Info = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.modal.wizard.background.info};
-  z-index: ${({ theme }) => theme.zIndex.OVER_4};
-  color: ${({ theme }) => theme.modal.wizard.text};
-  transform: translate(-50%, 0);
-  text-align: left;
-  margin-left: -102px;
+  width: 30%;
 `;
 
 const Content = styled.div`
-  overflow-y: auto;
-  max-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  z-index: ${({ theme }) => theme.zIndex.OVER_4};
+  width: 70%;
 `;
 
-const Title = styled(Text.h2)`
+const Info = styled.div`
+  height: 32%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.modal.wizard.background.info};
+  color: ${({ theme }) => theme.modal.wizard.text.active};
+  padding: 28px 52px 0 21px;
   text-align: left;
-  margin-bottom: 20px;
-  color: ${({ theme }) => theme.modal.wizard.text};
 `;
 
-interface TextProps {
-  isActive?: boolean;
+const Title = styled(Text.h3)``;
+
+const Subtitle = styled(Text.h4)`
+  margin-top: 15px;
+`;
+
+interface ImageBackgroundProps {
+  backgroundColor: string;
 }
 
-const ItemText = styled(Text.h4)<TextProps>`
-  color: ${({ isActive, theme }) =>
-    isActive
-      ? theme.modal.wizard.text.active
-      : theme.modal.wizard.text.inactive};
+const ImageBackground = styled.div<ImageBackgroundProps>`
+  height: 68%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${({ theme, backgroundColor }) =>
+    theme.modal.wizard.background[backgroundColor]};
+`;
+
+interface ItemProps {
+  status: 'unread' | 'read' | 'active';
+}
+
+const ItemText = styled(Text.h4)<ItemProps>`
+  color: ${({ status, theme }) =>
+    status === 'unread'
+      ? theme.modal.wizard.text.inactive
+      : theme.modal.wizard.text.active};
+  margin-left: ${({ status }) => (status === 'active' ? '9px' : '0')};
+
+  :hover {
+    transform: scale(1.05);
+    color: ${({ theme }) => theme.modal.wizard.text.active};
+  }
 `;
 
 const Item = styled.div`
+  cursor: pointer;
   margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const ActiveItem = styled.div<ItemProps>`
+  display: ${({ status }) => (status === 'active' ? 'flex' : 'none')};
+  width: 1px;
+  height: 15px;
+  box-sizing: border-box;
+  border-radius: 1.5px;
+  background: ${({ theme }) => theme.modal.wizard.text.active};
 `;
 
 export default {
@@ -137,11 +169,19 @@ export default {
   Dialog,
   Container,
   SideMenu,
-  Content,
   Button,
   Message,
-  Title,
-  Item,
-  ItemText,
-  Info
+  Item: {
+    Text: ItemText,
+    Wrapper: Item,
+    Active: ActiveItem
+  },
+  Info,
+  Content: {
+    Wrapper: Content,
+    Background: ImageBackground,
+    Title,
+    Subtitle,
+    Icon
+  }
 };
