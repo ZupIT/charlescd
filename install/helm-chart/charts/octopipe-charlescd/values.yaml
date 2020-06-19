@@ -1,6 +1,6 @@
 image:
   repository: octopipe
-  tag: zupcharles/charlescd-octopipe:v0.2.11
+  tag: zupcharles/charlescd-octopipe:0.2.12
   blueTag: latest
   pullPolicy: Always
 
