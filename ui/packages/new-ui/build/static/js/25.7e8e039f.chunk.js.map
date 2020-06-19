@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/edit.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/25.7e8e039f.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/edit.f56b4285.svg\";"],"sourceRoot":""}
