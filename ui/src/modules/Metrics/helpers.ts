@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { DeployMetricSearch } from 'modules/Metrics/Deploys/interfaces';
-import { baseRequest } from './base';
+export const timestampFormater = (seconds: number) => {
+  const hours = Math.floor(seconds / 60 / 60);
+  const minutes = Math.floor(seconds / 60) - hours * 60;
 
-const endpoint = '/moove/metrics';
-
-export const findCircleMetrics = (data: CircleMetrics) => {
-  const params = new URLSearchParams({ ...data });
-  return baseRequest(`${endpoint}/?${params}`);
-};
-
-export const findDeployMetrics = (filter: DeployMetricSearch) => {
-  const params = new URLSearchParams({
-    period: `${filter?.period}`,
-    circles: `${filter?.circles}`
-  });
-
-  return baseRequest(`${endpoint}/deployments?${params}`);
+  if (hours > 0) return hours + ':' + minutes + ':' + (seconds % 60) + 'h';
+  else if (minutes > 0) return minutes + ':' + (seconds % 60) + 'm';
+  else if (seconds > 0) return (seconds % 60) + 's';
+  else return 'No Data';
 };

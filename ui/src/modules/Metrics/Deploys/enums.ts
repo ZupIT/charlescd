@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { DeployMetricSearch } from 'modules/Metrics/Deploys/interfaces';
-import { baseRequest } from './base';
-
-const endpoint = '/moove/metrics';
-
-export const findCircleMetrics = (data: CircleMetrics) => {
-  const params = new URLSearchParams({ ...data });
-  return baseRequest(`${endpoint}/?${params}`);
-};
-
-export const findDeployMetrics = (filter: DeployMetricSearch) => {
-  const params = new URLSearchParams({
-    period: `${filter?.period}`,
-    circles: `${filter?.circles}`
-  });
-
-  return baseRequest(`${endpoint}/deployments?${params}`);
-};
+export enum PERIOD {
+  ONE_WEEK = 'ONE_WEEK',
+  TWO_WEEKS = 'TWO_WEEKS',
+  ONE_MONTH = 'ONE_MONTH',
+  THREE_MONTHS = 'THREE_MONTHS'
+}

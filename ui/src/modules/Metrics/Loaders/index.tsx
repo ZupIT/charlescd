@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { DeployMetricSearch } from 'modules/Metrics/Deploys/interfaces';
-import { baseRequest } from './base';
+import React from 'react';
+import { Loader as LoaderCard } from './card';
 
-const endpoint = '/moove/metrics';
-
-export const findCircleMetrics = (data: CircleMetrics) => {
-  const params = new URLSearchParams({ ...data });
-  return baseRequest(`${endpoint}/?${params}`);
+const Loader = {
+  Card: () => <LoaderCard />
 };
 
-export const findDeployMetrics = (filter: DeployMetricSearch) => {
-  const params = new URLSearchParams({
-    period: `${filter?.period}`,
-    circles: `${filter?.circles}`
-  });
-
-  return baseRequest(`${endpoint}/deployments?${params}`);
-};
+export default Loader;

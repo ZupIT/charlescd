@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import { AreaChart } from 'core/components/Charts';
+import { useDeployMetric } from './hooks';
+// import Loader from '../Loaders/index';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 // import useWorker from 'core/hooks/useWorker';
 // import metricWorker from './worker';
 // import { getChartColor } from './helpers';
 import Styled from './styled';
+import { timestampFormater } from '../helpers';
 
 const Deploys = () => {
   // const [series, workerHook] = useWorker<[]>(metricWorker, []);
+  const { searchDeployMetrics, response, loading } = useDeployMetric();
 
   const series = [
     {
@@ -41,23 +45,39 @@ const Deploys = () => {
   // const colors = getChartColor(metricType, chartType);
   // const options = { ...metricOptions, colors };
 
+  const period = 'ONE_WEEK';
+  const circles = 'b49ba0b3-4e8e-46cf-a526-9f7c6d46fc7b';
+
+  const onSubmit = () => {
+    searchDeployMetrics({ period, circles });
+  };
+
   return (
     <Styled.Content>
       <Styled.Card width="531px" height="79px">
         Filters
+        <button onClick={() => onSubmit()}>
+          <span> asdf </span>
+        </button>
       </Styled.Card>
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>
-          <Text.h1 color="light">345</Text.h1>
+          {/* <Text.h1 color="light">
+            {response?.successfulDeploymentsQuantity}
+          </Text.h1> */}
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Error</Text.h4>
-          <Text.h1 color="light">12</Text.h1>
+          <Text.h1 color="light">{response?.failedDeploymentsQuantity}</Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Average time</Text.h4>
-          <Text.h1 color="light">3:26m</Text.h1>
+          <Text.h1 color="light">
+            {timestampFormater(
+              response?.successfulDeploymentsAverageTimeInSeconds
+            )}
+          </Text.h1>
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px">
