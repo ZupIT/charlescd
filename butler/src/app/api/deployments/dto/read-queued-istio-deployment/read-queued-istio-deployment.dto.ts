@@ -26,8 +26,6 @@ export class ReadQueuedIstioDeploymentDto {
 
   public readonly componentDeploymentId: string
 
-  public readonly circleId: string
-
   public readonly status: QueuedPipelineStatusEnum
 
   public readonly createdAt: Date
@@ -37,7 +35,6 @@ export class ReadQueuedIstioDeploymentDto {
     deploymentId: string,
     componentId: string,
     componentDeploymentId: string,
-    circleId: string,
     status: QueuedPipelineStatusEnum,
     createdAt: Date
   ) {
@@ -45,7 +42,6 @@ export class ReadQueuedIstioDeploymentDto {
     this.deploymentId = deploymentId
     this.componentId = componentId
     this.componentDeploymentId = componentDeploymentId,
-    this.circleId = circleId
     this.status = status
     this.createdAt = createdAt
   }
