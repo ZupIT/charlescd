@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/checkmark.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/18.fcb3a3c7.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/checkmark.f7d85d61.svg\";"],"sourceRoot":""}

@@ -31,13 +31,15 @@ import {
 import {
     ComponentDeploymentEntity,
     DeploymentEntity,
-    QueuedDeploymentEntity
+    QueuedDeploymentEntity,
+    QueuedIstioDeploymentEntity
 } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 import {
     ComponentDeploymentsRepository,
     QueuedDeploymentsRepository
 } from '../repository'
+import { QueuedIstioDeploymentsRepository } from '../repository/queued-istio-deployments.repository'
 import {
     ModulesService,
     PipelineDeploymentsService,
@@ -45,6 +47,7 @@ import {
     PipelineQueuesService
 } from '../services'
 import { IConstraintError } from '../interfaces/errors.interface'
+
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -60,6 +63,8 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly queuedDeploymentsRepository: QueuedDeploymentsRepository,
         @InjectRepository(ComponentDeploymentsRepository)
         private readonly componentDeploymentsRepository: ComponentDeploymentsRepository,
+        @InjectRepository(QueuedIstioDeploymentsRepository)
+        private readonly queuedIstioDeploymentsRepository: QueuedDeploymentsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService,
         private readonly pipelineQueuesService: PipelineQueuesService,
         private readonly pipelineDeploymentsService: PipelineDeploymentsService,
@@ -119,6 +124,7 @@ export class CreateDefaultDeploymentRequestUsecase {
         if (queuedDeployment.status === QueuedPipelineStatusEnum.RUNNING) {
             await this.pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, component, deployment, queuedDeployment)
         }
+        this.scheduleIstioDeployment(deployment, component, componentDeployment)
     }
 
     private async saveQueuedDeployment(componentDeployment: ComponentDeploymentEntity): Promise<QueuedDeploymentEntity> {
@@ -129,6 +135,32 @@ export class CreateDefaultDeploymentRequestUsecase {
             )
         } catch (error) {
             return this.handleUniqueRunningConstraint(error as IConstraintError, componentDeployment)
+        }
+    }
+
+    private async scheduleIstioDeployment(
+        deployment: DeploymentEntity,
+        component: ComponentEntity,
+        componentDeployment: ComponentDeploymentEntity,
+    ): Promise<void> {
+        try {
+            await this.saveQueuedIstioDeployment(deployment.id, component.id, componentDeployment.id)
+        } catch (error) {
+            throw new InternalServerErrorException(error)
+        }
+    }
+
+    private async saveQueuedIstioDeployment(
+        deploymentId: string,
+        componentId: string,
+        componentDeploymentId: string,
+    ): Promise<QueuedIstioDeploymentEntity> {
+        try {
+            return await this.queuedIstioDeploymentsRepository.save(
+                new QueuedIstioDeploymentEntity(deploymentId, componentId, componentDeploymentId, QueuedPipelineStatusEnum.QUEUED)
+            )
+        } catch (error) {
+            throw new InternalServerErrorException(error)
         }
     }
 
