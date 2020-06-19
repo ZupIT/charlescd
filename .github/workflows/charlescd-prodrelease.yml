@@ -3,7 +3,7 @@ name: charlescd-prodrelease
 on:
   release:
     types:
-      - released
+      - created
     branches: [ master ]
 
 jobs:
