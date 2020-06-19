@@ -38,7 +38,8 @@ const hypothesesCard = `/hypotheses/:hypothesisId/card/:cardId`;
 const modules = `/modules`;
 const modulesComparation = `${modules}/compare`;
 const metrics = `/metrics`;
-const metricsDashboard = `/metrics/dashboard/:id`;
+const metricsDeploys = `${metrics}/deploys`;
+const metricsModules = `${metrics}/modules`;
 const settings = `/settings`;
 const credentials = `${settings}/credentials`;
 
@@ -92,5 +93,6 @@ export default {
   hypothesesEdit,
   hypothesesCard,
   metrics,
-  metricsDashboard
+  metricsDeploys,
+  metricsModules
 };

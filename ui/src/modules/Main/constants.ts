@@ -105,8 +105,8 @@ export const rootWorkspaceMenu = [
     icon: 'metrics',
     text: 'Metrics',
     to: routes.metrics,
-    action: 'read',
-    subject: 'metrics'
+    action: 'write',
+    subject: 'maintenance'
   },
   {
     id: genMenuId(routes.settings),

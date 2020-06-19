@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import routes from 'core/constants/routes';
+import { genMenuId } from 'core/utils/menu';
 
 export const items = [
   {
-    id: 'deploy',
-    name: 'Deploy'
+    id: genMenuId(routes.metricsDeploys),
+    text: 'Deploys',
+    to: routes.metricsDeploys
   },
   {
-    id: 'circles',
-    name: 'Circles'
+    id: genMenuId(routes.metricsModules),
+    text: 'Modules',
+    to: routes.metricsModules
   }
 ];
