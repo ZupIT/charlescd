@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/plus-circle.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/37.e08e7f61.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/plus-circle.78c5783d.svg\";"],"sourceRoot":""}
