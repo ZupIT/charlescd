@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CreateCircleDeploymentDto, CreateModuleDeploymentDto} from '../index'
+import { CreateCircleDeploymentDto, CreateModuleDeploymentDto } from '../index'
 import { Type } from 'class-transformer'
 import {
   IsDefined,
@@ -24,8 +24,8 @@ import {
   ValidateNested
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import {CircleDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity} from '../../entity';
-import {DeploymentStatusEnum} from '../../enums';
+import {  DeploymentEntity } from '../../entity';
+
 
 export  class CreateDeploymentRequestDto {
 
