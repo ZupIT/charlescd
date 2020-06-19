@@ -3,14 +3,6 @@ coverage:
     project:
       default:
         target: auto
-        threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
       villager:
         target: 35%
         flags:
@@ -37,15 +29,7 @@ coverage:
           - ui
     patch:
       default:
-        target: 80%
-        threshold: 0%
-        flags: 
-          - villager
-          - circlematcher
-          - octopipe
-          - moove
-          - butler
-          - ui
+        only_pulls: true
       
 flags:
   villager:
