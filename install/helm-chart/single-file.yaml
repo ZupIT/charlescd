@@ -1054,7 +1054,7 @@ spec:
       
       containers:
         - name: octopipe
-          image: "zupcharles/charlescd-octopipe:0.2.12"
+          image: "zupcharles/charlescd-octopipe:0.2.13"
           
           livenessProbe:
             failureThreshold: 3
