@@ -69,7 +69,14 @@ const CirclesMetrics = [
   }
 ];
 
+const DeployMetrics = {
+  successfulDeploymentsQuantity: 22,
+  failedDeploymentsQuantity: 3,
+  successfulDeploymentsAverageTimeInSeconds: 207
+};
+
 export default {
   CircleMetricsData,
-  CirclesMetrics
+  CirclesMetrics,
+  DeployMetrics
 };
