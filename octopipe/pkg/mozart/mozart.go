@@ -31,6 +31,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const (
+	MAXIMUM_REQUEST_RETRY_ATTEMPTS = 5
+)
+
 type Mozart struct {
 	*MozartManager
 	Stages             [][]*pipeline.Step
@@ -271,7 +275,7 @@ func (mozart *Mozart) returnPipelineError(pipelineError error) {
 func (mozart *Mozart) SendRequest(request *http.Request, client http.Client, attempts int) (*http.Response,error) {
 	response, err := client.Do(request)
 	if err != nil && attempts< 5 {
-		response ,err = mozart.SendRequest(request, client, attempts+1)
+		response, err = mozart.SendRequest(request, client, attempts+1)
 	}
-	return response,err
+	return response, err
 }
