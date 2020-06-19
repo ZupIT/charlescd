@@ -1,0 +1,13 @@
+name: villager prod-release
+
+on:
+  release:
+    types:
+      - published
+    branches: [ master ]
+
+jobs:
+  update_helm_charts:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
