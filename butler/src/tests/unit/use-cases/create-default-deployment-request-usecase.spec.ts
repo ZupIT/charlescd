@@ -23,11 +23,13 @@ import {
     ComponentsRepositoryStub,
     DeploymentsRepositoryStub,
     ModulesRepositoryStub,
-    QueuedDeploymentsRepositoryStub
+    QueuedDeploymentsRepositoryStub,
+    QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
     ComponentDeploymentsRepository,
-    QueuedDeploymentsRepository
+    QueuedDeploymentsRepository,
+    QueuedIstioDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import {
     ModulesService,
@@ -83,7 +85,8 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-                { provide: ModulesService, useClass: ModulesServiceStub}
+                { provide: ModulesService, useClass: ModulesServiceStub},
+                { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
             ]
         }).compile()
 

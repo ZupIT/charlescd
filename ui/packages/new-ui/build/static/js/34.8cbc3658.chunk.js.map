@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/metrics.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/34.8cbc3658.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/metrics.eb99852c.svg\";"],"sourceRoot":""}
