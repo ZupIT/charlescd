@@ -1,7 +1,7 @@
 import os
 import uuid
 
-def get_deploy_request():
+def get_samecluster_request():
    circle_id = str(uuid.uuid4())
    return {
       "appName": "darwin-content",
