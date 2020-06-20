@@ -9,5 +9,5 @@ class OctopipeSameClusterTest(HttpUser):
     @task
     def deploy(self):
         request_data = fixtures.get_samecluster_request()
-        response = self.client.post("/api/v1/pipelines", data = json.dumps(request_data), catch_response = True)
-        print(response)
+        headers = {'content-type': 'application/json'}
+        response = self.client.post("/api/v1/pipelines", data = json.dumps(request_data), headers = headers, catch_response = True)
