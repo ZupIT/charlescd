@@ -16,7 +16,6 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import isEmpty from 'lodash/isEmpty';
 import Loader from '../Loaders/index';
 import { timestampFormater } from '../helpers';
 import { useDeployMetric } from './hooks';
@@ -57,6 +56,11 @@ const Deploys = () => {
     searchDeployMetrics({ period, circles });
   };
 
+  const renderData = (data: unknown) => {
+    if (data === 0) return <Text.h2 color="light"> No data </Text.h2>;
+    return <Text.h1 color="light">{data}</Text.h1>;
+  };
+
   return (
     <Styled.Content>
       <Styled.Card width="531px" height="79px">
@@ -72,14 +76,18 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              response?.successfulDeploymentsQuantity
+              renderData(response?.successfulDeploymentsQuantity)
             )}
           </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Error</Text.h4>
           <Text.h1 color="light">
-            {loading ? <Loader.Card /> : response?.failedDeploymentsQuantity}
+            {loading ? (
+              <Loader.Card />
+            ) : (
+              renderData(response?.failedDeploymentsQuantity)
+            )}
           </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
@@ -88,8 +96,10 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              timestampFormater(
-                response?.successfulDeploymentsAverageTimeInSeconds
+              renderData(
+                timestampFormater(
+                  response?.successfulDeploymentsAverageTimeInSeconds
+                )
               )
             )}
           </Text.h1>
