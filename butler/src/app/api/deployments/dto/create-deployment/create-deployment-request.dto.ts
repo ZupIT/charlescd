@@ -35,7 +35,7 @@ export  class CreateDeploymentRequestDto {
     authorId: string,
     description: string,
     callbackUrl: string,
-    circle: CreateCircleDeploymentDto | undefined,
+    circle: CreateCircleDeploymentDto | null,
     cdConfigurationId: string
   ) {
     this.applicationName = applicationName
@@ -50,7 +50,7 @@ export  class CreateDeploymentRequestDto {
   @ApiProperty({ type: () => CreateCircleDeploymentDto })
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
-  public readonly circle: CreateCircleDeploymentDto | undefined
+  public readonly circle: CreateCircleDeploymentDto | null
 
   @ApiProperty()
   @IsNotEmpty()
