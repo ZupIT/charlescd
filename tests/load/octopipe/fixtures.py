@@ -259,7 +259,7 @@ def get_outofcluster_request():
          caData: os.getenv("OUT_OF_CLUSTER_CA_DATA"),
          clientKey: os.getenv("OUT_OF_CLUSTER_CLIENT_KEY"),
          host: os.getenv("OUT_OF_CLUSTER_HOST")
-      }
+      },
       "webHookUrl": os.getenv("BUTLER_WEBHOOK_URL"),
       "circleId": circle_id
    }
