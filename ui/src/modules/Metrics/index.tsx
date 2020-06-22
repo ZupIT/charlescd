@@ -22,9 +22,9 @@ import Menu from './Menu';
 import Styled from './styled';
 
 const Deploys = lazy(() => import('modules/Metrics/Deploys'));
-const Modules = lazy(() => import('modules/Metrics/Modules'));
+const Circles = lazy(() => import('modules/Metrics/Circles'));
 
-const Circles = () => {
+const Metrics = () => {
   const renderPlaceholder = () => (
     <Page.Placeholder
       icon="placeholder-metrics"
@@ -48,9 +48,9 @@ const Circles = () => {
               <Deploys />
             </Styled.Scrollable>
           </Route>
-          <Route exact path={routes.metricsModules}>
+          <Route exact path={routes.metricsCircles}>
             <Styled.Scrollable>
-              <Modules />
+              <Circles />
             </Styled.Scrollable>
           </Route>
         </Switch>
@@ -59,4 +59,4 @@ const Circles = () => {
   );
 };
 
-export default Circles;
+export default Metrics;

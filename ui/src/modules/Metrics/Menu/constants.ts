@@ -23,8 +23,8 @@ export const items = [
     to: routes.metricsDeploys
   },
   {
-    id: genMenuId(routes.metricsModules),
-    text: 'Modules',
-    to: routes.metricsModules
+    id: genMenuId(routes.metricsCircles),
+    text: 'Circles',
+    to: routes.metricsCircles
   }
 ];
