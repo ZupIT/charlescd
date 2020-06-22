@@ -8,9 +8,9 @@ def get_samecluster_request():
       "appNamespace": "octopipe-load",
       "git": {
          "provider": "GITHUB",
-         "token": os.getenv('GITHUB_TOKEN', '')
+         "token": os.getenv("GITHUB_TOKEN")
       },
-      "helmUrl": os.getenv('HELM_URL', ''),
+      "helmUrl": os.getenv("HELM_URL"),
       "istio": {
          "virtualService": {
             "apiVersion": "networking.istio.io/v1alpha3",
@@ -125,6 +125,6 @@ def get_samecluster_request():
             "versionUrl": "realwavelab.azurecr.io/darwin-content:darwin-acarditi"
          }
       ],
-      "webHookUrl": os.getenv('BUTLER_WEBHOOK_URL', ''),
+      "webHookUrl": os.getenv("BUTLER_WEBHOOK_URL"),
       "circleId": circle_id
    }
