@@ -17,7 +17,7 @@
 import React from 'react';
 import Styled from './styled';
 
-const Modules = () => {
+const Circles = () => {
   return (
     <Styled.Content>
       <Styled.MiniCard>
@@ -36,4 +36,4 @@ const Modules = () => {
   );
 };
 
-export default Modules;
+export default Circles;

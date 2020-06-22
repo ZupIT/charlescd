@@ -16,12 +16,13 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
+import isEmpty from 'lodash/isEmpty';
+import Loader from '../Loaders/index';
+import { timestampFormater } from '../helpers';
 import { useDeployMetric } from './hooks';
-// import Loader from '../Loaders/index';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 import Styled from './styled';
-import { timestampFormater } from '../helpers';
 
 const Deploys = () => {
   // const [series, workerHook] = useWorker<[]>(metricWorker, []);
@@ -48,6 +49,10 @@ const Deploys = () => {
   const period = 'ONE_WEEK';
   const circles = 'b49ba0b3-4e8e-46cf-a526-9f7c6d46fc7b';
 
+  useEffect(() => {
+    searchDeployMetrics({ period });
+  }, [searchDeployMetrics]);
+
   const onSubmit = () => {
     searchDeployMetrics({ period, circles });
   };
@@ -64,18 +69,28 @@ const Deploys = () => {
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>
           <Text.h1 color="light">
-            {response?.successfulDeploymentsQuantity}
+            {loading ? (
+              <Loader.Card />
+            ) : (
+              response?.successfulDeploymentsQuantity
+            )}
           </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Error</Text.h4>
-          <Text.h1 color="light">{response?.failedDeploymentsQuantity}</Text.h1>
+          <Text.h1 color="light">
+            {loading ? <Loader.Card /> : response?.failedDeploymentsQuantity}
+          </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Average time</Text.h4>
           <Text.h1 color="light">
-            {timestampFormater(
-              response?.successfulDeploymentsAverageTimeInSeconds
+            {loading ? (
+              <Loader.Card />
+            ) : (
+              timestampFormater(
+                response?.successfulDeploymentsAverageTimeInSeconds
+              )
             )}
           </Text.h1>
         </Styled.Card>
