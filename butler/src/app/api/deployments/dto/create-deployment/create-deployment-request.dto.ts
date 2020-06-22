@@ -20,7 +20,7 @@ import {
   IsDefined,
   IsNotEmpty,
   Length,
-  Matches,
+  Matches, ValidateIf,
   ValidateNested
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
@@ -48,6 +48,7 @@ export  class CreateDeploymentRequestDto {
   }
 
   @ApiProperty({ type: () => CreateCircleDeploymentDto })
+  @ValidateIf((obj, value) => { return value != null })
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
   public readonly circle: CreateCircleDeploymentDto | null
