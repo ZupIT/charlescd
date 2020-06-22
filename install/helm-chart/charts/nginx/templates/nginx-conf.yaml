@@ -31,25 +31,25 @@ data:
             }
             {{- end}}
             {{ if .Values.moove.enabled}}
-            location /moove {
+            location /moove/ {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
             }
             {{- end}}
             {{ if .Values.octopipe.enabled}}
-            location /octopipe {
+            location /octopipe/ {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-octopipe:8080/;
             }
             {{- end}}
             {{ if .Values.circlematcher.enabled}}
-            location /charlescd-circle-matcher {
+            location /charlescd-circle-matcher/ {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-circle-matcher:8080/;
             }
             {{- end}}
             {{ if .Values.keycloak.enabled}}
-            location ^~ /keycloak {
+            location ^~ /keycloak/ {
                 proxy_http_version 1.1;
                 proxy_set_header X-Forwarded-For $host;
                 proxy_set_header X-Forwarded-Proto $scheme;
