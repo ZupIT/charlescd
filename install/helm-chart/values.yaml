@@ -1,7 +1,7 @@
 butler:
   enabled: true
   name: "charlescd-butler"
-  frontHost: "http://charles-user-migration.continuousplatform.com"
+  frontHost: "http://charles.info.example"
   database:
     name: charlescd_butler
     host: charlescd-postgresql
@@ -10,7 +10,7 @@ butler:
     password: 3f2Yq8R4HhDCnefR
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.2.12
+    name: zupcharles/charlescd-butler:0.2.13
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -29,8 +29,8 @@ butler:
 moove:
   enabled: true
   name: "charlescd-moove"
-  frontHost: "http://charles-user-migration.continuousplatform.com"
-  keycloakHost: "http://charles-user-migration.continuousplatform.com/keycloak/auth"
+  frontHost: "http://charles.info.example"
+  keycloakHost: "http://charles.info.example/keycloak/auth"
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -39,7 +39,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: realwavelab.azurecr.io/charlescd-moove:admin-user-migration
+    name: zupcharles/charlescd-moove:0.2.13
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -70,7 +70,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.2.12
+    name: zupcharles/charlescd-villager:0.2.13
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -89,11 +89,11 @@ villager:
 ui:
   enabled: true
   name: charlescd-ui
-  apiHost: http://charles-user-migration.continuousplatform.com
-  keycloakHost: http://charles-user-migration.continuousplatform.com/keycloak
+  apiHost: http://charles.info.example
+  keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.2.12
+    name: zupcharles/charlescd-ui:0.2.13
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -116,10 +116,10 @@ circlematcher:
     host: charlescd-redis-master
     port: 6379
     password: hb2Fj9MGKjBkZ6zV
-  frontHost: http://charles-user-migration.continuousplatform.com
+  frontHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.2.12
+    name: zupcharles/charlescd-circle-matcher:0.2.13
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher

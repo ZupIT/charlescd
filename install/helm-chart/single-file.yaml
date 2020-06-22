@@ -1064,7 +1064,7 @@ spec:
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.2.12
+          image: zupcharles/charlescd-butler:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1108,7 +1108,7 @@ spec:
             - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/istio-deployment"
             - name: OCTOPIPE_URL
-              value: "http://charles-user-migration.continuousplatform.com/octopipe"
+              value: "http://charles.info.example/octopipe"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -1147,7 +1147,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.2.12
+          image: zupcharles/charlescd-circle-matcher:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1179,7 +1179,7 @@ spec:
             - name: SPRING_REDIS_PASSWORD
               value: hb2Fj9MGKjBkZ6zV
             - name: ALLOWED_ORIGINS
-              value: http://charles-user-migration.continuousplatform.com
+              value: http://charles.info.example
           resources:
             limits:
               cpu: 256m
@@ -1213,7 +1213,7 @@ spec:
     spec:
       containers:
         - name: charlescd-moove
-          image: realwavelab.azurecr.io/charlescd-moove:admin-user-migration
+          image: zupcharles/charlescd-moove:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1247,13 +1247,13 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://charles-user-migration.continuousplatform.com/keycloak/auth"
+              value: "http://charles.info.example/keycloak/auth"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
             - name: ORIGIN_HOSTS
-              value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles-user-migration.continuousplatform.com"
+              value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -1292,7 +1292,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.2.12
+          image: zupcharles/charlescd-ui:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1316,9 +1316,9 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_API_URI
-              value: http://charles-user-migration.continuousplatform.com
+              value: http://charles.info.example
             - name: REACT_APP_AUTH_URI
-              value: http://charles-user-migration.continuousplatform.com/keycloak
+              value: http://charles.info.example/keycloak
             - name: REACT_APP_AUTH_REALM
               value: charlescd
             - name: REACT_APP_AUTH_CLIENT_ID
@@ -1356,7 +1356,7 @@ spec:
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.2.12
+          image: zupcharles/charlescd-villager:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
