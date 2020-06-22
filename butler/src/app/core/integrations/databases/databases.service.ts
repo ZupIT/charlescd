@@ -41,7 +41,7 @@ export class DatabasesService {
   private static getPostgresCredentials(envConfiguration: IEnvConfiguration): IPostgresCredentials {
 
     const {
-      postgresHost, postgresPort, postgresUser, postgresPass, postgresDbName
+      postgresHost, postgresPort, postgresUser, postgresPass, postgresDbName, postgresSSL
     } = envConfiguration
 
     return {
@@ -49,7 +49,8 @@ export class DatabasesService {
       port: postgresPort,
       username: postgresUser,
       password: postgresPass,
-      database: postgresDbName
+      database: postgresDbName,
+      ssl: postgresSSL,
     }
   }
 }
