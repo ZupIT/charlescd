@@ -28,6 +28,8 @@ export const ConfigurationConstants = {
 
   DATABASE_DB_PASS: 'darwin',
 
+  DATABASE_SSL: false,
+
   MOOVE_URL: 'http://localhost:8883/moove',
 
   DARWIN_NOTIFICATION_URL: 'http://localhost:8883/deploy/notifications',
