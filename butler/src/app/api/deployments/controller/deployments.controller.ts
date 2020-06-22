@@ -41,7 +41,7 @@ export class DeploymentsController {
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') circleId: string
   ): Promise<ReadDeploymentDto> {
-    if (createDeploymentRequestDto.circle) {
+    if (createDeploymentRequestDto.circle != null) {
       return await this.createCircleDeploymentRequestUsecase.execute(createDeploymentRequestDto, circleId)
     }
     return await this.createDefaultDeploymentRequestUsecase.execute(createDeploymentRequestDto, circleId)
