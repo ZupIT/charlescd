@@ -20,5 +20,6 @@ export const timestampFormater = (seconds: number) => {
 
   if (hours > 0) return hours + ':' + minutes + ':' + (seconds % 60) + 'h';
   else if (minutes > 0) return minutes + ':' + (seconds % 60) + 'm';
-  else return (seconds % 60) + 's';
+  else if (seconds > 0) return (seconds % 60) + 's';
+  else return 0;
 };
