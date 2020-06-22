@@ -18,7 +18,7 @@ import {
   DeploymentEntity,
   UndeploymentEntity
 } from '../../entity'
-import { Allow } from 'class-validator'
+import { Allow, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateUndeploymentDto {
@@ -27,10 +27,15 @@ export class CreateUndeploymentDto {
   @Allow()
   public readonly authorId: string
 
+  @IsNotEmpty()
+  public readonly deploymentId: string
+
   constructor(
-      authorId: string
+      authorId: string,
+      deploymentId: string,
   ) {
     this.authorId = authorId
+    this.deploymentId = deploymentId
   }
 
   public toEntity(deployment: DeploymentEntity, circleId: string): UndeploymentEntity {

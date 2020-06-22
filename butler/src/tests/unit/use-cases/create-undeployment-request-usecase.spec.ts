@@ -86,7 +86,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
         queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
 
-        createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
+        createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id','dummy-deployment-id')
 
         componentDeployments = [
             new ComponentDeploymentEntity(
@@ -158,7 +158,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
             jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
                 .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
 
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
                 .toEqual(undeployment.toReadDto())
         })
 
@@ -175,7 +175,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
                 )
                 .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
                 .toEqual(undeployment.toReadDto())
         })
     })
