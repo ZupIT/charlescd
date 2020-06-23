@@ -18,19 +18,18 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
-import io.charlescd.moove.domain.DeploymentStats
+import io.charlescd.moove.domain.DeploymentGeneralStats
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
 import java.time.Duration
-import java.time.LocalDate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
 @Component
-class DeploymentStatsExtractor : ResultSetExtractor<Set<DeploymentStats>> {
+class DeploymentGeneralStatsExtractor : ResultSetExtractor<Set<DeploymentGeneralStats>> {
 
-    override fun extractData(resultSet: ResultSet): Set<DeploymentStats>? {
-        val deploymentMetric = HashSet<DeploymentStats>()
+    override fun extractData(resultSet: ResultSet): Set<DeploymentGeneralStats>? {
+        val deploymentMetric = HashSet<DeploymentGeneralStats>()
 
         while (resultSet.next()) {
             deploymentMetric.add(mapDeploymentStats(resultSet))
@@ -39,11 +38,10 @@ class DeploymentStatsExtractor : ResultSetExtractor<Set<DeploymentStats>> {
         return deploymentMetric
     }
 
-    private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentStats(
+    private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentGeneralStats(
         total = resultSet.getInt("deployment_quantity"),
         deploymentStatus = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
-        averageTime = Duration.parse(formatIntervalToDurationStringFormat(resultSet.getString("deployment_average_time"))),
-        date = LocalDate.parse(resultSet.getString("deployment_date"))
+        averageTime = Duration.parse(formatIntervalToDurationStringFormat(resultSet.getString("deployment_average_time")))
     )
 
     private fun formatIntervalToDurationStringFormat(interval: String): String {

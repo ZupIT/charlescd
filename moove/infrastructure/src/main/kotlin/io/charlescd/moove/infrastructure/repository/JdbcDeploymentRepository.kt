@@ -18,11 +18,11 @@
 
 package io.charlescd.moove.infrastructure.repository
 
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStats
-import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import io.charlescd.moove.infrastructure.repository.mapper.DeploymentAverageTimeStatsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.DeploymentGeneralStatsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentStatsExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
@@ -32,7 +32,9 @@ import org.springframework.stereotype.Repository
 class JdbcDeploymentRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val deploymentExtractor: DeploymentExtractor,
-    private val deploymentStatsExtractor: DeploymentStatsExtractor
+    private val deploymentGeneralStatsExtractor: DeploymentGeneralStatsExtractor,
+    private val deploymentStatsExtractor: DeploymentStatsExtractor,
+    private val deploymentAverageTimeStatsExtractor: DeploymentAverageTimeStatsExtractor
 ) : DeploymentRepository {
 
     companion object {
@@ -239,7 +241,7 @@ class JdbcDeploymentRepository(
         workspaceId: String,
         circlesId: List<String>,
         numberOfDays: Int
-    ): List<DeploymentStats> {
+    ): List<DeploymentGeneralStats> {
         var query = """
                         SELECT 
                             COUNT(id) AS deployment_quantity,
@@ -258,9 +260,45 @@ class JdbcDeploymentRepository(
                         """
 
         if (circlesId.isNotEmpty()) {
-            query += " AND circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
+            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
         }
         query += " GROUP BY deployment_status "
+
+        return this.jdbcTemplate.query(
+            query,
+            arrayOf(workspaceId, numberOfDays),
+            deploymentGeneralStatsExtractor
+        )?.toList()
+            ?: emptyList()
+    }
+
+    override fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
+        workspaceId: String,
+        circlesId: List<String>,
+        numberOfDays: Int
+    ): List<DeploymentStats> {
+        var query = """
+                        SELECT 
+                            COUNT(id) AS deployment_quantity,
+	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
+                            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') as deployment_date,
+	                        CASE status 
+                                WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
+		                        ELSE 'DEPLOYED'
+	                        END AS deployment_status
+                        FROM
+	                        deployments
+                        WHERE
+	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
+                            AND workspace_id = ?
+                            AND created_at <= NOW() 
+	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                        """
+
+        if (circlesId.isNotEmpty()) {
+            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+        }
+        query += " GROUP BY deployment_status, deployment_date "
 
         return this.jdbcTemplate.query(
             query,
@@ -268,5 +306,39 @@ class JdbcDeploymentRepository(
             deploymentStatsExtractor
         )?.toList()
             ?: emptyList()
+    }
+
+    override fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
+        workspaceId: String,
+        circlesId: List<String>,
+        numberOfDays: Int
+    ): List<DeploymentAverageTimeStats> {
+        var query = """
+                        SELECT 
+	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
+                            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') as deployment_date
+                        FROM
+	                        deployments
+                        WHERE
+                            workspace_id = ?
+                            AND created_at <= NOW() 
+	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                        """
+
+        if (circlesId.isNotEmpty()) {
+            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+        }
+        query += " GROUP BY deployment_date "
+
+        return this.jdbcTemplate.query(
+            query,
+            arrayOf(workspaceId, numberOfDays),
+            deploymentAverageTimeStatsExtractor
+        )?.toList()
+            ?: emptyList()
+    }
+
+    private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
+        return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
     }
 }

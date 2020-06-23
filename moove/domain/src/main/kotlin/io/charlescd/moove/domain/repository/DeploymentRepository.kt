@@ -18,9 +18,7 @@
 
 package io.charlescd.moove.domain.repository
 
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStats
-import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.*
 import java.util.*
 
 interface DeploymentRepository {
@@ -43,5 +41,17 @@ interface DeploymentRepository {
 
     fun deleteByCircleId(circleId: String)
 
-    fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId: String, circlesId: List<String>, numberOfDays: Int): List<DeploymentStats>
+    fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId: String, circlesId: List<String>, numberOfDays: Int): List<DeploymentGeneralStats>
+
+    fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
+        workspaceId: String,
+        circlesId: List<String>,
+        numberOfDays: Int
+    ): List<DeploymentStats>
+
+    fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
+        workspaceId: String,
+        circlesId: List<String>,
+        numberOfDays: Int
+    ): List<DeploymentAverageTimeStats>
 }
