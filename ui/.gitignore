@@ -13,6 +13,8 @@
 
 # production
 /build
+/environments
+/public/config.js
 
 # misc
 .DS_Store
