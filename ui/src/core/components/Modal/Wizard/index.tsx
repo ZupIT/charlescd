@@ -34,7 +34,17 @@ const Wizard = () => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [isOpen, setIsOpen] = useState(true);
+  const [localStorageValue, setLocalStorageValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setLocalStorageValue(localStorage.getItem('wizard'));
+    if (!localStorageValue) {
+      setIsOpen(true);
+    } else if (localStorageValue === 'not-first-access') {
+      setIsOpen(false);
+    }
+  }, [localStorage, localStorageValue]);
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
@@ -49,16 +59,21 @@ const Wizard = () => {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
       setIsOpen(false);
+      localStorage.setItem('wizard', 'not-first-access');
     }
   };
 
   const sideMenu = () => (
-    <Styled.SideMenu>
+    <Styled.SideMenu className="modal-sidemenu">
       <Text.h3 color="light" weight="bold">
         Configure the Workspace
       </Text.h3>
       {map(WizardItems, (item, index) => (
-        <Styled.Item.Wrapper onClick={() => setItemSelect(item)}>
+        <Styled.Item.Wrapper
+          key={item.name}
+          data-testid={`modal-wizard-menu-item-${item.name}`}
+          onClick={() => setItemSelect(item)}
+        >
           <Styled.Item.Active
             status={
               itemSelect.name === item.name
@@ -94,7 +109,10 @@ const Wizard = () => {
   );
 
   const Info = (item: Item) => (
-    <Styled.Content.Wrapper>
+    <Styled.Content.Wrapper
+      className="modal-info"
+      data-testid={`modal-wizard-info-${item.name}`}
+    >
       <Styled.Content.Background backgroundColor={item.backgroundColor}>
         <Styled.Content.Icon name={item.icon} size={item.size} />
       </Styled.Content.Background>
@@ -110,7 +128,7 @@ const Wizard = () => {
   );
 
   return (
-    <Styled.Wrapper isOpen={isOpen}>
+    <Styled.Wrapper isOpen={isOpen} data-testid="modal-wizard">
       <Styled.Background className="modal-background" />
       <Styled.Dialog className="modal-dialog" ref={modalRef}>
         <Styled.Container className="modal-content">
