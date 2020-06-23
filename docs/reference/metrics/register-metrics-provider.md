@@ -14,5 +14,5 @@ Add your metrics provider in the Charles' configuration. You will find the steps
 4. Select your **tool option**;
 5. Make the configuration based on the selected tool. 
 
-![](../../.gitbook/assets/metrics-provider%20%282%29%20%281%29.gif)
+![](../../.gitbook/assets/metrics-provider%20%282%29%20%281%29%20%281%29.gif)
 
