@@ -1,0 +1,331 @@
+- request:
+    method: POST
+    url: ^/build
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "5f1adb96-866f-4bed-874b-ac47c31fd515 "
+      }
+
+- request:
+    method: GET
+    url: ^/registry/.+/components/.+/tags
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "tags": [
+          {
+            "artifact": "registry.io/component:version1",
+            "name": "version1"
+          },
+          {
+            "artifact": "registry.io/component:version2",
+            "name": "version2"
+          }
+        ]
+      }
+
+- request:
+    method: POST
+    url: ^/deployments/circle
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0db",
+        "applicationName": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dv",
+        "modulesDeployments":[
+          {
+            "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dz",
+            "moduleId":"131d2352-287b-4b24-99f2-41dd3dcc6efc",
+            "k8sConfigurationId": "131d2352-287b-4b24-99f2-41dd3dcc6eff",
+            "componentsDeployments":[
+              {
+                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
+                "componentId":"7256b285-2101-44d6-ac38-d0d7503419e3",
+                "componentName":"component1",
+                "buildImageUrl":"registry.io/component1:qa-1",
+                "buildImageTag":"qa-1",
+                "status": "CREATED",
+                "createdAt": "2019-09-19T22:20:06.379Z"
+              },
+              {
+                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
+                "componentId":"82c05d7e-b49c-4f0a-990b-126144e0f5e6",
+                "componentName":"component2",
+                "buildImageUrl":"registry.io/component2:qa-2",
+                "buildImageTag":"qa-2",
+                "status": "CREATED",
+                "createdAt": "2019-09-19T22:20:06.379Z"
+              }
+            ],
+            "status": "CREATED",
+            "createdAt": "2019-09-19T22:20:06.379Z"
+          }
+        ],
+        "authorId":"8f87dee4-c67d-45a5-999c-afa9df02c1ab",
+        "callbackUrl":"http://localhost/callback/deploy/01261eba-56ee-4c27-b770-7d9fad5fbd96",
+        "circle": {
+          "headerValue":"Developer"
+        },
+        "status": "CREATED",
+        "createdAt": "2019-09-19T22:20:06.379Z"
+      }
+
+- request:
+    method: POST
+    url: ^/deployments/default
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0db",
+        "applicationName": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dv",
+        "modulesDeployments":[
+          {
+            "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dz",
+            "moduleId":"131d2352-287b-4b24-99f2-41dd3dcc6efc",
+            "k8sConfigurationId": "131d2352-287b-4b24-99f2-41dd3dcc6eff",
+            "componentsDeployments":[
+              {
+                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
+                "componentId":"7256b285-2101-44d6-ac38-d0d7503419e3",
+                "componentName":"component1",
+                "buildImageUrl":"registry.io/component1:qa-1",
+                "buildImageTag":"qa-1",
+                "status": "CREATED",
+                "createdAt": "2019-09-19T22:20:06.379Z"
+              },
+              {
+                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
+                "componentId":"82c05d7e-b49c-4f0a-990b-126144e0f5e6",
+                "componentName":"component2",
+                "buildImageUrl":"registry.io/component2:qa-2",
+                "buildImageTag":"qa-2",
+                "status": "CREATED",
+                "createdAt": "2019-09-19T22:20:06.379Z"
+              }
+            ],
+            "status": "CREATED",
+            "createdAt": "2019-09-19T22:20:06.379Z"
+          }
+        ],
+        "authorId":"8f87dee4-c67d-45a5-999c-afa9df02c1ab",
+        "callbackUrl":"http://localhost/callback/deploy/01261eba-56ee-4c27-b770-7d9fad5fbd96",
+        "circle": null,
+        "status": "CREATED",
+        "createdAt": "2019-09-19T22:20:06.379Z"
+      }
+
+- request:
+    method: POST
+    url: ^/deployments/.+/undeploy
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0db"
+      }
+
+- request:
+    method: POST
+    url: ^/modules
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "module-id",
+        "components": [
+          {
+            "id": "component-id",
+            "pipelineOptions": {
+              "pipelineCircles": [],
+              "pipelineVersions": [],
+              "pipelineUnusedVersions": []
+            },
+            "createdAt": "2020-02-29T02:09:40.291Z"
+          }
+        ],
+        "createdAt": "2020-02-29T02:09:40.291Z",
+        "cdConfigurationId": "f8b5dccb-398c-4345-8254-a3b5c8d9222a"
+      }
+
+- request:
+    method: POST
+    url: ^/configurations/cd
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "id": "f8b5dccb-398c-4345-8254-a3b5c8d9222a",
+        "name": "aa",
+        "authorId": "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f",
+        "workspaceId": "workspace-id",
+        "createdAt": "2020-02-28T20:13:17.950Z"
+      }
+
+- request:
+    method: GET
+    url: ^/configurations/cd
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "id": "f8b5dccb-398c-4345-8254-a3b5c8d9222a",
+          "name": "aa",
+          "authorId": "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f",
+          "workspaceId": "workspace-id",
+          "createdAt": "2020-02-28T20:13:17.950Z"
+        },
+        {
+          "id": "lkb5dccb-398c-4345-0000-a3b5c8d9222a",
+          "name": "bb",
+          "authorId": "a59186d2-ed6c-4a8d-a1cb-b5bfe450804f",
+          "workspaceId": "workspace-id",
+          "createdAt": "2020-02-28T20:13:17.950Z"
+        }
+      ]
+
+- request:
+    method: POST
+    url: ^/segmentation
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+         "name":"test-circle",
+         "node":{
+            "type":"CLAUSE",
+            "logicalOperator":"OR",
+            "clauses":[
+               {
+                  "type":"RULE",
+                  "logicalOperator":null,
+                  "clauses":[
+
+                  ],
+                  "content":{
+                     "key":"gender",
+                     "condition":"EQUAL",
+                     "value":[
+                        "F"
+                     ]
+                  }
+               }
+            ],
+            "content":null
+         },
+         "id":"67813c5b-be67-4d3f-9298-3261b5075d2f"
+      }
+
+- request:
+    method: POST
+    url: ^/segmentation/import
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+
+- request:
+    method: PUT
+    url: ^/segmentation/import
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+
+- request:
+    method: PUT
+    url: ^/segmentation/.+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+
+- request:
+    method: DELETE
+    url: ^/segmentation/.+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+
+- request:
+    method: POST
+    url: ^/registry
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+         "id":"67813c5b-be67-4d3f-9298-3261b5075d2f"
+      }
+
+- request:
+    method: GET
+    url: ^/registry
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+         {
+            "id":"64f295d8-7576-48c9-9601-1579f1be2a94",
+            "name":"Registry name 1",
+            "authorId": "64f295d8-7576-48c9-9601-1579f1be2a94"
+         },
+         {
+            "id":"1654b8cf-97b7-4643-9065-c0cf73f72a77",
+            "name":"Registry name 2",
+            "authorId": "1654b8cf-97b7-4643-9065-c0cf73f72a77"
+         },
+         {
+            "id":"a71da489-b903-4e1a-9815-0a131c07d3d3",
+            "name":"Registry name 3",
+            "authorId": "a71da489-b903-4e1a-9815-0a131c07d3d3"
+         },
+         {
+            "id":"67813c5b-be67-4d3f-9298-3261b5075d2f",
+            "name":"Registry name 4",
+            "authorId": "a71da489-b903-4e1a-9815-0a131c07d3d3"
+         }
+      ]
+
+- request:
+    method: DELETE
+    url: ^/registry/67813c5b-be67-4d3f-9298-3261b5075d2f
+  response:
+    status: 204
+    headers:
+      content-type: application/json
