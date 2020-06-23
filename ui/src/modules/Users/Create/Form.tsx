@@ -50,11 +50,10 @@ const FormUser = ({ onFinish }: Props) => {
   }, [createdUser, history, onFinish]);
 
   const onSubmit = (user: NewUser) => {
-    user = {
+    save({
       ...user,
-      isRoot: true
-    };
-    save(user);
+      isRoot: false
+    });
   };
 
   const renderForm = () => (
