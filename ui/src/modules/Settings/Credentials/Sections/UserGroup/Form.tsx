@@ -23,7 +23,7 @@ import Card from 'core/components/Card';
 import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { Option } from 'core/components/Form/Select/interfaces';
-import CustomOption from 'core/components/Form/Select/CustomOption';
+import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { getWorkspaceId } from 'core/utils/workspace';
 import Loader from './Loader';
 import { useUserGroup, useRole } from './hooks';

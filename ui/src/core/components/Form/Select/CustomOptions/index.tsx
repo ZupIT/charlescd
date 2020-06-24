@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import Single from './Single';
-import MultiCheck from './MultiCheck';
+import Icon from './Icon';
+import Description from './Description';
+import Check from './Check';
 
-export default {
-  Single,
-  MultiCheck
-};
+export default { Icon, Description, Check };

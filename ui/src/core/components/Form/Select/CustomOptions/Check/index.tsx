@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-import Single from './Single';
-import MultiCheck from './MultiCheck';
+import React from 'react';
+import { components, OptionTypeBase, OptionProps } from 'react-select';
+import Styled from './styled';
+import Checkbox from 'core/components/Form/Checkbox';
 
-export default {
-  Single,
-  MultiCheck
+const CheckOption = (props: OptionProps<OptionTypeBase>) => {
+  const { label } = props.data;
+
+  return (
+    <components.Option {...props}>
+      <Styled.Wrapper>
+        <Checkbox checked={props.isSelected} onChange={() => null} />
+        <Styled.Content>
+          <Styled.Label color="light">{label}</Styled.Label>
+        </Styled.Content>
+      </Styled.Wrapper>
+    </components.Option>
+  );
 };
+
+export default CheckOption;

@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 import FormComponent from 'core/components/Form';
+import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
 import ButtonComponent from 'core/components/Button';
@@ -77,7 +78,7 @@ const moduleWrapper = styled.div`
   }
 `;
 
-const Select = styled(FormComponent.Select)``;
+const Select = styled(SelectComponent.Single)``;
 
 const SelectWrapper = styled.div`
   width: 150px;

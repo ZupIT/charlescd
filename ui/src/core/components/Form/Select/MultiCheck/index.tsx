@@ -14,25 +14,46 @@
  * limitations under the License.
  */
 
-import { SelectComponentsConfig, OptionTypeBase } from 'react-select';
+import React from 'react';
+import { Control, Controller } from 'react-hook-form';
+import { Option } from '../interfaces';
+import Select from './Select';
 
-export type Option = {
-  [key: string]: string;
-};
-
-export interface Props {
-  placeholder?: string;
-  options?: Option[];
-  defaultValue?: Option | Option[];
+interface Props {
+  name: string;
+  control: Control<unknown>;
+  options: Option[];
+  rules?: Partial<{ required: boolean | string }>;
+  defaultValue?: Option[];
+  className?: string;
+  label?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
-  className?: string;
-  onChange?: (event: unknown) => void;
+  onChange?: (value: Option[]) => void;
   onInputChange?: (value: string) => void;
   customOption?: any;
-  customMultiValue?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
   isMulti?: boolean;
-  components?: SelectComponentsConfig<OptionTypeBase>;
 }
+
+const MultiCheck = ({
+  name,
+  control,
+  options,
+  customOption,
+  className,
+  defaultValue
+}: Props) => (
+  <Controller
+    as={Select}
+    options={options}
+    name={name}
+    control={control}
+    customOption={customOption}
+    className={className}
+    defaultValue={defaultValue}
+  />
+);
+
+export default MultiCheck;

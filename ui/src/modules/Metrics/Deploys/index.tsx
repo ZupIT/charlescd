@@ -25,6 +25,9 @@ import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
+import CircleFilter from './CircleFilter';
+import includes from 'lodash/includes';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
@@ -65,8 +68,10 @@ const Deploys = () => {
   }, [searchDeployMetrics]);
 
   const onSubmit = () => {
-    const { period } = getValues();
-    searchDeployMetrics({ period, circles: '' });
+    const { circles, period } = getValues();
+    const filteredCircles = includes(circles, allOption) ? [] : circles;
+    console.log(filteredCircles);
+    searchDeployMetrics({ period, circles: filteredCircles });
   };
 
   const renderData = (data: unknown) => {
@@ -76,20 +81,22 @@ const Deploys = () => {
 
   return (
     <Styled.Content data-testid="metrics-deploy">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Card width="531px" height="79px">
-          <Styled.Select
+      <Styled.Card width="531px" height="79px">
+        <Styled.FilterForm onSubmit={handleSubmit(onSubmit)}>
+          <Styled.SingleSelect
             label="Select a timestamp"
             name="period"
             options={periodFilterItems}
             control={control}
             defaultValue={periodFilterItems[0]}
           />
+          <CircleFilter control={control} />
           <Styled.Button type="submit" isLoading={loading}>
             Apply
           </Styled.Button>
-        </Styled.Card>
-      </form>
+        </Styled.FilterForm>
+      </Styled.Card>
+
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>

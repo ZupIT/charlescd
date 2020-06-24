@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import { AreaChart } from 'core/components/Charts';
 import ComponentButton from 'core/components/Button';
-import ComponentSelect from 'core/components/Form/Select';
+import SelectComponent from 'core/components/Form/Select';
 
 const Content = styled.div`
   display: flex;
@@ -63,7 +63,7 @@ const Card = styled.div<Card>`
   box-sizing: border-box;
 
   &:first-child {
-    display: flex};
+    display: flex;
   }
 `;
 
@@ -76,7 +76,7 @@ const Chart = styled(AreaChart)`
   }
 `;
 
-const Select = styled(ComponentSelect)`
+const SingleSelect = styled(SelectComponent.Single)`
   width: 200px;
   padding-right: 10px;
 
@@ -91,11 +91,21 @@ const Button = styled(ComponentButton.Default)`
   border-radius: 30px;
 `;
 
+const MultiSelect = styled(SelectComponent.MultiCheck)`
+  width: 200px;
+`;
+
+const FilterForm = styled.form`
+  display: flex;
+`;
+
 export default {
   Content,
   Card,
   Plates,
   Chart,
-  Select,
-  Button
+  SingleSelect,
+  MultiSelect,
+  Button,
+  FilterForm
 };

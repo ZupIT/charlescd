@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render } from 'unit-test/testUtils';
-import Select from '../Select';
+import Select from '../Single/Select';
 
 test('render select component', () => {
   const options = [{ value: 'apple', label: 'apple' }];
