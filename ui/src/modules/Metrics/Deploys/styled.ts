@@ -61,10 +61,6 @@ const Card = styled.div<Card>`
   padding: 16px 25px;
   border-radius: 4px;
   box-sizing: border-box;
-
-  &:first-child {
-    display: flex;
-  }
 `;
 
 const Chart = styled(AreaChart)`
@@ -78,7 +74,7 @@ const Chart = styled(AreaChart)`
 
 const SingleSelect = styled(SelectComponent.Single)`
   width: 200px;
-  padding-right: 10px;
+  padding-right: 30px;
 
   div:first-child {
     background: transparent;
@@ -87,7 +83,7 @@ const SingleSelect = styled(SelectComponent.Single)`
 
 const MultiSelect = styled(SelectComponent.MultiCheck)`
   width: 200px;
-  padding-right: 10px;
+  padding-right: 30px;
 
   div:first-child {
     background: transparent;
@@ -95,13 +91,13 @@ const MultiSelect = styled(SelectComponent.MultiCheck)`
 `;
 
 const Button = styled(ComponentButton.Default)`
-  height: 30px;
-  margin-top: 10px;
   border-radius: 30px;
+  margin-top: 10px;
 `;
 
 const FilterForm = styled.form`
   display: flex;
+  justify-content: space-around;
 `;
 
 export default {
