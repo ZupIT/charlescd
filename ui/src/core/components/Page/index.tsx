@@ -62,7 +62,7 @@ Page.Placeholder = ({
   children,
   className
 }: Props) => (
-  <Styled.Placeholder className={className}>
+  <Styled.Placeholder data-testid="page-placeholder" className={className}>
     <Icon name={icon} />
     <Styled.PlaceholderText>
       {title && (

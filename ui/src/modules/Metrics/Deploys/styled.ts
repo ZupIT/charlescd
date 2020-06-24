@@ -16,6 +16,8 @@
 
 import styled from 'styled-components';
 import { AreaChart } from 'core/components/Charts';
+import ComponentButton from 'core/components/Button';
+import ComponentSelect from 'core/components/Form/Select';
 
 const Content = styled.div`
   display: flex;
@@ -56,9 +58,13 @@ const Card = styled.div<Card>`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: ${({ height }) => height || '94px'};
   width: ${({ width }) => width || '175px'};
-  padding: 16px 30px;
+  padding: 16px 25px;
   border-radius: 4px;
   box-sizing: border-box;
+
+  &:first-child {
+    display: flex};
+  }
 `;
 
 const Chart = styled(AreaChart)`
@@ -70,9 +76,26 @@ const Chart = styled(AreaChart)`
   }
 `;
 
+const Select = styled(ComponentSelect)`
+  width: 200px;
+  padding-right: 10px;
+
+  div:first-child {
+    background: transparent;
+  }
+`;
+
+const Button = styled(ComponentButton.Default)`
+  height: 30px;
+  margin-top: 10px;
+  border-radius: 30px;
+`;
+
 export default {
   Content,
   Card,
   Plates,
-  Chart
+  Chart,
+  Select,
+  Button
 };
