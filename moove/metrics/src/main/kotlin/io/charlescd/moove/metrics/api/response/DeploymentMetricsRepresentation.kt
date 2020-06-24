@@ -1,5 +1,6 @@
 package io.charlescd.moove.metrics.api.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class DeploymentMetricsRepresentation(
@@ -15,10 +16,14 @@ data class DeploymentMetricsRepresentation(
 data class DeploymentStatsInPeriodRepresentation(
     val total: Int,
     val averageTime: Long,
+
+    @JsonFormat(pattern = "MM-dd-yyyy")
     val period: LocalDate
 )
 
 data class DeploymentAverageTimeInPeriodRepresentation(
     val averageTime: Long,
+
+    @JsonFormat(pattern = "MM-dd-yyyy")
     val period: LocalDate
 )
