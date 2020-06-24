@@ -77,7 +77,7 @@ export default {
       border: 'none',
       borderRadius: '0',
       fontSize: '14px',
-      backgroundColor: theme.select.background,
+      backgroundColor: 'transparent',
       borderBottom: `1px solid ${borderBottom}`,
       boxShadow: '0',
       '&:hover': {

@@ -43,7 +43,8 @@ const MultiCheck = ({
   options,
   customOption,
   className,
-  defaultValue
+  defaultValue,
+  label
 }: Props) => (
   <Controller
     as={Select}
@@ -53,6 +54,7 @@ const MultiCheck = ({
     customOption={customOption}
     className={className}
     defaultValue={defaultValue}
+    label={label}
   />
 );
 
