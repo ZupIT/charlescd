@@ -85,14 +85,19 @@ const SingleSelect = styled(SelectComponent.Single)`
   }
 `;
 
+const MultiSelect = styled(SelectComponent.MultiCheck)`
+  width: 200px;
+  padding-right: 10px;
+
+  div:first-child {
+    background: transparent;
+  }
+`;
+
 const Button = styled(ComponentButton.Default)`
   height: 30px;
   margin-top: 10px;
   border-radius: 30px;
-`;
-
-const MultiSelect = styled(SelectComponent.MultiCheck)`
-  width: 200px;
 `;
 
 const FilterForm = styled.form`

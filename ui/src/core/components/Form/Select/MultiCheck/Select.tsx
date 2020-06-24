@@ -23,9 +23,12 @@ import SelectComponent, {
   OptionTypeBase
 } from 'react-select';
 import Text from 'core/components/Text';
+import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
 import { Props, Option } from '../interfaces';
 import customStyles from '../customStyle';
 import { allOption } from './constants';
+
+const { Placeholder } = components;
 
 const ValueContainer = ({ children, ...props }: any) => {
   const currentValues = props.getValue();
@@ -40,6 +43,9 @@ const ValueContainer = ({ children, ...props }: any) => {
 
   return (
     <components.ValueContainer {...props}>
+      <Placeholder {...props} innerProps={null}>
+        {props.selectProps.placeholder}
+      </Placeholder>
       <Text.h4 color="light">{toBeRendered}</Text.h4>
     </components.ValueContainer>
   );
@@ -50,10 +56,20 @@ const MultiValue = (props: MultiValueProps<OptionTypeBase>) => {
   if (props.data.value === '*') {
     labelToBeDisplayed = 'All is selected';
   }
-  return <span>{labelToBeDisplayed}</span>;
+  return (
+    <components.SingleValue {...props}>
+      {labelToBeDisplayed}
+    </components.SingleValue>
+  );
 };
 
-const Select = ({ options, onChange, customOption, ...otherProps }: Props) => {
+const Select = ({
+  options,
+  onChange,
+  customOption,
+  label,
+  ...otherProps
+}: Props) => {
   const handleChange = (selected: Option[], event: ActionMeta) => {
     if (selected !== null && selected.length > 0) {
       if (selected[selected.length - 1].value === allOption.value) {
@@ -76,15 +92,19 @@ const Select = ({ options, onChange, customOption, ...otherProps }: Props) => {
   return (
     <SelectComponent
       {...otherProps}
+      placeholder={label}
       isMulti
       closeMenuOnSelect={false}
       hideSelectedOptions={false}
       styles={customStyles}
+      isClearable={false}
       options={[allOption, ...options]}
       components={{
         Option: customOption,
         MultiValue,
-        ValueContainer
+        ValueContainer,
+        IndicatorSeparator: null,
+        DropdownIndicator: () => <DownSVG />
       }}
       onChange={(value: ValueType<OptionTypeBase>, actionMeta: ActionMeta) =>
         handleChange(value as Option[], actionMeta)
