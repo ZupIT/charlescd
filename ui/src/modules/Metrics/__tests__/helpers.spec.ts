@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-export interface DeployMetricSearch {
-  period: string;
-  circles?: string;
-}
+import { timestampFormater } from '../helpers';
 
-export interface DeployMetricData {
-  successfulDeploymentsQuantity: number;
-  failedDeploymentsQuantity: number;
-  successfulDeploymentsAverageTimeInSeconds: number;
-  successfulDeploymentsInPeriod: MetricDataInPeriod[];
-  failedDeploymentsInPeriod: MetricDataInPeriod[];
-  deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
-}
-
-export interface MetricDataInPeriod {
-  total?: number;
-  averageTime: number;
-  date: string;
-}
+test('should return time formated correctly', async () => {
+  expect(timestampFormater(53)).toEqual('53s');
+  expect(timestampFormater(72)).toEqual('1:12m');
+  expect(timestampFormater(4365)).toEqual('1:12:45h');
+  expect(timestampFormater(0)).toEqual(0);
+})

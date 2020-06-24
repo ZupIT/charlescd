@@ -14,9 +14,25 @@
  * limitations under the License.
  */
 
-export enum PERIOD {
-  ONE_WEEK = 'ONE_WEEK',
-  TWO_WEEKS = 'TWO_WEEKS',
-  ONE_MONTH = 'ONE_MONTH',
-  THREE_MONTHS = 'THREE_MONTHS'
-}
+export const periodFilterItems = [
+  {
+    label: 'One week',
+    value: 'ONE_WEEK',
+    icon: 'Calendar'
+  },
+  {
+    label: 'Two weeks',
+    value: 'TWO_WEEKS',
+    icon: 'Calendar'
+  },
+  {
+    label: 'One month',
+    value: 'ONE_MONTH',
+    icon: 'Calendar'
+  },
+  {
+    label: 'Three monts',
+    value: 'THREE_MONTHS',
+    icon: 'Calendar'
+  }
+];

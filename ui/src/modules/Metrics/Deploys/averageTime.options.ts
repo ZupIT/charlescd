@@ -66,7 +66,7 @@ export default {
     }
   },
   xaxis: {
-    type: 'numeric',
+    type: 'datetime',
     tickAmount: 6,
     labels: {
       style: {

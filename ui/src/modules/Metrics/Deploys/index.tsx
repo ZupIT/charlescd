@@ -16,44 +16,57 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
+import { useForm } from 'react-hook-form';
+import map from 'lodash/map';
 import Loader from '../Loaders/index';
 import { timestampFormater } from '../helpers';
 import { useDeployMetric } from './hooks';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
+import { periodFilterItems } from './constants';
 import Styled from './styled';
 
 const Deploys = () => {
-  // const [series, workerHook] = useWorker<[]>(metricWorker, []);
   const { searchDeployMetrics, response, loading } = useDeployMetric();
+  const { control, handleSubmit, getValues } = useForm();
 
   const deploySeries = [
     {
       name: 'Deploy',
-      data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
+      data: map(response?.successfulDeploymentsInPeriod, successTotal => ({
+        x: successTotal.date,
+        y: successTotal.total
+      }))
     },
     {
       name: 'Error',
-      data: [18, 11, 1, 4, 13, 7, 2, 12, 8, 5]
+      data: map(response?.failedDeploymentsInPeriod, failedTotal => ({
+        x: failedTotal.date,
+        y: failedTotal.total
+      }))
     }
   ];
 
   const averageTimeSeries = [
     {
       name: 'Elapse time',
-      data: [40, 49, 69, 56, 18, 25, 47, 55, 61, 43]
+      data: map(
+        response?.deploymentsAverageTimeInPeriod,
+        DeploymentAverageTime => ({
+          x: DeploymentAverageTime.date,
+          y: DeploymentAverageTime.averageTime
+        })
+      )
     }
   ];
 
-  const period = 'ONE_WEEK';
-  const circles = 'b49ba0b3-4e8e-46cf-a526-9f7c6d46fc7b';
-
   useEffect(() => {
-    searchDeployMetrics({ period });
+    searchDeployMetrics({ period: periodFilterItems[0].value });
   }, [searchDeployMetrics]);
 
   const onSubmit = () => {
-    searchDeployMetrics({ period, circles });
+    const { period } = getValues();
+    searchDeployMetrics({ period, circles: '' });
   };
 
   const renderData = (data: unknown) => {
@@ -62,13 +75,21 @@ const Deploys = () => {
   };
 
   return (
-    <Styled.Content>
-      <Styled.Card width="531px" height="79px">
-        Filters
-        <button onClick={() => onSubmit()}>
-          <span> asdf </span>
-        </button>
-      </Styled.Card>
+    <Styled.Content data-testid="metrics-deploy">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Styled.Card width="531px" height="79px">
+          <Styled.Select
+            label="Select a timestamp"
+            name="period"
+            options={periodFilterItems}
+            control={control}
+            defaultValue={periodFilterItems[0]}
+          />
+          <Styled.Button type="submit" isLoading={loading}>
+            Apply
+          </Styled.Button>
+        </Styled.Card>
+      </form>
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>

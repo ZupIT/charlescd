@@ -65,6 +65,8 @@ export const dark = {
   },
   dashboard: {
     card: COLOR_BASTILLE,
+    button: COLOR_PAYNES_GREY,
+    text: COLOR_SANTAS_GREY,
     chart: {
       Error: COLOR_RED_ORANGE,
       Deploy: COLOR_MOUNTAIN_MEADOW
