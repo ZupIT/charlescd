@@ -1,6 +1,6 @@
 import mock from './mock';
 
-const API = '/auth/realms/mock/protocol/openid-connect/token';
+const API = '/auth/realms/{realm}/protocol/openid-connect/token';
 
 const keycloak = {
   method: 'POST',

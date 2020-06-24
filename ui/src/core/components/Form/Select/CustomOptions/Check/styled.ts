@@ -14,7 +14,32 @@
  * limitations under the License.
  */
 
-import Icon from './Icon';
-import Description from './Description';
+import styled from 'styled-components';
+import Text from 'core/components/Text';
 
-export default { Icon, Description };
+const Wrapper = styled.div`
+  display: flex;
+`;
+
+const checkWidth = '30px';
+
+const Checkmark = styled.span``;
+
+const Content = styled.div`
+  width: calc(100% - ${checkWidth});
+`;
+
+const Label = styled(Text.h5)`
+  margin-left: 10px;
+  margin-bottom: 5px;
+`;
+
+const Description = styled(Text.h5)``;
+
+export default {
+  Wrapper,
+  Content,
+  Label,
+  Description,
+  Checkmark
+};

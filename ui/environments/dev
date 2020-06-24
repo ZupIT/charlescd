@@ -1,5 +1,5 @@
 PUBLIC_URL=/
-REACT_APP_API_URI=YOUR_ENV_VARIABLE
-REACT_APP_AUTH_URI=YOUR_ENV_VARIABLE
-REACT_APP_AUTH_REALM=realm
-REACT_APP_AUTH_CLIENT_ID=clientId
+REACT_APP_API_URI=https://charles-dev.continuousplatform.com
+REACT_APP_AUTH_URI=https://charles-dev.continuousplatform.com/keycloak
+REACT_APP_AUTH_REALM=charlescd
+REACT_APP_AUTH_CLIENT_ID=charlescd-client
