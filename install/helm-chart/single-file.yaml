@@ -1314,7 +1314,7 @@ spec:
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
-              value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
+              value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
             - name: ORIGIN_HOSTS
               value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
