@@ -26,11 +26,18 @@ import { ComponentEntity } from '../../components/entity'
 import { CdConfigurationEntity } from '../../configurations/entity'
 import { CdConfigurationsRepository } from '../../configurations/repository'
 import {
-    CircleDeploymentEntity, ComponentDeploymentEntity, ComponentUndeploymentEntity,
-    DeploymentEntity, QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity, QueuedIstioDeploymentEntity
+    CircleDeploymentEntity,
+    ComponentDeploymentEntity,
+    ComponentUndeploymentEntity,
+    DeploymentEntity,
+    QueuedDeploymentEntity,
+    QueuedIstioDeploymentEntity,
+    QueuedUndeploymentEntity,
+    UndeploymentEntity
 } from '../entity'
 import { ComponentUndeploymentsRepository } from '../repository'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
+import { CallbackTypeEnum } from '../../notifications/enums/callback-type.enum';
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -199,11 +206,11 @@ export class PipelineDeploymentsService {
     }
 
     private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
-        return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedUndeploymentId=${queuedUndeploymentId}`
+        return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedDeploymentId=${queuedUndeploymentId}`
     }
 
     private getIstioDeploymentCallbackUrl(queuedIstioDeploymentId: number): string {
-        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedIstioDeploymentId=${queuedIstioDeploymentId}`
+        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedDeploymetId=${queuedIstioDeploymentId}`
     }
 
     private async triggerComponentDeployment(
@@ -228,7 +235,7 @@ export class PipelineDeploymentsService {
         this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            deploymentEntity.circleId, pipelineCallbackUrl
+            deploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.DEPLOYMENT
         )
 
         await cdService.createDeployment(connectorConfiguration)
@@ -252,7 +259,7 @@ export class PipelineDeploymentsService {
         this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            undeploymentEntity.circleId, pipelineCallbackUrl
+            undeploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.UNDEPLOYMENT
         )
         await cdService.createUndeployment(connectorConfiguration)
     }
@@ -276,7 +283,7 @@ export class PipelineDeploymentsService {
 
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            deploymentEntity.circleId, pipelineCallbackUrl
+            deploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.ISTIO_DEPLOYMENT
         )
 
         await cdService.createIstioDeployment(connectorConfiguration)
@@ -287,7 +294,8 @@ export class PipelineDeploymentsService {
         cdConfiguration: CdConfigurationEntity,
         componentDeployment: ComponentDeploymentEntity,
         callbackCircleId: string,
-        pipelineCallbackUrl: string
+        pipelineCallbackUrl: string,
+        typeCallback: CallbackTypeEnum
     ): IConnectorConfiguration {
 
         return {
@@ -298,7 +306,8 @@ export class PipelineDeploymentsService {
             componentName: componentDeployment.componentName,
             helmRepository: componentDeployment.moduleDeployment.helmRepository,
             callbackCircleId,
-            pipelineCallbackUrl
+            pipelineCallbackUrl,
+            typeCallback
         }
     }
 }
