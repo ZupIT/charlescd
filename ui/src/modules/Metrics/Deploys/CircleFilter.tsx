@@ -31,11 +31,9 @@ const CircleFilter = ({ control, setValue }: Props) => {
       name="circles"
       isLoading={loading}
       customOption={CustomOption.Check}
-      closeMenuOnSelect={false}
-      hideSelectedOptions={false}
       options={circles}
       label="Select Circles"
-      isMulti
+      defaultValue={[allOption]}
     />
   );
 };
