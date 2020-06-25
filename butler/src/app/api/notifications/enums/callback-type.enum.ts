@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export enum NotificationTypeEnum {
+export enum CallbackTypeEnum {
 
     DEPLOYMENT = 'DEPLOYMENT',
     UNDEPLOYMENT = 'UNDEPLOYMENT',

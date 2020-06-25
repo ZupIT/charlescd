@@ -34,4 +34,6 @@ export interface IConnectorConfiguration {
     callbackCircleId: string
 
     pipelineCallbackUrl: string
+
+    typeCallback: string
 }
