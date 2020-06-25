@@ -25,7 +25,7 @@ test('render react hook select', () => {
   const { control } = result.current;
 
   const { getByTestId } = render(
-    <FormSelect name="fieldSelect" control={control} options={[]} />
+    <FormSelect.Single name="fieldSelect" control={control} options={[]} />
   );
 
   expect(getByTestId('select-fieldSelect')).toBeInTheDocument();
