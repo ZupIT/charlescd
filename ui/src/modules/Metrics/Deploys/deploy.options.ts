@@ -42,6 +42,8 @@ export default {
   legend: {
     show: true,
     showForNullSeries: true,
+    showForSingleSeries: true,
+    showForZeroSeries: true,
     position: 'top',
     horizontalAlign: 'left',
     itemMargin: {
