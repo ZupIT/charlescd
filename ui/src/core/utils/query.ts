@@ -25,7 +25,13 @@ type Params = {
 export const buildParams = (data: Params) => {
   const params = new URLSearchParams();
 
-  map(data, (value, key) => params.append(key, value as string));
+  map(data, (value, key) => {
+    if (Array.isArray(data[key])) {
+      map(value as [], item => params.append(key, item));
+    } else {
+      params.append(key, value as string);
+    }
+  });
 
   return params;
 };
