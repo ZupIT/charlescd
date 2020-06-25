@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo, useMemo } from 'react';
 import Styled from './styled';
 import { Control } from 'react-hook-form';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
@@ -13,7 +13,9 @@ type Props = {
 
 const CircleFilter = ({ control, setValue }: Props) => {
   const [loading, filterCircles, , data] = useCircles(CIRCLE_TYPES.list);
-  const circles = normalizeSelectOptions(data?.content);
+  const circles = useMemo(() => {
+    return normalizeSelectOptions(data?.content);
+  }, [data]);
 
   useEffect(() => {
     if (data) {
@@ -38,4 +40,4 @@ const CircleFilter = ({ control, setValue }: Props) => {
   );
 };
 
-export default CircleFilter;
+export default memo(CircleFilter);
