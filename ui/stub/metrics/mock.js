@@ -72,111 +72,111 @@ const CirclesMetrics = [
 ];
 
 const DeployMetrics = () => ({
-  successfulDeploymentsQuantity: 27,
-  failedDeploymentsQuantity: 0,
-  successfulDeploymentsAverageTimeInSeconds: 87,
+  successfulDeployments: 27,
+  failedDeployments: 0,
+  successfulDeploymentsAverageTime: 87,
   successfulDeploymentsInPeriod: [
     {
       total: random(0, 10),
       averageTime: 207,
-      date: '08-12-2020'
+      period: '08-12-2020'
     },
     {
       total: random(0, 40),
       averageTime: 30,
-      date: '08-13-2020'
+      period: '08-13-2020'
     },
     {
       total: random(0, 25),
       averageTime: 90,
-      date: '08-14-2020'
+      period: '08-14-2020'
     },
     {
       total: random(0, 150),
       averageTime: 27,
-      date: '08-15-2020'
+      period: '08-15-2020'
     },
     {
       total: random(0, 80),
       averageTime: 63,
-      date: '08-16-2020'
+      period: '08-16-2020'
     },
     {
       total: random(0, 130),
       averageTime: 80,
-      date: '08-17-2020'
+      period: '08-17-2020'
     },
     {
       total: random(0, 2),
       averageTime: 195,
-      date: '08-18-2020'
+      period: '08-18-2020'
     }
   ],
   failedDeploymentsInPeriod: [
     {
       total: random(0, 5),
       averageTime: 207,
-      date: '08-12-2020'
+      period: '08-12-2020'
     },
     {
       total: random(0, 10),
       averageTime: 30,
-      date: '08-13-2020'
+      period: '08-13-2020'
     },
     {
       total: random(0, 14),
       averageTime: 90,
-      date: '08-14-2020'
+      period: '08-14-2020'
     },
     {
       total: random(0, 60),
       averageTime: 27,
-      date: '08-15-2020'
+      period: '08-15-2020'
     },
     {
       total: random(0, 40),
       averageTime: 27,
-      date: '08-16-2020'
+      period: '08-16-2020'
     },
     {
       total: random(0, 20),
       averageTime: 27,
-      date: '08-17-2020'
+      period: '08-17-2020'
     },
     {
       total: random(0, 0),
       averageTime: 195,
-      date: '08-18-2020'
+      period: '08-18-2020'
     }
   ],
   deploymentsAverageTimeInPeriod: [
     {
       averageTime: 203,
-      date: '08-12-2020'
+      period: '08-12-2020'
     },
     {
       averageTime: 102,
-      date: '08-13-2020'
+      period: '08-13-2020'
     },
     {
       averageTime: 330,
-      date: '08-14-2020'
+      period: '08-14-2020'
     },
     {
       averageTime: 83,
-      date: '08-15-2020'
+      period: '08-15-2020'
     },
     {
       averageTime: 26,
-      date: '08-16-2020'
+      period: '08-16-2020'
     },
     {
       averageTime: 150,
-      date: '08-17-2020'
+      period: '08-17-2020'
     },
     {
       averageTime: 203,
-      date: '08-18-2020'
+      period: '08-18-2020'
     }
   ]
 });

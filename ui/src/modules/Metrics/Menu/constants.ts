@@ -21,10 +21,5 @@ export const items = [
     id: genMenuId(routes.metricsDeploys),
     text: 'Deploys',
     to: routes.metricsDeploys
-  },
-  {
-    id: genMenuId(routes.metricsCircles),
-    text: 'Circles',
-    to: routes.metricsCircles
   }
 ];
