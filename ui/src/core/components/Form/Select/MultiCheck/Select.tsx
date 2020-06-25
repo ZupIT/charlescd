@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import SelectComponent, {
+import {
   ActionMeta,
   ValueType,
   components,
@@ -27,14 +27,15 @@ import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
 import { Props, Option } from '../interfaces';
 import customStyles from '../customStyle';
 import { allOption } from './constants';
+import Styled from '../styled';
 
 const { Placeholder } = components;
 
 const ValueContainer = ({ children, ...props }: any) => {
-  const currentValues = props.getValue();
+  const currentValues = props.getValue() as Option[];
   let toBeRendered = children;
 
-  if (currentValues.some((val: any) => val.value === allOption.value)) {
+  if (currentValues.some((val: Option) => val.value === allOption.value)) {
     toBeRendered = [[children[0][0]], children[1]];
   } else if (currentValues.length) {
     const label = (
@@ -94,7 +95,7 @@ const Select = ({
   };
 
   return (
-    <SelectComponent
+    <Styled.Select
       {...otherProps}
       isMulti
       placeholder={label}
