@@ -23,7 +23,7 @@ export default {
   },
   colors: ['#30D158', '#FF453A'],
   stroke: {
-    curve: 'straight'
+    curve: 'smooth'
   },
   theme: {
     mode: 'dark'
@@ -43,7 +43,10 @@ export default {
     show: true,
     showForNullSeries: true,
     position: 'top',
-    horizontalAlign: 'left'
+    horizontalAlign: 'left',
+    itemMargin: {
+      horizontal: 20
+    }
   },
   onItemClick: {
     toggleDataSeries: true

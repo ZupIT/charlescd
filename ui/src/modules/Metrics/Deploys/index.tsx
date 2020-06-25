@@ -16,6 +16,7 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import Loader from '../Loaders/index';
@@ -27,7 +28,6 @@ import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import includes from 'lodash/includes';
-import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
@@ -94,8 +94,10 @@ const Deploys = () => {
             defaultValue={periodFilterItems[0]}
           />
           <CircleFilter control={control} setValue={setValue} />
-          <Styled.Button type="submit" isLoading={loading}>
-            Apply
+          <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
+            <Text.h5 weight="bold" align="center" color="light">
+              Apply
+            </Text.h5>
           </Styled.Button>
         </Styled.FilterForm>
       </Styled.Card>
