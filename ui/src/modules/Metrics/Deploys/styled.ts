@@ -100,6 +100,11 @@ const FilterForm = styled.form`
   justify-content: space-around;
 `;
 
+const ChartControls = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 export default {
   Content,
   Card,
@@ -108,5 +113,6 @@ export default {
   SingleSelect,
   MultiSelect,
   Button,
-  FilterForm
+  FilterForm,
+  ChartControls
 };

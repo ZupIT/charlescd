@@ -28,6 +28,7 @@ import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import includes from 'lodash/includes';
+import ChartMenu from './ChartMenu';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
@@ -80,6 +81,10 @@ const Deploys = () => {
     }
 
     return <Text.h1 color="light">{data}</Text.h1>;
+  };
+
+  const resetChart = (chartId: string) => {
+    window.ApexCharts.exec(chartId, 'resetSeries');
   };
 
   return (
@@ -137,9 +142,12 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="light" weight="bold">
-          Deploy
-        </Text.h2>
+        <Styled.ChartControls>
+          <Text.h2 color="light" weight="bold">
+            Deploy
+          </Text.h2>
+          <ChartMenu onReset={() => resetChart('chartDeploy')} />
+        </Styled.ChartControls>
         <Styled.Chart
           options={deployOptions}
           series={deploySeries}
@@ -148,9 +156,12 @@ const Deploys = () => {
         />
       </Styled.Card>
       <Styled.Card width="1220px" height="521px">
-        <Text.h2 color="light" weight="bold">
-          Average time
-        </Text.h2>
+        <Styled.ChartControls>
+          <Text.h2 color="light" weight="bold">
+            Average time
+          </Text.h2>
+          <ChartMenu onReset={() => resetChart('chartAverageTime')} />
+        </Styled.ChartControls>
         <Styled.Chart
           options={averageTimeOptions}
           series={averageTimeSeries}

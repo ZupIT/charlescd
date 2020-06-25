@@ -19,7 +19,8 @@ import dayjs from 'dayjs';
 export default {
   chart: {
     width: 1180,
-    height: 450
+    height: 450,
+    id: 'chartAverageTime'
   },
   colors: ['#10AA80'],
   stroke: {
