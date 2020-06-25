@@ -40,9 +40,14 @@ export interface EnvVariables {
   REACT_APP_AUTH_REALM: string;
 }
 
+type GlobalApexCharts = {
+  exec: Function;
+};
+
 declare global {
   interface Window {
     ENVIRONMENT: EnvVariables;
+    ApexCharts: GlobalApexCharts;
   }
 }
 
