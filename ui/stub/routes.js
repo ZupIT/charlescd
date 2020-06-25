@@ -1,29 +1,31 @@
-const keycloack = require("./auth");
-const circles = require("./circles");
-const users = require("./users");
-const modules = require("./modules");
-const metrics = require("./metrics");
-const workspaces = require("./workspaces");
-const usergroups = require("./user-groups");
-const git = require("./git");
-const registry = require("./registry");
-const metricProvider = require("./metricProvider");
-const userGroup = require("./userGroup");
-const cdConfiguration = require("./cdConfiguration");
-const roles = require("./roles");
+import auth from './auth';
+import circles from './circles';
+import users from './users';
+import modules from './modules';
+import metrics from './metrics';
+import workspaces from './workspaces';
+import userGroups from './user-groups';
+import git from './git';
+import registry from './registry';
+import metricProvider from './metricProvider';
+import userGroup from './userGroup';
+import cdConfiguration from './cdConfiguration';
+import roles from './roles';
+import circleMatcher from './circle-matcher';
 
-module.exports = {
-  keycloack,
+export default {
+  auth,
   circles,
   users,
   modules,
   metrics,
   workspaces,
-  usergroups,
+  userGroups,
   git,
   registry,
   metricProvider,
   userGroup,
   cdConfiguration,
-  roles
+  roles,
+  circleMatcher
 };
