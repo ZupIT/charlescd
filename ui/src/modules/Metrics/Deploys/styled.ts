@@ -105,6 +105,10 @@ const ChartControls = styled.div`
   justify-content: space-between;
 `;
 
+const ChartMenu = styled.div`
+  margin-right: 7px;
+`;
+
 export default {
   Content,
   Card,
@@ -114,5 +118,6 @@ export default {
   MultiSelect,
   Button,
   FilterForm,
-  ChartControls
+  ChartControls,
+  ChartMenu
 };
