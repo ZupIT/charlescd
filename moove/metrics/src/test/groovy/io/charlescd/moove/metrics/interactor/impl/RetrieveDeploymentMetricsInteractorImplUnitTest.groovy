@@ -131,4 +131,48 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         PeriodType.THREE_MONTHS | 90
     }
 
+
+    def 'when returning items in deployments list, the list should be ordered by date'() {
+        given:
+        def failedDeployStats = new DeploymentGeneralStats(5, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0))
+        def successfulDeployStats = new DeploymentGeneralStats(30, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(300))
+
+        def deploymentsAverageTimeInPeriod = [new DeploymentAverageTimeStats(Duration.ofSeconds(200), LocalDate.of(2020, 06, 21)),
+                                              new DeploymentAverageTimeStats(Duration.ofSeconds(175), LocalDate.of(2020, 06, 22)),
+                                              new DeploymentAverageTimeStats(Duration.ofSeconds(230), LocalDate.of(2020, 06, 20))]
+
+        def deploymentsStatsInPeriod = [new DeploymentStats(32, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(155), LocalDate.of(2020, 06, 22)),
+                                        new DeploymentStats(28, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(235), LocalDate.of(2020, 06, 20)),
+                                        new DeploymentStats(17, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(200), LocalDate.of(2020, 06, 21)),
+                                        new DeploymentStats(5, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), LocalDate.of(2020, 06, 22)),
+                                        new DeploymentStats(8, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), LocalDate.of(2020, 06, 21))]
+
+        when:
+        def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, null)
+
+        then:
+        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], period.numberOfDays) >> [failedDeployStats, successfulDeployStats]
+        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], period.numberOfDays) >> deploymentsStatsInPeriod
+        1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, [], period.numberOfDays) >> deploymentsAverageTimeInPeriod
+        0 * _
+
+        result.failedDeployments == 5
+        result.successfulDeployments == 30
+        result.successfulDeploymentsAverageTime == 300
+
+        result.successfulDeploymentsInPeriod.size() == 3
+        result.successfulDeploymentsInPeriod[0].period == LocalDate.of(2020, 06, 20)
+        result.successfulDeploymentsInPeriod[1].period == LocalDate.of(2020, 06, 21)
+        result.successfulDeploymentsInPeriod[2].period == LocalDate.of(2020, 06, 22)
+
+        result.failedDeploymentsInPeriod.size() == 2
+        result.failedDeploymentsInPeriod[0].period == LocalDate.of(2020, 06, 21)
+        result.failedDeploymentsInPeriod[1].period == LocalDate.of(2020, 06, 22)
+
+        result.deploymentsAverageTimeInPeriod.size() == 3
+        result.deploymentsAverageTimeInPeriod[0].period == LocalDate.of(2020, 06, 20)
+        result.deploymentsAverageTimeInPeriod[1].period == LocalDate.of(2020, 06, 21)
+        result.deploymentsAverageTimeInPeriod[2].period == LocalDate.of(2020, 06, 22)
+    }
+
 }
