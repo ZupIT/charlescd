@@ -34,10 +34,14 @@ const ValueContainer = ({ children, ...props }: any) => {
   const currentValues = props.getValue();
   let toBeRendered = children;
 
-  if (currentValues.some((val: any) => val.value === '*')) {
+  if (currentValues.some((val: any) => val.value === allOption.value)) {
     toBeRendered = [[children[0][0]], children[1]];
   } else if (currentValues.length) {
-    const label = `${currentValues.length} selected`;
+    const label = (
+      <components.SingleValue {...props} key="selectedAmount">
+        {currentValues.length} selected
+      </components.SingleValue>
+    );
     toBeRendered = [label, children[1]];
   }
 
@@ -52,8 +56,8 @@ const ValueContainer = ({ children, ...props }: any) => {
 };
 
 const MultiValue = (props: MultiValueProps<OptionTypeBase>) => {
-  let labelToBeDisplayed = `${props.data.label}, `;
-  if (props.data.value === '*') {
+  let labelToBeDisplayed = props.data.label;
+  if (props.data.value === allOption.value) {
     labelToBeDisplayed = 'All is selected';
   }
   return (
@@ -92,12 +96,13 @@ const Select = ({
   return (
     <SelectComponent
       {...otherProps}
-      placeholder={label}
       isMulti
+      placeholder={label}
       closeMenuOnSelect={false}
       hideSelectedOptions={false}
       styles={customStyles}
       isClearable={false}
+      isSearchable={false}
       options={[allOption, ...options]}
       components={{
         Option: customOption,

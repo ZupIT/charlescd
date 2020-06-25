@@ -15,7 +15,6 @@
  */
 
 import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { DeployMetricSearch } from 'modules/Metrics/Deploys/interfaces';
 import { baseRequest } from './base';
 
 const endpoint = '/moove/metrics';
@@ -25,11 +24,5 @@ export const findCircleMetrics = (data: CircleMetrics) => {
   return baseRequest(`${endpoint}/?${params}`);
 };
 
-export const findDeployMetrics = (filter: DeployMetricSearch) => {
-  const params = new URLSearchParams({
-    period: `${filter?.period}`,
-    circles: `${filter?.circles}`
-  });
-
-  return baseRequest(`${endpoint}/deployments?${params}`);
-};
+export const findDeployMetrics = (params: URLSearchParams) =>
+  baseRequest(`${endpoint}/deployments?${params}`);

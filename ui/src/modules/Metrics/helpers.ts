@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { Option } from 'core/components/Form/Select/interfaces';
+import map from 'lodash/map';
+
 export const timestampFormater = (seconds: number) => {
   const hours = Math.floor(seconds / 60 / 60);
   const minutes = Math.floor(seconds / 60) - hours * 60;
@@ -23,3 +26,6 @@ export const timestampFormater = (seconds: number) => {
   else if (seconds > 0) return (seconds % 60) + 's';
   else return 0;
 };
+
+export const normalizeCircleParams = (selectedCircles: Option[]) =>
+  map(selectedCircles, 'value');
