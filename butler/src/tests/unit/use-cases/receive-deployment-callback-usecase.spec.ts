@@ -26,28 +26,23 @@ import {
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-import {
-    PipelineErrorHandlerService,
-    PipelineQueuesService
-} from '../../../app/api/deployments/services'
+import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 import {
     ComponentDeploymentsRepositoryStub,
     DeploymentsRepositoryStub,
     QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
-import {
-    ComponentDeploymentsRepository,
-    QueuedDeploymentsRepository
-} from '../../../app/api/deployments/repository'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { FinishDeploymentDto } from '../../../app/api/notifications/dto'
 import {
+    CircleDeploymentEntity,
     ComponentDeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
-    QueuedDeploymentEntity,
-    CircleDeploymentEntity
+    QueuedDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { NotificationTypeEnum } from '../../../app/api/notifications/enums/notification-type.enum';
 
 describe('ReceiveDeploymentCallbackUsecase', () => {
 
@@ -85,8 +80,8 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
         pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
         pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
         componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-        successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
-        failedFinishDeploymentDto = new FinishDeploymentDto('FAILED')
+        successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED', NotificationTypeEnum.DEPLOYMENT)
+        failedFinishDeploymentDto = new FinishDeploymentDto('FAILED', NotificationTypeEnum.DEPLOYMENT)
         queuedDeployment = new QueuedDeploymentEntity(
             'dummy-component-id',
             'dummy-component-deployment-id',
