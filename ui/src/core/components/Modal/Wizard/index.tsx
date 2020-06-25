@@ -44,7 +44,7 @@ const Wizard = () => {
     } else if (localStorageValue === 'not-first-access') {
       setIsOpen(false);
     }
-  }, [localStorage, localStorageValue]);
+  }, [localStorageValue]);
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
