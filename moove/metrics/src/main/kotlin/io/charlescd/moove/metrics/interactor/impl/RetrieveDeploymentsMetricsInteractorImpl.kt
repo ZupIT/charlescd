@@ -47,11 +47,14 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
             failedDeployments = failedDeployments?.total ?: 0,
             successfulDeploymentsAverageTime = successfulDeployments?.averageTime?.seconds ?: 0,
             deploymentsAverageTimeInPeriod = deploymentsAverageTime
-                .map { DeploymentAverageTimeInPeriodRepresentation(it.averageTime.seconds, it.date) },
+                .map { DeploymentAverageTimeInPeriodRepresentation(it.averageTime.seconds, it.date) }
+                .sortedBy { it.period },
             successfulDeploymentsInPeriod = successDeploymentsInPeriod
-                .map { DeploymentStatsInPeriodRepresentation(it.total, it.averageTime.seconds, it.date) },
+                .map { DeploymentStatsInPeriodRepresentation(it.total, it.averageTime.seconds, it.date) }
+                .sortedBy { it.period },
             failedDeploymentsInPeriod = failedDeploymentsInPeriod
                 .map { DeploymentStatsInPeriodRepresentation(it.total, it.averageTime.seconds, it.date) }
+                .sortedBy { it.period }
         )
     }
 }
