@@ -1,7 +1,7 @@
 const METRICS_TYPE = {
-  REQUESTS_BY_CIRCLE: "REQUESTS_BY_CIRCLE",
-  REQUESTS_ERRORS_BY_CIRCLE: "REQUESTS_ERRORS_BY_CIRCLE",
-  REQUESTS_LATENCY_BY_CIRCLE: "REQUESTS_LATENCY_BY_CIRCLE"
+  REQUESTS_BY_CIRCLE: 'REQUESTS_BY_CIRCLE',
+  REQUESTS_ERRORS_BY_CIRCLE: 'REQUESTS_ERRORS_BY_CIRCLE',
+  REQUESTS_LATENCY_BY_CIRCLE: 'REQUESTS_LATENCY_BY_CIRCLE'
 };
 
 const METRICS_SPEED = {
@@ -10,22 +10,22 @@ const METRICS_SPEED = {
 };
 
 const CHART_TYPE = {
-  COMPARISON: "COMPARISON",
-  NORMAL: "NORMAL"
+  COMPARISON: 'COMPARISON',
+  NORMAL: 'NORMAL'
 };
 
 const PROJECTION_TYPE = {
-  FIVE_MINUTES: "FIVE_MINUTES",
-  THIRTY_MINUTES: "THIRTY_MINUTES",
-  ONE_HOUR: "ONE_HOUR",
-  THREE_HOUR: "THREE_HOUR",
-  EIGHT_HOUR: "EIGHT_HOUR"
+  FIVE_MINUTES: 'FIVE_MINUTES',
+  THIRTY_MINUTES: 'THIRTY_MINUTES',
+  ONE_HOUR: 'ONE_HOUR',
+  THREE_HOUR: 'THREE_HOUR',
+  EIGHT_HOUR: 'EIGHT_HOUR'
 };
 
 const CircleMetricsData = {
   period: {
     value: 1,
-    label: "h"
+    label: 'h'
   },
   data: [
     {
@@ -53,23 +53,23 @@ const CircleMetricsData = {
 
 const CirclesMetrics = [
   {
-    circleId: "f52eda57-5607-4306-te33-477eg398cc2a",
+    circleId: 'f52eda57-5607-4306-te33-477eg398cc2a',
     projectionType: PROJECTION_TYPE,
     metricType: METRICS_TYPE
   },
   {
-    circleId: "883t35d8-dece-412f-9w25-f37h54e56fa5",
+    circleId: '883t35d8-dece-412f-9w25-f37h54e56fa5',
     projectionType: PROJECTION_TYPE,
     metricType: METRICS_TYPE
   },
   {
-    circleId: "cay5h4a5-6278-45b5-ab15-a53e76tdbc3e",
+    circleId: 'cay5h4a5-6278-45b5-ab15-a53e76tdbc3e',
     projectionType: PROJECTION_TYPE,
     metricType: METRICS_TYPE
   }
 ];
 
-module.exports = {
+export default {
   CircleMetricsData,
   CirclesMetrics
 };
