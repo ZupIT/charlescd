@@ -37,14 +37,14 @@ const Deploys = () => {
     {
       name: 'Deploy',
       data: map(response?.successfulDeploymentsInPeriod, successTotal => ({
-        x: successTotal.date,
+        x: successTotal.period,
         y: successTotal.total
       }))
     },
     {
       name: 'Error',
       data: map(response?.failedDeploymentsInPeriod, failedTotal => ({
-        x: failedTotal.date,
+        x: failedTotal.period,
         y: failedTotal.total
       }))
     }
@@ -56,7 +56,7 @@ const Deploys = () => {
       data: map(
         response?.deploymentsAverageTimeInPeriod,
         DeploymentAverageTime => ({
-          x: DeploymentAverageTime.date,
+          x: DeploymentAverageTime.period,
           y: DeploymentAverageTime.averageTime
         })
       )
@@ -109,7 +109,7 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              renderData(response?.successfulDeploymentsQuantity)
+              renderData(response?.successfulDeployments)
             )}
           </Text.h1>
         </Styled.Card>
@@ -119,7 +119,7 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              renderData(response?.failedDeploymentsQuantity)
+              renderData(response?.failedDeployments)
             )}
           </Text.h1>
         </Styled.Card>
@@ -130,9 +130,7 @@ const Deploys = () => {
               <Loader.Card />
             ) : (
               renderData(
-                timestampFormater(
-                  response?.successfulDeploymentsAverageTimeInSeconds
-                )
+                timestampFormater(response?.successfulDeploymentsAverageTime)
               )
             )}
           </Text.h1>

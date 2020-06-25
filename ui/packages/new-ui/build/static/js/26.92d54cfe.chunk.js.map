@@ -1,1 +1,0 @@
-{"version":3,"sources":["core/assets/svg/empty-workspaces.svg"],"names":["module","exports"],"mappings":"4FAAAA,EAAOC,QAAU,IAA0B","file":"static/js/26.92d54cfe.chunk.js","sourcesContent":["module.exports = __webpack_public_path__ + \"static/media/empty-workspaces.5684f8cc.svg\";"],"sourceRoot":""}

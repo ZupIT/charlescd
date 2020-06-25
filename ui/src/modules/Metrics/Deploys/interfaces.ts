@@ -20,9 +20,9 @@ export interface DeployMetricSearch {
 }
 
 export interface DeployMetricData {
-  successfulDeploymentsQuantity: number;
-  failedDeploymentsQuantity: number;
-  successfulDeploymentsAverageTimeInSeconds: number;
+  successfulDeployments: number;
+  failedDeployments: number;
+  successfulDeploymentsAverageTime: number;
   successfulDeploymentsInPeriod: MetricDataInPeriod[];
   failedDeploymentsInPeriod: MetricDataInPeriod[];
   deploymentsAverageTimeInPeriod: MetricDataInPeriod[];
@@ -31,5 +31,5 @@ export interface DeployMetricData {
 export interface MetricDataInPeriod {
   total?: number;
   averageTime: number;
-  date: string;
+  period: string;
 }
