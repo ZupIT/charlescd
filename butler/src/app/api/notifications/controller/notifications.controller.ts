@@ -21,7 +21,7 @@ import {
   ReceiveIstioDeploymentCallbackUsecase,
   ReceiveUndeploymentCallbackUsecase
 } from '../use-cases'
-import { NotificationTypeEnum } from '../enums/notification-type.enum';
+import { CallbackTypeEnum } from '../enums/callback-type.enum';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -38,13 +38,13 @@ export class NotificationsController {
     @Query('queuedDeploymentId') queuedDeploymentId: number,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
-    if (finishDeploymentDto.type == NotificationTypeEnum.DEPLOYMENT) {
+    if (finishDeploymentDto.typeCallback == CallbackTypeEnum.DEPLOYMENT) {
       return await this.receiveDeploymentCallbackUsecase.execute(queuedDeploymentId, finishDeploymentDto)
     }
-    if (finishDeploymentDto.type == NotificationTypeEnum.ISTIO_DEPLOYMENT) {
+    if (finishDeploymentDto.typeCallback == CallbackTypeEnum.ISTIO_DEPLOYMENT) {
       return await this.receiveIstioDeploymentCallbackUsecase.execute(queuedDeploymentId, finishDeploymentDto)
     }
-    if (finishDeploymentDto.type == NotificationTypeEnum.UNDEPLOYMENT) {
+    if (finishDeploymentDto.typeCallback == CallbackTypeEnum.UNDEPLOYMENT) {
       return await this.receiveUndeploymentCallbackUsecase.execute(queuedDeploymentId, finishDeploymentDto)
     }
   }

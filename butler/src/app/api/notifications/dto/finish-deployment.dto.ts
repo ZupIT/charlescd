@@ -17,7 +17,7 @@
 import { NotificationStatusEnum } from '../enums'
 import { Allow, IsDefined } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { NotificationTypeEnum } from '../enums/notification-type.enum';
+import { CallbackTypeEnum } from '../enums/callback-type.enum';
 
 export class FinishDeploymentDto {
 
@@ -27,14 +27,14 @@ export class FinishDeploymentDto {
 
   @ApiProperty()
   @IsDefined()
-  public readonly type: NotificationTypeEnum
+  public readonly typeCallback: CallbackTypeEnum
 
   constructor(
       status: string,
-      type: NotificationTypeEnum
+      type: CallbackTypeEnum
   ) {
     this.status = status
-    this.type = type
+    this.typeCallback = type
   }
 
   public isSuccessful(): boolean {

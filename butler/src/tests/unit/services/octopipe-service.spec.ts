@@ -28,6 +28,7 @@ import { IOctopipePayload, ClusterProviderEnum } from '../../../app/core/integra
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
+import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('Octopipe Service', () => {
   let octopipeService: OctopipeService
@@ -102,7 +103,8 @@ describe('Octopipe Service', () => {
         componentName: componentDeployment.componentName,
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
-        pipelineCallbackUrl: 'dummy-callback-url'
+        pipelineCallbackUrl: 'dummy-callback-url',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -196,7 +198,8 @@ describe('Octopipe Service', () => {
         componentName: componentDeployment.componentName,
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
-        pipelineCallbackUrl: 'dummy-callback-url'
+        pipelineCallbackUrl: 'dummy-callback-url',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -286,7 +289,8 @@ describe('Octopipe Service', () => {
         componentName: componentDeployment.componentName,
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
-        pipelineCallbackUrl: 'dummy-callback-url'
+        pipelineCallbackUrl: 'dummy-callback-url',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -368,7 +372,8 @@ describe('Octopipe Service', () => {
         componentName: componentDeployment.componentName,
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
-        pipelineCallbackUrl: 'dummy-callback-url'
+        pipelineCallbackUrl: 'dummy-callback-url',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload =

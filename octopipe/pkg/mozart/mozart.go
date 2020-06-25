@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
@@ -36,6 +37,11 @@ type Mozart struct {
 	Stages             [][]*pipeline.Step
 	CurrentExecutionID *primitive.ObjectID
 	//TODO: Add pipeline to struct
+}
+
+type Payload struct {
+	status string
+	typeCallback string
 }
 
 // TODO: Change deployment to pipeline
@@ -60,7 +66,7 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 	}
 
 	for _, steps := range mozart.Stages {
-		if len(steps) <= 0 {
+		if len(steps) <= 1 {
 			continue
 		}
 
@@ -70,7 +76,7 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 			break
 		}
 	}
-
+	fmt.Println(deployment)
 	mozart.finishPipeline(deployment, err)
 }
 
@@ -231,15 +237,15 @@ func (mozart *Mozart) getManifestsByTemplateStep(step *pipeline.Step) (map[strin
 }
 
 func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineError error) error {
-	var payload map[string]string
+	var payload Payload
 	client := http.Client{}
 
 	if pipelineError != nil {
-		payload = map[string]string{"status": "FAILED"}
+		payload = Payload{status: "FAILED", typeCallback: pipeline.TypeCallback}
 	} else {
-		payload = map[string]string{"status": "SUCCEEDED"}
+		payload = Payload{status: "SUCCEEDED", typeCallback: pipeline.TypeCallback}
 	}
-
+	fmt.Println(payload)
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return err

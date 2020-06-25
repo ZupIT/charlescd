@@ -48,4 +48,5 @@ type Deployment struct {
 	K8s            cloudprovider.Cloudprovider `json:"k8s"`
 	Istio          map[string]interface{}      `json:"istio"`
 	CircleID       string                      `json:"circleId"`
+    TypeCallback    string                      `json:"typeCallback"`
 }
