@@ -40,11 +40,11 @@ export const ConfigurationConstants = {
 
   SPINNAKER_CONNECTION_MILLISECONDS_RETRY_DELAY: 1000,
 
-  DARWIN_UNDEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/undeployment',
+  DARWIN_UNDEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications',
 
-  DARWIN_DEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/deployment',
+  DARWIN_DEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications',
 
-  DARWIN_ISTIO_DEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/istio-deployment',
+  DARWIN_ISTIO_DEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications',
 
   SPINNAKER_URL: 'http://localhost:8883/spinnaker',
 

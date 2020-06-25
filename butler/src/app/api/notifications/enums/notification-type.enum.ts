@@ -14,30 +14,10 @@
  * limitations under the License.
  */
 
-import { NotificationStatusEnum } from '../enums'
-import { Allow, IsDefined } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
-import { NotificationTypeEnum } from '../enums/notification-type.enum';
+export enum NotificationTypeEnum {
 
-export class FinishDeploymentDto {
+    DEPLOYMENT = 'DEPLOYMENT',
+    UNDEPLOYMENT = 'UNDEPLOYMENT',
+    ISTIO_DEPLOYMENT = 'ISTIO_DEPLOYMENT',
 
-  @ApiProperty()
-  @Allow()
-  public readonly status: string
-
-  @ApiProperty()
-  @IsDefined()
-  public readonly type: NotificationTypeEnum
-
-  constructor(
-      status: string,
-      type: NotificationTypeEnum
-  ) {
-    this.status = status
-    this.type = type
-  }
-
-  public isSuccessful(): boolean {
-    return this.status === NotificationStatusEnum.SUCCEEDED
-  }
 }
