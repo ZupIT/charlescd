@@ -29,7 +29,7 @@ export interface Props {
   className?: string;
   onChange?: (event: unknown) => void;
   onInputChange?: (value: string) => void;
-  customOption?: any;
+  customOption?: React.ReactNode;
   customMultiValue?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;

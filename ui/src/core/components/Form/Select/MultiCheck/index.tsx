@@ -31,7 +31,7 @@ interface Props {
   isLoading?: boolean;
   onChange?: (value: Option[]) => void;
   onInputChange?: (value: string) => void;
-  customOption?: any;
+  customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
   isMulti?: boolean;
