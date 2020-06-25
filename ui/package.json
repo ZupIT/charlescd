@@ -36,7 +36,7 @@
     "test:watch": "react-scripts test",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "build": "react-scripts build",
-    "stub": "nodemon ./stub"
+    "stub": "nodemon -r esm ./stub"
   },
   "bugs": {
     "url": "https://github.com/ZupIT/darwin-ui/issues"
@@ -100,6 +100,7 @@
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "esm": "^3.2.25",
     "hapi": "^18.1.0",
     "jest-fetch-mock": "^3.0.3",
     "lodash": "^4.17.15",
