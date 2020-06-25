@@ -78,6 +78,7 @@ const HealthCard = ({ type, health, name, className }: Props) => {
 
   return (
     <Styled.Wrapper
+      data-testid={`health-variation-card-${type}`}
       className={className}
       isExpanded={isExpanded}
       isDefault={isDefault}
