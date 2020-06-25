@@ -75,7 +75,10 @@ const Select = ({
   label,
   ...otherProps
 }: Props) => {
-  const handleChange = (selected: Option[], event: ActionMeta) => {
+  const handleChange = (
+    selected: Option[],
+    event: ActionMeta<OptionTypeBase>
+  ) => {
     if (selected !== null && selected.length > 0) {
       if (selected[selected.length - 1].value === allOption.value) {
         return onChange([allOption, ...options]);
@@ -112,9 +115,10 @@ const Select = ({
         IndicatorSeparator: null,
         DropdownIndicator: () => <DownSVG />
       }}
-      onChange={(value: ValueType<OptionTypeBase>, actionMeta: ActionMeta) =>
-        handleChange(value as Option[], actionMeta)
-      }
+      onChange={(
+        value: ValueType<OptionTypeBase>,
+        actionMeta: ActionMeta<OptionTypeBase>
+      ) => handleChange(value as Option[], actionMeta)}
     />
   );
 };
