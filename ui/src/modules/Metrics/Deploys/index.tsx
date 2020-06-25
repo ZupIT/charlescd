@@ -19,7 +19,7 @@ import Text from 'core/components/Text';
 import { useForm } from 'react-hook-form';
 import map from 'lodash/map';
 import Loader from '../Loaders/index';
-import { timestampFormater } from '../helpers';
+import { timestampFormater, normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
@@ -31,7 +31,7 @@ import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
-  const { control, handleSubmit, getValues } = useForm();
+  const { control, handleSubmit, getValues, setValue } = useForm();
 
   const deploySeries = [
     {
@@ -70,12 +70,15 @@ const Deploys = () => {
   const onSubmit = () => {
     const { circles, period } = getValues();
     const filteredCircles = includes(circles, allOption) ? [] : circles;
-    console.log(filteredCircles);
-    searchDeployMetrics({ period, circles: filteredCircles });
+    const circleIds = normalizeCircleParams(filteredCircles);
+    searchDeployMetrics({ period: period.value, circles: circleIds });
   };
 
   const renderData = (data: unknown) => {
-    if (data === 0) return <Text.h2 color="light"> No data </Text.h2>;
+    if (!data) {
+      return <Text.h2 color="light"> No data </Text.h2>;
+    }
+
     return <Text.h1 color="light">{data}</Text.h1>;
   };
 
@@ -90,7 +93,7 @@ const Deploys = () => {
             control={control}
             defaultValue={periodFilterItems[0]}
           />
-          <CircleFilter control={control} />
+          <CircleFilter control={control} setValue={setValue} />
           <Styled.Button type="submit" isLoading={loading}>
             Apply
           </Styled.Button>
