@@ -18,7 +18,7 @@ import { useCallback } from 'react';
 import { findDeployMetrics } from 'core/providers/metrics';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { DeployMetricData } from './interfaces';
-import { buildParams } from 'core/utils/query';
+import { buildParams, URLParams } from 'core/utils/query';
 
 interface DeployMetric extends FetchProps {
   searchDeployMetrics: Function;
@@ -32,7 +32,7 @@ export const useDeployMetric = (): DeployMetric => {
   const { response, loading } = deployData;
 
   const searchDeployMetrics = useCallback(
-    (payload: any) => {
+    (payload: URLParams) => {
       const params = buildParams(payload);
       searchDeployData(params);
     },

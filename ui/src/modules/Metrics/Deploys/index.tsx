@@ -16,53 +16,28 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import { useForm } from 'react-hook-form';
-import map from 'lodash/map';
 import Loader from '../Loaders/index';
-import { timestampFormater, normalizeCircleParams } from '../helpers';
+import {
+  timestampFormater,
+  normalizeCircleParams,
+  getDeploySeries,
+  getAverageTimeSeries
+} from '../helpers';
 import { useDeployMetric } from './hooks';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
-import includes from 'lodash/includes';
 import ChartMenu from './ChartMenu';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
 
-  const deploySeries = [
-    {
-      name: 'Deploy',
-      data: map(response?.successfulDeploymentsInPeriod, successTotal => ({
-        x: successTotal.period,
-        y: successTotal.total
-      }))
-    },
-    {
-      name: 'Error',
-      data: map(response?.failedDeploymentsInPeriod, failedTotal => ({
-        x: failedTotal.period,
-        y: failedTotal.total
-      }))
-    }
-  ];
-
-  const averageTimeSeries = [
-    {
-      name: 'Elapse time',
-      data: map(
-        response?.deploymentsAverageTimeInPeriod,
-        DeploymentAverageTime => ({
-          x: DeploymentAverageTime.period,
-          y: DeploymentAverageTime.averageTime
-        })
-      )
-    }
-  ];
+  const deploySeries = getDeploySeries(response);
+  const averageTimeSeries = getAverageTimeSeries(response);
 
   useEffect(() => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
@@ -70,12 +45,11 @@ const Deploys = () => {
 
   const onSubmit = () => {
     const { circles, period } = getValues();
-    const filteredCircles = includes(circles, allOption) ? [] : circles;
-    const circleIds = normalizeCircleParams(filteredCircles);
+    const circleIds = normalizeCircleParams(circles);
     searchDeployMetrics({ period: period.value, circles: circleIds });
   };
 
-  const renderData = (data: unknown) => {
+  const renderData = (data: number | string) => {
     if (!data) {
       return <Text.h2 color="light"> No data </Text.h2>;
     }
