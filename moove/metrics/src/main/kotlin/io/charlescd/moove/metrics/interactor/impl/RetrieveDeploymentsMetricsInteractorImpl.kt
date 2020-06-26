@@ -19,42 +19,33 @@ package io.charlescd.moove.metrics.interactor.impl
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.metrics.api.PeriodType
-import io.charlescd.moove.metrics.api.response.DeploymentAverageTimeInPeriodRepresentation
 import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
-import io.charlescd.moove.metrics.api.response.DeploymentStatsInPeriodRepresentation
 import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
 import org.springframework.stereotype.Component
 
 @Component
 class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: DeploymentRepository) : RetrieveDeploymentsMetricsInteractor {
 
-    override fun execute(workspaceId: String, period: PeriodType, circlesId: List<String>?): DeploymentMetricsRepresentation {
+    override fun execute(workspaceId: String, period: PeriodType, circlesIds: List<String>?): DeploymentMetricsRepresentation {
         val deploymentGeneralStats = deploymentRepository
-            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, circlesId ?: emptyList(), period.numberOfDays)
+            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
         val failedDeployments = deploymentGeneralStats.find { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
         val successfulDeployments = deploymentGeneralStats.find { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
 
         val deploymentsStats = deploymentRepository
-            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesId ?: emptyList(), period.numberOfDays)
+            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
         val successDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
         val failedDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
 
         val deploymentsAverageTime = deploymentRepository
-            .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesId ?: emptyList(), period.numberOfDays)
+            .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
 
-        return DeploymentMetricsRepresentation(
-            successfulDeployments = successfulDeployments?.total ?: 0,
-            failedDeployments = failedDeployments?.total ?: 0,
-            successfulDeploymentsAverageTime = successfulDeployments?.averageTime?.seconds ?: 0,
-            deploymentsAverageTimeInPeriod = deploymentsAverageTime
-                .map { DeploymentAverageTimeInPeriodRepresentation(it.averageTime.seconds, it.date) }
-                .sortedBy { it.period },
-            successfulDeploymentsInPeriod = successDeploymentsInPeriod
-                .map { DeploymentStatsInPeriodRepresentation(it.total, it.averageTime.seconds, it.date) }
-                .sortedBy { it.period },
-            failedDeploymentsInPeriod = failedDeploymentsInPeriod
-                .map { DeploymentStatsInPeriodRepresentation(it.total, it.averageTime.seconds, it.date) }
-                .sortedBy { it.period }
+        return DeploymentMetricsRepresentation.from(
+            successfulDeployments,
+            failedDeployments,
+            successDeploymentsInPeriod,
+            failedDeploymentsInPeriod,
+            deploymentsAverageTime
         )
     }
 }

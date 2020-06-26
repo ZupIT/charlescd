@@ -21,5 +21,5 @@ import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
 
 interface RetrieveDeploymentsMetricsInteractor {
 
-    fun execute(workspaceId: String, period: PeriodType, circlesId: List<String>?): DeploymentMetricsRepresentation
+    fun execute(workspaceId: String, period: PeriodType, circlesIds: List<String>?): DeploymentMetricsRepresentation
 }
