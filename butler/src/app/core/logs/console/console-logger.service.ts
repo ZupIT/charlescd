@@ -60,14 +60,18 @@ export class ConsoleLoggerService {
     message: string,
     messageObject?: any
   ): void {
+    if (process.env.NODE_ENV !== 'test') {
       this.logger.log('info', message, this.getDataTrace(messageObject))
+    }
   }
 
   public error(
     error: string,
     errorObject?: any
   ): void {
-      this.logger.log('error', error, { error: JSON.stringify(errorObject, errorObject != null ? Object.getOwnPropertyNames(errorObject) : null) })
+    if (process.env.NODE_ENV !== 'test') {
+      this.logger.log('error', error, {error: JSON.stringify(errorObject, errorObject != null ? Object.getOwnPropertyNames(errorObject) : null)})
+    }
   }
 
   public getDataTrace(data?: any) {

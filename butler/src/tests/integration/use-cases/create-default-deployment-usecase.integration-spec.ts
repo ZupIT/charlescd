@@ -30,7 +30,7 @@ import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios';
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service';
-import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -457,6 +457,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
       callbackUrl: 'http://localhost:8883/moove',
     }
+
     const httpSpy = jest.spyOn(httpService, 'post')
     await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest)
 
