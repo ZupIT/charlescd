@@ -32,7 +32,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
-import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 
