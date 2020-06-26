@@ -41,7 +41,7 @@ import { SpinnakerApiService } from '../../../app/core/integrations/cd/spinnaker
 import { of } from 'rxjs'
 import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
 import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
-import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService

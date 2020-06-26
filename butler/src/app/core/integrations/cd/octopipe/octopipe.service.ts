@@ -55,7 +55,7 @@ export class OctopipeService implements ICdServiceStrategy {
   public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
 
     const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
-    console.log(await this.deploy(payload))
+    await this.deploy(payload)
   }
 
   public async deploy(
