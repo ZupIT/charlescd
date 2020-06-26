@@ -109,8 +109,8 @@ export class PipelineDeploymentsService {
         } catch (error) {
             this.consoleLoggerService.error('ERROR:TRIGGER_UNDEPLOYMENT', error)
             const componentUndeployment: ComponentUndeploymentEntity =
-                await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
-            await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+                await this.componentUndeploymentsRepository.getOneWithAllRelations(queuedUndeployment.componentUndeploymentId)
+            await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentUndeployment, queuedUndeployment)
             await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
             throw error
         }
