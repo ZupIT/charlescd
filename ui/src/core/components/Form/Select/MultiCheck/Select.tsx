@@ -15,66 +15,15 @@
  */
 
 import React from 'react';
-import {
-  ActionMeta,
-  ValueType,
-  components,
-  MultiValueProps,
-  OptionTypeBase,
-  SingleValueProps,
-  ValueContainerProps
-} from 'react-select';
-import Text from 'core/components/Text';
+import { ActionMeta, ValueType, OptionTypeBase } from 'react-select';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
 import { Props, Option } from '../interfaces';
 import customStyles from '../customStyle';
 import { allOption } from './constants';
 import Styled from '../styled';
 import { handleChange } from './helpers';
-
-const { Placeholder } = components;
-
-type ContainerProps = {
-  children?: React.ReactNode[][];
-} & ValueContainerProps<OptionTypeBase> &
-  SingleValueProps<OptionTypeBase>;
-
-const ValueContainer = ({ children, ...props }: ContainerProps) => {
-  const currentValues = props.getValue() as Option[];
-  let toBeRendered = children;
-
-  if (currentValues.some((val: Option) => val.value === allOption.value)) {
-    toBeRendered = [[children[0][0]], children[1]];
-  } else if (currentValues.length) {
-    const label = [
-      <components.SingleValue {...props} key="selectedAmount">
-        {currentValues.length} selected
-      </components.SingleValue>
-    ];
-    toBeRendered = [label, children[1]];
-  }
-
-  return (
-    <components.ValueContainer {...props}>
-      <Placeholder {...props} innerProps={null}>
-        {props.selectProps.placeholder}
-      </Placeholder>
-      <Text.h4 color="light">{toBeRendered}</Text.h4>
-    </components.ValueContainer>
-  );
-};
-
-const MultiValue = (props: MultiValueProps<OptionTypeBase>) => {
-  const { data } = props;
-  const isAllSelected = data.value === allOption.value;
-  const labelToBeDisplayed = isAllSelected ? 'All is selected' : data.label;
-
-  return (
-    <components.SingleValue {...props}>
-      {labelToBeDisplayed}
-    </components.SingleValue>
-  );
-};
+import MultiValue from './MultiValue';
+import ValueContainer from './ValueContainer';
 
 const Select = ({
   options,

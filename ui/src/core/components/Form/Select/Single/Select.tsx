@@ -17,9 +17,9 @@
 import React from 'react';
 import { components } from 'react-select';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
-import SingleValue from '../SingleValue';
+import SingleValue from './SingleValue';
 import customStyles from '../customStyle';
-import FloatingLabel from '../FloatingLabel';
+import FloatingLabel from './FloatingLabel';
 import { Props, Option } from '../interfaces';
 import Styled from '../styled';
 
