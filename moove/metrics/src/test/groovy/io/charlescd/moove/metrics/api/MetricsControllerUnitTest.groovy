@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.metrics.api
 
-
 import io.charlescd.moove.metrics.api.response.*
 import io.charlescd.moove.metrics.domain.HealthStatus
 import io.charlescd.moove.metrics.domain.MetricType
@@ -35,6 +34,7 @@ class MetricsControllerUnitTest extends Specification {
     def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
     def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
     def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth, retrieveDeploymentsMetric)
+
 
     def circleId = "circle-id"
     def workspaceId = "workspace-id"
