@@ -36,6 +36,7 @@ import { PipelineErrorHandlerService } from '../../../app/api/deployments/servic
 
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
+import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
@@ -152,6 +153,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           unusedVersions: [],
           versions: [],
           webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+          typeCallback : CallbackTypeEnum.UNDEPLOYMENT
 
         }
 
@@ -218,6 +220,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           unusedVersions: [],
           versions: [],
           webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+          typeCallback : CallbackTypeEnum.UNDEPLOYMENT
         }
         expect(octopipeServiceSpy).toHaveBeenCalledWith(
           expectedOctopipePayload2

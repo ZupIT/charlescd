@@ -60,5 +60,4 @@ export interface IOctopipePayload {
   helmUrl: string,
   k8s?: IEKSClusterConfig | IGenericClusterConfig | null // TODO Remove null from this union
   circleId: string,
-  typeCallback: string
 }

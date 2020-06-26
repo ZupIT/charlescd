@@ -35,6 +35,7 @@ export class OctopipeApiService {
     ) {}
 
     public deploy(octopipeConfiguration: IOctopipePayload): Observable<AxiosResponse> {
+        console.log(octopipeConfiguration)
         return this.httpService.post(
             `${this.envConfiguration.octopipeUrl}/api/v1/pipelines`,
             octopipeConfiguration,

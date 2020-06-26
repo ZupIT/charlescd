@@ -29,6 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -417,6 +418,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it(`/POST deployments/circle should call octopipe for each RUNNING component deployment`, async () => {
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -455,13 +457,14 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: '4046f193-9479-48b5-ac29 -01f419b64cb5',
       circle: {
         headerValue: 'circle-header'
       }
     }
 
     const httpSpy = jest.spyOn(httpService, 'post')
+
     await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
 
     expect(httpSpy).toHaveBeenCalledTimes(2)
@@ -514,6 +517,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           version: 'component-name2-image-tag2'
         }
       ],
+      typeCallback: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: '12345'
     }
@@ -529,8 +533,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
-    jest.spyOn(httpService, 'post').
-      mockImplementation(() => of({} as AxiosResponse))
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
