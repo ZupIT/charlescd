@@ -71,7 +71,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'SUCCEEDED',
-            typeNotification: CallbackTypeEnum.DEPLOYMENT
+            typeCallback: CallbackTypeEnum.DEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
@@ -114,7 +114,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'FAILED',
-            type: CallbackTypeEnum.DEPLOYMENT
+            typeCallback: CallbackTypeEnum.DEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
@@ -156,7 +156,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'SUCCEEDED',
-            type: CallbackTypeEnum.DEPLOYMENT
+            typeCallback: CallbackTypeEnum.DEPLOYMENT
         }
         let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
             findOneOrFail( {
@@ -197,7 +197,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'FAILED',
-            type: CallbackTypeEnum.DEPLOYMENT
+            typeCallback: CallbackTypeEnum.DEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
@@ -239,7 +239,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'FAILED',
-            type: CallbackTypeEnum.DEPLOYMENT
+            typeCallback: CallbackTypeEnum.DEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.

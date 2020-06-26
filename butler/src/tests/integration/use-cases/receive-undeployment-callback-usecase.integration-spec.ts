@@ -32,6 +32,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
+import {CallbackTypeEnum} from '../../../app/api/notifications/enums/callback-type.enum';
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 
@@ -74,7 +75,8 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
         jest.spyOn(httpService, 'post').
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
-            status : 'FAILED'
+            status : 'FAILED',
+            typeCallback: CallbackTypeEnum.UNDEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedUndeploymentEntity  = await queuedUndeploymentsRepository.

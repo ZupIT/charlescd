@@ -140,7 +140,8 @@ describe('Octopipe Service', () => {
           }
         ],
         webHookUrl: 'dummy-callback-url',
-        circleId: 'circle-id'
+        circleId: 'circle-id',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -235,7 +236,8 @@ describe('Octopipe Service', () => {
           }
         ],
         webHookUrl: 'dummy-callback-url',
-        circleId: 'circle-id'
+        circleId: 'circle-id',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -315,7 +317,8 @@ describe('Octopipe Service', () => {
           }
         ],
         webHookUrl: 'dummy-callback-url',
-        circleId: 'circle-id'
+        circleId: 'circle-id',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -405,7 +408,8 @@ describe('Octopipe Service', () => {
         },
         unusedVersions: [],
         versions: [],
-        webHookUrl: 'dummy-callback-url'
+        webHookUrl: 'dummy-callback-url',
+        typeCallback: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
