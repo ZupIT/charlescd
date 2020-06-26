@@ -462,7 +462,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     const httpSpy = jest.spyOn(httpService, 'post')
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
 
     expect(httpSpy).toHaveBeenCalledTimes(2)
 
@@ -576,7 +577,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345').expect(500)
+    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
+      .set('x-circle-id', '12345').expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
@@ -626,7 +628,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345').expect(500)
+    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
+      .set('x-circle-id', '12345').expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
@@ -675,7 +678,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         headerValue: 'circle-header'
       }
     }
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345').expect(400)
+    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
+      .set('x-circle-id', '12345').expect(400)
 
   })
 
