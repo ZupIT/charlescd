@@ -8,7 +8,7 @@ module.exports = function(app) {
       changeOrigin: true,
       logLevel: 'debug',
       pathRewrite: {
-        '^/api/': '/'
+        '^/api/': process.env.PUBLIC_URL
       }
     })
   );
