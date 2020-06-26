@@ -75,6 +75,7 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 			break
 		}
 	}
+
 	mozart.finishPipeline(deployment, err)
 }
 

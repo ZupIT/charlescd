@@ -61,9 +61,11 @@ spec:
             - name: DARWIN_NOTIFICATION_URL
               value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
             - name: DARWIN_UNDEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/undeployment"
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
             - name: DARWIN_DEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications/deployment"
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
+            - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
+              value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
