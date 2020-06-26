@@ -43,6 +43,7 @@ jobs:
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.1
       with:
+        :wqgithub-token: ${{ secrets.github_token }}
         path-to-lcov: ./villager/target/site/jacoco/jacoco.xml
         base-path: ./villager
     - name: Code style
