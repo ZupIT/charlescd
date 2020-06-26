@@ -16,6 +16,7 @@
 
 import { DeployMetricData } from './interfaces';
 import map from 'lodash/map';
+import dayjs from 'dayjs';
 
 export const getDeploySeries = (data: DeployMetricData) => [
   {
@@ -43,3 +44,7 @@ export const getAverageTimeSeries = (data: DeployMetricData) => [
     }))
   }
 ];
+
+export const chartDateFormatter = (date: string) => {
+  return dayjs(date).format('DD/MM');
+};

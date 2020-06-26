@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import dayjs from 'dayjs';
+import { chartDateFormatter as formatter } from './helpers';
 
 export default {
   chart: {
@@ -56,9 +56,7 @@ export default {
   },
   tooltip: {
     x: {
-      formatter: (date: string) => {
-        return dayjs(date).format('DD/MM');
-      }
+      formatter
     }
   },
   yaxis: {
@@ -79,9 +77,7 @@ export default {
         color: '#fff',
         fontSize: '10px'
       },
-      formatter: (date: string) => {
-        return dayjs(date).format('DD/MM');
-      }
+      formatter
     }
   }
 };
