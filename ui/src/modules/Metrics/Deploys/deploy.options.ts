@@ -22,10 +22,7 @@ export default {
     height: 450,
     id: 'chartDeploy'
   },
-  colors: ['#30D158', '#FF453A'],
-  stroke: {
-    curve: 'smooth'
-  },
+  colors: ['#10AA80', '#FF453A'],
   theme: {
     mode: 'dark'
   },
@@ -40,6 +37,11 @@ export default {
       left: 30
     }
   },
+  plotOption: {
+    bar: {
+      horizontal: false
+    }
+  },
   legend: {
     show: true,
     showForNullSeries: true,
@@ -47,8 +49,11 @@ export default {
     showForZeroSeries: true,
     position: 'top',
     horizontalAlign: 'left',
+    markers: {
+      radius: 50
+    },
     itemMargin: {
-      horizontal: 20
+      horizontal: 10
     }
   },
   onItemClick: {
@@ -70,9 +75,9 @@ export default {
     }
   },
   xaxis: {
-    type: 'datetime',
-    tickAmount: 6,
+    tickAmount: 'dataPoints',
     labels: {
+      hideOverlappingLabels: false,
       style: {
         color: '#fff',
         fontSize: '10px'

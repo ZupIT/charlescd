@@ -66,8 +66,9 @@ export default {
   },
   xaxis: {
     type: 'datetime',
-    tickAmount: 6,
+    tickAmount: 7,
     labels: {
+      hideOverlappingLabels: false,
       style: {
         color: '#fff',
         fontSize: '10px'

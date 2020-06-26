@@ -14,7 +14,23 @@
  * limitations under the License.
  */
 
-import AreaChart from './Area';
-import ColumnChart from './Column';
+import styled from 'styled-components';
+import Charts from 'react-apexcharts';
 
-export { AreaChart, ColumnChart };
+interface ChartProps {
+  className?: string;
+}
+
+const Chart = styled(Charts)<ChartProps>`
+  cursor: crosshair;
+  padding-right: 15px;
+
+  .apexcharts-canvas,
+  .apexcharts-canvas.apexcharts-theme-dark {
+    background-color: transparent;
+  }
+`;
+
+export default {
+  Chart
+};
