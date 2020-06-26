@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
+import { PERIOD_PARAM } from './interfaces';
+
 export const periodFilterItems = [
   {
     label: 'One week',
-    value: 'ONE_WEEK',
-    icon: 'Calendar'
+    value: PERIOD_PARAM.ONE_WEEK
   },
   {
     label: 'Two weeks',
-    value: 'TWO_WEEKS',
-    icon: 'Calendar'
+    value: PERIOD_PARAM.TWO_WEEKS
   },
   {
     label: 'One month',
-    value: 'ONE_MONTH',
-    icon: 'Calendar'
+    value: PERIOD_PARAM.ONE_MONTH
   },
   {
     label: 'Three monts',
-    value: 'THREE_MONTHS',
-    icon: 'Calendar'
+    value: PERIOD_PARAM.THREE_MONTHS
   }
 ];

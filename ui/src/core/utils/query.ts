@@ -18,11 +18,11 @@ import map from 'lodash/map';
 
 const getQueryStrings = () => new URLSearchParams(window.location.search);
 
-type Params = {
-  [key: string]: unknown;
+export type URLParams = {
+  [key: string]: string | number | string[] | number[];
 };
 
-export const buildParams = (data: Params) => {
+export const buildParams = (data: URLParams) => {
   const params = new URLSearchParams();
 
   map(data, (value, key) => {

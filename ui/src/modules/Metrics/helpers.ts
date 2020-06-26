@@ -16,6 +16,9 @@
 
 import { Option } from 'core/components/Form/Select/interfaces';
 import map from 'lodash/map';
+import includes from 'lodash/includes';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
+import { DeployMetricData } from './Deploys/interfaces';
 
 export const timestampFormater = (seconds: number) => {
   const hours = Math.floor(seconds / 60 / 60);
@@ -27,5 +30,35 @@ export const timestampFormater = (seconds: number) => {
   else return 0;
 };
 
-export const normalizeCircleParams = (selectedCircles: Option[]) =>
-  map(selectedCircles, 'value');
+export const normalizeCircleParams = (circles: Option[]) => {
+  const filteredCircles = includes(circles, allOption) ? [] : circles;
+
+  return map(filteredCircles, 'value');
+};
+
+export const getDeploySeries = (data: DeployMetricData) => [
+  {
+    name: 'Deploy',
+    data: map(data?.successfulDeploymentsInPeriod, successTotal => ({
+      x: successTotal.period,
+      y: successTotal.total
+    }))
+  },
+  {
+    name: 'Error',
+    data: map(data?.failedDeploymentsInPeriod, failedTotal => ({
+      x: failedTotal.period,
+      y: failedTotal.total
+    }))
+  }
+];
+
+export const getAverageTimeSeries = (data: DeployMetricData) => [
+  {
+    name: 'Elapse time',
+    data: map(data?.deploymentsAverageTimeInPeriod, DeploymentAverageTime => ({
+      x: DeploymentAverageTime.period,
+      y: DeploymentAverageTime.averageTime
+    }))
+  }
+];

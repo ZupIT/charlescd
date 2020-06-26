@@ -33,3 +33,10 @@ export interface MetricDataInPeriod {
   averageTime: number;
   period: string;
 }
+
+export enum PERIOD_PARAM {
+  ONE_WEEK = 'ONE_WEEK',
+  TWO_WEEKS = 'TWO_WEEKS',
+  ONE_MONTH = 'ONE_MONTH',
+  THREE_MONTHS = 'THREE_MONTHS'
+}

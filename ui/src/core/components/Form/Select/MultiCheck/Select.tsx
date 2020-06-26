@@ -20,7 +20,9 @@ import {
   ValueType,
   components,
   MultiValueProps,
-  OptionTypeBase
+  OptionTypeBase,
+  SingleValueProps,
+  ValueContainerProps
 } from 'react-select';
 import Text from 'core/components/Text';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
@@ -31,18 +33,23 @@ import Styled from '../styled';
 
 const { Placeholder } = components;
 
-const ValueContainer = ({ children, ...props }: any) => {
+type ContainerProps = {
+  children?: React.ReactNode[][];
+} & ValueContainerProps<OptionTypeBase> &
+  SingleValueProps<OptionTypeBase>;
+
+const ValueContainer = ({ children, ...props }: ContainerProps) => {
   const currentValues = props.getValue() as Option[];
   let toBeRendered = children;
 
   if (currentValues.some((val: Option) => val.value === allOption.value)) {
     toBeRendered = [[children[0][0]], children[1]];
   } else if (currentValues.length) {
-    const label = (
+    const label = [
       <components.SingleValue {...props} key="selectedAmount">
         {currentValues.length} selected
       </components.SingleValue>
-    );
+    ];
     toBeRendered = [label, children[1]];
   }
 
