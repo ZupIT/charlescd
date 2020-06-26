@@ -35,6 +35,21 @@ export class ComponentUndeploymentsRepository extends Repository<ComponentUndepl
         })
     }
 
+    public async getOneWithAllRelations(
+      componentUndeploymentId: string
+    ): Promise<ComponentUndeploymentEntity> {
+
+        return this.findOneOrFail({
+            where: { id: componentUndeploymentId },
+            relations: [
+                'moduleUndeployment',
+                'moduleUndeployment.undeployment',
+                'moduleUndeployment.undeployment.deployment',
+                'componentDeployment'
+            ]
+        })
+    }
+
     public async updateStatus(
       componentUndeploymentId: string,
       status: UndeploymentStatusEnum
