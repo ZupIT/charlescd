@@ -40,6 +40,13 @@
     "moduleId": "23776617-7840-4819-b356-30e165b7ebb9",
     "status": "CREATED",
     "helmRepository": "helm-repository"
+  },
+  {
+    "id": "bd686e90-99de-4087-9c17-7a852db0e8b4",
+    "deployment": "a9d8946c-0162-403d-a085-a0eab3036a44",
+    "moduleId": "0cc9b3bc-4f5b-4520-b162-7a123dba2782",
+    "status": "CREATED",
+    "helmRepository": "helm-repository"
   }
   
 ]
