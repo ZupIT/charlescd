@@ -34,7 +34,6 @@ interface Props {
   customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
-  isMulti?: boolean;
 }
 
 const Single = ({
@@ -51,8 +50,7 @@ const Single = ({
   isLoading = false,
   customOption,
   closeMenuOnSelect = true,
-  hideSelectedOptions,
-  isMulti
+  hideSelectedOptions
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
@@ -67,7 +65,6 @@ const Single = ({
           defaultValue={defaultValue}
           closeMenuOnSelect={closeMenuOnSelect}
           hideSelectedOptions={hideSelectedOptions}
-          isMulti={isMulti}
         />
       }
       onChange={([selected]) => {
