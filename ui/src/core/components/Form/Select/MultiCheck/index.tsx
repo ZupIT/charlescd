@@ -34,7 +34,6 @@ interface Props {
   customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
-  isMulti?: boolean;
 }
 
 const MultiCheck = ({

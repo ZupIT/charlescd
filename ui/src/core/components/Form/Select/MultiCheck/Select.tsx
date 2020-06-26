@@ -30,6 +30,7 @@ import { Props, Option } from '../interfaces';
 import customStyles from '../customStyle';
 import { allOption } from './constants';
 import Styled from '../styled';
+import { handleChange } from './helpers';
 
 const { Placeholder } = components;
 
@@ -64,10 +65,10 @@ const ValueContainer = ({ children, ...props }: ContainerProps) => {
 };
 
 const MultiValue = (props: MultiValueProps<OptionTypeBase>) => {
-  let labelToBeDisplayed = props.data.label;
-  if (props.data.value === allOption.value) {
-    labelToBeDisplayed = 'All is selected';
-  }
+  const { data } = props;
+  const isAllSelected = data.value === allOption.value;
+  const labelToBeDisplayed = isAllSelected ? 'All is selected' : data.label;
+
   return (
     <components.SingleValue {...props}>
       {labelToBeDisplayed}
@@ -82,28 +83,6 @@ const Select = ({
   label,
   ...otherProps
 }: Props) => {
-  const handleChange = (
-    selected: Option[],
-    event: ActionMeta<OptionTypeBase>
-  ) => {
-    if (selected !== null && selected.length > 0) {
-      if (selected[selected.length - 1].value === allOption.value) {
-        return onChange([allOption, ...options]);
-      }
-      let result: Option[] = [];
-      if (selected.length === options.length) {
-        if (selected.includes(allOption)) {
-          result = selected.filter(option => option.value !== allOption.value);
-        } else if (event.action === 'select-option') {
-          result = [allOption, ...options];
-        }
-        return onChange(result);
-      }
-    }
-
-    return onChange(selected);
-  };
-
   return (
     <Styled.Select
       {...otherProps}
@@ -125,7 +104,7 @@ const Select = ({
       onChange={(
         value: ValueType<OptionTypeBase>,
         actionMeta: ActionMeta<OptionTypeBase>
-      ) => handleChange(value as Option[], actionMeta)}
+      ) => handleChange(value as Option[], actionMeta, onChange, options)}
     />
   );
 };
