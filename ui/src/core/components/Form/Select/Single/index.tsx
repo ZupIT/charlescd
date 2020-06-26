@@ -15,10 +15,9 @@
  */
 
 import React from 'react';
-import { Control } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import Select from './Select';
 import { Option } from '../interfaces';
-import FormController from '../FormController';
 
 interface Props {
   name: string;
@@ -55,31 +54,33 @@ const Single = ({
   hideSelectedOptions,
   isMulti
 }: Props) => (
-  <FormController
-    as={
-      <Select
-        placeholder={label}
-        className={className}
-        isDisabled={isDisabled}
-        isLoading={isLoading}
-        customOption={customOption}
-        onInputChange={onInputChange}
-        defaultValue={defaultValue}
-        closeMenuOnSelect={closeMenuOnSelect}
-        hideSelectedOptions={hideSelectedOptions}
-        isMulti={isMulti}
-      />
-    }
-    onChange={([selected]) => {
-      onChange && onChange(selected);
-      return selected;
-    }}
-    defaultValue={defaultValue}
-    rules={rules}
-    control={control}
-    options={options}
-    name={name}
-  />
+  <div data-testid={`select-${name}`}>
+    <Controller
+      as={
+        <Select
+          placeholder={label}
+          className={className}
+          isDisabled={isDisabled}
+          isLoading={isLoading}
+          customOption={customOption}
+          onInputChange={onInputChange}
+          defaultValue={defaultValue}
+          closeMenuOnSelect={closeMenuOnSelect}
+          hideSelectedOptions={hideSelectedOptions}
+          isMulti={isMulti}
+        />
+      }
+      onChange={([selected]) => {
+        onChange && onChange(selected);
+        return selected;
+      }}
+      defaultValue={defaultValue}
+      rules={rules}
+      control={control}
+      options={options}
+      name={name}
+    />
+  </div>
 );
 
 export default Single;

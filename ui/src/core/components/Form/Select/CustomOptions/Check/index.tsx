@@ -25,7 +25,7 @@ const CheckOption = (props: OptionProps<OptionTypeBase>) => {
   return (
     <components.Option {...props}>
       <Styled.Wrapper>
-        <Checkbox checked={props.isSelected} onChange={() => null} />
+        <Checkbox checked={props.isSelected} />
         <Styled.Content>
           <Styled.Label color="light">{label}</Styled.Label>
         </Styled.Content>
