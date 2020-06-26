@@ -89,7 +89,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
             })
 
 
-        await request(app.getHttpServer()).post(`/notifications/undeployment?queuedUndeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto)
 
         queuedDeploymentSearch = await queuedUndeploymentsRepository.
