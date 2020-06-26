@@ -34,7 +34,7 @@ import {
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
     CircleDeploymentEntity,
-    ComponentDeploymentEntity,
+    ComponentDeploymentEntity, ComponentUndeploymentEntity,
     DeploymentEntity,
     ModuleDeploymentEntity,
     QueuedDeploymentEntity,
@@ -66,6 +66,7 @@ describe('Pipeline Error Handler Service specs', () => {
     let undeploymentFailed: UndeploymentEntity
     let deploymentFailed: DeploymentEntity
     let componentDeployment: ComponentDeploymentEntity
+    let componentUndeployment: ComponentUndeploymentEntity
     let moduleDeployment: ModuleDeploymentEntity
     let moduleDeployments: ModuleDeploymentEntity[]
     let componentEntity: ComponentEntity
@@ -104,6 +105,10 @@ describe('Pipeline Error Handler Service specs', () => {
             'dummy-name',
             'dummy-img-url',
             'dummy-img-tag'
+        )
+
+        componentUndeployment = new ComponentUndeploymentEntity(
+          componentDeployment
         )
 
         moduleDeployment = new ModuleDeploymentEntity(
@@ -232,7 +237,7 @@ describe('Pipeline Error Handler Service specs', () => {
             jest.spyOn(componentsRepository, 'findOne')
                 .mockImplementation(() => Promise.resolve(componentEntity))
             const pipelineQueueSpy = jest.spyOn(pipelineQueuesService, 'triggerNextComponentPipeline')
-            await pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedDeployment)
+            await pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentUndeployment, queuedDeployment)
             expect(pipelineQueueSpy).toHaveBeenCalled()
         })
     })
