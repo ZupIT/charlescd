@@ -2,13 +2,13 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function(app) {
   app.use(
-    '/api',
+    process.env.REACT_APP_API_URI,
     createProxyMiddleware({
-      target: 'https://charles-dev.continuousplatform.com',
+      target: process.env.REACT_APP_URI,
       changeOrigin: true,
       logLevel: 'debug',
       pathRewrite: {
-        '^/api/': '/' // remove base path
+        '^/api/': process.env.PUBLIC_URL
       }
     })
   );
