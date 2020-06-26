@@ -34,12 +34,17 @@ jobs:
     - name: Build
       run: mvn -B clean install
       working-directory: ./villager
-    - name: Tests coverage
-      uses: codecov/codecov-action@v1.0.7
+    # - name: Tests coverage
+    #   uses: codecov/codecov-action@v1.0.7
+    #   with:
+    #     file: ./villager/target/site/jacoco/jacoco.xml
+    #     flags: villager
+    #     fail_ci_if_error: true
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v1.1.1
       with:
-        file: ./villager/target/site/jacoco/jacoco.xml
-        flags: villager
-        fail_ci_if_error: true
+        path-to-lcov: ./villager/target/site/jacoco/jacoco.xml
+        base-path: ./villager
     - name: Code style
       run: mvn checkstyle:checkstyle
       working-directory: ./villager
