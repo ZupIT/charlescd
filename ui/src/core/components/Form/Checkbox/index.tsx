@@ -9,7 +9,7 @@ type Props = {
 
 const Checkbox = ({ className, checked, onChange }: Props) => (
   <Styled.CheckboxContainer className={className}>
-    <Styled.HiddenCheckbox checked={checked} onChange={onChange} />
+    <Styled.HiddenCheckbox defaultChecked={checked} onChange={onChange} />
     <Styled.Checkbox checked={checked}>
       <Styled.Icon viewBox="0 0 24 24">
         <polyline points="20 6 9 17 4 12" />

@@ -14,34 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import defaultsDeep from 'lodash/defaultsDeep';
-import defaultConfig from './config';
-import Styled from './styled';
+import {
+  COLOR_BASTILLE,
+  COLOR_LAVENDER_GREY,
+  COLOR_DODGER_BLUE
+} from 'core/assets/colors';
 
-export interface Props {
-  series: object[];
-  options?: object;
-  className?: string;
-  width?: number | string;
-  height?: number | string;
-}
+export const light = {};
 
-const AreaChart = ({
-  className,
-  options,
-  series,
-  width = '100%',
-  height
-}: Props) => (
-  <Styled.Chart
-    className={className}
-    options={defaultsDeep(options, defaultConfig.options)}
-    width={width}
-    height={height}
-    series={series}
-    type="area"
-  />
-);
-
-export default AreaChart;
+export const dark = {
+  checked: {
+    background: COLOR_DODGER_BLUE
+  },
+  unchecked: {
+    background: COLOR_BASTILLE,
+    borderColor: COLOR_LAVENDER_GREY
+  }
+};

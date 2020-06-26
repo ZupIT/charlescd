@@ -32,8 +32,12 @@ const Checkbox = styled.div<Props>`
   display: inline-block;
   width: ${props => (props.checked ? '12px' : '10px')};
   height: ${props => (props.checked ? '12px' : '10px')};
-  background: ${props => (props.checked ? '#0A84FF' : '#2C2C2E')};
-  border: ${props => (props.checked ? 'none' : '1px solid #C7C7D4')};
+  background: ${({ theme, checked }) =>
+    checked
+      ? theme.checkbox.checked.background
+      : theme.checkbox.unchecked.background};
+  border: ${({ theme, checked }) =>
+    checked ? 'none' : `1px solid ${theme.checkbox.unchecked.borderColor}`};
   border-radius: 2px;
 
   ${Icon} {

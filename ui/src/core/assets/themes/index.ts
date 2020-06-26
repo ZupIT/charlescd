@@ -44,6 +44,7 @@ import { dark as darkSwitch } from './switch';
 import { dark as darkBoard } from './board';
 import { dark as darkCircleMatcher } from './circleMatcher';
 import { dark as darkCircleSegmentation } from './circleSegmentation';
+import { dark as darkCheckbox } from './checkbox';
 import { zIndex } from '../zindex';
 
 const common = {
@@ -85,7 +86,8 @@ const dark = {
   switch: darkSwitch,
   board: darkBoard,
   circleMatcher: darkCircleMatcher,
-  circleSegmentation: darkCircleSegmentation
+  circleSegmentation: darkCircleSegmentation,
+  checkbox: darkCheckbox
 };
 
 export default {
