@@ -15,7 +15,7 @@
  */
 
 import { GitProvidersEnum } from '../../configuration/interfaces/git-providers.type'
-import {CallbackTypeEnum} from '../../../../api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum';
 
 export interface IOctopipeVersion {
   version?: string

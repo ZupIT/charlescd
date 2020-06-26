@@ -70,7 +70,7 @@ export class ConsoleLoggerService {
     errorObject?: any
   ): void {
     if (process.env.NODE_ENV !== 'test') {
-      this.logger.log('error', error, {error: JSON.stringify(errorObject, errorObject != null ? Object.getOwnPropertyNames(errorObject) : null)})
+      this.logger.log('error', error, { error: JSON.stringify(errorObject, errorObject != null ? Object.getOwnPropertyNames(errorObject) : null) })
     }
   }
 
