@@ -1,0 +1,26 @@
+{
+    "deploymentId": "uuid()",
+    "applicationName": "{{applicationName}}",
+    "modules": [
+        {
+            "moduleId": "uuid()",
+            "helmRepository": "https://some-helm.repo",
+            "components": [
+                {
+                    "componentId": "uuid()",
+                    "buildImageUrl": "imageurl.com",
+                    "buildImageTag": "tag1",
+                    "componentName": "component-name"
+                }
+            ]
+        }
+    ],
+
+    "authorId": "{{authorId}}",
+    "description": "",
+    "cdConfigurationId": "{{cdConfigurationId}}",
+    "callbackUrl": "http://localhost:8883/deploy/notifications/deployment",
+    "circle": {
+      "headerValue": "uuid()"
+    }
+}
