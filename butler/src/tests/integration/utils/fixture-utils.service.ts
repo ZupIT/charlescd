@@ -73,6 +73,7 @@ export class FixtureUtilsService {
             { name: 'ComponentEntity', tableName: 'components' },
             { name: 'DeploymentEntity', tableName: 'deployments' },
             { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+            { name: 'QueuedUndeploymentEntity', tableName: 'queued_undeployments' },
             { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
             { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
             { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },

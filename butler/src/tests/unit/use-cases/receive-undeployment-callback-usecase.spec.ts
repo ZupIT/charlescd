@@ -209,7 +209,7 @@ describe('ReceiveUndeploymentCallbackUsecase', () => {
 
             jest.spyOn(queuedUndeploymentsRepository, 'findOneOrFail')
                 .mockImplementation(() => Promise.resolve(queuedUndeployment))
-            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+            jest.spyOn(componentUndeploymentsRepository, 'getOneWithAllRelations')
                 .mockImplementation(() => Promise.resolve(componentUndeployment))
             const queueSpy = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
             const queueSpy1 = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
