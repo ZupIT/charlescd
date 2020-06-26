@@ -17,7 +17,8 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
 import relativeTime from 'dayjs/plugin/relativeTime';
-
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 export const dateFrom = (date: string) => {
@@ -32,4 +33,13 @@ export const dateFrom = (date: string) => {
   }
 
   return dayjs(currentDate).fromNow();
+};
+
+export const humanizeDateFromSeconds = (timeInSeconds: number) => {
+  const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
+  const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
+  const hours = dayjs.duration(timeInSeconds, 'seconds').hours();
+  const formattedHours = hours ? `${hours}:` : '';
+
+  return `${formattedHours}${minutes}:${seconds}m`;
 };

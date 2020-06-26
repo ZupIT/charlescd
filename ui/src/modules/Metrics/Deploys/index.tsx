@@ -18,7 +18,7 @@ import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
-import { timestampFormater, normalizeCircleParams } from '../helpers';
+import { normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
@@ -27,6 +27,7 @@ import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
 import { getDeploySeries, getAverageTimeSeries } from './helpers';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
@@ -105,7 +106,9 @@ const Deploys = () => {
               <Loader.Card />
             ) : (
               renderData(
-                timestampFormater(response?.successfulDeploymentsAverageTime)
+                humanizeDateFromSeconds(
+                  response?.successfulDeploymentsAverageTime
+                )
               )
             )}
           </Text.h1>
