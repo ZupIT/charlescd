@@ -75,9 +75,9 @@ rules:
   - update
   - watch
 - apiGroups:
-  - "networking.istio.io"
+  - networking.istio.io
   resources:
-  - "*"
+  - '*'
   verbs:
   - create
   - delete
