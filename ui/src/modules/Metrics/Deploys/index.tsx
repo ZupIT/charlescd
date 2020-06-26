@@ -18,12 +18,7 @@ import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
-import {
-  timestampFormater,
-  normalizeCircleParams,
-  getDeploySeries,
-  getAverageTimeSeries
-} from '../helpers';
+import { timestampFormater, normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
 import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
@@ -31,6 +26,7 @@ import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
+import { getDeploySeries, getAverageTimeSeries } from './helpers';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
