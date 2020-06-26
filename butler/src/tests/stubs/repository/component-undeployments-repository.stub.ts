@@ -22,6 +22,10 @@ export class ComponentUndeploymentsRepositoryStub {
         return Promise.resolve({} as ComponentUndeploymentEntity)
     }
 
+    public async getOneWithAllRelations(): Promise<ComponentUndeploymentEntity> {
+        return Promise.resolve({} as ComponentUndeploymentEntity)
+    }
+
     public async getOneOrFail(): Promise<ComponentUndeploymentEntity> {
         return Promise.resolve({} as ComponentUndeploymentEntity)
     }
