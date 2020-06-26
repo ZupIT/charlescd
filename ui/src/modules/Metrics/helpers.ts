@@ -19,16 +19,6 @@ import map from 'lodash/map';
 import includes from 'lodash/includes';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
-export const timestampFormater = (seconds: number) => {
-  const hours = Math.floor(seconds / 60 / 60);
-  const minutes = Math.floor(seconds / 60) - hours * 60;
-
-  if (hours > 0) return hours + ':' + minutes + ':' + (seconds % 60) + 'h';
-  else if (minutes > 0) return minutes + ':' + (seconds % 60) + 'm';
-  else if (seconds > 0) return (seconds % 60) + 's';
-  else return 0;
-};
-
 export const normalizeCircleParams = (circles: Option[]) => {
   const filteredCircles = includes(circles, allOption) ? [] : circles;
 
