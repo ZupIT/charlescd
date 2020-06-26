@@ -152,7 +152,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
                 successfulFinishDeploymentDto
             )
             expect(queueSpy).not.toHaveBeenCalledWith(1234)
-            })
+        })
 
         it('should handle a failed deployment callback', async () => {
 

@@ -55,7 +55,7 @@ export class OctopipeService implements ICdServiceStrategy {
   public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
 
     const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
-    await this.deploy(payload)
+    console.log(await this.deploy(payload))
   }
 
   public async deploy(
@@ -89,7 +89,6 @@ export class OctopipeService implements ICdServiceStrategy {
       versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
-      typeCallback:  configuration.typeCallback
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
 
@@ -112,7 +111,6 @@ export class OctopipeService implements ICdServiceStrategy {
       istio: { virtualService: {}, destinationRules: {} },
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
-      typeCallback:  configuration.typeCallback
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
 
@@ -150,7 +148,6 @@ export class OctopipeService implements ICdServiceStrategy {
       versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
-      typeCallback:  configuration.typeCallback
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
 

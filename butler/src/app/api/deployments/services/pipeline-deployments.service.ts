@@ -210,7 +210,7 @@ export class PipelineDeploymentsService {
     }
 
     private getIstioDeploymentCallbackUrl(queuedIstioDeploymentId: number): string {
-        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedDeploymetId=${queuedIstioDeploymentId}`
+        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedDeploymentId=${queuedIstioDeploymentId}`
     }
 
     private async triggerComponentDeployment(

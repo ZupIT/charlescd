@@ -105,7 +105,7 @@
 
 - request:
     method: POST
-    url: ^/deploy/notifications/deployment
+    url: ^/deploy/notifications
   response: 201
 
 # CONSUL
@@ -128,8 +128,8 @@
             "postgresPass": "darwin",
             "postgresDbName": "darwin",
             "mooveUrl": "http://localhost:8883/moove",
-            "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/deployment",
-            "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications/undeployment",
+            "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications",
+            "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications",
             "spinnakerUrl": "http://localhost:8883/spinnaker",
             "octopipeUrl": "http://localhost:8883/octopipe"
           }

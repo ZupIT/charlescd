@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
@@ -66,7 +65,7 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 	}
 
 	for _, steps := range mozart.Stages {
-		if len(steps) <= 1 {
+		if len(steps) <= 0 {
 			continue
 		}
 
@@ -76,7 +75,6 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 			break
 		}
 	}
-	fmt.Println(deployment)
 	mozart.finishPipeline(deployment, err)
 }
 
@@ -245,7 +243,6 @@ func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineEr
 	} else {
 		payload = Payload{status: "SUCCEEDED", typeCallback: pipeline.TypeCallback}
 	}
-	fmt.Println(payload)
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return err
