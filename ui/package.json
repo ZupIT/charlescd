@@ -29,8 +29,8 @@
     "styled-components": "^5.0.1"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none react-scripts start",
-    "mock:api": "cross-env BROWSER=none react-scripts start & yarn stub",
+    "start": "cross-env ENVIRONMENT=dev node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
+    "mock:api": "cross-env ENVIRONMENT=mock node env-writer.js path=./public && cross-env BROWSER=none react-scripts start & yarn stub",
     "test": "react-scripts test --watchAll=false",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
     "test:watch": "react-scripts test",
