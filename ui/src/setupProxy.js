@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://charles-dev.continuousplatform.com',
+      target: process.env.REACT_APP_URI,
       changeOrigin: true,
       logLevel: 'debug',
       pathRewrite: {
