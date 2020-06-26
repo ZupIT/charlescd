@@ -71,8 +71,8 @@ class MetricsController(
     fun getDeploymentsMetrics(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("period") period: PeriodType,
-        @RequestParam(value = "circles", required = false) circlesId: List<String>?
+        @RequestParam(value = "circles", required = false) circlesIds: List<String>?
     ): DeploymentMetricsRepresentation {
-        return retrieveDeploymentsMetricsInteractor.execute(workspaceId, period, circlesId)
+        return retrieveDeploymentsMetricsInteractor.execute(workspaceId, period, circlesIds)
     }
 }

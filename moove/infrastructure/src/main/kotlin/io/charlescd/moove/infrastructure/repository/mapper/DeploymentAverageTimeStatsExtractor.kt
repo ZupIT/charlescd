@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component
 @Component
 class DeploymentAverageTimeStatsExtractor : ResultSetExtractor<Set<DeploymentAverageTimeStats>> {
 
-    override fun extractData(resultSet: ResultSet): Set<DeploymentAverageTimeStats>? {
+    override fun extractData(resultSet: ResultSet): Set<DeploymentAverageTimeStats> {
         val deploymentMetric = HashSet<DeploymentAverageTimeStats>()
 
         while (resultSet.next()) {
