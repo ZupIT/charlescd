@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import { DeployMetricData } from './interfaces';
+import { DeployMetricData, MetricDataInPeriod } from './interfaces';
 import map from 'lodash/map';
 import dayjs from 'dayjs';
+
+const buildSeriesData = (metricData: MetricDataInPeriod[]) =>
+  map(metricData, item => ({
+    x: item.period,
+    y: item.total
+  }));
 
 export const getDeploySeries = (data: DeployMetricData) => [
   {
     name: 'Deploy',
-    data: map(data?.successfulDeploymentsInPeriod, successTotal => ({
-      x: successTotal.period,
-      y: successTotal.total
-    }))
+    data: buildSeriesData(data?.successfulDeploymentsInPeriod)
   },
   {
     name: 'Error',
-    data: map(data?.failedDeploymentsInPeriod, failedTotal => ({
-      x: failedTotal.period,
-      y: failedTotal.total
-    }))
+    data: buildSeriesData(data?.failedDeploymentsInPeriod)
   }
 ];
 
