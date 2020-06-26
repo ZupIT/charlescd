@@ -44,7 +44,7 @@ jobs:
       uses: coverallsapp/github-action@v1.1.1
       with:
         github-token: ${{ secrets.github_token }}
-        path-to-lcov: ./villager/target/site/jacoco/jacoco.csv
+        path-to-lcov: ./villager/target/jacoco.exec
         base-path: ./villager
     - name: Code style
       run: mvn checkstyle:checkstyle
