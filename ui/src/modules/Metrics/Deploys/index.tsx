@@ -118,7 +118,7 @@ const Deploys = () => {
           </Text.h2>
           <ChartMenu onReset={() => resetChart('chartDeploy')} />
         </Styled.ChartControls>
-        <Styled.Chart
+        <Styled.ColumnChart
           options={deployOptions}
           series={deploySeries}
           width={1180}
@@ -132,7 +132,7 @@ const Deploys = () => {
           </Text.h2>
           <ChartMenu onReset={() => resetChart('chartAverageTime')} />
         </Styled.ChartControls>
-        <Styled.Chart
+        <Styled.AreaChart
           options={averageTimeOptions}
           series={averageTimeSeries}
           width={1180}
