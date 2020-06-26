@@ -72,7 +72,7 @@ const Chart = styled(AreaChart)`
   }
 `;
 
-const SingleSelect = styled(SelectComponent.Single)`
+const StyledSelect = `
   width: 200px;
   padding-right: 30px;
 
@@ -81,13 +81,12 @@ const SingleSelect = styled(SelectComponent.Single)`
   }
 `;
 
-const MultiSelect = styled(SelectComponent.MultiCheck)`
-  width: 200px;
-  padding-right: 30px;
+const SingleSelect = styled(SelectComponent.Single)`
+  ${StyledSelect}
+`;
 
-  div:first-child {
-    background: transparent;
-  }
+const MultiSelect = styled(SelectComponent.MultiCheck)`
+  ${StyledSelect}
 `;
 
 const Button = styled(ComponentButton.Default)`
