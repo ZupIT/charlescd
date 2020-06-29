@@ -34,10 +34,10 @@ export class ComponentDeploymentUniquenessPipe implements PipeTransform {
         return deploymentRequest
     }
 
-    private verifyDuplicatedComponents(mapTimesComponent: Map<string,boolean>, componentId: string) {
+    private verifyDuplicatedComponents(mapTimesComponent: Map<string, boolean>, componentId: string) {
         if (mapTimesComponent.get(componentId)) {
-            throw new BadRequestException("Deployment should not have repeated components")
-        }else {
+            throw new BadRequestException('Deployment should not have repeated components')
+        } else {
             mapTimesComponent.set(componentId, true)
         }
         return mapTimesComponent
