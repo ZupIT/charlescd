@@ -13,7 +13,7 @@
     "apexcharts": "^3.16.0",
     "clipboard-copy": "^3.1.0",
     "cross-env": "^7.0.2",
-    "http-proxy-middleware": "^1.0.4",
+    "http-proxy-middleware": "^1.0.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.12.0",
     "react-ace": "^8.1.0",
@@ -31,8 +31,8 @@
   "scripts": {
     "start": "cross-env ENVIRONMENT=dev node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
     "mock:api": "cross-env ENVIRONMENT=mock node env-writer.js path=./public && cross-env BROWSER=none react-scripts start & yarn stub",
-    "test": "react-scripts test --watchAll=false",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
+    "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "build": "react-scripts build",
@@ -108,7 +108,7 @@
     "nodemon": "^2.0.4",
     "prettier": "^1.19.1",
     "react-content-loader": "^5.0.2",
-    "react-scripts": "3.4.1",
+    "react-scripts": "3.4.0",
     "react-test-renderer": "^16.13.0",
     "typescript": "~3.7.2"
   }

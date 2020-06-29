@@ -41,7 +41,7 @@ test('render Credentials with inner form', async () => {
 
   await wait();
 
-  const addButtons = getAllByTestId("button-iconRounded-add");
+  const addButtons = getAllByTestId("button-iconRounded-section");
   expect(addButtons.length).toBe(6);
 
   fireEvent.click(addButtons[0]);

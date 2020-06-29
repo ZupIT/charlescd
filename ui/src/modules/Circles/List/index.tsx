@@ -111,7 +111,7 @@ const CirclesList = () => {
   );
 
   return (
-    <Styled.Wrapper data-testid="metrics-list">
+    <Styled.Wrapper>
       {isEmpty(response?.metricConfiguration) && !loading
         ? renderNoMetrics()
         : renderMetrics()}

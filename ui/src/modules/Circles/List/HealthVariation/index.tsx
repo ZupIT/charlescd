@@ -36,11 +36,7 @@ const CircleHealthComponent = ({
   className
 }: Props) => {
   const renderHealth = () => (
-    <Styled.Wrapper
-      className={className}
-      onClick={e => e.stopPropagation()}
-      data-testid="health-variation"
-    >
+    <Styled.Wrapper className={className} onClick={e => e.stopPropagation()}>
       <Text.h5 color="light">
         Request:{' '}
         <strong>

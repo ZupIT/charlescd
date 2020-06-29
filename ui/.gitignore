@@ -13,11 +13,11 @@
 
 # production
 /build
-/public/config.js
 
 # misc
 .DS_Store
-.env
+environments
+public/config.js
 .env.local
 .env.development.local
 .env.test.local
