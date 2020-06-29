@@ -658,7 +658,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle: null
     }
     await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(400)
-
   })
 
   afterAll(async () => {
