@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { timestampFormater } from '../helpers';
+import { humanizeDateFromSeconds } from '../date';
 
 test('should return time formated correctly', async () => {
-  expect(timestampFormater(53)).toEqual('53s');
-  expect(timestampFormater(72)).toEqual('1:12m');
-  expect(timestampFormater(4365)).toEqual('1:12:45h');
-  expect(timestampFormater(0)).toEqual(0);
+  expect(humanizeDateFromSeconds(0)).toEqual(undefined);
+  expect(humanizeDateFromSeconds(72)).toEqual('1:12m');
+  expect(humanizeDateFromSeconds(53)).toEqual('53s');
+  expect(humanizeDateFromSeconds(4365)).toEqual('1:12:45h');
 })
