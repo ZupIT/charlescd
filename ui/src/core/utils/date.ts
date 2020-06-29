@@ -40,10 +40,16 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
     return;
   }
 
-  const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
+  const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
   const hours = dayjs.duration(timeInSeconds, 'seconds').hours();
-  const formattedHours = hours ? `${hours}:` : '';
 
-  return `${formattedHours}${minutes}:${seconds}m`;
+  if (hours) {
+    return `${hours}:${minutes}:${seconds}h`;
+  }
+  if (minutes) {
+    return `${minutes}:${seconds}m`;
+  }  
+
+  return `${seconds}s`;
 };
