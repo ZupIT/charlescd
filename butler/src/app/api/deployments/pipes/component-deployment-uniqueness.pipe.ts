@@ -25,20 +25,21 @@ import { CreateDeploymentRequestDto } from '../dto'
 export class ComponentDeploymentUniquenessPipe implements PipeTransform {
 
     public async transform(deploymentRequest: CreateDeploymentRequestDto): Promise<CreateDeploymentRequestDto> {
-        let mapTimesComponent: Map<string, boolean> =  new Map()
+        const mapTimesComponent: Map<string, boolean> =  new Map()
         deploymentRequest.modules.forEach(
           module => module.components.forEach(
-            component =>  mapTimesComponent = this.verifyDuplicatedComponents(mapTimesComponent,component.componentId)
+            component =>  this.verifyDuplicatedComponents(mapTimesComponent, component.componentId)
           )
         )
         return deploymentRequest
     }
 
     private verifyDuplicatedComponents(mapTimesComponent: Map<string,boolean>, componentId: string) {
-        if (mapTimesComponent.get(componentId))
+        if (mapTimesComponent.get(componentId)) {
             throw new BadRequestException("Deployment should not have repeated components")
-        else
-            mapTimesComponent.set(componentId,true)
+        }else {
+            mapTimesComponent.set(componentId, true)
+        }
         return mapTimesComponent
     }
 }
