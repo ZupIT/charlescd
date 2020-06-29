@@ -29,7 +29,7 @@ butler:
 moove:
   enabled: true
   name: "charlescd-moove"
-  frontHost: "http://charles.info.example"
+  allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charles.info.example/keycloak/auth"
   database:
     name: charlescd_moove
@@ -116,7 +116,7 @@ circlematcher:
     host: charlescd-redis-master
     port: 6379
     password: hb2Fj9MGKjBkZ6zV
-  frontHost: http://charles.info.example
+  allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
     name: zupcharles/charlescd-circle-matcher:latest
