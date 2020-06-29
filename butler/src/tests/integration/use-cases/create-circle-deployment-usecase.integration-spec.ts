@@ -29,7 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 

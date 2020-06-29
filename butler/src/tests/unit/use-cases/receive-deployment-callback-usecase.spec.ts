@@ -42,7 +42,7 @@ import {
     QueuedDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('ReceiveDeploymentCallbackUsecase', () => {
 

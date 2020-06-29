@@ -28,9 +28,9 @@ import { ComponentEntity } from '../../../app/api/components/entity'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
-import { AxiosResponse } from 'axios';
-import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service';
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { AxiosResponse } from 'axios'
+import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 

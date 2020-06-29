@@ -83,7 +83,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
                 }
             })
 
-        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto).expect(204)
 
         queuedDeploymentSearch = await queuedDeploymentsRepository.
@@ -126,7 +126,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
                 }
             })
 
-        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto).expect(204)
 
         queuedDeploymentSearch = await queuedDeploymentsRepository.
@@ -167,7 +167,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
                 }
             })
 
-        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto).expect(204)
 
         queuedDeploymentSearch = await queuedDeploymentsRepository.
@@ -209,7 +209,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
                 }
             })
 
-        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto).expect(204)
 
         queuedDeploymentSearch = await queuedDeploymentsRepository.
@@ -251,7 +251,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
                 }
             })
 
-        await request(app.getHttpServer()).post(`/notifications?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+        await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
           .send(finishDeploymentDto).expect(204)
 
         queuedDeploymentSearch = await queuedDeploymentsRepository.

@@ -20,9 +20,9 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity} from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentsRepository} from '../../../app/api/deployments/repository'
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
@@ -35,8 +35,8 @@ import {  of } from 'rxjs'
 import { PipelineErrorHandlerService } from '../../../app/api/deployments/services'
 
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
-import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
