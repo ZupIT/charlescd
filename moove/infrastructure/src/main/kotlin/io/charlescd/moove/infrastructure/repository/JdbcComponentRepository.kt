@@ -60,10 +60,11 @@ class JdbcComponentRepository(
 	                    components.error_threshold      AS components_error_threshold,
 	                    components.latency_threshold    AS components_latency_threshold
                 FROM components components
-                    INNER JOIN modules modules                      ON modules.id = components.module_id
-                    INNER JOIN features_modules features_modules    ON features_modules.module_id = modules.id
-                    INNER JOIN builds_features builds_features      ON builds_features.feature_id = features_modules.feature_id
-                    INNER JOIN deployments deployments              ON deployments.build_id = builds_features.build_id
+                    INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
+                    INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
+                    INNER JOIN feature_snapshots feature_snapshots      ON feature_snapshots.id = module_snapshots.feature_snapshot_id
+                    INNER JOIN builds_features builds_features          ON builds_features.feature_id = feature_snapshots.feature_id
+                    INNER JOIN deployments deployments                  ON deployments.build_id = builds_features.build_id
                 WHERE deployments.circle_id = ?
 	                AND deployments.workspace_id = ?
 	                AND deployments.status = 'DEPLOYED';
