@@ -54,5 +54,4 @@ interface DeploymentRepository {
         circlesId: List<String>,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats>
-
 }

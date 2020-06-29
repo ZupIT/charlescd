@@ -19,13 +19,13 @@
 package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.Deployment
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentAverageTimeStatsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentGeneralStatsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentStatsExtractor
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -344,5 +344,4 @@ class JdbcDeploymentRepository(
     private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
         return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
     }
-
 }
