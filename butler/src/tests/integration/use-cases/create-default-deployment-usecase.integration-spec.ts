@@ -517,7 +517,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     )
   })
 
-  it(`/POST deployments/default should handle deployment failure `, async () => {
+  it(`/POST deployments in default should handle deployment failure `, async () => {
     jest.spyOn(octopipeApiService, 'deploy').
     mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -553,7 +553,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
@@ -561,7 +561,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/default should handle deployment failure `, async () => {
+  it(`/POST deployments in default  should handle deployment failure `, async () => {
     jest.spyOn(octopipeApiService, 'deploy').
     mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -609,7 +609,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.CREATED)
