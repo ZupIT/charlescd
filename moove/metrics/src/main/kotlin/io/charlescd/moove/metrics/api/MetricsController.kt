@@ -19,14 +19,12 @@ package io.charlescd.moove.metrics.api
 import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
 import io.charlescd.moove.metrics.api.response.CircleMetricRepresentation
 import io.charlescd.moove.metrics.api.response.ComponentMetricRepresentation
-
 import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
 import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
-
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
@@ -78,5 +76,4 @@ class MetricsController(
     ): DeploymentMetricsRepresentation {
         return retrieveDeploymentsMetricsInteractor.execute(workspaceId, period, circlesIds)
     }
-
 }
