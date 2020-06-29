@@ -92,7 +92,8 @@ export class CreateDefaultDeploymentRequestUsecase {
 
     private async saveDeploymentEntity(
       createDefaultDeploymentRequestDto: CreateDeploymentRequestDto,
-      circleId: string): Promise<DeploymentEntity> {
+      circleId: string
+    ): Promise<DeploymentEntity> {
         try {
             return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
         } catch (error) {
