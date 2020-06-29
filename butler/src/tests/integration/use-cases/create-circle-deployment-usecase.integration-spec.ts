@@ -574,7 +574,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500).set('x-circle-id','123456')
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500).set('x-circle-id', '123456')
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
