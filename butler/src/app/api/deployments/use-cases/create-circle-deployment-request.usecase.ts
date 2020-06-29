@@ -21,7 +21,7 @@ import { QueuedDeploymentsConstraints } from '../../../core/integrations/databas
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
-import { CreateDeploymentRequestDto, ReadDeploymentDto} from '../dto'
+import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedIstioDeploymentEntity } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
