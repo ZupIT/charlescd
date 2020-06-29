@@ -16,12 +16,14 @@
 
 import { dark as darkDefault } from './default';
 import { dark as darkTrigger } from './trigger';
+import { dark as darkWizard } from './wizard';
 
 const light = {};
 
 const dark = {
   default: darkDefault,
-  trigger: darkTrigger
+  trigger: darkTrigger,
+  wizard: darkWizard
 };
 
 export { dark, light };

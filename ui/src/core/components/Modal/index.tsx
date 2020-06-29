@@ -16,5 +16,6 @@
 
 import Trigger from './Trigger';
 import Default from './Default';
+import Wizard from './Wizard';
 
-export default { Default, Trigger };
+export default { Default, Trigger, Wizard };
