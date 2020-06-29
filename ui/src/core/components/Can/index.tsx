@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-import React, { ReactElement, cloneElement, useEffect } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { createCanBoundTo } from '@casl/react';
 import uniqueId from 'lodash/uniqueId';
 import omit from 'lodash/omit';
 import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
 
 interface Props {
   I: Actions;
   a: Subjects;
   passThrough?: boolean;
   isDisabled?: boolean;
-  allowedRoutes?: boolean;
   children: ReactElement;
 }
 
@@ -40,17 +37,9 @@ const Element = ({
   I,
   a,
   passThrough = false,
-  isDisabled = false,
-  allowedRoutes = true
+  isDisabled = false
 }: Props) => {
   const id = uniqueId();
-  const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace, , ,] = useWorkspace();
-
-  useEffect(() => {
-    loadWorkspace(workspaceId);
-  }, [workspaceId, loadWorkspace]);
-
   const renderTooltip = () => (
     <ReactTooltip id={id} place="right" effect="solid">
       <Text.h6 color="dark">Not allowed</Text.h6>
@@ -79,25 +68,17 @@ const Element = ({
     });
   };
 
-  const renderChildren = (allowed: boolean) => (
-    <>
-      {!allowed && renderTooltip()}
-      {cloneElement(getChildren(allowed), {
-        'data-tip': true,
-        'data-for': id
-      })}
-    </>
-  );
-
   return (
     <Can I={I} a={a} passThrough={passThrough}>
-      {(allowed: boolean) => {
-        const isAllowed =
-          (allowed && workspace?.status === 'COMPLETE') ||
-          (allowed && allowedRoutes);
-
-        return renderChildren(isAllowed);
-      }}
+      {(allowed: boolean) => (
+        <>
+          {!allowed && renderTooltip()}
+          {cloneElement(getChildren(allowed), {
+            'data-tip': true,
+            'data-for': id
+          })}
+        </>
+      )}
     </Can>
   );
 };

@@ -68,13 +68,7 @@ const MenuItems = ({ isExpanded, expandMenu }: Props) => {
   );
 
   const renderProtectedLink = (link: LinkProps) => (
-    <Can
-      key={link.icon}
-      I={link.action}
-      a={link.subject}
-      passThrough
-      allowedRoutes={link.icon === 'settings' ? true : false}
-    >
+    <Can key={link.icon} I={link.action} a={link.subject} passThrough>
       {renderLink(link)}
     </Can>
   );
