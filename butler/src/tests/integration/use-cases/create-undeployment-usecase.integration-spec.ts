@@ -153,7 +153,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           unusedVersions: [],
           versions: [],
           webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-          typeCallback : CallbackTypeEnum.UNDEPLOYMENT
+          callbackType : CallbackTypeEnum.UNDEPLOYMENT
 
         }
 
@@ -220,7 +220,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           unusedVersions: [],
           versions: [],
           webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-          typeCallback : CallbackTypeEnum.UNDEPLOYMENT
+          callbackType : CallbackTypeEnum.UNDEPLOYMENT
         }
         expect(octopipeServiceSpy).toHaveBeenCalledWith(
           expectedOctopipePayload2

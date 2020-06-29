@@ -202,7 +202,8 @@ const istioPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Deploy Virtual Service\' ).status.toString()}'
+        status: '${#stage( \'Deploy Virtual Service\' ).status.toString()}',
+        callbackType: '${#stage( \'Deploy Virtual Service\' ).callbackType.toString()}',
       },
       refId: '3',
       requisiteStageRefIds: [

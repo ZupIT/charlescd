@@ -24,7 +24,8 @@ export interface IBaseWebhook {
   method: 'POST'
   name: 'Trigger webhook'
   payload: {
-    status: string
+    status: string,
+    callbackType: string
   }
   refId: string
   requisiteStageRefIds: string[]
@@ -43,7 +44,8 @@ const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: str
   method: 'POST',
   name: 'Trigger webhook',
   payload: {
-    status: '${#stage( \'' + previousStage + '\' ).status.toString()}'
+    status: '${#stage( \'' + previousStage + '\' ).status.toString()}',
+    callbackType: '${#stage( \'' + previousStage + '\' ).callbackType.toString()}'
   },
   refId,
   requisiteStageRefIds: requisiteRefId,

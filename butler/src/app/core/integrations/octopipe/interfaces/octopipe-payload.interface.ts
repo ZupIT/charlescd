@@ -15,7 +15,7 @@
  */
 
 import { GitProvidersEnum } from '../../configuration/interfaces/git-providers.type'
-import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum'
 
 export interface IOctopipeVersion {
   version?: string
@@ -61,5 +61,5 @@ export interface IOctopipePayload {
   helmUrl: string,
   k8s?: IEKSClusterConfig | IGenericClusterConfig | null // TODO Remove null from this union
   circleId: string,
-  typeCallback: CallbackTypeEnum
+  callbackType: CallbackTypeEnum
 }

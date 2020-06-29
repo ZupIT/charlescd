@@ -48,4 +48,7 @@ export interface ISpinnakerPipelineConfiguration {
   hosts?: string[]
 
   url: string
+
+  callbackType: string
+
 }

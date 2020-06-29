@@ -486,7 +486,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           version: 'component-name-image-tag'
         }
       ],
-      typeCallback: CallbackTypeEnum.DEPLOYMENT,
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: '12345'
     }
@@ -516,7 +516,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           version: 'component-name2-image-tag2'
         }
       ],
-      typeCallback: CallbackTypeEnum.DEPLOYMENT,
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: '12345'
     }
