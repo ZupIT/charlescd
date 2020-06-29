@@ -21,7 +21,7 @@ import {
 import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
 import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
-import { ComponentDeploymentUniquenessPipe } from '../pipes/component-deployment-uniqueness.pipe';
+import { ComponentDeploymentUniquenessPipe } from '../pipes/component-deployment-uniqueness.pipe'
 
 @Controller('deployments')
 export class DeploymentsController {
