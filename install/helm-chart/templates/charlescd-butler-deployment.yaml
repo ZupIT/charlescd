@@ -66,6 +66,8 @@ spec:
               value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
             - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
               value: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/notifications"
+            - name: OCTOPIPE_URL
+              value: "{{ .Values.butler.octopipeHost }}"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
