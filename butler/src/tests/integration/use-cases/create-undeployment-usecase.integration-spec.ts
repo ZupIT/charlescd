@@ -26,7 +26,6 @@ import { QueuedDeploymentsRepository} from '../../../app/api/deployments/reposit
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
-  DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
   UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
