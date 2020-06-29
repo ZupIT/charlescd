@@ -194,7 +194,8 @@ const expectedTotalPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Delete Deployments\' ).status.toString()}'
+        status: '${#stage( \'Delete Deployments\' ).status.toString()}',
+        callbackType: '${#stage( \'Delete Deployments\' ).callbackType.toString()}'
       },
       refId: '4',
       requisiteStageRefIds: [

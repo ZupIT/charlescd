@@ -20,6 +20,7 @@ import expectedTotalPipeline from './fixtures/expected-total-pipeline'
 import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 import istioPipeline from './fixtures/expected-istio-pipeline'
+import {  CallbackTypeEnum } from '../../../../app/api/notifications/enums/callback-type.enum'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
@@ -35,7 +36,8 @@ it('compiles the pipeline', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.DEPLOYMENT
   }
 
   const totalPipeline = new TotalPipeline(contract)
@@ -56,7 +58,8 @@ it('compiles the pipeline with only undeployment', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.DEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()
@@ -78,7 +81,8 @@ it('builds istio pipeline', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.DEPLOYMENT
   }
     const totalPipeline = new TotalPipeline(contract)
     const result = totalPipeline.buildIstioPipeline()

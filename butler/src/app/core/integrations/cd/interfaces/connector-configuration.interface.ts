@@ -16,7 +16,7 @@
 
 import { ICdConfigurationData } from '../../../../api/configurations/interfaces'
 import { IPipelineOptions } from '../../../../api/components/interfaces'
-import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-type.enum'
 
 export interface IConnectorConfiguration {
 
@@ -36,5 +36,5 @@ export interface IConnectorConfiguration {
 
     pipelineCallbackUrl: string
 
-    typeCallback: CallbackTypeEnum
+    callbackType: CallbackTypeEnum
 }

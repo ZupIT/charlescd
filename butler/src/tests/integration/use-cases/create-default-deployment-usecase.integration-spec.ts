@@ -376,7 +376,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
-      typeCallback: CallbackTypeEnum.DEPLOYMENT,
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       circle: {
         headerValue: 'circle-header'
       }
@@ -482,7 +482,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name-image-tag'
         }
       ],
-      typeCallback: CallbackTypeEnum.DEPLOYMENT,
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }
@@ -512,7 +512,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
           version: 'component-name2-image-tag2'
         }
       ],
-      typeCallback: CallbackTypeEnum.DEPLOYMENT,
+      callbackType: CallbackTypeEnum.DEPLOYMENT,
       webHookUrl: expect.stringContaining(envConfiguration.darwinDeploymentCallbackUrl),
       circleId: null
     }

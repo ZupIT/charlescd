@@ -28,7 +28,7 @@ import { IOctopipePayload, ClusterProviderEnum } from '../../../app/core/integra
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('Octopipe Service', () => {
   let octopipeService: OctopipeService
@@ -104,7 +104,7 @@ describe('Octopipe Service', () => {
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
         pipelineCallbackUrl: 'dummy-callback-url',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -141,7 +141,7 @@ describe('Octopipe Service', () => {
         ],
         webHookUrl: 'dummy-callback-url',
         circleId: 'circle-id',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -200,7 +200,7 @@ describe('Octopipe Service', () => {
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
         pipelineCallbackUrl: 'dummy-callback-url',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -237,7 +237,7 @@ describe('Octopipe Service', () => {
         ],
         webHookUrl: 'dummy-callback-url',
         circleId: 'circle-id',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -292,7 +292,7 @@ describe('Octopipe Service', () => {
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
         pipelineCallbackUrl: 'dummy-callback-url',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload = octopipeService.createPipelineConfigurationObject(connectorConfiguration)
@@ -318,7 +318,7 @@ describe('Octopipe Service', () => {
         ],
         webHookUrl: 'dummy-callback-url',
         circleId: 'circle-id',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })
@@ -376,7 +376,7 @@ describe('Octopipe Service', () => {
         helmRepository: componentDeployment.moduleDeployment.helmRepository,
         callbackCircleId: 'circle-id',
         pipelineCallbackUrl: 'dummy-callback-url',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
 
       const payload =
@@ -409,7 +409,7 @@ describe('Octopipe Service', () => {
         unusedVersions: [],
         versions: [],
         webHookUrl: 'dummy-callback-url',
-        typeCallback: CallbackTypeEnum.DEPLOYMENT
+        callbackType: CallbackTypeEnum.DEPLOYMENT
       }
       expect(payload).toEqual(expectedPayload)
     })

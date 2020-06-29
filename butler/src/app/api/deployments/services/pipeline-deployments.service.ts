@@ -37,7 +37,7 @@ import {
 } from '../entity'
 import { ComponentUndeploymentsRepository } from '../repository'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
-import { CallbackTypeEnum } from '../../notifications/enums/callback-type.enum';
+import { CallbackTypeEnum } from '../../notifications/enums/callback-type.enum'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -235,7 +235,7 @@ export class PipelineDeploymentsService {
         this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            deploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.DEPLOYMENT
+            deploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.DEPLOYMENT
         )
 
         await cdService.createDeployment(connectorConfiguration)
@@ -259,7 +259,7 @@ export class PipelineDeploymentsService {
         this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            undeploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.UNDEPLOYMENT
+            undeploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.UNDEPLOYMENT
         )
         await cdService.createUndeployment(connectorConfiguration)
     }
@@ -283,7 +283,7 @@ export class PipelineDeploymentsService {
 
         const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
             componentEntity, cdConfiguration, componentDeployment,
-            deploymentEntity.circleId, pipelineCallbackUrl,CallbackTypeEnum.ISTIO_DEPLOYMENT
+            deploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.ISTIO_DEPLOYMENT
         )
 
         await cdService.createIstioDeployment(connectorConfiguration)
@@ -295,7 +295,7 @@ export class PipelineDeploymentsService {
         componentDeployment: ComponentDeploymentEntity,
         callbackCircleId: string,
         pipelineCallbackUrl: string,
-        typeCallback: CallbackTypeEnum
+        callbackType: CallbackTypeEnum
     ): IConnectorConfiguration {
 
         return {
@@ -307,7 +307,7 @@ export class PipelineDeploymentsService {
             helmRepository: componentDeployment.moduleDeployment.helmRepository,
             callbackCircleId,
             pipelineCallbackUrl,
-            typeCallback
+            callbackType
         }
     }
 }

@@ -31,8 +31,8 @@ import {
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum';
+import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
+import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 
@@ -76,7 +76,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
             mockImplementation( () => of({} as AxiosResponse) )
         const finishDeploymentDto = {
             status : 'FAILED',
-            typeCallback: CallbackTypeEnum.UNDEPLOYMENT
+            callbackType: CallbackTypeEnum.UNDEPLOYMENT
         }
         const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
         let queuedDeploymentSearch: QueuedUndeploymentEntity  = await queuedUndeploymentsRepository.
@@ -105,7 +105,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
                 where : {
                     id: queuedDeploymentSearch.componentUndeploymentId
                 },
-                relations: ['moduleUndeployment','moduleUndeployment.undeployment']
+                relations: ['moduleUndeployment', 'moduleUndeployment.undeployment']
         })
         const moduleUndeploymentEntities : ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({
             where: {
