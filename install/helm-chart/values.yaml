@@ -1,6 +1,7 @@
 butler:
   enabled: true
   name: "charlescd-butler"
+  octopipeHost: "http://charlescd-octopipe:8080/"
   database:
     name: charlescd_butler
     host: charlescd-postgresql
@@ -9,7 +10,7 @@ butler:
     password: 3f2Yq8R4HhDCnefR
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:v0.2.10
+    name: zupcharles/charlescd-butler:latest
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -38,7 +39,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:v0.2.10
+    name: zupcharles/charlescd-moove:latest
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -55,7 +56,7 @@ moove:
     memory: 128Mi
   
 sidecarIstio:
-  enabled: true
+  enabled: false
 
 villager:
   enabled: true
@@ -69,7 +70,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:v0.2.10
+    name: zupcharles/charlescd-villager:latest
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -92,7 +93,7 @@ ui:
   keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:v0.2.10
+    name: zupcharles/charlescd-ui:latest
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -118,7 +119,7 @@ circlematcher:
   frontHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:v0.2.10
+    name: zupcharles/charlescd-circle-matcher:latest
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
