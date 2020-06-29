@@ -39,12 +39,12 @@ export class DeploymentsController {
   @Post()
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
-    @Headers('x-circle-id') circleId: string
+    @Headers('x-circle-id') incomingCircleId: string
   ): Promise<ReadDeploymentDto> {
     if (createDeploymentRequestDto.circle != null) {
-      return await this.createCircleDeploymentRequestUsecase.execute(createDeploymentRequestDto, circleId)
+      return await this.createCircleDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
     }
-    return await this.createDefaultDeploymentRequestUsecase.execute(createDeploymentRequestDto, circleId)
+    return await this.createDefaultDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
   }
 
   @Post(':id/undeploy')
