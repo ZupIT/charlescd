@@ -26,6 +26,7 @@ import (
 	"octopipe/pkg/execution"
 	"octopipe/pkg/pipeline"
 	"octopipe/pkg/utils"
+	"strconv"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -256,7 +257,7 @@ func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineEr
 	request.Header.Set("x-circle-id", pipeline.CircleID)
 	request.Header.Set("Content-Type", "application/json")
 	attempts := 1
-	_, err = mozart.SendRequest(request, client,attempts)
+	_, err = mozart.SendRequest(request, client, attempts)
 	if err != nil {
 		utils.CustomLog("error", "triggerWebhook", err.Error())
 		return err
@@ -273,10 +274,11 @@ func (mozart *Mozart) returnPipelineError(pipelineError error) {
 }
 
 func (mozart *Mozart) SendRequest(request *http.Request, client http.Client, attempts int) (*http.Response,error) {
+	utils.CustomLog("success", "sendRequest","Request retry attempt" + strconv.Itoa(attempts))
 	response, err := client.Do(request)
-	if err != nil && attempts< maximumRetryRequestAttempts {
+	if err != nil && attempts < maximumRetryRequestAttempts {
 		utils.CustomLog("error", "sendRequest", err.Error())
-		response, err = mozart.SendRequest(request, client, attempts+1)
+		response, err = mozart.SendRequest(request, client, attempts + 1)
 	}
 	return response, err
 }
