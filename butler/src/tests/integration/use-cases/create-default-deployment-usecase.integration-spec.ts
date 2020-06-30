@@ -189,7 +189,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     return request(app.getHttpServer())
       .post('/deployments/default')
       .send(createDeploymentRequest)
-      .expect(400, done)
+      .expect(409, done)
 
   })
 
