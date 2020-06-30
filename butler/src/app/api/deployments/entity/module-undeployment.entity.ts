@@ -59,7 +59,7 @@ export class ModuleUndeploymentEntity extends BaseEntity {
   @Column({ name: 'status' })
   public status: UndeploymentStatusEnum
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   @Column({ name: 'finished_at' })

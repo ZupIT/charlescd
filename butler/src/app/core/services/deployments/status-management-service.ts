@@ -61,7 +61,7 @@ export class StatusManagementService {
         private readonly consoleLoggerService: ConsoleLoggerService
     ) {}
 
-    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]>{
+    public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]> {
         await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id, status)
         return Promise.all(
             moduleUndeployment.componentUndeployments
@@ -304,7 +304,7 @@ export class StatusManagementService {
 
     private async isQueuedIstiodeploymentHasFinished(deploymentId: string): Promise<boolean> {
         const allQueuedIstioDeployments = await this.queuedIstioDeploymentsRepository.find({
-            where: {deploymentId}
+            where: { deploymentId }
         })
 
         return allQueuedIstioDeployments.every(
