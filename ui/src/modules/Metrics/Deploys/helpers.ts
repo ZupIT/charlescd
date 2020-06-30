@@ -48,3 +48,13 @@ export const getAverageTimeSeries = (data: DeployMetricData) => [
 export const chartDateFormatter = (date: string) => {
   return dayjs(date).format('DD/MM');
 };
+
+export const getPlotOption = (deploySeries: Array<any>) => {
+  const plotOptionsMin = { bar: { columnWidth: '25%' } };
+  const plotOptionsMax = { bar: { columnWidth: '50%' } };
+
+  const deploy = deploySeries[0].data[2];
+  const error = deploySeries[1].data[2];
+
+  return !(deploy || error) ? plotOptionsMin : plotOptionsMax;
+};
