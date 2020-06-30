@@ -202,15 +202,15 @@ export class PipelineDeploymentsService {
     }
 
     private getDeploymentCallbackUrl(queuedDeploymentId: number): string {
-        return `${this.envConfiguration.darwinDeploymentCallbackUrl}?queuedDeploymentId=${queuedDeploymentId}`
+        return `${this.envConfiguration.darwinDeploymentCallbackUrl}?queuedId=${queuedDeploymentId}`
     }
 
     private getUndeploymentCallbackUrl(queuedUndeploymentId: number): string {
-        return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedDeploymentId=${queuedUndeploymentId}`
+        return `${this.envConfiguration.darwinUndeploymentCallbackUrl}?queuedId=${queuedUndeploymentId}`
     }
 
     private getIstioDeploymentCallbackUrl(queuedIstioDeploymentId: number): string {
-        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedDeploymentId=${queuedIstioDeploymentId}`
+        return `${this.envConfiguration.darwinIstioDeploymentCallbackUrl}?queuedId=${queuedIstioDeploymentId}`
     }
 
     private async triggerComponentDeployment(
