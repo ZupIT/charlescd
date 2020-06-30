@@ -15,6 +15,7 @@
  */
 
 import React, { useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { getNameInitials } from './helper';
 
@@ -36,7 +37,8 @@ const AvatarName = ({
   alt
 }: Props) => {
   const [error, setError] = useState(false);
-  if (error) {
+
+  if (error || isEmpty(src)) {
     return (
       <Styled.Wrapper className={`${className} avatar-initials`} size={size}>
         {initials || getNameInitials(name)}
