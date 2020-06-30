@@ -15,7 +15,7 @@
  */
 
 import {
-    BadRequestException,
+    ConflictException,
     Injectable,
     PipeTransform
 } from '@nestjs/common'
@@ -36,7 +36,7 @@ export class DeploymentUniquenessPipe implements PipeTransform {
         const deployment: DeploymentEntity | undefined =
             await this.deploymentsRepository.findOne({ id: deploymentRequest.deploymentId })
         if (deployment) {
-            throw new BadRequestException('Deployment already exists')
+            throw new ConflictException('Deployment already exists')
         }
         return deploymentRequest
     }
