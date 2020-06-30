@@ -37,11 +37,6 @@ export default {
       left: 30
     }
   },
-  plotOption: {
-    bar: {
-      horizontal: false
-    }
-  },
   legend: {
     show: true,
     showForNullSeries: true,
