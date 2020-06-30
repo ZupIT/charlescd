@@ -41,6 +41,7 @@ const FormGit = ({ onFinish }: Props) => {
   const onSubmit = (git: Git) => {
     save({
       ...git,
+      name: `${gitType} Configuration`,
       authorId: profileId,
       credentials: {
         ...git.credentials,
