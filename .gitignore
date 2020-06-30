@@ -15,6 +15,7 @@ nb-configuration.xml
 
 # Visual Studio Code
 .vscode
+!butler/.vscode
 
 # OSX
 .DS_Store

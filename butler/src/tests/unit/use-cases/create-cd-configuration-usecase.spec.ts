@@ -26,48 +26,48 @@ import { ConsoleLoggerServiceStub } from '../../stubs/services'
 
 describe('CreateCdConfigurationUsecase', () => {
 
-    let createCdConfigurationUsecase: CreateCdConfigurationUsecase
-    let cdConfigurationsRepository: CdConfigurationsRepository
-    let cdConfiguration: CdConfigurationEntity
-    let createCdConfigurationDto: CreateCdConfigurationDto
+  let createCdConfigurationUsecase: CreateCdConfigurationUsecase
+  let cdConfigurationsRepository: CdConfigurationsRepository
+  let cdConfiguration: CdConfigurationEntity
+  let createCdConfigurationDto: CreateCdConfigurationDto
 
-    beforeEach(async () => {
+  beforeEach(async() => {
 
-        const module = await Test.createTestingModule({
-            providers: [
-                CreateCdConfigurationUsecase,
-                { provide: CdConfigurationsRepository, useClass: CdConfigurationsRepositoryStub },
-                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub }
-            ]
-        }).compile()
+    const module = await Test.createTestingModule({
+      providers: [
+        CreateCdConfigurationUsecase,
+        { provide: CdConfigurationsRepository, useClass: CdConfigurationsRepositoryStub },
+        { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub }
+      ]
+    }).compile()
 
-        createCdConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
-        cdConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
+    createCdConfigurationUsecase = module.get<CreateCdConfigurationUsecase>(CreateCdConfigurationUsecase)
+    cdConfigurationsRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
 
-        createCdConfigurationDto = new CreateCdConfigurationDto(
-            CdTypeEnum.SPINNAKER,
-            { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-            'config-name',
-            'authorId'
-        )
+    createCdConfigurationDto = new CreateCdConfigurationDto(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId'
+    )
 
-        cdConfiguration = new CdConfigurationEntity(
-            CdTypeEnum.SPINNAKER,
-            { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-            'config-name',
-            'authorId',
-            'workspaceId'
-        )
+    cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+  })
+
+  describe('execute', () => {
+    it('should return the correct read dto for a given entity', async() => {
+
+      jest.spyOn(cdConfigurationsRepository, 'saveEncrypted')
+        .mockImplementation(() => Promise.resolve(cdConfiguration))
+
+      expect(await createCdConfigurationUsecase.execute(createCdConfigurationDto, 'workspaceId'))
+        .toEqual(cdConfiguration.toReadDto())
     })
-
-    describe('execute', () => {
-        it('should return the correct read dto for a given entity', async () => {
-
-            jest.spyOn(cdConfigurationsRepository, 'saveEncrypted')
-                .mockImplementation(() => Promise.resolve(cdConfiguration))
-
-            expect(await createCdConfigurationUsecase.execute(createCdConfigurationDto, 'workspaceId'))
-                .toEqual(cdConfiguration.toReadDto())
-        })
-    })
+  })
 })
