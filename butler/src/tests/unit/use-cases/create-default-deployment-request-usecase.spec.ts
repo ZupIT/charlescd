@@ -84,7 +84,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
                 { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
                 { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
                 { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-                { provide: ModulesService, useClass: ModulesServiceStub},
+                { provide: ModulesService, useClass: ModulesServiceStub },
                 { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
             ]
         }).compile()
