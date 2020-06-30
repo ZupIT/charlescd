@@ -18,7 +18,7 @@ import {
   EntityRepository,
   Repository
 } from 'typeorm'
-import { ModuleDeploymentEntity} from '../entity'
+import { ModuleDeploymentEntity } from '../entity'
 import { DeploymentStatusEnum } from '../enums'
 
 @EntityRepository(ModuleDeploymentEntity)

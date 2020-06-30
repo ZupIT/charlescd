@@ -40,7 +40,7 @@ export class ModuleEntity extends BaseEntity {
   )
   public components: ComponentEntity[]
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(

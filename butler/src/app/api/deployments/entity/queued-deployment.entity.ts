@@ -47,7 +47,7 @@ export class QueuedDeploymentEntity extends BaseEntity {
   @Column({ name: 'type' })
   public type: QueuedPipelineTypesEnum
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(

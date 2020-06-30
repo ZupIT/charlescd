@@ -59,10 +59,10 @@ export class ModuleDeploymentEntity extends BaseEntity {
   )
   public components: ComponentDeploymentEntity[]
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
-  @Column({ name: 'finished_at'})
+  @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
   constructor(

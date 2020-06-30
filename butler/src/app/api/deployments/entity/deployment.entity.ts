@@ -80,7 +80,7 @@ export class DeploymentEntity extends BaseEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
-  @Column({ name: 'cd_configuration_id', type: 'varchar'})
+  @Column({ name: 'cd_configuration_id', type: 'varchar' })
   public cdConfigurationId!: string
 
   constructor(
