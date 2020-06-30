@@ -29,9 +29,9 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
-import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
-import { AppConstants } from '../../../constants';
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { Observable, of, throwError } from 'rxjs'
+import { AppConstants } from '../../../constants'
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -84,7 +84,7 @@ export class OctopipeService implements ICdServiceStrategy {
   private getDeployRetryCondition(deployError: Observable<any>) {
     return deployError.pipe(
       concatMap((error, attempts) => {
-        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS?
+        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS ?
           throwError('Reached maximum attemps.') :
           this.getDeployRetryPipe(error, attempts)
       })
