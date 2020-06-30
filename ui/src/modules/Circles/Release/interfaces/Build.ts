@@ -39,4 +39,5 @@ export interface FilterBuild {
   tagName?: string;
   page?: number;
   size?: number;
+  status?: string;
 }
