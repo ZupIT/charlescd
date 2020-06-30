@@ -153,6 +153,53 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
+  it(`/POST deployments/circle should do a upsert if a module already exists and has new components `, async () => {
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'component-id-upsert',
+              componentName: 'component-upsert',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+
+    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345').expect(201)
+
+    const deployment = await deploymentsRepository.findOne(
+      { id: createDeploymentRequest.deploymentId },
+      { relations: ['modules', 'modules.components'] }
+    )
+
+    if (!deployment) {
+      fail('Deployment entity was not saved')
+    }
+    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+  })
+
   it(`/POST deployments/circle should fail when deployment already exists`, done => {
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
