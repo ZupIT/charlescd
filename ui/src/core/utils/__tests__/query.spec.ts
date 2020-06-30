@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import { ModuleForm } from 'modules/Circles/Release/interfaces/Module';
-import { FilterBuild } from 'modules/Circles/Release/interfaces/Build';
-import { postRequest, baseRequest } from './base';
-import { getParams } from 'core/utils/query';
+import { getParams } from '../query';
 
-const endpoint = '/moove/v2/builds';
-
-export const composeBuild = (data: ModuleForm) =>
-  postRequest(`${endpoint}/compose`, data);
-
-export const findBuilds = (data: FilterBuild) =>
-  baseRequest(`${endpoint}${getParams(data)}`);
+test('get params', () => {
+  const params = { key: 'value' };
+  expect(getParams(params)).toEqual('?key=value')
+});

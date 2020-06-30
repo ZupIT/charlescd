@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+import forEach from 'lodash/forEach';
+import isEmpty from 'lodash/isEmpty';
+
 const getQueryStrings = () => new URLSearchParams(window.location.search);
+
+export const getParams = (params: object) => {
+  const param = new URLSearchParams();
+  forEach(params, (value, key) => { param.append(key, value); });
+  const paramTS = param.toString();
+
+  return !isEmpty(paramTS) ? `?${paramTS}` : '';
+}
 
 export default getQueryStrings;

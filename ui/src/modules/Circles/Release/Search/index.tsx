@@ -37,7 +37,7 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
   const { createDeployment, response: deployed } = useCreateDeployment();
 
   useEffect(() => {
-    getBuilds();
+    getBuilds({ status: 'BUILT' });
   }, [getBuilds]);
 
   useEffect(() => {
