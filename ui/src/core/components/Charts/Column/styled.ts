@@ -22,7 +22,6 @@ interface ChartProps {
 }
 
 const Chart = styled(Charts)<ChartProps>`
-  cursor: crosshair;
   padding-right: 15px;
 
   .apexcharts-canvas,

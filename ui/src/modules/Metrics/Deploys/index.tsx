@@ -26,8 +26,13 @@ import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
-import { getDeploySeries, getAverageTimeSeries } from './helpers';
+import {
+  getDeploySeries,
+  getAverageTimeSeries,
+  getPlotOption
+} from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
+import isUndefined from 'lodash/isUndefined';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
@@ -35,6 +40,11 @@ const Deploys = () => {
 
   const deploySeries = getDeploySeries(response);
   const averageTimeSeries = getAverageTimeSeries(response);
+
+  const plotOptions = getPlotOption(deploySeries);
+  const deployChartOption = isUndefined(plotOptions)
+    ? deployOptions
+    : { ...deployOptions, plotOptions };
 
   useEffect(() => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
@@ -122,7 +132,7 @@ const Deploys = () => {
           <ChartMenu onReset={() => resetChart('chartDeploy')} />
         </Styled.ChartControls>
         <Styled.ColumnChart
-          options={deployOptions}
+          options={deployChartOption}
           series={deploySeries}
           width={1180}
           height={450}
