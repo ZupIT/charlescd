@@ -18,6 +18,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ModuleEntity } from '../../modules/entity'
+import { ComponentEntity } from '../../components/entity'
 
 @Injectable()
 export class ModulesService {
@@ -38,7 +39,10 @@ export class ModulesService {
     private async saveModule(moduleEntity: ModuleEntity) {
         const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
 
-        if (module) {
+        const newComponents: ComponentEntity[] = moduleEntity.components.filter(
+          component => !module?.components.includes(component)
+        )
+        if (module && !newComponents) {
             return
         }
 
