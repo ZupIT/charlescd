@@ -242,20 +242,20 @@ jobs:
     ]
     steps:
     - uses: actions/checkout@v2
+    - uses: WyriHaximus/github-action-helm3@v1.0.0
 
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: Update charts
-      uses: WyriHaximus/github-action-helm3@v1.0.0
       run: |
         mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
         cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
         echo -e "\r\nappVersion: ${{ steps.get_version.outputs.VERSION }}\r\n" >> ./install/helm-chart/Chart.yaml &&
         cat ./install/helm-chart/Chart.yaml &&
         sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml &&
-        helm3 template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
+        helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
     - name: Commit Chart updated
       run: |
