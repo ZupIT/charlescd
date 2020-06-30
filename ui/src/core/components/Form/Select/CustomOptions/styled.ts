@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 `;
 
 interface LabelProps {
-  marginContent?: string;
+  marginContent: string;
 }
 
 const Label = styled.div<LabelProps>`

@@ -21,12 +21,10 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
-const checkWidth = '30px';
-
 const Checkmark = styled.span``;
 
 const Content = styled.div`
-  width: calc(100% - ${checkWidth});
+  width: calc(100% - 30px);
 `;
 
 const Label = styled(Text.h5)`

@@ -3,12 +3,12 @@
     <defs>
         <path d="M19,21 L5,21 C4.449,21 4,20.552 4,20 L4,11 L20,11 L20,20 C20,20.552 19.552,21 19,21 M5,5 L7,5 L7,6 C7,6.552 7.448,7 8,7 C8.552,7 9,6.552 9,6 L9,5 L15,5 L15,6 C15,6.552 15.447,7 16,7 C16.553,7 17,6.552 17,6 L17,5 L19,5 C19.552,5 20,5.449 20,6 L20,9 L4,9 L4,6 C4,5.449 4.449,5 5,5 M19,3 L17,3 L17,2 C17,1.448 16.553,1 16,1 C15.447,1 15,1.448 15,2 L15,3 L9,3 L9,2 C9,1.448 8.552,1 8,1 C7.448,1 7,1.448 7,2 L7,3 L5,3 C3.346,3 2,4.346 2,6 L2,20 C2,21.654 3.346,23 5,23 L19,23 C20.654,23 22,21.654 22,20 L22,6 C22,4.346 20.654,3 19,3" id="path-calendar"></path>
     </defs>
-    <g id="Circles" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="calendar" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Icon/Calendar/Calendar" transform="translate(-2.000000, -1.000000)">
-            <mask id="mask-2" fill="currentColor">
+            <mask id="mask-calendar" fill="currentColor">
                 <use xlink:href="#path-calendar"></use>
             </mask>
-            <use id="Icon-Calendar" fill="currentColor" fill-rule="evenodd" xlink:href="#path-calendar"></use>
+            <use id="icon-calendar" fill="currentColor" fill-rule="evenodd" xlink:href="#path-calendar"></use>
         </g>
     </g>
 </svg>

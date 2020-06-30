@@ -29,8 +29,7 @@ import {
   COLOR_BLACK_MARLIN,
   COLOR_SANTAS_GREY,
   COLOR_PAYNES_GREY,
-  COLOR_BASTILLE,
-  COLOR_FREE_SPEECH_BLUE
+  COLOR_BASTILLE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -64,17 +63,6 @@ export const dark = {
     }
   },
   dashboard: {
-    card: COLOR_BASTILLE,
-    button: COLOR_PAYNES_GREY,
-    text: COLOR_SANTAS_GREY,
-    chart: {
-      Error: COLOR_RED_ORANGE,
-      Deploy: COLOR_MOUNTAIN_MEADOW
-    },
-    release: {
-      Deployed: COLOR_MOUNTAIN_MEADOW,
-      Deploying: COLOR_FREE_SPEECH_BLUE,
-      Error: COLOR_RED_ORANGE
-    }
+    card: COLOR_BASTILLE
   }
 };
