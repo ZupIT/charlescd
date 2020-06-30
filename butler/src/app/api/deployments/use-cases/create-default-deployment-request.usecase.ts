@@ -73,12 +73,10 @@ export class CreateDefaultDeploymentRequestUsecase {
     ) { }
 
     public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
         const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
         await this.modulesService.createModules(modules)
-
-        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
         const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
-
         try {
             await this.scheduleComponentDeployments(deployment)
             this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)

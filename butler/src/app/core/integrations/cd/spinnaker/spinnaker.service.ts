@@ -39,7 +39,6 @@ export class SpinnakerService implements ICdServiceStrategy {
   ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
     this.consoleLoggerService.log('START:PROCESS_SPINNAKER_DEPLOYMENT', configuration)
     const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
     await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
@@ -120,9 +119,9 @@ export class SpinnakerService implements ICdServiceStrategy {
   private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineType: PipelineTypeEnum): Promise<void> {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = this.getTotalPipelineByPipelineType(spinnakerConfiguration, pipelineType)
-    const { data: { id: pipelineId } } =
-      await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
-        spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
+    const { data: { id: pipelineId } } = await this.spinnakerApiService.getPipeline(
+      spinnakerConfiguration.applicationName, spinnakerConfiguration.pipelineName, spinnakerConfiguration.url
+    ).toPromise()
 
     pipelineId ?
       await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId, pipelineType) :
@@ -134,15 +133,13 @@ export class SpinnakerService implements ICdServiceStrategy {
   private getTotalPipelineByPipelineType(
     spinnakerConfiguration: ISpinnakerPipelineConfiguration,
     pipelineType: PipelineTypeEnum
-  ) {
+  ): IBaseSpinnakerPipeline {
     if (pipelineType === PipelineTypeEnum.ISTIO) {
       return new TotalPipeline(spinnakerConfiguration).buildIstioPipeline()
     }
-
     if (pipelineType === PipelineTypeEnum.UNDEPLOYED) {
       return new TotalPipeline(spinnakerConfiguration).buildUndeploymentPipeline()
     }
-
     return new TotalPipeline(spinnakerConfiguration).buildPipeline()
   }
 

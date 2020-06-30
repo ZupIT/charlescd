@@ -65,7 +65,8 @@ export class PipelineQueuesService {
       await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
     const runningDeployment: QueuedDeploymentEntity | undefined =
       await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
-    if (nextQueuedDeployment && !runningDeployment) {
+
+      if (nextQueuedDeployment && !runningDeployment) {
       nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
         await this.triggerQueuedDeployment(nextQueuedDeployment) :
         await this.triggerQueuedUndeployment(nextQueuedDeployment as QueuedUndeploymentEntity)
