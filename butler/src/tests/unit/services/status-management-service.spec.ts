@@ -16,33 +16,33 @@
 
 import { Test } from '@nestjs/testing'
 import {
-    ComponentDeploymentsRepositoryStub,
-    ComponentUndeploymentsRepositoryStub,
-    DeploymentsRepositoryStub,
-    ModuleDeploymentsRepositoryStub,
-    ModuleUndeploymentsRepositoryStub,
-    UndeploymentsRepositoryStub,
-    QueuedIstioDeploymentsRepositoryStub
+  ComponentDeploymentsRepositoryStub,
+  ComponentUndeploymentsRepositoryStub,
+  DeploymentsRepositoryStub,
+  ModuleDeploymentsRepositoryStub,
+  ModuleUndeploymentsRepositoryStub,
+  UndeploymentsRepositoryStub,
+  QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import {
-    CircleDeploymentEntity,
-    ComponentDeploymentEntity,
-    ComponentUndeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    ModuleUndeploymentEntity,
-    UndeploymentEntity
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  ModuleUndeploymentEntity,
+  UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import {
-    ComponentDeploymentsRepository,
-    ComponentUndeploymentsRepository,
-    QueuedIstioDeploymentsRepository
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedIstioDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import { Repository } from 'typeorm'
 import {
-    DeploymentStatusEnum,
-    UndeploymentStatusEnum
+  DeploymentStatusEnum,
+  UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
 import { DeploymentsRepository } from '../../../app/api/deployments/repository/deployments.repository'
 import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
@@ -53,228 +53,228 @@ import { ConsoleLoggerServiceStub } from '../../stubs/services'
 
 describe('PipelinesService', () => {
 
-    let statusManagementService: StatusManagementService
-    let componentDeploymentsRepository: ComponentDeploymentsRepository
-    let componentUndeploymentsRepository: ComponentUndeploymentsRepository
-    let moduleDeploymentsRepository: Repository<ModuleDeploymentEntity>
-    let moduleUndeploymentsRepository: Repository<ModuleUndeploymentEntity>
-    let deploymentsRepository: Repository<DeploymentEntity>
-    let undeploymentsRepository: Repository<UndeploymentEntity>
-    let deployment: DeploymentEntity
-    let deploymentWithRelations: DeploymentEntity
-    let moduleDeployment: ModuleDeploymentEntity
-    let moduleDeploymentWithRelations: ModuleDeploymentEntity
-    let moduleDeploymentsList: ModuleDeploymentEntity[]
-    let componentDeployment: ComponentDeploymentEntity
-    let componentDeploymentsList: ComponentDeploymentEntity[]
-    let circle: CircleDeploymentEntity
-    let undeployment: UndeploymentEntity
-    let moduleUndeployment: ModuleUndeploymentEntity
-    let componentUndeployment: ComponentUndeploymentEntity
-    let componentUndeploymentsList: ComponentUndeploymentEntity[]
-    let moduleUndeploymentWithRelations: ModuleUndeploymentEntity
+  let statusManagementService: StatusManagementService
+  let componentDeploymentsRepository: ComponentDeploymentsRepository
+  let componentUndeploymentsRepository: ComponentUndeploymentsRepository
+  let moduleDeploymentsRepository: Repository<ModuleDeploymentEntity>
+  let moduleUndeploymentsRepository: Repository<ModuleUndeploymentEntity>
+  let deploymentsRepository: Repository<DeploymentEntity>
+  let undeploymentsRepository: Repository<UndeploymentEntity>
+  let deployment: DeploymentEntity
+  let deploymentWithRelations: DeploymentEntity
+  let moduleDeployment: ModuleDeploymentEntity
+  let moduleDeploymentWithRelations: ModuleDeploymentEntity
+  let moduleDeploymentsList: ModuleDeploymentEntity[]
+  let componentDeployment: ComponentDeploymentEntity
+  let componentDeploymentsList: ComponentDeploymentEntity[]
+  let circle: CircleDeploymentEntity
+  let undeployment: UndeploymentEntity
+  let moduleUndeployment: ModuleUndeploymentEntity
+  let componentUndeployment: ComponentUndeploymentEntity
+  let componentUndeploymentsList: ComponentUndeploymentEntity[]
+  let moduleUndeploymentWithRelations: ModuleUndeploymentEntity
 
-    beforeEach(async () => {
+  beforeEach(async() => {
 
-        const module = await Test.createTestingModule({
-            providers: [
-                StatusManagementService,
-                { provide: DeploymentsRepository, useClass: DeploymentsRepositoryStub },
-                { provide: ModuleDeploymentsRepository, useClass: ModuleDeploymentsRepositoryStub },
-                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-                { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
-                { provide: ModuleUndeploymentsRepository, useClass: ModuleUndeploymentsRepositoryStub },
-                { provide: UndeploymentsRepository, useClass: UndeploymentsRepositoryStub },
-                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
-            ]
-        }).compile()
+    const module = await Test.createTestingModule({
+      providers: [
+        StatusManagementService,
+        { provide: DeploymentsRepository, useClass: DeploymentsRepositoryStub },
+        { provide: ModuleDeploymentsRepository, useClass: ModuleDeploymentsRepositoryStub },
+        { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+        { provide: ComponentUndeploymentsRepository, useClass: ComponentUndeploymentsRepositoryStub },
+        { provide: ModuleUndeploymentsRepository, useClass: ModuleUndeploymentsRepositoryStub },
+        { provide: UndeploymentsRepository, useClass: UndeploymentsRepositoryStub },
+        { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
+        { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
+      ]
+    }).compile()
 
-        statusManagementService = module.get<StatusManagementService>(StatusManagementService)
-        componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-        componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-        moduleUndeploymentsRepository = module.get<Repository<ModuleUndeploymentEntity>>(ModuleUndeploymentsRepository)
-        deploymentsRepository = module.get<Repository<DeploymentEntity>>(DeploymentsRepository)
-        undeploymentsRepository = module.get<Repository<UndeploymentEntity>>(UndeploymentsRepository)
-        moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>(ModuleDeploymentsRepository)
+    statusManagementService = module.get<StatusManagementService>(StatusManagementService)
+    componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+    componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
+    moduleUndeploymentsRepository = module.get<Repository<ModuleUndeploymentEntity>>(ModuleUndeploymentsRepository)
+    deploymentsRepository = module.get<Repository<DeploymentEntity>>(DeploymentsRepository)
+    undeploymentsRepository = module.get<Repository<UndeploymentEntity>>(UndeploymentsRepository)
+    moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>(ModuleDeploymentsRepository)
 
-        circle = new CircleDeploymentEntity('dummy-circle')
+    circle = new CircleDeploymentEntity('dummy-circle')
 
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag'
-        )
+    componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
 
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            [componentDeployment]
-        )
+    moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
 
-        deployment = new DeploymentEntity(
-            'dummy-deployment-id',
-            'dummy-application-name',
-            [moduleDeployment],
-            'dummy-author-id',
-            'dummy-description',
-            'dummy-callback-url',
-            circle,
-            false,
-            'dummy-circle-id',
-            'cd-configuration-id'
-        )
+    deployment = new DeploymentEntity(
+      'dummy-deployment-id',
+      'dummy-application-name',
+      [moduleDeployment],
+      'dummy-author-id',
+      'dummy-description',
+      'dummy-callback-url',
+      circle,
+      false,
+      'dummy-circle-id',
+      'cd-configuration-id'
+    )
 
-        moduleDeployment.deployment = deployment
+    moduleDeployment.deployment = deployment
 
-        componentDeployment.moduleDeployment = moduleDeployment
+    componentDeployment.moduleDeployment = moduleDeployment
 
-        componentDeploymentsList = [
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag'
-            ),
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag'
-            )
-        ]
+    componentDeploymentsList = [
+      new ComponentDeploymentEntity(
+        'dummy-id',
+        'dummy-name',
+        'dummy-img-url',
+        'dummy-img-tag'
+      ),
+      new ComponentDeploymentEntity(
+        'dummy-id',
+        'dummy-name',
+        'dummy-img-url',
+        'dummy-img-tag'
+      )
+    ]
 
-        moduleDeployment.components = componentDeploymentsList
+    moduleDeployment.components = componentDeploymentsList
 
-        moduleDeploymentWithRelations = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            componentDeploymentsList
-        )
+    moduleDeploymentWithRelations = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      componentDeploymentsList
+    )
 
-        moduleDeploymentsList = [
-            moduleDeploymentWithRelations
-        ]
+    moduleDeploymentsList = [
+      moduleDeploymentWithRelations
+    ]
 
-        deploymentWithRelations = new DeploymentEntity(
-            'dummy-deployment-id',
-            'dummy-application-name',
-            moduleDeploymentsList,
-            'dummy-author-id',
-            'dummy-description',
-            'dummy-callback-url',
-            circle,
-            false,
-            'dummy-circle-id',
-            'cd-configuration-id'
-        )
+    deploymentWithRelations = new DeploymentEntity(
+      'dummy-deployment-id',
+      'dummy-application-name',
+      moduleDeploymentsList,
+      'dummy-author-id',
+      'dummy-description',
+      'dummy-callback-url',
+      circle,
+      false,
+      'dummy-circle-id',
+      'cd-configuration-id'
+    )
 
-        undeployment = new UndeploymentEntity(
-            'dummy-author-id',
-            deploymentWithRelations,
-            'dummy-circle-id'
-        )
+    undeployment = new UndeploymentEntity(
+      'dummy-author-id',
+      deploymentWithRelations,
+      'dummy-circle-id'
+    )
 
-        componentUndeployment = new ComponentUndeploymentEntity(
-            componentDeployment
-        )
+    componentUndeployment = new ComponentUndeploymentEntity(
+      componentDeployment
+    )
 
-        moduleUndeployment = new ModuleUndeploymentEntity(
-            moduleDeployment,
-            [componentUndeployment]
-        )
-        moduleUndeployment.undeployment = undeployment
+    moduleUndeployment = new ModuleUndeploymentEntity(
+      moduleDeployment,
+      [componentUndeployment]
+    )
+    moduleUndeployment.undeployment = undeployment
 
-        componentUndeployment.moduleUndeployment = moduleUndeployment
+    componentUndeployment.moduleUndeployment = moduleUndeployment
 
-        componentUndeploymentsList = [
-            componentUndeployment,
-            componentUndeployment
-        ]
+    componentUndeploymentsList = [
+      componentUndeployment,
+      componentUndeployment
+    ]
 
-        moduleUndeploymentWithRelations = new ModuleUndeploymentEntity(
-            moduleDeployment,
-            componentUndeploymentsList
-        )
+    moduleUndeploymentWithRelations = new ModuleUndeploymentEntity(
+      moduleDeployment,
+      componentUndeploymentsList
+    )
 
-        undeployment.moduleUndeployments = [moduleUndeploymentWithRelations]
+    undeployment.moduleUndeployments = [moduleUndeploymentWithRelations]
 
+  })
+
+  describe('setComponentDeploymentStatusAsFinished', () => {
+    it('should correctly update component deployment status to SUCCEEDED', async() => {
+      jest.spyOn(global, 'Date')
+        .mockImplementation(() => '2020-04-20T19:16:46.700Z')
+      jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+        .mockImplementation(() => Promise.resolve(componentDeployment))
+      jest.spyOn(moduleDeploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(moduleDeploymentWithRelations))
+      jest.spyOn(deploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(deploymentWithRelations))
+
+      const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
+      await statusManagementService.setComponentDeploymentStatusAsFinished(
+        'dummy-component-deployment-id'
+      )
+
+      expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.SUCCEEDED)
     })
+  })
 
-    describe('setComponentDeploymentStatusAsFinished', () => {
-        it('should correctly update component deployment status to SUCCEEDED', async () => {
-            jest.spyOn(global, 'Date')
-                .mockImplementation(() => '2020-04-20T19:16:46.700Z')
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-            jest.spyOn(moduleDeploymentsRepository, 'findOneOrFail')
-                .mockImplementation(() => Promise.resolve(moduleDeploymentWithRelations))
-            jest.spyOn(deploymentsRepository, 'findOneOrFail')
-                .mockImplementation(() => Promise.resolve(deploymentWithRelations))
+  describe('setComponentDeploymentStatusAsFailed', () => {
+    it('should correctly update component deployment status to FAILED', async() => {
 
-            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
-            await statusManagementService.setComponentDeploymentStatusAsFinished(
-                'dummy-component-deployment-id'
-            )
+      jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
+        .mockImplementation(() => Promise.resolve(componentDeployment))
+      jest.spyOn(moduleDeploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(moduleDeploymentWithRelations))
+      jest.spyOn(deploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(deploymentWithRelations))
 
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.SUCCEEDED)
-        })
+      const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
+      await statusManagementService.setComponentDeploymentStatusAsFailed(
+        'dummy-component-deployment-id'
+      )
+
+      expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.FAILED)
     })
+  })
 
-    describe('setComponentDeploymentStatusAsFailed', () => {
-        it('should correctly update component deployment status to FAILED', async () => {
+  describe('setComponentUndeploymentStatusAsFinished', () => {
+    it('should correctly update component undeployment status to SUCCEEDED', async() => {
 
-            jest.spyOn(componentDeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentDeployment))
-            jest.spyOn(moduleDeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(moduleDeploymentWithRelations))
-            jest.spyOn(deploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(deploymentWithRelations))
+      jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+        .mockImplementation(() => Promise.resolve(componentUndeployment))
+      jest.spyOn(moduleUndeploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
+      jest.spyOn(undeploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(undeployment))
 
-            const queueSpy = jest.spyOn(componentDeploymentsRepository, 'updateStatus')
-            await statusManagementService.setComponentDeploymentStatusAsFailed(
-                'dummy-component-deployment-id'
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-deployment-id', DeploymentStatusEnum.FAILED)
-        })
+      const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
+      await statusManagementService.setComponentUndeploymentStatusAsFinished(
+        'dummy-component-undeployment-id'
+      )
+      expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.SUCCEEDED)
     })
+  })
 
-    describe('setComponentUndeploymentStatusAsFinished', () => {
-        it('should correctly update component undeployment status to SUCCEEDED', async () => {
+  describe('setComponentUndeploymentStatusAsFailed', () => {
+    it('should correctly update component undeployment status to FAILED', async() => {
 
-            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentUndeployment))
-            jest.spyOn(moduleUndeploymentsRepository, 'findOneOrFail')
-                .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
-            jest.spyOn(undeploymentsRepository, 'findOneOrFail')
-                .mockImplementation(() => Promise.resolve(undeployment))
+      jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+        .mockImplementation(() => Promise.resolve(componentUndeployment))
+      jest.spyOn(moduleUndeploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
+      jest.spyOn(undeploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(undeployment))
 
-            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
-            await statusManagementService.setComponentUndeploymentStatusAsFinished(
-                'dummy-component-undeployment-id'
-            )
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.SUCCEEDED)
-        })
+      const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
+      await statusManagementService.setComponentUndeploymentStatusAsFailed(
+        'dummy-component-undeployment-id'
+      )
+
+      expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FAILED)
     })
-
-    describe('setComponentUndeploymentStatusAsFailed', () => {
-        it('should correctly update component undeployment status to FAILED', async () => {
-
-            jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
-                .mockImplementation(() => Promise.resolve(componentUndeployment))
-            jest.spyOn(moduleUndeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
-            jest.spyOn(undeploymentsRepository, 'findOne')
-                .mockImplementation(() => Promise.resolve(undeployment))
-
-            const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
-            await statusManagementService.setComponentUndeploymentStatusAsFailed(
-                'dummy-component-undeployment-id'
-            )
-
-            expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FAILED)
-        })
-    })
+  })
 })
