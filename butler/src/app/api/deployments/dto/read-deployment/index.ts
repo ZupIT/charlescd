@@ -20,8 +20,8 @@ import { ReadComponentDeploymentDto } from './read-component-deployment.dto'
 import { ReadModuleDeploymentDto } from './read-module-deployment.dto'
 
 export {
-    ReadCircleDeploymentDto,
-    ReadDeploymentDto,
-    ReadComponentDeploymentDto,
-    ReadModuleDeploymentDto
+  ReadCircleDeploymentDto,
+  ReadDeploymentDto,
+  ReadComponentDeploymentDto,
+  ReadModuleDeploymentDto
 }
