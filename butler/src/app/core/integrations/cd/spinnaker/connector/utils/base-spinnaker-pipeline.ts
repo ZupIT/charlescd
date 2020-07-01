@@ -27,23 +27,23 @@ interface AppConfig {
 const baseSpinnaker = (
   { appName, pipelineName, applicationName }: AppConfig,
   helmRepository: string, githubAccount: string): IBaseSpinnakerPipeline => ({
-    appConfig: {},
-    application: applicationName,
-    name: pipelineName,
-    expectedArtifacts: helmValues.map(helmType => buildExpectedArtifacts(helmRepository, githubAccount, appName, helmType as HelmTypes)),
-    keepWaitingPipelines: false,
-    lastModifiedBy: 'anonymous',
-    limitConcurrent: true,
-    stages: [],
-    triggers: [
-      {
-        enabled: true,
-        payloadConstraints: {},
-        source: pipelineName,
-        type: 'webhook'
-      }
-    ],
-    updateTs: '1573212638000'
-  })
+  appConfig: {},
+  application: applicationName,
+  name: pipelineName,
+  expectedArtifacts: helmValues.map(helmType => buildExpectedArtifacts(helmRepository, githubAccount, appName, helmType as HelmTypes)),
+  keepWaitingPipelines: false,
+  lastModifiedBy: 'anonymous',
+  limitConcurrent: true,
+  stages: [],
+  triggers: [
+    {
+      enabled: true,
+      payloadConstraints: {},
+      source: pipelineName,
+      type: 'webhook'
+    }
+  ],
+  updateTs: '1573212638000'
+})
 
 export default baseSpinnaker

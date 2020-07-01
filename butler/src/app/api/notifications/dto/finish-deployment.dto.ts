@@ -25,7 +25,7 @@ export class FinishDeploymentDto {
   public readonly status: string
 
   constructor(
-      status: string
+    status: string
   ) {
     this.status = status
   }

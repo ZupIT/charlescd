@@ -34,7 +34,7 @@ import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('Pipeline Deployments Service', () => {
   let pipelineDeploymentsService: PipelineDeploymentsService
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module = await Test.createTestingModule({
       providers: [
         PipelineDeploymentsService,
@@ -51,7 +51,7 @@ describe('Pipeline Deployments Service', () => {
     pipelineDeploymentsService = module.get<PipelineDeploymentsService>(PipelineDeploymentsService)
   })
 
-  it('triggers deployment without error', async () => {
+  it('triggers deployment without error', async() => {
     const moduleEntity = new ModuleEntity(
       'module-id',
       []
@@ -84,7 +84,7 @@ describe('Pipeline Deployments Service', () => {
       circle,
       false,
       'incoming-circle-id',
-        'cd-configuration-id'
+      'cd-configuration-id'
     )
     moduleDeployment.deployment = deploymentEntity
     componentDeployment.moduleDeployment = moduleDeployment
