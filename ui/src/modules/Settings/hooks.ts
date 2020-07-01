@@ -57,7 +57,7 @@ export const useWorkspace = (): [
         );
       }
     },
-    [updateWorkspace, data]
+    [updateWorkspace, data, dispatch]
   );
 
   useEffect(() => {
