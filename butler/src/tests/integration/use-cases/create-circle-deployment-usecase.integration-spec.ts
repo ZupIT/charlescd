@@ -683,6 +683,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const responseObject = JSON.parse(response.text)
     expect(responseObject.statusCode).toEqual(422)
     expect(responseObject.message).toEqual('Deployment should not have repeated components')
+
   })
 
   afterAll(async () => {
