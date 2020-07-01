@@ -30,6 +30,7 @@ import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -38,6 +39,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
   let deploymentsRepository: Repository<DeploymentEntity>
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
+  let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -59,6 +61,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
+    modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
@@ -186,9 +189,17 @@ describe('CreateDefaultDeploymentUsecase', () => {
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
       circle: null
     }
+    const moduleEntity = await modulesRepository.findOneOrFail({
+      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      relations: ['components']
+    })
 
     await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(201)
 
+    const moduleEntityUpdated = await modulesRepository.findOneOrFail({
+      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      relations: ['components']
+    })
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
       { relations: ['modules', 'modules.components'] }
@@ -197,6 +208,12 @@ describe('CreateDefaultDeploymentUsecase', () => {
     if (!deployment) {
       fail('Deployment entity was not saved')
     }
+
+    expect(moduleEntity.components.length).not.toEqual(moduleEntityUpdated.components.length)
+    expect(moduleEntity.components.length).toBe(1)
+    expect(moduleEntityUpdated.components.length).toBe(2)
+    expect(moduleEntityUpdated.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(moduleEntityUpdated.components[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
   })
