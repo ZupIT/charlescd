@@ -23,15 +23,6 @@ const Circles = () => {
       <Styled.MiniCard>
         <span>Circle 1</span>
       </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 2</span>
-      </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 3</span>
-      </Styled.MiniCard>
-      <Styled.Chart>
-        <span>Circle 4</span>
-      </Styled.Chart>
     </Styled.Content>
   );
 };
