@@ -25,14 +25,14 @@ export class CreateComponentDto {
     public readonly id: string
 
     constructor(
-        id: string
+      id: string
     ) {
-        this.id = id
+      this.id = id
     }
 
     public toEntity(): ComponentEntity {
-        return new ComponentEntity(
-            this.id
-        )
+      return new ComponentEntity(
+        this.id
+      )
     }
 }

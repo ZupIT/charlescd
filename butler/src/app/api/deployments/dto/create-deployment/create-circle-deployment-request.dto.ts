@@ -15,16 +15,16 @@
  */
 
 import {
-    CreateCircleDeploymentDto,
-    CreateModuleDeploymentDto
+  CreateCircleDeploymentDto,
+  CreateModuleDeploymentDto
 } from '../'
 import {
-    CreateDeploymentRequestDto
+  CreateDeploymentRequestDto
 } from './'
 import { DeploymentEntity } from '../../entity'
 import {
-    IsDefined,
-    ValidateNested
+  IsDefined,
+  ValidateNested
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -37,38 +37,38 @@ export class CreateCircleDeploymentRequestDto extends CreateDeploymentRequestDto
     public readonly circle: CreateCircleDeploymentDto
 
     constructor(
-        deploymentId: string,
-        applicationName: string,
-        modules: CreateModuleDeploymentDto[],
-        authorId: string,
-        description: string,
-        callbackUrl: string,
-        circle: CreateCircleDeploymentDto,
-        cdConfigurationId: string
+      deploymentId: string,
+      applicationName: string,
+      modules: CreateModuleDeploymentDto[],
+      authorId: string,
+      description: string,
+      callbackUrl: string,
+      circle: CreateCircleDeploymentDto,
+      cdConfigurationId: string
     ) {
-        super()
-        this.deploymentId = deploymentId
-        this.applicationName = applicationName
-        this.modules = modules
-        this.authorId = authorId
-        this.description = description
-        this.callbackUrl = callbackUrl
-        this.circle = circle
-        this.cdConfigurationId = cdConfigurationId
+      super()
+      this.deploymentId = deploymentId
+      this.applicationName = applicationName
+      this.modules = modules
+      this.authorId = authorId
+      this.description = description
+      this.callbackUrl = callbackUrl
+      this.circle = circle
+      this.cdConfigurationId = cdConfigurationId
     }
 
     public toEntity(requestCircleId: string): DeploymentEntity {
-        return new DeploymentEntity(
-            this.deploymentId,
-            this.applicationName,
-            this.modules.map(module => module.toModuleDeploymentEntity()),
-            this.authorId,
-            this.description,
-            this.callbackUrl,
-            this.circle.toEntity(),
-            false,
-            requestCircleId,
-            this.cdConfigurationId
-        )
+      return new DeploymentEntity(
+        this.deploymentId,
+        this.applicationName,
+        this.modules.map(module => module.toModuleDeploymentEntity()),
+        this.authorId,
+        this.description,
+        this.callbackUrl,
+        this.circle.toEntity(),
+        false,
+        requestCircleId,
+        this.cdConfigurationId
+      )
     }
 }

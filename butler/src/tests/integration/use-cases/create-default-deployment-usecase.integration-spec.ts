@@ -42,7 +42,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
         await AppModule.forRootAsync()
@@ -66,12 +66,12 @@ describe('CreateDefaultDeploymentUsecase', () => {
     await fixtureUtilsService.loadDatabase()
   })
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
     await fixtureUtilsService.loadDatabase()
   })
 
-  it(`/POST deployments/default should create deployment, module deployment and component deployment entities`, async () => {
+  it('/POST deployments/default should create deployment, module deployment and component deployment entities', async() => {
 
     const createDeploymentRequest = {
       deploymentId: 'e4c41beb-0a77-44c4-8d77-9addf3fc8ea9',
@@ -156,7 +156,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules).toMatchObject(expectedModules)
   })
 
-  it(`/POST deployments/default should fail if already exists deployment `, done => {
+  it('/POST deployments/default should fail if already exists deployment ', done => {
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -193,7 +193,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
   })
 
-  it(`/POST deployments/default  should enqueue RUNNING component deployments correctly`, async () => {
+  it('/POST deployments/default  should enqueue RUNNING component deployments correctly', async() => {
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -253,7 +253,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     })
   })
 
-  it(`/POST deployments/default should enqueue QUEUED and RUNNING component deployments correctly`, async () => {
+  it('/POST deployments/default should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -334,7 +334,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     })
   })
 
-  it(`/POST deployments/default should correctly update component pipeline options`, async () => {
+  it('/POST deployments/default should correctly update component pipeline options', async() => {
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -414,7 +414,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     )
   })
 
-  it(`/POST deployments/default should call octopipe for each RUNNING component deployment`, async () => {
+  it('/POST deployments/default should call octopipe for each RUNNING component deployment', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -520,11 +520,11 @@ describe('CreateDefaultDeploymentUsecase', () => {
     )
   })
 
-  it(`/POST deployments/default should handle deployment failure `, async () => {
+  it('/POST deployments/default should handle deployment failure ', async() => {
     jest.spyOn(octopipeApiService, 'deploy').
-    mockImplementation( () => { throw new Error() })
+      mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
-    mockImplementation( () =>  of({} as AxiosResponse) )
+      mockImplementation( () =>  of({} as AxiosResponse) )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -564,11 +564,11 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/default should handle deployment failure `, async () => {
+  it('/POST deployments/default should handle deployment failure ', async() => {
     jest.spyOn(octopipeApiService, 'deploy').
-    mockImplementation( () => { throw new Error() })
+      mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
-    mockImplementation( () =>  of({} as AxiosResponse) )
+      mockImplementation( () =>  of({} as AxiosResponse) )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -621,7 +621,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/default with repeated components should return unprocessable entity status`, async () => {
+  it('/POST deployments/default with repeated components should return unprocessable entity status', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -663,7 +663,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(responseObject.message).toEqual('Deployment should not have repeated components')
   })
 
-  afterAll(async () => {
+  afterAll(async() => {
     await app.close()
   })
 })
