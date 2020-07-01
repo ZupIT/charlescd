@@ -124,7 +124,6 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
         try {
             this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
-            await this.setComponentPipelineDefaultCircle(componentDeployment, component)
             const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
             await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
@@ -143,7 +142,6 @@ export class PipelineDeploymentsService {
     ): Promise<void> {
         try {
             this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
-            await this.setComponentPipelineCircle(componentDeployment, circle, component)
             const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
             await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
             this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
