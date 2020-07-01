@@ -22,7 +22,7 @@ This installation is recommended for who has already setup your infrastructure d
 | butler.resources.requests.memory             | min amount of memory that a container needs to function                     | 128Mi                                             |
 | moove.enabled                                | enable moove installation                                                   | true                                              |
 | moove.name                                   | name of deployment                                                          | charlescd-moove                                   |
-| moove.frontHost                              | host of frontend (cors use)                                                 | http://charlescd.example.com                      |
+| moove.allowedOriginHost                      | host of frontend (cors use)                                                 | http://charlescd.example.com                      |
 | moove.database.name                          | database name                                                               | charlescd_moove                                   |
 | moove.database.host                          | host of database                                                            | charlescd-postgresql                              |
 | moove.database.port                          | port of database                                                            | 5432                                              |
@@ -71,7 +71,7 @@ This installation is recommended for who has already setup your infrastructure d
 | circlematcher.redis.host                     | hostname of Redis instance                                                  | charlescd-redis-master                            |
 | circlematcher.redis.port                     | port of Redis instance                                                      | 6379                                              |
 | circlematcher.redis.password                 | password of Redis                                                           | hb2Fj9MGKjBkZ6zV                                  |
-| circlematcher.frontHost                      | http://charles-example-ui.com                                               | -                                                 |
+| circlematcher.allowedOriginHost              | host of frontend (cors use)                                                 | -                                                 |
 | circlematcher.replicaCount                   | number of pods to run                                                       | 1                                                 |
 | circlematcher.image.name                     | name of Circle Matcher image                                                | zupcharles/charlescd-circle-matcher:0.2.2         |
 | circlematcher.image.pullPolicy               | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | -                                                 |

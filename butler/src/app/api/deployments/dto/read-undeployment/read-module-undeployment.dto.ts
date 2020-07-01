@@ -29,16 +29,16 @@ export class ReadModuleUndeploymentDto {
     public readonly createdAt: Date
 
     constructor(
-        id: string,
-        moduleUndeployment: string,
-        componentsUndeployments: ReadComponentUndeploymentDto[],
-        status: string,
-        createdAt: Date
+      id: string,
+      moduleUndeployment: string,
+      componentsUndeployments: ReadComponentUndeploymentDto[],
+      status: string,
+      createdAt: Date
     ) {
-        this.id = id
-        this.moduleUndeployment = moduleUndeployment
-        this.componentsUndeployments = componentsUndeployments
-        this.status = status
-        this.createdAt = createdAt
+      this.id = id
+      this.moduleUndeployment = moduleUndeployment
+      this.componentsUndeployments = componentsUndeployments
+      this.status = status
+      this.createdAt = createdAt
     }
 }

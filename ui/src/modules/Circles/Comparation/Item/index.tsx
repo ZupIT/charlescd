@@ -163,13 +163,15 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
         />
       </Can>
-      <Can I="write" a="deploy" passThrough>
-        <Dropdown.Item
-          icon="undeploy"
-          name="Undeploy"
-          onClick={() => undeployRelease(circle?.deployment)}
-        />
-      </Can>
+      {!isDefaultCircle(circle?.name) && (
+        <Can I="write" a="deploy" passThrough>
+          <Dropdown.Item
+            icon="undeploy"
+            name="Undeploy"
+            onClick={() => undeployRelease(circle?.deployment)}
+          />
+        </Can>
+      )}
       <Can I="read" a="circles" passThrough>
         <Dropdown.Item
           icon="copy"

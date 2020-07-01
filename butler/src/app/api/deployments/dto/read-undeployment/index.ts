@@ -19,7 +19,7 @@ import { ReadModuleUndeploymentDto } from './read-module-undeployment.dto'
 import { ReadComponentUndeploymentDto } from './read-component-undeployment.dto'
 
 export {
-    ReadUndeploymentDto,
-    ReadModuleUndeploymentDto,
-    ReadComponentUndeploymentDto
+  ReadUndeploymentDto,
+  ReadModuleUndeploymentDto,
+  ReadComponentUndeploymentDto
 }
