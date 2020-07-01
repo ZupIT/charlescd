@@ -20,7 +20,8 @@ export default {
   chart: {
     width: 1180,
     height: 450,
-    id: 'chartAverageTime'
+    id: 'chartAverageTime',
+    background: 'transparent'
   },
   colors: ['#10AA80'],
   stroke: {

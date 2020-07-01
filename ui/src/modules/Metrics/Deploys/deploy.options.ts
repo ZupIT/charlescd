@@ -20,7 +20,8 @@ export default {
   chart: {
     width: 1180,
     height: 450,
-    id: 'chartDeploy'
+    id: 'chartDeploy',
+    background: 'transparent'
   },
   colors: ['#10AA80', '#FF453A'],
   theme: {
