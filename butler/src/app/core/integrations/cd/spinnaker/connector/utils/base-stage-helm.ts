@@ -57,9 +57,9 @@ export interface IBaseHelmStage {
 }
 
 const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
-                       githubAccount: string,
-                       version: string, versionUrl: string, refId: string,
-                       reqRefId: string[], previousStage: string | undefined | string[]): IBaseHelmStage => {
+  githubAccount: string,
+  version: string, versionUrl: string, refId: string,
+  reqRefId: string[], previousStage: string | undefined | string[]): IBaseHelmStage => {
   const baseHelm: IBaseHelmStage = {
     stageEnabled: {},
     completeOtherBranchesThenFail: false,

@@ -19,7 +19,7 @@ import { ISpinnakerConfigurationData } from './spinnaker-configuration-data.inte
 import { OctopipeConfigurationData } from './octopipe-configuration-data.type'
 
 export {
-    ICdConfigurationData,
-    ISpinnakerConfigurationData,
-    OctopipeConfigurationData
+  ICdConfigurationData,
+  ISpinnakerConfigurationData,
+  OctopipeConfigurationData
 }

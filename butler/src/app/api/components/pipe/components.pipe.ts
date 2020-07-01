@@ -21,13 +21,13 @@ import { ComponentEntity } from '../entity'
 
 @Injectable()
 export class ComponentsExistencePipe implements PipeTransform {
-    constructor(
+  constructor(
         @InjectRepository(ComponentEntity)
         private componentRepository: Repository<ComponentEntity>) {
-    }
+  }
 
-    async transform(idComponent: string) : Promise<string> {
-        await this.componentRepository.findOneOrFail({id: idComponent})
-        return idComponent
-    }
+  async transform(idComponent: string) : Promise<string> {
+    await this.componentRepository.findOneOrFail({id: idComponent})
+    return idComponent
+  }
 }
