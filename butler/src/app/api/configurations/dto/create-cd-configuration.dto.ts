@@ -39,24 +39,24 @@ export class CreateCdConfigurationDto {
     public readonly authorId: string
 
     constructor(
-        type: CdTypeEnum,
-        configurationData: ICdConfigurationData,
-        name: string,
-        authorId: string
+      type: CdTypeEnum,
+      configurationData: ICdConfigurationData,
+      name: string,
+      authorId: string
     ) {
-        this.type = type
-        this.configurationData = configurationData
-        this.name = name
-        this.authorId = authorId
+      this.type = type
+      this.configurationData = configurationData
+      this.name = name
+      this.authorId = authorId
     }
 
     public toEntity(workspaceId: string): CdConfigurationEntity {
-        return new CdConfigurationEntity(
-            this.type,
-            this.configurationData,
-            this.name,
-            this.authorId,
-            workspaceId
-        )
+      return new CdConfigurationEntity(
+        this.type,
+        this.configurationData,
+        this.name,
+        this.authorId,
+        workspaceId
+      )
     }
 }

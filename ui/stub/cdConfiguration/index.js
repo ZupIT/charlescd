@@ -1,13 +1,13 @@
-const mock = require("./mock");
+import mock from './mock';
 
-const API = "/moove/config/cd";
+const API = '/moove/config/cd';
 
 const create = {
-  method: "POST",
+  method: 'POST',
   path: `${API}`,
   handler: (req, h) => h.response(mock.newCDConfiuration)
 };
 
-module.exports = {
+export default {
   create
 };

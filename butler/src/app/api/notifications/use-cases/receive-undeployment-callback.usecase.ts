@@ -85,13 +85,10 @@ export class ReceiveUndeploymentCallbackUsecase {
     const queuedUndeployment: QueuedUndeploymentEntity =
       await this.queuedUndeploymentsRepository.findOneOrFail({ id: queuedUndeploymentId })
 
-    const componentDeployment: ComponentDeploymentEntity =
-      await this.componentDeploymentsRepository.findOneOrFail({ id: queuedUndeployment.componentDeploymentId })
-
     const componentUndeployment: ComponentUndeploymentEntity =
-      await this.componentUndeploymentsRepository.getOneWithRelations(queuedUndeployment.componentUndeploymentId)
+      await this.componentUndeploymentsRepository.getOneWithAllRelations(queuedUndeployment.componentUndeploymentId)
 
-    await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentDeployment, queuedUndeployment)
+    await this.pipelineErrorHandlerService.handleComponentUndeploymentFailure(componentUndeployment, queuedUndeployment)
     await this.pipelineErrorHandlerService.handleUndeploymentFailure(componentUndeployment.moduleUndeployment.undeployment)
 
     this.consoleLoggerService.log('FINISH:UNDEPLOYMENT_FAILURE_WEBHOOK', { queuedUndeploymentId })
