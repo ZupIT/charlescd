@@ -41,7 +41,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
 
-  beforeAll(async () => {
+  beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
         await AppModule.forRootAsync()
@@ -63,12 +63,12 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
   })
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
     await fixtureUtilsService.loadDatabase()
   })
 
-  it(`/POST deployments/circle should create deployment, module deployment and component deployment entities`, async () => {
+  it('/POST deployments/circle should create deployment, module deployment and component deployment entities', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -153,7 +153,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it(`/POST deployments/circle should fail when deployment already exists`, done => {
+  it('/POST deployments/circle should fail when deployment already exists', done => {
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -193,7 +193,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       .expect(400, done)
   })
 
-  it(`/POST deployments/circle should enqueue RUNNING component deployments correctly`, async () => {
+  it('/POST deployments/circle should enqueue RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -254,7 +254,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it(`/POST deployments/circle should enqueue QUEUED and RUNNING component deployments correctly`, async () => {
+  it('/POST deployments/circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -337,7 +337,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it(`/POST deployments/circle should correctly update component pipeline options`, async () => {
+  it('/POST deployments/circle should correctly update component pipeline options', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -416,7 +416,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
-  it(`/POST deployments/circle should call octopipe for each RUNNING component deployment`, async () => {
+  it('/POST deployments/circle should call octopipe for each RUNNING component deployment', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -526,7 +526,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
-  it(`/POST  when a module deployment fails another module QUEUED should not be updated too `, async () => {
+  it('/POST  when a module deployment fails another module QUEUED should not be updated too ', async() => {
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -590,11 +590,11 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST should handle deployment failure `, async () => {
+  it('/POST should handle deployment failure ', async() => {
     jest.spyOn(octopipeApiService, 'deploy').
-    mockImplementation(() => { throw new Error() })
+      mockImplementation(() => { throw new Error() })
     jest.spyOn(httpService, 'post').
-    mockImplementation(() => of({} as AxiosResponse))
+      mockImplementation(() => of({} as AxiosResponse))
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -640,7 +640,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/circle with repeated components should return unprocessable entity status`, async () => {
+  it('/POST deployments/circle with repeated components should return unprocessable entity status', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -686,7 +686,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   })
 
-  afterAll(async () => {
+  afterAll(async() => {
     await app.close()
   })
 })

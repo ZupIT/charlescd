@@ -26,11 +26,11 @@ export class QueuedDeploymentsRepository extends Repository<QueuedDeploymentEnti
 
   public async getNextQueuedDeployment(componentId: string): Promise<QueuedDeploymentEntity | undefined> {
     return this.createQueryBuilder('queued_deployment')
-        .where(
-            'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',
-            { componentId, status: QueuedPipelineStatusEnum.QUEUED })
-        .orderBy('queued_deployment.id', 'ASC')
-        .getOne()
+      .where(
+        'queued_deployment.component_id = :componentId AND queued_deployment.status = :status',
+        { componentId, status: QueuedPipelineStatusEnum.QUEUED })
+      .orderBy('queued_deployment.id', 'ASC')
+      .getOne()
   }
 
   public async getAllByComponentIdQueuedAscending(componentId: string): Promise<QueuedDeploymentEntity[]> {

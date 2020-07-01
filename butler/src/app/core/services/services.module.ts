@@ -18,17 +18,17 @@ import { Module } from '@nestjs/common'
 import { StatusManagementService } from './deployments'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import {
-    ComponentDeploymentEntity,
-    ComponentUndeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    ModuleUndeploymentEntity,
-    UndeploymentEntity
+  ComponentDeploymentEntity,
+  ComponentUndeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  ModuleUndeploymentEntity,
+  UndeploymentEntity
 } from '../../api/deployments/entity'
 import {
-    ComponentDeploymentsRepository,
-    ComponentUndeploymentsRepository,
-    QueuedIstioDeploymentsRepository
+  ComponentDeploymentsRepository,
+  ComponentUndeploymentsRepository,
+  QueuedIstioDeploymentsRepository
 } from '../../api/deployments/repository'
 import { ModuleDeploymentsRepository } from '../../api/deployments/repository/module-deployments.repository'
 import { DeploymentsRepository } from '../../api/deployments/repository/deployments.repository'
@@ -37,28 +37,28 @@ import { UndeploymentsRepository } from '../../api/deployments/repository/undepl
 import { LogsModule } from '../logs/logs.module'
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-            ComponentDeploymentEntity,
-            ComponentDeploymentsRepository,
-            DeploymentEntity,
-            DeploymentsRepository,
-            ModuleDeploymentEntity,
-            ModuleDeploymentsRepository,
-            ComponentUndeploymentEntity,
-            ComponentUndeploymentsRepository,
-            ModuleUndeploymentEntity,
-            ModuleUndeploymentsRepository,
-            UndeploymentEntity,
-            UndeploymentsRepository,
-            QueuedIstioDeploymentsRepository,
-        ]), LogsModule
-    ],
-    providers: [
-        StatusManagementService
-    ],
-    exports: [
-        StatusManagementService
-    ]
+  imports: [
+    TypeOrmModule.forFeature([
+      ComponentDeploymentEntity,
+      ComponentDeploymentsRepository,
+      DeploymentEntity,
+      DeploymentsRepository,
+      ModuleDeploymentEntity,
+      ModuleDeploymentsRepository,
+      ComponentUndeploymentEntity,
+      ComponentUndeploymentsRepository,
+      ModuleUndeploymentEntity,
+      ModuleUndeploymentsRepository,
+      UndeploymentEntity,
+      UndeploymentsRepository,
+      QueuedIstioDeploymentsRepository,
+    ]), LogsModule
+  ],
+  providers: [
+    StatusManagementService
+  ],
+  exports: [
+    StatusManagementService
+  ]
 })
 export class ServicesModule {}
