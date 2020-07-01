@@ -26,74 +26,74 @@ interface DatabaseEntity {
 @Injectable()
 export class FixtureUtilsService {
 
-    constructor(
+  constructor(
         @Inject('Connection') public connection: Connection
-    ) {}
+  ) {}
 
-    public async loadDatabase(): Promise<void> {
-        try {
-            const entities = this.getOrderedLoadDbEntities()
-            for (const entity of entities) {
-                await this.insertFixture(entity)
-            }
-        } catch (error) {
-            throw new Error(`ERROR: Loading fixtures on test db: ${error}`)
-        }
+  public async loadDatabase(): Promise<void> {
+    try {
+      const entities = this.getOrderedLoadDbEntities()
+      for (const entity of entities) {
+        await this.insertFixture(entity)
+      }
+    } catch (error) {
+      throw new Error(`ERROR: Loading fixtures on test db: ${error}`)
     }
+  }
 
-    public async clearDatabase(): Promise<void> {
-        try {
-            const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
-            for (const entity of entities) {
-                const repository = await this.connection.getRepository(entity.name)
-                await repository.query(`DELETE FROM ${entity.tableName};`)
-            }
-        } catch (error) {
-            throw new Error(`ERROR: Cleaning test db: ${error}`)
-        }
-    }
-
-    private async insertFixture(entity: DatabaseEntity): Promise<void> {
+  public async clearDatabase(): Promise<void> {
+    try {
+      const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
+      for (const entity of entities) {
         const repository = await this.connection.getRepository(entity.name)
-        const fixtureFile = Path.join(__dirname, `../fixtures/${entity.tableName}.json`)
-        if (fs.existsSync(fixtureFile)) {
-            const items = JSON.parse(fs.readFileSync(fixtureFile, 'utf8'))
-            await repository
-                .createQueryBuilder(entity.name)
-                .insert()
-                .values(items)
-                .execute()
-        }
+        await repository.query(`DELETE FROM ${entity.tableName};`)
+      }
+    } catch (error) {
+      throw new Error(`ERROR: Cleaning test db: ${error}`)
     }
+  }
 
-    private getOrderedLoadDbEntities(): DatabaseEntity[] {
-        return [
-            { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-            { name: 'ModuleEntity', tableName: 'modules' },
-            { name: 'ComponentEntity', tableName: 'components' },
-            { name: 'DeploymentEntity', tableName: 'deployments' },
-            { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
-            { name: 'QueuedUndeploymentEntity', tableName: 'queued_undeployments' },
-            { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
-            { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
-            { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
-            { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
-            { name: 'UndeploymentEntity', tableName: 'undeployments' }
-        ]
+  private async insertFixture(entity: DatabaseEntity): Promise<void> {
+    const repository = await this.connection.getRepository(entity.name)
+    const fixtureFile = Path.join(__dirname, `../fixtures/${entity.tableName}.json`)
+    if (fs.existsSync(fixtureFile)) {
+      const items = JSON.parse(fs.readFileSync(fixtureFile, 'utf8'))
+      await repository
+        .createQueryBuilder(entity.name)
+        .insert()
+        .values(items)
+        .execute()
     }
+  }
 
-    private getOrderedClearDbEntities(): DatabaseEntity[] {
-        return [
-            { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
-            { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
-            { name: 'DeploymentEntity', tableName: 'deployments' },
-            { name: 'ModuleEntity', tableName: 'modules' },
-            { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-            { name: 'ComponentEntity', tableName: 'components' },
-            { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
-            { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
-            { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
-            { name: 'UndeploymentEntity', tableName: 'undeployments' }
-        ]
-    }
+  private getOrderedLoadDbEntities(): DatabaseEntity[] {
+    return [
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      { name: 'ModuleEntity', tableName: 'modules' },
+      { name: 'ComponentEntity', tableName: 'components' },
+      { name: 'DeploymentEntity', tableName: 'deployments' },
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'QueuedUndeploymentEntity', tableName: 'queued_undeployments' },
+      { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
+      { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
+      { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
+      { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
+      { name: 'UndeploymentEntity', tableName: 'undeployments' }
+    ]
+  }
+
+  private getOrderedClearDbEntities(): DatabaseEntity[] {
+    return [
+      { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
+      { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
+      { name: 'DeploymentEntity', tableName: 'deployments' },
+      { name: 'ModuleEntity', tableName: 'modules' },
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      { name: 'ComponentEntity', tableName: 'components' },
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
+      { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
+      { name: 'UndeploymentEntity', tableName: 'undeployments' }
+    ]
+  }
 }
