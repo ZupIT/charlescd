@@ -40,7 +40,7 @@ const CirclesList = () => {
   const profileName = getProfileByKey('name');
 
   useEffect(() => {
-    if (response === undefined) {
+    if (response === null) {
       loadWorkspace(getWorkspaceId());
     }
   }, [loadWorkspace, response]);
