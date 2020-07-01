@@ -53,7 +53,6 @@ const Deploys = () => {
   const onSubmit = () => {
     const { circles, period } = getValues();
     const circleIds = normalizeCircleParams(circles);
-    console.log(period);
     searchDeployMetrics({ period: period, circles: circleIds });
   };
 
