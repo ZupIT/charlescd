@@ -621,7 +621,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/default with repeated components should return bad request exception`, async () => {
+  it(`/POST deployments/default with repeated components should return unprocessable entity status`, async () => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -657,7 +657,10 @@ describe('CreateDefaultDeploymentUsecase', () => {
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
       circle: null
     }
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(400)
+    const response  = await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(422)
+    const responseObject = JSON.parse(response.text)
+    expect(responseObject.statusCode).toEqual(422)
+    expect(responseObject.message).toEqual('Deployment should not have repeated components')
   })
 
   afterAll(async () => {

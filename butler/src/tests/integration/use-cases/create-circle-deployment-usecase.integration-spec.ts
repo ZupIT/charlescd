@@ -640,7 +640,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it(`/POST deployments/circle with repeated components should return bad request exception`, async () => {
+  it(`/POST deployments/circle with repeated components should return unprocessable entity status`, async () => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -678,9 +678,11 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         headerValue: 'circle-header'
       }
     }
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
-      .set('x-circle-id', '12345').expect(400)
-
+    const response  = await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
+    const responseObject = JSON.parse(response.text)
+    expect(responseObject.statusCode).toEqual(422)
+    expect(responseObject.message).toEqual('Deployment should not have repeated components')
   })
 
   afterAll(async () => {

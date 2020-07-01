@@ -15,9 +15,8 @@
  */
 
 import {
-    BadRequestException,
     Injectable,
-    PipeTransform
+    PipeTransform, UnprocessableEntityException
 } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto'
 
@@ -36,7 +35,7 @@ export class ComponentDeploymentUniquenessPipe implements PipeTransform {
 
     private verifyDuplicatedComponents(mapTimesComponent: Map<string, boolean>, componentId: string) {
         if (mapTimesComponent.get(componentId)) {
-            throw new BadRequestException('Deployment should not have repeated components')
+            throw new UnprocessableEntityException('Deployment should not have repeated components')
         } else {
             mapTimesComponent.set(componentId, true)
         }
