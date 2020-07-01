@@ -99,7 +99,7 @@ export class PipelineQueuesService {
 
     !deployment.circle ?
       await this.pipelineDeploymentsService.triggerIstioDefaultDeployment(componentDeployment, component, deployment, queuedIstioDeployment) :
-      await this.pipelineDeploymentsService.triggerIstioDeployment(componentDeployment, component, deployment, queuedIstioDeployment, deployment.circle)
+      await this.pipelineDeploymentsService.triggerIstioDeployment(componentDeployment, component, deployment, queuedIstioDeployment)
   }
 
   private async triggerQueuedDeployment(queuedDeployment: QueuedDeploymentEntity): Promise<void> {

@@ -137,8 +137,7 @@ export class PipelineDeploymentsService {
     componentDeployment: ComponentDeploymentEntity,
     component: ComponentEntity,
     deployment: DeploymentEntity,
-    queuedIstioDeployment: QueuedIstioDeploymentEntity,
-    circle: CircleDeploymentEntity
+    queuedIstioDeployment: QueuedIstioDeploymentEntity
   ): Promise<void> {
     try {
       this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
