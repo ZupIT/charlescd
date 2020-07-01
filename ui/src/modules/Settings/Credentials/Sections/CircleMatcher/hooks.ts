@@ -26,7 +26,7 @@ export const useCircleMatcher = (): FetchProps => {
   const [addData, addCircleMatcher] = useFetch(addConfig);
   const [removeData, delCircleMatcher] = useFetch(delConfig);
   const { loading: loadingAdd, response: responseAdd, error } = addData;
-  const { error: errorRemove } = removeData;
+  const { response: responseRemove, error: errorRemove } = removeData;
 
   const save = useCallback(
     (url: string) => {
@@ -61,5 +61,5 @@ export const useCircleMatcher = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
-  return { responseAdd, loadingAdd, save, remove };
+  return { responseAdd, responseRemove, loadingAdd, save, remove };
 };
