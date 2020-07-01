@@ -51,7 +51,7 @@ export interface IBaseStage {
 }
 
 const baseStage = (manifest: ISpinnakerBaseService, nameStage: string, account: string, refId: string, reqRefIds: string[],
-                   previousStages: string | undefined | string[]): IBaseStage => {
+  previousStages: string | undefined | string[]): IBaseStage => {
 
   const baseStageTemplate: IBaseStage = {
     stageEnabled: {},

@@ -25,7 +25,7 @@ export class CreateCircleDeploymentDto {
   public readonly headerValue: string
 
   constructor(
-      headerValue: string
+    headerValue: string
   ) {
     this.headerValue = headerValue
   }
