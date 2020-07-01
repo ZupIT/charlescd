@@ -55,7 +55,7 @@ describe('Spinnaker Service', () => {
   let moduleUndeployment: ModuleUndeploymentEntity
   let connectorConfiguration: IConnectorConfiguration
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module = await Test.createTestingModule({
       providers: [
         SpinnakerService,
@@ -154,7 +154,7 @@ describe('Spinnaker Service', () => {
     }
   })
 
-  it('should handle on spinnaker deployment failure', async () => {
+  it('should handle on spinnaker deployment failure', async() => {
     jest.spyOn(spinnakerApiService, 'getApplication')
       .mockImplementation(() => of({} as AxiosResponse))
     jest.spyOn(spinnakerApiService, 'getPipeline')
