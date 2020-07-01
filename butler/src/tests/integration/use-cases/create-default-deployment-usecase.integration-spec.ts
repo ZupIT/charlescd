@@ -473,7 +473,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url',
@@ -502,7 +502,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url2',
