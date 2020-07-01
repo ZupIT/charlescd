@@ -20,37 +20,37 @@ import { DeploymentEntity } from '../../entity'
 
 export class CreateDefaultDeploymentRequestDto extends CreateDeploymentRequestDto {
 
-    constructor(
-        deploymentId: string,
-        applicationName: string,
-        modules: CreateModuleDeploymentDto[],
-        authorId: string,
-        description: string,
-        callbackUrl: string,
-        cdConfigurationId: string
-    ) {
-        super()
-        this.deploymentId = deploymentId
-        this.applicationName = applicationName
-        this.modules = modules
-        this.authorId = authorId
-        this.description = description
-        this.callbackUrl = callbackUrl
-        this.cdConfigurationId = cdConfigurationId
-    }
+  constructor(
+    deploymentId: string,
+    applicationName: string,
+    modules: CreateModuleDeploymentDto[],
+    authorId: string,
+    description: string,
+    callbackUrl: string,
+    cdConfigurationId: string
+  ) {
+    super()
+    this.deploymentId = deploymentId
+    this.applicationName = applicationName
+    this.modules = modules
+    this.authorId = authorId
+    this.description = description
+    this.callbackUrl = callbackUrl
+    this.cdConfigurationId = cdConfigurationId
+  }
 
-    public toEntity(requestCircleId: string): DeploymentEntity {
-        return new DeploymentEntity(
-            this.deploymentId,
-            this.applicationName,
-            this.modules.map(module => module.toModuleDeploymentEntity()),
-            this.authorId,
-            this.description,
-            this.callbackUrl,
-            null,
-            true,
-            requestCircleId,
-            this.cdConfigurationId
-        )
-    }
+  public toEntity(requestCircleId: string): DeploymentEntity {
+    return new DeploymentEntity(
+      this.deploymentId,
+      this.applicationName,
+      this.modules.map(module => module.toModuleDeploymentEntity()),
+      this.authorId,
+      this.description,
+      this.callbackUrl,
+      null,
+      true,
+      requestCircleId,
+      this.cdConfigurationId
+    )
+  }
 }

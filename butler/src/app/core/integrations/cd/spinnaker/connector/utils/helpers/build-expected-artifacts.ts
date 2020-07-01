@@ -19,7 +19,7 @@ import { createPrimaryId } from './create-id-names'
 import { IBuildArtifact } from '../../interfaces'
 
 const buildExpectedArtifacts = (helmRepository: string, githubAccount: string,
-                                appName: string, helmType: HelmTypes): IBuildArtifact => {
+  appName: string, helmType: HelmTypes): IBuildArtifact => {
   const fileJudge = helmType === 'template'
     ? `${helmRepository}${appName}/${appName}-darwin.tgz`
     : `${helmRepository}${appName}/${appName}.yaml`

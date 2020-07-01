@@ -31,10 +31,10 @@ import { LogsModule } from '../../core/logs/logs.module'
     LogsModule
   ],
   controllers: [
-      ModulesController
+    ModulesController
   ],
   providers: [
-      ModulesService,
+    ModulesService,
   ]
 })
 export class ModulesModule {}

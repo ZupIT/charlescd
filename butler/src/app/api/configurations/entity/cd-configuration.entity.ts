@@ -15,10 +15,10 @@
  */
 
 import {
-    BaseEntity,
-    Column,
-    Entity,
-    PrimaryColumn
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryColumn
 } from 'typeorm'
 import { ReadCdConfigurationDto } from '../dto'
 import { v4 as uuidv4 } from 'uuid'
@@ -50,28 +50,28 @@ export class CdConfigurationEntity extends BaseEntity {
     public createdAt!: Date
 
     constructor(
-        type: CdTypeEnum,
-        configurationData: ICdConfigurationData,
-        name: string,
-        authorId: string,
-        workspaceId: string
+      type: CdTypeEnum,
+      configurationData: ICdConfigurationData,
+      name: string,
+      authorId: string,
+      workspaceId: string
     ) {
-        super()
-        this.id = uuidv4()
-        this.type = type
-        this.configurationData = configurationData
-        this.name = name
-        this.authorId = authorId
-        this.workspaceId = workspaceId
+      super()
+      this.id = uuidv4()
+      this.type = type
+      this.configurationData = configurationData
+      this.name = name
+      this.authorId = authorId
+      this.workspaceId = workspaceId
     }
 
     public toReadDto(): ReadCdConfigurationDto {
-        return new ReadCdConfigurationDto(
-            this.id,
-            this.name,
-            this.authorId,
-            this.workspaceId,
-            this.createdAt
-        )
+      return new ReadCdConfigurationDto(
+        this.id,
+        this.name,
+        this.authorId,
+        this.workspaceId,
+        this.createdAt
+      )
     }
 }

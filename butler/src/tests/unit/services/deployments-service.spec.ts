@@ -16,88 +16,88 @@
 
 import { Test } from '@nestjs/testing'
 import {
-    DeploymentsService,
-    PipelineQueuesService
+  DeploymentsService,
+  PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import { DeploymentsRepositoryStub } from '../../stubs/repository'
 import {
-    ConsoleLoggerServiceStub,
-    MooveServiceStub,
-    PipelineQueuesServiceStub,
-    StatusManagementServiceStub
+  ConsoleLoggerServiceStub,
+  MooveServiceStub,
+  PipelineQueuesServiceStub,
+  StatusManagementServiceStub
 } from '../../stubs/services'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
-    CircleDeploymentEntity,
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { StatusManagementService } from '../../../app/core/services/deployments'
 import { MooveService } from '../../../app/core/integrations/moove'
 
 describe('Deployments service specs', () => {
-    let deploymentsService: DeploymentsService
-    let deploymentsRepository: Repository<DeploymentEntity>
-    let circle: CircleDeploymentEntity
-    let deployment: DeploymentEntity
-    let moduleDeployment: ModuleDeploymentEntity
-    let componentDeployment: ComponentDeploymentEntity
+  let deploymentsService: DeploymentsService
+  let deploymentsRepository: Repository<DeploymentEntity>
+  let circle: CircleDeploymentEntity
+  let deployment: DeploymentEntity
+  let moduleDeployment: ModuleDeploymentEntity
+  let componentDeployment: ComponentDeploymentEntity
 
-    beforeEach(async () => {
+  beforeEach(async() => {
 
-        const module = await Test.createTestingModule({
-            providers: [
-                DeploymentsService,
-                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: StatusManagementService, useClass: StatusManagementServiceStub },
-                { provide: MooveService, useClass: MooveServiceStub },
-            ]
-        }).compile()
+    const module = await Test.createTestingModule({
+      providers: [
+        DeploymentsService,
+        { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
+        { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
+        { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+        { provide: StatusManagementService, useClass: StatusManagementServiceStub },
+        { provide: MooveService, useClass: MooveServiceStub },
+      ]
+    }).compile()
 
-        deploymentsService = module.get<DeploymentsService>(DeploymentsService)
-        deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
+    deploymentsService = module.get<DeploymentsService>(DeploymentsService)
+    deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
 
-        circle = new CircleDeploymentEntity('header-value')
+    circle = new CircleDeploymentEntity('header-value')
 
-        componentDeployment = new ComponentDeploymentEntity(
-            'dummy-id',
-            'dummy-name',
-            'dummy-img-url',
-            'dummy-img-tag'
-        )
+    componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
 
-        moduleDeployment = new ModuleDeploymentEntity(
-            'dummy-id',
-            'helm-repository',
-            [componentDeployment]
-        )
+    moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
 
-        deployment = new DeploymentEntity(
-            'deployment-id',
-            'application-name',
-            [moduleDeployment],
-            'author-id',
-            'description',
-            'callback-url',
-            circle,
-            false,
-            'incoming-circle-id',
-            'cd-configuration-id'
-        )
+    deployment = new DeploymentEntity(
+      'deployment-id',
+      'application-name',
+      [moduleDeployment],
+      'author-id',
+      'description',
+      'callback-url',
+      circle,
+      false,
+      'incoming-circle-id',
+      'cd-configuration-id'
+    )
+  })
+
+  describe('getDeployments', () => {
+
+    it('should correctly return deployments as dtos', async() => {
+
+      jest.spyOn(deploymentsRepository, 'find')
+        .mockImplementation(() => Promise.resolve([deployment]))
+
+      expect(await deploymentsService.getDeployments()).toStrictEqual([deployment.toReadDto()])
     })
-
-    describe('getDeployments', () => {
-
-        it('should correctly return deployments as dtos', async () => {
-
-            jest.spyOn(deploymentsRepository, 'find')
-                .mockImplementation(() => Promise.resolve([deployment]))
-
-            expect(await deploymentsService.getDeployments()).toStrictEqual([deployment.toReadDto()])
-        })
-    })
+  })
 })
