@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-import { getParams } from '../query';
+import { buildParams } from "../query";
 
-test('get params', () => {
-  const params = { key: 'value' };
-  expect(getParams(params)).toEqual('?key=value')
+test("should build query params dynammicaly", () => {
+  const params = {
+    foo: 'bar',
+    ids: [1,2],
+    names: ['jhon', 'doe'],
+    age: 9
+  };
+
+  const urlParams = buildParams(params);
+  const expected = 'foo=bar&ids=1&ids=2&names=jhon&names=doe&age=9';
+  
+  expect(urlParams.toString()).toEqual(expected);
 });
