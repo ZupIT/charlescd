@@ -66,8 +66,8 @@ export class OctopipeService implements ICdServiceStrategy {
   ): Promise<AxiosResponse> {
 
     try {
-      this.consoleLoggerService.log(`START:DEPLOY_OCTOPIPE_PIPELINE`)
-       return await this.octopipeApiService.deploy(octopipeConfiguration)
+      this.consoleLoggerService.log('START:DEPLOY_OCTOPIPE_PIPELINE')
+      return await this.octopipeApiService.deploy(octopipeConfiguration)
         .pipe(
           map(response => response),
           retryWhen(error => this.getDeployRetryCondition(error))
@@ -76,7 +76,7 @@ export class OctopipeService implements ICdServiceStrategy {
       this.consoleLoggerService.error('ERROR:DEPLOY_OCTOPIPE_PIPELINE', error)
       throw error
     } finally {
-      this.consoleLoggerService.log(`FINISH:DEPLOY_OCTOPIPE_PIPELINE`)
+      this.consoleLoggerService.log('FINISH:DEPLOY_OCTOPIPE_PIPELINE')
     }
   }
 
@@ -212,24 +212,24 @@ export class OctopipeService implements ICdServiceStrategy {
 
   private buildK8sConfig(config: OctopipeConfigurationData): IEKSClusterConfig | IGenericClusterConfig | null {
     switch (config.provider) {
-      case ClusterProviderEnum.EKS:
-        return {
-          provider: ClusterProviderEnum.EKS,
-          awsSID: config.awsSID,
-          awsSecret: config.awsSecret,
-          awsRegion: config.awsRegion,
-          awsClusterName: config.awsClusterName
-        }
-      case ClusterProviderEnum.GENERIC:
-        return {
-          provider: ClusterProviderEnum.GENERIC,
-          clientCertificate: config.clientCertificate,
-          caData: config.caData,
-          clientKey: config.clientKey,
-          host: config.host
-        }
-      default:
-        return null
+    case ClusterProviderEnum.EKS:
+      return {
+        provider: ClusterProviderEnum.EKS,
+        awsSID: config.awsSID,
+        awsSecret: config.awsSecret,
+        awsRegion: config.awsRegion,
+        awsClusterName: config.awsClusterName
+      }
+    case ClusterProviderEnum.GENERIC:
+      return {
+        provider: ClusterProviderEnum.GENERIC,
+        clientCertificate: config.clientCertificate,
+        caData: config.caData,
+        clientKey: config.clientKey,
+        host: config.host
+      }
+    default:
+      return null
     }
   }
 
