@@ -116,40 +116,38 @@ export class PipelineDeploymentsService {
     }
   }
 
-    public async triggerIstioDefaultDeployment(
-        componentDeployment: ComponentDeploymentEntity,
-        component: ComponentEntity,
-        deployment: DeploymentEntity,
-        queuedIstioDeployment: QueuedIstioDeploymentEntity,
-    ): Promise<void> {
-        try {
-            this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
-            const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
-            await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
-            this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
-        } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', error)
-            throw error
-        }
+  public async triggerIstioDefaultDeployment(
+    componentDeployment: ComponentDeploymentEntity,
+    component: ComponentEntity,
+    deployment: DeploymentEntity,
+    queuedIstioDeployment: QueuedIstioDeploymentEntity,
+  ): Promise<void> {
+    try {
+      this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
+      const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
+      await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
+      this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', queuedIstioDeployment)
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEFAULT_DEPLOYMENT', error)
+      throw error
     }
   }
 
-    public async triggerIstioDeployment(
-        componentDeployment: ComponentDeploymentEntity,
-        component: ComponentEntity,
-        deployment: DeploymentEntity,
-        queuedIstioDeployment: QueuedIstioDeploymentEntity,
-        circle: CircleDeploymentEntity
-    ): Promise<void> {
-        try {
-            this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
-            const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
-            await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
-            this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
-        } catch (error) {
-            this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEPLOYMENT', error)
-            throw error
-        }
+  public async triggerIstioDeployment(
+    componentDeployment: ComponentDeploymentEntity,
+    component: ComponentEntity,
+    deployment: DeploymentEntity,
+    queuedIstioDeployment: QueuedIstioDeploymentEntity,
+    circle: CircleDeploymentEntity
+  ): Promise<void> {
+    try {
+      this.consoleLoggerService.log('START:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
+      const pipelineCallbackUrl: string = this.getIstioDeploymentCallbackUrl(queuedIstioDeployment.id)
+      await this.triggerIstioComponentDeployment(component, deployment, componentDeployment, pipelineCallbackUrl)
+      this.consoleLoggerService.log('FINISH:TRIGGER_ISTIO_DEPLOYMENT', queuedIstioDeployment)
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:TRIGGER_ISTIO_DEPLOYMENT', error)
+      throw error
     }
   }
 
