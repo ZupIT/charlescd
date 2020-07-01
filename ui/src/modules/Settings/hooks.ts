@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFetch } from 'core/providers/base/hooks';
 import { findAll, findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './Workspaces/interfaces/WorkspacePagination';
 import { Workspace } from './Workspaces/interfaces/Workspace';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useWorkspace = (): [
   Workspace,
@@ -30,8 +31,10 @@ export const useWorkspace = (): [
   Function
 ] => {
   const [workspace, getWorkspace] = useFetch<Workspace>(findById);
-  const [, updateWorkspace] = useFetch(updateName);
+  const [, , updateWorkspace] = useFetch(updateName);
   const { loading, response } = workspace;
+  const [data, setData] = useState(null);
+  const dispatch = useDispatch();
 
   const loadWorkspace = useCallback(
     (id: string) => {
@@ -41,13 +44,29 @@ export const useWorkspace = (): [
   );
 
   const update = useCallback(
-    (name: string) => {
-      updateWorkspace(name);
+    async (name: string) => {
+      try {
+        await updateWorkspace(name);
+        setData({ ...data, name });
+      } catch (error) {
+        dispatch(
+          toogleNotification({
+            text: `[${error.status}] Could not update`,
+            status: 'error'
+          })
+        );
+      }
     },
-    [updateWorkspace]
+    [updateWorkspace, data]
   );
 
-  return [response, loadWorkspace, getWorkspace, loading, update];
+  useEffect(() => {
+    if (response) {
+      setData(response);
+    }
+  }, [response]);
+
+  return [data, loadWorkspace, getWorkspace, loading, update];
 };
 
 export const useWorkspaces = (): [Function, Function] => {
