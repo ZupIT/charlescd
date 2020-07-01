@@ -130,7 +130,7 @@ describe('Octopipe Service', () => {
 
           }
         },
-        unusedVersions: [],
+        unusedVersions: [{}],
         versions: [
           {
             version: 'some-app-name-v1',
@@ -224,7 +224,7 @@ describe('Octopipe Service', () => {
 
           }
         },
-        unusedVersions: [],
+        unusedVersions: [{}],
         versions: [
           {
             version: 'some-app-name-v1',
@@ -303,7 +303,7 @@ describe('Octopipe Service', () => {
           virtualService: {},
           destinationRules: {}
         },
-        unusedVersions: [],
+        unusedVersions: [{}],
         versions: [
           {
             version: 'some-app-name-v1',
@@ -398,7 +398,7 @@ describe('Octopipe Service', () => {
           awsSecret: 'secret',
           provider: 'EKS',
         },
-        unusedVersions: [],
+        unusedVersions: [{}],
         versions: [],
         webHookUrl: 'dummy-callback-url'
       }
