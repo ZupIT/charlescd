@@ -21,9 +21,9 @@ import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { ModulesService } from './modules.service'
 
 export {
-    DeploymentsService,
-    PipelineQueuesService,
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    ModulesService
+  DeploymentsService,
+  PipelineQueuesService,
+  PipelineDeploymentsService,
+  PipelineErrorHandlerService,
+  ModulesService
 }

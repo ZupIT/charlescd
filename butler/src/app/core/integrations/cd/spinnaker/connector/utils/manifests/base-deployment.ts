@@ -44,8 +44,8 @@ export interface IBaseDeployment {
 }
 
 const baseDeployment = (manifestId: string, stageName: string, refId: string,
-                        reqRefId: string[], previousStage: string | undefined | string[],
-                        appName: string, account: string): IBaseDeployment => {
+  reqRefId: string[], previousStage: string | undefined | string[],
+  appName: string, account: string): IBaseDeployment => {
   const deployment: IBaseDeployment = {
     stageEnabled: {},
     account: account || 'default',
