@@ -41,27 +41,27 @@ export class OctopipeService implements ICdServiceStrategy {
   ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
-    this.consoleLoggerService.log(`START:CREATE_OCTOPIPE_DEPLOYMENT`, { configuration })
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createPipelineConfigurationObject(configuration)
-    this.consoleLoggerService.log(`GET:OCTOPIPE_PAYLOAD`, { payload })
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
-    this.consoleLoggerService.log(`START:FINISH_OCTOPIPE_DEPLOYMENT`)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_DEPLOYMENT')
   }
 
   public async createIstioDeployment(configuration: IConnectorConfiguration): Promise<void> {
-    this.consoleLoggerService.log(`START:CREATE_OCTOPIPE_ISTIO_DEPLOYMENT`, { configuration })
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_ISTIO_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createIstioPipelineConfigurationObject(configuration)
-    this.consoleLoggerService.log(`GET:OCTOPIPE_PAYLOAD`, { payload })
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
-    this.consoleLoggerService.log(`START:FINISH_OCTOPIPE_ISTIO_DEPLOYMENT`)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_ISTIO_DEPLOYMENT')
   }
 
   public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
-    this.consoleLoggerService.log(`START:CREATE_OCTOPIPE_UNDEPLOYMENT`, { configuration })
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_UNDEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
-    this.consoleLoggerService.log(`GET:OCTOPIPE_PAYLOAD`, { payload })
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
-    this.consoleLoggerService.log(`START:FINISH_OCTOPIPE_UNDEPLOYMENT`)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_UNDEPLOYMENT')
   }
 
   public async deploy(

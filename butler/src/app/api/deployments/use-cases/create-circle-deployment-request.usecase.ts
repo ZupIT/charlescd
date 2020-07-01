@@ -51,24 +51,14 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly modulesService: ModulesService
   ) { }
 
-    public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
-        const modules: ModuleEntity[] = createCircleDeploymentRequestDto.modules.map(module => module.toModuleEntity())
-        await this.modulesService.createModules(modules)
-        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
-        if (!deployment.circle) {
-            this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
-            throw new BadRequestException('Deployment does not have a circle')
-        }
-        try {
-            await this.scheduleComponentDeployments(deployment, deployment.circle)
-            this.consoleLoggerService.log('FINISH:CREATE_CIRCLE_DEPLOYMENT', deployment)
-            return deployment.toReadDto()
-        } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_CIRCLE_DEPLOYMENT', error)
-            await this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
-            throw error
-        }
+  public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
+    const modules: ModuleEntity[] = createCircleDeploymentRequestDto.modules.map(module => module.toModuleEntity())
+    await this.modulesService.createModules(modules)
+    const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
+    if (!deployment.circle) {
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
+      throw new BadRequestException('Deployment does not have a circle')
     }
     try {
       await this.scheduleComponentDeployments(deployment, deployment.circle)

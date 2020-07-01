@@ -72,20 +72,19 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly modulesService: ModulesService
   ) { }
 
-    public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
-        this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
-        const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
-        await this.modulesService.createModules(modules)
-        const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
-        try {
-            await this.scheduleComponentDeployments(deployment)
-            this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
-            return deployment.toReadDto()
-        } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT', error)
-            this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
-            throw error
-        }
+  public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
+    const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
+    await this.modulesService.createModules(modules)
+    const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
+    try {
+      await this.scheduleComponentDeployments(deployment)
+      this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
+      return deployment.toReadDto()
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT', error)
+      this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
+      throw error
     }
   }
 
