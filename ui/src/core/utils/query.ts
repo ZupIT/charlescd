@@ -15,16 +15,25 @@
  */
 
 import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
 
 const getQueryStrings = () => new URLSearchParams(window.location.search);
 
-export const getParams = (params: object) => {
-  const param = new URLSearchParams();
-  forEach(params, (value, key) => { param.append(key, value); });
-  const paramTS = param.toString();
+export type URLParams = {
+  [key: string]: string | number | string[] | number[];
+};
 
-  return !isEmpty(paramTS) ? `?${paramTS}` : '';
-}
+export const buildParams = (data: URLParams) => {
+  const params = new URLSearchParams();
+
+  forEach(data, (value, key) => {
+    if (Array.isArray(data[key])) {
+      forEach(value as [], item => params.append(key, item));
+    } else {
+      params.append(key, value as string);
+    }
+  });
+
+  return params;
+};
 
 export default getQueryStrings;
