@@ -16,11 +16,9 @@
 
 package io.charlescd.villager.interactor.registry;
 
-import java.util.List;
-
 @FunctionalInterface
-public interface ListDockerRegistryTagsInteractor {
+public interface GetDockerRegistryTagInteractor {
 
-    List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input);
+    ComponentTagDTO execute(GetDockerRegistryTagInput input);
 
 }
