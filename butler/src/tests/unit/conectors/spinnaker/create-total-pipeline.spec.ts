@@ -20,7 +20,7 @@ import expectedTotalPipeline from './fixtures/expected-total-pipeline'
 import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 import istioPipeline from './fixtures/expected-istio-pipeline'
-import {  CallbackTypeEnum } from '../../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../../app/api/notifications/enums/callback-type.enum'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
