@@ -20,8 +20,8 @@ import { OctopipeEKSConfigurationDataSchema } from './octopipe-eks-configuration
 import { OctopipeDefaultConfigurationDataSchema } from './octopipe-default-configuration-data.schema'
 
 export {
-    SpinnakerConfigurationDataSchema,
-    OctopipeEKSConfigurationDataSchema,
-    OctopipeGenericConfigurationDataSchema,
-    OctopipeDefaultConfigurationDataSchema
+  SpinnakerConfigurationDataSchema,
+  OctopipeEKSConfigurationDataSchema,
+  OctopipeGenericConfigurationDataSchema,
+  OctopipeDefaultConfigurationDataSchema
 }

@@ -16,9 +16,9 @@
 
 import { ModuleEntity } from '../entity'
 import {
-    IsDefined,
-    IsNotEmpty,
-    ValidateNested
+  IsDefined,
+  IsNotEmpty,
+  ValidateNested
 } from 'class-validator'
 import { CreateComponentDto } from './'
 import { Type } from 'class-transformer'
@@ -37,17 +37,17 @@ export class CreateModuleDto {
     public readonly components: CreateComponentDto[]
 
     constructor(
-        id: string,
-        components: CreateComponentDto[]
+      id: string,
+      components: CreateComponentDto[]
     ) {
-        this.id = id
-        this.components = components
+      this.id = id
+      this.components = components
     }
 
     public toEntity(): ModuleEntity {
-        return new ModuleEntity(
-            this.id,
-            this.components.map(component => component.toEntity())
-        )
+      return new ModuleEntity(
+        this.id,
+        this.components.map(component => component.toEntity())
+      )
     }
 }

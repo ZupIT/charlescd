@@ -16,42 +16,42 @@
 
 import { Test } from '@nestjs/testing'
 import {
-    CreateDefaultDeploymentRequestUsecase
+  CreateDefaultDeploymentRequestUsecase
 } from '../../../app/api/deployments/use-cases'
 import {
-    ComponentDeploymentsRepositoryStub,
-    ComponentsRepositoryStub,
-    DeploymentsRepositoryStub,
-    ModulesRepositoryStub,
-    QueuedDeploymentsRepositoryStub,
-    QueuedIstioDeploymentsRepositoryStub
+  ComponentDeploymentsRepositoryStub,
+  ComponentsRepositoryStub,
+  DeploymentsRepositoryStub,
+  ModulesRepositoryStub,
+  QueuedDeploymentsRepositoryStub,
+  QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
 import {
-    ComponentDeploymentsRepository,
-    QueuedDeploymentsRepository,
-    QueuedIstioDeploymentsRepository
+  ComponentDeploymentsRepository,
+  QueuedDeploymentsRepository,
+  QueuedIstioDeploymentsRepository
 } from '../../../app/api/deployments/repository'
 import {
-    ModulesService,
-    PipelineDeploymentsService,
-    PipelineErrorHandlerService,
-    PipelineQueuesService
+  ModulesService,
+  PipelineDeploymentsService,
+  PipelineErrorHandlerService,
+  PipelineQueuesService
 } from '../../../app/api/deployments/services'
 import {
-    ConsoleLoggerServiceStub, ModulesServiceStub,
-    PipelineDeploymentsServiceStub,
-    PipelineErrorHandlerServiceStub,
-    PipelineQueuesServiceStub
+  ConsoleLoggerServiceStub, ModulesServiceStub,
+  PipelineDeploymentsServiceStub,
+  PipelineErrorHandlerServiceStub,
+  PipelineQueuesServiceStub
 } from '../../stubs/services'
 import { ConsoleLoggerService } from '../../../app/core/logs/console'
 import {
-    ComponentDeploymentEntity,
-    DeploymentEntity,
-    ModuleDeploymentEntity,
-    QueuedDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity,
 } from '../../../app/api/deployments/entity'
 import {
-    CreateCircleDeploymentDto, CreateDeploymentRequestDto
+  CreateCircleDeploymentDto, CreateDeploymentRequestDto
 } from '../../../app/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
@@ -59,125 +59,128 @@ import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/dat
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
-    let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
-    let deploymentsRepository: Repository<DeploymentEntity>
-    let deployment: DeploymentEntity
-    let moduleDeployments: ModuleDeploymentEntity[]
-    let componentDeployments: ComponentDeploymentEntity[]
-    let createCircleDeploymentDto: CreateCircleDeploymentDto
-    let createDeploymentDto: CreateDeploymentRequestDto
-    let queuedDeploymentsRepository: QueuedDeploymentsRepository
-    let queuedDeployment: QueuedDeploymentEntity
-    let modulesService: ModulesService
 
-    beforeEach(async () => {
+  let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
+  let deploymentsRepository: Repository<DeploymentEntity>
+  let deployment: DeploymentEntity
+  let moduleDeployments: ModuleDeploymentEntity[]
+  let componentDeployments: ComponentDeploymentEntity[]
+  let createCircleDeploymentDto: CreateCircleDeploymentDto
+  let createDeploymentDto: CreateDeploymentRequestDto
+  let queuedDeploymentsRepository: QueuedDeploymentsRepository
+  let queuedDeployment: QueuedDeploymentEntity
+  let modulesService: ModulesService
 
-        const module = await Test.createTestingModule({
-            providers: [
-                CreateDefaultDeploymentRequestUsecase,
-                { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
-                { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
-                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-                { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
-                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
-                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-                { provide: ModulesService, useClass: ModulesServiceStub },
-                { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
-            ]
-        }).compile()
+  beforeEach(async() => {
 
-        createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
-        deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-        queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
-        modulesService = module.get<ModulesService>(ModulesService)
+    const module = await Test.createTestingModule({
+      providers: [
+        CreateDefaultDeploymentRequestUsecase,
+        { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
+        { provide: 'ModuleEntityRepository', useClass: ModulesRepositoryStub },
+        { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
+        { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
+        { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
+        { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
+        { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
+        { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
+        { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
+        { provide: ModulesService, useClass: ModulesServiceStub },
+        { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
+      ]
+    }).compile()
 
-        componentDeployments = [
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag'
-            ),
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name2',
-                'dummy-img-url2',
-                'dummy-img-tag2'
-            )
-        ]
+    createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
+    deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
+    queuedDeploymentsRepository = module.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+    modulesService = module.get<ModulesService>(ModulesService)
 
-        moduleDeployments = [
-            new ModuleDeploymentEntity(
-                'dummy-id',
-                'helm-repository',
-                componentDeployments
-            )
-        ]
+    componentDeployments = [
+      new ComponentDeploymentEntity(
+        'dummy-id',
+        'dummy-name',
+        'dummy-img-url',
+        'dummy-img-tag'
+      ),
+      new ComponentDeploymentEntity(
+        'dummy-id',
+        'dummy-name2',
+        'dummy-img-url2',
+        'dummy-img-tag2'
+      )
+    ]
 
-        deployment = new DeploymentEntity(
-            'dummy-deployment-id',
-            'dummy-application-name',
-            moduleDeployments,
-            'dummy-author-id',
-            'dummy-description',
-            'dummy-callback-url',
-            null,
-            false,
-            'dummy-circle-id',
-            'cd-configuration-id'
-        )
+    moduleDeployments = [
+      new ModuleDeploymentEntity(
+        'dummy-id',
+        'helm-repository',
+        componentDeployments
+      )
+    ]
 
-        createCircleDeploymentDto = new CreateCircleDeploymentDto(
-            'header-value'
-        )
+    deployment = new DeploymentEntity(
+      'dummy-deployment-id',
+      'dummy-application-name',
+      moduleDeployments,
+      'dummy-author-id',
+      'dummy-description',
+      'dummy-callback-url',
+      null,
+      false,
+      'dummy-circle-id',
+      'cd-configuration-id'
+    )
 
-        createDeploymentDto = new CreateDeploymentRequestDto(
-            'application-name',
-            [],
-            'author-id',
-            'description',
-            'callback-url',
-            createCircleDeploymentDto,
-            'cd-configuration-id'
-        )
+    createCircleDeploymentDto = new CreateCircleDeploymentDto(
+      'header-value'
+    )
 
-        queuedDeployment = new QueuedDeploymentEntity(
-            'dummy-component-id',
-            'dummy-component-deployment-id',
-            QueuedPipelineStatusEnum.RUNNING
-        )
+    createDeploymentDto = new CreateDeploymentRequestDto(
+      'application-name',
+      [],
+      'author-id',
+      'description',
+      'callback-url',
+      createCircleDeploymentDto,
+      'cd-configuration-id'
+    )
+
+    queuedDeployment = new QueuedDeploymentEntity(
+      'dummy-component-id',
+      'dummy-component-deployment-id',
+      QueuedPipelineStatusEnum.RUNNING
+    )
+
+
+  })
+
+  describe('execute', () => {
+    it('should return the correct read dto for a given create dto', async() => {
+
+      jest.spyOn(deploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(queuedDeploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(queuedDeployment))
+      jest.spyOn(modulesService, 'createModules')
+        .mockImplementation()
+
+      expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
+        .toEqual(deployment.toReadDto())
     })
 
-    describe('execute', () => {
-        it('should return the correct read dto for a given create dto', async () => {
+    it('should handle duplicated module default deployment', async() => {
 
-            jest.spyOn(deploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(queuedDeploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(queuedDeployment))
-            jest.spyOn(modulesService, 'createModules')
-                .mockImplementation()
+      jest.spyOn(deploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(queuedDeploymentsRepository, 'save')
+        .mockImplementationOnce(
+          () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+        ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+      jest.spyOn(modulesService, 'createModules')
+        .mockImplementation()
 
-            expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
-                .toEqual(deployment.toReadDto())
-        })
-
-        it('should handle duplicated module default deployment', async () => {
-
-            jest.spyOn(deploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(queuedDeploymentsRepository, 'save')
-                .mockImplementationOnce(
-                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
-                ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
-            jest.spyOn(modulesService, 'createModules')
-                .mockImplementation()
-
-            expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
-                .toEqual(deployment.toReadDto())
-        })
+      expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
+        .toEqual(deployment.toReadDto())
     })
+  })
 })
