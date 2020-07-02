@@ -615,6 +615,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)
     expect(deployment.modules[1].components[0].status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
+
   })
 
   afterAll(async() => {
