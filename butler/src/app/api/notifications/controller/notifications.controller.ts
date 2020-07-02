@@ -35,17 +35,17 @@ export class NotificationsController {
   @Post()
   @HttpCode(204)
   public async receiveDeploymentCallback(
-    @Query('queuedId') queuedId: number,
+    @Query('queueId') queueId: number,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
     if (finishDeploymentDto.callbackType === CallbackTypeEnum.DEPLOYMENT) {
-      return await this.receiveDeploymentCallbackUsecase.execute(queuedId, finishDeploymentDto)
+      return await this.receiveDeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
     }
     if (finishDeploymentDto.callbackType === CallbackTypeEnum.ISTIO_DEPLOYMENT) {
-      return await this.receiveIstioDeploymentCallbackUsecase.execute(queuedId, finishDeploymentDto)
+      return await this.receiveIstioDeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
     }
     if (finishDeploymentDto.callbackType === CallbackTypeEnum.UNDEPLOYMENT) {
-      return await this.receiveUndeploymentCallbackUsecase.execute(queuedId, finishDeploymentDto)
+      return await this.receiveUndeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
     }
   }
 

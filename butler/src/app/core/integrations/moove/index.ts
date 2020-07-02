@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {MooveService} from './moove.service'
+import { MooveService } from './moove.service'
 
 export {
-    MooveService
+  MooveService
 }

@@ -68,7 +68,7 @@ it('compiles the pipeline with only undeployment', () => {
 })
 
 it('builds istio pipeline', () => {
-    const contract: ISpinnakerPipelineConfiguration = {
+  const contract: ISpinnakerPipelineConfiguration = {
     account: 'account',
     pipelineName: 'pipeline-name',
     applicationName: 'application-name',
@@ -84,7 +84,7 @@ it('builds istio pipeline', () => {
     url: 'http://spinnaker.url.com',
     callbackType: CallbackTypeEnum.DEPLOYMENT
   }
-    const totalPipeline = new TotalPipeline(contract)
-    const result = totalPipeline.buildIstioPipeline()
-    expect(result).toEqual(istioPipeline)
+  const totalPipeline = new TotalPipeline(contract)
+  const result = totalPipeline.buildIstioPipeline()
+  expect(result).toEqual(istioPipeline)
 })

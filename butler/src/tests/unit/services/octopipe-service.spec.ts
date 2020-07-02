@@ -34,7 +34,7 @@ describe('Octopipe Service', () => {
   let octopipeService: OctopipeService
   let octopipeApiService: OctopipeApiService
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module = await Test.createTestingModule({
       providers: [
         OctopipeService,
@@ -72,7 +72,7 @@ describe('Octopipe Service', () => {
         null,
         false,
         'dummy-circle-id',
-          'cd-configuration-id'
+        'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -168,7 +168,7 @@ describe('Octopipe Service', () => {
         null,
         false,
         'dummy-circle-id',
-          'cd-configuration-id'
+        'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -264,7 +264,7 @@ describe('Octopipe Service', () => {
         null,
         false,
         'dummy-circle-id',
-          'cd-configuration-id'
+        'cd-configuration-id'
       )
 
       moduleDeployment.deployment = deployment
@@ -347,7 +347,7 @@ describe('Octopipe Service', () => {
         null,
         false,
         'dummy-circle-id',
-          'cd-configuration-id'
+        'cd-configuration-id'
       )
       moduleDeployment.deployment = deployment
       componentDeployment.moduleDeployment = moduleDeployment
@@ -413,7 +413,7 @@ describe('Octopipe Service', () => {
       }
       expect(payload).toEqual(expectedPayload)
     })
-    it('posts to octopipe server', async () => {
+    it('posts to octopipe server', async() => {
       const payload = {} as IOctopipePayload
       jest.spyOn(octopipeApiService, 'deploy').mockImplementation(
         () => of({
@@ -431,7 +431,7 @@ describe('Octopipe Service', () => {
       ).toEqual({ config: {}, data: { id: 'some-pipeline-id' }, headers: {}, status: 200, statusText: 'OK' })
     })
 
-    it('should handle on octopipe deployment failure', async () => {
+    it('should handle on octopipe deployment failure', async() => {
       const payload = {} as IOctopipePayload
       jest.spyOn(octopipeApiService, 'deploy').mockImplementation(
         () => { throw new Error('bad request') }

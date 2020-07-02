@@ -30,8 +30,8 @@ export class FinishDeploymentDto {
   public readonly callbackType: CallbackTypeEnum
 
   constructor(
-      status: string,
-      type: CallbackTypeEnum
+    status: string,
+    type: CallbackTypeEnum
   ) {
     this.status = status
     this.callbackType = type
