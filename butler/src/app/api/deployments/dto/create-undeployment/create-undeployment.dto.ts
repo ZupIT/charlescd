@@ -31,8 +31,8 @@ export class CreateUndeploymentDto {
   public readonly deploymentId: string
 
   constructor(
-      authorId: string,
-      deploymentId: string,
+    authorId: string,
+    deploymentId: string,
   ) {
     this.authorId = authorId
     this.deploymentId = deploymentId

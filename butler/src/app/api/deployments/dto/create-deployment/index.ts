@@ -22,10 +22,10 @@ import { CreateComponentDeploymentDto } from './create-component-deployment.dto'
 import { CreateModuleDeploymentDto } from './create-module-deployment.dto'
 
 export {
-    CreateDeploymentRequestDto,
-    CreateCircleDeploymentRequestDto,
-    CreateDefaultDeploymentRequestDto,
-    CreateCircleDeploymentDto,
-    CreateComponentDeploymentDto,
-    CreateModuleDeploymentDto
+  CreateDeploymentRequestDto,
+  CreateCircleDeploymentRequestDto,
+  CreateDefaultDeploymentRequestDto,
+  CreateCircleDeploymentDto,
+  CreateComponentDeploymentDto,
+  CreateModuleDeploymentDto
 }

@@ -19,7 +19,7 @@ import { DeleteCdConfigurationUsecase } from './delete-cd-configuration.usecase'
 import { GetCdConfigurationsUsecase } from './get-cd-configurations.usecase'
 
 export {
-    CreateCdConfigurationUsecase,
-    GetCdConfigurationsUsecase,
-    DeleteCdConfigurationUsecase
+  CreateCdConfigurationUsecase,
+  GetCdConfigurationsUsecase,
+  DeleteCdConfigurationUsecase
 }

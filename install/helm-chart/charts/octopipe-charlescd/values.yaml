@@ -1,6 +1,6 @@
 image:
   repository: octopipe
-  tag: zupcharles/charlescd-octopipe:v0.2.11
+  tag: zupcharles/charlescd-octopipe:latest
   blueTag: latest
   pullPolicy: Always
 
@@ -8,7 +8,7 @@ envVars:
   - name: APP_PORT
     value: "8080"
   - name: DB_URL
-    value: "mongodb://octopipe:octopipe@charlescd-mongo-mongodb:27017"
+    value: "mongodb://root:octopipe@charlescd-mongodb:27017"
   - name: KUBECONFIG
     value: "IN_CLUSTER"
   - name: TIMEOUT_RESOURCE_VERIFICATION
