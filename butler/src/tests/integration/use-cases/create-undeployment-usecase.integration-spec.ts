@@ -111,7 +111,6 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
             name: 'componentName2',
             namespace: 'qa'
           },
-
           spec: {
             hosts: [
               'unreachable-app-name'
@@ -322,7 +321,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(500)
     const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: id, status: DeploymentStatusEnum.FAILED } })
-    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id }, relations: ['componentUndeployments'] })
+    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)

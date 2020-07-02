@@ -219,13 +219,12 @@ export class PipelineDeploymentsService {
     componentDeployment: ComponentDeploymentEntity,
     pipelineCallbackUrl: string
   ): Promise<void> {
-
     if (!deploymentEntity.cdConfigurationId) {
       throw new NotFoundException('Deployment does not have cd configuration id')
     }
     this.consoleLoggerService.log('START:INSTANTIATE_CD_SERVICE')
     const cdConfiguration =
-      await this.cdConfigurationsRepository.findDecrypted(deploymentEntity.cdConfigurationId)
+            await this.cdConfigurationsRepository.findDecrypted(deploymentEntity.cdConfigurationId)
 
     if (!cdConfiguration) {
       throw new NotFoundException(`Configuration not found - id: ${deploymentEntity.cdConfigurationId}`)
@@ -275,6 +274,7 @@ export class PipelineDeploymentsService {
     }
     const cdConfiguration =
       await this.cdConfigurationsRepository.findDecrypted(deploymentEntity.cdConfigurationId)
+
     if (!cdConfiguration) {
       throw new NotFoundException(`Configuration not found - id: ${deploymentEntity.cdConfigurationId}`)
     }
@@ -294,7 +294,7 @@ export class PipelineDeploymentsService {
     componentDeployment: ComponentDeploymentEntity,
     callbackCircleId: string,
     pipelineCallbackUrl: string,
-    callbackType: CallbackTypeEnum
+    callbackType: CallbackTypeEnum,
   ): IConnectorConfiguration {
 
     return {
@@ -309,5 +309,4 @@ export class PipelineDeploymentsService {
       callbackType
     }
   }
-
 }

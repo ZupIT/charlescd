@@ -53,7 +53,6 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
         FixtureUtilsService
       ]
     })
-
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
 
@@ -71,6 +70,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
   })
 
   it('/POST a circle undeploy callback fails should update status only the component and module that failed ', async() => {
+
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
@@ -87,7 +87,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
         }
       })
     await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
-      .send(finishDeploymentDto).expect(204)
+      .send(finishDeploymentDto)
 
     queuedDeploymentSearch = await queuedUndeploymentsRepository.
       findOneOrFail( {
