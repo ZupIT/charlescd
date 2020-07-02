@@ -18,21 +18,21 @@ import { ValidationSchema } from 'class-validator'
 
 export const SpinnakerConfigurationDataSchema: ValidationSchema = {
 
-    name: 'spinnakerConfigurationDataSchema',
+  name: 'spinnakerConfigurationDataSchema',
 
-    properties: {
-        gitAccount: [{
-            type: 'isNotEmpty'
-        }],
+  properties: {
+    gitAccount: [{
+      type: 'isNotEmpty'
+    }],
 
-        url: [{
-            type: 'isNotEmpty'
-        }],
-        account: [{
-            type: 'isNotEmpty'
-        }],
-        namespace: [{
-            type: 'isNotEmpty'
-        }]
-    }
+    url: [{
+      type: 'isNotEmpty'
+    }],
+    account: [{
+      type: 'isNotEmpty'
+    }],
+    namespace: [{
+      type: 'isNotEmpty'
+    }]
+  }
 }

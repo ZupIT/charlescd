@@ -23,30 +23,30 @@ import { ComponentEntity } from '../../components/entity'
 @Injectable()
 export class ModulesService {
 
-    constructor(
+  constructor(
         @InjectRepository(ModuleEntity)
         private readonly moduleEntityRepository: Repository<ModuleEntity>
-    ) { }
+  ) { }
 
-    public async createModules(moduleEntities: ModuleEntity[]): Promise<void> {
-        await this.verifyModuleExistAndSave(moduleEntities)
+  public async createModules(moduleEntities: ModuleEntity[]): Promise<void> {
+    await this.verifyModuleExistAndSave(moduleEntities)
+  }
+
+  private async verifyModuleExistAndSave(moduleEntities: ModuleEntity[]): Promise<void> {
+    await Promise.all(moduleEntities.map(moduleEntity => this.saveModule(moduleEntity)))
+  }
+
+  private async saveModule(moduleEntity: ModuleEntity) {
+    const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
+    const newComponents: ComponentEntity[] = moduleEntity.components.filter(
+      component => !module?.components.includes(component)
+    )
+
+    if (module && !newComponents) {
+      return
     }
 
-    private async verifyModuleExistAndSave(moduleEntities: ModuleEntity[]): Promise<void> {
-        await Promise.all(moduleEntities.map(moduleEntity => this.saveModule(moduleEntity)))
-    }
-
-    private async saveModule(moduleEntity: ModuleEntity) {
-        const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
-
-        const newComponents: ComponentEntity[] = moduleEntity.components.filter(
-          component => !module?.components.includes(component)
-        )
-        if (module && !newComponents) {
-            return
-        }
-
-        await this.moduleEntityRepository.save(moduleEntity)
-    }
+    await this.moduleEntityRepository.save(moduleEntity)
+  }
 
 }

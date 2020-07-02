@@ -88,7 +88,7 @@ const CardView = ({ id, onClose }: Props) => {
   );
 
   return (
-    <Styled.Modal onClose={() => handleClose()} isOutsideClick>
+    <Styled.Modal onClose={() => handleClose()}>
       {isLoading ? renderLoader() : renderContent()}
     </Styled.Modal>
   );
