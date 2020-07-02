@@ -73,7 +73,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
   it('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
 
-
     const createDeploymentRequest = {
       deploymentId: 'e4c41beb-0a77-44c4-8d77-9addf3fc8ea9',
       applicationName: 'dae2121f-8b06-4218-9de4-97dc0becccab',
@@ -156,9 +155,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules).toMatchObject(expectedModules)
   })
 
-
   it('/POST /deployments in default circle should fail if already exists deployment ', done => {
-
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -254,7 +251,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
       createdAt: expect.anything()
     })
   })
-
 
   it('/POST /deployments in default circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
@@ -565,7 +561,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST deployments in default  should handle deployment failure ', async() => {
-
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').

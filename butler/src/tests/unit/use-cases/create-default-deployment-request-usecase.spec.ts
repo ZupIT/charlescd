@@ -59,7 +59,6 @@ import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/dat
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
-
   let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
   let deploymentsRepository: Repository<DeploymentEntity>
   let deployment: DeploymentEntity
@@ -150,8 +149,6 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
       'dummy-component-deployment-id',
       QueuedPipelineStatusEnum.RUNNING
     )
-
-
   })
 
   describe('execute', () => {
