@@ -123,7 +123,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
-    await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
     queuedDeploymentSearch = await queuedDeploymentsRepository.
       findOneOrFail( {
@@ -245,7 +245,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         }
       })
 
-    await request(app.getHttpServer()).post(`/notifications?queuedId=${queuedDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
     queuedDeploymentSearch = await queuedDeploymentsRepository.
       findOneOrFail( {
