@@ -86,7 +86,6 @@ export class CreateDefaultDeploymentRequestUsecase {
       this.consoleLoggerService.error('ERROR:CREATE_DEFAULT_DEPLOYMENT', error)
       this.pipelineErrorHandlerService.handleDeploymentFailure(deployment)
       throw error
-
     }
   }
 

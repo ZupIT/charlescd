@@ -82,6 +82,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
 
@@ -100,6 +101,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         },
         relations: ['moduleDeployment']
       })
+
     expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.SUCCEEDED)
@@ -156,7 +158,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       status : 'SUCCEEDED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
-
     let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
@@ -224,6 +225,8 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         },
         relations: ['moduleDeployment']
       })
+
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()

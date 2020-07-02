@@ -117,7 +117,6 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
     expect(moduleUndeploymentEntities[1].status).toBe(DeploymentStatusEnum.FAILED)
     expect(moduleUndeploymentEntities[1].componentUndeployments[0].status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()
-
   })
 
   afterAll(async() => {
