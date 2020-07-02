@@ -48,106 +48,6 @@ import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/dat
 
 describe('CreateUndeploymentRequestUsecase', () => {
 
-<<<<<<< HEAD
-    let createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase
-    let deploymentsRepository: Repository<DeploymentEntity>
-    let undeploymentsRepository: Repository<UndeploymentEntity>
-    let createUndeploymentDto: CreateUndeploymentDto
-    let deployment: DeploymentEntity
-    let undeployment: UndeploymentEntity
-    let moduleDeployments: ModuleDeploymentEntity[]
-    let componentDeployments: ComponentDeploymentEntity[]
-    let pipelineQueuesService: PipelineQueuesService
-    let queuedUndeployments: QueuedUndeploymentEntity[]
-    let queuedUndeploymentRepository: Repository<QueuedUndeploymentEntity>
-
-    beforeEach(async () => {
-
-        const module = await Test.createTestingModule({
-            providers: [
-                CreateUndeploymentRequestUsecase,
-                { provide: 'DeploymentEntityRepository', useClass: DeploymentsRepositoryStub },
-                { provide: 'UndeploymentEntityRepository', useClass: UndeploymentsRepositoryStub },
-                { provide: ComponentDeploymentsRepository, useClass: ComponentDeploymentsRepositoryStub },
-                { provide: QueuedDeploymentsRepository, useClass: QueuedDeploymentsRepositoryStub },
-                { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
-                { provide: StatusManagementService, useClass: StatusManagementServiceStub },
-                { provide: ConsoleLoggerService, useClass: ConsoleLoggerServiceStub },
-                { provide: MooveService, useClass: MooveServiceStub },
-                { provide: 'ComponentEntityRepository', useClass: ComponentsRepositoryStub },
-                { provide: 'QueuedUndeploymentEntityRepository', useClass: QueuedUndeploymentsRepositoryStub },
-                { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
-                { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-            ]
-        }).compile()
-
-        createUndeploymentRequestUsecase = module.get<CreateUndeploymentRequestUsecase>(CreateUndeploymentRequestUsecase)
-        pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
-        deploymentsRepository = module.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-        undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
-        queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
-
-        createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id','dummy-deployment-id')
-
-        componentDeployments = [
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name',
-                'dummy-img-url',
-                'dummy-img-tag'
-            ),
-            new ComponentDeploymentEntity(
-                'dummy-id',
-                'dummy-name2',
-                'dummy-img-url2',
-                'dummy-img-tag2'
-            )
-        ]
-
-        moduleDeployments = [
-            new ModuleDeploymentEntity(
-                'dummy-id',
-                'helm-repository',
-                componentDeployments
-            )
-        ]
-
-        deployment = new DeploymentEntity(
-            'dummy-deployment-id',
-            'dummy-application-name',
-            moduleDeployments,
-            'dummy-author-id',
-            'dummy-description',
-            'dummy-callback-url',
-            null,
-            false,
-            'dummy-circle-id',
-            'cd-configuration-id'
-        )
-
-        deployment.circle = new CircleDeploymentEntity('header-value')
-
-        undeployment = new UndeploymentEntity(
-            'dummy-author-id',
-            deployment,
-            'dummy-circle-id'
-        )
-
-        queuedUndeployments = [
-            new QueuedUndeploymentEntity(
-                'dummy-id',
-                componentDeployments[0].id,
-                QueuedPipelineStatusEnum.RUNNING,
-                'dummy-id-2'
-            ),
-            new QueuedUndeploymentEntity(
-                'dummy-id',
-                componentDeployments[1].id,
-                QueuedPipelineStatusEnum.QUEUED,
-                'dummy-id-3'
-            )
-        ]
-=======
   let createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase
   let deploymentsRepository: Repository<DeploymentEntity>
   let undeploymentsRepository: Repository<UndeploymentEntity>
@@ -186,7 +86,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
     queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
 
-    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
+    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id','dummy-deployment-id')
 
     componentDeployments = [
       new ComponentDeploymentEntity(
@@ -246,6 +146,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         'dummy-id-3'
       )
     ]
+
   })
 
   describe('execute', () => {
@@ -258,9 +159,8 @@ describe('CreateUndeploymentRequestUsecase', () => {
       jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
         .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
 
-      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
         .toEqual(undeployment.toReadDto())
->>>>>>> 6c23453e92a0d4bf445d208fb6f13aeaf1c4a9d5
     })
 
     it('should handle duplicated module undeployment', async() => {
@@ -270,37 +170,25 @@ describe('CreateUndeploymentRequestUsecase', () => {
       jest.spyOn(undeploymentsRepository, 'save')
         .mockImplementation(() => Promise.resolve(undeployment))
 
-<<<<<<< HEAD
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
-                .toEqual(undeployment.toReadDto())
-        })
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
+        .toEqual(undeployment.toReadDto())
+    })
 
-        it('should handle duplicated module undeployment', async () => {
+    it('should handle duplicated module undeployment', async() => {
 
-            jest.spyOn(deploymentsRepository, 'findOneOrFail')
-                .mockImplementation(() => Promise.resolve(deployment))
-            jest.spyOn(undeploymentsRepository, 'save')
-                .mockImplementation(() => Promise.resolve(undeployment))
+      jest.spyOn(deploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(undeploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(undeployment))
 
-            jest.spyOn(queuedUndeploymentRepository, 'save')
-                .mockImplementationOnce(
-                    () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
-                )
-                .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
-
-            expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
-                .toEqual(undeployment.toReadDto())
-        })
-=======
       jest.spyOn(queuedUndeploymentRepository, 'save')
         .mockImplementationOnce(
           () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
         )
         .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
-      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
         .toEqual(undeployment.toReadDto())
->>>>>>> 6c23453e92a0d4bf445d208fb6f13aeaf1c4a9d5
     })
   })
 })
