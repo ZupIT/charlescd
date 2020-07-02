@@ -111,6 +111,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
             name: 'componentName2',
             namespace: 'qa'
           },
+
           spec: {
             hosts: [
               'unreachable-app-name'
@@ -144,13 +145,18 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
             name: 'componentName2',
             namespace: 'qa'
           },
-          unusedVersions: [],
-          versions: [],
-          webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-          callbackType: CallbackTypeEnum.UNDEPLOYMENT
+          spec: {
+            host: 'componentName2',
+            subsets: []
+          }
         }
-      }
+      },
+      unusedVersions: [],
+      versions: [],
+      webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
+
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
       expectedOctopipePayload1
     )
@@ -205,12 +211,16 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
             name: 'componentName',
             namespace: 'qa'
           },
-          unusedVersions: [],
-          versions: [],
-          webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-          callbackType: CallbackTypeEnum.UNDEPLOYMENT
+          spec: {
+            host: 'componentName',
+            subsets: []
+          }
         }
-      }
+      },
+      unusedVersions: [],
+      versions: [],
+      webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
       expectedOctopipePayload2
