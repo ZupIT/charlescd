@@ -15,12 +15,12 @@
  */
 
 import {
-    Injectable,
-    InternalServerErrorException
+  Injectable,
+  InternalServerErrorException
 } from '@nestjs/common'
 import {
-    CreateCdConfigurationDto,
-    ReadCdConfigurationDto
+  CreateCdConfigurationDto,
+  ReadCdConfigurationDto
 } from '../dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CdConfigurationsRepository } from '../repository'
@@ -30,26 +30,26 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 @Injectable()
 export class CreateCdConfigurationUsecase {
 
-    constructor(
+  constructor(
         @InjectRepository(CdConfigurationsRepository)
         private readonly cdConfigurationsRepository: CdConfigurationsRepository,
         private readonly consoleLoggerService: ConsoleLoggerService
-    ) {}
+  ) {}
 
-    public async execute(
-        createCdConfigurationDto: CreateCdConfigurationDto,
-        workspaceId: string
-    ): Promise<ReadCdConfigurationDto> {
+  public async execute(
+    createCdConfigurationDto: CreateCdConfigurationDto,
+    workspaceId: string
+  ): Promise<ReadCdConfigurationDto> {
 
-        try {
-            this.consoleLoggerService.log('START:CREATE_CONFIGURATION', createCdConfigurationDto)
-            const cdConfiguration: CdConfigurationEntity =
+    try {
+      this.consoleLoggerService.log('START:CREATE_CONFIGURATION', createCdConfigurationDto)
+      const cdConfiguration: CdConfigurationEntity =
                 await this.cdConfigurationsRepository.saveEncrypted(createCdConfigurationDto.toEntity(workspaceId))
-            this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration)
-            return cdConfiguration.toReadDto()
-        } catch (error) {
-            this.consoleLoggerService.error('ERROR:CREATE_CONFIGURATION: ', error)
-            throw new InternalServerErrorException(error)
-        }
+      this.consoleLoggerService.log('FINISH:CREATE_CONFIGURATION', cdConfiguration)
+      return cdConfiguration.toReadDto()
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:CREATE_CONFIGURATION: ', error)
+      throw new InternalServerErrorException(error)
     }
+  }
 }

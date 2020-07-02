@@ -17,13 +17,12 @@
 import { ModuleForm } from 'modules/Circles/Release/interfaces/Module';
 import { FilterBuild } from 'modules/Circles/Release/interfaces/Build';
 import { postRequest, baseRequest } from './base';
+import { buildParams, URLParams } from 'core/utils/query';
 
 const endpoint = '/moove/v2/builds';
 
 export const composeBuild = (data: ModuleForm) =>
   postRequest(`${endpoint}/compose`, data);
 
-export const findBuilds = (data: FilterBuild) => {
-  const params = data ? `?tagName=${data?.tagName}` : '';
-  return baseRequest(`${endpoint}${params}`);
-};
+export const findBuilds = (data: FilterBuild) =>
+  baseRequest(`${endpoint}?${buildParams(data as URLParams)}`);
