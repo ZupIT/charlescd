@@ -51,8 +51,8 @@ export class CreateModuleDeploymentDto {
 
   public toModuleEntity(): ModuleEntity {
     return new ModuleEntity(
-        this.moduleId,
-        this.components.map(component => component.toComponentEntity())
+      this.moduleId,
+      this.components.map(component => component.toComponentEntity())
     )
   }
 
