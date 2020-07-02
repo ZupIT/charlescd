@@ -30,6 +30,8 @@ jobs:
         node-version: 12.x
     - run: npm install
       working-directory: ./ui
+    - run: npm run build
+      working-directory: ./ui
     - run: npm run test:coverage
       working-directory: ./ui
       env:
