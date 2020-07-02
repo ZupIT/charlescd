@@ -196,7 +196,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       status: 'FAILED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
-
+    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
     let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
@@ -205,7 +205,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
     await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
 

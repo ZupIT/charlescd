@@ -26,13 +26,11 @@ import {
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
-
 import {
   ComponentDeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
-
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
 import {
@@ -174,7 +172,5 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
       expect(queueSpy).toHaveBeenCalled()
       expect(queueSpy1).toHaveBeenCalled()
     })
-
   })
 })
-
