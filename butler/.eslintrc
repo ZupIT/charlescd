@@ -7,5 +7,10 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
-  ]
+  ],
+  "rules": {
+    "indent": ["error", 2],
+    "quotes": ["error", "single"],
+    "space-before-function-paren": ["error", "never"]
+  }
 }

@@ -26,21 +26,26 @@ import {
 } from '../../stubs/services'
 import { MooveService } from '../../../app/core/integrations/moove'
 import { StatusManagementService } from '../../../app/core/services/deployments'
+
 import {
   ComponentDeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
+
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import {
+  ComponentDeploymentsRepository,
+  QueuedDeploymentsRepository
+} from '../../../app/api/deployments/repository'
 import { FinishDeploymentDto } from '../../../app/api/notifications/dto'
 import {
-  CircleDeploymentEntity,
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
-  QueuedDeploymentEntity
+  QueuedDeploymentEntity,
+  CircleDeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
 
@@ -169,5 +174,7 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
       expect(queueSpy).toHaveBeenCalled()
       expect(queueSpy1).toHaveBeenCalled()
     })
+
   })
 })
+

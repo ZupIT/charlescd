@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
+import { buildParams } from "../query";
 
-const getQueryStrings = () => new URLSearchParams(window.location.search);
+test("should build query params dynammicaly", () => {
+  const params = {
+    foo: 'bar',
+    ids: [1,2],
+    names: ['jhon', 'doe'],
+    age: 9
+  };
 
-export type URLParams = {
-  [key: string]: string | number | string[] | number[];
-};
-
-export const buildParams = (data: URLParams) => {
-  const params = new URLSearchParams();
-
-  forEach(data, (value, key) => {
-    if (Array.isArray(data[key])) {
-      forEach(value as [], item => params.append(key, item));
-    } else {
-      params.append(key, value as string);
-    }
-  });
-
-  return params;
-};
-
-export default getQueryStrings;
+  const urlParams = buildParams(params);
+  const expected = 'foo=bar&ids=1&ids=2&names=jhon&names=doe&age=9';
+  
+  expect(urlParams.toString()).toEqual(expected);
+});

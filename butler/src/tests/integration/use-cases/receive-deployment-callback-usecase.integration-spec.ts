@@ -111,7 +111,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status: 'FAILED',
+      status : 'FAILED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
@@ -123,8 +123,10 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
+
     queuedDeploymentSearch = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
@@ -151,9 +153,10 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status: 'SUCCEEDED',
+      status : 'SUCCEEDED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
+
     let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
@@ -190,10 +193,50 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status: 'FAILED',
+      status: 'SUCCEEDED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
+    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    queuedDeploymentSearch = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          status: QueuedPipelineStatusEnum.FINISHED,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          id: queuedDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment']
+      })
+
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.SUCCEEDED)
+  })
+
+  it('/POST deploy/callback in circle  should remove pipeline options when deployment failure', async() => {
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status: 'FAILED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
+    }
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
     let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
       findOneOrFail( {
@@ -227,56 +270,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()
-  })
-  it('/POST deploy/callback in circle  should remove pipeline options when deployment failure', async() => {
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
-    const finishDeploymentDto = {
-      status: 'FAILED',
-      callbackType: CallbackTypeEnum.DEPLOYMENT
-    }
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
-
-    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
-      .send(finishDeploymentDto).expect(204)
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.FINISHED,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
-    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
-      findOneOrFail({
-        where : {
-          id: queuedDeploymentSearch.componentDeploymentId
-        },
-        relations: ['moduleDeployment'] }
-      )
-    const componentEntity: ComponentEntity = await componentsRepository.
-      findOneOrFail({
-        where : { id: componentDeploymentEntity.componentId } }
-      )
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
-    expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
-    expect(spy).toBeCalled()
-    expect(componentEntity.pipelineOptions).toEqual(
-      {
-        pipelineCircles: [],
-        pipelineVersions: [],
-        pipelineUnusedVersions: []
-      }
-    )
   })
 
   afterAll(async() => {

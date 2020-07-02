@@ -42,7 +42,7 @@ const Modules = ({ card, onFinish }: Props) => {
 
   const handleClose = () => {
     openModal(false);
-    if (onFinish) onFinish();
+    onFinish();
   };
 
   const renderModules = () =>
