@@ -193,26 +193,26 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status: 'SUCCEEDED',
+      status: 'FAILED',
       callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
     let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
           status: QueuedPipelineStatusEnum.RUNNING,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
-
+    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
     await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeploymentSearch = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
@@ -224,10 +224,9 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         },
         relations: ['moduleDeployment']
       })
-
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
-    expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
+    expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
+    expect(spy).toBeCalled()
   })
 
   it('/POST deploy/callback in circle  should remove pipeline options when deployment failure', async() => {
@@ -265,11 +264,22 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         },
         relations: ['moduleDeployment']
       })
+    const componentEntity: ComponentEntity = await componentsRepository.
+      findOneOrFail({
+        where : { id: componentDeploymentEntity.componentId } }
+      )
 
     expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()
+    expect(componentEntity.pipelineOptions).toEqual(
+      {
+        pipelineCircles: [],
+        pipelineVersions: [],
+        pipelineUnusedVersions: []
+      }
+    )
   })
 
   afterAll(async() => {
