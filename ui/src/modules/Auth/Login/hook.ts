@@ -94,9 +94,9 @@ export const useLogin = (): {
       setError('');
       try {
         const response: AuthResponse = await getSession(email, password);
+        saveSessionData(response['access_token'], response['refresh_token']);
         getCircleId({ username: email });
         getUserByEmail(email);
-        saveSessionData(response['access_token'], response['refresh_token']);
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
