@@ -55,7 +55,6 @@ export class CreateCircleDeploymentRequestUsecase {
     const modules: ModuleEntity[] = createCircleDeploymentRequestDto.modules.map(module => module.toModuleEntity())
     await this.modulesService.createModules(modules)
 
-
     this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
     const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
     if (!deployment.circle) {
