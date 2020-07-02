@@ -43,7 +43,7 @@ const LayerMetrics = ({ id }: Props) => {
   const history = useHistory();
 
   useEffect(() => {
-    if (response === undefined) {
+    if (response === null) {
       loadWorkspace(getWorkspaceId());
     } else {
       setIsWorkspaceLoaded(true);
