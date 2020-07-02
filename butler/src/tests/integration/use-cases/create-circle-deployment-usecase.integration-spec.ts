@@ -253,7 +253,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-
   it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
