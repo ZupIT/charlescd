@@ -18,27 +18,27 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigurationsController } from './controller'
 import {
-    CreateCdConfigurationUsecase, DeleteCdConfigurationUsecase,
-    GetCdConfigurationsUsecase
+  CreateCdConfigurationUsecase, DeleteCdConfigurationUsecase,
+  GetCdConfigurationsUsecase
 } from './use-cases'
 import { CdConfigurationsRepository } from './repository'
 
 import { LogsModule } from '../../core/logs/logs.module'
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-            CdConfigurationsRepository
-        ]),
-        LogsModule
-    ],
-    controllers: [
-        ConfigurationsController
-    ],
-    providers: [
-        CreateCdConfigurationUsecase,
-        GetCdConfigurationsUsecase,
-        DeleteCdConfigurationUsecase
-    ]
+  imports: [
+    TypeOrmModule.forFeature([
+      CdConfigurationsRepository
+    ]),
+    LogsModule
+  ],
+  controllers: [
+    ConfigurationsController
+  ],
+  providers: [
+    CreateCdConfigurationUsecase,
+    GetCdConfigurationsUsecase,
+    DeleteCdConfigurationUsecase
+  ]
 })
 export class ConfigurationsModule {}
