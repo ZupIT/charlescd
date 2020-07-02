@@ -71,7 +71,7 @@ const Single = ({
         onChange && onChange(selected);
         return selected?.value;
       }}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue?.value}
       rules={rules}
       control={control}
       options={options}
