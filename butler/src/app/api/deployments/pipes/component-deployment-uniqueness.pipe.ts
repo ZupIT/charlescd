@@ -15,30 +15,30 @@
  */
 
 import {
-    Injectable,
-    PipeTransform, UnprocessableEntityException
+  Injectable,
+  PipeTransform, UnprocessableEntityException
 } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto'
 
 @Injectable()
 export class ComponentDeploymentUniquenessPipe implements PipeTransform {
 
-    public async transform(deploymentRequest: CreateDeploymentRequestDto): Promise<CreateDeploymentRequestDto> {
-        const mapTimesComponent: Map<string, boolean> =  new Map()
-        deploymentRequest.modules.forEach(
-          module => module.components.forEach(
-            component =>  this.verifyDuplicatedComponents(mapTimesComponent, component.componentId)
-          )
-        )
-        return deploymentRequest
-    }
+  public async transform(deploymentRequest: CreateDeploymentRequestDto): Promise<CreateDeploymentRequestDto> {
+    const mapTimesComponent: Map<string, boolean> =  new Map()
+    deploymentRequest.modules.forEach(
+      module => module.components.forEach(
+        component =>  this.verifyDuplicatedComponents(mapTimesComponent, component.componentId)
+      )
+    )
+    return deploymentRequest
+  }
 
-    private verifyDuplicatedComponents(mapTimesComponent: Map<string, boolean>, componentId: string) {
-        if (mapTimesComponent.get(componentId)) {
-            throw new UnprocessableEntityException('Deployment should not have repeated components')
-        } else {
-            mapTimesComponent.set(componentId, true)
-        }
-        return mapTimesComponent
+  private verifyDuplicatedComponents(mapTimesComponent: Map<string, boolean>, componentId: string) {
+    if (mapTimesComponent.get(componentId)) {
+      throw new UnprocessableEntityException('Deployment should not have repeated components')
+    } else {
+      mapTimesComponent.set(componentId, true)
     }
+    return mapTimesComponent
+  }
 }
