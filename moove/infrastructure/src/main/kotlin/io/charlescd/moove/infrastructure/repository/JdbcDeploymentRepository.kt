@@ -258,8 +258,8 @@ class JdbcDeploymentRepository(
                         WHERE
 	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                             AND workspace_id = ?
-                            AND created_at <= NOW() 
-	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                            AND created_at <= CURRENT_DATE 
+	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
@@ -294,8 +294,8 @@ class JdbcDeploymentRepository(
                         WHERE
 	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                             AND workspace_id = ?
-                            AND created_at <= NOW() 
-	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                            AND created_at <= CURRENT_DATE 
+	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
@@ -324,8 +324,8 @@ class JdbcDeploymentRepository(
 	                        deployments
                         WHERE
                             workspace_id = ?
-                            AND created_at <= NOW() 
-	                        AND created_at >= (NOW() - ? * INTERVAL '1 days')
+                            AND created_at <= CURRENT_DATE 
+	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
