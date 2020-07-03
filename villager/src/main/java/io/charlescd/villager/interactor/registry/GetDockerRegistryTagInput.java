@@ -34,6 +34,7 @@ public class GetDockerRegistryTagInput {
         return artifactName;
     }
 
+
     public String getWorkspaceId() {
         return workspaceId;
     }

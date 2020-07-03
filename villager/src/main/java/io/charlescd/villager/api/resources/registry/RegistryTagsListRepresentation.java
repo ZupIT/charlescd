@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+package io.charlescd.villager.api.resources.registry;
 
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.io.IOException;
-import java.util.Optional;
-import javax.ws.rs.core.Response;
+import java.util.List;
 
-public interface RegistryClient {
+public class RegistryTagsListRepresentation {
 
-    void configureAuthentication(RegistryType type,
-                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
+    private List<ComponentTagRepresentation> tags;
 
-    Optional<Response> getImage(String name, String tagName);
+    public RegistryTagsListRepresentation(List<ComponentTagRepresentation> tags) {
+        this.tags = tags;
+    }
 
-    TagsResponse listImageTags(String name, Integer max, String last) throws IOException;
-
+    public List<ComponentTagRepresentation> getTags() {
+        return tags;
+    }
 }
