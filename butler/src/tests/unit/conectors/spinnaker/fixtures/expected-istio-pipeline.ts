@@ -143,6 +143,11 @@ const istioPipeline = {
                       subset: 'v3'
                     },
                     headers: {
+                      response: {
+                        set: {
+                          'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
+                        }
+                      },
                       request: {
                         set: {
                           'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
@@ -160,6 +165,11 @@ const istioPipeline = {
                       subset: 'v4'
                     },
                     headers: {
+                      response: {
+                        set: {
+                          'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
+                        }
+                      },
                       request: {
                         set: {
                           'x-circle-source': 'f5d23a57-5607-4306-9993-477e1598cc2a'
