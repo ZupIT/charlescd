@@ -15,32 +15,23 @@
  */
 
 import React from 'react';
-import { useRouter } from 'core/utils/routes';
 import Button from 'core/components/Button';
-import routes from 'core/constants/routes';
 import Placeholder from 'core/components/Placeholder';
 import Styled from '../styled';
+import { logout } from 'core/utils/auth';
 
-const Forbidden403 = () => {
-  const router = useRouter();
-
-  return (
-    <Styled.Error>
-      <Placeholder
-        title="Error 403."
-        subtitle="You don't have permission to access."
-        icon="error-403"
-      >
-        <Button.Rounded
-          name="workspace"
-          color="dark"
-          onClick={() => router.push(routes.workspaces)}
-        >
-          Go to home
-        </Button.Rounded>
-      </Placeholder>
-    </Styled.Error>
-  );
-};
+const Forbidden403 = () => (
+  <Styled.Error>
+    <Placeholder
+      title="Error 403."
+      subtitle="You don't have permission to access."
+      icon="error-403"
+    >
+      <Button.Rounded name="workspace" color="dark" onClick={logout}>
+        Go to login
+      </Button.Rounded>
+    </Placeholder>
+  </Styled.Error>
+);
 
 export default Forbidden403;
