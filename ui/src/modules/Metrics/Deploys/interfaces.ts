@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-export interface DeployMetricSearch {
-  period: string;
-  circles?: string;
-}
-
 export interface DeployMetricData {
   successfulDeployments: number;
   failedDeployments: number;

@@ -17,7 +17,7 @@ const findDeployMetrics = {
 const findAllCirclsMetrics = {
   method: 'GET',
   path: `${API}/circles`,
-  handler: (req, h) => h.response(mock.AllCirclesMetrics())
+  handler: (req, h) => h.response(mock.AllCirclesMetrics)
 };
 
 export default {
