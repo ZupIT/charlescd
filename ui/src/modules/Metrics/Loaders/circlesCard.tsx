@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Loader as LoaderCard } from './card';
-import { Loader as LoaderCircleCard } from './circlesCard';
-import { Loader as LoaderCircleAverageTime } from './circleAverageTime';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-const Loader = {
-  Card: () => <LoaderCard />,
-  CircleCard: () => <LoaderCircleCard />,
-  CircleAvaregeTime: () => <LoaderCircleAverageTime />
-};
-
-export default Loader;
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={4}
+    width={175}
+    height={94}
+    viewBox="0 0 175 94"
+    backgroundColor="#3a393c"
+    foregroundColor="#2c2b2e"
+  >
+    <circle cx="37" cy="44" r="25" />
+    <rect x="75" y="28" rx="2" ry="2" width="80" height="10" />
+    <rect x="75" y="51" rx="2" ry="2" width="80" height="10" />
+  </ContentLoader>
+);
