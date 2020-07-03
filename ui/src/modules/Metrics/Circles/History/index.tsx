@@ -15,18 +15,28 @@
  */
 
 import React from 'react';
+import Text from 'core/components/Text';
 import Styled from './styled';
-import History from './History';
 
-const Circles = () => {
+const History = () => {
   return (
     <Styled.Content>
-      <Styled.MiniCard>
-        <span>Circle 1</span>
-      </Styled.MiniCard>
-      <History />
+      <Styled.TableHead>
+        <div>
+          <Text.h5 color="dark">Status</Text.h5>
+        </div>
+        <div>
+          <Text.h5 color="dark">Circles</Text.h5>
+        </div>
+        <div>
+          <Text.h5 color="dark">Last update</Text.h5>
+        </div>
+        <div>
+          <Text.h5 color="dark">Life time</Text.h5>
+        </div>
+      </Styled.TableHead>
     </Styled.Content>
   );
 };
 
-export default Circles;
+export default History;

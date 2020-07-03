@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
-import History from './History';
+import styled from 'styled-components';
 
-const Circles = () => {
-  return (
-    <Styled.Content>
-      <Styled.MiniCard>
-        <span>Circle 1</span>
-      </Styled.MiniCard>
-      <History />
-    </Styled.Content>
-  );
+const lineHeight = '40px';
+
+const Content = styled.div`
+  margin-top: 20px;
+  width: calc(100% - 20px);
+  background: ${({ theme }) => theme.metrics.dashboard.card};
+`;
+
+const TableHead = styled.div`
+  display: flex;
+  height: ${lineHeight};
+
+  > div {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+`;
+
+export default {
+  Content,
+  TableHead
 };
-
-export default Circles;
