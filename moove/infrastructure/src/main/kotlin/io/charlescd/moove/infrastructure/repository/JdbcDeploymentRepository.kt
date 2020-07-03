@@ -19,8 +19,6 @@
 package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentAverageTimeStatsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
@@ -258,8 +256,8 @@ class JdbcDeploymentRepository(
                         WHERE
 	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                             AND workspace_id = ?
-                            AND created_at <= CURRENT_DATE 
-	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
+                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
@@ -294,8 +292,8 @@ class JdbcDeploymentRepository(
                         WHERE
 	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                             AND workspace_id = ?
-                            AND created_at <= CURRENT_DATE 
-	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
+                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
@@ -324,8 +322,8 @@ class JdbcDeploymentRepository(
 	                        deployments
                         WHERE
                             workspace_id = ?
-                            AND created_at <= CURRENT_DATE 
-	                        AND created_at >= (CURRENT_DATE - ? * INTERVAL '1 days')
+                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
                         """
 
         if (circlesId.isNotEmpty()) {
