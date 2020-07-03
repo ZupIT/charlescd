@@ -15,17 +15,37 @@
  */
 
 import React from 'react';
+import Text from 'core/components/Text';
 import Styled from './styled';
-import History from './History';
 
 const Circles = () => {
   return (
-    <Styled.Content>
-      <Styled.MiniCard>
-        <span>Circle 1</span>
-      </Styled.MiniCard>
-      <History />
-    </Styled.Content>
+    <>
+      <Styled.Content>
+        <Styled.MiniCard>
+          <Styled.CirclesData color="light">32</Styled.CirclesData>
+          <Styled.CirclesDataDetail>
+            <Text.h4 color="light">Actives: 20</Text.h4>
+            <Text.h4 color="light">Inactives: 12</Text.h4>
+          </Styled.CirclesDataDetail>
+        </Styled.MiniCard>
+        <Styled.MiniCard>
+          <Styled.CirclesData>
+            <Text.h4 color="light">Average life time</Text.h4>
+            <Text.h1 color="light">25 days</Text.h1>
+          </Styled.CirclesData>
+        </Styled.MiniCard>
+      </Styled.Content>
+      <Styled.Content>
+        <Styled.History>
+          <Text.h2 color="dark" weight="bold">
+            History
+          </Text.h2>
+          <Text.h5 color="dark">Active: 20</Text.h5>
+          <Text.h5 color="dark">Inactive: 12</Text.h5>
+        </Styled.History>
+      </Styled.Content>
+    </>
   );
 };
 

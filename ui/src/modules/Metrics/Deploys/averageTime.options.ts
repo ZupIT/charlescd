@@ -15,6 +15,7 @@
  */
 
 import { chartDateFormatter as formatter } from './helpers';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 
 export default {
   chart: {
@@ -41,18 +42,11 @@ export default {
       left: 30
     }
   },
-  legend: {
-    show: true,
-    showForNullSeries: true,
-    position: 'top',
-    horizontalAlign: 'left'
-  },
-  onItemClick: {
-    toggleDataSeries: true
-  },
   tooltip: {
-    x: {
-      formatter
+    y: {
+      formatter: function(value: number) {
+        return humanizeDateFromSeconds(value);
+      }
     }
   },
   yaxis: {

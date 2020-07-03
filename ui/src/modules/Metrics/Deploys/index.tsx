@@ -53,15 +53,7 @@ const Deploys = () => {
   const onSubmit = () => {
     const { circles, period } = getValues();
     const circleIds = normalizeCircleParams(circles);
-    searchDeployMetrics({ period: period.value, circles: circleIds });
-  };
-
-  const renderData = (data: number | string) => {
-    if (!data) {
-      return <Text.h2 color="light"> No data </Text.h2>;
-    }
-
-    return <Text.h1 color="light">{data}</Text.h1>;
+    searchDeployMetrics({ period: period, circles: circleIds });
   };
 
   const resetChart = (chartId: string) => {
@@ -92,21 +84,13 @@ const Deploys = () => {
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Deploy</Text.h4>
           <Text.h1 color="light">
-            {loading ? (
-              <Loader.Card />
-            ) : (
-              renderData(response?.successfulDeployments)
-            )}
+            {loading ? <Loader.Card /> : response?.successfulDeployments}
           </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
           <Text.h4 color="dark">Error</Text.h4>
           <Text.h1 color="light">
-            {loading ? (
-              <Loader.Card />
-            ) : (
-              renderData(response?.failedDeployments)
-            )}
+            {loading ? <Loader.Card /> : response?.failedDeployments}
           </Text.h1>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
@@ -115,10 +99,8 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              renderData(
-                humanizeDateFromSeconds(
-                  response?.successfulDeploymentsAverageTime
-                )
+              humanizeDateFromSeconds(
+                response?.successfulDeploymentsAverageTime
               )
             )}
           </Text.h1>
