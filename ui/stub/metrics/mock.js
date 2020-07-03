@@ -181,8 +181,40 @@ const DeployMetrics = () => ({
   ]
 });
 
+const AllCirclesMetrics = {
+  circleStats: {
+    active: 12,
+    inactive: 8
+  },
+  averageCircleLifeTime: 3400,
+  history: [
+    {
+      id: '123',
+      circleStatus: 'ACTIVE',
+      name: 'Circle',
+      lifeTime: 2400,
+      lastUpdate: '8-6-2020 15:48:37'
+    },
+    {
+      id: '456',
+      circleStatus: 'INACTIVE',
+      name: 'Other Circle',
+      lifeTime: 3670,
+      lastUpdate: '8-7-2020 10:32:28'
+    },
+    {
+      id: '789',
+      circleStatus: 'ACTIVE',
+      name: 'Another Circle',
+      lifeTime: 1860,
+      lastUpdate: '8-7-2020 10:32:28'
+    }
+  ]
+};
+
 export default {
   CircleMetricsData,
   CirclesMetrics,
-  DeployMetrics
+  DeployMetrics,
+  AllCirclesMetrics
 };

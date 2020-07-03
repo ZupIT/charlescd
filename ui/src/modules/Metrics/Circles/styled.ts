@@ -15,28 +15,48 @@
  */
 
 import styled from 'styled-components';
+import Text from 'core/components/Text';
 
 const Content = styled.div`
+  display: flex;
+  align-items: center;
   padding: 20px 0 0 30px;
 `;
 
 const MiniCard = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
+  display: flex;
   height: 94px;
   width: 175px;
   margin-right: 20px;
   border-radius: 5px;
 `;
 
-const Chart = styled.div`
+const CirclesData = styled(Text.h1)`
+  margin: auto;
+  > * + * {
+    margin-top: 5px;
+  }
+`;
+
+const CirclesDataDetail = styled.div`
+  margin: auto 25px auto 0;
+  > * + * {
+    margin-top: 5px;
+  }
+`;
+
+const History = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
-  height: 94px;
-  width: 175px;
+  height: 641px;
+  width: 1220px;
   border-radius: 5px;
 `;
 
 export default {
   Content,
   MiniCard,
-  Chart
+  CirclesData,
+  CirclesDataDetail,
+  History
 };
