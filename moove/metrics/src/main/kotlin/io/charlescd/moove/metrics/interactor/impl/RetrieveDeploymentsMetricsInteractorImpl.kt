@@ -22,10 +22,10 @@ import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.metrics.api.PeriodType
 import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
 import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
-import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.LocalDate
 import java.util.*
+import org.springframework.stereotype.Component
 
 @Component
 class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: DeploymentRepository) : RetrieveDeploymentsMetricsInteractor {
@@ -41,13 +41,11 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
         val successDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
         val failedDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
 
-        val deploymentsAverageTime = deploymentRepository
+        var deploymentsAverageTime = deploymentRepository
             .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
 
-        if (deploymentsAverageTime.isNotEmpty()) {
-            val deploymentsStack = deploymentsAverageTime.sortedByDescending { it.date }
-            val firstDay = LocalDate.now().minusDays(period.numberOfDays.toLong())
-
+        if (deploymentsAverageTime.isNotEmpty() && deploymentsAverageTime.size <= period.numberOfDays) {
+            deploymentsAverageTime = fillMissingItemsInAverageTimeList(deploymentsAverageTime, period)
         }
 
         return DeploymentMetricsRepresentation.from(
@@ -59,21 +57,48 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
         )
     }
 
-    private fun test(presentStats: DeploymentAverageTimeStats, statsToCome: Iterator<DeploymentAverageTimeStats>){
-        if (!statsToCome.hasNext()){
-            if (presentStats.date < LocalDate.now()){
-                test(DeploymentAverageTimeStats(Duration.ZERO, presentStats.date.plusDays(1)), statsToCome)
-            }else{
-                val list = LinkedList<DeploymentAverageTimeStats>()
-                list.addFirst(presentStats)
+    private fun fillMissingItemsInAverageTimeList(
+        deploymentsAverageTime: List<DeploymentAverageTimeStats>,
+        period: PeriodType
+    ): List<DeploymentAverageTimeStats> {
+
+        val deploymentsStack = deploymentsAverageTime
+            .sortedByDescending { it.date }
+            .toCollection(Stack())
+
+        val firstDay = LocalDate.now().minusDays(period.numberOfDays.toLong())
+        val lastDay = LocalDate.now()
+
+        val filledList = when (deploymentsStack.peek().date == firstDay) {
+            true -> mutableListOf(deploymentsStack.pop())
+            false -> mutableListOf(DeploymentAverageTimeStats(Duration.ZERO, firstDay))
+        }
+
+        var lastAddedItemDate = filledList.last().date
+        while (lastAddedItemDate < lastDay) {
+            if (deploymentsStack.isEmpty()) {
+                filledList.addAll(getValuesUntilDate(lastAddedItemDate.plusDays(1), lastDay.plusDays(1)))
+            } else {
+                if (lastAddedItemDate.until(deploymentsStack.peek().date).days > 1) {
+                    filledList.addAll(getValuesUntilDate(lastAddedItemDate.plusDays(1), deploymentsStack.peek().date))
+                }
+
+                filledList.add(deploymentsStack.pop())
             }
+            lastAddedItemDate = filledList.last().date
         }
 
-        val nextDayStats = statsToCome.next()
-        if (presentStats.date.until(nextDayStats.date).days > 1){
-
-        }
-
+        return filledList
     }
 
+    private fun getValuesUntilDate(fromDate: LocalDate, toDate: LocalDate): List<DeploymentAverageTimeStats> {
+        val valuesUntilToday = mutableListOf<DeploymentAverageTimeStats>()
+        var fromDay = fromDate
+        while (fromDay < toDate) {
+            valuesUntilToday.add(DeploymentAverageTimeStats(Duration.ZERO, fromDay))
+            fromDay = fromDay.plusDays(1)
+        }
+
+        return valuesUntilToday
+    }
 }
