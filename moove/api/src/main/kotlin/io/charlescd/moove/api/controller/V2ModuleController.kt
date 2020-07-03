@@ -28,10 +28,10 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 
 @Api(value = "Module Endpoints", tags = ["Module"])
 @RestController
@@ -163,8 +163,9 @@ class V2ModuleController(
     fun findComponentsTags(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @NotBlank @PathVariable("moduleId") moduleId: String,
-        @NotBlank @PathVariable("componentId") componentId: String
+        @NotBlank @PathVariable("componentId") componentId: String,
+        @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
-        return findComponentTagsInteractor.execute(moduleId, componentId, workspaceId)
+        return findComponentTagsInteractor.execute(moduleId, componentId,name, workspaceId)
     }
 }
