@@ -23,6 +23,7 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     }
 
     @Override
-    public ComponentTagDTO execute(GetDockerRegistryTagInput input) {
+    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
         var optionalEntity =
                 this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
@@ -63,10 +64,12 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
         var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
 
         if (response.isEmpty()) {
-            throw new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY_IMAGE_TAG);
+            return Optional.empty();
         }
 
-        return new ComponentTagDTO(
-                input.getName(), entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName());
+        return Optional.of(new ComponentTagDTO(
+                input.getName(),
+                entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
+        ));
     }
 }

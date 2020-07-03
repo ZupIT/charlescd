@@ -17,7 +17,6 @@
 package io.charlescd.villager.test;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
-import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.integration.registry.TagsResponse;
@@ -30,15 +29,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,7 +79,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        ComponentTagDTO component = interactor.execute(input);
+        ComponentTagDTO component = interactor.execute(input).get();
 
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("test.org/name:test"));
@@ -110,7 +108,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .withName("test")
                 .build();
 
-        assertThrows(ResourceNotFoundException.class, () -> interactor.execute(input));
+        assertTrue(interactor.execute(input).isEmpty());
         verify(registryClient, times(1)).configureAuthentication(entity.type, entity.connectionData);
         verify(registryClient, times(1)).getImage("name", "test");
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
@@ -134,7 +132,7 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         Exception exception = assertThrows(IllegalAccessResourceException.class, () -> {
-            ComponentTagDTO component = interactor.execute(input);
+            ComponentTagDTO component = interactor.execute(input).get();
         });
 
         assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));

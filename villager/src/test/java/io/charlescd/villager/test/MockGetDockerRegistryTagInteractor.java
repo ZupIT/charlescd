@@ -20,15 +20,15 @@ import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.quarkus.test.Mock;
-
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Optional;
 
 @Mock
 @ApplicationScoped
 public class MockGetDockerRegistryTagInteractor implements GetDockerRegistryTagInteractor {
 
     @Override
-    public ComponentTagDTO execute(GetDockerRegistryTagInput input) {
+    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
         return null;
     }
 }

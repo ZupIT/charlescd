@@ -16,9 +16,11 @@
 
 package io.charlescd.villager.interactor.registry;
 
+import java.util.Optional;
+
 @FunctionalInterface
 public interface GetDockerRegistryTagInteractor {
 
-    ComponentTagDTO execute(GetDockerRegistryTagInput input);
+    Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input);
 
 }
