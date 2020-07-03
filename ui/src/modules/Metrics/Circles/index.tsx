@@ -16,6 +16,7 @@
 
 import React from 'react';
 import Text from 'core/components/Text';
+import History from './History';
 import Styled from './styled';
 
 const Circles = () => {
@@ -37,13 +38,14 @@ const Circles = () => {
         </Styled.MiniCard>
       </Styled.Content>
       <Styled.Content>
-        <Styled.History>
+        <Styled.HistoryWrapper>
           <Text.h2 color="dark" weight="bold">
             History
           </Text.h2>
           <Text.h5 color="dark">Active: 20</Text.h5>
           <Text.h5 color="dark">Inactive: 12</Text.h5>
-        </Styled.History>
+          <History />
+        </Styled.HistoryWrapper>
       </Styled.Content>
     </>
   );
