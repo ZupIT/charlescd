@@ -14,35 +14,82 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
+import Loader from '../Loaders/index';
+import { useCirclesMetric } from './hooks';
 import Styled from './styled';
 
 const Circles = () => {
+  const { findAllCirclesData, response, loading } = useCirclesMetric();
+  const totalCircles =
+    response?.circleStats?.active + response?.circleStats?.inactive;
+
+  const onSearch = () => {
+    console.log('o/');
+  };
+
+  useEffect(() => {
+    findAllCirclesData();
+  }, [findAllCirclesData]);
+
   return (
     <>
       <Styled.Content>
         <Styled.MiniCard>
-          <Styled.CirclesData color="light">32</Styled.CirclesData>
-          <Styled.CirclesDataDetail>
-            <Text.h4 color="light">Actives: 20</Text.h4>
-            <Text.h4 color="light">Inactives: 12</Text.h4>
-          </Styled.CirclesDataDetail>
+          {loading ? (
+            <Loader.CircleCard />
+          ) : (
+            <>
+              <Styled.CirclesData color="light">
+                {totalCircles}
+              </Styled.CirclesData>
+              <Styled.CirclesDataDetail>
+                <Text.h4 color="light">
+                  Actives: {response?.circleStats?.active}
+                </Text.h4>
+                <Text.h4 color="light">
+                  Inactives: {response?.circleStats?.inactive}
+                </Text.h4>
+              </Styled.CirclesDataDetail>
+            </>
+          )}
         </Styled.MiniCard>
         <Styled.MiniCard>
           <Styled.CirclesData>
             <Text.h4 color="light">Average life time</Text.h4>
-            <Text.h1 color="light">25 days</Text.h1>
+            <Text.h1 color="light">
+              {loading ? (
+                <Loader.CircleAvaregeTime />
+              ) : (
+                `${response?.averageCircleLifeTime} days`
+              )}
+            </Text.h1>
           </Styled.CirclesData>
         </Styled.MiniCard>
       </Styled.Content>
       <Styled.Content>
         <Styled.History>
-          <Text.h2 color="dark" weight="bold">
-            History
-          </Text.h2>
-          <Text.h5 color="dark">Active: 20</Text.h5>
-          <Text.h5 color="dark">Inactive: 12</Text.h5>
+          <Styled.HistoryHeader>
+            <Text.h2 color="light" weight="bold">
+              History
+            </Text.h2>
+            <Styled.HistorySearchInput
+              resume
+              onSearch={onSearch}
+              placeholder={'Search circle'}
+            />
+          </Styled.HistoryHeader>
+          <Styled.HistoryLegend>
+            <Styled.Dot active={true} />
+            <Text.h5 color="dark">
+              Active: {response?.circleStats?.active}
+            </Text.h5>
+            <Styled.Dot active={false} />
+            <Text.h5 color="dark">
+              Inactive: {response?.circleStats?.inactive}
+            </Text.h5>
+          </Styled.HistoryLegend>
         </Styled.History>
       </Styled.Content>
     </>
