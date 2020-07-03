@@ -31,10 +31,6 @@ public class TagsResponse {
         this.name = name;
     }
 
-    public List<String> getTags() {
-        return tags;
-    }
-
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
