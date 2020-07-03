@@ -8,7 +8,7 @@ module.exports = function(app) {
       changeOrigin: true,
       logLevel: 'debug',
       pathRewrite: {
-        '^/api/': process.env.PUBLIC_URL
+        [`^${process.env.REACT_APP_API_URI}/`]: process.env.PUBLIC_URL
       }
     })
   );

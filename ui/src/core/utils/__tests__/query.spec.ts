@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from './cd-type.enum'
+import { buildParams } from "../query";
 
-export {
-  CdTypeEnum
-}
+test("should build query params dynammicaly", () => {
+  const params = {
+    foo: 'bar',
+    ids: [1,2],
+    names: ['jhon', 'doe'],
+    age: 9
+  };
+
+  const urlParams = buildParams(params);
+  const expected = 'foo=bar&ids=1&ids=2&names=jhon&names=doe&age=9';
+  
+  expect(urlParams.toString()).toEqual(expected);
+});
