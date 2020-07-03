@@ -12,3 +12,4 @@ labelPRBasedOnFilePath:
   ui:
     - ui/**/*
   villager:
+    - villager/**/*
