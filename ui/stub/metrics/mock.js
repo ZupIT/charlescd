@@ -186,7 +186,7 @@ const AllCirclesMetrics = {
     active: 12,
     inactive: 8
   },
-  averageCircleLifeTime: 3400,
+  averageCircleLifeTime: 26,
   history: [
     {
       id: '123',

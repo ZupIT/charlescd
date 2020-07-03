@@ -29,7 +29,8 @@ import {
   COLOR_BLACK_MARLIN,
   COLOR_SANTAS_GREY,
   COLOR_PAYNES_GREY,
-  COLOR_BASTILLE
+  COLOR_BASTILLE,
+  COLOR_FREE_SPEECH_BLUE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -64,5 +65,10 @@ export const dark = {
   },
   dashboard: {
     card: COLOR_BASTILLE
+  },
+  circles: {
+    filter: COLOR_BLACK_MARLIN,
+    active: COLOR_FREE_SPEECH_BLUE,
+    inactive: COLOR_MAYA_BLUE
   }
 };

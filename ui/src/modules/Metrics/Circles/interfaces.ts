@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Loader as LoaderCard } from './card';
-import { Loader as LoaderCircleCard } from './circlesCard';
-import { Loader as LoaderCircleAverageTime } from './circleAverageTime';
+export interface CirclesMetricData {
+  circleStats: Stats;
+  averageCircleLifeTime: number;
+  history: History[];
+}
 
-const Loader = {
-  Card: () => <LoaderCard />,
-  CircleCard: () => <LoaderCircleCard />,
-  CircleAvaregeTime: () => <LoaderCircleAverageTime />
-};
+export interface Stats {
+  active: number;
+  inactive: number;
+}
 
-export default Loader;
+export interface History {
+  id: string;
+  circleStatus: string;
+  name: string;
+  lifeTime: number;
+  lastUpdate: string;
+}
