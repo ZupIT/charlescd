@@ -46,7 +46,7 @@ const CirclesDataDetail = styled.div`
   }
 `;
 
-const History = styled.div`
+const HistoryWrapper = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: 641px;
   width: 1220px;
@@ -58,5 +58,5 @@ export default {
   MiniCard,
   CirclesData,
   CirclesDataDetail,
-  History
+  HistoryWrapper
 };

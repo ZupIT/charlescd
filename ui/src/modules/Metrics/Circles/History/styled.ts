@@ -19,6 +19,7 @@ import styled from 'styled-components';
 const lineHeight = '40px';
 
 const Content = styled.div`
+  margin-left: 20px;
   margin-top: 20px;
   width: calc(100% - 20px);
   background: ${({ theme }) => theme.metrics.dashboard.card};
