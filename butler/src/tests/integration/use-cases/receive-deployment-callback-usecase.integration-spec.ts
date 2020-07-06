@@ -365,6 +365,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
@@ -373,6 +374,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         relations: ['moduleDeployment', 'moduleDeployment.deployment']
       }
       )
+
     const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
       find({
         where : {
@@ -423,6 +425,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
@@ -431,6 +434,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         relations: ['moduleDeployment', 'moduleDeployment.deployment']
       }
       )
+
     const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
       find({
         where : {
