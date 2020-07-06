@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect } from 'react';
-import Styled from './styled';
-import Text from 'core/components/Text';
-import { WizardItems } from './constants';
-import map from 'lodash/map';
-import indexOf from 'lodash/indexOf';
+import React, { useRef, useState, useEffect } from "react";
+import Styled from "./styled";
+import Text from "core/components/Text";
+import { WizardItems } from "./constants";
+import map from "lodash/map";
+import indexOf from "lodash/indexOf";
 
 interface Item {
   icon: string;
@@ -34,17 +34,8 @@ const Wizard = () => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [localStorageValue, setLocalStorageValue] = useState('');
+  const [localStorageValue, setLocalStorageValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setLocalStorageValue(localStorage.getItem('wizard'));
-    if (!localStorageValue) {
-      setIsOpen(true);
-    } else if (localStorageValue === 'not-first-access') {
-      setIsOpen(false);
-    }
-  }, [localStorageValue]);
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
@@ -54,12 +45,37 @@ const Wizard = () => {
     setItemSelect(WizardItems[indexOfItemSelect]);
   }, [indexOfItemSelect]);
 
+  useEffect(() => {
+    setLocalStorageValue(localStorage.getItem("wizard"));
+  }, []);
+
+  useEffect(() => {
+    if (!localStorageValue) {
+      setIsOpen(true);
+    } else if (localStorageValue === "true") {
+      setIsOpen(false);
+    }
+  }, [localStorageValue]);
+
+  const isFinalStep = () =>
+    itemSelect.name === "metrics-provider" ? true : false;
+
   const handleButton = () => {
-    if (itemSelect.name !== 'metrics-provider') {
+    if (!isFinalStep()) {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
       setIsOpen(false);
-      localStorage.setItem('wizard', 'not-first-access');
+      localStorage.setItem("wizard", "true");
+    }
+  };
+
+  const setItemStatus = (item: Item, index: number) => {
+    if (itemSelect.name === item.name) {
+      return "active";
+    } else if (index > indexOfItemSelect) {
+      return "unread";
+    } else {
+      return "read";
     }
   };
 
@@ -74,24 +90,8 @@ const Wizard = () => {
           data-testid={`modal-wizard-menu-item-${item.name}`}
           onClick={() => setItemSelect(item)}
         >
-          <Styled.Item.Active
-            status={
-              itemSelect.name === item.name
-                ? 'active'
-                : index > indexOfItemSelect
-                ? 'unread'
-                : 'read'
-            }
-          />
-          <Styled.Item.Text
-            status={
-              itemSelect.name === item.name
-                ? 'active'
-                : index > indexOfItemSelect
-                ? 'unread'
-                : 'read'
-            }
-          >
+          <Styled.Item.Active status={setItemStatus(item, index)} />
+          <Styled.Item.Text status={setItemStatus(item, index)}>
             {item.title}
           </Styled.Item.Text>
         </Styled.Item.Wrapper>
@@ -103,7 +103,7 @@ const Wizard = () => {
         backgroundColor="primary"
         size="small"
       >
-        {itemSelect.name === 'metrics-provider' ? "Let's Start" : 'Next'}
+        {isFinalStep() ? "Let's Start" : "Next"}
       </Styled.Button>
     </Styled.SideMenu>
   );
