@@ -33,13 +33,14 @@ export const pathCircleById = (id: string) => {
 
 export const isDefaultCircle = (name: string) => name === DEFAULT_CIRCLE;
 
-export const isDeploying = (status: string) =>
+export const isDeploying = (status: CIRCLE_STATUS) =>
   CIRCLE_STATUS.deploying === status;
-export const isUndeploying = (status: string) =>
+export const isUndeploying = (status: CIRCLE_STATUS) =>
   CIRCLE_STATUS.undeploying === status;
 
 export const isBusy = (status: string) =>
-  isDeploying(status) || isUndeploying(status);
+  isDeploying(status as CIRCLE_STATUS) ||
+  isUndeploying(status as CIRCLE_STATUS);
 
 export const validateChangeMetricTypes = (index: number) => {
   const BASE_INDEX = 0;
