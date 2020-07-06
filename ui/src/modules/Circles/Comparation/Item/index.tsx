@@ -46,6 +46,7 @@ import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
 import CreateRelease from 'modules/Circles/Release';
 import CreateSegments from './CreateSegments';
 import { updateCirclesAction } from 'modules/Circles/state/actions';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import Styled from './styled';
 
 interface Props {
@@ -98,7 +99,10 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       resetUndeployStatus();
       setCircle({
         ...circle,
-        deployment: { ...circle.deployment, status: 'UNDEPLOYING' }
+        deployment: {
+          ...circle.deployment,
+          status: DEPLOYMENT_STATUS.undeploying
+        }
       });
     }
   }, [undeployStatus, setCircle, circle, resetUndeployStatus]);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export enum CIRCLE_STATUS {
+export enum DEPLOYMENT_STATUS {
   deploying = 'DEPLOYING',
   undeploying = 'UNDEPLOYING'
 }

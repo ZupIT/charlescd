@@ -18,7 +18,7 @@ import indexOf from 'lodash/indexOf';
 import { METRICS_TYPE } from 'containers/Metrics/Chart/enums';
 import routes from 'core/constants/routes';
 import { generatePathV1 } from 'core/utils/path';
-import { CIRCLE_STATUS } from 'core/enums/CircleStatus';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { URL_PATH_POSITION, DEFAULT_CIRCLE } from './constants';
 
 export type ChangeType = 'INCREASE' | 'DECREASE';
@@ -33,14 +33,15 @@ export const pathCircleById = (id: string) => {
 
 export const isDefaultCircle = (name: string) => name === DEFAULT_CIRCLE;
 
-export const isDeploying = (status: CIRCLE_STATUS) =>
-  CIRCLE_STATUS.deploying === status;
-export const isUndeploying = (status: CIRCLE_STATUS) =>
-  CIRCLE_STATUS.undeploying === status;
+export const isDeploying = (status: DEPLOYMENT_STATUS) =>
+  DEPLOYMENT_STATUS.deploying === status;
+
+export const isUndeploying = (status: DEPLOYMENT_STATUS) =>
+  DEPLOYMENT_STATUS.undeploying === status;
 
 export const isBusy = (status: string) =>
-  isDeploying(status as CIRCLE_STATUS) ||
-  isUndeploying(status as CIRCLE_STATUS);
+  isDeploying(status as DEPLOYMENT_STATUS) ||
+  isUndeploying(status as DEPLOYMENT_STATUS);
 
 export const validateChangeMetricTypes = (index: number) => {
   const BASE_INDEX = 0;
