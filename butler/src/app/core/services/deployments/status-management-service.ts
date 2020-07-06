@@ -24,11 +24,7 @@ import {
   ModuleUndeploymentEntity,
   UndeploymentEntity
 } from '../../../api/deployments/entity'
-import {
-  DeploymentStatusEnum,
-  UndeploymentStatusEnum,
-  QueuedPipelineStatusEnum
-} from '../../../api/deployments/enums'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../api/deployments/enums'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
@@ -61,7 +57,7 @@ export class StatusManagementService {
         private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]>{
+  public async deepUpdateModuleUndeploymentStatus(moduleUndeployment: ModuleUndeploymentEntity, status: UndeploymentStatusEnum) : Promise<void[]> {
     await this.moduleUndeploymentsRepository.updateStatus(moduleUndeployment.id, status)
     return Promise.all(
       moduleUndeployment.componentUndeployments
@@ -105,7 +101,6 @@ export class StatusManagementService {
             await this.getDeploymentEntity(deploymentId)
     const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
-
     return finishedModules.length === deployment.modules.length
   }
 
@@ -296,7 +291,6 @@ export class StatusManagementService {
             await this.getDeploymentEntity(deploymentId)
     const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
-
     if (finishedModules.length === deployment.modules.length && await this.isQueuedIstiodeploymentHasFinished(deployment.id)) {
       await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.SUCCEEDED)
     }
@@ -304,9 +298,11 @@ export class StatusManagementService {
 
   private async isQueuedIstiodeploymentHasFinished(deploymentId: string): Promise<boolean> {
     const allQueuedIstioDeployments = await this.queuedIstioDeploymentsRepository.find({
-      where: {deploymentId}
+      where: { deploymentId }
     })
-
+    if (allQueuedIstioDeployments.length === 0) {
+      return false
+    }
     return allQueuedIstioDeployments.every(
       deployment => deployment.status === QueuedPipelineStatusEnum.FINISHED
     )
