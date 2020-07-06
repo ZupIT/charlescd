@@ -14,33 +14,22 @@
  * limitations under the License.
  */
 
-package api
+package deployment
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "k8s.io/client-go/dynamic"
 
-type API struct {
-	router *gin.Engine
-	v1     *gin.RouterGroup
+type MainUseCases interface {
+	NewDeployment(
+		action string,
+		forceUpdate bool,
+		namespaces string,
+		manifest map[string]interface{},
+		config dynamic.Interface,
+	) UseCases
 }
 
-const (
-	v1Path = "/api/v1"
-)
+type DeploymentMain struct{}
 
-func NewAPI() *API {
-	router := gin.Default()
-
-	v1 := router.Group(v1Path)
-	v1.GET("/health", health)
-	return &API{router, v1}
-}
-
-func health(context *gin.Context) {
-	context.JSON(200, "is alive")
-}
-
-func (api *API) Start() {
-	api.router.Run(":8080")
+func NewDeploymentMain() MainUseCases {
+	return &DeploymentMain{}
 }

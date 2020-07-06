@@ -16,12 +16,16 @@
 
 package template
 
-type ManagerUseCases interface {
-	NewTemplate(templateType string) (TemplateUseCases, error)
+import "octopipe/pkg/repository"
+
+type MainUseCases interface {
+	NewTemplate(template *Template) (UseCases, error)
 }
 
-type TemplateManager struct{}
+type TemplateMain struct {
+	repositoryMain repository.MainUseCases
+}
 
-func NewTemplateManager() ManagerUseCases {
-	return &TemplateManager{}
+func NewTemplateMain(repositoryMain repository.MainUseCases) MainUseCases {
+	return &TemplateMain{repositoryMain}
 }

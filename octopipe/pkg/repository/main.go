@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package fake
+package repository
 
-import (
-	"octopipe/pkg/git"
-)
-
-type GitManagerFake struct{}
-
-func NewGitManagerFake() git.ManagerUseCases {
-	return &GitManagerFake{}
+type MainUseCases interface {
+	NewRepository(repository *Repository) (UseCases, error)
 }
 
-type GitFake struct{}
+type RepositoryMain struct{}
 
-func (g GitManagerFake) NewGit(gitProviderType string) (git.GitUseCases, error) {
-	return &GitFake{}, nil
-}
-
-func (g GitFake) GetDataFromDefaultFiles(name, token, url string) ([]string, error) {
-	contents := []string{
-		"content-1",
-	}
-
-	return contents, nil
+func NewRepositoryMain() MainUseCases {
+	return &RepositoryMain{}
 }

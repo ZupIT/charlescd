@@ -14,4 +14,14 @@
  * limitations under the License.
  */
 
-package api
+package pipeline
+
+type MainUseCases interface {
+	NewPipeline() UseCases
+}
+
+type PipelineMain struct{}
+
+func NewPipelineMain() MainUseCases {
+	return &PipelineMain{}
+}

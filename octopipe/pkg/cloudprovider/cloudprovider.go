@@ -42,7 +42,11 @@ type Cloudprovider struct {
 	generic.GenericProvider
 }
 
-func (cloudproviderManager *CloudproviderManager) NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases {
+func (cloudproviderManager *CloudproviderMain) NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases {
+	if provider == nil {
+		return provider.newDefaultConfig()
+	}
+
 	switch provider.Provider {
 	case GenericCloudProviderType:
 		genericProvider := &generic.GenericProvider{

@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package api
+package manager
 
 import (
+	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
-	"octopipe/pkg/mozart"
-
-	"github.com/gin-gonic/gin"
+	"octopipe/pkg/repository"
+	"octopipe/pkg/template"
 )
 
-type PipelineAPI struct {
-	mozart mozart.MozartUseCases
+type MainUseCases interface {
+	NewManager() UseCases
 }
 
-func (api *API) NewPipelineAPI(mozart mozart.MozartUseCases) {
-	path := "/pipelines"
-	controller := PipelineAPI{mozart}
-
-	api.v1.POST(path, controller.startPipeline)
+type ManagerMain struct {
+	templateMain      template.MainUseCases
+	deploymentMain    deployment.MainUseCases
+	cloudproviderMain cloudprovider.MainUseCases
+	repositoryMain    repository.MainUseCases
 }
 
-func (api *PipelineAPI) startPipeline(ctx *gin.Context) {
-	var deployment *deployment.Deployment
-	ctx.Bind(&deployment)
-
-	api.mozart.Start(deployment)
-
-	ctx.JSON(201, nil)
+func NewManagerMain(
+	templateMain template.MainUseCases,
+	deploymentMain deployment.MainUseCases,
+	cloudprovider cloudprovider.MainUseCases,
+	repositoryMain repository.MainUseCases,
+) MainUseCases {
+	return &ManagerMain{templateMain, deploymentMain, cloudprovider, repositoryMain}
 }

@@ -14,25 +14,33 @@
  * limitations under the License.
  */
 
-package git
+package v1
 
 import (
-	"errors"
+	"octopipe/pkg/manager"
+	"octopipe/pkg/pipeline"
+
+	"github.com/gin-gonic/gin"
 )
 
-const (
-	typeGithubProvider = "GITHUB"
-)
-
-type GitUseCases interface {
-	GetDataFromDefaultFiles(name, token, url string) ([]string, error)
+type PipelineAPI struct {
+	manager manager.UseCases
 }
 
-func (gitManager *GitManager) NewGit(gitProviderType string) (GitUseCases, error) {
-	switch gitProviderType {
-	case typeGithubProvider:
-		return NewGithubConfig(), nil
-	default:
-		return nil, errors.New("Not found git provider")
-	}
+func (api *API) NewPipelineAPI(managerMain manager.MainUseCases) {
+	path := "/pipelines"
+	manager := managerMain.NewManager()
+	controller := PipelineAPI{manager}
+
+	api.v1.POST(path, controller.CreateOrUpdatePipeline)
+}
+
+func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
+	var deprecatedPipeline *pipeline.DEPRECATED_pipeline
+	ctx.Bind(&deprecatedPipeline)
+
+	pipeline := deprecatedPipeline.ToPipeline()
+	api.manager.Start(&pipeline)
+
+	ctx.JSON(204, nil)
 }
