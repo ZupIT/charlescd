@@ -19,12 +19,13 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
 
 describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
@@ -32,6 +33,8 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
   let fixtureUtilsService: FixtureUtilsService
   let queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository
   let deploymentsRepository: Repository<DeploymentEntity>
+  let componentDeploymentsRepository: ComponentDeploymentsRepository
+  let moduleDeploymentsRepository: ModuleDeploymentsRepository
   let httpService: HttpService
 
   beforeAll(async() => {
@@ -49,6 +52,8 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
+    componentDeploymentsRepository = app.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+    moduleDeploymentsRepository = app.get<ModuleDeploymentsRepository>(ModuleDeploymentsRepository)
     queuedIstioDeploymentsRepository = app.get<QueuedIstioDeploymentsRepository>(QueuedIstioDeploymentsRepository)
     httpService = app.get<HttpService>(HttpService)
   })
@@ -66,7 +71,7 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
       status : 'SUCCEEDED'
     }
 
-    const queuedDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
+    const queuedIstioDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
       findOneOrFail( {
         where : {
           deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
@@ -75,21 +80,39 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
         }
       })
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    const queuedDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedIstioDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
+      )
+
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const queuedIstioDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
       find( {
         where : {
           deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
         }
       })
 
-    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedDeploymentSearch.deploymentId })
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedIstioDeploymentSearch.deploymentId })
     expect(deploymentEntity.status).toBe(DeploymentStatusEnum.CREATED)
-    expect(queuedDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
-    expect(queuedDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(queuedDeploymentsUpdated[1].id).toBe(queuedDeploymentSearch.id)
+    expect(queuedIstioDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(queuedIstioDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedIstioDeploymentsUpdated[1].id).toBe(queuedIstioDeploymentSearch.id)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
 
   })
 
@@ -101,7 +124,7 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
       status : 'SUCCEEDED'
     }
 
-    const queuedDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
+    const queuedIstioDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
       findOneOrFail( {
         where : {
           deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
@@ -110,21 +133,38 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
         }
       })
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeploymentSearch.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    const queuedDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
+    const queuedIstioDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
       find( {
         where : {
           deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
         }
       })
 
-    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedDeploymentSearch.deploymentId })
-    expect(deploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
-    expect(queuedDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(queuedDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedIstioDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
+      )
 
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedIstioDeploymentSearch.deploymentId })
+    expect(deploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(queuedIstioDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedIstioDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
   })
 
   afterAll(async() => {
