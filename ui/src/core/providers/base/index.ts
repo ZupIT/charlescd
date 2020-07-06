@@ -17,7 +17,7 @@
 import defaultsDeep from 'lodash/defaultsDeep';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
-import { getAccessToken } from 'core/utils/auth';
+import { getAccessToken, checkStatus } from 'core/utils/auth';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { getCircleId } from 'core/utils/circle';
 import routes from 'core/constants/routes';
@@ -89,6 +89,7 @@ export const unauthenticatedRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
+          checkStatus(response.status);
           return Promise.reject(response);
         } else {
           return response;
@@ -120,7 +121,6 @@ export const baseRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
-          console.log('baseRequest (response)', response, response.status);
           response.status === HTTP_STATUS.forbidden && pushTo(routes.error403);
           return Promise.reject(response);
         } else {

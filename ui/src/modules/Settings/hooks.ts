@@ -87,7 +87,6 @@ export const useWorkspaces = (): [Function, Function] => {
     if (!error) {
       dispatch(loadedWorkspacesAction(response));
     } else {
-      console.log('DOING LOGOUT');
       error.status === HTTP_STATUS.unauthorized && logout();
     }
   }, [dispatch, response, error]);
