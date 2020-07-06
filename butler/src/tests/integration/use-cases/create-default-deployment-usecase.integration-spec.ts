@@ -199,11 +199,15 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     const moduleEntityUpdated = await modulesRepository.findOneOrFail({
       where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
-      relations: ['components']
+      relations: ['components'],
+
     })
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
-      { relations: ['modules', 'modules.components'] }
+      { relations: ['modules', 'modules.components'],
+      },
+
+
     )
 
     if (!deployment) {
@@ -217,7 +221,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(moduleEntityUpdated.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
-
   })
 
   it('/POST deployments/default should fail if already exists deployment ', done => {
