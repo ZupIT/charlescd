@@ -44,21 +44,27 @@ export class OctopipeService implements ICdServiceStrategy {
   ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_DEPLOYMENT')
   }
 
   public async createIstioDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_ISTIO_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createIstioPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_ISTIO_DEPLOYMENT')
   }
 
   public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_UNDEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_UNDEPLOYMENT')
   }
 
   public async deploy(
@@ -100,7 +106,6 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
-    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -111,14 +116,12 @@ export class OctopipeService implements ICdServiceStrategy {
       },
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
-      unusedVersions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineUnusedVersions, configuration.componentName),
+      unusedVersions: [{}],
       versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
-
-    this.consoleLoggerService.log('FINISH:CREATE_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 
@@ -131,7 +134,7 @@ export class OctopipeService implements ICdServiceStrategy {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
       },
-      unusedVersions: [{}],
+      unusedVersions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineUnusedVersions, configuration.componentName),
       versions: [{}],
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
@@ -159,7 +162,6 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createUndeployPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
-    this.consoleLoggerService.log('START:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -191,7 +193,6 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions
     )
-    this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 
