@@ -32,7 +32,6 @@ import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { ModuleEntity } from '../../../app/api/modules/entity'
 
-
 describe('CreateDefaultDeploymentUsecase', () => {
 
   let app: INestApplication
@@ -202,12 +201,14 @@ describe('CreateDefaultDeploymentUsecase', () => {
       relations: ['components'],
 
     })
+    const componentsModuleEntities = await componentsRepository.find({
+      where :{ module: '23776617-7840-4819-b356-30e165b7ebb9' },
+      order: { createdAt: 'ASC' },
+    })
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
       { relations: ['modules', 'modules.components'],
       },
-
-
     )
 
     if (!deployment) {
@@ -217,8 +218,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(moduleEntity.components.length).not.toEqual(moduleEntityUpdated.components.length)
     expect(moduleEntity.components.length).toBe(1)
     expect(moduleEntityUpdated.components.length).toBe(2)
-    expect(moduleEntityUpdated.components[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
-    expect(moduleEntityUpdated.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(componentsModuleEntities[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(componentsModuleEntities[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
   })
