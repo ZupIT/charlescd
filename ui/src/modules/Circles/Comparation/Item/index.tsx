@@ -38,7 +38,7 @@ import LayerSegments from './Layer/Segments';
 import LayerRelease from './Layer/Release';
 import LayerComponents from './Layer/Components';
 import LayerMetrics from './Layer/Metrics';
-import { isDefaultCircle, pathCircleById } from './helpers';
+import { isDefaultCircle, pathCircleById, isBusy } from './helpers';
 import Loader from './Loaders';
 import { SECTIONS } from './enums';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
@@ -163,7 +163,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
         />
       </Can>
-      {!isDefaultCircle(circle?.name) && (
+      {!isDefaultCircle(circle?.name) && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
           <Dropdown.Item
             icon="undeploy"
@@ -211,7 +211,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
 
   const renderActions = () => (
     <Styled.Actions>
-      {circle?.deployment && (
+      {circle?.deployment && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
           <LabeledIcon
             icon="override"
