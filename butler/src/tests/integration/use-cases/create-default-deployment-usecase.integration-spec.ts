@@ -217,6 +217,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(moduleEntityUpdated.components[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+
   })
 
   it('/POST deployments/default should fail if already exists deployment ', done => {
