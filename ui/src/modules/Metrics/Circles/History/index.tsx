@@ -20,12 +20,14 @@ import Styled from './styled';
 import CommonStyled from '../styled';
 import ReleasesTable from './ReleasesTable';
 import { History } from '../interfaces';
+import Loader from '../../Loaders/index';
 
 type Props = {
   data: History[];
+  loading: boolean;
 };
 
-const HistoryComponent = ({ data }: Props) => {
+const HistoryComponent = ({ data, loading }: Props) => {
   const [activeRow, setActiveRow] = useState('');
 
   const expandRow = (id: string) => {
@@ -52,31 +54,39 @@ const HistoryComponent = ({ data }: Props) => {
           <Text.h5 color="dark">Life time</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {data?.map(circle => (
-        <Styled.CircleRow key={circle.id}>
-          <Styled.TableRow onClick={() => expandRow(circle.id)}>
-            <Styled.TableColumn>
-              <Text.h5 color="light">
-                <CommonStyled.Dot active={circle.circleStatus === 'active'} />
-              </Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn width={2}>
-              <Text.h5 color="light">{circle.name}</Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{circle.lastUpdate}</Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{circle.lifeTime}</Text.h5>
-            </Styled.TableColumn>
-          </Styled.TableRow>
-          {activeRow === circle.id && (
-            <Styled.ReleasesWrapper>
-              <ReleasesTable />
-            </Styled.ReleasesWrapper>
-          )}
-        </Styled.CircleRow>
-      ))}
+      {loading ? (
+        <Loader.History />
+      ) : (
+        <>
+          {data?.map(circle => (
+            <Styled.CircleRow key={circle.id}>
+              <Styled.TableRow onClick={() => expandRow(circle.id)}>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">
+                    <CommonStyled.Dot
+                      active={circle.circleStatus === 'active'}
+                    />
+                  </Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn width={2}>
+                  <Text.h5 color="light">{circle.name}</Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{circle.lastUpdate}</Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{circle.lifeTime}</Text.h5>
+                </Styled.TableColumn>
+              </Styled.TableRow>
+              {activeRow === circle.id && (
+                <Styled.ReleasesWrapper>
+                  <ReleasesTable />
+                </Styled.ReleasesWrapper>
+              )}
+            </Styled.CircleRow>
+          ))}
+        </>
+      )}
     </Styled.Table>
   );
 };

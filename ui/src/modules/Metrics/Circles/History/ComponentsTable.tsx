@@ -18,6 +18,7 @@ import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import { components } from './mock';
+import Loader from '../../Loaders/index';
 
 const ComponentsTable = () => {
   return (
@@ -33,19 +34,25 @@ const ComponentsTable = () => {
           <Text.h5 color="dark">Version</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {components.map(component => (
-        <Styled.ComponentsRow key={component.id}>
-          <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.moduleName}</Text.h5>
-          </Styled.TableColumn>
-          <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.componentName}</Text.h5>
-          </Styled.TableColumn>
-          <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.version}</Text.h5>
-          </Styled.TableColumn>
-        </Styled.ComponentsRow>
-      ))}
+      {false ? (
+        <Loader.Components />
+      ) : (
+        <>
+          {components.map(component => (
+            <Styled.ComponentsRow key={component.id}>
+              <Styled.TableColumn width={1}>
+                <Text.h5 color="light">{component.moduleName}</Text.h5>
+              </Styled.TableColumn>
+              <Styled.TableColumn width={1}>
+                <Text.h5 color="light">{component.componentName}</Text.h5>
+              </Styled.TableColumn>
+              <Styled.TableColumn width={1}>
+                <Text.h5 color="light">{component.version}</Text.h5>
+              </Styled.TableColumn>
+            </Styled.ComponentsRow>
+          ))}
+        </>
+      )}
     </>
   );
 };
