@@ -479,7 +479,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url',
@@ -508,7 +508,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url2',
