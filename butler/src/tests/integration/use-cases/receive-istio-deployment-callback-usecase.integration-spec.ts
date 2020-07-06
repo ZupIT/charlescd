@@ -63,7 +63,7 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
     await fixtureUtilsService.loadDatabase()
   })
 
-  it('/POST a istio deployment callback should not update deployment  status to SUCCEEDED if another queued deployment is RUNNING ', async() => {
+  it('/POST a istio deployment callback should not update deployment  status to SUCCEEDED if another istio queued deployment is RUNNING ', async() => {
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
@@ -116,7 +116,7 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
   })
 
-  it('/POST a istio deployment callback should update deployment  status to SUCCEEDED if all  queued deployments finished and all components are succeeded ', async() => {
+  it('/POST a istio deployment callback should update deployment  status to SUCCEEDED if all istio queued deployments finished and all components are succeeded ', async() => {
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )

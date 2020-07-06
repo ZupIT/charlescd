@@ -313,6 +313,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
@@ -320,6 +321,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         },
         relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
       )
+
     const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
       find({
         where : {
@@ -338,7 +340,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
   })
 
-  it('/POST when all callbacks have success, each component should be RUNNING ', async() => {
+  it('/POST when all callbacks have success, each istio queued deployment should be RUNNING ', async() => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
@@ -398,7 +400,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
   })
 
-  it('/POST when one callback fails, each istio component should be QUEUED ', async() => {
+  it('/POST when one callback fails, each istio queued deployment should be QUEUED ', async() => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
