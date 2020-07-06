@@ -21,6 +21,7 @@ import {
 import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
 import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
+import { ComponentDeploymentUniquenessPipe } from '../pipes/component-deployment-uniqueness.pipe'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -32,7 +33,7 @@ export class DeploymentsController {
     private readonly createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
   ) {}
 
-  @UsePipes(DeploymentUniquenessPipe)
+  @UsePipes(DeploymentUniquenessPipe, ComponentDeploymentUniquenessPipe)
   @Post('/circle')
   public async createCircleDeployment(
       @Body() createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto,
@@ -41,7 +42,7 @@ export class DeploymentsController {
     return await this.createCircleDeploymentRequestUsecase.execute(createCircleDeploymentRequestDto, circleId)
   }
 
-  @UsePipes(DeploymentUniquenessPipe)
+  @UsePipes(DeploymentUniquenessPipe, ComponentDeploymentUniquenessPipe)
   @Post('/default')
   public async createDefaultDeployment(
       @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,

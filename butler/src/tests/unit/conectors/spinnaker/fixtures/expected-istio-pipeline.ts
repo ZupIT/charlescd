@@ -193,6 +193,51 @@ const istioPipeline = {
       ]
     },
     {
+      account: 'account',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'app',
+            kind: 'EQUALS',
+            values: [
+              'app-name'
+            ]
+          },
+          {
+            key: 'version',
+            kind: 'EQUALS',
+            values: [
+              'app-name-v2'
+            ]
+          }
+        ]
+      },
+      location: 'app-namespace',
+      mode: 'label',
+      name: 'Delete Deployments',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true,
+        gracePeriodSeconds: null
+      },
+      refId: '3',
+      requisiteStageRefIds: [
+        '2'
+      ],
+      stageEnabled: {
+        expression: '${ #stage(\'Deploy Virtual Service\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -202,11 +247,11 @@ const istioPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Deploy Virtual Service\' ).status.toString()}'
+        status: '${#stage( \'Delete Deployments\' ).status.toString()}'
       },
-      refId: '3',
+      refId: '4',
       requisiteStageRefIds: [
-        '2'
+        '3'
       ],
       statusUrlResolution: 'getMethod',
       type: 'webhook',

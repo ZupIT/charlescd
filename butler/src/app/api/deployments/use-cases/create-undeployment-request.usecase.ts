@@ -50,15 +50,14 @@ export class CreateUndeploymentRequestUsecase {
 
   public async execute(createUndeploymentDto: CreateUndeploymentDto, circleId: string): Promise<ReadUndeploymentDto> {
     const undeployment = await this.saveUndeploymentRequest(createUndeploymentDto, createUndeploymentDto.deploymentId, circleId)
-
+    this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
+    
     if (!undeployment.deployment.circle) {
       this.consoleLoggerService.error('ERROR:CANNOT_PERFORM_UNDEPLOYMENT_WITHOUT_CIRCLE', undeployment)
       throw new BadRequestException('Cannot perform undeployment without a circle')
     }
-
     const deploymentCircle: CircleDeploymentEntity = undeployment.deployment.circle
     try {
-      this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT', createUndeploymentDto)
       await this.scheduleComponentUndeployments(undeployment, deploymentCircle)
       this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT', undeployment)
       return undeployment.toReadDto()
