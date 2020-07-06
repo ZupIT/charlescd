@@ -36,7 +36,7 @@ const Forbidden403 = () => {
           color="dark"
           onClick={() => router.push(routes.workspaces)}
         >
-          Go to login
+          Go to home
         </Button.Rounded>
       </Placeholder>
     </Styled.Error>
