@@ -29,6 +29,9 @@ import { IBaseVirtualService, IEmptyVirtualService } from '../spinnaker/connecto
 import createDestinationRules from '../spinnaker/connector/utils/manifests/base-destination-rules'
 import { createEmptyVirtualService, createVirtualService } from '../spinnaker/connector/utils/manifests/base-virtual-service'
 import { OctopipeApiService } from './octopipe-api.service'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { Observable, of, throwError } from 'rxjs'
+import { AppConstants } from '../../../constants'
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -41,21 +44,27 @@ export class OctopipeService implements ICdServiceStrategy {
   ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_DEPLOYMENT')
   }
 
   public async createIstioDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_ISTIO_DEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createIstioPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_ISTIO_DEPLOYMENT')
   }
 
   public async createUndeployment(configuration: IConnectorConfiguration): Promise<void> {
-
+    this.consoleLoggerService.log('START:CREATE_OCTOPIPE_UNDEPLOYMENT', { configuration })
     const payload: IOctopipePayload = this.createUndeployPipelineConfigurationObject(configuration)
+    this.consoleLoggerService.log('GET:OCTOPIPE_PAYLOAD', { payload })
     await this.deploy(payload)
+    this.consoleLoggerService.log('START:FINISH_OCTOPIPE_UNDEPLOYMENT')
   }
 
   public async deploy(
@@ -64,7 +73,11 @@ export class OctopipeService implements ICdServiceStrategy {
 
     try {
       this.consoleLoggerService.log('START:DEPLOY_OCTOPIPE_PIPELINE')
-      return await this.octopipeApiService.deploy(octopipeConfiguration).toPromise()
+      return await this.octopipeApiService.deploy(octopipeConfiguration)
+        .pipe(
+          map(response => response),
+          retryWhen(error => this.getDeployRetryCondition(error))
+        ).toPromise()
     } catch (error) {
       this.consoleLoggerService.error('ERROR:DEPLOY_OCTOPIPE_PIPELINE', error)
       throw error
@@ -73,8 +86,26 @@ export class OctopipeService implements ICdServiceStrategy {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getDeployRetryCondition(deployError: Observable<any>) {
+    return deployError.pipe(
+      concatMap((error, attempts) => {
+        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS ?
+          throwError('Reached maximum attemps.') :
+          this.getDeployRetryPipe(error, attempts)
+      })
+    )
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getDeployRetryPipe(error: any, attempts: number) {
+    return of(error).pipe(
+      tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
+      delay(AppConstants.CD_CONNECTION_MILLISECONDS_RETRY_DELAY)
+    )
+  }
+
   public createPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
-    this.consoleLoggerService.log('START:CREATE_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -85,14 +116,12 @@ export class OctopipeService implements ICdServiceStrategy {
       },
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
-      unusedVersions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineUnusedVersions, configuration.componentName),
+      unusedVersions: [{}],
       versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
-
-    this.consoleLoggerService.log('FINISH:CREATE_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 
@@ -105,7 +134,7 @@ export class OctopipeService implements ICdServiceStrategy {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
       },
-      unusedVersions: [{}],
+      unusedVersions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineUnusedVersions, configuration.componentName),
       versions: [{}],
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
@@ -133,7 +162,6 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   public createUndeployPipelineConfigurationObject(configuration: IConnectorConfiguration): IOctopipePayload {
-    this.consoleLoggerService.log('START:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', configuration)
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
@@ -165,7 +193,6 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions
     )
-    this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOY_PIPELINE_CONFIGURATION_OBJECT', payload)
     return payload
   }
 
