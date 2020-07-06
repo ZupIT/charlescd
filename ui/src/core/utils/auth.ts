@@ -100,5 +100,7 @@ export const logout = () => {
 };
 
 export const checkStatus = (status: number) => {
-  if (status === HTTP_STATUS.unauthorized) logout();
+  if (status === HTTP_STATUS.unauthorized) {
+    logout();
+  }
 };
