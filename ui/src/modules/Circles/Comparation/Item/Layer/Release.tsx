@@ -22,6 +22,7 @@ import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
 import { useCirclePolling } from 'modules/Circles/hooks';
+import { isBusy } from '../helpers';
 
 interface Props {
   onClickCreate: (
@@ -52,7 +53,7 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
 
   useEffect(() => {
     let timeout = 0;
-    if (deployStatus === 'DEPLOYING' || deployStatus === 'UNDEPLOYING') {
+    if (isBusy(deployStatus)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
       }, delay);
