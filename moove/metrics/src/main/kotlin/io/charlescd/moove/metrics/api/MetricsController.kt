@@ -18,11 +18,13 @@ package io.charlescd.moove.metrics.api
 
 import io.charlescd.moove.metrics.api.response.CircleHealthRepresentation
 import io.charlescd.moove.metrics.api.response.CircleMetricRepresentation
+import io.charlescd.moove.metrics.api.response.CirclesMetricsRepresentation
 import io.charlescd.moove.metrics.api.response.ComponentMetricRepresentation
 import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.RetrieveCirclesMetricsInteractor
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
@@ -33,7 +35,8 @@ import org.springframework.web.bind.annotation.*
 class MetricsController(
     private val retrieveCircleComponentsPeriodMetric: RetrieveCircleComponentsPeriodMetricInteractor,
     private val retrieveCirclePeriodMetric: RetrieveCirclePeriodMetricInteractor,
-    private val retrieveCircleComponentsHealthInteractor: RetrieveCircleComponentsHealthInteractor
+    private val retrieveCircleComponentsHealthInteractor: RetrieveCircleComponentsHealthInteractor,
+    private val retrieveCirclesMetricsInteractor: RetrieveCirclesMetricsInteractor
 ) {
 
     @ApiOperation(value = "Get Metrics")
@@ -44,7 +47,7 @@ class MetricsController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam metricType: MetricType
     ): CircleMetricRepresentation =
-            this.retrieveCirclePeriodMetric.execute(circleId, projectionType, metricType, workspaceId)
+        this.retrieveCirclePeriodMetric.execute(circleId, projectionType, metricType, workspaceId)
 
     @ApiOperation(value = "Get Compoment Metrics")
     @GetMapping
@@ -55,10 +58,17 @@ class MetricsController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam metricType: MetricType
     ): ComponentMetricRepresentation =
-            this.retrieveCircleComponentsPeriodMetric.execute(circleId, projectionType, metricType, workspaceId)
+        this.retrieveCircleComponentsPeriodMetric.execute(circleId, projectionType, metricType, workspaceId)
 
     @GetMapping
     @RequestMapping("/circle/{circleId}/components/health")
     fun getComponentHealth(@PathVariable circleId: String, @RequestHeader("x-workspace-id") workspaceId: String):
             CircleHealthRepresentation = this.retrieveCircleComponentsHealthInteractor.execute(circleId, workspaceId)
+
+    @GetMapping
+    @RequestMapping("/circles")
+    fun getCircleHealth(@RequestHeader("x-workspace-id") workspaceId: String):
+            CirclesMetricsRepresentation = this.retrieveCirclesMetricsInteractor.execute(workspaceId)
+
 }
+
