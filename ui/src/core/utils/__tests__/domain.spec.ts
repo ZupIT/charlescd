@@ -14,7 +14,28 @@
  * limitations under the License.
  */
 
-export const getCookieOptions = () => ({
-  path: '/',
-  domain: window.location.hostname
+import { getCookieOptions } from '../domain';
+
+const originalWindow = { ...window };
+
+beforeEach(() => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    href: '',
+    pathname: '',
+    hostname: 'charles.hostname'
+  };
+});
+
+afterEach(() => {
+  Object.assign(window, originalWindow);
+})
+
+
+test("should get current hostname", () => {
+  const options = getCookieOptions();
+
+  expect(options.domain).toBe('charles.hostname');
 });
