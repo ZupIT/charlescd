@@ -3,7 +3,7 @@ coverage:
     project:
       default:
         target: auto
-        threshold: 0%
+        threshold: 3%
         flags: 
           - villager
           - circlematcher
@@ -38,7 +38,7 @@ coverage:
     patch:
       default:
         target: 80%
-        threshold: 0%
+        threshold: 3%
         flags: 
           - villager
           - circlematcher
