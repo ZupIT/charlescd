@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package git
+package cloudprovider
 
-import "fmt"
+type MainUseCases interface {
+	NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases
+}
 
-func getDefaultFileNamesByName(name string) []string {
-	return []string{
-		fmt.Sprintf("%s-darwin.tgz", name),
-		fmt.Sprintf("%s.yaml", name),
-	}
+type CloudproviderMain struct{}
+
+func NewCloudproviderMain() MainUseCases {
+	return &CloudproviderMain{}
 }

@@ -14,43 +14,49 @@
  * limitations under the License.
  */
 
-package template
+package helm
 
 import (
 	"encoding/json"
 	"errors"
-	"octopipe/pkg/utils"
 	"strings"
 
 	"github.com/tidwall/sjson"
 
+	"helm.sh/helm/v3/pkg/chart"
+	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v3/pkg/engine"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/engine"
-	"k8s.io/helm/pkg/proto/hapi/chart"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type HelmTemplate struct {
+	OverrideValues map[string]string `json:"overrideValues"`
 }
 
-func NewHelmTemplate() *HelmTemplate {
-	return &HelmTemplate{}
+func NewHelmTemplate(template *HelmTemplate) *HelmTemplate {
+	return template
 }
 
-func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent string, overrideValues map[string]string) (map[string]interface{}, error) {
-	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, overrideValues)
+func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent string) (map[string]interface{}, error) {
+	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, helmTemplate.OverrideValues)
 	if err != nil {
+
 		return nil, err
 	}
 
 	manifests, err := helmTemplate.renderManifest(chartTemplate, chartValues)
 	if err != nil {
+		log.WithFields(log.Fields{"function": "GetManifests"}).Error("It was not possible to render the manifest using helm template. Error: " + err.Error())
 		return nil, err
 	}
 
 	encodedManifests, err := helmTemplate.encodeManifests(manifests)
 	if err != nil {
+		log.WithFields(log.Fields{"function": "GetManifests"}).Error("It was not possible to transform the manifest into a valid json. Error: " + err.Error())
 		return nil, err
 	}
 
@@ -58,9 +64,7 @@ func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent str
 }
 
 func (helmTemplate *HelmTemplate) renderManifest(chart *chart.Chart, values chartutil.Values) (map[string]string, error) {
-	templateEngine := engine.New()
-
-	templateRender, err := templateEngine.Render(chart, values)
+	templateRender, err := engine.Render(chart, values)
 
 	if err != nil {
 		return nil, err
@@ -70,19 +74,19 @@ func (helmTemplate *HelmTemplate) renderManifest(chart *chart.Chart, values char
 }
 
 func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueContent string, overrideValues map[string]string) (*chart.Chart, chartutil.Values, error) {
-	newChart, err := chartutil.LoadArchive(strings.NewReader(templateContent))
+
+	newChart, err := loader.LoadArchive(strings.NewReader(templateContent))
 	if err != nil {
-		utils.CustomLog("error", "getHelmChartAndValues", err.Error())
 		return nil, nil, err
 	}
 
-	config := &chart.Config{
-		Raw: valueContent,
+	values, err := chartutil.ReadValues([]byte(valueContent))
+	if err != nil {
+		return nil, nil, err
 	}
 
-	renderedValues, err := chartutil.ToRenderValues(newChart, config, chartutil.ReleaseOptions{})
+	renderedValues, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
 	if err != nil {
-		utils.CustomLog("error", "getHelmChartAndValues", err.Error())
 		return nil, nil, err
 	}
 
