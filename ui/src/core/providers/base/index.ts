@@ -20,9 +20,6 @@ import isUndefined from 'lodash/isUndefined';
 import { getAccessToken, checkStatus } from 'core/utils/auth';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { getCircleId } from 'core/utils/circle';
-import routes from 'core/constants/routes';
-import { HTTP_STATUS } from 'core/enums/HttpStatus';
-import { pushTo } from 'core/utils/path';
 
 export const headers = {
   Accept: 'application/json',
