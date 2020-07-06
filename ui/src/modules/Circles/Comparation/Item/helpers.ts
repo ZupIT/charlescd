@@ -39,9 +39,8 @@ export const isDeploying = (status: DEPLOYMENT_STATUS) =>
 export const isUndeploying = (status: DEPLOYMENT_STATUS) =>
   DEPLOYMENT_STATUS.undeploying === status;
 
-export const isBusy = (status: string) =>
-  isDeploying(status as DEPLOYMENT_STATUS) ||
-  isUndeploying(status as DEPLOYMENT_STATUS);
+export const isBusy = (status: DEPLOYMENT_STATUS) =>
+  isDeploying(status) || isUndeploying(status);
 
 export const validateChangeMetricTypes = (index: number) => {
   const BASE_INDEX = 0;
