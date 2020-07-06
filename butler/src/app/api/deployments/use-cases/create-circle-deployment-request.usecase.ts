@@ -52,10 +52,9 @@ export class CreateCircleDeploymentRequestUsecase {
   ) { }
 
   public async execute(createCircleDeploymentRequestDto: CreateDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
     const modules: ModuleEntity[] = createCircleDeploymentRequestDto.modules.map(module => module.toModuleEntity())
     await this.modulesService.createModules(modules)
-
-    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
     const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
     if (!deployment.circle) {
       this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
@@ -78,7 +77,7 @@ export class CreateCircleDeploymentRequestUsecase {
   ): Promise<DeploymentEntity> {
     try {
       return await this.deploymentsRepository.save(createCircleDeploymentRequestDto.toEntity(circleId))
-    } catch(error) {
+    } catch (error) {
       this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_DEPLOYMENT', error)
       throw new InternalServerErrorException('Could not save deployment')
     }
