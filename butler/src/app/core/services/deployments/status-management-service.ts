@@ -101,6 +101,7 @@ export class StatusManagementService {
             await this.getDeploymentEntity(deploymentId)
     const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
+
     return finishedModules.length === deployment.modules.length
   }
 
