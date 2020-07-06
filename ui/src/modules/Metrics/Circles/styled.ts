@@ -50,9 +50,10 @@ const CirclesDataDetail = styled.div`
 
 const HistoryWrapper = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
-  height: 641px;
+  height: auto;
   width: 1220px;
   border-radius: 5px;
+  padding-bottom: 20px;
 `;
 
 const HistoryHeader = styled.div`

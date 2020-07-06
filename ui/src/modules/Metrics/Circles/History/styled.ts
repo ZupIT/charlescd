@@ -14,29 +14,70 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+type ColumnProps = {
+  width?: number;
+};
 
 const lineHeight = '40px';
 
-const Content = styled.div`
-  margin-left: 20px;
-  margin-top: 20px;
-  width: calc(100% - 20px);
-  background: ${({ theme }) => theme.metrics.dashboard.card};
+const defaultTableRow = css`
+  display: flex;
+  height: ${lineHeight};
+  border-radius: 4px;
+  margin-bottom: 5px;
+`;
+
+const Table = styled.div`
+  margin: 20px 20px 0 20px;
+`;
+
+const TableRow = styled.div`
+  ${defaultTableRow}
+  cursor: pointer;
 `;
 
 const TableHead = styled.div`
-  display: flex;
-  height: ${lineHeight};
+  ${defaultTableRow}
+`;
 
-  > div {
-    display: flex;
-    align-items: center;
-    flex: 1;
+const CircleRow = styled.div`
+  background-color: #3a3a3c;
+  margin-bottom: 5px;
+`;
+
+const ReleaseRow = styled.div`
+  background-color: #48484a;
+  margin-bottom: 5px;
+`;
+
+const ComponentsRow = styled.div`
+  ${defaultTableRow}
+  background-color: #3A3A3C;
+`;
+
+const ReleasesWrapper = styled.div`
+  padding: 0 10px 10px 10px;
+`;
+
+const TableColumn = styled.div<ColumnProps>`
+  display: flex;
+  align-items: center;
+  flex: ${({ width }) => width || 1};
+
+  :first-child {
+    padding-left: 20px;
   }
 `;
 
 export default {
-  Content,
-  TableHead
+  Table,
+  TableRow,
+  TableColumn,
+  TableHead,
+  CircleRow,
+  ReleaseRow,
+  ReleasesWrapper,
+  ComponentsRow
 };
