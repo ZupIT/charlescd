@@ -17,15 +17,10 @@
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import CommonStyled from '../styled';
-import ReleasesTable from './ReleasesTable';
-import { History } from '../interfaces';
+import { releases } from './mock';
+import ComponentsTable from './ComponentsTable';
 
-type Props = {
-  data: History[];
-};
-
-const HistoryComponent = ({ data }: Props) => {
+const ReleasesTable = () => {
   const [activeRow, setActiveRow] = useState('');
 
   const expandRow = (id: string) => {
@@ -37,48 +32,46 @@ const HistoryComponent = ({ data }: Props) => {
   };
 
   return (
-    <Styled.Table>
+    <>
       <Styled.TableHead>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Status</Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn width={2}>
-          <Text.h5 color="dark">Circles</Text.h5>
+          <Text.h5 color="dark">Release</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Last update</Text.h5>
+          <Text.h5 color="dark">Deployed</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Life time</Text.h5>
+          <Text.h5 color="dark">Undeployed</Text.h5>
+        </Styled.TableColumn>
+        <Styled.TableColumn>
+          <Text.h5 color="dark">Last editor</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {data?.map(circle => (
-        <Styled.CircleRow key={circle.id}>
-          <Styled.TableRow onClick={() => expandRow(circle.id)}>
+      {releases.map(release => (
+        <Styled.ReleaseRow key={release.id}>
+          <Styled.TableRow onClick={() => expandRow(release.id)}>
             <Styled.TableColumn>
-              <Text.h5 color="light">
-                <CommonStyled.Dot active={circle.circleStatus === 'active'} />
-              </Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn width={2}>
-              <Text.h5 color="light">{circle.name}</Text.h5>
+              <Text.h5 color="light">{release.name}</Text.h5>
             </Styled.TableColumn>
             <Styled.TableColumn>
-              <Text.h5 color="light">{circle.lastUpdate}</Text.h5>
+              <Text.h5 color="light">{release.deployed}</Text.h5>
             </Styled.TableColumn>
             <Styled.TableColumn>
-              <Text.h5 color="light">{circle.lifeTime}</Text.h5>
+              <Text.h5 color="light">{release.undeployed}</Text.h5>
+            </Styled.TableColumn>
+            <Styled.TableColumn>
+              <Text.h5 color="light">{release.lastEditor}</Text.h5>
             </Styled.TableColumn>
           </Styled.TableRow>
-          {activeRow === circle.id && (
+          {activeRow === release.id && (
             <Styled.ReleasesWrapper>
-              <ReleasesTable />
+              <ComponentsTable />
             </Styled.ReleasesWrapper>
           )}
-        </Styled.CircleRow>
+        </Styled.ReleaseRow>
       ))}
-    </Styled.Table>
+    </>
   );
 };
 
-export default HistoryComponent;
+export default ReleasesTable;

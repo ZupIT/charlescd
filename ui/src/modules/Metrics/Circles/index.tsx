@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import History from './History';
+import HistoryComponent from './History';
 import Loader from '../Loaders/index';
 import { useCirclesMetric } from './hooks';
 import Styled from './styled';
@@ -43,7 +43,7 @@ const Circles = () => {
           ) : (
             <>
               <Styled.CirclesData color="light">
-                {totalCircles}
+                {`${totalCircles}`}
               </Styled.CirclesData>
               <Styled.CirclesDataDetail>
                 <Text.h4 color="light">
@@ -91,7 +91,7 @@ const Circles = () => {
               Inactive: {response?.circleStats?.inactive}
             </Text.h5>
           </Styled.HistoryLegend>
-          <History />
+          <HistoryComponent data={response?.history} />
         </Styled.HistoryWrapper>
       </Styled.Content>
     </>
