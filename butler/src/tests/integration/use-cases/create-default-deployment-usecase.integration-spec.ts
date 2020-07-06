@@ -29,7 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios';
-import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service';
+import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
