@@ -61,7 +61,7 @@ const Circles = () => {
             <Text.h4 color="light">Average life time</Text.h4>
             <Text.h1 color="light">
               {loading ? (
-                <Loader.CircleAvaregeTime />
+                <Loader.CircleAverageTime />
               ) : (
                 `${response?.averageCircleLifeTime} days`
               )}
@@ -81,17 +81,21 @@ const Circles = () => {
               placeholder={'Search circle'}
             />
           </Styled.HistoryHeader>
-          <Styled.HistoryLegend>
-            <Styled.Dot active={true} />
-            <Text.h5 color="dark">
-              Active: {response?.circleStats?.active}
-            </Text.h5>
-            <Styled.Dot active={false} />
-            <Text.h5 color="dark">
-              Inactive: {response?.circleStats?.inactive}
-            </Text.h5>
-          </Styled.HistoryLegend>
-          <HistoryComponent data={response?.history} />
+          {loading ? (
+            <Loader.Legend />
+          ) : (
+            <Styled.HistoryLegend>
+              <Styled.Dot active={true} />
+              <Text.h5 color="dark">
+                Active: {response?.circleStats?.active}
+              </Text.h5>
+              <Styled.Dot active={false} />
+              <Text.h5 color="dark">
+                Inactive: {response?.circleStats?.inactive}
+              </Text.h5>
+            </Styled.HistoryLegend>
+          )}
+          <HistoryComponent data={response?.history} loading={loading} />
         </Styled.HistoryWrapper>
       </Styled.Content>
     </>

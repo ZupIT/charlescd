@@ -19,6 +19,7 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import { releases } from './mock';
 import ComponentsTable from './ComponentsTable';
+import Loader from '../../Loaders/index';
 
 const ReleasesTable = () => {
   const [activeRow, setActiveRow] = useState('');
@@ -47,29 +48,35 @@ const ReleasesTable = () => {
           <Text.h5 color="dark">Last editor</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {releases.map(release => (
-        <Styled.ReleaseRow key={release.id}>
-          <Styled.TableRow onClick={() => expandRow(release.id)}>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{release.name}</Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{release.deployed}</Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{release.undeployed}</Text.h5>
-            </Styled.TableColumn>
-            <Styled.TableColumn>
-              <Text.h5 color="light">{release.lastEditor}</Text.h5>
-            </Styled.TableColumn>
-          </Styled.TableRow>
-          {activeRow === release.id && (
-            <Styled.ReleasesWrapper>
-              <ComponentsTable />
-            </Styled.ReleasesWrapper>
-          )}
-        </Styled.ReleaseRow>
-      ))}
+      {false ? (
+        <Loader.Releases />
+      ) : (
+        <>
+          {releases.map(release => (
+            <Styled.ReleaseRow key={release.id}>
+              <Styled.TableRow onClick={() => expandRow(release.id)}>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{release.name}</Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{release.deployed}</Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{release.undeployed}</Text.h5>
+                </Styled.TableColumn>
+                <Styled.TableColumn>
+                  <Text.h5 color="light">{release.lastEditor}</Text.h5>
+                </Styled.TableColumn>
+              </Styled.TableRow>
+              {activeRow === release.id && (
+                <Styled.ReleasesWrapper>
+                  <ComponentsTable />
+                </Styled.ReleasesWrapper>
+              )}
+            </Styled.ReleaseRow>
+          ))}
+        </>
+      )}
     </>
   );
 };

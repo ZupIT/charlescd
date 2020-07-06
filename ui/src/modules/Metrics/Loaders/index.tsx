@@ -18,11 +18,19 @@ import React from 'react';
 import { Loader as LoaderCard } from './card';
 import { Loader as LoaderCircleCard } from './circlesCard';
 import { Loader as LoaderCircleAverageTime } from './circleAverageTime';
+import { Loader as LoaderLegend } from './legend';
+import { Loader as LoaderHistory } from './history';
+import { Loader as LoaderReleases } from './releases';
+import { Loader as LoaderComponents } from './components';
 
 const Loader = {
   Card: () => <LoaderCard />,
   CircleCard: () => <LoaderCircleCard />,
-  CircleAvaregeTime: () => <LoaderCircleAverageTime />
+  CircleAverageTime: () => <LoaderCircleAverageTime />,
+  Legend: () => <LoaderLegend />,
+  History: () => <LoaderHistory />,
+  Releases: () => <LoaderReleases />,
+  Components: () => <LoaderComponents />
 };
 
 export default Loader;
