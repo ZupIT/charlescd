@@ -19,26 +19,20 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
+import { DeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
-import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
-import { ComponentEntity } from '../../../app/api/components/entity'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { queue } from 'rxjs/internal/scheduler/queue'
 
 describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
   let app: INestApplication
   let fixtureUtilsService: FixtureUtilsService
-  let queuedDeploymentsRepository: Repository<QueuedDeploymentEntity>
   let queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository
   let deploymentsRepository: Repository<DeploymentEntity>
-  let componentDeploymentsRepository: ComponentDeploymentsRepository
   let httpService: HttpService
-  let mooveService: MooveService
 
   beforeAll(async() => {
     const module = Test.createTestingModule({
@@ -55,11 +49,8 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
-    componentDeploymentsRepository = app.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    queuedDeploymentsRepository = app.get<Repository<QueuedDeploymentEntity>>('QueuedDeploymentEntityRepository')
     queuedIstioDeploymentsRepository = app.get<QueuedIstioDeploymentsRepository>(QueuedIstioDeploymentsRepository)
     httpService = app.get<HttpService>(HttpService)
-    mooveService = app.get<MooveService>(MooveService)
   })
 
   beforeEach(async() => {

@@ -328,10 +328,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         relations: ['components'] }
       )
 
-    const componentEntity: ComponentEntity = await componentsRepository.
-      findOneOrFail({
-        where : { id: componentDeploymentEntity.componentId } }
-      )
     const deployment = componentDeploymentEntity.moduleDeployment.deployment
     expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
