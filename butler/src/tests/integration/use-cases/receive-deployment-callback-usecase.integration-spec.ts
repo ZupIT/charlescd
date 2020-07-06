@@ -342,7 +342,65 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
   })
 
-  it('/POST when have fails in one callbacks, each istio component should be QUEUED ', async() => {
+  it('/POST when all callbacks have success, each component should be RUNNING ', async() => {
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'SUCCEEDED'
+    }
+
+    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    queuedDeploymentSearch = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.FINISHED,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      }
+      )
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const deployment = componentDeploymentEntity.moduleDeployment.deployment
+    const istioQueuedDeployments = await queuedIstioDeploymentsRepository.find({ where : { deploymentId : componentDeploymentEntity.moduleDeployment.deployment.id } })
+    expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(istioQueuedDeployments[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[1].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[2].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[3].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+  })
+
+  it('/POST when one callback fails, each istio component should be QUEUED ', async() => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {

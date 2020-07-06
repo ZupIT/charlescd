@@ -291,6 +291,7 @@ export class StatusManagementService {
             await this.getDeploymentEntity(deploymentId)
     const finishedModules: ModuleDeploymentEntity[] =
             this.getDeploymentFinishedModules(deployment)
+
     if (finishedModules.length === deployment.modules.length && await this.isQueuedIstiodeploymentHasFinished(deployment.id)) {
       await this.updateDeploymentStatus(deployment.id, DeploymentStatusEnum.SUCCEEDED)
     }
@@ -300,9 +301,7 @@ export class StatusManagementService {
     const allQueuedIstioDeployments = await this.queuedIstioDeploymentsRepository.find({
       where: { deploymentId }
     })
-    if (allQueuedIstioDeployments.length === 0) {
-      return false
-    }
+
     return allQueuedIstioDeployments.every(
       deployment => deployment.status === QueuedPipelineStatusEnum.FINISHED
     )

@@ -1,0 +1,142 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { Test } from '@nestjs/testing'
+import { HttpService, INestApplication } from '@nestjs/common'
+import { FixtureUtilsService } from '../utils/fixture-utils.service'
+import { AppModule } from '../../../app/app.module'
+import * as request from 'supertest'
+import { TestSetupUtils } from '../utils/test-setup-utils'
+import { ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
+import { Repository } from 'typeorm'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
+import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { ComponentEntity } from '../../../app/api/components/entity'
+import { of } from 'rxjs'
+import { AxiosResponse } from 'axios'
+import { MooveService } from '../../../app/core/integrations/moove'
+import { queue } from 'rxjs/internal/scheduler/queue'
+
+describe('IstioDeploymentCallbackUsecase Integration Test', () => {
+
+  let app: INestApplication
+  let fixtureUtilsService: FixtureUtilsService
+  let queuedDeploymentsRepository: Repository<QueuedDeploymentEntity>
+  let queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository
+  let deploymentsRepository: Repository<DeploymentEntity>
+  let componentDeploymentsRepository: ComponentDeploymentsRepository
+  let httpService: HttpService
+  let mooveService: MooveService
+
+  beforeAll(async() => {
+    const module = Test.createTestingModule({
+      imports: [
+        await AppModule.forRootAsync()
+      ],
+      providers: [
+        FixtureUtilsService
+      ]
+    })
+
+    app = await TestSetupUtils.createApplication(module)
+    TestSetupUtils.seApplicationConstants()
+
+    fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
+    deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
+    componentDeploymentsRepository = app.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+    queuedDeploymentsRepository = app.get<Repository<QueuedDeploymentEntity>>('QueuedDeploymentEntityRepository')
+    queuedIstioDeploymentsRepository = app.get<QueuedIstioDeploymentsRepository>(QueuedIstioDeploymentsRepository)
+    httpService = app.get<HttpService>(HttpService)
+    mooveService = app.get<MooveService>(MooveService)
+  })
+
+  beforeEach(async() => {
+    await fixtureUtilsService.clearDatabase()
+    await fixtureUtilsService.loadDatabase()
+  })
+
+  it('/POST a istio deployment callback should not update deployment  status to SUCCEEDED if another queued deployment is RUNNING ', async() => {
+
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'SUCCEEDED'
+    }
+
+    const queuedDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          componentDeploymentId: 'f4e6ec6a-e870-4299-972e-ae4fe90b9dc6'
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    const queuedDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
+      find( {
+        where : {
+          deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
+        }
+      })
+
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedDeploymentSearch.deploymentId })
+    expect(deploymentEntity.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(queuedDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(queuedDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedDeploymentsUpdated[1].id).toBe(queuedDeploymentSearch.id)
+
+  })
+
+  it('/POST a istio deployment callback should update deployment  status to SUCCEEDED if all  queued deployments finished and all components are succeeded ', async() => {
+
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'SUCCEEDED'
+    }
+
+    const queuedDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          componentDeploymentId: '489e16fe-20f3-4c83-8c3a-59fb36517d1c'
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    const queuedDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
+      find( {
+        where : {
+          deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
+        }
+      })
+
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedDeploymentSearch.deploymentId })
+    expect(deploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(queuedDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+  })
+
+  afterAll(async() => {
+    await app.close()
+  })
+})

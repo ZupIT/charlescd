@@ -61,6 +61,20 @@
     "moduleId": "eaedc02f-8376-47cd-937c-8e30512955a8",
     "status": "SUCCEEDED",
     "helmRepository": "helm-repository"
+  },
+  {
+    "id": "6976d2c0-940d-4329-80a3-e1c7ad585b7a",
+    "deployment": "a8b28b83-19d9-43a3-8695-7f33bd7e5e00",
+    "moduleId": "eaedc02f-8376-47cd-937c-8e30512955a8",
+    "status": "SUCCEEDED",
+    "helmRepository": "helm-repository"
+  },
+  {
+    "id": "c9090950-a714-4e71-a99f-706c443ef28e",
+    "deployment": "7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762",
+    "moduleId": "eaedc02f-8376-47cd-937c-8e30512955a8",
+    "status": "SUCCEEDED",
+    "helmRepository": "helm-repository"
   }
 
 
