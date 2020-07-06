@@ -46,7 +46,6 @@ export default class TotalPipeline {
 
   public buildPipeline(): IBaseSpinnakerPipeline {
     this.buildDeployments()
-    this.buildDeleteDeployments()
     this.buildWebhook()
     this.cleanIds()
     return this.basePipeline
@@ -55,6 +54,7 @@ export default class TotalPipeline {
   public buildIstioPipeline(): IBaseSpinnakerPipeline {
     this.buildDestinationRules()
     this.buildVirtualService()
+    this.buildDeleteDeployments()
     this.buildWebhook()
     return this.basePipeline
   }
