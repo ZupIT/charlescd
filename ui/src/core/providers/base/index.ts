@@ -89,7 +89,6 @@ export const unauthenticatedRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
-          checkStatus(response.status);
           return Promise.reject(response);
         } else {
           return response;
@@ -121,7 +120,7 @@ export const baseRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
-          response.status === HTTP_STATUS.forbidden && pushTo(routes.error403);
+          checkStatus(response.status);
           return Promise.reject(response);
         } else {
           return response;
