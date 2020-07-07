@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import HistoryComponent from './History';
 import Loader from '../Loaders/index';
@@ -23,16 +23,13 @@ import Styled from './styled';
 
 const Circles = () => {
   const { findAllCirclesData, response, loading } = useCirclesMetric();
+  const [name, setName] = useState('');
   const totalCircles =
     response?.circleStats?.active + response?.circleStats?.inactive;
 
-  const onSearch = () => {
-    console.log('o/');
-  };
-
   useEffect(() => {
-    findAllCirclesData();
-  }, [findAllCirclesData]);
+    findAllCirclesData({ name: name });
+  }, [findAllCirclesData, name]);
 
   return (
     <>
@@ -77,7 +74,7 @@ const Circles = () => {
             </Text.h2>
             <Styled.HistorySearchInput
               resume
-              onSearch={onSearch}
+              onSearch={setName}
               placeholder={'Search circle'}
             />
           </Styled.HistoryHeader>
