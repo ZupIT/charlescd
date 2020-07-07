@@ -30,16 +30,12 @@ import { PipelineTypeEnum } from './connector/pipelines/enums/pipeline-type.enum
 @Injectable()
 export class SpinnakerService implements ICdServiceStrategy {
 
-  private readonly MAXIMUM_RETRY_ATTEMPTS = 5
-  private readonly MILLISECONDS_RETRY_DELAY = 1000
-
   constructor(
     private readonly spinnakerApiService: SpinnakerApiService,
     private readonly consoleLoggerService: ConsoleLoggerService
   ) { }
 
   public async createDeployment(configuration: IConnectorConfiguration): Promise<void> {
-
     this.consoleLoggerService.log('START:PROCESS_SPINNAKER_DEPLOYMENT', configuration)
     const spinnakerConfiguration: ISpinnakerPipelineConfiguration = this.getSpinnakerConfiguration(configuration)
     await this.createSpinnakerApplication(spinnakerConfiguration.applicationName, spinnakerConfiguration.url)
@@ -101,7 +97,7 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     return deployError.pipe(
       concatMap((error, attempts) => {
-        return attempts >= this.MAXIMUM_RETRY_ATTEMPTS ?
+        return attempts >= AppConstants.CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS ?
           throwError('Reached maximum attemps.') :
           this.getDeployRetryPipe(error, attempts)
       })
@@ -113,16 +109,18 @@ export class SpinnakerService implements ICdServiceStrategy {
 
     return of(error).pipe(
       tap(() => this.consoleLoggerService.log(`Deploy attempt #${attempts + 1}. Retrying deployment: ${error}`)),
-      delay(this.MILLISECONDS_RETRY_DELAY)
+      delay(AppConstants.CD_CONNECTION_MILLISECONDS_RETRY_DELAY)
     )
   }
 
   private async createSpinnakerPipeline(spinnakerConfiguration: ISpinnakerPipelineConfiguration, pipelineType: PipelineTypeEnum): Promise<void> {
     this.consoleLoggerService.log('START:CREATE_SPINNAKER_PIPELINE', { spinnakerConfiguration })
     const spinnakerPipeline: IBaseSpinnakerPipeline = this.getTotalPipelineByPipelineType(spinnakerConfiguration, pipelineType)
-    const { data: { id: pipelineId } } =
-      await this.spinnakerApiService.getPipeline(spinnakerConfiguration.applicationName,
-        spinnakerConfiguration.pipelineName, spinnakerConfiguration.url).toPromise()
+    this.consoleLoggerService.log('GET:SPINNAKER_TOTAL_PIPELINE', { spinnakerPipeline })
+
+    const { data: { id: pipelineId } } = await this.spinnakerApiService.getPipeline(
+      spinnakerConfiguration.applicationName, spinnakerConfiguration.pipelineName, spinnakerConfiguration.url
+    ).toPromise()
 
     pipelineId ?
       await this.updateSpinnakerPipeline(spinnakerConfiguration, pipelineId, pipelineType) :
@@ -134,15 +132,13 @@ export class SpinnakerService implements ICdServiceStrategy {
   private getTotalPipelineByPipelineType(
     spinnakerConfiguration: ISpinnakerPipelineConfiguration,
     pipelineType: PipelineTypeEnum
-  ) {
+  ): IBaseSpinnakerPipeline {
     if (pipelineType === PipelineTypeEnum.ISTIO) {
       return new TotalPipeline(spinnakerConfiguration).buildIstioPipeline()
     }
-
     if (pipelineType === PipelineTypeEnum.UNDEPLOYED) {
       return new TotalPipeline(spinnakerConfiguration).buildUndeploymentPipeline()
     }
-
     return new TotalPipeline(spinnakerConfiguration).buildPipeline()
   }
 
