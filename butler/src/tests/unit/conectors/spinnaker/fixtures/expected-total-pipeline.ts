@@ -152,9 +152,9 @@ const expectedTotalPipeline = {
         status: '${#stage( \'Deploy v1\' ).status.toString()}',
         callbackType: '${#stage( \'Deploy v1\' ).callbackType.toString()}'
       },
-      refId: '4',
+      refId: '3',
       requisiteStageRefIds: [
-        '3'
+        '2'
       ],
       statusUrlResolution: 'getMethod',
       type: 'webhook',
