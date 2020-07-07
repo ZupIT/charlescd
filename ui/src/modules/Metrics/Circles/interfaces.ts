@@ -32,3 +32,19 @@ export interface History {
   lifeTime: number;
   lastUpdate: string;
 }
+
+export interface CircleRelease {
+  id: string;
+  name: string;
+  deployed: string;
+  undeployed: string;
+  lastEditor: string;
+  components: ReleaseComponent[];
+}
+
+export interface ReleaseComponent {
+  id: string;
+  moduleName: string;
+  componentName: string;
+  version: string;
+}
