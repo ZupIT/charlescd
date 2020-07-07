@@ -33,27 +33,22 @@ export const useCircleMatcher = (): {
   getCircleId: Function;
   loading: boolean;
 } => {
-  const [data, getCircleMatcher] = useFetch<CircleMatcherResponse>(
-    circleMatcher
-  );
-  const { loading, response, error } = data;
-
-  useEffect(() => {
-    if (response) {
-      const [circle] = response?.circles;
-      saveCircleId(circle?.id);
-    }
-  }, [response]);
-
-  useEffect(() => {
-    if (error) {
-      saveCircleId(CIRCLE_UNMATCHED);
-    }
-  }, [error]);
+  const [, , getCircleMatcher] = useFetch<CircleMatcherResponse>(circleMatcher);
+  const [loading, setLoading] = useState(null);
 
   const getCircleId = useCallback(
-    (data: unknown) => {
-      getCircleMatcher(data);
+    async (data: unknown) => {
+      setLoading(true);
+      try {
+        const response = await getCircleMatcher(data);
+        if (response) {
+          const [circle] = response?.circles;
+          saveCircleId(circle?.id);
+        }
+      } catch (e) {
+        saveCircleId(CIRCLE_UNMATCHED);
+        setLoading(false);
+      }
     },
     [getCircleMatcher]
   );
