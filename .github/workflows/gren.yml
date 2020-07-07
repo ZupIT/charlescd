@@ -25,5 +25,18 @@ jobs:
           GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm install github-release-notes -g
-          gren release --tags=${GITHUB_REF/refs\/tags\//} --override
+          gren release --override
           gren changelog --override
+
+      - name: Commiting CHANGELOG.md
+        run: |
+          git config --local user.name "charlescd"
+          git add CHANGELOG.md
+          git commit -m "Updating CHANGELOG.md"
+
+      - name: Pushing changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+
