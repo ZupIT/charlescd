@@ -17,11 +17,11 @@
 package repository
 
 type MainUseCases interface {
-	NewRepository(repository *Repository) (UseCases, error)
+	NewRepository(repository Repository) (UseCases, error)
 }
 
 type RepositoryMain struct{}
 
 func NewRepositoryMain() MainUseCases {
-	return &RepositoryMain{}
+	return RepositoryMain{}
 }

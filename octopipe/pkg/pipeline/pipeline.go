@@ -48,12 +48,12 @@ type DEPRECATED_pipeline struct {
 	Versions       []DEPRECATED_pipelineVersion `json:"versions"`
 	WebHookUrl     string                       `json:"webhookUrl"`
 	CircleID       string                       `json:"circleID"`
-	K8s            *cloudprovider.Cloudprovider `json:"k8s"`
+	K8s            cloudprovider.Cloudprovider  `json:"k8s"`
 }
 
 type StepTemplate struct {
-	Repository *repository.Repository `json:"reposository"`
-	*template.Template
+	Repository repository.Repository `json:"reposository"`
+	template.Template
 }
 
 type StepWebhook struct {
@@ -65,31 +65,31 @@ type StepWebhook struct {
 type Step struct {
 	Action     string                 `json:"action"`
 	Update     bool                   `json:"update"`
-	Repository *repository.Repository `json:"reposository"`
-	Template   *template.Template     `json:"template"`
+	Repository repository.Repository  `json:"reposository"`
+	Template   template.Template      `json:"template"`
 	Manifest   map[string]interface{} `json:"manifest"`
 }
 
 type Pipeline struct {
-	Name      string                       `json:"name"`
-	Namespace string                       `json:"namespace"`
-	Stages    [][]*Step                    `json:"stages"`
-	Webhook   StepWebhook                  `json:"webhook"`
-	Config    *cloudprovider.Cloudprovider `json:"config"`
+	Name      string                      `json:"name"`
+	Namespace string                      `json:"namespace"`
+	Stages    [][]Step                    `json:"stages"`
+	Webhook   StepWebhook                 `json:"webhook"`
+	Config    cloudprovider.Cloudprovider `json:"config"`
 }
 
-func (main *PipelineMain) NewPipeline() UseCases {
-	return &Pipeline{}
+func (main PipelineMain) NewPipeline() UseCases {
+	return Pipeline{}
 }
 
-func (deprecatedPipeline *DEPRECATED_pipeline) ToPipeline() Pipeline {
+func (deprecatedPipeline DEPRECATED_pipeline) ToPipeline() Pipeline {
 	versionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.Versions, deployment.DeployAction)
 	unusedVersionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.UnusedVersions, deployment.UndeployAction)
 	istioSteps := deprecatedPipeline.generateIstioSteps()
 	pipeline := Pipeline{
 		Name:      deprecatedPipeline.AppName,
 		Namespace: deprecatedPipeline.AppNamespace,
-		Stages: [][]*Step{
+		Stages: [][]Step{
 			versionsSteps,
 			unusedVersionsSteps,
 			istioSteps,
@@ -107,27 +107,27 @@ func (deprecatedPipeline *DEPRECATED_pipeline) ToPipeline() Pipeline {
 	return pipeline
 }
 
-func (deprecatedPipeline *DEPRECATED_pipeline) generateVersionSteps(versions []DEPRECATED_pipelineVersion, action string) []*Step {
-	steps := []*Step{}
+func (deprecatedPipeline DEPRECATED_pipeline) generateVersionSteps(versions []DEPRECATED_pipelineVersion, action string) []Step {
+	steps := []Step{}
 
 	for _, version := range versions {
 		if version.Version == "" {
 			continue
 		}
 
-		steps = append(steps, &Step{
+		steps = append(steps, Step{
 			Action: action,
 			Update: false,
-			Repository: &repository.Repository{
+			Repository: repository.Repository{
 				Type: deprecatedPipeline.Git.Provider,
-				GithubRepository: &github.GithubRepository{
+				GithubRepository: github.GithubRepository{
 					Token: deprecatedPipeline.Git.Token,
 					Url:   deprecatedPipeline.HelmURL,
 				},
 			},
-			Template: &template.Template{
+			Template: template.Template{
 				Type: template.HelmType,
-				HelmTemplate: &helm.HelmTemplate{
+				HelmTemplate: helm.HelmTemplate{
 					OverrideValues: map[string]string{
 						"Name":      version.Version,
 						"Namespace": deprecatedPipeline.AppNamespace,
@@ -141,15 +141,15 @@ func (deprecatedPipeline *DEPRECATED_pipeline) generateVersionSteps(versions []D
 	return steps
 }
 
-func (deprecatedPipeline *DEPRECATED_pipeline) generateIstioSteps() []*Step {
-	steps := []*Step{}
+func (deprecatedPipeline DEPRECATED_pipeline) generateIstioSteps() []Step {
+	steps := []Step{}
 
 	for _, version := range deprecatedPipeline.Istio {
 		if len(version.(map[string]interface{})) == 0 {
 			continue
 		}
 
-		steps = append(steps, &Step{
+		steps = append(steps, Step{
 			Action:   deployment.DeployAction,
 			Update:   true,
 			Manifest: version.(map[string]interface{}),

@@ -36,11 +36,11 @@ func (api *API) NewPipelineAPI(managerMain manager.MainUseCases) {
 }
 
 func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
-	var deprecatedPipeline *pipeline.DEPRECATED_pipeline
+	var deprecatedPipeline pipeline.DEPRECATED_pipeline
 	ctx.Bind(&deprecatedPipeline)
 
 	pipeline := deprecatedPipeline.ToPipeline()
-	api.manager.Start(&pipeline)
+	api.manager.Start(pipeline)
 
 	ctx.JSON(204, nil)
 }

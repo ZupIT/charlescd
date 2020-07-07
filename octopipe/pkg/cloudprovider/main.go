@@ -17,11 +17,11 @@
 package cloudprovider
 
 type MainUseCases interface {
-	NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases
+	NewCloudProvider(provider Cloudprovider) CloudproviderUseCases
 }
 
 type CloudproviderMain struct{}
 
 func NewCloudproviderMain() MainUseCases {
-	return &CloudproviderMain{}
+	return CloudproviderMain{}
 }

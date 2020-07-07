@@ -33,10 +33,10 @@ type UseCases interface {
 
 type Template struct {
 	Type string `json:"type"`
-	*helm.HelmTemplate
+	helm.HelmTemplate
 }
 
-func (main *TemplateMain) NewTemplate(template *Template) (UseCases, error) {
+func (main TemplateMain) NewTemplate(template Template) (UseCases, error) {
 	switch template.Type {
 	case HelmType:
 		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("Selected helm template")

@@ -33,10 +33,10 @@ type UseCases interface {
 
 type Repository struct {
 	Type string `json:"type"`
-	*github.GithubRepository
+	github.GithubRepository
 }
 
-func (main *RepositoryMain) NewRepository(repository *Repository) (UseCases, error) {
+func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error) {
 	switch repository.Type {
 	case GithubType:
 		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected github repository")

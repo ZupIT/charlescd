@@ -27,22 +27,23 @@ import (
 )
 
 type UseCases interface {
-	Start(pipeline *pipelinePKG.Pipeline)
+	Start(pipeline pipelinePKG.Pipeline)
 }
 
 type Manager struct {
-	*ManagerMain
+	ManagerMain
 }
 
-func (main *ManagerMain) NewManager() UseCases {
-	return &Manager{main}
+func (main ManagerMain) NewManager() UseCases {
+	return Manager{main}
 }
 
-func (manager *Manager) Start(pipeline *pipelinePKG.Pipeline) {
+func (manager Manager) Start(pipeline pipelinePKG.Pipeline) {
+	fmt.Println(pipeline)
 	go manager.executeStages(pipeline)
 }
 
-func (manager *Manager) executeStages(pipeline *pipelinePKG.Pipeline) {
+func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 	var err error
 
 	for _, stage := range pipeline.Stages {
@@ -60,7 +61,7 @@ func (manager *Manager) executeStages(pipeline *pipelinePKG.Pipeline) {
 	manager.pipelineOnSuccess(pipeline)
 }
 
-func (manager *Manager) pipelineOnSuccess(pipeline *pipelinePKG.Pipeline) {
+func (manager Manager) pipelineOnSuccess(pipeline pipelinePKG.Pipeline) {
 	payload := map[string]string{
 		"status": "SUCCEEDED",
 	}
@@ -68,7 +69,7 @@ func (manager *Manager) pipelineOnSuccess(pipeline *pipelinePKG.Pipeline) {
 	manager.triggerWebhook(pipeline, payload)
 }
 
-func (manager *Manager) pipelineOnError(pipeline *pipelinePKG.Pipeline) {
+func (manager Manager) pipelineOnError(pipeline pipelinePKG.Pipeline) {
 	payload := map[string]string{
 		"status": "FAILED",
 	}
@@ -76,7 +77,7 @@ func (manager *Manager) pipelineOnError(pipeline *pipelinePKG.Pipeline) {
 	manager.triggerWebhook(pipeline, payload)
 }
 
-func (manager *Manager) executeSteps(pipeline *pipelinePKG.Pipeline, stage []*pipelinePKG.Step) error {
+func (manager Manager) executeSteps(pipeline pipelinePKG.Pipeline, stage []pipelinePKG.Step) error {
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, step := range stage {
 		currentStep := step
@@ -88,11 +89,11 @@ func (manager *Manager) executeSteps(pipeline *pipelinePKG.Pipeline, stage []*pi
 	return errs.Wait()
 }
 
-func (manager *Manager) getManifestsFromPipeline(pipeline *pipelinePKG.Pipeline, step *pipelinePKG.Step) (map[string]interface{}, error) {
+func (manager Manager) getManifestsFromPipeline(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step) (map[string]interface{}, error) {
 	defaultManifestKey := "default"
 	manifests := map[string]interface{}{}
 
-	if step.Template != nil {
+	if step.Repository.Url != "" {
 		var err error
 		log.WithFields(log.Fields{"function": "executeStep"}).Info("Step has a template")
 		manifests, err = manager.getManifestsbyTemplate(pipeline.Name, step)
@@ -114,7 +115,7 @@ func (manager *Manager) getManifestsFromPipeline(pipeline *pipelinePKG.Pipeline,
 	return manifests, nil
 }
 
-func (manager *Manager) executeStep(pipeline *pipelinePKG.Pipeline, step *pipelinePKG.Step) error {
+func (manager Manager) executeStep(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step) error {
 	var err error
 
 	manifests, err := manager.getManifestsFromPipeline(pipeline, step)
@@ -133,7 +134,7 @@ func (manager *Manager) executeStep(pipeline *pipelinePKG.Pipeline, step *pipeli
 	return nil
 }
 
-func (manager *Manager) executeManifests(pipeline *pipelinePKG.Pipeline, step *pipelinePKG.Step, manifests map[string]interface{}) error {
+func (manager Manager) executeManifests(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step, manifests map[string]interface{}) error {
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, manifest := range manifests {
 		currentManifest := manifest
@@ -145,7 +146,7 @@ func (manager *Manager) executeManifests(pipeline *pipelinePKG.Pipeline, step *p
 	return errs.Wait()
 }
 
-func (manager *Manager) executeManifest(pipeline *pipelinePKG.Pipeline, step *pipelinePKG.Step, manifest map[string]interface{}) error {
+func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipelinePKG.Step, manifest map[string]interface{}) error {
 	cloudprovider := manager.cloudproviderMain.NewCloudProvider(pipeline.Config)
 	config, err := cloudprovider.GetClient()
 	if err != nil {
@@ -171,7 +172,7 @@ func (manager *Manager) executeManifest(pipeline *pipelinePKG.Pipeline, step *pi
 	return nil
 }
 
-func (manager *Manager) getFilesFromRepository(name string, step *pipelinePKG.Step) (string, string, error) {
+func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
 	repository, err := manager.repositoryMain.NewRepository(step.Repository)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot create repository main. Error: " + err.Error())
@@ -187,7 +188,7 @@ func (manager *Manager) getFilesFromRepository(name string, step *pipelinePKG.St
 	return templateContent, valueContent, nil
 }
 
-func (manager *Manager) getManifestsbyTemplate(name string, step *pipelinePKG.Step) (map[string]interface{}, error) {
+func (manager *Manager) getManifestsbyTemplate(name string, step pipelinePKG.Step) (map[string]interface{}, error) {
 	templateContent, valueContent, err := manager.getFilesFromRepository(name, step)
 	if err != nil {
 		return nil, err
