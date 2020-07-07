@@ -18,6 +18,7 @@ import { authRequest, unauthenticatedRequest } from './base';
 
 const clientId = window.ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
 const realm = window.ENVIRONMENT?.REACT_APP_AUTH_REALM;
+const workspaceId = window.ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
 const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
@@ -34,7 +35,8 @@ export const login = (username: string, password: string) => {
 
 export const circleMatcher = (payload: unknown) => {
   const data = {
-    requestData: payload
+    requestData: payload,
+    workspaceId
   };
   return unauthenticatedRequest(circleMatcherEndpoint, data, {
     method: 'POST'
