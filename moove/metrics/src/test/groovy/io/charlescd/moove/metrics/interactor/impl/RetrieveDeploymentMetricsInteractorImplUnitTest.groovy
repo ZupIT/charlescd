@@ -44,8 +44,8 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, ["circle-id"])
 
         then:
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [successfulDeployStats]
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [successfulDeployStats]
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
         0 * _
 
@@ -62,8 +62,8 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, ["circle-id"])
 
         then:
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [failedDeployStats]
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [failedDeployStats]
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
         0 * _
 
@@ -81,8 +81,8 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, null)
 
         then:
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], period.numberOfDays) >> [failedDeployStats, successfulDeployStats]
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], period.numberOfDays) >> []
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], period.numberOfDays) >> [failedDeployStats, successfulDeployStats]
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], period.numberOfDays) >> []
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, [], period.numberOfDays) >> []
         0 * _
 
@@ -112,8 +112,8 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, searchPeriod, null)
 
         then:
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], numberOfDays) >> [failedDeployStats, successfulDeployStats]
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], numberOfDays) >> deploymentsStatsInPeriod
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], numberOfDays) >> [failedDeployStats, successfulDeployStats]
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], numberOfDays) >> deploymentsStatsInPeriod
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, [], numberOfDays) >> deploymentsAverageTimeInPeriod
         0 * _
 
@@ -153,8 +153,8 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, null)
 
         then:
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], period.numberOfDays) >> [failedDeployStats, successfulDeployStats]
-        1 * deploymentRepository.countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], period.numberOfDays) >> deploymentsStatsInPeriod
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, [], period.numberOfDays) >> [failedDeployStats, successfulDeployStats]
+        1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, [], period.numberOfDays) >> deploymentsStatsInPeriod
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, [], period.numberOfDays) >> deploymentsAverageTimeInPeriod
         0 * _
 

@@ -32,12 +32,12 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
 
     override fun execute(workspaceId: String, period: PeriodType, circlesIds: List<String>?): DeploymentMetricsRepresentation {
         val deploymentGeneralStats = deploymentRepository
-            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
+            .countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
         val failedDeployments = deploymentGeneralStats.find { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
         val successfulDeployments = deploymentGeneralStats.find { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
 
         val deploymentsStats = deploymentRepository
-            .countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
+            .countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
         val successDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
         val failedDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
 

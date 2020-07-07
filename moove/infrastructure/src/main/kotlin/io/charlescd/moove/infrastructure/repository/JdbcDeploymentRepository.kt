@@ -238,7 +238,7 @@ class JdbcDeploymentRepository(
         )?.toList() ?: emptyList()
     }
 
-    override fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatus(
+    override fun countBetweenTodayAndDaysPastGroupingByStatus(
         workspaceId: String,
         circlesId: List<String>,
         numberOfDays: Int
@@ -273,7 +273,7 @@ class JdbcDeploymentRepository(
             ?: emptyList()
     }
 
-    override fun countByWorkspaceIdBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
+    override fun countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
         workspaceId: String,
         circlesId: List<String>,
         numberOfDays: Int
