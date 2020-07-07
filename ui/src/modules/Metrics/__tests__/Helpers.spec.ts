@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { baseRequest } from './base';
+import { normalizeCircleParams } from '../helpers';
+import { periodFilterItems } from '../Deploys/constants';
 
-const endpoint = '/moove/metrics';
+test('Normalize Circle Params for request', async () => {
+  const value = ["ONE_WEEK", "TWO_WEEKS", "ONE_MONTH", "THREE_MONTHS"];
 
-export const findCircleMetrics = (data: CircleMetrics) => {
-  const params = new URLSearchParams({ ...data });
-  return baseRequest(`${endpoint}/?${params}`);
-};
-
-export const findDeployMetrics = (params: URLSearchParams) =>
-  baseRequest(`${endpoint}/deployments?${params}`);
-
-export const findAllCirclesMetrics = (params: URLSearchParams) =>
-  baseRequest(`${endpoint}/circles?${params}`);
+  expect(normalizeCircleParams(periodFilterItems)).toEqual(value);
+})
