@@ -111,6 +111,10 @@ func (deprecatedPipeline *DEPRECATED_pipeline) generateVersionSteps(versions []D
 	steps := []*Step{}
 
 	for _, version := range versions {
+		if version.Version == "" {
+			continue
+		}
+
 		steps = append(steps, &Step{
 			Action: action,
 			Update: false,
@@ -141,6 +145,10 @@ func (deprecatedPipeline *DEPRECATED_pipeline) generateIstioSteps() []*Step {
 	steps := []*Step{}
 
 	for _, version := range deprecatedPipeline.Istio {
+		if len(version.(map[string]interface{})) == 0 {
+			continue
+		}
+
 		steps = append(steps, &Step{
 			Action:   deployment.DeployAction,
 			Update:   true,
