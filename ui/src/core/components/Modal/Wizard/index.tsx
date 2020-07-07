@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect } from "react";
-import indexOf from "lodash/indexOf";
-import map from "lodash/map";
-import Text from "core/components/Text";
-import { WizardItems } from "./constants";
-import Styled from "./styled";
+import React, { useRef, useState, useEffect } from 'react';
+import indexOf from 'lodash/indexOf';
+import map from 'lodash/map';
+import Text from 'core/components/Text';
+import { WizardItems } from './constants';
+import Styled from './styled';
 
 interface Item {
   icon: string;
@@ -57,7 +57,7 @@ const Wizard = () => {
     }
   }, [localStorageValue]);
 
-  const isFinalStep = () => itemSelect.name === "metrics-provider";
+  const isFinalStep = () => itemSelect.name === 'metrics-provider';
 
   const handleButton = () => {
     if (!isFinalStep()) {
