@@ -1,0 +1,20 @@
+{
+  "dataSource": "prs",
+  "prefix": "",
+  "onlyMilestones": false,
+  "changelogFilename": "CHANGELOG.md",
+  "ignoreIssuesWith": [
+    "duplicate",
+    "wontfix",
+    "invalid",
+    "help wanted"
+  ],
+  "groupBy": {
+    "Enhancements:": [
+      "enhancement"
+    ],
+    "Bug Fixes:": [
+      "bug"
+    ]
+  }
+}
