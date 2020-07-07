@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import { releases } from './mock';
-import ComponentsTable from './ComponentsTable';
+import ReleaseComponentsTable from './ReleaseComponentsTable';
 import Loader from '../../Loaders/index';
+import { useCirclesReleases } from '../hooks';
 
-const ReleasesTable = () => {
+type Props = {
+  circleId: string;
+};
+
+const CircleReleasesTable = ({ circleId }: Props) => {
   const [activeRow, setActiveRow] = useState('');
+  const { getCircleReleases, releases, loading } = useCirclesReleases();
 
   const expandRow = (id: string) => {
     if (id === activeRow) {
@@ -31,6 +36,10 @@ const ReleasesTable = () => {
       setActiveRow(id);
     }
   };
+
+  useEffect(() => {
+    getCircleReleases(circleId);
+  }, [circleId, getCircleReleases]);
 
   return (
     <>
@@ -48,11 +57,11 @@ const ReleasesTable = () => {
           <Text.h5 color="dark">Last editor</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {false ? (
+      {loading ? (
         <Loader.Releases />
       ) : (
         <>
-          {releases.map(release => (
+          {releases?.map(release => (
             <Styled.ReleaseRow key={release.id}>
               <Styled.TableRow onClick={() => expandRow(release.id)}>
                 <Styled.TableColumn>
@@ -70,7 +79,7 @@ const ReleasesTable = () => {
               </Styled.TableRow>
               {activeRow === release.id && (
                 <Styled.ReleasesWrapper>
-                  <ComponentsTable />
+                  <ReleaseComponentsTable components={release.components} />
                 </Styled.ReleasesWrapper>
               )}
             </Styled.ReleaseRow>
@@ -81,4 +90,4 @@ const ReleasesTable = () => {
   );
 };
 
-export default ReleasesTable;
+export default CircleReleasesTable;

@@ -17,10 +17,13 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import { components } from './mock';
-import Loader from '../../Loaders/index';
+import { ReleaseComponent } from '../interfaces';
 
-const ComponentsTable = () => {
+type Props = {
+  components: ReleaseComponent[];
+};
+
+const ReleaseComponentsTable = ({ components }: Props) => {
   return (
     <>
       <Styled.TableHead>
@@ -34,27 +37,21 @@ const ComponentsTable = () => {
           <Text.h5 color="dark">Version</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {false ? (
-        <Loader.Components />
-      ) : (
-        <>
-          {components.map(component => (
-            <Styled.ComponentsRow key={component.id}>
-              <Styled.TableColumn width={1}>
-                <Text.h5 color="light">{component.moduleName}</Text.h5>
-              </Styled.TableColumn>
-              <Styled.TableColumn width={1}>
-                <Text.h5 color="light">{component.componentName}</Text.h5>
-              </Styled.TableColumn>
-              <Styled.TableColumn width={1}>
-                <Text.h5 color="light">{component.version}</Text.h5>
-              </Styled.TableColumn>
-            </Styled.ComponentsRow>
-          ))}
-        </>
-      )}
+      {components.map(component => (
+        <Styled.ComponentsRow key={component.id}>
+          <Styled.TableColumn width={1}>
+            <Text.h5 color="light">{component.moduleName}</Text.h5>
+          </Styled.TableColumn>
+          <Styled.TableColumn width={1}>
+            <Text.h5 color="light">{component.componentName}</Text.h5>
+          </Styled.TableColumn>
+          <Styled.TableColumn width={1}>
+            <Text.h5 color="light">{component.version}</Text.h5>
+          </Styled.TableColumn>
+        </Styled.ComponentsRow>
+      ))}
     </>
   );
 };
 
-export default ComponentsTable;
+export default ReleaseComponentsTable;

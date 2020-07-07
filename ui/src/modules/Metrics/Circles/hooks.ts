@@ -15,13 +15,15 @@
  */
 
 import { useCallback } from 'react';
-import { findAllCirclesMetrics } from 'core/providers/metrics';
+import {
+  findAllCirclesMetrics,
+  findAllCirclesReleases
+} from 'core/providers/metrics';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
-import { CirclesMetricData } from './interfaces';
+import { CirclesMetricData, CircleRelease } from './interfaces';
 
 interface CirclesMetrics extends FetchProps {
   findAllCirclesData: Function;
-  // searchCircleRelease: Function;
   response: CirclesMetricData;
 }
 
@@ -38,6 +40,26 @@ export const useCirclesMetric = (): CirclesMetrics => {
   return {
     findAllCirclesData,
     response,
+    loading
+  };
+};
+
+export const useCirclesReleases = () => {
+  const [releasesData, getCircleData] = useFetch<CircleRelease[]>(
+    findAllCirclesReleases
+  );
+  const { response: releases, loading } = releasesData;
+
+  const getCircleReleases = useCallback(
+    (circleId: string) => {
+      getCircleData(circleId);
+    },
+    [getCircleData]
+  );
+
+  return {
+    getCircleReleases,
+    releases,
     loading
   };
 };
