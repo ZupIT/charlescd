@@ -90,7 +90,7 @@ export const useLogin = (): {
       try {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
-        getCircleId({ username: email });
+        await getCircleId({ username: email });
         getUserByEmail(email);
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
