@@ -105,8 +105,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         pageRequest: PageRequest
     ): Set<User>? {
         val parameters = mutableListOf<Any>()
-        parameters.add(workspaceId)
-        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement)
+        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement, workspaceId)
     }
 
     private fun findUserByEmail(email: String): Optional<User> {
@@ -144,7 +143,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         pageRequest: PageRequest
     ): Set<User>? {
         val parameters = mutableListOf<Any>()
-        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement)
+        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement, null)
     }
 
     private fun appendParametersAndRunQuery(
@@ -152,12 +151,14 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         parameters: MutableList<Any>,
         email: String?,
         pageRequest: PageRequest,
-        statement: String
+        statement: String,
+        workspaceId: String?
     ): Set<User>? {
         name?.let { parameters.add("%$it%") }
         email?.let { parameters.add("%$it%") }
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.offset())
+        workspaceId?.let { parameters.add(workspaceId) }
 
         return this.jdbcTemplate.query(
             statement,
@@ -200,6 +201,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
                                              OR workspaces.status = 'COMPLETE')
                  LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
         WHERE 1 = 1
+        ORDER BY users.name ASC
         """
     }
 
@@ -233,7 +235,8 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
                      LEFT JOIN workspaces ON workspaces_user_groups.workspace_id = workspaces.id
                      LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
             WHERE 1 = 1
-            AND workspaces.id = ?"""
+            AND workspaces.id = ?
+            ORDER BY users.name ASC"""
     }
 
     private fun createInnerQueryStatement(name: String?, email: String?): String {
