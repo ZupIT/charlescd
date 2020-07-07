@@ -24,7 +24,7 @@ const PROJECTION_TYPE = {
   EIGHT_HOUR: 'EIGHT_HOUR'
 };
 
-const CircleMetricsData = {
+const circleMetricsData = {
   period: {
     value: 1,
     label: 'h'
@@ -53,7 +53,7 @@ const CircleMetricsData = {
   ]
 };
 
-const CirclesMetrics = [
+const circlesMetrics = [
   {
     circleId: 'f52eda57-5607-4306-te33-477eg398cc2a',
     projectionType: PROJECTION_TYPE,
@@ -71,7 +71,7 @@ const CirclesMetrics = [
   }
 ];
 
-const DeployMetrics = () => ({
+const deployMetrics = () => ({
   successfulDeployments: 27,
   failedDeployments: 0,
   successfulDeploymentsAverageTime: 87,
@@ -181,7 +181,7 @@ const DeployMetrics = () => ({
   ]
 });
 
-const AllCirclesMetrics = {
+const allCirclesMetrics = {
   circleStats: {
     active: 12,
     inactive: 8
@@ -212,9 +212,94 @@ const AllCirclesMetrics = {
   ]
 };
 
+const allCircleReleases = [
+  {
+    id: 'dnsafjhf',
+    name: 'release-darwin-new-repos',
+    deployed: '16/03/2020 • 15:01:26',
+    undeployed: '16/03/2020 • 15:01:26',
+    lastEditor: 'Leandro Latini',
+    components: [
+      {
+        id: 'fgfdgjkii',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.1'
+      },
+      {
+        id: 'llllllllll',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.2'
+      },
+      {
+        id: '0000000000000',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.3'
+      }
+    ]
+  },
+  {
+    id: 'jfdhfuhfds',
+    name: 'release-darwin-new-test',
+    deployed: '16/03/2020 • 15:01:26',
+    undeployed: '16/03/2020 • 15:01:26',
+    lastEditor: 'Leandro Latini',
+    components: [
+      {
+        id: 'fgfdgjkii',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.1'
+      },
+      {
+        id: 'llllllllll',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.2'
+      },
+      {
+        id: '0000000000000',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.3'
+      }
+    ]
+  },
+  {
+    id: 'dnsafjhffdsfjdsbh',
+    name: 'release-darwin-new-gmfgoij',
+    deployed: '16/03/2020 • 15:01:26',
+    undeployed: '16/03/2020 • 15:01:26',
+    lastEditor: 'Leandro Latini',
+    components: [
+      {
+        id: 'fgfdgjkii',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.1'
+      },
+      {
+        id: 'llllllllll',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.2'
+      },
+      {
+        id: '0000000000000',
+        moduleName: 'ZupIT/darwin-ui',
+        componentName: 'component1',
+        version: 'v.1.2.3'
+      }
+    ]
+  }
+];
+
 export default {
-  CircleMetricsData,
-  CirclesMetrics,
-  DeployMetrics,
-  AllCirclesMetrics
+  circleMetricsData,
+  circlesMetrics,
+  deployMetrics,
+  allCirclesMetrics,
+  allCircleReleases
 };
