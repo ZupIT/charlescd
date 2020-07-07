@@ -44,6 +44,11 @@ const Input = styled(FormComponent.Input)`
   margin: 10px 0 20px;
 `;
 
+const ModuleInput = styled(FormComponent.Input)`
+  width: 150px;
+  margin: 0 0 20px;
+`;
+
 const Trash = styled(IconComponent)`
   visibility: hidden;
 `;
@@ -132,6 +137,7 @@ export default {
     Icon: Trash,
     Wrapper: moduleWrapper,
     Button: AddModule,
-    Info
+    Info,
+    Input: ModuleInput
   }
 };
