@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CommonStyled from '../styled';
-import ReleasesTable from './ReleasesTable';
+import CircleReleasesTable from './CircleReleasesTable';
 import { History } from '../interfaces';
 import Loader from '../../Loaders/index';
 
@@ -80,7 +80,7 @@ const HistoryComponent = ({ data, loading }: Props) => {
               </Styled.TableRow>
               {activeRow === circle.id && (
                 <Styled.ReleasesWrapper>
-                  <ReleasesTable />
+                  <CircleReleasesTable circleId={circle.id} />
                 </Styled.ReleasesWrapper>
               )}
             </Styled.CircleRow>

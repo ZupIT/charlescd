@@ -69,6 +69,17 @@ export const dark = {
   circles: {
     filter: COLOR_BLACK_MARLIN,
     active: COLOR_FREE_SPEECH_BLUE,
-    inactive: COLOR_MAYA_BLUE
+    inactive: COLOR_MAYA_BLUE,
+    history: {
+      circleRow: {
+        background: COLOR_BLACK_MARLIN
+      },
+      releaseRow: {
+        background: COLOR_PAYNES_GREY
+      },
+      componentRow: {
+        background: COLOR_BLACK_MARLIN
+      }
+    }
   }
 };

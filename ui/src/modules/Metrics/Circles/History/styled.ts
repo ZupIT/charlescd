@@ -43,18 +43,21 @@ const TableHead = styled.div`
 `;
 
 const CircleRow = styled.div`
-  background-color: #3a3a3c;
+  background-color: ${({ theme }) =>
+    theme.metrics.circles.history.circleRow.background};
   margin-bottom: 5px;
 `;
 
 const ReleaseRow = styled.div`
-  background-color: #48484a;
+  background-color: ${({ theme }) =>
+    theme.metrics.circles.history.releaseRow.background};
   margin-bottom: 5px;
 `;
 
 const ComponentsRow = styled.div`
   ${defaultTableRow}
-  background-color: #3A3A3C;
+  background-color: ${({ theme }) =>
+    theme.metrics.circles.history.componentRow.background};
 `;
 
 const ReleasesWrapper = styled.div`
