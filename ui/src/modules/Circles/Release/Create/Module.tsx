@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
+import debounce from 'lodash/debounce';
 import {
   formatModuleOptions,
   formatTagOptions,
@@ -37,14 +38,13 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
   const prefixName = `modules[${index}]`;
   const {
     getComponentTags,
     response: tags,
     loading: loadingTags
   } = useComponentTags();
-  const { errors, control, getValues } = useFormContext();
+  const { errors, register, control, getValues } = useFormContext();
 
   useEffect(() => {
     getAllModules();
@@ -55,12 +55,6 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
       setModuleOptions(formatModuleOptions(modules.content));
     }
   }, [modules]);
-
-  useEffect(() => {
-    if (tags) {
-      setTagOptions(formatTagOptions(tags));
-    }
-  }, [tags]);
 
   const updateComponents = (option: Option) => {
     setComponentOptions(formatComponentOptions(modules.content, option?.value));
@@ -73,9 +67,12 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const listVersions = (option: Option) => {
     const moduleId = getValues(`${prefixName}.module`);
     const componentId = option?.value;
-    getComponentTags(moduleId, componentId);
-    setTagOptions([]);
+    getComponentTags(moduleId, componentId, { name: 'release-darwin' });
   };
+
+  const onSearchTag = () => {
+    console.log('data', getValues());
+  }
 
   return (
     <Styled.Module.Wrapper>
@@ -112,13 +109,11 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         </Styled.Error>
       </Styled.SelectWrapper>
       <Styled.SelectWrapper>
-        <Styled.Select
+        <Styled.Module.Input
           name={`${prefixName}.version`}
-          label="Select a version"
-          isLoading={loadingTags}
-          control={control}
-          rules={{ required: true }}
-          options={tagOptions}
+          ref={register({ required: true })}
+          onChange={useCallback(debounce(onSearchTag, 500), [])}
+          label="Type a version"
         />
       </Styled.SelectWrapper>
     </Styled.Module.Wrapper>
