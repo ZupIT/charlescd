@@ -272,6 +272,9 @@ jobs:
       uses: peter-evans/create-pull-request@v2
       with:
         title: CI Update of charts
+        commit-message: |
+          auto generated PR
+          Signed-off-by: Charles CD Bot <charlescdbot@users.noreply.github.com>
 
     - name: Zup Settings
       run: |
