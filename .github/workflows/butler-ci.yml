@@ -30,22 +30,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
-    - name: Start docker-compose
-      run: docker-compose up -d
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: npm ci
       working-directory: ./butler
-
-    - name: Run test on docker-compose
-      run: docker-compose exec -T app npm ci && npm run test:all:cov
+    - run: npm run build --if-present
       working-directory: ./butler
-
-    - name: Run lint on docker-compose
-      run: docker-compose exec -T app npm run lint
+    - run: npm run test:cov
       env:
         CI: true
       working-directory: ./butler
-
+    - run: npm run lint
+      working-directory: ./butler
     - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
-        file: ./butler/coverage/lcov.info
+        file: ./butler/coverage/coverage-final.json
         flags: butler
