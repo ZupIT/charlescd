@@ -17,7 +17,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useRouter, getPath, redirectToLegacy } from '../routes';
 import { MemoryRouter } from 'react-router-dom';
-import { hostLegacyDevelopment, isDevelopmentLegacyHost } from '../development';
 
 const mockPush = jest.fn();
 const mockGo = jest.fn();
