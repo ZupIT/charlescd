@@ -42,14 +42,10 @@ type Cloudprovider struct {
 	generic.GenericProvider
 }
 
-func (cloudproviderManager *CloudproviderMain) NewCloudProvider(provider *Cloudprovider) CloudproviderUseCases {
-	if provider == nil {
-		return provider.newDefaultConfig()
-	}
-
+func (cloudproviderManager CloudproviderMain) NewCloudProvider(provider Cloudprovider) CloudproviderUseCases {
 	switch provider.Provider {
 	case GenericCloudProviderType:
-		genericProvider := &generic.GenericProvider{
+		genericProvider := generic.GenericProvider{
 			Host:              provider.Host,
 			CAData:            provider.CAData,
 			ClientCertificate: provider.ClientCertificate,
@@ -57,7 +53,7 @@ func (cloudproviderManager *CloudproviderMain) NewCloudProvider(provider *Cloudp
 		}
 		return generic.NewGenericProvider(genericProvider)
 	case EKSCloudProviderType:
-		eksProvider := &eks.EKSProvider{
+		eksProvider := eks.EKSProvider{
 			AWSID:          provider.AWSID,
 			AWSSecret:      provider.AWSSecret,
 			AWSRegion:      provider.AWSRegion,
@@ -69,7 +65,7 @@ func (cloudproviderManager *CloudproviderMain) NewCloudProvider(provider *Cloudp
 	}
 }
 
-func (provider *Cloudprovider) newDefaultConfig() CloudproviderUseCases {
+func (provider Cloudprovider) newDefaultConfig() CloudproviderUseCases {
 	if config := os.Getenv("KUBECONFIG"); config == OutOfClusterType {
 		return outofcluster.NewOutOfCluster()
 	}

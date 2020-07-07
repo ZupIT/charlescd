@@ -32,11 +32,11 @@ type GithubRepository struct {
 	Token string `json:"token"`
 }
 
-func NewGithubRepository(repository *GithubRepository) *GithubRepository {
+func NewGithubRepository(repository GithubRepository) GithubRepository {
 	return repository
 }
 
-func (githubRepository *GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
+func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	var responseMap map[string]interface{}
 	client := &http.Client{}
 	filesData := []string{}
@@ -78,7 +78,7 @@ func (githubRepository *GithubRepository) GetTemplateAndValueByName(name string)
 	return filesData[0], filesData[1], nil
 }
 
-func (githubRepository *GithubRepository) getDefaultFileNamesByName(name string) []string {
+func (githubRepository GithubRepository) getDefaultFileNamesByName(name string) []string {
 	return []string{
 		fmt.Sprintf("%s-darwin.tgz", name),
 		fmt.Sprintf("%s.yaml", name),

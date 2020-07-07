@@ -37,11 +37,11 @@ type HelmTemplate struct {
 	OverrideValues map[string]string `json:"overrideValues"`
 }
 
-func NewHelmTemplate(template *HelmTemplate) *HelmTemplate {
+func NewHelmTemplate(template HelmTemplate) HelmTemplate {
 	return template
 }
 
-func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent string) (map[string]interface{}, error) {
+func (helmTemplate HelmTemplate) GetManifests(templateContent, valueContent string) (map[string]interface{}, error) {
 	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, helmTemplate.OverrideValues)
 	if err != nil {
 
@@ -63,8 +63,8 @@ func (helmTemplate *HelmTemplate) GetManifests(templateContent, valueContent str
 	return encodedManifests, nil
 }
 
-func (helmTemplate *HelmTemplate) renderManifest(chart *chart.Chart, values chartutil.Values) (map[string]string, error) {
-	templateRender, err := engine.Render(chart, values)
+func (helmTemplate HelmTemplate) renderManifest(chart chart.Chart, values chartutil.Values) (map[string]string, error) {
+	templateRender, err := engine.Render(&chart, values)
 
 	if err != nil {
 		return nil, err
@@ -73,33 +73,33 @@ func (helmTemplate *HelmTemplate) renderManifest(chart *chart.Chart, values char
 	return templateRender, nil
 }
 
-func (helmTemplate *HelmTemplate) getHelmChartAndValues(templateContent, valueContent string, overrideValues map[string]string) (*chart.Chart, chartutil.Values, error) {
+func (helmTemplate HelmTemplate) getHelmChartAndValues(templateContent, valueContent string, overrideValues map[string]string) (chart.Chart, chartutil.Values, error) {
 
 	newChart, err := loader.LoadArchive(strings.NewReader(templateContent))
 	if err != nil {
-		return nil, nil, err
+		return chart.Chart{}, nil, err
 	}
 
 	values, err := chartutil.ReadValues([]byte(valueContent))
 	if err != nil {
-		return nil, nil, err
+		return chart.Chart{}, nil, err
 	}
 
 	renderedValues, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
 	if err != nil {
-		return nil, nil, err
+		return chart.Chart{}, nil, err
 	}
 
 	overridedValues, err := helmTemplate.overrideValues(renderedValues.AsMap(), overrideValues)
 	if err != nil {
-		return nil, nil, err
+		return chart.Chart{}, nil, err
 	}
 
-	return newChart, overridedValues, nil
+	return *newChart, overridedValues, nil
 
 }
 
-func (helmTemplate *HelmTemplate) overrideValues(
+func (helmTemplate HelmTemplate) overrideValues(
 	chartValues map[string]interface{}, overrideValues map[string]string,
 ) (map[string]interface{}, error) {
 	overridedChartValues := map[string]interface{}{}
@@ -122,7 +122,7 @@ func (helmTemplate *HelmTemplate) overrideValues(
 	return overridedChartValues, nil
 }
 
-func (helmTemplate *HelmTemplate) chartValueBytesToStructure(chartValueBytes []byte) (map[string]interface{}, error) {
+func (helmTemplate HelmTemplate) chartValueBytesToStructure(chartValueBytes []byte) (map[string]interface{}, error) {
 	var newChartValue map[string]interface{}
 	err := json.Unmarshal(chartValueBytes, &newChartValue)
 	if err != nil {
@@ -132,7 +132,7 @@ func (helmTemplate *HelmTemplate) chartValueBytesToStructure(chartValueBytes []b
 	return newChartValue, nil
 }
 
-func (helmTemplate *HelmTemplate) overrideValueInChartValueBytes(
+func (helmTemplate HelmTemplate) overrideValueInChartValueBytes(
 	chartValueBytes []byte, overrideValues map[string]string,
 ) ([]byte, error) {
 	newChartValueBytes := chartValueBytes
@@ -149,7 +149,7 @@ func (helmTemplate *HelmTemplate) overrideValueInChartValueBytes(
 	return newChartValueBytes, nil
 }
 
-func (helmTemplate *HelmTemplate) encodeManifests(manifests map[string]string) (map[string]interface{}, error) {
+func (helmTemplate HelmTemplate) encodeManifests(manifests map[string]string) (map[string]interface{}, error) {
 	encodedManifests := map[string]interface{}{}
 
 	for key, manifest := range manifests {

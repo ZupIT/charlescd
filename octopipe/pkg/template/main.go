@@ -19,7 +19,7 @@ package template
 import "octopipe/pkg/repository"
 
 type MainUseCases interface {
-	NewTemplate(template *Template) (UseCases, error)
+	NewTemplate(template Template) (UseCases, error)
 }
 
 type TemplateMain struct {
@@ -27,5 +27,5 @@ type TemplateMain struct {
 }
 
 func NewTemplateMain(repositoryMain repository.MainUseCases) MainUseCases {
-	return &TemplateMain{repositoryMain}
+	return TemplateMain{repositoryMain}
 }
