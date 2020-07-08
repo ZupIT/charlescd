@@ -124,42 +124,47 @@ func (deployment *Deployment) isFailedResourceController(resource *unstructured.
 	}
 
 	_, foundUnavailableReplicas, _ := unstructured.NestedInt64(resource.Object, "status", "unavailableReplicas")
-	if foundUnavailableReplicas {
-		return true
-	}
-
-	return false
+	return foundUnavailableReplicas
 }
 
 func (deployment *Deployment) isTerminating(resource *unstructured.Unstructured) bool {
 	_, foundFinalizers, _ := unstructured.NestedSlice(resource.Object, "metadata", "finalizers")
-	if foundFinalizers {
-		return true
-	}
-
-	return false
+	return foundFinalizers
 }
 
-func (deployment *Deployment) isRedeploy(resource *unstructured.Unstructured, resourceInterface dynamic.ResourceInterface) bool {
-	if deployment.isFailedResourceController(resource) {
-		err := deployment.undeploy()
-		if err != nil {
-			return false
-		}
-
-		return true
+func (deployment *Deployment) addWatcherToTerminatingResourceController(
+	resource *unstructured.Unstructured, resourceInterface dynamic.ResourceInterface,
+) (bool, error) {
+	if !deployment.isTerminating(resource) {
+		return false, nil
 	}
 
-	if deployment.isTerminating(resource) {
-		err := newTerminatingWatcher(resource, resourceInterface)
-		if err != nil {
-			return false
-		}
+	return true, newTerminatingWatcher(resource, resourceInterface)
+}
 
-		return true
+func (deployment Deployment) undeployResourceControllerFailed(resource *unstructured.Unstructured) (bool, error) {
+	if !deployment.isFailedResourceController(resource) {
+		return false, nil
 	}
 
-	return false
+	return true, deployment.undeploy()
+}
+
+func (deployment *Deployment) prepareForRedeploy(
+	resource *unstructured.Unstructured,
+	resourceInterface dynamic.ResourceInterface,
+) (bool, error) {
+	isFailedResourceController, err := deployment.undeployResourceControllerFailed(resource)
+	if err != nil {
+		return false, err
+	}
+
+	isTerminatingResourceController, err := deployment.addWatcherToTerminatingResourceController(resource, resourceInterface)
+	if err != nil {
+		return false, err
+	}
+
+	return isFailedResourceController || isTerminatingResourceController, nil
 }
 
 func (deployment *Deployment) deploy() error {
@@ -176,7 +181,12 @@ func (deployment *Deployment) deploy() error {
 		return deployment.getDeploymentError("Failed to get latest version of resource", err, manifest)
 	}
 
-	if deployment.isRedeploy(resource, resourceInterface) {
+	isRedeploy, err := deployment.prepareForRedeploy(resource, resourceInterface)
+	if err != nil {
+		return err
+	}
+
+	if isRedeploy {
 		return deployment.createResource(manifest, resourceInterface)
 	}
 
