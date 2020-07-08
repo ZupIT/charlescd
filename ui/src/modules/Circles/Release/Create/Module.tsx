@@ -21,8 +21,8 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import debounce from 'lodash/debounce';
 import {
   formatModuleOptions,
-  formatTagOptions,
-  formatComponentOptions
+  formatComponentOptions,
+  formatTagOptions
 } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
@@ -39,11 +39,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
   const prefixName = `modules[${index}]`;
-  const {
-    getComponentTags,
-    response: tags,
-    loading: loadingTags
-  } = useComponentTags();
+  const { getComponentTags, tags, status } = useComponentTags();
   const { errors, register, control, getValues } = useFormContext();
 
   useEffect(() => {
@@ -56,6 +52,12 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     }
   }, [modules]);
 
+  useEffect(() => {
+    if (status === 'resolved') {
+      console.log('response', tags);
+    }
+  }, [status, tags]);
+
   const updateComponents = (option: Option) => {
     setComponentOptions(formatComponentOptions(modules.content, option?.value));
   };
@@ -64,15 +66,13 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     return errors?.modules?.[index]?.[name]?.message;
   };
 
-  const listVersions = (option: Option) => {
-    const moduleId = getValues(`${prefixName}.module`);
-    const componentId = option?.value;
-    getComponentTags(moduleId, componentId, { name: 'release-darwin' });
-  };
-
   const onSearchTag = () => {
-    console.log('data', getValues());
-  }
+    const componentId = getValues(`${prefixName}.component`);
+    const moduleId = getValues(`${prefixName}.module`);
+    const name = getValues(`${prefixName}.version`);
+
+    getComponentTags(moduleId, componentId, { name });
+  };
 
   return (
     <Styled.Module.Wrapper>
@@ -100,7 +100,6 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           name={`${prefixName}.component`}
           label="Select a component"
           options={componentOptions}
-          onChange={listVersions}
           rules={{ required: true }}
           control={control}
         />
@@ -113,8 +112,11 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           name={`${prefixName}.version`}
           ref={register({ required: true })}
           onChange={useCallback(debounce(onSearchTag, 500), [])}
-          label="Type a version"
+          label="Version name"
         />
+        <Styled.Error color="error">
+          {getErrorMessage('component')}
+        </Styled.Error>
       </Styled.SelectWrapper>
     </Styled.Module.Wrapper>
   );
