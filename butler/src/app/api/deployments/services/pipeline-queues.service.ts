@@ -65,6 +65,7 @@ export class PipelineQueuesService {
       await this.queuedDeploymentsRepository.getNextQueuedDeployment(finishedComponentDeployment.componentId)
     const runningDeployment: QueuedDeploymentEntity | undefined =
       await this.queuedDeploymentsRepository.getOneByComponentIdRunning(finishedComponentDeployment.componentId)
+
     if (nextQueuedDeployment && !runningDeployment) {
       nextQueuedDeployment.type === QueuedPipelineTypesEnum.QueuedDeploymentEntity ?
         await this.triggerQueuedDeployment(nextQueuedDeployment) :
@@ -98,7 +99,7 @@ export class PipelineQueuesService {
 
     !deployment.circle ?
       await this.pipelineDeploymentsService.triggerIstioDefaultDeployment(componentDeployment, component, deployment, queuedIstioDeployment) :
-      await this.pipelineDeploymentsService.triggerIstioDeployment(componentDeployment, component, deployment, queuedIstioDeployment, deployment.circle)
+      await this.pipelineDeploymentsService.triggerIstioDeployment(componentDeployment, component, deployment, queuedIstioDeployment)
   }
 
   private async triggerQueuedDeployment(queuedDeployment: QueuedDeploymentEntity): Promise<void> {
