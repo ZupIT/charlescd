@@ -26,6 +26,7 @@ import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
 
         var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
 
-        if (response.isEmpty()) {
+        if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
             return Optional.empty();
         }
 

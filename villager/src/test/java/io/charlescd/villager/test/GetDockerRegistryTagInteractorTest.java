@@ -25,13 +25,20 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.impl.GetDockerRegistryTagInteractorImpl;
+import org.jboss.resteasy.core.Headers;
+import org.jboss.resteasy.core.ServerResponse;
+import org.jboss.resteasy.specimpl.BuiltResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -58,6 +65,7 @@ public class GetDockerRegistryTagInteractorTest {
         when(registryClient.getImage("name", "test")).then(invocationOnMock -> {
 
             var tagsResponse = new TagsResponse();
+            Annotation[] annotations = new Annotation[1];
 
             tagsResponse.setName("name");
             var tags = new ArrayList<String>();
@@ -65,7 +73,10 @@ public class GetDockerRegistryTagInteractorTest {
             tags.add("tag_2");
             tagsResponse.setTags(tags);
 
-            return Optional.of(tagsResponse);
+            var builtResponse = new BuiltResponse(200,new Headers<>(),tagsResponse,annotations);
+            var response = new ServerResponse(builtResponse);
+
+            return Optional.of(response);
 
         });
 
