@@ -33,7 +33,7 @@ const Circles = () => {
 
   return (
     <>
-      <Styled.Content>
+      <Styled.Content data-testid="metrics-circles">
         <Styled.MiniCard>
           {loading ? (
             <Loader.CircleCard />
