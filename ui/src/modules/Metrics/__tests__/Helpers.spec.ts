@@ -15,10 +15,18 @@
  */
 
 import { normalizeCircleParams } from '../helpers';
-import { periodFilterItems } from '../Deploys/constants';
+import { Option } from 'core/components/Form/Select/interfaces';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
-test('Normalize Circle Params for request', async () => {
-  const value = ["ONE_WEEK", "TWO_WEEKS", "ONE_MONTH", "THREE_MONTHS"];
+test('Normalize Circle Params for request with specific data', async () => {
+  const data = [{ label: 'Circle 1', value: '1' }, { label: 'Circle 2', value: '2' }, { label: 'Circle 3', value: '3' }] as Option[];
+  const value = ['1', '2', '3'];
 
-  expect(normalizeCircleParams(periodFilterItems)).toEqual(value);
+  expect(normalizeCircleParams(data)).toEqual(value);
+})
+
+test('Normalize Circle Params for request with all options', async () => {
+ const data = [allOption, {label: 'circle 1',value: '1'}] as Option[];
+
+  expect(normalizeCircleParams(data)).toEqual([]);
 })
