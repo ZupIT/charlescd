@@ -8,6 +8,7 @@ butler:
     port: "5432"
     user: charlescd_butler
     password: 3f2Yq8R4HhDCnefR
+    ssl: false
   replicaCount: 1
   image:
     name: zupcharles/charlescd-butler:0.2.13
