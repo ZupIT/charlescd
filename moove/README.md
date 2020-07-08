@@ -68,3 +68,4 @@ Please check our [Contributing Guide].
 [Circle Matcher]: https://github.com/ZupIT/charlescd/tree/master/circle-matcher
 [Contributing Guide]: https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md
 [Documentation]: https://docs.charlescd.io/
+
