@@ -26,6 +26,7 @@ export class FinishDeploymentDto {
   public readonly status: string
 
   @ApiProperty()
+  @Allow()
   @IsDefined()
   public readonly callbackType: CallbackTypeEnum
 
