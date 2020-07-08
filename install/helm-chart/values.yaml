@@ -117,6 +117,7 @@ circlematcher:
     host: charlescd-redis-master
     port: 6379
     password: hb2Fj9MGKjBkZ6zV
+    ssl: false
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
