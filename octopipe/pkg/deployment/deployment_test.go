@@ -283,9 +283,18 @@ func TestRedeployTerminatingResourceController(t *testing.T) {
 		DeployAction,
 		false,
 		"default",
-		toJSON(simpleManifestForUpdate),
+		toJSON(simpleManifest),
 		client,
 	)
+
+	unstructuredObj = &unstructured.Unstructured{
+		Object: toJSON(simpleManifest),
+	}
+
+	_, err = client.Resource(deploymentRes).Namespace("default").Update(context.TODO(), unstructuredObj, metav1.UpdateOptions{})
+	if err != nil {
+		t.Error(err)
+	}
 
 	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
