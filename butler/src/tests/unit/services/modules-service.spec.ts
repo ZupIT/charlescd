@@ -1,4 +1,4 @@
-import { DeploymentsRepositoryStub, ModulesRepositoryStub } from '../../stubs/repository'
+import {  ModulesRepositoryStub } from '../../stubs/repository'
 import { Repository } from 'typeorm'
 import { ModuleEntity } from '../../../app/api/modules/entity'
 import {  ModulesService } from '../../../app/api/deployments/services'
