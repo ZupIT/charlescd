@@ -278,10 +278,14 @@ jobs:
 
     - name: Zup Settings
       run: |
-        sed -i -E "s/(charles\.info\.example)/${{ secrets.HOST }}/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/(http:\/\/charles\.info\.example)/https:\/\/${{ secrets.HOST }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/(charlescd-postgresql)/${{ secrets.PG_HOST }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/(charlescd-postgresql)/${{ secrets.PG_HOST }}/" ./install/helm-chart/charts/keycloak/values.yaml &&
-        sed -i -E "/postgresql:/N;s/(postgresql:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml
+        sed -i -E "/postgresql:/N;s/(postgresql:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml &&
+        sed -i -E "/nginx:/N;s/(nginx:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/name: charlescd_(.*)/name: charlescd\1/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/user: charlescd_(.*)/user: charlesadmin/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/password: (.*)/password: firstpassword/" ./install/helm-chart/values.yaml
     - name: Deploy
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
