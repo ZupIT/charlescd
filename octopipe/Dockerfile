@@ -1,11 +1,9 @@
-FROM golang:1.13-alpine
+FROM golang:1.13-alpine as builder
 
 RUN apk add --no-cache git
 
-# Set the Current Working Directory inside the container
 WORKDIR /app/octopipe
 
-# We want to populate the module cache based on the go.{mod,sum} files.
 COPY ./go.mod .
 COPY ./go.sum .
 
@@ -13,12 +11,14 @@ RUN go mod download
 
 COPY . .
 
-# Build the Go app
 RUN go build -o ./out/octopipe cmd/*.go
 
+# -----------------------------------------------
 
-# This container exposes port 8080 to the outside world
+FROM alpine:3.12.0
+
+COPY --from=builder /app/octopipe/out/octopipe .
+
 EXPOSE 8080
 
-# Run the binary program produced by `go install`
-ENTRYPOINT ["./out/octopipe"]
+ENTRYPOINT ["./octopipe"]
