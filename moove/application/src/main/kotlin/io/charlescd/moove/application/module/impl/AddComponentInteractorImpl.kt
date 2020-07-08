@@ -36,9 +36,7 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
 
         val component = request.toDomain(module.id, workspaceId)
 
-        moduleService.addComponents(
-            module.copy(components = listOf(component))
-        )
+        moduleService.addComponents(module.copy(components = listOf(component)))
 
         return ComponentResponse.from(component)
     }
