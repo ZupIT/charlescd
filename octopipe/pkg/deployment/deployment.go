@@ -139,7 +139,11 @@ func (deployment *Deployment) addWatcherToTerminatingResourceController(
 		return false, nil
 	}
 
-	return true, newTerminatingWatcher(resource, resourceInterface)
+	if err := newTerminatingWatcher(resource, resourceInterface); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (deployment Deployment) undeployResourceControllerFailed(resource *unstructured.Unstructured) (bool, error) {
@@ -147,7 +151,11 @@ func (deployment Deployment) undeployResourceControllerFailed(resource *unstruct
 		return false, nil
 	}
 
-	return true, deployment.undeploy()
+	if err := deployment.undeploy(); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (deployment *Deployment) prepareForRedeploy(
@@ -210,11 +218,6 @@ func (deployment *Deployment) undeploy() error {
 
 	if err != nil {
 		return deployment.getDeploymentError("Failed to delete resource", err, manifest)
-	}
-
-	err = newTerminatingWatcher(manifest, resourceInterface)
-	if err != nil {
-		return err
 	}
 
 	return nil
