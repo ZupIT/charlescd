@@ -2,39 +2,27 @@ coverage:
   status:
     project:
       default:
-        target: auto
+        target: 47%
         threshold: 3%
-        flags:
+        flags: 
           - villager
           - circlematcher
+          - octopipe
           - moove
-          - ui
-      villager:
-        target: 35%
-        flags:
-          - villager
-      circlematcher:
-        target: 70%
-        flags:
-          - circlematcher
-      moove:
-        target: 50%
-        flags:
-          - moove
-      ui:
-        target: 35%
-        flags:
+          - butler
           - ui
     patch:
       default:
         target: 80%
         threshold: 3%
-        flags:
+        flags: 
           - villager
           - circlematcher
+          - octopipe
           - moove
+          - butler
           - ui
-
+      
 flags:
   villager:
     paths:
@@ -44,9 +32,17 @@ flags:
     paths:
       - circle-matcher/
     carryforward: true
+  octopipe:
+    paths:
+      - octopipe/
+    carryforward: true
   moove:
     paths:
       - moove/
+    carryforward: true
+  butler:
+    paths:
+      - butler/
     carryforward: true
   ui:
     paths:
