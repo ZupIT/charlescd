@@ -19,8 +19,9 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { FetchMock } from 'jest-fetch-mock';
 import { circleKey } from 'core/utils/circle';
 import { useCircleMatcher } from '../hook';
+import { CIRCLE_UNMATCHED } from '../constants';
 
-test('render react hook select', async () => {
+test('match a circle id', async () => {
   const id = '123';
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({
     circles: [{ id, name: 'circle' }]
@@ -31,4 +32,14 @@ test('render react hook select', async () => {
   await act(async () => current.getCircleId({ username: 'email@test.com' }));
 
   expect(document.cookie).toContain(`${circleKey}=${id}`);
+});
+
+test('should not match a circle id', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  const { result } = renderHook(() => useCircleMatcher());
+  const { current } = result;
+
+  await act(async () => current.getCircleId({ username: 'email@test.com' }));
+
+  expect(document.cookie).toContain(`${circleKey}=${CIRCLE_UNMATCHED}`);
 });
