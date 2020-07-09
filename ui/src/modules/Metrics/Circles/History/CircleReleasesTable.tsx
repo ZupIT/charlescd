@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import ReleaseComponentsTable from './ReleaseComponentsTable';
+import ReleaseRow from './ReleaseRow';
 import Loader from '../../Loaders/index';
 import { useCirclesReleases } from '../hooks';
 
@@ -26,16 +26,7 @@ type Props = {
 };
 
 const CircleReleasesTable = ({ circleId }: Props) => {
-  const [activeRow, setActiveRow] = useState('');
   const { getCircleReleases, releases, loading } = useCirclesReleases();
-
-  const expandRow = (id: string) => {
-    if (id === activeRow) {
-      setActiveRow('');
-    } else {
-      setActiveRow(id);
-    }
-  };
 
   useEffect(() => {
     getCircleReleases(circleId);
@@ -62,27 +53,7 @@ const CircleReleasesTable = ({ circleId }: Props) => {
       ) : (
         <>
           {releases?.map(release => (
-            <Styled.ReleaseRow key={release.id}>
-              <Styled.TableRow onClick={() => expandRow(release.id)}>
-                <Styled.TableColumn>
-                  <Text.h5 color="light">{release.name}</Text.h5>
-                </Styled.TableColumn>
-                <Styled.TableColumn>
-                  <Text.h5 color="light">{release.deployed}</Text.h5>
-                </Styled.TableColumn>
-                <Styled.TableColumn>
-                  <Text.h5 color="light">{release.undeployed}</Text.h5>
-                </Styled.TableColumn>
-                <Styled.TableColumn>
-                  <Text.h5 color="light">{release.lastEditor}</Text.h5>
-                </Styled.TableColumn>
-              </Styled.TableRow>
-              {activeRow === release.id && (
-                <Styled.ReleasesWrapper>
-                  <ReleaseComponentsTable components={release.components} />
-                </Styled.ReleasesWrapper>
-              )}
-            </Styled.ReleaseRow>
+            <ReleaseRow release={release} key={release.id} />
           ))}
         </>
       )}

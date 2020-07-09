@@ -14,46 +14,42 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import CircleRow from './CircleRow';
-import { History } from '../interfaces';
-import Loader from '../../Loaders/index';
+import { CircleRelease } from '../interfaces';
+import ReleaseComponentsTable from './ReleaseComponentsTable';
 
 type Props = {
-  data: History[];
-  loading: boolean;
+  release: CircleRelease;
 };
 
-const HistoryComponent = ({ data, loading }: Props) => {
+const CircleReleasesTable = ({ release }: Props) => {
+  const [activeRow, setActiveRow] = useState(false);
+
   return (
-    <Styled.Table>
-      <Styled.TableHead>
+    <Styled.ReleaseRow key={release.id}>
+      <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Status</Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn width={2}>
-          <Text.h5 color="dark">Circles</Text.h5>
+          <Text.h5 color="light">{release.name}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Last update</Text.h5>
+          <Text.h5 color="light">{release.deployed}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Life time</Text.h5>
+          <Text.h5 color="light">{release.undeployed}</Text.h5>
         </Styled.TableColumn>
-      </Styled.TableHead>
-      {loading ? (
-        <Loader.History />
-      ) : (
-        <>
-          {data?.map(circle => (
-            <CircleRow circle={circle} key={circle.id} />
-          ))}
-        </>
+        <Styled.TableColumn>
+          <Text.h5 color="light">{release.lastEditor}</Text.h5>
+        </Styled.TableColumn>
+      </Styled.TableRow>
+      {activeRow && (
+        <Styled.ReleasesWrapper>
+          <ReleaseComponentsTable components={release.components} />
+        </Styled.ReleasesWrapper>
       )}
-    </Styled.Table>
+    </Styled.ReleaseRow>
   );
 };
 
-export default HistoryComponent;
+export default CircleReleasesTable;
