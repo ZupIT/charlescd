@@ -32,7 +32,7 @@ const NotFound404 = () => {
         icon="error-403"
       >
         <Button.Rounded
-          name="workspace"
+          name="error404"
           color="dark"
           onClick={() => router.push(routes.workspaces)}
         >
