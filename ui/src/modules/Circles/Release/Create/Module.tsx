@@ -19,6 +19,7 @@ import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
@@ -34,6 +35,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
+  const [isEmptyTag, setIsEmptyTag] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTags, tags, status } = useComponentTags();
   const { errors, register, control, getValues, setValue } = useFormContext();
@@ -52,6 +54,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     if (status === 'resolved') {
       const [tag] = tags;
       setValue(`${prefixName}.tag`, tag?.artifact);
+      setIsEmptyTag(isEmpty(tag?.artifact));
     }
   }, [status, tags, setValue, prefixName]);
 
@@ -116,9 +119,14 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           ref={register({ required: true })}
           onChange={useCallback(debounce(onSearchTag, 300), [])}
           isLoading={status === 'pending'}
+          isError={isEmptyTag}
           label="Version name"
         />
-        <Styled.Error color="error">{getErrorMessage('tag')}</Styled.Error>
+        {isEmptyTag && (
+          <Styled.Error color="error">
+            This version is not in the configured registry.
+          </Styled.Error>
+        )}
       </Styled.SelectWrapper>
     </Styled.Module.Wrapper>
   );

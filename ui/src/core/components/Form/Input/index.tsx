@@ -42,6 +42,7 @@ export interface Props extends InputEvents {
   placeholder?: string;
   disabled?: boolean;
   isLoading?: boolean;
+  isError?: boolean;
 }
 
 const Input = React.forwardRef(
@@ -57,6 +58,7 @@ const Input = React.forwardRef(
       onChange,
       maxLength,
       isLoading,
+      isError,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -81,7 +83,7 @@ const Input = React.forwardRef(
     };
 
     return (
-      <Styled.Wrapper type={type} className={className}>
+      <Styled.Wrapper type={type} className={className} isError={isError}>
         <Styled.Input
           ref={inputRef}
           type={type}

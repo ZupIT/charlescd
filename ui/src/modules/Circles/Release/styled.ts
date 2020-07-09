@@ -85,6 +85,7 @@ const moduleWrapper = styled.div`
 const Select = styled(FormComponent.Select)``;
 
 const SelectWrapper = styled.div`
+  position: relative;
   width: 150px;
 `;
 
@@ -94,7 +95,8 @@ const SearchWrapper = styled.div`
 `;
 
 const Error = styled(Text.h6)`
-  margin-top: 5px;
+  position: absolute;
+  top: 47px;
 `;
 
 const Info = styled(Text.h5)`
