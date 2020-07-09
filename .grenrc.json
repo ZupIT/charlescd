@@ -1,0 +1,9 @@
+{
+    "dataSource": "prs",
+    "prefix": "",
+    "onlyMilestones": false,
+    "changelogFilename": "CHANGELOG.md",
+    "template": {
+        "issue": "- [{{text}}]({{url}}) {{name}} {{labels}}"
+    }
+}

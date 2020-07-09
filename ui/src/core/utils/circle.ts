@@ -17,11 +17,12 @@
 import { remove, load, save } from 'react-cookies';
 import { getCookieOptions } from './domain';
 
-const circleKey = 'x-circle-id';
+export const circleKey = 'x-circle-id';
 
 export const getCircleId = () => load(circleKey);
 
 export const clearCircleId = () => remove(circleKey, getCookieOptions());
 
-export const saveCircleId = (value: string) =>
+export const saveCircleId = (value: string) => {
   save(circleKey, value, getCookieOptions());
+};
