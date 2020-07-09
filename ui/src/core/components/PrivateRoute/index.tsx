@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { isRoot } from 'core/utils/auth';
+import { useWorkspace } from 'modules/Settings/hooks';
+import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
 
 export interface Props extends RouteProps {
@@ -29,7 +31,15 @@ const PrivateRoute = ({
   allowedRoles,
   ...rest
 }: Props) => {
-  const isAuthorized = isRoot() || isAllowed(allowedRoles);
+  const workspaceId = getWorkspaceId();
+  const [workspace, loadWorkspace, , ,] = useWorkspace();
+
+  useEffect(() => {
+    loadWorkspace(workspaceId);
+  }, [workspaceId, loadWorkspace]);
+
+  const isAuthorized =
+    isRoot() || isAllowed(allowedRoles) || workspace?.status === 'COMPLETE';
 
   return (
     <Route
