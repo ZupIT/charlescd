@@ -23,33 +23,33 @@ import { IReadHealthcheckStatus } from '../../../app/api/healthcheck/interfaces'
 
 describe('HealthcheckController', () => {
 
-    let healthcheckController: HealthcheckController
-    let healthcheckService: HealthcheckService
+  let healthcheckController: HealthcheckController
+  let healthcheckService: HealthcheckService
 
-    beforeEach(async () => {
+  beforeEach(async() => {
 
-        const module = await Test.createTestingModule({
-            controllers: [
-                HealthcheckController
-            ],
-            providers: [
-                {
-                    provide: HealthcheckService,
-                    useClass: HealthcheckServiceStub
-                }
-            ]
-        }).compile()
+    const module = await Test.createTestingModule({
+      controllers: [
+        HealthcheckController
+      ],
+      providers: [
+        {
+          provide: HealthcheckService,
+          useClass: HealthcheckServiceStub
+        }
+      ]
+    }).compile()
 
-        healthcheckService = module.get<HealthcheckService>(HealthcheckService)
-        healthcheckController = module.get<HealthcheckController>(HealthcheckController)
+    healthcheckService = module.get<HealthcheckService>(HealthcheckService)
+    healthcheckController = module.get<HealthcheckController>(HealthcheckController)
+  })
+
+  describe('getHealthcheck', () => {
+    it('should return the correct healthcheck status', async() => {
+      const result: IReadHealthcheckStatus = { status: HealthcheckStatusEnum.OK }
+      jest.spyOn(healthcheckService, 'getHealthcheckStatus')
+        .mockImplementation(() => ({ status: HealthcheckStatusEnum.OK }))
+      expect(await healthcheckController.getHealthcheck()).toEqual(result)
     })
-
-    describe('getHealthcheck', () => {
-        it('should return the correct healthcheck status', async () => {
-            const result: IReadHealthcheckStatus = { status: HealthcheckStatusEnum.OK }
-            jest.spyOn(healthcheckService, 'getHealthcheckStatus')
-                .mockImplementation(() => ({ status: HealthcheckStatusEnum.OK }))
-            expect(await healthcheckController.getHealthcheck()).toEqual(result)
-        })
-    })
+  })
 })
