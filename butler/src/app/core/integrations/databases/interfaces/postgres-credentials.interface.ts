@@ -25,4 +25,6 @@ export interface IPostgresCredentials {
   password: string
 
   database: string
+
+  ssl: boolean
 }
