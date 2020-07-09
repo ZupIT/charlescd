@@ -21,7 +21,7 @@ import { QueuedDeploymentsConstraints } from '../../../core/integrations/databas
 import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
-import { CreateCircleDeploymentRequestDto, ReadDeploymentDto } from '../dto'
+import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../dto'
 import { CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, QueuedDeploymentEntity, QueuedIstioDeploymentEntity } from '../entity'
 import { QueuedPipelineStatusEnum } from '../enums'
 import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../repository'
@@ -51,11 +51,10 @@ export class CreateCircleDeploymentRequestUsecase {
         private readonly modulesService: ModulesService
   ) { }
 
-  public async execute(createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+  public async execute(createCircleDeploymentRequestDto: CreateDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
     const modules: ModuleEntity[] = createCircleDeploymentRequestDto.modules.map(module => module.toModuleEntity())
     await this.modulesService.createModules(modules)
-
-    this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT', createCircleDeploymentRequestDto)
     const deployment: DeploymentEntity = await this.saveDeploymentEntity(createCircleDeploymentRequestDto, circleId)
     if (!deployment.circle) {
       this.consoleLoggerService.error('ERROR:DEPLOYMENT_DOES_NOT_HAVE_CIRCLE', deployment)
@@ -73,10 +72,9 @@ export class CreateCircleDeploymentRequestUsecase {
   }
 
   private async saveDeploymentEntity(
-    createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto,
+    createCircleDeploymentRequestDto: CreateDeploymentRequestDto,
     circleId: string
   ): Promise<DeploymentEntity> {
-
     try {
       return await this.deploymentsRepository.save(createCircleDeploymentRequestDto.toEntity(circleId))
     } catch (error) {
@@ -84,7 +82,6 @@ export class CreateCircleDeploymentRequestUsecase {
       throw new InternalServerErrorException('Could not save deployment')
     }
   }
-
   private async scheduleComponentDeployments(deployment: DeploymentEntity, circle: CircleDeploymentEntity): Promise<void> {
     const componentDeploymentsIds: string[] = deployment.getComponentDeploymentsIds()
     await Promise.all(
