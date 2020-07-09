@@ -68,7 +68,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     await fixtureUtilsService.loadDatabase()
   })
 
-  it('/POST deployments/circle should create deployment, module deployment and component deployment entities', async() => {
+  it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -101,7 +101,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
 
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
@@ -120,7 +120,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       circle: createDeploymentRequest.circle,
       defaultCircle: false,
       status: DeploymentStatusEnum.CREATED,
-      circleId: '12345',
       createdAt: expect.anything(),
       finishedAt: null,
       modules: [{
@@ -153,7 +152,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it('/POST deployments/circle should fail when deployment already exists', done => {
+  it('/POST /deployments in circle should fail when deployment already exists', done => {
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -187,13 +186,13 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     return request(app.getHttpServer())
-      .post('/deployments/circle')
+      .post('/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
       .expect(400, done)
   })
 
-  it('/POST deployments/circle should enqueue RUNNING component deployments correctly', async() => {
+  it('/POST deployments in circle should enqueue RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -227,7 +226,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
     const componentDeployments = responseData.modulesDeployments[0].componentsDeployments
 
     const queuedDeployment1 = await queuedDeploymentsRepository.findOne({ componentDeploymentId: componentDeployments[0].id })
@@ -254,7 +253,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it('/POST deployments/circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
+  it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -300,7 +299,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
     const componentDeployments1 = responseData.modulesDeployments[0].componentsDeployments
     const componentDeployments2 = responseData.modulesDeployments[1].componentsDeployments
 
@@ -337,7 +336,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
-  it('/POST deployments/circle should correctly update component pipeline options', async() => {
+  it('/POST /deployments in circle should correctly update component pipeline options', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -383,7 +382,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
     const componentDeployments1 = responseData.modulesDeployments[0].componentsDeployments
     const componentDeployments2 = responseData.modulesDeployments[1].componentsDeployments
 
@@ -416,7 +415,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
-  it('/POST deployments/circle should call octopipe for each RUNNING component deployment', async() => {
+  it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -462,7 +461,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
 
     const httpSpy = jest.spyOn(httpService, 'post')
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).set('x-circle-id', '12345')
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
 
     expect(httpSpy).toHaveBeenCalledTimes(2)
 
@@ -478,7 +478,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url',
@@ -507,7 +507,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         virtualService: {},
         destinationRules: {}
       },
-      unusedVersions: [],
+      unusedVersions: [{}],
       versions: [
         {
           versionUrl: 'image-url2',
@@ -525,7 +525,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
-  it('/POST  when a module deployment fails another module QUEUED should not be updated too ', async() => {
+  it('/POST /deployments in circle should handle deployment failure ', async() => {
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -576,7 +576,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500).set('x-circle-id', '123456')
+
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
@@ -626,7 +627,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       }
     }
 
-    await request(app.getHttpServer()).post('/deployments/circle').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
+
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
@@ -635,6 +637,52 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].components[0].status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
+  })
+
+  it('/POST deployments/circle with repeated components should return unprocessable entity status', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: 'c41f029d-186c-4097-ad43-1b344b2e8041',
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'f4c4bcbe-58a9-41cc-ad8b-7177121905de',
+              componentName: 'component-name2',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            },
+            {
+              componentId: 'f4c4bcbe-58a9-41cc-ad8b-7177121905de',
+              componentName: 'component-name2',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+    const response  = await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
+    const responseObject = JSON.parse(response.text)
+    expect(responseObject.statusCode).toEqual(422)
+    expect(responseObject.message).toEqual('Deployment should not have repeated components')
+
   })
 
   afterAll(async() => {
