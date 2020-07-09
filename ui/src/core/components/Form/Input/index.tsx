@@ -83,7 +83,11 @@ const Input = React.forwardRef(
     };
 
     return (
-      <Styled.Wrapper type={type} className={className} isError={isError}>
+      <Styled.Wrapper
+        type={type}
+        className={className}
+        data-testid={`input-wrapper-${name}`}
+      >
         <Styled.Input
           ref={inputRef}
           type={type}
@@ -96,11 +100,13 @@ const Input = React.forwardRef(
           onClick={() => setIsFocused(true)}
           onBlur={handleFocused}
           disabled={disabled}
+          isError={isError}
           {...rest}
         />
         {label && (
           <Styled.Label
             isFocused={isFocused}
+            isError={isError}
             onClick={() => {
               inputRef.current.focus();
               setIsFocused(true);
