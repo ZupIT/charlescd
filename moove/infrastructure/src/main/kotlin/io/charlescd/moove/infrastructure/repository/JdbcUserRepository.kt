@@ -23,9 +23,9 @@ import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserExtractor
+import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val userExtractor: UserExtractor) :
