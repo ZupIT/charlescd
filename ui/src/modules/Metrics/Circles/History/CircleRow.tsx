@@ -14,46 +14,45 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import CircleRow from './CircleRow';
+import CommonStyled from '../styled';
+import CircleReleasesTable from './CircleReleasesTable';
 import { History } from '../interfaces';
-import Loader from '../../Loaders/index';
 
 type Props = {
-  data: History[];
-  loading: boolean;
+  circle: History;
 };
 
-const HistoryComponent = ({ data, loading }: Props) => {
+const CircleRow = ({ circle }: Props) => {
+  const [activeRow, setActiveRow] = useState(false);
+
   return (
-    <Styled.Table>
-      <Styled.TableHead>
+    <Styled.CircleRow>
+      <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Status</Text.h5>
+          <Text.h5 color="light">
+            <CommonStyled.Dot active={circle.circleStatus === 'active'} />
+          </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn width={2}>
-          <Text.h5 color="dark">Circles</Text.h5>
+          <Text.h5 color="light">{circle.name}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Last update</Text.h5>
+          <Text.h5 color="light">{circle.lastUpdate}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Life time</Text.h5>
+          <Text.h5 color="light">{circle.lifeTime}</Text.h5>
         </Styled.TableColumn>
-      </Styled.TableHead>
-      {loading ? (
-        <Loader.History />
-      ) : (
-        <>
-          {data?.map(circle => (
-            <CircleRow circle={circle} key={circle.id} />
-          ))}
-        </>
+      </Styled.TableRow>
+      {activeRow && (
+        <Styled.ReleasesWrapper>
+          <CircleReleasesTable circleId={circle.id} />
+        </Styled.ReleasesWrapper>
       )}
-    </Styled.Table>
+    </Styled.CircleRow>
   );
 };
 
-export default HistoryComponent;
+export default CircleRow;
