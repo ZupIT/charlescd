@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
@@ -28,60 +27,23 @@ import {
   CreateCircleDeploymentRequestUsecaseStub,
   CreateUndeploymentRequestUsecaseStub
 } from '../../stubs/use-cases'
-import {
-  ComponentsRepositoryStub,
-  DeploymentsRepositoryStub,
-  ModulesRepositoryStub
-} from '../../stubs/repository'
 import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
+
+
 
 describe('DeploymentsController', () => {
 
   let deploymentsController: DeploymentsController
   let deploymentsService: DeploymentsService
-  let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
+  let createCircleDeploymentUseCase: CreateCircleDeploymentRequestUsecase
+  let createDefaultDeploymentUseCase: CreateDefaultDeploymentRequestUsecase
 
   beforeEach(async() => {
-
-    const module = await Test.createTestingModule({
-      controllers: [
-        DeploymentsController
-      ],
-      providers: [
-        {
-          provide: DeploymentsService,
-          useClass: DeploymentsServiceStub
-        },
-        {
-          provide: CreateUndeploymentRequestUsecase,
-          useClass: CreateUndeploymentRequestUsecaseStub
-        },
-        {
-          provide: CreateCircleDeploymentRequestUsecase,
-          useClass: CreateCircleDeploymentRequestUsecaseStub
-        },
-        {
-          provide: CreateDefaultDeploymentRequestUsecase,
-          useClass: CreateCircleDeploymentRequestUsecaseStub
-        },
-        {
-          provide: 'DeploymentEntityRepository',
-          useClass: DeploymentsRepositoryStub
-        },
-        {
-          provide: 'ModuleEntityRepository',
-          useClass: ModulesRepositoryStub
-        },
-        {
-          provide: 'ComponentEntityRepository',
-          useClass: ComponentsRepositoryStub
-        }
-      ]
-    }).compile()
-
-    deploymentsService = module.get<DeploymentsService>(DeploymentsService)
-    deploymentsController = module.get<DeploymentsController>(DeploymentsController)
-    createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
+    deploymentsService = new DeploymentsServiceStub() as DeploymentsService
+    const undeploymentUseCase = new CreateUndeploymentRequestUsecaseStub() as CreateUndeploymentRequestUsecase
+    createCircleDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateCircleDeploymentRequestUsecase
+    createDefaultDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateDefaultDeploymentRequestUsecase
+    deploymentsController = new DeploymentsController(deploymentsService, undeploymentUseCase, createCircleDeploymentUseCase, createDefaultDeploymentUseCase)
   })
 
   describe('getDeployments', () => {
@@ -113,7 +75,7 @@ describe('DeploymentsController', () => {
         'callbackurl',
         null,
         'cd-id')
-      jest.spyOn(createDefaultDeploymentRequestUsecase, 'execute').mockImplementation(() => Promise.resolve(readUndeploymentDto))
+      jest.spyOn(createDefaultDeploymentUseCase, 'execute').mockImplementation(() => Promise.resolve(readUndeploymentDto))
       expect(await deploymentsController.createDeployment(createUndeploymentDto, 'circle-id')).toBe(readUndeploymentDto)
     })
   })
