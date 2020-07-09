@@ -29,7 +29,7 @@ import (
 )
 
 func main() {
-	// _ = pipeline.NewPipeline()
+
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}

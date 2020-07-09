@@ -17,7 +17,7 @@
 package pipeline
 
 type MainUseCases interface {
-	NewPipeline() UseCases
+	NewPipeline() Pipeline
 }
 
 type PipelineMain struct{}
