@@ -22,17 +22,18 @@ test('render ButtonIconRounded default component', async () => {
 	const click = jest.fn();
 	const props = {
 		name: 'add',
+		icon: 'add',
 		children: 'button'
 	};
 	const { getByTestId } = render(
-		<ButtonIconRounded onClick={click} name={props.name}>
+		<ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
 			{props.children}
 		</ButtonIconRounded>
 	);
 
 	const Button = getByTestId(`button-iconRounded-${props.name}`);
-
-	expect(Button).toBeInTheDocument();
+	const Icon = getByTestId(`icon-${props.name}`);
+	expect(Button && Icon).toBeInTheDocument();
 	fireEvent.click(Button);
 	wait(() => expect(click).toBeCalled());
 });
