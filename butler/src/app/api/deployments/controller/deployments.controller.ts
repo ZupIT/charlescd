@@ -16,7 +16,8 @@
 
 import { Body, Controller, Get, Headers, Param, Post, UsePipes } from '@nestjs/common'
 import {
-  CreateCircleDeploymentRequestDto, CreateDefaultDeploymentRequestDto, ReadDeploymentDto
+  CreateDeploymentRequestDto,
+  ReadDeploymentDto
 } from '../dto'
 import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
