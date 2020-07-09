@@ -140,51 +140,6 @@ const expectedTotalPipeline = {
       type: 'deployManifest'
     },
     {
-      account: 'account',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'app-name'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'app-name-v2'
-            ]
-          }
-        ]
-      },
-      location: 'app-namespace',
-      mode: 'label',
-      name: 'Delete Deployments',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true,
-        gracePeriodSeconds: null
-      },
-      refId: '3',
-      requisiteStageRefIds: [
-        '2'
-      ],
-      stageEnabled: {
-        expression: '${ #stage(\'Deploy v1\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -194,11 +149,11 @@ const expectedTotalPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Delete Deployments\' ).status.toString()}'
+        status: '${#stage( \'Deploy v1\' ).status.toString()}'
       },
-      refId: '4',
+      refId: '3',
       requisiteStageRefIds: [
-        '3'
+        '2'
       ],
       statusUrlResolution: 'getMethod',
       type: 'webhook',
