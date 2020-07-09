@@ -21,39 +21,39 @@ import { UndeploymentStatusEnum } from '../enums'
 @EntityRepository(ComponentUndeploymentEntity)
 export class ComponentUndeploymentsRepository extends Repository<ComponentUndeploymentEntity> {
 
-    public async getOneWithRelations(
-        componentUndeploymentId: string
-    ): Promise<ComponentUndeploymentEntity> {
+  public async getOneWithRelations(
+    componentUndeploymentId: string
+  ): Promise<ComponentUndeploymentEntity> {
 
-        return this.findOneOrFail({
-            where: { id: componentUndeploymentId },
-            relations: [
-                'moduleUndeployment',
-                'moduleUndeployment.undeployment',
-                'moduleUndeployment.undeployment.deployment'
-            ]
-        })
-    }
+    return this.findOneOrFail({
+      where: { id: componentUndeploymentId },
+      relations: [
+        'moduleUndeployment',
+        'moduleUndeployment.undeployment',
+        'moduleUndeployment.undeployment.deployment'
+      ]
+    })
+  }
 
-    public async getOneWithAllRelations(
-      componentUndeploymentId: string
-    ): Promise<ComponentUndeploymentEntity> {
+  public async getOneWithAllRelations(
+    componentUndeploymentId: string
+  ): Promise<ComponentUndeploymentEntity> {
 
-        return this.findOneOrFail({
-            where: { id: componentUndeploymentId },
-            relations: [
-                'moduleUndeployment',
-                'moduleUndeployment.undeployment',
-                'moduleUndeployment.undeployment.deployment',
-                'componentDeployment'
-            ]
-        })
-    }
+    return this.findOneOrFail({
+      where: { id: componentUndeploymentId },
+      relations: [
+        'moduleUndeployment',
+        'moduleUndeployment.undeployment',
+        'moduleUndeployment.undeployment.deployment',
+        'componentDeployment'
+      ]
+    })
+  }
 
-    public async updateStatus(
-      componentUndeploymentId: string,
-      status: UndeploymentStatusEnum
-    ): Promise<void> {
-      await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
-    }
+  public async updateStatus(
+    componentUndeploymentId: string,
+    status: UndeploymentStatusEnum
+  ): Promise<void> {
+    await this.update(componentUndeploymentId, { status, finishedAt: new Date() })
+  }
 }

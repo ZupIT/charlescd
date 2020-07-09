@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router';
 import useQueryStrings from 'core/utils/query';
 import Text from 'core/components/Text';
@@ -47,4 +47,4 @@ const MenuItem = ({ id, name }: Props) => {
   );
 };
 
-export default memo(MenuItem);
+export default MenuItem;

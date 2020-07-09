@@ -2,6 +2,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const os = require('os');
+const { ENVIRONMENT } = process.env;
 
 const deleteFile = path => {
   fs.unlinkSync(path);
@@ -59,7 +60,7 @@ const readFile = (path, confPath) => {
 const sourceFile = () => {
   const endOfLine = os.EOL;
   if (ENVIRONMENT) {
-    const lines = fs.readFileSync(`./environments/${ENVIRONMENT}`);
+    const lines = fs.readFileSync(`.env.${ENVIRONMENT}`);
     const variables = lines.toString().split(endOfLine);
     return variables;
   }
@@ -79,7 +80,6 @@ const envPath = './.env';
 const configPath = createConfigPath(args);
 
 fileExist(configPath);
-const { ENVIRONMENT } = process.env;
 
 if (ENVIRONMENT) {
   const variables = sourceFile();

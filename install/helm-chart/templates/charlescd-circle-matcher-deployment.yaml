@@ -54,8 +54,10 @@ spec:
               value: "{{ .Values.circlematcher.redis.port }}"
             - name: SPRING_REDIS_PASSWORD
               value: {{ .Values.circlematcher.redis.password }}
+            - name: SPRING_REDIS_SSL
+              value: "{{ .Values.circlematcher.redis.ssl }}"
             - name: ALLOWED_ORIGINS
-              value: {{ .Values.circlematcher.frontHost }}
+              value: {{ .Values.circlematcher.allowedOriginHost }}
           resources:
 {{ toYaml .Values.circlematcher.resources | indent 12 }}
     {{- with .Values.circlematcher.nodeSelector }}
