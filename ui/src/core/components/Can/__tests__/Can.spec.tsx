@@ -15,21 +15,26 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Can from '..';
+import Dropdown from 'core/components/Dropdown';
 
 test('renders ContentIcon component with default properties', async () => {
   const props = {
-    key: 'can-test',
-    children: <p>test</p>,
-    isdisabled: false
+    children: (
+      <Dropdown.Item
+        icon="edit"
+        name="Edit segments"
+        onClick={() => jest.fn()}
+      />
+    )
   };
 
-  const { queryByText, debug } = render(
-    <Can key={props.key} I="read" a="deploy" passThrough isDisabled={props.isdisabled}>
+  const { getByTestId } = render(
+    <Can I="write" a="circles" passThrough>
       {props.children}
     </Can>
   );
-  const component = queryByText('test');
-  expect(component).toBeInTheDocument();
+  const buttoDropdown = getByTestId('icon-edit');
+  expect(buttoDropdown).toBeInTheDocument();
 });
