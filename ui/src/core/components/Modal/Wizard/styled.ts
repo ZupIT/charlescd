@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import styled from "styled-components";
-import Text from "core/components/Text";
-import ButtonComponent from "core/components/Button/Rounded";
-import IconComponent from "core/components/Icon";
+import styled from 'styled-components';
+import Text from 'core/components/Text';
+import ButtonComponent from 'core/components/Button/Rounded';
+import IconComponent from 'core/components/Icon';
 
 const Icon = styled(IconComponent)``;
 
@@ -26,8 +26,8 @@ interface WrapperProps {
   className?: string;
 }
 
-const Wrapper = styled("div")<WrapperProps>`
-  display: ${({ isOpen }: WrapperProps) => (!isOpen ? "none" : "flex")};
+const Wrapper = styled('div')<WrapperProps>`
+  display: ${({ isOpen }: WrapperProps) => (!isOpen ? 'none' : 'flex')};
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
   align-items: center;
   position: fixed;
@@ -131,15 +131,15 @@ const ImageBackground = styled.div<ImageBackgroundProps>`
 `;
 
 interface ItemProps {
-  status: "read" | "unread" | "active";
+  status: 'read' | 'unread' | 'active';
 }
 
 const ItemText = styled(Text.h4)<ItemProps>`
   color: ${({ status, theme }) =>
-    status === "unread"
+    status === 'unread'
       ? theme.modal.wizard.text.inactive
       : theme.modal.wizard.text.active};
-  margin-left: ${({ status }) => (status === "active" ? "9px" : "0")};
+  margin-left: ${({ status }) => (status === 'active' ? '9px' : '0')};
 
   :hover {
     transform: scale(1.05);
@@ -155,7 +155,7 @@ const Item = styled.div`
 `;
 
 const ActiveItem = styled.div<ItemProps>`
-  display: ${({ status }) => (status === "active" ? "flex" : "none")};
+  display: ${({ status }) => (status === 'active' ? 'flex' : 'none')};
   width: 1px;
   height: 15px;
   box-sizing: border-box;

@@ -34,7 +34,7 @@ const Wizard = () => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [localStorageValue, setLocalStorageValue] = useState("");
+  const [localStorageValue, setLocalStorageValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -46,13 +46,13 @@ const Wizard = () => {
   }, [indexOfItemSelect]);
 
   useEffect(() => {
-    setLocalStorageValue(localStorage.getItem("wizard"));
+    setLocalStorageValue(localStorage.getItem('wizard'));
   }, []);
 
   useEffect(() => {
     if (!localStorageValue) {
       setIsOpen(true);
-    } else if (localStorageValue === "true") {
+    } else if (localStorageValue === 'true') {
       setIsOpen(false);
     }
   }, [localStorageValue]);
@@ -64,17 +64,17 @@ const Wizard = () => {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
       setIsOpen(false);
-      localStorage.setItem("wizard", "true");
+      localStorage.setItem('wizard', 'true');
     }
   };
 
   const setItemStatus = (item: Item, index: number) => {
     if (itemSelect.name === item.name) {
-      return "active";
+      return 'active';
     } else if (index > indexOfItemSelect) {
-      return "unread";
+      return 'unread';
     } else {
-      return "read";
+      return 'read';
     }
   };
 
@@ -102,7 +102,7 @@ const Wizard = () => {
         backgroundColor="primary"
         size="small"
       >
-        {isFinalStep() ? "Let's Start" : "Next"}
+        {isFinalStep() ? "Let's Start" : 'Next'}
       </Styled.Button>
     </Styled.SideMenu>
   );
