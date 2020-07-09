@@ -73,6 +73,7 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
 
   const renderButton = () => (
     <Button.Rounded
+      icon="add"
       name="add"
       color="dark"
       onClick={onClickCreate}
