@@ -19,12 +19,12 @@ import ContentLoader from 'react-content-loader';
 
 export const Loader: FunctionComponent = () => (
   <ContentLoader
-    speed={4}
+    speed={1}
     width={1200}
     height={160}
     viewBox="0 0 1100 110"
-    backgroundColor="#3a3a3c"
-    foregroundColor="#48484a"
+    backgroundColor="#48484a"
+    foregroundColor="#3a3a3c"
   >
     <rect x="18" y="0" rx="0" ry="0" width="1000" height="35" />
     <rect x="18" y="40" rx="0" ry="0" width="1000" height="35" />
