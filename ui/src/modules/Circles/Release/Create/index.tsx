@@ -96,7 +96,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   return (
     <FormContext {...form}>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+      <Styled.Form
+        onSubmit={handleSubmit(onSubmit)}
+        data-testid="create-release"
+      >
         <Text.h5 color="dark">Type a name for release:</Text.h5>
         <Styled.Input
           name="releaseName"
