@@ -29,8 +29,6 @@ import {
 } from '../../stubs/use-cases'
 import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
 
-
-
 describe('DeploymentsController', () => {
 
   let deploymentsController: DeploymentsController
