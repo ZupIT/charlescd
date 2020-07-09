@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 interface ButtonProps {
-  backgroundColor: "default" | "primary";
-  size: "small" | "default";
+  backgroundColor: 'default' | 'primary';
+  size: 'small' | 'default';
 }
 
 const Button = styled.button<ButtonProps>`
@@ -26,12 +26,12 @@ const Button = styled.button<ButtonProps>`
   background: ${({ backgroundColor, theme }) =>
     theme.button.rounded.background[backgroundColor]};
   height: 50px;
-  border-radius: ${({ size }) => (size === "default" ? "30px" : "15px")};
-  height: ${({ size }) => (size === "default" ? "50px" : "30px")};
+  border-radius: ${({ size }) => (size === 'default' ? '30px' : '15px')};
+  height: ${({ size }) => (size === 'default' ? '50px' : '30px')};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: ${({ size }) => (size === "default" ? "15px 33px" : "9px 18px")};
+  padding: ${({ size }) => (size === 'default' ? '15px 33px' : '9px 18px')};
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;

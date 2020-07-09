@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import React from "react";
-import { render, fireEvent, wait } from "unit-test/testUtils";
-import ButtonIconRounded from "..";
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import ButtonIconRounded from '..';
 
-test("render ButtonIconRounded default component", async () => {
+test('render ButtonIconRounded default component', async () => {
   const click = jest.fn();
   const props = {
-    name: "add",
-    icon: "add",
-    children: "button"
+    name: 'add',
+    icon: 'add',
+    children: 'button'
   };
   const { getByTestId } = render(
     <ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
@@ -37,12 +37,12 @@ test("render ButtonIconRounded default component", async () => {
   wait(() => expect(click).toBeCalled());
 });
 
-test("render ButtonIconRounded default component without default props", async () => {
+test('render ButtonIconRounded default component without default props', async () => {
   const click = jest.fn();
   const props = {
-    name: "add",
-    icon: "add",
-    children: "button"
+    name: 'add',
+    icon: 'add',
+    children: 'button'
   };
   const { getByTestId } = render(
     <ButtonIconRounded
@@ -62,12 +62,12 @@ test("render ButtonIconRounded default component without default props", async (
   wait(() => expect(click).toBeCalled());
 });
 
-test("render ButtonIconRounded on loading mode", async () => {
+test('render ButtonIconRounded on loading mode', async () => {
   const click = jest.fn();
   const props = {
-    name: "add",
-    icon: "add",
-    children: "button"
+    name: 'add',
+    icon: 'add',
+    children: 'button'
   };
   const { getByTestId } = render(
     <ButtonIconRounded
@@ -80,6 +80,6 @@ test("render ButtonIconRounded on loading mode", async () => {
     </ButtonIconRounded>
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
-  const IconLoading = getByTestId("icon-loading");
+  const IconLoading = getByTestId('icon-loading');
   expect(Button && IconLoading).toBeInTheDocument();
 });
