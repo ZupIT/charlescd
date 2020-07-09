@@ -242,7 +242,9 @@ jobs:
     ]
     steps:
     - uses: actions/checkout@v2
-    
+      with:
+        ref: master
+
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
@@ -264,8 +266,15 @@ jobs:
       run: |
         git config --global user.name 'Charles CD Bot'
         git config --global user.email 'charlescdbot@users.noreply.github.com'
-        git commit -am "Automated chart update"
-        git push origin HEAD:master
+        git commit -sam "Automated chart update"
+        
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v2
+      with:
+        title: CI Update of charts
+        commit-message: |
+          auto generated PR
+          Signed-off-by: Charles CD Bot <charlescdbot@users.noreply.github.com>
 
     - name: Zup Settings
       run: |
