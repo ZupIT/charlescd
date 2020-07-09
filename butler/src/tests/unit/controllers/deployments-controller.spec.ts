@@ -18,7 +18,7 @@ import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
-import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateDeploymentRequestDto, CreateUndeploymentDto, ReadDeploymentDto, ReadUndeploymentDto } from '../../../app/api/deployments/dto'
 import {
   CreateCircleDeploymentRequestUsecase,
   CreateDefaultDeploymentRequestUsecase,
@@ -33,11 +33,13 @@ import {
   DeploymentsRepositoryStub,
   ModulesRepositoryStub
 } from '../../stubs/repository'
+import { DeploymentStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('DeploymentsController', () => {
 
   let deploymentsController: DeploymentsController
   let deploymentsService: DeploymentsService
+  let createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
 
   beforeEach(async() => {
 
@@ -79,6 +81,7 @@ describe('DeploymentsController', () => {
 
     deploymentsService = module.get<DeploymentsService>(DeploymentsService)
     deploymentsController = module.get<DeploymentsController>(DeploymentsController)
+    createDefaultDeploymentRequestUsecase = module.get<CreateDefaultDeploymentRequestUsecase>(CreateDefaultDeploymentRequestUsecase)
   })
 
   describe('getDeployments', () => {
@@ -86,6 +89,32 @@ describe('DeploymentsController', () => {
       const result: ReadDeploymentDto[] = []
       jest.spyOn(deploymentsService, 'getDeployments').mockImplementation(() => Promise.resolve(result))
       expect(await deploymentsController.getDeployments()).toBe(result)
+    })
+  })
+  describe('execute', () => {
+    it('should return a read deployment dto', async() => {
+      const readUndeploymentDto = new ReadDeploymentDto(
+        'dummy-id',
+        'app-name',
+        [],
+        'author-id',
+        'description',
+        DeploymentStatusEnum.CREATED,
+        'callback',
+        true,
+        new Date(),
+        undefined
+      )
+      const createUndeploymentDto = new CreateDeploymentRequestDto(
+        'name',
+        [],
+        'author-id',
+        'description',
+        'callbackurl',
+        null,
+        'cd-id')
+      jest.spyOn(createDefaultDeploymentRequestUsecase, 'execute').mockImplementation(() => Promise.resolve(readUndeploymentDto))
+      expect(await deploymentsController.createDeployment(createUndeploymentDto, 'circle-id')).toBe(readUndeploymentDto)
     })
   })
 })
