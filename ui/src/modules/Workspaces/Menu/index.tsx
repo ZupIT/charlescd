@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import map from "lodash/map";
-import Text from "core/components/Text";
-import LabeledIcon from "core/components/LabeledIcon";
-import Modal from "core/components/Modal";
-import { getProfileByKey } from "core/utils/profile";
-import routes from "core/constants/routes";
-import { saveWorkspace } from "core/utils/workspace";
-import { isRoot } from "core/utils/auth";
-import { useSaveWorkspace } from "modules/Workspaces/hooks";
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import map from 'lodash/map';
+import Text from 'core/components/Text';
+import LabeledIcon from 'core/components/LabeledIcon';
+import Modal from 'core/components/Modal';
+import { getProfileByKey } from 'core/utils/profile';
+import routes from 'core/constants/routes';
+import { saveWorkspace } from 'core/utils/workspace';
+import { isRoot } from 'core/utils/auth';
+import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
-import MenuItem from "./MenuItem";
-import Styled from "./styled";
-import Loader from "./Loaders";
+import MenuItem from './MenuItem';
+import Styled from './styled';
+import Loader from './Loaders';
 
 interface Props {
   items: Workspace[];
@@ -42,7 +42,7 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(true);
   const { register, handleSubmit, watch } = useForm();
-  const name = watch("name");
+  const name = watch('name');
   const {
     save,
     response: saveWorkspaceResponse,
@@ -64,7 +64,7 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
   const openWorkspaceModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
-    const authorId = getProfileByKey("id");
+    const authorId = getProfileByKey('id');
     save({ name, authorId });
   };
 
