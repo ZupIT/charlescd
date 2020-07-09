@@ -25,6 +25,7 @@ interface InputProps {
 
 interface WrapperProps {
   type?: string;
+  isError?: boolean;
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -34,6 +35,18 @@ const Wrapper = styled.div<WrapperProps>`
     type === 'hidden' &&
     css`
       display: none;
+    `};
+
+  ${({ isError, theme }) =>
+    isError &&
+    css`
+      > input {
+        border-bottom-color: ${theme.input.error.borderColor};
+      }
+
+      > label {
+        color: ${theme.input.error.color};
+      }
     `};
 `;
 
