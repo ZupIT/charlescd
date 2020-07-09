@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
-import ButtonIconRounded from '..';
+import React from "react";
+import { render, fireEvent, wait } from "unit-test/testUtils";
+import ButtonIconRounded from "..";
 
-test('render ButtonIconRounded default component', async () => {
-	const click = jest.fn();
-	const props = {
-		name: 'add',
-		children: 'button'
-	};
-	const { getByTestId } = render(
-		<ButtonIconRounded onClick={click} name={props.name}>
-			{props.children}
-		</ButtonIconRounded>
-	);
-
-	const Button = getByTestId(`button-iconRounded-${props.name}`);
-	const IconAdd = getByTestId(`icon-${props.name}`);
-	expect(Button && IconAdd).toBeInTheDocument();
-	fireEvent.click(Button);
-	wait(() => expect(click).toBeCalled());
+test("render ButtonIconRounded default component", async () => {
+  const click = jest.fn();
+  const props = {
+    name: "add",
+    icon: "add",
+    children: "button"
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconAdd = getByTestId(`icon-${props.name}`);
+  expect(Button && IconAdd).toBeInTheDocument();
+  fireEvent.click(Button);
+  wait(() => expect(click).toBeCalled());
 });
 
 test("render ButtonIconRounded on loading mode", async () => {
   const click = jest.fn();
-	wait(() => expect(click).toBeCalled());
   const props = {
     name: "add",
     icon: "add",
