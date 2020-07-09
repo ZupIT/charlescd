@@ -21,11 +21,11 @@ import Icon from 'core/components/Icon';
 interface InputProps {
   resume?: boolean;
   ref?: Ref<HTMLInputElement>;
+  isError?: boolean;
 }
 
 interface WrapperProps {
   type?: string;
-  isError?: boolean;
 }
 
 const Wrapper = styled.div<WrapperProps>`
@@ -36,22 +36,11 @@ const Wrapper = styled.div<WrapperProps>`
     css`
       display: none;
     `};
-
-  ${({ isError, theme }) =>
-    isError &&
-    css`
-      > input {
-        border-bottom-color: ${theme.input.error.borderColor};
-      }
-
-      > label {
-        color: ${theme.input.error.color};
-      }
-    `};
 `;
 
-const Label = styled.label<{ isFocused: boolean }>`
-  color: ${({ theme }) => theme.input.label};
+const Label = styled.label<{ isFocused: boolean; isError: boolean }>`
+  color: ${({ theme, isError }) =>
+    isError ? theme.input.error.color : theme.input.label};
   cursor: text;
   font-size: ${({ isFocused }) => (isFocused ? '12px' : '14px')};
   position: absolute;
@@ -62,7 +51,9 @@ const Label = styled.label<{ isFocused: boolean }>`
 const Input = styled.input<InputProps>`
   background-color: transparent;
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.input.borderColor};
+  border-bottom: 1px solid
+    ${({ theme, isError }) =>
+      isError ? theme.input.error.borderColor : theme.input.borderColor};
   border-radius: 0;
   bottom: 0px;
   box-sizing: border-box;
