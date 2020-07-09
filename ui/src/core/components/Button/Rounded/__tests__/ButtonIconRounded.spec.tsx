@@ -32,9 +32,10 @@ test('render ButtonIconRounded default component', async () => {
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
   const IconAdd = getByTestId(`icon-${props.name}`);
-  expect(Button && IconAdd).toBeInTheDocument();
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
   fireEvent.click(Button);
-  wait(() => expect(click).toBeCalled());
+  await wait(() => expect(click).toBeCalled());
 });
 
 test('render ButtonIconRounded default component without default props', async () => {
@@ -57,9 +58,10 @@ test('render ButtonIconRounded default component without default props', async (
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
   const IconAdd = getByTestId(`icon-${props.name}`);
-  expect(Button && IconAdd).toBeInTheDocument();
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
   fireEvent.click(Button);
-  wait(() => expect(click).toBeCalled());
+  await wait(() => expect(click).toBeCalled());
 });
 
 test('render ButtonIconRounded on loading mode', async () => {
@@ -81,5 +83,6 @@ test('render ButtonIconRounded on loading mode', async () => {
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
   const IconLoading = getByTestId('icon-loading');
-  expect(Button && IconLoading).toBeInTheDocument();
+  expect(Button).toBeInTheDocument();
+  expect(IconLoading).toBeInTheDocument();
 });
