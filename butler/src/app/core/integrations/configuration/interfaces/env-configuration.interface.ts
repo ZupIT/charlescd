@@ -26,6 +26,8 @@ export default interface IEnvConfiguration {
 
   postgresDbName: string
 
+  postgresSSL: boolean
+
   mooveUrl: string
 
   darwinNotificationUrl: string
