@@ -48,7 +48,7 @@ export const workspaceMenu = [
     text: 'Metrics',
     to: routes.metrics,
     action: 'read',
-    subject: 'metrics'
+    subject: 'circles'
   },
   {
     id: genMenuId(routes.settings),
@@ -105,8 +105,8 @@ export const rootWorkspaceMenu = [
     icon: 'metrics',
     text: 'Metrics',
     to: routes.metrics,
-    action: 'write',
-    subject: 'maintenance'
+    action: 'read',
+    subject: 'circles'
   },
   {
     id: genMenuId(routes.settings),

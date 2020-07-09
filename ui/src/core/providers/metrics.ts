@@ -27,7 +27,8 @@ export const findCircleMetrics = (data: CircleMetrics) => {
 export const findDeployMetrics = (params: URLSearchParams) =>
   baseRequest(`${endpoint}/deployments?${params}`);
 
-export const findAllCirclesMetrics = () => baseRequest(`${endpoint}/circles`);
+export const findAllCirclesMetrics = (params: URLSearchParams) =>
+  baseRequest(`${endpoint}/circles?${params}`);
 
 export const findAllCirclesReleases = (circleId: string) =>
   baseRequest(`${endpoint}/circles/${circleId}/releases`);

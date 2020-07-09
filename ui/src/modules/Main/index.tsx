@@ -86,7 +86,7 @@ const Main = () => {
             <PrivateRoute
               path={routes.metrics}
               component={Metrics}
-              allowedRoles={['maintenance_write']}
+              allowedRoles={['circles_read']}
             />
             <Redirect to={routes.error404} />
           </Switch>
