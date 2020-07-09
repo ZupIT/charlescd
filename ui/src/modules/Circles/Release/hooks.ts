@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useFetch } from 'core/providers/base/hooks';
 import { findComponentTags } from 'core/providers/modules';
 import {

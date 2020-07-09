@@ -41,6 +41,7 @@ export interface Props extends InputEvents {
   onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
   placeholder?: string;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 const Input = React.forwardRef(
@@ -55,6 +56,7 @@ const Input = React.forwardRef(
       autoComplete = 'off',
       onChange,
       maxLength,
+      isLoading,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -105,6 +107,7 @@ const Input = React.forwardRef(
             {label}
           </Styled.Label>
         )}
+        {isLoading && <Styled.Loading name="ellipse-loading" color="light" />}
       </Styled.Wrapper>
     );
   }

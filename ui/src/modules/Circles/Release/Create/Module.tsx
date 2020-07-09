@@ -19,11 +19,7 @@ import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
 import debounce from 'lodash/debounce';
-import {
-  formatModuleOptions,
-  formatComponentOptions,
-  formatTagOptions
-} from './helpers';
+import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 
@@ -40,7 +36,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const [componentOptions, setComponentOptions] = useState([]);
   const prefixName = `modules[${index}]`;
   const { getComponentTags, tags, status } = useComponentTags();
-  const { errors, register, control, getValues } = useFormContext();
+  const { errors, register, control, getValues, setValue } = useFormContext();
 
   useEffect(() => {
     getAllModules();
@@ -54,9 +50,10 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
 
   useEffect(() => {
     if (status === 'resolved') {
-      console.log('response', tags);
+      const [tag] = tags;
+      setValue(`${prefixName}.tag`, tag?.artifact);
     }
-  }, [status, tags]);
+  }, [status, tags, setValue, prefixName]);
 
   const updateComponents = (option: Option) => {
     setComponentOptions(formatComponentOptions(modules.content, option?.value));
@@ -71,6 +68,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     const moduleId = getValues(`${prefixName}.module`);
     const name = getValues(`${prefixName}.version`);
 
+    setValue(`${prefixName}.tag`, '');
     getComponentTags(moduleId, componentId, { name });
   };
 
@@ -109,14 +107,18 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
       </Styled.SelectWrapper>
       <Styled.SelectWrapper>
         <Styled.Module.Input
+          type="hidden"
+          name={`${prefixName}.tag`}
+          ref={register({ required: true })}
+        />
+        <Styled.Module.Input
           name={`${prefixName}.version`}
           ref={register({ required: true })}
-          onChange={useCallback(debounce(onSearchTag, 500), [])}
+          onChange={useCallback(debounce(onSearchTag, 300), [])}
+          isLoading={status === 'pending'}
           label="Version name"
         />
-        <Styled.Error color="error">
-          {getErrorMessage('component')}
-        </Styled.Error>
+        <Styled.Error color="error">{getErrorMessage('tag')}</Styled.Error>
       </Styled.SelectWrapper>
     </Styled.Module.Wrapper>
   );
