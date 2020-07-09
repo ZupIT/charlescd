@@ -21,7 +21,6 @@ import { Loader as LoaderCircleAverageTime } from './circleAverageTime';
 import { Loader as LoaderLegend } from './legend';
 import { Loader as LoaderHistory } from './history';
 import { Loader as LoaderReleases } from './releases';
-import { Loader as LoaderComponents } from './components';
 
 const Loader = {
   Card: () => <LoaderCard />,
@@ -29,8 +28,7 @@ const Loader = {
   CircleAverageTime: () => <LoaderCircleAverageTime />,
   Legend: () => <LoaderLegend />,
   History: () => <LoaderHistory />,
-  Releases: () => <LoaderReleases />,
-  Components: () => <LoaderComponents />
+  Releases: () => <LoaderReleases />
 };
 
 export default Loader;
