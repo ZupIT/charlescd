@@ -8,6 +8,7 @@ butler:
     port: "5432"
     user: charlescd_butler
     password: 3f2Yq8R4HhDCnefR
+    ssl: false
   replicaCount: 1
   image:
     name: zupcharles/charlescd-butler:0.2.13
@@ -116,6 +117,7 @@ circlematcher:
     host: charlescd-redis-master
     port: 6379
     password: hb2Fj9MGKjBkZ6zV
+    ssl: false
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
