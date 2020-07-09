@@ -18,7 +18,7 @@ import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
-import { CreateDeploymentRequestDto, CreateUndeploymentDto, ReadDeploymentDto, ReadUndeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../../../app/api/deployments/dto'
 import {
   CreateCircleDeploymentRequestUsecase,
   CreateDefaultDeploymentRequestUsecase,
@@ -33,7 +33,7 @@ import {
   DeploymentsRepositoryStub,
   ModulesRepositoryStub
 } from '../../stubs/repository'
-import { DeploymentStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('DeploymentsController', () => {
 
