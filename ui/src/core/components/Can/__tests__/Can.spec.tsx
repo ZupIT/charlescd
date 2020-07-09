@@ -19,7 +19,7 @@ import { render } from 'unit-test/testUtils';
 import Can from '..';
 import Dropdown from 'core/components/Dropdown';
 
-test('renders ContentIcon component with default properties', async () => {
+test('renders Can component', async () => {
   const props = {
     children: (
       <Dropdown.Item
@@ -37,4 +37,38 @@ test('renders ContentIcon component with default properties', async () => {
   );
   const buttoDropdown = getByTestId('icon-edit');
   expect(buttoDropdown).toBeInTheDocument();
+});
+
+test('renders Can component disabled', async () => {
+  const props = {
+    children: (
+      <Dropdown.Item
+        icon="edit"
+        name="Edit segments"
+        onClick={() => jest.fn()}
+      />
+    )
+  };
+
+  const { getByTestId } = render(
+    <Can I="write" a="circles" passThrough isDisabled>
+      {props.children}
+    </Can>
+  );
+  const buttoDropdown = getByTestId('icon-edit');
+  expect(buttoDropdown).toBeInTheDocument();
+});
+
+test('renders Can component with default properties', async () => {
+  const props = {
+    children: <p>test</p>
+  };
+
+  render(
+    <Can I="read" a="maintenance">
+      {props.children}
+    </Can>
+  );
+
+  expect(document.body.innerHTML).toBe('<div></div>');
 });
