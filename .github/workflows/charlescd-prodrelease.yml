@@ -287,7 +287,9 @@ jobs:
         sed -i -E "/nginx:/N;s/(nginx:.*enabled: )(true)/\1false/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/name: charlescd_(.*)/name: charlescd\1/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/user: charlescd_(.*)/user: charlesadmin/" ./install/helm-chart/values.yaml &&
-        sed -i -E "s/password: (.*)/password: firstpassword/" ./install/helm-chart/values.yaml
+        sed -i -E "s/password: (.*)/password: firstpassword/" ./install/helm-chart/values.yaml &&
+        sed -i -E "/redis:/{N;N;N;s/firstpassword/hb2Fj9MGKjBkZ6zV/}" ./install/helm-chart/values.yaml
+
     - name: Deploy
       uses: WyriHaximus/github-action-helm3@v1.0.0
       with:
