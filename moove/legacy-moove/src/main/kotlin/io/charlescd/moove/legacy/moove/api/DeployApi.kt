@@ -36,7 +36,7 @@ interface DeployApi {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/deployments/{id}/undeploy"],
+        value = ["/undeployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
