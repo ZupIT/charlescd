@@ -262,16 +262,24 @@ jobs:
       with:
         exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
-    - name: Commit Chart updated
+    - name: Running changelog generator
+      env:
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        npm install github-release-notes -g
+        gren release --override
+        gren changelog --override
+
+    - name: Commit updated chart and changelog file
       run: |
         git config --global user.name 'Charles CD Bot'
         git config --global user.email 'charlescdbot@users.noreply.github.com'
-        git commit -sam "Automated chart update"
+        git commit -sam "Automated updated chart and changelog file"
         
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
       with:
-        title: CI Update of charts
+        title: CI Update of charts and changelog
         commit-message: |
           auto generated PR
           Signed-off-by: Charles CD Bot <charlescdbot@users.noreply.github.com>
