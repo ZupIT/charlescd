@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-export class CreateCircleDeploymentRequestUsecaseStub {
+import { ReadDeploymentDto } from '../../../app/api/deployments/dto/read-deployment'
 
+export class CreateCircleDeploymentRequestUsecaseStub {
+  public execute(): Promise<ReadDeploymentDto> {
+    return Promise.resolve({} as ReadDeploymentDto)
+  }
 }
