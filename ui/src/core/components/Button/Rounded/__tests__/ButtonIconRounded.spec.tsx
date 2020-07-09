@@ -37,6 +37,31 @@ test("render ButtonIconRounded default component", async () => {
   wait(() => expect(click).toBeCalled());
 });
 
+test("render ButtonIconRounded default component without default props", async () => {
+  const click = jest.fn();
+  const props = {
+    name: "add",
+    icon: "add",
+    children: "button"
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded
+      onClick={click}
+      name={props.name}
+      icon={props.name}
+      size="small"
+      backgroundColor="primary"
+    >
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconAdd = getByTestId(`icon-${props.name}`);
+  expect(Button && IconAdd).toBeInTheDocument();
+  fireEvent.click(Button);
+  wait(() => expect(click).toBeCalled());
+});
+
 test("render ButtonIconRounded on loading mode", async () => {
   const click = jest.fn();
   const props = {
