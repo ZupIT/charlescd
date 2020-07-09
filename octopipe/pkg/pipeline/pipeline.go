@@ -25,30 +25,27 @@ import (
 	"octopipe/pkg/template/helm"
 )
 
-type UseCases interface {
-}
-
-type DEPRECATED_pipelineVersion struct {
+type NonAdjustablePipelineVersion struct {
 	Version    string `json:"version"`
 	VersionURL string `json:"versionUrl"`
 }
 
-type DEPRECATED_pipelineGithub struct {
+type NonAdjustablePipelineGithub struct {
 	Provider string `json:"provider"`
 	Token    string `json:"token"`
 }
 
-type DEPRECATED_pipeline struct {
-	AppName        string                       `json:"appName"`
-	AppNamespace   string                       `json:"appNamespace"`
-	Git            DEPRECATED_pipelineGithub    `json:"git"`
-	HelmURL        string                       `json:"helmUrl"`
-	Istio          map[string]interface{}       `json:"istio"`
-	UnusedVersions []DEPRECATED_pipelineVersion `json:"unusedVersions"`
-	Versions       []DEPRECATED_pipelineVersion `json:"versions"`
-	WebHookUrl     string                       `json:"webhookUrl"`
-	CircleID       string                       `json:"circleID"`
-	K8s            cloudprovider.Cloudprovider  `json:"k8s"`
+type NonAdjustablePipeline struct {
+	AppName        string                         `json:"appName"`
+	AppNamespace   string                         `json:"appNamespace"`
+	Git            NonAdjustablePipelineGithub    `json:"git"`
+	HelmURL        string                         `json:"helmUrl"`
+	Istio          map[string]interface{}         `json:"istio"`
+	UnusedVersions []NonAdjustablePipelineVersion `json:"unusedVersions"`
+	Versions       []NonAdjustablePipelineVersion `json:"versions"`
+	WebHookUrl     string                         `json:"webhookUrl"`
+	CircleID       string                         `json:"circleID"`
+	K8s            cloudprovider.Cloudprovider    `json:"k8s"`
 }
 
 type StepTemplate struct {
@@ -78,11 +75,11 @@ type Pipeline struct {
 	Config    cloudprovider.Cloudprovider `json:"config"`
 }
 
-func (main PipelineMain) NewPipeline() UseCases {
+func (main PipelineMain) NewPipeline() Pipeline {
 	return Pipeline{}
 }
 
-func (deprecatedPipeline DEPRECATED_pipeline) ToPipeline() Pipeline {
+func (deprecatedPipeline NonAdjustablePipeline) ToPipeline() Pipeline {
 	versionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.Versions, deployment.DeployAction)
 	unusedVersionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.UnusedVersions, deployment.UndeployAction)
 	istioSteps := deprecatedPipeline.generateIstioSteps()
@@ -107,7 +104,7 @@ func (deprecatedPipeline DEPRECATED_pipeline) ToPipeline() Pipeline {
 	return pipeline
 }
 
-func (deprecatedPipeline DEPRECATED_pipeline) generateVersionSteps(versions []DEPRECATED_pipelineVersion, action string) []Step {
+func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []NonAdjustablePipelineVersion, action string) []Step {
 	steps := []Step{}
 
 	for _, version := range versions {
@@ -141,7 +138,7 @@ func (deprecatedPipeline DEPRECATED_pipeline) generateVersionSteps(versions []DE
 	return steps
 }
 
-func (deprecatedPipeline DEPRECATED_pipeline) generateIstioSteps() []Step {
+func (deprecatedPipeline NonAdjustablePipeline) generateIstioSteps() []Step {
 	steps := []Step{}
 
 	for _, version := range deprecatedPipeline.Istio {
