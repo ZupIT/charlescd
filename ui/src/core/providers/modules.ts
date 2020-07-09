@@ -72,5 +72,13 @@ export const deleteComponent = (moduleId: string, componentId: string) =>
     }
   );
 
-export const findComponentTags = (moduleId: string, componentId: string, params: URLParams) =>
-  baseRequest(`${endpoint}/${moduleId}/components/${componentId}/tags?${buildParams(params)}`);
+export const findComponentTags = (
+  moduleId: string,
+  componentId: string,
+  params: URLParams
+) =>
+  baseRequest(
+    `${endpoint}/${moduleId}/components/${componentId}/tags?${buildParams(
+      params
+    )}`
+  );

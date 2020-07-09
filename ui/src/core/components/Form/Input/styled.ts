@@ -16,6 +16,7 @@
 
 import { Ref } from 'react';
 import styled, { css } from 'styled-components';
+import Icon from 'core/components/Icon';
 
 interface InputProps {
   resume?: boolean;
@@ -79,8 +80,16 @@ const Input = styled.input<InputProps>`
     `};
 `;
 
+const Loading = styled(Icon)`
+  position: absolute;
+  display: block;
+  right: 0;
+  bottom: 5px;
+`;
+
 export default {
   Wrapper,
   Input,
-  Label
+  Label,
+  Loading
 };

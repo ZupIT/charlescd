@@ -117,7 +117,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         </Styled.Module.Info>
         <Styled.Module.Button
           type="button"
-          isDisabled={!isEmpty(errors)}
+          isDisabled={isEmptyFields || !isEmpty(errors)}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
