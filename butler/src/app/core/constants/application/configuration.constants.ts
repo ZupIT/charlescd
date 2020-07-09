@@ -28,6 +28,8 @@ export const ConfigurationConstants = {
 
   DATABASE_DB_PASS: 'darwin',
 
+  DATABASE_SSL: false,
+
   MOOVE_URL: 'http://localhost:8883/moove',
 
   DARWIN_NOTIFICATION_URL: 'http://localhost:8883/deploy/notifications',
@@ -36,9 +38,9 @@ export const ConfigurationConstants = {
 
   MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY: 1000,
 
-  SPINNAKER_CONNECTION_MAXIMUM_RETRY_ATTEMPTS : 5,
+  CD_CONNECTION_MAXIMUM_RETRY_ATTEMPTS : 5,
 
-  SPINNAKER_CONNECTION_MILLISECONDS_RETRY_DELAY: 1000,
+  CD_CONNECTION_MILLISECONDS_RETRY_DELAY: 1000,
 
   DARWIN_UNDEPLOYMENT_CALLBACK: 'http://localhost:8883/deploy/notifications/undeployment',
 

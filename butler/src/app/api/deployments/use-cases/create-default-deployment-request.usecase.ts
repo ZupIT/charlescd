@@ -25,7 +25,7 @@ import { ConsoleLoggerService } from '../../../core/logs/console'
 import { ComponentEntity } from '../../components/entity'
 import { ModuleEntity } from '../../modules/entity'
 import {
-  CreateDefaultDeploymentRequestDto,
+  CreateDeploymentRequestDto,
   ReadDeploymentDto
 } from '../dto'
 import {
@@ -47,7 +47,6 @@ import {
   PipelineQueuesService
 } from '../services'
 import { IConstraintError } from '../interfaces/errors.interface'
-
 
 @Injectable()
 export class CreateDefaultDeploymentRequestUsecase {
@@ -72,13 +71,10 @@ export class CreateDefaultDeploymentRequestUsecase {
         private readonly modulesService: ModulesService
   ) { }
 
-  public async execute(createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
+  public async execute(createDefaultDeploymentRequestDto: CreateDeploymentRequestDto, circleId: string): Promise<ReadDeploymentDto> {
     const modules: ModuleEntity[] = createDefaultDeploymentRequestDto.modules.map(module => module.toModuleEntity())
     await this.modulesService.createModules(modules)
-
-    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT', createDefaultDeploymentRequestDto)
     const deployment: DeploymentEntity = await this.saveDeploymentEntity(createDefaultDeploymentRequestDto, circleId)
-
     try {
       await this.scheduleComponentDeployments(deployment)
       this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT', deployment)
@@ -91,16 +87,16 @@ export class CreateDefaultDeploymentRequestUsecase {
   }
 
   private async saveDeploymentEntity(
-    createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
+    createDefaultDeploymentRequestDto: CreateDeploymentRequestDto,
     circleId: string
   ): Promise<DeploymentEntity> {
-
     try {
       return await this.deploymentsRepository.save(createDefaultDeploymentRequestDto.toEntity(circleId))
     } catch (error) {
       this.consoleLoggerService.error('ERROR:COULD_NOT_SAVE_DEPLOYMENT', error)
       throw new InternalServerErrorException('Could not save deployment')
     }
+
   }
 
   private async scheduleComponentDeployments(deployment: DeploymentEntity): Promise<void> {

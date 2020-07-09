@@ -16,11 +16,15 @@
 
 import { Body, Controller, Get, Headers, Param, Post, UsePipes } from '@nestjs/common'
 import {
-  CreateCircleDeploymentRequestDto, CreateDefaultDeploymentRequestDto, CreateUndeploymentDto, ReadDeploymentDto, ReadUndeploymentDto
+  CreateDeploymentRequestDto,
+  CreateUndeploymentDto,
+  ReadDeploymentDto,
+  ReadUndeploymentDto
 } from '../dto'
 import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
 import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
+import { ComponentDeploymentUniquenessPipe } from '../pipes/component-deployment-uniqueness.pipe'
 
 @Controller('deployments')
 export class DeploymentsController {
@@ -32,22 +36,16 @@ export class DeploymentsController {
     private readonly createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
   ) {}
 
-  @UsePipes(DeploymentUniquenessPipe)
-  @Post('/circle')
-  public async createCircleDeployment(
-      @Body() createCircleDeploymentRequestDto: CreateCircleDeploymentRequestDto,
-      @Headers('x-circle-id') circleId: string
+  @UsePipes(DeploymentUniquenessPipe,  ComponentDeploymentUniquenessPipe)
+  @Post()
+  public async createDeployment(
+    @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
+    @Headers('x-circle-id') incomingCircleId: string
   ): Promise<ReadDeploymentDto> {
-    return await this.createCircleDeploymentRequestUsecase.execute(createCircleDeploymentRequestDto, circleId)
-  }
-
-  @UsePipes(DeploymentUniquenessPipe)
-  @Post('/default')
-  public async createDefaultDeployment(
-      @Body() createDefaultDeploymentRequestDto: CreateDefaultDeploymentRequestDto,
-      @Headers('x-circle-id') circleId: string
-  ): Promise<ReadDeploymentDto> {
-    return await this.createDefaultDeploymentRequestUsecase.execute(createDefaultDeploymentRequestDto, circleId)
+    if (createDeploymentRequestDto.circle) {
+      return await this.createCircleDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
+    }
+    return await this.createDefaultDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
   }
 
   @Post(':id/undeploy')
