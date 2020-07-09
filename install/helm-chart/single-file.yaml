@@ -1,26 +1,4 @@
 ---
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
----
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -37,7 +15,7 @@ metadata:
   name: charlescd-keycloak-db
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
@@ -52,7 +30,7 @@ metadata:
   name: charlescd-keycloak-http
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
@@ -128,7 +106,7 @@ metadata:
   name: charlescd-keycloak-sh
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
 data:
@@ -147,7 +125,7 @@ metadata:
   name: charlescd-keycloak-startup
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
 data:
@@ -222,12 +200,12 @@ data:
                 proxy_pass http://charlescd-ui:3000;
             }
             
-            location /moove {
+            location /moove/ {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
             }
             
-            location /octopipe {
+            location /octopipe/ {
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-octopipe:8080/;
             }
@@ -237,7 +215,7 @@ data:
                 proxy_pass http://charlescd-circle-matcher:8080/;
             }
             
-            location ^~ /keycloak {
+            location ^~ /keycloak/ {
                 proxy_http_version 1.1;
                 proxy_set_header X-Forwarded-For $host;
                 proxy_set_header X-Forwarded-Proto $scheme;
@@ -404,6 +382,28 @@ spec:
     requests:
       storage: "8Gi"
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -472,29 +472,6 @@ rules:
   resources:
   - services/proxy
   - pods/portforward
-  verbs:apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: charlescd-role
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  - configmaps
-  - events
-  - replicationcontrollers
-  - serviceaccounts
-  - pods/log
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - services
-  - secrets
   verbs:
   - create
   - delete
@@ -505,53 +482,9 @@ rules:
   - update
   - watch
 - apiGroups:
-  - autoscaling
+  - networking.istio.io
   resources:
-  - horizontalpodautoscalers
-  verbs:
-  - list
-  - get
-- apiGroups:
-  - apps
-  resources:
-  - controllerrevisions
-  - statefulsets
-  verbs:
-  - list
-- apiGroups:
-  - extensions
-  - apps
-  resources:
-  - deployments
-  - replicasets
-  - ingresses
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services/proxy
-  - pods/portforward
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - "networking.istio.io"
-  resources:
-  - "*"
+  - '*'
   verbs:
   - create
   - delete
@@ -592,7 +525,7 @@ metadata:
   name: charlescd-keycloak-headless
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
     service: headless
@@ -619,7 +552,7 @@ metadata:
   name: charlescd-keycloak-http
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
     service: http
@@ -1054,7 +987,7 @@ spec:
       
       containers:
         - name: octopipe
-          image: "zupcharles/charlescd-octopipe:v0.2.11"
+          image: "zupcharles/charlescd-octopipe:latest"
           
           livenessProbe:
             failureThreshold: 3
@@ -1083,7 +1016,7 @@ spec:
           - name: APP_PORT
             value: "8080"
           - name: DB_URL
-            value: "mongodb://octopipe:octopipe@charlescd-mongo-mongodb:27017"
+            value: "mongodb://root:octopipe@charlescd-mongodb:27017"
           - name: KUBECONFIG
             value: "IN_CLUSTER"
           - name: TIMEOUT_RESOURCE_VERIFICATION
@@ -1124,14 +1057,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'false' 
       labels:
         app: charlescd-butler
         version: charlescd-butler
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:v0.2.10
+          image: zupcharles/charlescd-butler:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1172,6 +1105,10 @@ spec:
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/undeployment"
             - name: DARWIN_DEPLOYMENT_CALLBACK
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/deployment"
+            - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
+              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/istio-deployment"
+            - name: OCTOPIPE_URL
+              value: "http://charlescd-octopipe:8080/"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -1203,14 +1140,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'false' 
       labels:
         app: charlescd-circle-matcher
         version: charlescd-circle-matcher
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:v0.2.10
+          image: zupcharles/charlescd-circle-matcher:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1269,14 +1206,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'false' 
       labels:
         app: charlescd-moove
         version: charlescd-moove
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:v0.2.10
+          image: zupcharles/charlescd-moove:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1310,11 +1247,11 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://charles.info.example/keycloak/auth"
+              value: "http://nginx/keycloak/auth"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
-              value: "f2dc9337-9aaf-461f-9c7f-d02a0439ae4d"
+              value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
             - name: ORIGIN_HOSTS
               value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
@@ -1348,14 +1285,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'false' 
       labels:
         app: charlescd-ui
         version: charlescd-ui
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:v0.2.10
+          image: zupcharles/charlescd-ui:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1412,14 +1349,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: 'false' 
       labels:
         app: charlescd-villager
         version: charlescd-villager
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:v0.2.10
+          image: zupcharles/charlescd-villager:0.2.13
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1471,7 +1408,7 @@ metadata:
   name: charlescd-keycloak
   labels:
     app.kubernetes.io/name: keycloak
-    helm.sh/chart: keycloak-7.5.1
+    helm.sh/chart: keycloak-7.5.6
     app.kubernetes.io/instance: "charlescd"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1490,8 +1427,8 @@ spec:
         app.kubernetes.io/name: keycloak
         app.kubernetes.io/instance: "charlescd"
       annotations:
-        checksum/config-sh: ddcae3fac33e5cd5d01a1719cf8c1fad4243eb67f76a472066689002a7e0998d
-        checksum/config-startup: bab44acba57b35862d4ac93d1d17f48b4fccc07a5dc644f2da8a3638d3e71304
+        checksum/config-sh: dcfdbcc04b7fd4e3524782de5fe68b27b8a62cfbfb730d9acaa145192d4381de
+        checksum/config-startup: 35153660db37e6edf18eab79b6528871b4fd69cfc316f31879274f7396c0f8cb
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       restartPolicy: Always
