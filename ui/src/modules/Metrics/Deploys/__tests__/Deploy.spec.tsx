@@ -16,36 +16,29 @@
 
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
-import Metrics from '..';
+import Deploys from '..';
 
-test('render Metrics default', async () => {
-  const { getByTestId } = render(<Metrics />);
-
-  await wait();
-
-  expect(getByTestId("page")).toBeInTheDocument();
-  expect(getByTestId("page-menu")).toBeInTheDocument();
-})
-
-test('render Metrics deploy dashboard', async () => {
-  const { getByText, getByTestId } = render(<Metrics />);
+test('render Deploy dashboard compomnent', async () => {
+  const { getByTestId } = render(<Deploys />);
 
   await wait();
 
-  const deployDashboard = getByText("Deploys");
-  fireEvent.click(deployDashboard);
-
-  await wait(() => expect(getByTestId("metrics-deploy")).toBeInTheDocument());
+  expect(getByTestId("metrics-deploy")).toBeInTheDocument();
 })
 
-test('render Metrics circles dashboard', async () => {
-  const { getByText, getByTestId } = render(<Metrics />);
+test('test Deploy filter compomnent', async () => {
+  const { getByTestId } = render(<Deploys />);
 
   await wait();
 
-  const circleDashboard = getByText("Circles");
-  fireEvent.click(circleDashboard);
-
-  await wait(() => expect(getByTestId("metrics-circles")).toBeInTheDocument());
+  expect(getByTestId("metrics-filter")).toBeInTheDocument();
 })
 
+test('test Deploy charts compomnent', async () => {
+  const { getByTestId } = render(<Deploys />);
+
+  await wait();
+
+  expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
+  expect(getByTestId("apexchart-average-time")).toBeInTheDocument();
+})
