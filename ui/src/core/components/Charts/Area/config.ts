@@ -82,8 +82,8 @@ export default {
         shade: 'dark',
         shadeIntensity: 0.5,
         opacityFrom: 0.6,
-        opacityTo: 0,
-        stops: [0, 50, 100]
+        opacityTo: 0.2,
+        stops: [0, 90, 100]
       }
     },
     noData: {
