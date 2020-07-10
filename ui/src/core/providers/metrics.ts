@@ -23,3 +23,6 @@ export const findCircleMetrics = (data: CircleMetrics) => {
   const params = new URLSearchParams({ ...data });
   return baseRequest(`${endpoint}/?${params}`);
 };
+
+export const findDeployMetrics = (params: URLSearchParams) =>
+  baseRequest(`${endpoint}/deployments?${params}`);
