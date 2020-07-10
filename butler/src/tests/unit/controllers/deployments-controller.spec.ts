@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { DeploymentsService } from '../../../app/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
-import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../../../app/api/deployments/dto'
 import {
   CreateCircleDeploymentRequestUsecase,
   CreateDefaultDeploymentRequestUsecase,
@@ -28,57 +27,21 @@ import {
   CreateCircleDeploymentRequestUsecaseStub,
   CreateUndeploymentRequestUsecaseStub
 } from '../../stubs/use-cases'
-import {
-  ComponentsRepositoryStub,
-  DeploymentsRepositoryStub,
-  ModulesRepositoryStub
-} from '../../stubs/repository'
+import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
 
 describe('DeploymentsController', () => {
 
   let deploymentsController: DeploymentsController
   let deploymentsService: DeploymentsService
+  let createCircleDeploymentUseCase: CreateCircleDeploymentRequestUsecase
+  let createDefaultDeploymentUseCase: CreateDefaultDeploymentRequestUsecase
 
   beforeEach(async() => {
-
-    const module = await Test.createTestingModule({
-      controllers: [
-        DeploymentsController
-      ],
-      providers: [
-        {
-          provide: DeploymentsService,
-          useClass: DeploymentsServiceStub
-        },
-        {
-          provide: CreateUndeploymentRequestUsecase,
-          useClass: CreateUndeploymentRequestUsecaseStub
-        },
-        {
-          provide: CreateCircleDeploymentRequestUsecase,
-          useClass: CreateCircleDeploymentRequestUsecaseStub
-        },
-        {
-          provide: CreateDefaultDeploymentRequestUsecase,
-          useClass: CreateCircleDeploymentRequestUsecaseStub
-        },
-        {
-          provide: 'DeploymentEntityRepository',
-          useClass: DeploymentsRepositoryStub
-        },
-        {
-          provide: 'ModuleEntityRepository',
-          useClass: ModulesRepositoryStub
-        },
-        {
-          provide: 'ComponentEntityRepository',
-          useClass: ComponentsRepositoryStub
-        }
-      ]
-    }).compile()
-
-    deploymentsService = module.get<DeploymentsService>(DeploymentsService)
-    deploymentsController = module.get<DeploymentsController>(DeploymentsController)
+    deploymentsService = new DeploymentsServiceStub() as DeploymentsService
+    const undeploymentUseCase = new CreateUndeploymentRequestUsecaseStub() as CreateUndeploymentRequestUsecase
+    createCircleDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateCircleDeploymentRequestUsecase
+    createDefaultDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateDefaultDeploymentRequestUsecase
+    deploymentsController = new DeploymentsController(deploymentsService, undeploymentUseCase, createCircleDeploymentUseCase, createDefaultDeploymentUseCase)
   })
 
   describe('getDeployments', () => {
@@ -86,6 +49,32 @@ describe('DeploymentsController', () => {
       const result: ReadDeploymentDto[] = []
       jest.spyOn(deploymentsService, 'getDeployments').mockImplementation(() => Promise.resolve(result))
       expect(await deploymentsController.getDeployments()).toBe(result)
+    })
+  })
+  describe('execute', () => {
+    it('should return a read deployment dto', async() => {
+      const readUndeploymentDto = new ReadDeploymentDto(
+        'dummy-id',
+        'app-name',
+        [],
+        'author-id',
+        'description',
+        DeploymentStatusEnum.CREATED,
+        'callback',
+        true,
+        new Date(),
+        undefined
+      )
+      const createUndeploymentDto = new CreateDeploymentRequestDto(
+        'name',
+        [],
+        'author-id',
+        'description',
+        'callbackurl',
+        null,
+        'cd-id')
+      jest.spyOn(createDefaultDeploymentUseCase, 'execute').mockImplementation(() => Promise.resolve(readUndeploymentDto))
+      expect(await deploymentsController.createDeployment(createUndeploymentDto, 'circle-id')).toBe(readUndeploymentDto)
     })
   })
 })

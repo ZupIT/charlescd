@@ -89,6 +89,11 @@ export interface IDefaultCircleMatcher {
         subset: string
       },
       headers: {
+        response: {
+          set: {
+            'x-circle-source': DefaultCircleId
+          }
+        },
         request: {
           set: {
             'x-circle-source': DefaultCircleId
@@ -107,6 +112,11 @@ interface ICircleRoute {
         subset: string
       },
       headers: {
+        response: {
+          set: {
+            'x-circle-source': string
+          }
+        },
         request: {
           set: {
             'x-circle-source': string
