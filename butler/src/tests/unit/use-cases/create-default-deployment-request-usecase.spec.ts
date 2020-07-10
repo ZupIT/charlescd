@@ -51,8 +51,7 @@ import {
   QueuedDeploymentEntity,
 } from '../../../app/api/deployments/entity'
 import {
-  CreateCircleDeploymentDto,
-  CreateCircleDeploymentRequestDto
+  CreateCircleDeploymentDto, CreateDeploymentRequestDto
 } from '../../../app/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
@@ -66,7 +65,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
   let moduleDeployments: ModuleDeploymentEntity[]
   let componentDeployments: ComponentDeploymentEntity[]
   let createCircleDeploymentDto: CreateCircleDeploymentDto
-  let createDeploymentDto: CreateCircleDeploymentRequestDto
+  let createDeploymentDto: CreateDeploymentRequestDto
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
   let modulesService: ModulesService
@@ -85,7 +84,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
         { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
         { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-        { provide: ModulesService, useClass: ModulesServiceStub},
+        { provide: ModulesService, useClass: ModulesServiceStub },
         { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
       ]
     }).compile()
@@ -135,8 +134,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
       'header-value'
     )
 
-    createDeploymentDto = new CreateCircleDeploymentRequestDto(
-      'deployment-id',
+    createDeploymentDto = new CreateDeploymentRequestDto(
       'application-name',
       [],
       'author-id',
