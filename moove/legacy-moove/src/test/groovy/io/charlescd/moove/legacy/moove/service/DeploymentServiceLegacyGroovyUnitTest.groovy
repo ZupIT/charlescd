@@ -105,7 +105,7 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
         then:
         this.deploymentRepository.findByIdAndWorkspaceId(_, _) >> Optional.ofNullable(deployment)
         this.deploymentRepository.save(_) >> updatedDeployment
-        this.deployApi.undeploy(_, _) >> new UndeployResponse("deployment-id")
+        this.deployApi.undeploy(_) >> new UndeployResponse("deployment-id")
 
     }
 
