@@ -179,7 +179,7 @@ const InputOperator = styled(InputComponent)`
   }
 `;
 
-const Select = styled(SelectComponent)`
+const Select = styled(SelectComponent.Single)`
   width: 130px;
   margin: 0 40px;
 `;

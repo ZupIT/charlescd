@@ -165,7 +165,7 @@ export const useDeleteCircle = (): [Function, string] => {
 
 export const useCircles = (
   type: CIRCLE_TYPES
-): [boolean, Function, Function] => {
+): [boolean, Function, Function, CirclePagination] => {
   const dispatch = useDispatch();
   const [circlesData, getCircles] = useFetch<CirclePagination>(findAllCircles);
   const { response, error, loading } = circlesData;
@@ -191,7 +191,7 @@ export const useCircles = (
     }
   }, [dispatch, response, error, type]);
 
-  return [loading, filterCircles, getCircles];
+  return [loading, filterCircles, getCircles, response];
 };
 
 export const useSaveCircleManually = (
