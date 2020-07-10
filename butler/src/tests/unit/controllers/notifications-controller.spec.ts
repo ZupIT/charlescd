@@ -50,6 +50,24 @@ describe('DeploymentsController', () => {
       await notificationsController.receiveDeploymentCallback(123, finishDeploymentDto)
       expect(spyUseCase).toBeCalled()
     })
+
+    it('should call the undeployment callback usecase', async() => {
+
+      const finishDeploymentDto = new FinishDeploymentDto('SUCCEEDED', CallbackTypeEnum.UNDEPLOYMENT)
+
+      const spyUseCase = jest.spyOn(receiveUndeploymentCallbackUsecase, 'execute')
+      await notificationsController.receiveDeploymentCallback(123, finishDeploymentDto)
+      expect(spyUseCase).toBeCalled()
+    })
+
+    it('should call the istio-deployment callback usecase', async() => {
+
+      const finishDeploymentDto = new FinishDeploymentDto('SUCCEEDED', CallbackTypeEnum.ISTIO_DEPLOYMENT)
+
+      const spyUseCase = jest.spyOn(receiveIstioDeploymentCallbackUseCase, 'execute')
+      await notificationsController.receiveDeploymentCallback(123, finishDeploymentDto)
+      expect(spyUseCase).toBeCalled()
+    })
   })
 
 })
