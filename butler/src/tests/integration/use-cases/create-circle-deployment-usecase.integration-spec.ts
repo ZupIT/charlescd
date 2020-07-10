@@ -252,7 +252,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       .post('/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
-      .expect(400, done)
+      .expect(409, done)
   })
 
   it('/POST deployments in circle should enqueue RUNNING component deployments correctly', async() => {

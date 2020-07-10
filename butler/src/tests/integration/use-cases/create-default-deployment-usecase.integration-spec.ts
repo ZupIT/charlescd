@@ -256,7 +256,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     return request(app.getHttpServer())
       .post('/deployments')
       .send(createDeploymentRequest)
-      .expect(400, done)
+      .expect(409, done)
 
   })
 
