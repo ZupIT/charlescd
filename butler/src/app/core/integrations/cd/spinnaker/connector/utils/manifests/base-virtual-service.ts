@@ -91,6 +91,11 @@ const createXCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string): I
             subset: circle.destination.version
           },
           headers: {
+            response: {
+              set: {
+                'x-circle-source': circle.header.headerValue
+              }
+            },
             request: {
               set: {
                 'x-circle-source': circle.header.headerValue
@@ -122,6 +127,11 @@ const createRegexHttpMatcher = (circle: IPipelineCircle, appName: string): ICirc
             subset: circle.destination.version
           },
           headers: {
+            response: {
+              set: {
+                'x-circle-source': circle.header.headerValue
+              }
+            },
             request: {
               set: {
                 'x-circle-source': circle.header.headerValue
@@ -142,6 +152,11 @@ const createDefaultCircleHttpMatcher = (circle: IPipelineCircle, appName: string
         subset: circle.destination.version
       },
       headers: {
+        response: {
+          set: {
+            'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId
+          }
+        },
         request: {
           set: {
             'x-circle-source': ConfigurationConstants.DEFAULT_CIRCLE_ID as DefaultCircleId

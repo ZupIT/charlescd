@@ -16,9 +16,7 @@
 
 import {
   CreateCircleDeploymentDto,
-  CreateCircleDeploymentRequestDto,
   CreateComponentDeploymentDto,
-  CreateDefaultDeploymentRequestDto,
   CreateDeploymentRequestDto,
   CreateModuleDeploymentDto
 } from './create-deployment'
@@ -39,8 +37,6 @@ import {
 
 export {
   CreateDeploymentRequestDto,
-  CreateCircleDeploymentRequestDto,
-  CreateDefaultDeploymentRequestDto,
   CreateCircleDeploymentDto,
   CreateComponentDeploymentDto,
   CreateModuleDeploymentDto,
