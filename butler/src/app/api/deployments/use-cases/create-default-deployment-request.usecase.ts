@@ -165,6 +165,7 @@ export class CreateDefaultDeploymentRequestUsecase {
     error: IConstraintError,
     componentDeployment: ComponentDeploymentEntity,
   ): Promise<QueuedDeploymentEntity> {
+
     if (error.constraint === QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE) {
       return this.queuedDeploymentsRepository.save(
         new QueuedDeploymentEntity(componentDeployment.componentId, componentDeployment.id, QueuedPipelineStatusEnum.QUEUED)
