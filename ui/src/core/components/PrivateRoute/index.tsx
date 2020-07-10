@@ -21,6 +21,7 @@ import { isRoot } from 'core/utils/auth';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 export interface Props extends RouteProps {
   allowedRoles: string[];
@@ -32,14 +33,16 @@ const PrivateRoute = ({
   ...rest
 }: Props) => {
   const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace, , ,] = useWorkspace();
+  const [workspace, loadWorkspace] = useWorkspace();
 
   useEffect(() => {
     loadWorkspace(workspaceId);
   }, [workspaceId, loadWorkspace]);
 
   const isAuthorized =
-    isRoot() || isAllowed(allowedRoles) || workspace?.status === 'COMPLETE';
+    isRoot() ||
+    isAllowed(allowedRoles) ||
+    workspace?.status === WORKSPACE_STATUS.COMPLETE;
 
   return (
     <Route
