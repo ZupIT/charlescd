@@ -126,10 +126,11 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
         <Styled.Submit
-          size="EXTRA_SMALL"
+          id="submit"
           type="submit"
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          size="EXTRA_SMALL"
           isLoading={savingBuild}
+          isDisabled={isEmptyFields || !isEmpty(errors)}
         >
           deploy
         </Styled.Submit>
