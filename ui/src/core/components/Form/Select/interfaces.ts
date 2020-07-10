@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { SelectComponentsConfig, OptionTypeBase } from 'react-select';
+
 export type Option = {
   [key: string]: string;
 };
@@ -21,11 +23,16 @@ export type Option = {
 export interface Props {
   placeholder?: string;
   options?: Option[];
-  defaultValue?: Option;
+  defaultValue?: Option | Option[];
   isDisabled?: boolean;
   isLoading?: boolean;
   className?: string;
   onChange?: (event: unknown) => void;
   onInputChange?: (value: string) => void;
   customOption?: React.ReactNode;
+  customMultiValue?: React.ReactNode;
+  closeMenuOnSelect?: boolean;
+  hideSelectedOptions?: boolean;
+  components?: SelectComponentsConfig<OptionTypeBase>;
+  label?: string;
 }
