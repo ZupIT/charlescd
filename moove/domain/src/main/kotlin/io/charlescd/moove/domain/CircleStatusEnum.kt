@@ -16,9 +16,6 @@
 
 package io.charlescd.moove.domain
 
-import java.time.LocalDateTime
-
-enum class CircleStatusEnum{
+enum class CircleStatusEnum {
     ACTIVE, INACTIVE
 }
-

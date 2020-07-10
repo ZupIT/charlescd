@@ -21,11 +21,11 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 import java.sql.Types
 import java.util.*
 import kotlin.collections.ArrayList
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val circleExtractor: CircleExtractor) :
@@ -345,7 +345,7 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
 	                    circle_status
             """
 
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getCircleAverageLifeTime(workspaceId: String): String {
@@ -359,6 +359,6 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
 	                circles.workspace_id = ? 
             """
 
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 }

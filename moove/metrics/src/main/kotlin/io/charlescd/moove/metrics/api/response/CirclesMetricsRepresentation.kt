@@ -31,7 +31,6 @@ data class CirclesMetricsRepresentation(val circleStats: CircleStatsRepresentati
                 ),
                 averageLifeTime = averageLifeTime
             )
-
         }
     }
 }
