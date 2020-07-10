@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import routes from 'core/constants/routes';
+import { genMenuId } from 'core/utils/menu';
 
-package io.charlescd.villager.test;
-
-import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
-import io.quarkus.test.Mock;
-import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-
-@Mock
-@ApplicationScoped
-public class MockListDockerRegistryTagsInteractor implements ListDockerRegistryTagsInteractor {
-
-    @Override
-    public List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input) {
-        return null;
-    }
-}
+export const items = [
+  {
+    id: genMenuId(routes.metricsDeploys),
+    text: 'Deploys',
+    to: routes.metricsDeploys
+  }
+];

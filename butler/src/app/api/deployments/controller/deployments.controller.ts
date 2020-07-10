@@ -17,9 +17,7 @@
 import { Body, Controller, Get, Headers, Param, Post, UsePipes } from '@nestjs/common'
 import {
   CreateDeploymentRequestDto,
-  CreateUndeploymentDto,
-  ReadDeploymentDto,
-  ReadUndeploymentDto
+  ReadDeploymentDto
 } from '../dto'
 import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
@@ -46,16 +44,6 @@ export class DeploymentsController {
       return await this.createCircleDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
     }
     return await this.createDefaultDeploymentRequestUsecase.execute(createDeploymentRequestDto, incomingCircleId)
-  }
-
-  @Post(':id/undeploy')
-  public async createUndeployment(
-    @Body() createUndeploymentDto: CreateUndeploymentDto,
-    @Param('id') deploymentId: string,
-    @Headers('x-circle-id') circleId: string
-  ): Promise<ReadUndeploymentDto> {
-
-    return await this.createUndeploymentRequestUsecase.execute(createUndeploymentDto, deploymentId, circleId)
   }
 
   @Get()

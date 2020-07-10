@@ -18,6 +18,7 @@ export interface Module {
   module: string;
   component: string;
   version: string;
+  tag?: string;
 }
 
 export interface ModuleForm {

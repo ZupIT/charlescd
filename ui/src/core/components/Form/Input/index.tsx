@@ -41,6 +41,8 @@ export interface Props extends InputEvents {
   onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
   placeholder?: string;
   disabled?: boolean;
+  isLoading?: boolean;
+  hasError?: boolean;
 }
 
 const Input = React.forwardRef(
@@ -55,6 +57,8 @@ const Input = React.forwardRef(
       autoComplete = 'off',
       onChange,
       maxLength,
+      isLoading,
+      hasError,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -79,7 +83,11 @@ const Input = React.forwardRef(
     };
 
     return (
-      <Styled.Wrapper type={type} className={className}>
+      <Styled.Wrapper
+        type={type}
+        className={className}
+        data-testid={`input-wrapper-${name}`}
+      >
         <Styled.Input
           ref={inputRef}
           type={type}
@@ -92,11 +100,13 @@ const Input = React.forwardRef(
           onClick={() => setIsFocused(true)}
           onBlur={handleFocused}
           disabled={disabled}
+          hasError={hasError}
           {...rest}
         />
         {label && (
           <Styled.Label
             isFocused={isFocused}
+            hasError={hasError}
             onClick={() => {
               inputRef.current.focus();
               setIsFocused(true);
@@ -105,6 +115,7 @@ const Input = React.forwardRef(
             {label}
           </Styled.Label>
         )}
+        {isLoading && <Styled.Loading name="ellipse-loading" color="light" />}
       </Styled.Wrapper>
     );
   }

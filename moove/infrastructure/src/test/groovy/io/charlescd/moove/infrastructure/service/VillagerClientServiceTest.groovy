@@ -179,26 +179,24 @@ class VillagerClientServiceTest extends Specification {
         def componentName = "3531d59f-af22-4f45-8c88-30c1f5aaee8e"
         def registryConfigurationId = "7477194c-2214-46a7-b4de-d232b34640e9"
         def workspaceId = "34eb6535-02ef-4756-af22-459d004d9121"
+        def componentTagName = "V-1.1.0"
 
         def componentTagsResponse = new FindComponentTagsResponse(
                 [
                         new FindComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.0"),
-                        new FindComponentTagsResponse.ComponentTag("component", "azure.acr/component:V-1.1.1")
                 ]
         )
 
         when:
-        def response = villagerService.findComponentTags(componentName, registryConfigurationId, workspaceId)
+        def response = villagerService.findComponentTags(componentName, registryConfigurationId,componentTagName, workspaceId)
 
         then:
-        1 * villagerClient.findComponentTags(registryConfigurationId, componentName, workspaceId) >> componentTagsResponse
+        1 * villagerClient.findComponentTags(registryConfigurationId, componentName,componentTagName, workspaceId) >> componentTagsResponse
 
         assert response != null
-        assert response.size() == 2
+        assert response.size() == 1
         assert response[0].name == "component"
         assert response[0].artifact == "azure.acr/component:V-1.1.0"
-        assert response[1].name == "component"
-        assert response[1].artifact == "azure.acr/component:V-1.1.1"
     }
 
     private User getDummyUser() {

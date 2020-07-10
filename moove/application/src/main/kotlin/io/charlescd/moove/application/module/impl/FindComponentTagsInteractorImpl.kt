@@ -36,21 +36,23 @@ class FindComponentTagsInteractorImpl(
     private val villagerService: VillagerService
 ) : FindComponentTagsInteractor {
 
-    override fun execute(moduleId: String, componentId: String, workspaceId: String): List<ComponentTagResponse> {
+    override fun execute(moduleId: String, componentId: String, name: String, workspaceId: String): List<ComponentTagResponse> {
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val component = findComponent(moduleService.find(moduleId, workspaceId), componentId)
-        return askVillagerForComponentTags(component, workspace, workspaceId)
+        return askVillagerForComponentTags(component, workspace, name, workspaceId)
     }
 
     private fun askVillagerForComponentTags(
         component: Component,
         workspace: Workspace,
+        name: String,
         workspaceId: String
     ): List<ComponentTagResponse> {
         return villagerService.findComponentTags(
             component.name,
             workspace.registryConfigurationId!!,
+            name,
             workspaceId
         ).map { ComponentTagResponse(it.name, it.artifact) }
     }
