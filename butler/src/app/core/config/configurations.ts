@@ -29,6 +29,8 @@ export const Configuration: IEnvConfiguration = {
 
   postgresDbName: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
 
+  postgresSSL: Boolean(process.env.DATABASE_SSL) || ConfigurationConstants.DATABASE_SSL,
+
   mooveUrl: process.env.MOOVE_URL || ConfigurationConstants.MOOVE_URL,
 
   darwinNotificationUrl: process.env.DARWIN_NOTIFICATION_URL || ConfigurationConstants.DARWIN_NOTIFICATION_URL,
