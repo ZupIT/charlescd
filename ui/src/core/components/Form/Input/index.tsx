@@ -42,7 +42,7 @@ export interface Props extends InputEvents {
   placeholder?: string;
   disabled?: boolean;
   isLoading?: boolean;
-  isError?: boolean;
+  hasError?: boolean;
 }
 
 const Input = React.forwardRef(
@@ -58,7 +58,7 @@ const Input = React.forwardRef(
       onChange,
       maxLength,
       isLoading,
-      isError,
+      hasError,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -100,13 +100,13 @@ const Input = React.forwardRef(
           onClick={() => setIsFocused(true)}
           onBlur={handleFocused}
           disabled={disabled}
-          isError={isError}
+          hasError={hasError}
           {...rest}
         />
         {label && (
           <Styled.Label
             isFocused={isFocused}
-            isError={isError}
+            hasError={hasError}
             onClick={() => {
               inputRef.current.focus();
               setIsFocused(true);

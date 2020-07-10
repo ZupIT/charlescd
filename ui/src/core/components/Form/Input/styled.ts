@@ -21,7 +21,7 @@ import Icon from 'core/components/Icon';
 interface InputProps {
   resume?: boolean;
   ref?: Ref<HTMLInputElement>;
-  isError?: boolean;
+  hasError?: boolean;
 }
 
 interface WrapperProps {
@@ -38,9 +38,9 @@ const Wrapper = styled.div<WrapperProps>`
     `};
 `;
 
-const Label = styled.label<{ isFocused: boolean; isError: boolean }>`
-  color: ${({ theme, isError }) =>
-    isError ? theme.input.error.color : theme.input.label};
+const Label = styled.label<{ isFocused: boolean; hasError: boolean }>`
+  color: ${({ theme, hasError }) =>
+    hasError ? theme.input.error.color : theme.input.label};
   cursor: text;
   font-size: ${({ isFocused }) => (isFocused ? '12px' : '14px')};
   position: absolute;
@@ -52,8 +52,8 @@ const Input = styled.input<InputProps>`
   background-color: transparent;
   border: none;
   border-bottom: 1px solid
-    ${({ theme, isError }) =>
-      isError ? theme.input.error.borderColor : theme.input.borderColor};
+    ${({ theme, hasError }) =>
+      hasError ? theme.input.error.borderColor : theme.input.borderColor};
   border-radius: 0;
   bottom: 0px;
   box-sizing: border-box;

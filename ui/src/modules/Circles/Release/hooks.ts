@@ -44,8 +44,8 @@ export const useComponentTags = (): {
     params: URLParams
   ) => {
     try {
-      setStatus('pending');
       if (params.name) {
+        setStatus('pending');
         const res = await getTags(moduleId, componentId, params);
         setTags(res);
         setStatus('resolved');

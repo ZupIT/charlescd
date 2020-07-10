@@ -79,7 +79,7 @@ test('renders Input component loading', () => {
 test('renders Input component error', async () => {
   const { container, getByTestId } = render(
     <Input
-      isError
+      hasError
       type={textProps.type}
       name={textProps.name}
       label="Label"
