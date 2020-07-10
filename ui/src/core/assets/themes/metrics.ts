@@ -63,6 +63,9 @@ export const dark = {
     }
   },
   dashboard: {
-    card: COLOR_BASTILLE
+    card: COLOR_BASTILLE,
+    averageTimeChart: COLOR_MOUNTAIN_MEADOW,
+    deployChart: COLOR_MOUNTAIN_MEADOW,
+    errorChart: COLOR_RED_ORANGE
   }
 };
