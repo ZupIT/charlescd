@@ -72,7 +72,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     await fixtureUtilsService.loadDatabase()
   })
 
-  it('/POST deployments/default should create deployment, module deployment and component deployment entities', async() => {
+  it('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
 
     const createDeploymentRequest = {
       deploymentId: 'e4c41beb-0a77-44c4-8d77-9addf3fc8ea9',
@@ -101,10 +101,9 @@ describe('CreateDefaultDeploymentUsecase', () => {
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
-      circle: null
     }
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(201)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
 
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
@@ -157,7 +156,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules).toMatchObject(expectedModules)
   })
 
-  it('/POST deployments/default should fail if already exists deployment ', done => {
+  it('/POST /deployments in default circle should fail if already exists deployment ', done => {
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -188,13 +187,13 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }
 
     return request(app.getHttpServer())
-      .post('/deployments/default')
+      .post('/deployments')
       .send(createDeploymentRequest)
-      .expect(400, done)
+      .expect(409, done)
 
   })
 
-  it('/POST deployments/default  should enqueue RUNNING component deployments correctly', async() => {
+  it('/POST /deployments in default circle  should enqueue RUNNING component deployments correctly', async() => {
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -227,7 +226,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest)
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest)
     const componentDeployments = responseData.modulesDeployments[0].componentsDeployments
 
     const queuedDeployment1 = await queuedDeploymentsRepository.findOne({ componentDeploymentId: componentDeployments[0].id })
@@ -254,7 +253,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     })
   })
 
-  it('/POST deployments/default should enqueue QUEUED and RUNNING component deployments correctly', async() => {
+  it('/POST /deployments in default circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -297,7 +296,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest)
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest)
 
     const componentDeployments1 = responseData.modulesDeployments[0].componentsDeployments
     const componentDeployments2 = responseData.modulesDeployments[1].componentsDeployments
@@ -335,8 +334,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     })
   })
 
-  it('/POST deployments/default should correctly update component pipeline options', async() => {
-
+  it('/POST /deployments in default circle should correctly update component pipeline options', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -383,7 +381,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }
 
     const { body: responseData } =
-      await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest)
+      await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest)
     const componentDeployments1 = responseData.modulesDeployments[0].componentsDeployments
     const componentDeployments2 = responseData.modulesDeployments[1].componentsDeployments
 
@@ -416,7 +414,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     )
   })
 
-  it('/POST deployments/default should call octopipe for each RUNNING component deployment', async() => {
+  it('/POST /deployments in default circle should call octopipe for each RUNNING component deployment', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -459,7 +457,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }
 
     const httpSpy = jest.spyOn(httpService, 'post')
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest)
 
     expect(httpSpy).toHaveBeenCalledTimes(2)
 
@@ -524,7 +522,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     )
   })
 
-  it('/POST deployments/default should handle deployment failure ', async() => {
+  it('/POST deployments in default should handle deployment failure ', async() => {
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -560,7 +558,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
@@ -568,7 +566,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it('/POST deployments/default should handle deployment failure ', async() => {
+  it('/POST deployments in default  should handle deployment failure ', async() => {
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -616,7 +614,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       circle : null
     }
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(500)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.CREATED)
@@ -625,7 +623,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it('/POST deployments/default with repeated components should return unprocessable entity status', async() => {
+  it('/POST deployments in default with repeated components should return unprocessable entity status', async() => {
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -661,7 +659,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
       circle: null
     }
-    const response  = await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(422)
+    const response  = await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(422)
     const responseObject = JSON.parse(response.text)
     expect(responseObject.statusCode).toEqual(422)
     expect(responseObject.message).toEqual('Deployment should not have repeated components')
