@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 import FormComponent from 'core/components/Form';
+import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
 import ButtonComponent from 'core/components/Button';
@@ -42,6 +43,11 @@ const Form = styled.form`
 const Input = styled(FormComponent.Input)`
   width: 190px;
   margin: 10px 0 20px;
+`;
+
+const ModuleInput = styled(FormComponent.Input)`
+  width: 150px;
+  margin: 0 0 20px;
 `;
 
 const Trash = styled(IconComponent)`
@@ -77,9 +83,10 @@ const moduleWrapper = styled.div`
   }
 `;
 
-const Select = styled(FormComponent.Select)``;
+const Select = styled(SelectComponent.Single)``;
 
 const SelectWrapper = styled.div`
+  position: relative;
   width: 150px;
 `;
 
@@ -89,7 +96,8 @@ const SearchWrapper = styled.div`
 `;
 
 const Error = styled(Text.h6)`
-  margin-top: 5px;
+  position: absolute;
+  top: 47px;
 `;
 
 const Info = styled(Text.h5)`
@@ -132,6 +140,7 @@ export default {
     Icon: Trash,
     Wrapper: moduleWrapper,
     Button: AddModule,
-    Info
+    Info,
+    Input: ModuleInput
   }
 };

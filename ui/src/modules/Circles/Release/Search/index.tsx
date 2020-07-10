@@ -67,7 +67,7 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
 
   return (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Styled.SearchWrapper>
+      <Styled.SearchWrapper data-testid="search-release">
         <Styled.Select
           name="buildId"
           label="Select a release name"
