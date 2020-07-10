@@ -27,11 +27,11 @@ test('renders Can component', async () => {
         name="Edit segments"
         onClick={() => jest.fn()}
       />
-    )
+    ),
   };
 
   const { getByTestId } = render(
-    <Can I="write" a="circles" passThrough>
+    <Can I="write" a="circles" passThrough allowedRoutes>
       {props.children}
     </Can>
   );
