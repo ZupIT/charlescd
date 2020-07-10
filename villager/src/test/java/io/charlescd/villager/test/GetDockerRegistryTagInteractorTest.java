@@ -33,13 +33,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -73,7 +72,7 @@ public class GetDockerRegistryTagInteractorTest {
             tags.add("tag_2");
             tagsResponse.setTags(tags);
 
-            var builtResponse = new BuiltResponse(200,new Headers<>(),tagsResponse,annotations);
+            var builtResponse = new BuiltResponse(200, new Headers<>(), tagsResponse, annotations);
             var response = new ServerResponse(builtResponse);
 
             return Optional.of(response);
