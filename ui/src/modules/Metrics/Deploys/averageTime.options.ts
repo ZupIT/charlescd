@@ -27,7 +27,7 @@ export default {
     id: 'chartAverageTime',
     background: 'transparent'
   },
-  colors: [theme.metrics.dashboard.averageTimeChart],
+  colors: [theme.metrics.dashboard.chart.averageTime],
   stroke: {
     curve: 'smooth'
   },
@@ -68,7 +68,7 @@ export default {
     labels: {
       hideOverlappingLabels: false,
       style: {
-        color: theme.metrics.dashboard.chartLabels,
+        color: theme.metrics.dashboard.chart.labels,
         fontSize: '10px'
       },
       formatter

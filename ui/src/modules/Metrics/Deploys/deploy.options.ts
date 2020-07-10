@@ -27,8 +27,8 @@ export default {
     background: 'transparent'
   },
   colors: [
-    theme.metrics.dashboard.deployChart,
-    theme.metrics.dashboard.errorChart
+    theme.metrics.dashboard.chart.deploy,
+    theme.metrics.dashboard.chart.error
   ],
   theme: {
     mode: 'dark'
@@ -81,7 +81,7 @@ export default {
     labels: {
       hideOverlappingLabels: false,
       style: {
-        color: theme.metrics.dashboard.chartLabels,
+        color: theme.metrics.dashboard.chart.labels,
         fontSize: '10px'
       },
       formatter
