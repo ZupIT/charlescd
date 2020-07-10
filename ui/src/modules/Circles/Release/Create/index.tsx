@@ -96,7 +96,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   return (
     <FormContext {...form}>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+      <Styled.Form
+        onSubmit={handleSubmit(onSubmit)}
+        data-testid="create-release"
+      >
         <Text.h5 color="dark">Type a name for release:</Text.h5>
         <Styled.Input
           name="releaseName"
@@ -117,16 +120,17 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         </Styled.Module.Info>
         <Styled.Module.Button
           type="button"
-          isDisabled={!isEmpty(errors)}
+          isDisabled={isEmptyFields || !isEmpty(errors)}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
         <Styled.Submit
-          size="EXTRA_SMALL"
+          id="submit"
           type="submit"
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          size="EXTRA_SMALL"
           isLoading={savingBuild}
+          isDisabled={isEmptyFields || !isEmpty(errors)}
         >
           deploy
         </Styled.Submit>

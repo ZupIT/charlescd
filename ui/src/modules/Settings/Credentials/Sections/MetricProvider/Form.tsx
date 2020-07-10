@@ -19,7 +19,7 @@ import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
 import Card from 'core/components/Card';
 import Button from 'core/components/Button';
-import Form from 'core/components/Form';
+import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -75,7 +75,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   );
 
   const renderSelect = () => (
-    <Form.Select
+    <Select.Single
       control={control}
       name="url"
       label="Select a type server"
