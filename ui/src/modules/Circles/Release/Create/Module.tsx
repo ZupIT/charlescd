@@ -119,7 +119,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           ref={register({ required: true })}
           onChange={useCallback(debounce(onSearchTag, 300), [])}
           isLoading={status === 'pending'}
-          isError={isEmptyTag}
+          hasError={isEmptyTag}
           label="Version name"
         />
         {isEmptyTag && (
