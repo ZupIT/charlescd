@@ -28,6 +28,8 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
     postgresDbName: 'postgresdbname',
 
+    postgresSSL: false,
+
     mooveUrl: 'mooveurl.com',
 
     darwinDeploymentCallbackUrl: 'darwin-deployment-callback.url.com',
