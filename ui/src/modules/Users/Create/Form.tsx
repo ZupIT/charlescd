@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
-import Popover from 'core/components/Popover';
+import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { NewUser } from 'modules/Users/interfaces/User';
 import Styled from './styled';
 import { useCreateUser } from '../hooks';
@@ -76,7 +76,7 @@ const FormUser = ({ onFinish }: Props) => {
         <Popover
           title="Creating a new user"
           icon="info"
-          link="#"
+          link={`${CHARLES_DOC}/reference/users-group`}
           linkLabel="View documentation"
           description="In order to create a new user, you must fill the following fields."
         />

@@ -170,7 +170,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         <Popover
           title="How does a user group work?"
           icon="info"
-          link={`${CHARLES_DOC}/primeiros-passsos/configurando-workspace`}
+          link={`${CHARLES_DOC}/reference/users-group`}
           linkLabel="View documentation"
           description="With the user group you have more control over the entire application. You can choose which accesses this group will have in this workspace. Consult the our documentation for further details."
         />
