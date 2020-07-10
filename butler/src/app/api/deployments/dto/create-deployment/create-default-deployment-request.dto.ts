@@ -29,7 +29,7 @@ export class CreateDefaultDeploymentRequestDto extends CreateDeploymentRequestDt
     callbackUrl: string,
     cdConfigurationId: string
   ) {
-    super()
+    super(applicationName, modules, authorId, description, callbackUrl, null, cdConfigurationId)
     this.deploymentId = deploymentId
     this.applicationName = applicationName
     this.modules = modules
