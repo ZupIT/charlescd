@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
 import Can from '..';
 import Dropdown from 'core/components/Dropdown';
 
@@ -36,7 +36,7 @@ test('renders Can component', async () => {
     </Can>
   );
   const buttoDropdown = getByTestId('icon-edit');
-  expect(buttoDropdown).toBeInTheDocument();
+  await wait(() => expect(buttoDropdown).toBeInTheDocument());
 });
 
 test('renders Can component disabled', async () => {
@@ -56,7 +56,7 @@ test('renders Can component disabled', async () => {
     </Can>
   );
   const buttoDropdown = getByTestId('icon-edit');
-  expect(buttoDropdown).toBeInTheDocument();
+  await wait(() => expect(buttoDropdown).toBeInTheDocument());
 });
 
 test('renders Can component with default properties', async () => {
@@ -70,5 +70,5 @@ test('renders Can component with default properties', async () => {
     </Can>
   );
 
-  expect(document.body.innerHTML).toBe('<div></div>');
+  await wait(() => expect(document.body.innerHTML).toBe('<div></div>'));
 });
