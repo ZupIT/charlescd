@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/deployments/circle"],
+        value = ["/deployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -33,7 +33,7 @@ interface DeployClient {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/deployments/default"],
+        value = ["/deployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
