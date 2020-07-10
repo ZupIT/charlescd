@@ -28,9 +28,32 @@ describe('Module service spec', () => {
     jest.spyOn(moduleRepository,'findOne').mockImplementation(
       () => Promise.resolve(moduleEntities[0]) )
 
-    modulesService.createModules(moduleEntities)
+    const spyModule = jest.spyOn(moduleRepository,'save')
+
+    await modulesService.createModules(moduleEntities)
+    expect(spyModule).not.toBeCalled()
+  })
+  it('when module  have new components should update the module again', async() => {
+
+    const moduleEntities = [
+      new ModuleEntity(
+        'module-id',
+        [
+          new ComponentEntity('component-id')
+        ])
+    ]
+    const moduleEntitiesUpdated = [
+      new ModuleEntity('moduleId-2',[
+        new ComponentEntity('component-id'),
+        new ComponentEntity('component-id-2')
+      ])
+    ]
+    jest.spyOn(moduleRepository,'findOne').mockImplementation(
+      () => Promise.resolve(moduleEntities[0]) )
 
     const spyModule = jest.spyOn(moduleRepository,'save')
-    expect(spyModule).not.toBeCalled()
+
+    await modulesService.createModules(moduleEntitiesUpdated)
+    expect(spyModule).toBeCalled()
   })
 })
