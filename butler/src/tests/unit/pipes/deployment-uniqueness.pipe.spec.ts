@@ -1,13 +1,14 @@
 import 'jest'
 import { DeploymentUniquenessPipe } from '../../../app/api/deployments/pipes'
 import { Repository } from 'typeorm'
-import { DeploymentEntity, ComponentDeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ComponentDeploymentEntity, ModuleDeploymentEntity, CircleDeploymentEntity } from '../../../app/api/deployments/entity'
+import { CreateDeploymentRequestDto } from '../../../app/api/deployments/dto'
 
 describe('uniqueness pipe', () => {
   it('should return the same request passed', async() => {
     const entityRepository = new Repository<DeploymentEntity>()
     const pipe = new DeploymentUniquenessPipe(entityRepository)
-    const request = {
+    const deploymentParams = {
       deploymentId: 'some-id',
       applicationName: 'app-name',
       authorId: 'author',
@@ -15,6 +16,18 @@ describe('uniqueness pipe', () => {
       cdConfigurationId: '123123',
       description: 'my deployment',
       modules: []
+    }
+    const request : CreateDeploymentRequestDto = {
+      ...deploymentParams,
+      circle: { headerValue: 'some-header-value', toEntity: () => { return new CircleDeploymentEntity('some-header-value') } },
+      toEntity: () => {
+        return new DeploymentEntity(
+          deploymentParams.deploymentId, deploymentParams.applicationName,
+          deploymentParams.modules, deploymentParams.authorId,
+          deploymentParams.description, deploymentParams.callbackUrl,
+          null, true,
+          'circle-id', deploymentParams.cdConfigurationId)
+      }
     }
     jest.spyOn(entityRepository, 'findOne').mockImplementation(() => Promise.resolve(undefined))
     const pipeTransformation = await pipe.transform(request)
@@ -46,7 +59,8 @@ describe('uniqueness pipe', () => {
       'dummy-circle-id',
       'cd-configuration-id'
     )
-    const request = {
+
+    const deploymentParams = {
       deploymentId: 'some-id',
       applicationName: 'app-name',
       authorId: 'author',
@@ -54,6 +68,18 @@ describe('uniqueness pipe', () => {
       cdConfigurationId: '123123',
       description: 'my deployment',
       modules: []
+    }
+    const request : CreateDeploymentRequestDto = {
+      ...deploymentParams,
+      circle: { headerValue: 'some-header-value', toEntity: () => { return new CircleDeploymentEntity('some-header-value') } },
+      toEntity: () => {
+        return new DeploymentEntity(
+          deploymentParams.deploymentId, deploymentParams.applicationName,
+          deploymentParams.modules, deploymentParams.authorId,
+          deploymentParams.description, deploymentParams.callbackUrl,
+          null, true,
+          'circle-id', deploymentParams.cdConfigurationId)
+      }
     }
     jest.spyOn(entityRepository, 'findOne').mockImplementation(() => Promise.resolve(deployment))
     expect(pipe.transform(request)).rejects.toThrow()
