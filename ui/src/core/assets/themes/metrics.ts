@@ -65,9 +65,11 @@ export const dark = {
   },
   dashboard: {
     card: COLOR_BASTILLE,
-    averageTimeChart: COLOR_MOUNTAIN_MEADOW,
-    deployChart: COLOR_MOUNTAIN_MEADOW,
-    errorChart: COLOR_RED_ORANGE,
-    chartLabels: COLOR_WHITE
+    chart: {
+      averageTime: COLOR_MOUNTAIN_MEADOW,
+      deploy: COLOR_MOUNTAIN_MEADOW,
+      error: COLOR_RED_ORANGE,
+      labels: COLOR_WHITE
+    }
   }
 };
