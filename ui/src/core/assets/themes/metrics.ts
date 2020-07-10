@@ -28,7 +28,9 @@ import {
   COLOR_MALACHITE,
   COLOR_BLACK_MARLIN,
   COLOR_SANTAS_GREY,
-  COLOR_PAYNES_GREY
+  COLOR_PAYNES_GREY,
+  COLOR_BASTILLE,
+  COLOR_WHITE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -59,6 +61,15 @@ export const dark = {
       warning: COLOR_GOLD,
       ok: COLOR_SANTAS_GREY,
       success: COLOR_MALACHITE
+    }
+  },
+  dashboard: {
+    card: COLOR_BASTILLE,
+    chart: {
+      averageTime: COLOR_MOUNTAIN_MEADOW,
+      deploy: COLOR_MOUNTAIN_MEADOW,
+      error: COLOR_RED_ORANGE,
+      labels: COLOR_WHITE
     }
   }
 };
