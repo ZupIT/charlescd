@@ -32,7 +32,7 @@ const Forbidden403 = () => {
         icon="error-403"
       >
         <Button.Rounded
-          name="error403"
+          name="error-403"
           color="dark"
           onClick={() => router.push(routes.workspaces)}
         >
