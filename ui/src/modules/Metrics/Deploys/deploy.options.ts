@@ -15,6 +15,9 @@
  */
 
 import { chartDateFormatter as formatter } from './helpers';
+import { getTheme } from 'core/utils/themes';
+
+const theme = getTheme();
 
 export default {
   chart: {
@@ -23,7 +26,10 @@ export default {
     id: 'chartDeploy',
     background: 'transparent'
   },
-  colors: ['#10AA80', '#FF453A'],
+  colors: [
+    theme.metrics.dashboard.deployChart,
+    theme.metrics.dashboard.errorChart
+  ],
   theme: {
     mode: 'dark'
   },
