@@ -22,6 +22,7 @@ import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.impl.RetrieveCirclesMetricsInteractorImpl
 import io.charlescd.moove.metrics.interactor.impl.RetrieveDeploymentsMetricsInteractorImpl
 import spock.lang.Specification
 
@@ -33,7 +34,9 @@ class MetricsControllerUnitTest extends Specification {
     def retrieveCirclePeriodMetric = Mock(RetrieveCirclePeriodMetricInteractor)
     def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
     def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
-    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth, retrieveDeploymentsMetric)
+    def retrieveCirclesMetrics = Mock(RetrieveCirclesMetricsInteractorImpl)
+    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric,
+            retrieveCircleComponentsHealth, retrieveDeploymentsMetric, retrieveCirclesMetrics)
 
 
     def circleId = "circle-id"
