@@ -244,21 +244,18 @@ class JdbcDeploymentRepository(
         numberOfDays: Int
     ): List<DeploymentGeneralStats> {
         var query = """
-                        SELECT 
-                            COUNT(id) AS deployment_quantity,
-	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
-	                        CASE status 
-                                WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
-		                        ELSE 'DEPLOYED'
-	                        END AS deployment_status
-                        FROM
-	                        deployments
-                        WHERE
-	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
-                            AND workspace_id = ?
-                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
-	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
-                        """
+                SELECT  COUNT(id)                                               AS deployment_quantity,
+                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
+                        CASE status 
+                            WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
+                            ELSE 'DEPLOYED'
+                        END                                                     AS deployment_status
+                FROM deployments
+                WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
+                    AND workspace_id = ?
+                    AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+                    AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
+        """
 
         if (circlesId.isNotEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
@@ -279,22 +276,19 @@ class JdbcDeploymentRepository(
         numberOfDays: Int
     ): List<DeploymentStats> {
         var query = """
-                        SELECT 
-                            COUNT(id) AS deployment_quantity,
-	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
-                            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') as deployment_date,
-	                        CASE status 
-                                WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
-		                        ELSE 'DEPLOYED'
-	                        END AS deployment_status
-                        FROM
-	                        deployments
-                        WHERE
-	                        status NOT IN ('DEPLOYING', 'UNDEPLOYING')
-                            AND workspace_id = ?
-                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
-	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
-                        """
+                SELECT  COUNT(id)                                               AS deployment_quantity,
+                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date,
+                        CASE status 
+                            WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
+                            ELSE 'DEPLOYED'
+                        END                                                     AS deployment_status
+                FROM deployments
+                WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
+                    AND workspace_id = ?
+                    AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+                    AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
+        """
 
         if (circlesId.isNotEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
@@ -315,16 +309,13 @@ class JdbcDeploymentRepository(
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats> {
         var query = """
-                        SELECT 
-	                        COALESCE(AVG(deployed_at - created_at), '00:00:00') AS deployment_average_time,
-                            TO_CHAR(CREATED_AT, 'YYYY-MM-DD') as deployment_date
-                        FROM
-	                        deployments
-                        WHERE
-                            workspace_id = ?
-                            AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
-	                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
-                        """
+                SELECT  COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date
+                FROM deployments
+                WHERE workspace_id = ?
+                    AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+                    AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
+        """
 
         if (circlesId.isNotEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
