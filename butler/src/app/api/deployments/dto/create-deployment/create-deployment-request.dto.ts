@@ -14,18 +14,44 @@
  * limitations under the License.
  */
 
-import { CreateModuleDeploymentDto } from '../index'
+import { CreateCircleDeploymentDto, CreateModuleDeploymentDto } from '../index'
 import { Type } from 'class-transformer'
 import {
   IsDefined,
   IsNotEmpty,
   Length,
-  Matches,
+  Matches, ValidateIf,
   ValidateNested
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import {  DeploymentEntity } from '../../entity'
 
-export abstract class CreateDeploymentRequestDto {
+
+export  class CreateDeploymentRequestDto {
+
+  constructor(
+    applicationName: string,
+    modules: CreateModuleDeploymentDto[],
+    authorId: string,
+    description: string,
+    callbackUrl: string,
+    circle: CreateCircleDeploymentDto | null,
+    cdConfigurationId: string
+  ) {
+    this.applicationName = applicationName
+    this.modules = modules
+    this.authorId = authorId
+    this.description = description
+    this.callbackUrl = callbackUrl
+    this.circle = circle
+    this.cdConfigurationId = cdConfigurationId
+  }
+
+  @ApiProperty({ type: () => CreateCircleDeploymentDto })
+  @ValidateIf((obj, value) => { return value })
+  @ValidateNested({ each: true })
+  @Type(() => CreateCircleDeploymentDto)
+  public readonly circle: CreateCircleDeploymentDto | null
 
   @ApiProperty()
   @IsNotEmpty()
@@ -55,4 +81,20 @@ export abstract class CreateDeploymentRequestDto {
 
   @IsNotEmpty()
   public cdConfigurationId!: string
+
+  public toEntity(requestCircleId: string): DeploymentEntity {
+    return new DeploymentEntity(
+      this.deploymentId,
+      this.applicationName,
+      this.modules.map(module => module.toModuleDeploymentEntity()),
+      this.authorId,
+      this.description,
+      this.callbackUrl,
+      this.circle ? this.circle.toEntity() : null,
+      !this.circle,
+      requestCircleId,
+      this.cdConfigurationId,
+    )
+  }
+
 }
