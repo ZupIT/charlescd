@@ -41,11 +41,11 @@ interface DeployClient {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/deployments/{id}/undeploy"],
+        value = ["/undeployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun undeploy(@PathVariable("id") id: String, @RequestBody request: UndeployRequest): UndeployResponse
+    fun undeploy(@RequestBody request: UndeployRequest): UndeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
