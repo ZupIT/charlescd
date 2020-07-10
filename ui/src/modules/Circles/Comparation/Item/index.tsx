@@ -47,6 +47,7 @@ import CreateRelease from 'modules/Circles/Release';
 import CreateSegments from './CreateSegments';
 import { updateCirclesAction } from 'modules/Circles/state/actions';
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
+import { useCirclePolling } from 'modules/Circles/hooks';
 import Styled from './styled';
 
 interface Props {
@@ -74,12 +75,31 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [, updateCircleWithFile] = useSaveCircleWithFile(id);
   const [action, setAction] = useState('');
   const [circle, setCircle] = useState<Circle>();
+  const { pollingCircle, response } = useCirclePolling();
+  const POLLING_DELAY = 15000;
 
   useEffect(() => {
     if (circleResponse) {
       setCircle(circleResponse);
     }
   }, [circleResponse]);
+
+  useEffect(() => {
+    if (response) {
+      setCircle(response);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    let timeout = 0;
+    if (isBusy(circle?.deployment?.status)) {
+      timeout = setTimeout(() => {
+        pollingCircle(circle?.id);
+      }, POLLING_DELAY);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [pollingCircle, circle]);
 
   useEffect(() => {
     if (updateManualResponse) {
