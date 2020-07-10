@@ -104,7 +104,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         <Popover
           title="Why we ask for Metrics Provider?"
           icon="info"
-          link={`${CHARLES_DOC}/referencia-1/metricas`}
+          link={`${CHARLES_DOC}/reference/metrics`}
           linkLabel="View documentation"
           description="Adding the URL of our tool helps Charles to metrics generation since this can vary from workspace to another. Consult the our documentation for further details."
         />
