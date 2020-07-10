@@ -29,7 +29,8 @@ import {
   COLOR_BLACK_MARLIN,
   COLOR_SANTAS_GREY,
   COLOR_PAYNES_GREY,
-  COLOR_BASTILLE
+  COLOR_BASTILLE,
+  COLOR_WHITE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -66,6 +67,7 @@ export const dark = {
     card: COLOR_BASTILLE,
     averageTimeChart: COLOR_MOUNTAIN_MEADOW,
     deployChart: COLOR_MOUNTAIN_MEADOW,
-    errorChart: COLOR_RED_ORANGE
+    errorChart: COLOR_RED_ORANGE,
+    chartLabels: COLOR_WHITE
   }
 };

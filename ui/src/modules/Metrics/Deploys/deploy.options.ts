@@ -81,7 +81,7 @@ export default {
     labels: {
       hideOverlappingLabels: false,
       style: {
-        color: '#fff',
+        color: theme.metrics.dashboard.chartLabels,
         fontSize: '10px'
       },
       formatter
