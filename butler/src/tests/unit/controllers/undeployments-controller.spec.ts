@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import { Test } from '@nestjs/testing'
 import { DeploymentsController } from '../../../app/api/deployments/controller'
-import { DeploymentsService } from '../../../app/api/deployments/services'
-
 import { UndeploymentsController } from '../../../app/api/deployments/controller/undeployments.controller'
 import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
 import { CreateUndeploymentRequestUsecaseStub } from '../../stubs/use-cases'
 import { ReadUndeploymentDto } from '../../../app/api/deployments/dto/read-undeployment'
-import { DeploymentStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import {  UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
 import { CreateUndeploymentDto } from '../../../app/api/deployments/dto/create-undeployment'
 
 describe('DeploymentsController', () => {
