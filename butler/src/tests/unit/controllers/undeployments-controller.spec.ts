@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { DeploymentsController } from '../../../app/api/deployments/controller'
 import { UndeploymentsController } from '../../../app/api/deployments/controller/undeployments.controller'
 import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
 import { CreateUndeploymentRequestUsecaseStub } from '../../stubs/use-cases'
