@@ -70,7 +70,6 @@
     "typescript": "3.8"
   },
   "jest": {
-    "collectCoverage": true,
     "collectCoverageFrom": [
       "app/**/*.ts",
       "!app/**/resources/**",
