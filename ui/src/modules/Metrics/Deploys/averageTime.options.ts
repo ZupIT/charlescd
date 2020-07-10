@@ -16,6 +16,9 @@
 
 import { chartDateFormatter as formatter } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
+import { getTheme } from 'core/utils/themes';
+
+const theme = getTheme();
 
 export default {
   chart: {
@@ -24,7 +27,7 @@ export default {
     id: 'chartAverageTime',
     background: 'transparent'
   },
-  colors: ['#10AA80'],
+  colors: [theme.metrics.dashboard.chart.averageTime],
   stroke: {
     curve: 'smooth'
   },
@@ -65,7 +68,7 @@ export default {
     labels: {
       hideOverlappingLabels: false,
       style: {
-        color: '#fff',
+        color: theme.metrics.dashboard.chart.labels,
         fontSize: '10px'
       },
       formatter
