@@ -18,16 +18,14 @@
 
 package io.charlescd.moove.infrastructure.repository
 
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.Page
-import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 import java.sql.Types
 import java.util.*
 import kotlin.collections.ArrayList
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val circleExtractor: CircleExtractor) :
@@ -327,5 +325,40 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
         statement.appendln("AND circles.workspace_id = ?")
 
         return statement
+    }
+
+    override fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleMetric> {
+        val query =
+            """
+                    SELECT
+	                    COUNT(circles.id),
+	                    CASE
+		                    deployment.status WHEN 'DEPLOYED' THEN 'ACTIVE'
+		                    ELSE 'INACTIVE'
+                        END AS circle_status
+                    FROM
+	                    circles circles
+                        INNER JOIN deployments deployments ON circles.id = deployments.circle_id
+                    WHERE
+	                    circles.workspace_id = ?
+                    GROUP BY
+	                    circle_status
+            """
+
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getCircleAverageLifeTime(workspaceId: String): String {
+        val query =
+            """
+                SELECT 
+	                AVG(NOW() - circles.created_at ) 
+                FROM
+	                circles circles
+                WHERE
+	                circles.workspace_id = ? 
+            """
+
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
