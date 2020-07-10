@@ -39,13 +39,12 @@ export class ModulesService {
   private async saveModule(moduleEntity: ModuleEntity) {
     const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
     const newComponents: ComponentEntity[] = moduleEntity.components.filter(
-      component => !module?.components.includes(component)
+      componentCompare => !module?.components.some(component=>component.id === componentCompare.id )
     )
 
-    if (module && !newComponents) {
+    if (module && newComponents.length === 0) {
       return
     }
-
     await this.moduleEntityRepository.save(moduleEntity)
   }
 
