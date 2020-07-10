@@ -25,7 +25,7 @@ export interface Props {
   isLoading?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   className?: string;
-  name?: string;
+  name: string;
   icon?: string;
   color?: PrimaryColors;
   isDisabled?: boolean;
