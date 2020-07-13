@@ -17,18 +17,18 @@
 package io.charlescd.villager.test;
 
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.quarkus.test.Mock;
-import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Optional;
 
 @Mock
 @ApplicationScoped
-public class MockListDockerRegistryTagsInteractor implements ListDockerRegistryTagsInteractor {
+public class MockGetDockerRegistryTagInteractor implements GetDockerRegistryTagInteractor {
 
     @Override
-    public List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input) {
+    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
         return null;
     }
 }

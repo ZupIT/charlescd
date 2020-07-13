@@ -51,6 +51,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
         def moduleId = "4ea37c3c-9fe3-4b81-8950-58d2dccbf6da"
         def componentId = "181db65b-4b8f-4b05-8ca0-32c0429a541c"
         def workspaceId = "5f39caad-5b3c-404c-b035-1089ca10c68d"
+        def tagName = "V-1.2.2"
 
         def author = getDummyUser()
 
@@ -72,32 +73,31 @@ class FindComponentTagsInteractorImplTest extends Specification {
                 "0b3a34b7-5180-469c-a343-ce7705f97475", null, null)
 
         when:
-        def response = findComponentTagsInteractor.execute(moduleId, componentId, workspaceId)
+        def response = findComponentTagsInteractor.execute(moduleId, componentId,tagName, workspaceId)
 
         then:
         1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * villagerService.findComponentTags(_, _, _) >> { arguments ->
+        1 * villagerService.findComponentTags(_, _,_,_) >> { arguments ->
             def componentNameArg = arguments[0]
             def registryConfigurationIdArg = arguments[1]
-            def workspaceIdArg = arguments[2]
+            def componentTagNameArg = arguments[2]
+            def workspaceIdArg = arguments[3]
 
             assert componentNameArg == component.name
             assert registryConfigurationIdArg == workspace.registryConfigurationId
             assert workspaceIdArg == workspace.id
+            assert componentTagNameArg == tagName
 
             return [
                     new SimpleArtifact("component", "azure.acr/component:V-1.2.2"),
-                    new SimpleArtifact("component", "azure.acr/component:V-1.2.3")
             ]
         }
 
         assert response != null
-        assert response.size() == 2
+        assert response.size() == 1
         assert response[0].name == "component"
         assert response[0].artifact == "azure.acr/component:V-1.2.2"
-        assert response[1].name == "component"
-        assert response[1].artifact == "azure.acr/component:V-1.2.3"
     }
 
     def "should throw an exception when workspace registry configuration is missing"() {
@@ -105,6 +105,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
         def moduleId = "4ea37c3c-9fe3-4b81-8950-58d2dccbf6da"
         def componentId = "181db65b-4b8f-4b05-8ca0-32c0429a541c"
         def workspaceId = "5f39caad-5b3c-404c-b035-1089ca10c68d"
+        def tagName = "V-1.2.2"
 
         def author = getDummyUser()
 
@@ -112,7 +113,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
                 WorkspaceStatusEnum.INCOMPLETE, null, null, "0b3a34b7-5180-469c-a343-ce7705f97475", null, null)
 
         when:
-        findComponentTagsInteractor.execute(moduleId, componentId, workspaceId)
+        findComponentTagsInteractor.execute(moduleId, componentId,tagName, workspaceId)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
