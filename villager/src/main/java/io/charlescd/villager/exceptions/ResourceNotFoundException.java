@@ -29,6 +29,7 @@ public class ResourceNotFoundException extends RuntimeException {
     }
 
     public enum ResourceEnum {
-        DOCKER_REGISTRY
+        DOCKER_REGISTRY,
+        DOCKER_REGISTRY_IMAGE_TAG
     }
 }

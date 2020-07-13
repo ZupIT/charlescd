@@ -54,6 +54,7 @@ import { ServicesModule } from '../../core/services/services.module'
 import { DeploymentUniquenessPipe } from './pipes'
 import { CdConfigurationsRepository } from '../configurations/repository'
 import { ModulesService } from './services/modules.service'
+import { UndeploymentsController } from './controller/undeployments.controller';
 
 @Module({
   imports: [
@@ -78,7 +79,7 @@ import { ModulesService } from './services/modules.service'
     ])
   ],
   controllers: [
-    DeploymentsController
+    DeploymentsController, UndeploymentsController
   ],
   providers: [
     DeploymentsService,
