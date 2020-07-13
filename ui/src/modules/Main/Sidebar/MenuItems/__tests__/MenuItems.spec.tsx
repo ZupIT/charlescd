@@ -18,27 +18,13 @@ import React from 'react';
 import { render } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
-import Sidebar from '../index';
+import MenuItems from '../index';
 
-const originalWindow = { ...window };
-
-beforeEach(() => {
-  delete window.location;
-
-  window.location = {
-    ...window.location,
-    pathname: routes.workspaces
-  };
-});
-
-afterEach(() => {
-  window = originalWindow;
-});
-
-test('renders sidebar component', async () => {
+test('renders sidebar menu Items', async () => {
   const { getByTestId } = render(
-    <Sidebar isExpanded={true} onClickExpand={null} />
+    <MenuItems isExpanded expandMenu={() => jest.fn()} />
   );
+
   const links = getByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
@@ -48,4 +34,3 @@ test('renders sidebar component', async () => {
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 });
-
