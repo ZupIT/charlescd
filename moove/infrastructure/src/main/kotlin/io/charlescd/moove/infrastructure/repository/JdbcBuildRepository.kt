@@ -380,17 +380,15 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
         return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, count ?: 0)
     }
 
-    private fun createQueryStatement(
+    private fun createInnerQueryStatement(
         parameters: Map<String, String>,
         pageRequest: PageRequest
     ): String {
-        val statement = StringBuilder(
-            BASE_QUERY_STATEMENT
-        )
+        val innerQuery = StringBuilder("SELECT * FROM builds WHERE 1 = 1")
 
-        parameters.forEach { (k, _) -> appendParameter(k, statement) }
+        parameters.forEach { (k, _) -> appendWhereParameters(k, innerQuery) }
 
-        return statement
+        return innerQuery
             .appendln("LIMIT ${pageRequest.size}")
             .appendln("OFFSET ${pageRequest.offset()}")
             .toString()
@@ -416,12 +414,12 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                 """
         )
 
-        parameters.forEach { (k, _) -> appendParameter(k, statement) }
+        parameters.forEach { (k, _) -> appendWhereParameters(k, statement) }
 
         return statement.toString()
     }
 
-    private fun appendParameter(parameter: String, query: StringBuilder) {
+    private fun appendWhereParameters(parameter: String, query: StringBuilder) {
         when (parameter) {
             "tag" -> query.appendln("AND builds.$parameter ILIKE ?")
             else -> query.appendln("AND builds.$parameter = ?")
@@ -505,4 +503,90 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
         components.map { component ->
             arrayOf(component.id)
         }
+
+    private fun createQueryStatement(
+        parameters: Map<String, String>,
+        pageRequest: PageRequest
+    ): String {
+        val innerQueryStatement = createInnerQueryStatement(parameters, pageRequest)
+        return """
+            SELECT builds.id                                AS build_id,
+                   builds.created_at                        AS build_created_at,
+                   builds.tag                               AS build_tag,
+                   builds.card_column_id                    AS build_card_column_id,
+                   builds.hypothesis_id                     AS build_hypothesis_id,
+                   builds.status                            AS build_status,
+                   builds.workspace_id                      AS build_workspace_id,
+                   build_user.id                            AS build_user_id,
+                   build_user.name                          AS build_user_name,
+                   build_user.email                         AS build_user_email,
+                   build_user.photo_url                     AS build_user_photo_url,
+                   build_user.created_at                    AS build_user_created_at,
+                   feature_snapshots.id                     AS feature_snapshot_id,
+                   feature_snapshots.feature_id             AS feature_snapshot_feature_id,
+                   feature_snapshots.name                   AS feature_snapshot_name,
+                   feature_snapshots.branch_name            AS feature_snapshot_branch_name,
+                   feature_snapshots.created_at             AS feature_snapshot_created_at,
+                   feature_snapshots.author_name            AS feature_snapshot_author_name,
+                   feature_snapshots.author_id              AS feature_snapshot_author_id,
+                   feature_snapshots.build_id               AS feature_snapshot_build_id,
+                   module_snapshots.id                      AS module_snapshot_id,
+                   module_snapshots.module_id               AS module_snapshot_module_id,
+                   module_snapshots.name                    AS module_snapshot_name,
+                   module_snapshots.git_repository_address  AS module_snapshot_git_repository_address,
+                   module_snapshots.created_at              AS module_snapshot_created_at,
+                   module_snapshots.helm_repository         AS module_snapshot_helm_repository,
+                   module_snapshots.workspace_id            AS module_snapshot_workspace_id,
+                   module_snapshots.feature_snapshot_id     AS module_snapshot_feature_snapshot_id,
+                   component_snapshots.id                   AS component_snapshot_id,
+                   component_snapshots.component_id         AS component_snapshot_component_id,
+                   component_snapshots.name                 AS component_snapshot_name,
+                   component_snapshots.created_at           AS component_snapshot_created_at,
+                   component_snapshots.workspace_id         AS component_snapshot_workspace_id,
+                   component_snapshots.module_snapshot_id   AS component_snapshot_module_snapshot_id,
+                   artifact_snapshots.id                    AS artifact_snapshot_id,
+                   artifact_snapshots.artifact              AS artifact_snapshot_artifact,
+                   artifact_snapshots.version               AS artifact_snapshot_version,
+                   artifact_snapshots.component_snapshot_id AS artifact_snapshot_component_snapshot_id,
+                   artifact_snapshots.created_at            AS artifact_snapshot_created_at,
+                   deployments.id                           AS deployment_id,
+                   deployments.created_at                   AS deployment_created_at,
+                   deployments.deployed_at                  AS deployment_deployed_at,
+                   deployments.status                       AS deployment_status,
+                   deployments.circle_id                    AS deployment_circle_id,
+                   deployments.build_id                     AS deployment_build_id,
+                   deployments.workspace_id                 AS deployment_workspace_id,
+                   deployment_user.id                       AS deployment_user_id,
+                   deployment_user.name                     AS deployment_user_name,
+                   deployment_user.email                    AS deployment_user_email,
+                   deployment_user.photo_url                AS deployment_user_photo_url,
+                   deployment_user.created_at               AS deployment_user_created_at,
+                   circles.id                               AS circle_id,
+                   circles.name                             AS circle_name,
+                   circles.reference                        AS circle_reference,
+                   circles.created_at                       AS circle_created_at,
+                   circles.matcher_type                     AS circle_matcher_type,
+                   circles.default_circle                   AS circle_default_circle,
+                   circles.rules                            AS circle_rules,
+                   circles.imported_kv_records              AS circle_imported_kv_records,
+                   circles.imported_at                      AS circle_imported_at,
+                   circles.workspace_id                     AS circle_workspace_id,
+                   circle_user.id                           AS circle_user_id,
+                   circle_user.name                         AS circle_user_name,
+                   circle_user.email                        AS circle_user_email,
+                   circle_user.photo_url                    AS circle_user_photo_url,
+                   circle_user.created_at                   AS circle_user_created_at
+            FROM ( $innerQueryStatement ) builds
+                     INNER JOIN users build_user ON builds.user_id = build_user.id
+                     LEFT JOIN feature_snapshots ON builds.id = feature_snapshots.build_id
+                     LEFT JOIN module_snapshots ON feature_snapshots.id = module_snapshots.feature_snapshot_id
+                     LEFT JOIN component_snapshots ON module_snapshots.id = component_snapshots.module_snapshot_id
+                     LEFT JOIN artifact_snapshots ON component_snapshots.id = artifact_snapshots.component_snapshot_id
+                     LEFT JOIN deployments ON builds.id = deployments.build_id
+                     LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
+                     LEFT JOIN circles ON deployments.circle_id = circles.id
+                     LEFT JOIN users circle_user ON circles.user_id = circle_user.id
+            WHERE 1 = 1
+        """
+    }
 }

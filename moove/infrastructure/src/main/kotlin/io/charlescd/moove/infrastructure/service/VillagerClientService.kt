@@ -62,11 +62,13 @@ class VillagerClientService(private val villagerClient: VillagerClient) : Villag
     override fun findComponentTags(
         componentName: String,
         registryConfigurationId: String,
+        name: String,
         workspaceId: String
     ): List<SimpleArtifact> {
         return villagerClient.findComponentTags(
             registryConfigurationId,
             componentName,
+            name,
             workspaceId
         ).tags.map { SimpleArtifact(it.name, it.artifact) }
     }

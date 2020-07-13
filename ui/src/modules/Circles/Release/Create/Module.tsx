@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { useFindAllModules } from 'modules/Modules/hooks/module';
 import { Option } from 'core/components/Form/Select/interfaces';
-import {
-  formatModuleOptions,
-  formatTagOptions,
-  formatComponentOptions
-} from './helpers';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
+import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 
@@ -37,14 +35,10 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
+  const [isEmptyTag, setIsEmptyTag] = useState(false);
   const prefixName = `modules[${index}]`;
-  const {
-    getComponentTags,
-    response: tags,
-    loading: loadingTags
-  } = useComponentTags();
-  const { errors, control, getValues } = useFormContext();
+  const { getComponentTags, tags, status } = useComponentTags();
+  const { errors, register, control, getValues, setValue } = useFormContext();
 
   useEffect(() => {
     getAllModules();
@@ -57,10 +51,12 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   }, [modules]);
 
   useEffect(() => {
-    if (tags) {
-      setTagOptions(formatTagOptions(tags));
+    if (status === 'resolved') {
+      const [tag] = tags;
+      setValue(`${prefixName}.tag`, tag?.artifact);
+      setIsEmptyTag(isEmpty(tag?.artifact));
     }
-  }, [tags]);
+  }, [status, tags, setValue, prefixName]);
 
   const updateComponents = (option: Option) => {
     setComponentOptions(formatComponentOptions(modules.content, option?.value));
@@ -70,11 +66,13 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     return errors?.modules?.[index]?.[name]?.message;
   };
 
-  const listVersions = (option: Option) => {
+  const onSearchTag = () => {
+    const componentId = getValues(`${prefixName}.component`);
     const moduleId = getValues(`${prefixName}.module`);
-    const componentId = option?.value;
-    getComponentTags(moduleId, componentId);
-    setTagOptions([]);
+    const name = getValues(`${prefixName}.version`);
+
+    setValue(`${prefixName}.tag`, '');
+    getComponentTags(moduleId, componentId, { name });
   };
 
   return (
@@ -103,7 +101,6 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           name={`${prefixName}.component`}
           label="Select a component"
           options={componentOptions}
-          onChange={listVersions}
           rules={{ required: true }}
           control={control}
         />
@@ -112,14 +109,24 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
         </Styled.Error>
       </Styled.SelectWrapper>
       <Styled.SelectWrapper>
-        <Styled.Select
-          name={`${prefixName}.version`}
-          label="Select a version"
-          isLoading={loadingTags}
-          control={control}
-          rules={{ required: true }}
-          options={tagOptions}
+        <Styled.Module.Input
+          type="hidden"
+          name={`${prefixName}.tag`}
+          ref={register({ required: true })}
         />
+        <Styled.Module.Input
+          name={`${prefixName}.version`}
+          ref={register({ required: true })}
+          onChange={useCallback(debounce(onSearchTag, 300), [])}
+          isLoading={status === 'pending'}
+          hasError={isEmptyTag}
+          label="Version name"
+        />
+        {isEmptyTag && (
+          <Styled.Error color="error">
+            This version is not in the configured registry.
+          </Styled.Error>
+        )}
       </Styled.SelectWrapper>
     </Styled.Module.Wrapper>
   );

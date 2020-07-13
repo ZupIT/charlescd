@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { buildParams, URLParams } from 'core/utils/query';
 import { baseRequest, postRequest } from './base';
 
 export interface Component {
@@ -71,5 +72,13 @@ export const deleteComponent = (moduleId: string, componentId: string) =>
     }
   );
 
-export const findComponentTags = (moduleId: string, componentId: string) =>
-  baseRequest(`${endpoint}/${moduleId}/components/${componentId}/tags`);
+export const findComponentTags = (
+  moduleId: string,
+  componentId: string,
+  params: URLParams
+) =>
+  baseRequest(
+    `${endpoint}/${moduleId}/components/${componentId}/tags?${buildParams(
+      params
+    )}`
+  );
