@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import MenuItems from '../index';
@@ -33,4 +33,49 @@ test('renders sidebar menu Items', async () => {
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
+});
+
+test('testing outside click menu Items', async () => {
+  const onOutSideCick = jest.fn();
+  const props = {
+    isExpanded: true
+  };
+
+  const { getByTestId } = render(
+    <div onClick={onOutSideCick} data-testid="external-div">
+      <MenuItems isExpanded={props.isExpanded} expandMenu={() => jest.fn()} />
+    </div>
+  );
+  const externalDiv = getByTestId('external-div');
+  const links = getByTestId('sidebar-links');
+
+  const workspacesId = genMenuId(routes.workspaces);
+  const accountId = genMenuId(routes.account);
+
+  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(links.children.length).toBe(3);
+  fireEvent.click(externalDiv);
+  wait(() => expect(props.isExpanded).toBeTruthy());
+});
+
+test('testing expand menu click', async () => {
+  const onClickExpand = jest.fn();
+
+  const isExpanded = false;
+
+  const { getByTestId } = render(
+    <MenuItems isExpanded={isExpanded} expandMenu={onClickExpand} />
+  );
+  const links = getByTestId('sidebar-links');
+  const workspacesId = genMenuId(routes.workspaces);
+  const accountId = genMenuId(routes.account);
+
+  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(links.children.length).toBe(3);
+
+  fireEvent.click(links.children[1]);
+
+  expect(onClickExpand).toHaveBeenCalled();
 });
