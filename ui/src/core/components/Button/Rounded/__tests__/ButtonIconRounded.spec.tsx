@@ -19,20 +19,70 @@ import { render, fireEvent, wait } from 'unit-test/testUtils';
 import ButtonIconRounded from '..';
 
 test('render ButtonIconRounded default component', async () => {
-	const click = jest.fn();
-	const props = {
-		name: 'add',
-		children: 'button'
-	};
-	const { getByTestId } = render(
-		<ButtonIconRounded onClick={click} name={props.name}>
-			{props.children}
-		</ButtonIconRounded>
-	);
+  const click = jest.fn();
+  const props = {
+    name: 'add',
+    icon: 'add',
+    children: 'button'
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconAdd = getByTestId(`icon-${props.name}`);
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
+  fireEvent.click(Button);
+  await wait(() => expect(click).toBeCalled());
+});
 
-	const Button = getByTestId(`button-iconRounded-${props.name}`);
+test('render ButtonIconRounded default component without default props', async () => {
+  const click = jest.fn();
+  const props = {
+    name: 'add',
+    icon: 'add',
+    children: 'button'
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded
+      onClick={click}
+      name={props.name}
+      icon={props.name}
+      size="small"
+      backgroundColor="primary"
+    >
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconAdd = getByTestId(`icon-${props.name}`);
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
+  fireEvent.click(Button);
+  await wait(() => expect(click).toBeCalled());
+});
 
-	expect(Button).toBeInTheDocument();
-	fireEvent.click(Button);
-	wait(() => expect(click).toBeCalled());
+test('render ButtonIconRounded on loading mode', async () => {
+  const click = jest.fn();
+  const props = {
+    name: 'add',
+    icon: 'add',
+    children: 'button'
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded
+      onClick={click}
+      name={props.name}
+      icon={props.name}
+      isLoading={true}
+    >
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconLoading = getByTestId('icon-loading');
+  expect(Button).toBeInTheDocument();
+  expect(IconLoading).toBeInTheDocument();
 });
