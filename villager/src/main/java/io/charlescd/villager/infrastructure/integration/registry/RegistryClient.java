@@ -17,7 +17,6 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.io.IOException;
 import java.util.Optional;
 import javax.ws.rs.core.Response;
 
@@ -27,7 +26,5 @@ public interface RegistryClient {
                                  DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
 
     Optional<Response> getImage(String name, String tagName);
-
-    TagsResponse listImageTags(String name, Integer max, String last) throws IOException;
 
 }
