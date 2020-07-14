@@ -50,17 +50,17 @@ export class ModulesService {
 
     if (!module) {
       await this.moduleEntityRepository.save(moduleEntity)
-    }else{
+    } else {
       newComponents.forEach(
-        newComponent => this.updateAndSaveComponent(newComponent,module)
+        newComponent => this.updateAndSaveComponent(newComponent, module)
       )
     }
 
   }
 
-  private updateAndSaveComponent(newComponent: ComponentEntity, module: ModuleEntity) {
+  private async updateAndSaveComponent(newComponent: ComponentEntity, module: ModuleEntity) {
     newComponent.module = module
-    this.componentEntityRepository.save(newComponent)
+    await this.componentEntityRepository.save(newComponent)
   }
 
 }
