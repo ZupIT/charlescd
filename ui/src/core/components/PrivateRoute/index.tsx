@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { isRoot } from 'core/utils/auth';
@@ -25,30 +25,41 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 export interface Props extends RouteProps {
   allowedRoles: string[];
+  allowedRoute?: boolean;
 }
 
 const PrivateRoute = ({
   component: Component,
   allowedRoles,
+  allowedRoute = false,
   ...rest
 }: Props) => {
   const workspaceId = getWorkspaceId();
   const [workspace, loadWorkspace] = useWorkspace();
+  const [isAuthorizedByWorkspace, setIsAuthorizedByWorkspace] = useState(true);
 
   useEffect(() => {
     loadWorkspace(workspaceId);
   }, [workspaceId, loadWorkspace]);
 
-  const isAuthorized =
-    isRoot() ||
-    isAllowed(allowedRoles) ||
-    workspace?.status === WORKSPACE_STATUS.COMPLETE;
+  useEffect(() => {
+    if (workspace) {
+      workspace?.status === WORKSPACE_STATUS.COMPLETE
+        ? setIsAuthorizedByWorkspace(true)
+        : setIsAuthorizedByWorkspace(false);
+    }
+  }, [workspace]);
+
+  const isAuthorizedByUser =
+    (isRoot() || isAllowed(allowedRoles)) && allowedRoute;
 
   return (
     <Route
       {...rest}
       render={props =>
-        isAuthorized ? (
+        isAuthorizedByWorkspace ? (
+          <Component {...props} />
+        ) : isAuthorizedByUser ? (
           <Component {...props} />
         ) : (
           <Redirect to={routes.error403} />
