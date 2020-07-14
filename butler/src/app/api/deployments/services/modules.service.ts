@@ -25,7 +25,9 @@ export class ModulesService {
 
   constructor(
         @InjectRepository(ModuleEntity)
-        private readonly moduleEntityRepository: Repository<ModuleEntity>
+        private readonly moduleEntityRepository: Repository<ModuleEntity>,
+        @InjectRepository(ComponentEntity)
+        private readonly componentEntityRepository: Repository<ComponentEntity>
   ) { }
 
   public async createModules(moduleEntities: ModuleEntity[]): Promise<void> {
@@ -45,7 +47,20 @@ export class ModulesService {
     if (module && newComponents.length === 0) {
       return
     }
-    await this.moduleEntityRepository.save(moduleEntity)
+
+    if (!module) {
+      await this.moduleEntityRepository.save(moduleEntity)
+    }else{
+      newComponents.forEach(
+        newComponent => this.updateAndSaveComponent(newComponent,module)
+      )
+    }
+
+  }
+
+  private updateAndSaveComponent(newComponent: ComponentEntity, module: ModuleEntity) {
+    newComponent.module = module
+    this.componentEntityRepository.save(newComponent)
   }
 
 }
