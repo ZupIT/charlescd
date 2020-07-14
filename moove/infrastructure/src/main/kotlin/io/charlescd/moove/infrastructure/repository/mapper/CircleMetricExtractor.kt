@@ -20,9 +20,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.CircleMetric
 import io.charlescd.moove.domain.CircleStatusEnum
+import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.sql.ResultSet
 
 @Component
 class CircleMetricExtractor : ResultSetExtractor<Set<CircleMetric>> {
