@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.interactor.registry;
+package io.charlescd.moove.metrics.interactor
 
-import java.util.List;
+import io.charlescd.moove.metrics.api.response.CirclesMetricsRepresentation
 
-@FunctionalInterface
-public interface ListDockerRegistryTagsInteractor {
+interface RetrieveCirclesMetricsInteractor {
 
-    List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input);
-
+    fun execute(workspaceId: String): CirclesMetricsRepresentation
 }

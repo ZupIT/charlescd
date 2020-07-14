@@ -46,7 +46,7 @@ export class CreateCircleDeploymentRequestDto extends CreateDeploymentRequestDto
       circle: CreateCircleDeploymentDto,
       cdConfigurationId: string
     ) {
-      super()
+      super(applicationName, modules, authorId, description, callbackUrl, circle, cdConfigurationId)
       this.deploymentId = deploymentId
       this.applicationName = applicationName
       this.modules = modules

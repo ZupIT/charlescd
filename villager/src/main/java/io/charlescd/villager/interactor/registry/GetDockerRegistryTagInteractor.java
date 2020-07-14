@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.test;
+package io.charlescd.villager.interactor.registry;
 
-import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
-import io.quarkus.test.Mock;
-import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
+import java.util.Optional;
 
-@Mock
-@ApplicationScoped
-public class MockListDockerRegistryTagsInteractor implements ListDockerRegistryTagsInteractor {
+@FunctionalInterface
+public interface GetDockerRegistryTagInteractor {
 
-    @Override
-    public List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input) {
-        return null;
-    }
+    Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input);
+
 }
