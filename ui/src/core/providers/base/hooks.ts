@@ -77,6 +77,22 @@ const getResponse = async (response: Response) => {
   }
 };
 
+export const useFetchData = <T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  req: (...args: any) => (options: RequestInit) => Promise<Response>
+): ((...args: unknown[]) => Promise<T>) => {
+  const isLoginRequest = login === req;
+
+  return async (...args: unknown[]) => {
+    const response = await renewTokenByCb(
+      () => req(...args)({}),
+      isLoginRequest
+    );
+    const data = await getResponse(response);
+    return data;
+  };
+};
+
 export const useFetch = <T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: (...args: any) => (options: RequestInit) => Promise<Response>

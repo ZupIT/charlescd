@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useState } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { findComponentTags } from 'core/providers/modules';
 import {
   composeBuild as postComposeBuild,
@@ -34,7 +34,8 @@ export const useComponentTags = (): {
   tags: Tag[];
   status: string;
 } => {
-  const [, , getTags] = useFetch<Tag[]>(findComponentTags);
+  // const [, , getTags] = useFetch<Tag[]>(findComponentTags);
+  const getTags = useFetchData<Tag[]>(findComponentTags);
   const [status, setStatus] = useState('idle');
   const [tags, setTags] = useState(null);
 
