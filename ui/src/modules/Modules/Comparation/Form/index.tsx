@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import isEqual from 'lodash/isEqual';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
-import { Module } from 'modules/Modules/interfaces/Module';
-import { getProfileByKey } from 'core/utils/profile';
-import Can from 'core/components/Can';
-import { updateParam } from 'core/utils/path';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import routes from 'core/constants/routes';
-import isEmpty from 'lodash/isEmpty';
-import Components from './Components';
-import { component } from './constants';
-import { validFields } from './helpers';
-import Styled from './styled';
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import isEqual from "lodash/isEqual";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useSaveModule, useUpdateModule } from "modules/Modules/hooks/module";
+import { Module } from "modules/Modules/interfaces/Module";
+import { getProfileByKey } from "core/utils/profile";
+import Can from "core/components/Can";
+import { updateParam } from "core/utils/path";
+import Popover, { CHARLES_DOC } from "core/components/Popover";
+import routes from "core/constants/routes";
+import isEmpty from "lodash/isEmpty";
+import Components from "./Components";
+import { component } from "./constants";
+import { validFields } from "./helpers";
+import Styled from "./styled";
 
 interface Props {
   module: Module;
@@ -39,9 +39,10 @@ interface Props {
 const FormModule = ({ module, onChange }: Props) => {
   const { loading: saveLoading, saveModule } = useSaveModule();
   const { status: updateStatus, updateModule } = useUpdateModule();
-  const authorId = getProfileByKey('id');
+  const authorId = getProfileByKey("id");
   const isEdit = !isEmpty(module);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [editMoreOptions, setEditMoreOptions] = useState(false);
   const history = useHistory();
 
   const { register, control, getValues, handleSubmit, watch } = useForm<Module>(
@@ -49,7 +50,7 @@ const FormModule = ({ module, onChange }: Props) => {
       defaultValues: { components: [component] }
     }
   );
-  const fieldArray = useFieldArray({ control, name: 'components' });
+  const fieldArray = useFieldArray({ control, name: "components" });
   const watchFields = watch();
 
   useEffect(() => {
@@ -65,16 +66,18 @@ const FormModule = ({ module, onChange }: Props) => {
   }, [watchFields, getValues, module]);
 
   useEffect(() => {
-    if (updateStatus === 'resolved') {
+    if (updateStatus === "resolved") {
       onChange();
     }
   }, [updateStatus, onChange]);
 
   const onSubmit = (data: Module) => {
     if (isEdit) {
-      updateModule(module?.id, data);
+      console.log(data)
+      // updateModule(module?.id, data);
     } else {
-      saveModule({ ...data, authorId });
+      console.log(data)
+      // saveModule({ ...data, authorId });
     }
   };
 
@@ -86,7 +89,7 @@ const FormModule = ({ module, onChange }: Props) => {
           color="dark"
           onClick={() =>
             updateParam(
-              'module',
+              "module",
               routes.modulesComparation,
               history,
               module?.id,
@@ -96,7 +99,7 @@ const FormModule = ({ module, onChange }: Props) => {
         />
       )}
       <Styled.Title color="light">
-        {isEdit ? 'Edit module' : 'Create module'}
+        {isEdit ? "Edit module" : "Create module"}
         <Popover
           title="How to create a module?"
           icon="info"
@@ -138,13 +141,70 @@ const FormModule = ({ module, onChange }: Props) => {
             description="Helm helps you manage Kubernetes applications"
           />
         </Styled.FieldPopover>
+        {/* <Styled.Components.MoreOptionsButton
+          size="EXTRA_SMALL"
+          onClick={() => setEditMoreOptions(true)}
+        >
+          <Icon name="add" size="15px" />
+          More Options
+        </Styled.Components.MoreOptionsButton> */}
+        {
+          <>
+            <Styled.Subtitle
+              onClick={() => setEditMoreOptions(!editMoreOptions)}
+              color="dark"
+            >
+              {editMoreOptions 
+                ? "Hide " 
+                : "Show "}
+              advanced options (be careful, do not change this if you are not using istio gateway)
+            </Styled.Subtitle>
+            {editMoreOptions && (
+              <>
+                <Styled.FieldPopover>
+                  <Styled.Input
+                    label="Insert a host for virtual service use"
+                    name="hostName"
+                    defaultValue={module?.hostValue}
+                    ref={register({ required: false })}
+                  />
+                  <Styled.Popover
+                    title="Host name"
+                    icon="info"
+                    size="20px"
+                    link="https://istio.io/latest/docs/reference/config/networking/virtual-service/"
+                    linkLabel="View documentation"
+                    description="In some cases it will be necessary to change the host to expose your application, by default leave it empty.."
+                  />
+                </Styled.FieldPopover>{" "}
+                <Styled.FieldPopover>
+                  <Styled.Input
+                    label="Insert a ingress name if necessary"
+                    name="gatewayName"
+                    defaultValue={module?.gatewayName}
+                    ref={register({ required: false })}
+                  />
+                  <Styled.Popover
+                    title="Istio ingress"
+                    icon="info"
+                    size="20px"
+                    link="https://istio.io/latest/docs/reference/config/networking/gateway/"
+                    linkLabel="View documentation"
+                    description="If your application use ingress gateway to be exposed it will be necessary to link with a virtual service using ingress name"
+                  />
+                </Styled.FieldPopover>
+              </>
+            )}
+          </>
+        }
+
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
           <Styled.Button
             type="submit"
             size="EXTRA_SMALL"
-            isLoading={saveLoading || updateStatus === 'pending'}
+            isLoading={saveLoading || updateStatus === "pending"}
           >
-            {isEdit ? 'Edit module' : 'Create module'}
+            {isEdit ? "Edit module" : "Create module"}
           </Styled.Button>
         </Can>
       </Styled.Form>

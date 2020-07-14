@@ -31,4 +31,6 @@ export interface Module {
   components?: Component[];
   gitRepositoryAddress: string;
   helmRepository: string;
+  hostValue?: string;
+  gatewayName?: string;
 }
