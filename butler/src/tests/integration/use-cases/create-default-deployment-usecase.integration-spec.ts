@@ -193,7 +193,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       relations: ['components']
     })
 
-    await request(app.getHttpServer()).post('/deployments/default').send(createDeploymentRequest).expect(201)
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
 
     const moduleEntityUpdated = await modulesRepository.findOneOrFail({
       where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
