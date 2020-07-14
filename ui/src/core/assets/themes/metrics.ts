@@ -30,7 +30,8 @@ import {
   COLOR_SANTAS_GREY,
   COLOR_PAYNES_GREY,
   COLOR_BASTILLE,
-  COLOR_FREE_SPEECH_BLUE
+  COLOR_FREE_SPEECH_BLUE,
+  COLOR_WHITE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -64,7 +65,13 @@ export const dark = {
     }
   },
   dashboard: {
-    card: COLOR_BASTILLE
+    card: COLOR_BASTILLE,
+    chart: {
+      averageTime: COLOR_MOUNTAIN_MEADOW,
+      deploy: COLOR_MOUNTAIN_MEADOW,
+      error: COLOR_RED_ORANGE,
+      labels: COLOR_WHITE
+    }
   },
   circles: {
     filter: COLOR_BLACK_MARLIN,

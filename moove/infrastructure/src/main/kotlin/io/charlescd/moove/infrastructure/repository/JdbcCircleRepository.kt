@@ -19,18 +19,25 @@
 package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.CircleMetric
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor
 import java.sql.Types
+import java.time.Duration
 import java.util.*
 import kotlin.collections.ArrayList
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
-class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val circleExtractor: CircleExtractor) :
+class JdbcCircleRepository(
+    private val jdbcTemplate: JdbcTemplate,
+    private val circleExtractor: CircleExtractor,
+    private val circleMetricExtractor: CircleMetricExtractor
+) :
     CircleRepository {
 
     companion object {
@@ -327,5 +334,41 @@ class JdbcCircleRepository(private val jdbcTemplate: JdbcTemplate, private val c
         statement.appendln("AND circles.workspace_id = ?")
 
         return statement
+    }
+
+    override fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleMetric> {
+        val query = """
+                SELECT  COUNT(circles.id)                                       AS total,
+                        CASE
+                            deployments.status WHEN 'DEPLOYED' THEN 'ACTIVE'
+                            ELSE 'INACTIVE'
+                        END                                                     AS circle_status
+                FROM circles circles
+                        LEFT JOIN deployments deployments ON circles.id = deployments.circle_id
+                WHERE circles.workspace_id = ?
+                GROUP BY circle_status
+        """
+
+        return this.jdbcTemplate.query(
+            query,
+            arrayOf(workspaceId),
+            circleMetricExtractor
+        )?.toList()
+            ?: emptyList()
+    }
+
+    override fun getCircleAverageLifeTime(workspaceId: String): Duration {
+        val query = """
+                SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', AVG((NOW() - circles.created_at)))) AS average_life_time 
+                FROM circles circles
+                WHERE circles.workspace_id = ? 
+        """
+
+        return this.jdbcTemplate.queryForObject(
+            query,
+            arrayOf(workspaceId)
+        ) { rs, _ ->
+            Duration.ofSeconds(rs.getLong(1))
+        } ?: Duration.ZERO
     }
 }
