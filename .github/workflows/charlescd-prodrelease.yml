@@ -313,7 +313,7 @@ jobs:
 
     - name: Zup Settings dev
       run: |
-        git Checkout .
+        git checkout .
         sed -i -E "s/(http:\/\/charles\.info\.example)/https:\/\/${{ secrets.HOST_DEV }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/(charlescd-postgresql)/${{ secrets.PG_HOST_DEV }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "/name: DB_USER/N;s/(name: DB_USER.*value: \")(keycloak\")/\1charlesadmin\"/" ./install/helm-chart/values.yaml &&
