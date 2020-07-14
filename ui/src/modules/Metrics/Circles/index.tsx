@@ -18,18 +18,18 @@ import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import HistoryComponent from './History';
 import Loader from '../Loaders/index';
-import { useCirclesMetric } from './hooks';
+import { useCirclesHistory } from './hooks';
 import Styled from './styled';
 
 const Circles = () => {
-  const { findAllCirclesData, response, loading } = useCirclesMetric();
+  const { findCirclesHistory, response, loading } = useCirclesHistory();
   const [name, setName] = useState('');
   const totalCircles =
     response?.circleStats?.active + response?.circleStats?.inactive;
 
   useEffect(() => {
-    findAllCirclesData({ name: name });
-  }, [findAllCirclesData, name]);
+    findCirclesHistory();
+  }, [findCirclesHistory, name]);
 
   return (
     <>
@@ -92,7 +92,7 @@ const Circles = () => {
               </Text.h5>
             </Styled.HistoryLegend>
           )}
-          <HistoryComponent data={response?.history} loading={loading} />
+          <HistoryComponent />
         </Styled.HistoryWrapper>
       </Styled.Content>
     </>

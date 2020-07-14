@@ -19,10 +19,9 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import CommonStyled from '../styled';
 import CircleReleasesTable from './CircleReleasesTable';
-import { History } from '../interfaces';
 
 type Props = {
-  circle: History;
+  circle: any;
 };
 
 const CircleRow = ({ circle }: Props) => {
@@ -37,13 +36,13 @@ const CircleRow = ({ circle }: Props) => {
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn width={2}>
-          <Text.h5 color="light">{circle.name}</Text.h5>
+          <Text.h5 color="light">{circle.author}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{circle.lastUpdate}</Text.h5>
+          <Text.h5 color="light">8-6-2020 15:48:37</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{circle.lifeTime}</Text.h5>
+          <Text.h5 color="light">2400</Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
       {activeRow && (
