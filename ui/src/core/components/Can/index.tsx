@@ -46,7 +46,7 @@ const Element = ({
 }: Props) => {
   const id = uniqueId();
   const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace, , ,] = useWorkspace();
+  const [workspace, loadWorkspace] = useWorkspace();
 
   useEffect(() => {
     loadWorkspace(workspaceId);

@@ -35,8 +35,8 @@ test('renders Can component', async () => {
       {props.children}
     </Can>
   );
-  const buttoDropdown = getByTestId('icon-edit');
-  await wait(() => expect(buttoDropdown).toBeInTheDocument());
+  const buttonDropdown = getByTestId('icon-edit');
+  await wait(() => expect(buttonDropdown).toBeInTheDocument());
 });
 
 test('renders Can component disabled', async () => {
@@ -55,8 +55,8 @@ test('renders Can component disabled', async () => {
       {props.children}
     </Can>
   );
-  const buttoDropdown = getByTestId('icon-edit');
-  await wait(() => expect(buttoDropdown).toBeInTheDocument());
+  const buttonDropdown = getByTestId('icon-edit');
+  await wait(() => expect(buttonDropdown).toBeInTheDocument());
 });
 
 test('renders Can component with default properties', async () => {

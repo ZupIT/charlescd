@@ -28,7 +28,22 @@ beforeAll(() => {
   );
 });
 
-test('render Private Route', async () => {
+test('render Private Route allowed', async () => {
+  const { getByTestId } = render(
+    <MemoryRouter initialEntries={['/main']}>
+      <PrivateRoute
+        path="/main"
+        component={MockApp}
+        allowedRoles={['moove_write']}
+        allowedRoute
+      />
+    </MemoryRouter>
+  );
+
+  await wait(() => expect(getByTestId('mock-component')).toBeInTheDocument());
+});
+
+test('render Private Route not allowed', async () => {
   const { getByTestId } = render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
@@ -38,8 +53,8 @@ test('render Private Route', async () => {
       />
     </MemoryRouter>
   );
-
-  await wait(() => expect(getByTestId('mock-component')).toBeInTheDocument());
+  const body = getByTestId('mock-component');
+  await wait(() => expect(body).not.toBeInTheDocument());
 });
 
 test('render PrivateRoute without role', async () => {
@@ -49,5 +64,7 @@ test('render PrivateRoute without role', async () => {
     </MemoryRouter>
   );
 
-  await wait(() => expect(queryByTestId('mock-component')).toBeInTheDocument());
+  await wait(() =>
+    expect(queryByTestId('mock-component')).not.toBeInTheDocument()
+  );
 });
