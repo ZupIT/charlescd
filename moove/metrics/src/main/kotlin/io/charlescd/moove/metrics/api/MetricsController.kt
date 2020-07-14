@@ -62,7 +62,7 @@ class MetricsController(
 
     @GetMapping
     @RequestMapping("/circles")
-    fun getCircleHealth(@RequestHeader("x-workspace-id") workspaceId: String):
+    fun getCircleGeneralMetrics(@RequestHeader("x-workspace-id") workspaceId: String):
             CirclesMetricsRepresentation = this.retrieveCirclesMetricsInteractor.execute(workspaceId)
 
     @ApiOperation(value = "Get Deployments Metrics")

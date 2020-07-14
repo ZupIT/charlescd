@@ -19,6 +19,7 @@
 package io.charlescd.moove.domain.repository
 
 import io.charlescd.moove.domain.*
+import java.time.Duration
 import java.util.*
 
 interface CircleRepository {
@@ -39,5 +40,5 @@ interface CircleRepository {
 
     fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleMetric>
 
-    fun getCircleAverageLifeTime(workspaceId: String): String
+    fun getCircleAverageLifeTime(workspaceId: String): Duration
 }

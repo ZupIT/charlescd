@@ -42,7 +42,7 @@ class MetricsControllerUnitTest extends Specification {
     def circleId = "circle-id"
     def workspaceId = "workspace-id"
 
-    def 'should get circle metrics'() {
+    def 'should get circle instant metrics'() {
         given:
         def period = ProjectionType.ONE_HOUR
         def metricType = MetricType.REQUESTS_BY_CIRCLE
@@ -168,6 +168,22 @@ class MetricsControllerUnitTest extends Specification {
         response.successfulDeploymentsInPeriod.size() == 3
         response.failedDeploymentsInPeriod.size() == 2
         response.deploymentsAverageTimeInPeriod.size() == 3
+    }
+
+    def 'should get circle general metrics'() {
+        given:
+        def circleMetricsRepresentation = new CirclesMetricsRepresentation(new CircleStatsRepresentation(10, 8), 50000)
+
+        when:
+        def response = metricsController.getCircleGeneralMetrics(workspaceId)
+
+        then:
+        1 * retrieveCirclesMetrics.execute(workspaceId) >> circleMetricsRepresentation
+        0 * _
+
+        response.averageLifeTime == 50000
+        response.circleStats.active == 10
+        response.circleStats.inactive == 8
     }
 
 }
