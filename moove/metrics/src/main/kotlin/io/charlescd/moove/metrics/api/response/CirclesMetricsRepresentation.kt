@@ -22,12 +22,10 @@ import io.charlescd.moove.domain.CircleStatusEnum
 data class CirclesMetricsRepresentation(val circleStats: CircleStatsRepresentation, val averageLifeTime: String) {
     companion object {
         fun from(circlesMetrics: List<CircleMetric>, averageLifeTime: String): CirclesMetricsRepresentation {
-            val metricsMap = circlesMetrics.associateBy { it.circleStatus }
-
             return CirclesMetricsRepresentation(
                 CircleStatsRepresentation(
-                    active = metricsMap[CircleStatusEnum.ACTIVE]?.total ?: 0,
-                    inactive = metricsMap[CircleStatusEnum.INACTIVE]?.total ?: 0
+                    active = circlesMetrics.firstOrNull { it.circleStatus == CircleStatusEnum.ACTIVE }?.total ?: 0,
+                    inactive = circlesMetrics.firstOrNull { it.circleStatus == CircleStatusEnum.INACTIVE }?.total ?: 0
                 ),
                 averageLifeTime = averageLifeTime
             )
