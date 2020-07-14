@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.2.14 (14/07/2020)
+- [#294](https://github.com/ZupIT/charlescd/pull/294) Cd/changelog [**closed**]
+- [#288](https://github.com/ZupIT/charlescd/pull/288) Fix invalid date deploy metrics [**bug**][**moove**][**ui**]
+- [#291](https://github.com/ZupIT/charlescd/pull/291) Fixing changelog generation [**closed**]
+- [#290](https://github.com/ZupIT/charlescd/pull/290) Fixing changelog generation [**closed**]
+- [#202](https://github.com/ZupIT/charlescd/pull/202) Feature Metrics dashboard [**docs**][**ui**]
+- [#241](https://github.com/ZupIT/charlescd/pull/241) fixing docker registry component tag search [**TESTED**][**bug**][**moove**][**ui**][**villager**]
+- [#198](https://github.com/ZupIT/charlescd/pull/198) Unify resources undeployment [**TESTED**][**butler**][**moove**]
+- [#263](https://github.com/ZupIT/charlescd/pull/263) Fixing paged JDBC queries [**TESTED**][**bug**][**moove**][**severity/critical**]
+- [#280](https://github.com/ZupIT/charlescd/pull/280) Creating an API for deployment statistics [**moove**]
+- [#213](https://github.com/ZupIT/charlescd/pull/213) change response status when deployment already exists [**TESTED**][**butler**]
+- [#192](https://github.com/ZupIT/charlescd/pull/192) Changing search deployed components query [**moove**]
+- [#239](https://github.com/ZupIT/charlescd/pull/239) Change virtual service template [**butler**]
+- [#190](https://github.com/ZupIT/charlescd/pull/190) Unify deployment resources [**TESTED**][**butler**][**moove**]
+- [#274](https://github.com/ZupIT/charlescd/pull/274) Workflow adjustments for zup environments [**closed**]
+- [#273](https://github.com/ZupIT/charlescd/pull/273) Changelog 0.2.13 [**closed**]
+- [#271](https://github.com/ZupIT/charlescd/pull/271) Adding gren release note generation [**closed**]
+- [#268](https://github.com/ZupIT/charlescd/pull/268) POC/Discussion: dont use nest dependency injection on simples tests [**butler**]
+- [#267](https://github.com/ZupIT/charlescd/pull/267) Identify is not working [**TESTED**][**bug**][**ui**]
+- [#240](https://github.com/ZupIT/charlescd/pull/240) Adding var env for redis ssl and defaulting its value to false [**TESTED**][**circle-matcher**][**enhancement**][**moove**]
+- [#223](https://github.com/ZupIT/charlescd/pull/223) Fix/configure ssl database connection [**TESTED**][**butler**][**enhancement**]
+- [#259](https://github.com/ZupIT/charlescd/pull/259) Enhancement: adding gren to generate release notes. [**enhancement**]
+- [#269](https://github.com/ZupIT/charlescd/pull/269) Revert "Enhancement: adding gren to generate release notes." [**closed**]
+- [#266](https://github.com/ZupIT/charlescd/pull/266) Force coverage [**butler**][**circle-matcher**][**moove**][**octopipe**][**ui**][**villager**]
+- [#265](https://github.com/ZupIT/charlescd/pull/265) Removing per module coverage [**closed**]
+- [#264](https://github.com/ZupIT/charlescd/pull/264) Revert "Temporarily disable codecov on butler" [**closed**]
+- [#261](https://github.com/ZupIT/charlescd/pull/261) Temporarily disable codecov on butler [**butler**][**octopipe**]
+- [#260](https://github.com/ZupIT/charlescd/pull/260) Update .env with workspace env [**ui**]
+- [#249](https://github.com/ZupIT/charlescd/pull/249) Pass the workspaceId to (circle matcher) the identify request [**bug**][**ui**]
+- [#257](https://github.com/ZupIT/charlescd/pull/257) CI Update of charts [**closed**]
+
+---
+
 ## 0.2.13 (07/07/2020)
 - [#258](https://github.com/ZupIT/charlescd/pull/258) Update charlescd-prodrelease.yml [**closed**]
 - [#256](https://github.com/ZupIT/charlescd/pull/256) Sign automated commits of workflow [**closed**]
@@ -72,7 +105,7 @@
 
 ---
 
-## 0.2.5 (02/06/2020)
+## 0.2.5 (03/06/2020)
 
 ---
 
