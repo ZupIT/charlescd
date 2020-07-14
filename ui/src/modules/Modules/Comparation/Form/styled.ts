@@ -108,6 +108,20 @@ const ComponentButton = styled(ButtonComponent.Default)`
   }
 `;
 
+const MoreOptionsButton = styled(ButtonComponent.Default)`
+  display: flex;
+  align-items: center;
+  border: 2px solid ${({ theme }) => theme.button.default.outline.border};
+  color: ${({ theme }) => theme.button.default.outline.color};
+  box-sizing: content-box;
+  background: none;
+  margin-bottom: 20px;
+
+  > i {
+    margin-right: 5px;
+  }
+`;
+
 export default {
   Content,
   Title,
@@ -124,6 +138,7 @@ export default {
     Input: ComponentInput,
     Number: ComponentNumber,
     Button: ComponentButton,
+    MoreOptionsButton: MoreOptionsButton,
     Trash: ComponentTrash
   }
 };
