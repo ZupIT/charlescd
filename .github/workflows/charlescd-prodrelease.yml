@@ -263,6 +263,9 @@ jobs:
         exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
     - name: Running changelog generator
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
       env:
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
