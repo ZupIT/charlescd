@@ -22,7 +22,8 @@ import {
   COLOR_SANTAS_GREY,
   COLOR_BASTILLE,
   COLOR_BLACK_MARLIN,
-  COLOR_GHOST_WHITE
+  COLOR_GHOST_WHITE,
+  COLOR_RED_ORANGE
 } from '../colors';
 
 export const light = {};
@@ -63,5 +64,9 @@ export const dark = {
   },
   copy: {
     background: COLOR_BASTILLE
+  },
+  error: {
+    borderColor: COLOR_RED_ORANGE,
+    color: COLOR_RED_ORANGE
   }
 };

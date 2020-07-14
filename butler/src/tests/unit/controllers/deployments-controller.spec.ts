@@ -38,7 +38,7 @@ describe('DeploymentsController', () => {
 
   beforeEach(async() => {
     deploymentsService = new DeploymentsServiceStub() as DeploymentsService
-    const undeploymentUseCase = new CreateUndeploymentRequestUsecaseStub() as CreateUndeploymentRequestUsecase
+    const undeploymentUseCase = new CreateUndeploymentRequestUsecaseStub() as unknown as CreateUndeploymentRequestUsecase
     createCircleDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateCircleDeploymentRequestUsecase
     createDefaultDeploymentUseCase = new CreateCircleDeploymentRequestUsecaseStub() as unknown as CreateDefaultDeploymentRequestUsecase
     deploymentsController = new DeploymentsController(deploymentsService, undeploymentUseCase, createCircleDeploymentUseCase, createDefaultDeploymentUseCase)
