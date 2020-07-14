@@ -74,6 +74,11 @@ const TableColumn = styled.div<ColumnProps>`
   }
 `;
 
+const CircleRowWrapper = styled.div`
+  max-height: 400px;
+  overflow: auto;
+`;
+
 export default {
   Table,
   TableRow,
@@ -82,5 +87,6 @@ export default {
   CircleRow,
   ReleaseRow,
   ReleasesWrapper,
-  ComponentsRow
+  ComponentsRow,
+  CircleRowWrapper
 };
