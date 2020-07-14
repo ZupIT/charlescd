@@ -14,64 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Control, Controller } from 'react-hook-form';
-import Select from './Select';
-import { Option } from './interfaces';
+import Single from './Single';
+import MultiCheck from './MultiCheck';
 
-interface Props {
-  name: string;
-  control: Control<unknown>;
-  options: Option[];
-  rules?: Partial<{ required: boolean | string }>;
-  defaultValue?: Option;
-  className?: string;
-  label?: string;
-  isDisabled?: boolean;
-  isLoading?: boolean;
-  onChange?: (value: Option) => void;
-  onInputChange?: (value: string) => void;
-  customOption?: React.ReactNode;
-}
-
-const FormSelect = ({
-  name,
-  control,
-  options,
-  rules,
-  defaultValue,
-  className,
-  label,
-  onChange,
-  onInputChange,
-  isDisabled = false,
-  isLoading = false,
-  customOption
-}: Props) => (
-  <div data-testid={`select-${name}`}>
-    <Controller
-      as={
-        <Select
-          placeholder={label}
-          className={className}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          customOption={customOption}
-          onInputChange={onInputChange}
-          defaultValue={defaultValue}
-        />
-      }
-      onChange={([selected]) => {
-        onChange && onChange(selected);
-        return selected?.value;
-      }}
-      rules={rules}
-      defaultValue={defaultValue?.value}
-      control={control}
-      options={options}
-      name={name}
-    />
-  </div>
-);
-
-export default FormSelect;
+export default {
+  Single,
+  MultiCheck
+};
