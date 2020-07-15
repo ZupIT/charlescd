@@ -91,7 +91,7 @@
       [
         "jest-html-reporters",
         {
-          "publicPath": "./coverage",
+          "publicPath": "./coverage/lcov-report",
           "filename": "report.html",
           "expand": true
         }
