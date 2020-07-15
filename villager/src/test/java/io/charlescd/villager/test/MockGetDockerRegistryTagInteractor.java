@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+package io.charlescd.villager.test;
 
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import io.charlescd.villager.interactor.registry.ComponentTagDTO;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import io.quarkus.test.Mock;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
-import javax.ws.rs.core.Response;
 
-public interface RegistryClient {
+@Mock
+@ApplicationScoped
+public class MockGetDockerRegistryTagInteractor implements GetDockerRegistryTagInteractor {
 
-    void configureAuthentication(RegistryType type,
-                                 DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
-
-    Optional<Response> getImage(String name, String tagName);
-
+    @Override
+    public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
+        return null;
+    }
 }

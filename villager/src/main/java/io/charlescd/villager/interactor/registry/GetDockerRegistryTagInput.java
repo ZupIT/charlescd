@@ -16,20 +16,18 @@
 
 package io.charlescd.villager.interactor.registry;
 
-public class ListDockerRegistryTagsInput {
+public class GetDockerRegistryTagInput {
     private String artifactName;
     private String workspaceId;
     private String artifactRepositoryConfigurationId;
-    private Integer max;
-    private String last;
+    private String name;
 
-    private ListDockerRegistryTagsInput(String artifactName, String workspaceId,
-                                        String artifactRepositoryConfigurationId, Integer max, String last) {
+    private GetDockerRegistryTagInput(String artifactName, String workspaceId,
+                                      String artifactRepositoryConfigurationId, String name) {
         this.artifactName = artifactName;
         this.workspaceId = workspaceId;
         this.artifactRepositoryConfigurationId = artifactRepositoryConfigurationId;
-        this.max = max;
-        this.last = last;
+        this.name = name;
     }
 
     public String getArtifactName() {
@@ -45,12 +43,8 @@ public class ListDockerRegistryTagsInput {
         return artifactRepositoryConfigurationId;
     }
 
-    public Integer getMax() {
-        return max;
-    }
-
-    public String getLast() {
-        return last;
+    public String getName() {
+        return name;
     }
 
     public static ListDockerRegistryTagsInputBuilder builder() {
@@ -61,8 +55,7 @@ public class ListDockerRegistryTagsInput {
         private String artifactName;
         private String workspaceId;
         private String artifactRepositoryConfigurationId;
-        private Integer max;
-        private String last;
+        private String name;
 
         private ListDockerRegistryTagsInputBuilder() {
         }
@@ -87,19 +80,13 @@ public class ListDockerRegistryTagsInput {
             return this;
         }
 
-        public ListDockerRegistryTagsInputBuilder withMax(Integer max) {
-            this.max = max;
+        public ListDockerRegistryTagsInputBuilder withName(String name) {
+            this.name = name;
             return this;
         }
 
-        public ListDockerRegistryTagsInputBuilder withLast(String last) {
-            this.last = last;
-            return this;
-        }
-
-        public ListDockerRegistryTagsInput build() {
-            return new ListDockerRegistryTagsInput(artifactName, workspaceId, artifactRepositoryConfigurationId, max,
-                    last);
+        public GetDockerRegistryTagInput build() {
+            return new GetDockerRegistryTagInput(artifactName, workspaceId, artifactRepositoryConfigurationId, name);
         }
     }
 }

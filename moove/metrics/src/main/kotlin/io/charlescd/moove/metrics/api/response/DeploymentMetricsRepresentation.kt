@@ -59,7 +59,7 @@ data class DeploymentStatsInPeriodRepresentation(
     val total: Int,
     val averageTime: Long,
 
-    @JsonFormat(pattern = "MM-dd-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val period: LocalDate
 ) {
     companion object {
@@ -74,7 +74,7 @@ data class DeploymentStatsInPeriodRepresentation(
 data class DeploymentAverageTimeInPeriodRepresentation(
     val averageTime: Long,
 
-    @JsonFormat(pattern = "MM-dd-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val period: LocalDate
 ) {
     companion object {
