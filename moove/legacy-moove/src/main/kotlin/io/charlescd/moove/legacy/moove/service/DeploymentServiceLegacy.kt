@@ -110,7 +110,8 @@ class DeploymentServiceLegacy(
             circle = findCircle(this.circleId),
             build = findBuild(this.buildId),
             status = DeploymentStatus.DEPLOYING,
-            workspaceId = workspaceId
+            workspaceId = workspaceId,
+            undeployedAt = null
         )
     }
 }

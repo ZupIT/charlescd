@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200513160800-1
+      author: arthur.pucci
+      changes:
+      - sql:
+          comment: "Alter table deployments to add column undeployed_at"
+          sql: "alter table deployments add column undeployed_aT timestamp;"

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.application.circle
 
-data class CircleMetric(
-    val total: Int,
-    val circleStatus: CircleStatusEnum
-)
+import io.charlescd.moove.application.circle.response.CircleHistoryResponse
+import io.charlescd.moove.domain.PageRequest
+
+interface FindCirclesHistoryInteractor {
+
+    fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): CircleHistoryResponse
+}

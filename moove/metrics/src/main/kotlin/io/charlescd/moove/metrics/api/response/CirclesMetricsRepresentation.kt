@@ -16,17 +16,17 @@
 
 package io.charlescd.moove.metrics.api.response
 
-import io.charlescd.moove.domain.CircleMetric
+import io.charlescd.moove.domain.CircleCount
 import io.charlescd.moove.domain.CircleStatusEnum
 import java.time.Duration
 
 data class CirclesMetricsRepresentation(val circleStats: CircleStatsRepresentation, val averageLifeTime: Long) {
     companion object {
-        fun from(circlesMetrics: List<CircleMetric>, averageLifeTime: Duration): CirclesMetricsRepresentation {
+        fun from(circlesCounts: List<CircleCount>, averageLifeTime: Duration): CirclesMetricsRepresentation {
             return CirclesMetricsRepresentation(
                 CircleStatsRepresentation(
-                    active = circlesMetrics.firstOrNull { it.circleStatus == CircleStatusEnum.ACTIVE }?.total ?: 0,
-                    inactive = circlesMetrics.firstOrNull { it.circleStatus == CircleStatusEnum.INACTIVE }?.total ?: 0
+                    active = circlesCounts.firstOrNull { it.circleStatus == CircleStatusEnum.ACTIVE }?.total ?: 0,
+                    inactive = circlesCounts.firstOrNull { it.circleStatus == CircleStatusEnum.INACTIVE }?.total ?: 0
                 ),
                 averageLifeTime = averageLifeTime.seconds
             )

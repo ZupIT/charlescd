@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.metrics.interactor.impl
 
-import io.charlescd.moove.domain.CircleMetric
+import io.charlescd.moove.domain.CircleCount
 import io.charlescd.moove.domain.CircleStatusEnum
 import io.charlescd.moove.domain.repository.CircleRepository
 import spock.lang.Specification
@@ -32,7 +32,7 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
 
     def 'when no active circle found should return with zeroed value'() {
         given:
-        def inactiveCircleMetric = new CircleMetric(10, CircleStatusEnum.INACTIVE)
+        def inactiveCircleMetric = new CircleCount(10, CircleStatusEnum.INACTIVE)
 
         when:
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
@@ -49,7 +49,7 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
 
     def 'when no inactive circle found should return with zeroed value'() {
         given:
-        def activeCircleMetric = new CircleMetric(10, CircleStatusEnum.ACTIVE)
+        def activeCircleMetric = new CircleCount(10, CircleStatusEnum.ACTIVE)
 
         when:
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
@@ -66,8 +66,8 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
 
     def 'when ok should return the values'() {
         given:
-        def activeCircleMetric = new CircleMetric(10, CircleStatusEnum.ACTIVE)
-        def inactiveCircleMetric = new CircleMetric(9, CircleStatusEnum.INACTIVE)
+        def activeCircleMetric = new CircleCount(10, CircleStatusEnum.ACTIVE)
+        def inactiveCircleMetric = new CircleCount(9, CircleStatusEnum.INACTIVE)
 
         when:
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
