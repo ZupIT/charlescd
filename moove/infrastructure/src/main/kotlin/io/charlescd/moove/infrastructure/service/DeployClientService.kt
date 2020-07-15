@@ -109,7 +109,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             DeployModuleRequest(
                 moduleId = module.moduleId,
                 helmRepository = module.helmRepository!!,
-                components = buildComponentsDeployRequest(module)
+                components = buildComponentsDeployRequest(module),
+                gatewayName = module.gatewayName,
+                hostValue = module.hostName
             )
         }
 

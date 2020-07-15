@@ -41,18 +41,26 @@ export class CreateModuleDeploymentDto {
   @Type(() => CreateComponentDeploymentDto)
   public readonly components!: CreateComponentDeploymentDto[]
 
+  @ApiProperty()
+  public readonly gatewayName: string = ""
+
+  @ApiProperty()
+  public readonly hostValue: string = ""
+
   public toModuleDeploymentEntity(): ModuleDeploymentEntity {
     return new ModuleDeploymentEntity(
       this.moduleId,
       this.helmRepository,
-      this.components.map(component => component.toComponentModuleEntity())
+      this.components.map(component => component.toComponentModuleEntity()),
+      this.gatewayName,
+      this.hostValue
     )
   }
 
   public toModuleEntity(): ModuleEntity {
     return new ModuleEntity(
       this.moduleId,
-      this.components.map(component => component.toComponentEntity())
+      this.components.map(component => component.toComponentEntity()),
     )
   }
 

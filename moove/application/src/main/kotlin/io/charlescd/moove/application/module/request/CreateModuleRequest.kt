@@ -43,7 +43,10 @@ data class CreateModuleRequest(
 
     @field:Valid
     @field:NotEmpty
-    val components: List<ComponentRequest>
+    val components: List<ComponentRequest>,
+
+    val gatewayName: String,
+    val hostValue: String
 ) {
     fun toDomain(moduleId: String, workspaceId: String, author: User) = Module(
         id = moduleId,
@@ -53,7 +56,9 @@ data class CreateModuleRequest(
         helmRepository = this.helmRepository,
         author = author,
         components = this.components.map { it.toDomain(moduleId, workspaceId) },
-        workspaceId = workspaceId
+        workspaceId = workspaceId,
+        gatewayName = this.gatewayName,
+        hostValue = this.hostValue
     )
 }
 
