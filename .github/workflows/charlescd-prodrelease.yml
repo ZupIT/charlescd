@@ -263,12 +263,16 @@ jobs:
         exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
     - name: Running changelog generator
-      env:
-        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: |
         npm install github-release-notes -g
         gren release --override
         gren changelog --override
+      env:
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Commit updated chart and changelog file
       run: |
@@ -309,7 +313,7 @@ jobs:
 
     - name: Zup Settings dev
       run: |
-        git Checkout .
+        git checkout .
         sed -i -E "s/(http:\/\/charles\.info\.example)/https:\/\/${{ secrets.HOST_DEV }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/(charlescd-postgresql)/${{ secrets.PG_HOST_DEV }}/" ./install/helm-chart/values.yaml &&
         sed -i -E "/name: DB_USER/N;s/(name: DB_USER.*value: \")(keycloak\")/\1charlesadmin\"/" ./install/helm-chart/values.yaml &&
