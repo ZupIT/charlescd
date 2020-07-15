@@ -18,6 +18,7 @@ package deployer
 
 import (
 	"errors"
+	"octopipe/pkg/utils"
 	"os"
 	"strconv"
 	"time"
@@ -91,13 +92,18 @@ func (deploy *Deploy) createResource() error {
 	resource := k8sResource.Namespace(deploy.Namespace)
 
 	_, err = resource.Create(deploy.Manifest, metav1.CreateOptions{})
-
+	if err != nil {
+		utils.CustomLog("error", "createResource", err.Error())
+		return err
+	}
 	err = deploy.newResourceVerification(resource, resourceSchema)
 	if err != nil {
+		utils.CustomLog("error", "createResource", err.Error())
 		return err
 	}
 
 	if err != nil {
+		utils.CustomLog("error", "createResource", err.Error())
 		return err
 	}
 
