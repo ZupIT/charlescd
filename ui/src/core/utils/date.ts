@@ -36,20 +36,25 @@ export const dateFrom = (date: string) => {
 };
 
 export const humanizeDateFromSeconds = (timeInSeconds: number) => {
-  if(!timeInSeconds) {
+  if (!timeInSeconds) {
     return;
   }
 
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
   const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
   const hours = dayjs.duration(timeInSeconds, 'seconds').hours();
+  const days = dayjs.duration(timeInSeconds, 'seconds').days();
 
+  if (days) {
+    return `${days} days`;
+  }
   if (hours) {
     return `${hours}:${minutes}:${seconds}h`;
   }
   if (minutes) {
     return `${minutes}:${seconds}m`;
-  }  
+  }
 
   return `${seconds}s`;
 };
+

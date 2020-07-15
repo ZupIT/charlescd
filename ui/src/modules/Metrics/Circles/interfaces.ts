@@ -16,7 +16,7 @@
 
 export interface CirclesMetricData {
   circleStats: Stats;
-  averageCircleLifeTime: number;
+  averageLifeTime: number;
   history: History[];
 }
 
