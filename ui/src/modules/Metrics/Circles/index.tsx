@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.interactor.registry;
+import React from 'react';
+import Styled from './styled';
 
-import java.util.List;
+const Circles = () => {
+  return (
+    <Styled.Content>
+      <Styled.MiniCard>
+        <span>Circle 1</span>
+      </Styled.MiniCard>
+      <Styled.MiniCard>
+        <span>Circle 2</span>
+      </Styled.MiniCard>
+      <Styled.MiniCard>
+        <span>Circle 3</span>
+      </Styled.MiniCard>
+      <Styled.Chart>
+        <span>Circle 4</span>
+      </Styled.Chart>
+    </Styled.Content>
+  );
+};
 
-@FunctionalInterface
-public interface ListDockerRegistryTagsInteractor {
-
-    List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input);
-
-}
+export default Circles;

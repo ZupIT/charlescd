@@ -25,12 +25,14 @@ interface Props {
   icon?: string;
   color?: 'primary' | 'dark' | 'error' | 'light' | 'medium' | 'success';
   className?: string;
+  size?: string;
 }
 
 const Dropdown = ({
   children,
   icon = 'vertical-dots',
   color = 'dark',
+  size = '15px',
   className
 }: Props) => {
   const [toggle, switchToggle] = useState(false);
@@ -57,7 +59,7 @@ const Dropdown = ({
         ref={ref}
         name={icon}
         color={color}
-        size="15px"
+        size={size}
         className="dropdown-icon"
         onClick={(event: MouseEvent) => handleClick(event)}
       />
