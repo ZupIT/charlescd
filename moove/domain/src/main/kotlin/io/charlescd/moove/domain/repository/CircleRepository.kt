@@ -38,7 +38,13 @@ interface CircleRepository {
 
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle>
 
-    fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleMetric>
+    fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount>
+
+    fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount>
 
     fun getCircleAverageLifeTime(workspaceId: String): Duration
+
+    fun findCirclesHistory(workspaceId: String, name: String?, pageRequest: PageRequest): Page<CircleHistory>
+
+    fun count(workspaceId: String, name: String?): Int
 }

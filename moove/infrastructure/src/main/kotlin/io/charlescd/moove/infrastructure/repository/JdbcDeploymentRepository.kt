@@ -47,6 +47,7 @@ class JdbcDeploymentRepository(
                        deployments.circle_id                 AS deployment_circle_id,
                        deployments.build_id                  AS deployment_build_id,
                        deployments.workspace_id              AS deployment_workspace_id,
+                       deployments.undeployed_at             AS deployment_undeployed_at,
                        deployment_user.id                    AS deployment_user_id,
                        deployment_user.name                  AS deployment_user_name,
                        deployment_user.email                 AS deployment_user_email,
@@ -164,7 +165,8 @@ class JdbcDeploymentRepository(
                     build_id       = ?,
                     status         = ?,
                     deployed_at    = ?,
-                    workspace_id = ?
+                    workspace_id   = ?,
+                    undeployed_at  = ?
                 WHERE id = ?
             """
         )
@@ -178,6 +180,7 @@ class JdbcDeploymentRepository(
             deployment.status.name,
             deployment.deployedAt,
             deployment.workspaceId,
+            deployment.undeployedAt,
             deployment.id
         )
     }

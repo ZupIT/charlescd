@@ -18,17 +18,18 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
-import io.charlescd.moove.domain.CircleCount
+import io.charlescd.moove.domain.CircleHistory
 import io.charlescd.moove.domain.CircleStatusEnum
-import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
+import java.sql.ResultSet
+import java.time.Duration
 
 @Component
-class CircleMetricExtractor : ResultSetExtractor<Set<CircleCount>> {
+class CircleHistoryExtractor : ResultSetExtractor<Set<CircleHistory>> {
 
-    override fun extractData(resultSet: ResultSet): Set<CircleCount>? {
-        val circles = HashSet<CircleCount>()
+    override fun extractData(resultSet: ResultSet): Set<CircleHistory>? {
+        val circles = HashSet<CircleHistory>()
 
         while (resultSet.next()) {
             circles.add(mapCircle(resultSet))
@@ -37,8 +38,11 @@ class CircleMetricExtractor : ResultSetExtractor<Set<CircleCount>> {
         return circles
     }
 
-    private fun mapCircle(resultSet: ResultSet) = CircleCount(
-        total = resultSet.getInt("total"),
-        circleStatus = CircleStatusEnum.valueOf(resultSet.getString("circle_status"))
+    private fun mapCircle(resultSet: ResultSet) = CircleHistory(
+        id = resultSet.getString("circle_id"),
+        name = resultSet.getString("circle_name"),
+        status = CircleStatusEnum.valueOf(resultSet.getString("circle_status")),
+        lastUpdatedAt = resultSet.getTimestamp("last_updated_at").toLocalDateTime(),
+        lifeTime = Duration.ofSeconds(resultSet.getLong("circle_life_time"))
     )
 }
