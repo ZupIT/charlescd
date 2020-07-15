@@ -16,16 +16,13 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.io.IOException;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -73,41 +70,5 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{name}/manifests/{tagName}");
 
         return builder.build(name, tagName).toString();
-    }
-
-    @Override
-    public TagsResponse listImageTags(String name, Integer max, String last) throws IOException {
-
-        String url = createListImageTagsUrl(this.baseAddress, name, max, last);
-
-        Response response = this.client.target(url).request().get();
-
-        if (response == null || response.getStatus() == 404) {
-            return null;
-        }
-
-        // due to aws API return "text/plain" in content-type header
-        if (response.getMediaType().isCompatible(MediaType.TEXT_PLAIN_TYPE)) {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(response.readEntity(String.class), TagsResponse.class);
-        }
-
-        return response.readEntity(TagsResponse.class);
-    }
-
-    private String createListImageTagsUrl(String baseAddress, String name, Integer max, String last) {
-
-        UriBuilder builder = UriBuilder.fromUri(baseAddress);
-        builder.path("/v2/{name}/tags/list");
-
-        if (max != null) {
-            builder.queryParam("n", max);
-        }
-
-        if (last != null) {
-            builder.queryParam("last", last);
-        }
-
-        return builder.build(name).toString();
     }
 }

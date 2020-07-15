@@ -114,7 +114,7 @@ class JdbcUserGroupRepository(
     }
 
     private fun updateUserGroup(userGroup: UserGroup) {
-        val statement = "UPDATE user_groups SET name = ? where id = ?"
+        val statement = "UPDATE user_groups SET name = ? WHERE id = ?"
 
         this.jdbcTemplate.update(
             statement,
@@ -133,7 +133,7 @@ class JdbcUserGroupRepository(
     }
 
     private fun findPage(page: PageRequest): Page<UserGroup> {
-        val result = executePageQuery(createStatement(), page)
+        val result = executePageQuery(createPagedStatement(page))
 
         return Page(
             result?.toList() ?: emptyList(),
@@ -143,22 +143,22 @@ class JdbcUserGroupRepository(
         )
     }
 
-    private fun executePageQuery(
-        statement: StringBuilder,
-        pageRequest: PageRequest
-    ): Set<UserGroup>? {
-        return this.jdbcTemplate.query(
-            statement.toString(),
-            arrayOf(pageRequest.size, pageRequest.offset()),
-            userGroupExtractor
-        )
+    private fun getPagedInnerQueryStatement(pageRequest: PageRequest): String {
+        val innerQueryStatatement = StringBuilder("SELECT * FROM user_groups WHERE 1 = 1")
+        return innerQueryStatatement.appendln("ORDER BY user_groups.name ASC")
+            .appendln("LIMIT ${pageRequest.size}")
+            .appendln("OFFSET ${pageRequest.offset()}")
+            .toString()
     }
 
-    private fun createStatement(): StringBuilder {
-        return StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("ORDER BY user_groups.name ASC")
-            .appendln("LIMIT ?")
-            .appendln("OFFSET ?")
+    private fun executePageQuery(
+        statement: String
+    ): Set<UserGroup>? {
+        return this.jdbcTemplate.query(
+            statement,
+            arrayOf(),
+            userGroupExtractor
+        )
     }
 
     private fun executeCountQuery(): Int? {
@@ -201,5 +201,31 @@ class JdbcUserGroupRepository(
         val statement = "SELECT workspace_id, permissions FROM workspaces_user_groups where workspace_id = ? and user_group_id = ?"
         val permissionsFromAssociation = this.jdbcTemplate.query(statement, arrayOf(workspaceId, userGroupId), workspacePermissionsExtractor)
         return permissionsFromAssociation?.get(workspaceId) ?: emptyList()
+    }
+
+    private fun createPagedStatement(pageRequest: PageRequest): String {
+        val innerQueryStatement = getPagedInnerQueryStatement(pageRequest)
+        return """
+                   SELECT user_groups.id          AS user_group_id,
+                   user_groups.name               AS user_group_name,
+                   user_groups.created_at         AS user_group_created_at,
+                   user_groups_author.id          AS user_group_author_id,
+                   user_groups_author.name        AS user_group_author_name,
+                   user_groups_author.photo_url   AS user_group_author_photo_url,
+                   user_groups_author.email       AS user_group_author_email,
+                   user_groups_author.created_at  AS user_group_author_created_at,
+                   user_groups_members.id         AS user_group_user_id,
+                   user_groups_members.name       AS user_group_user_name,
+                   user_groups_members.is_root    AS user_group_is_root,
+                   user_groups_members.photo_url  AS user_group_user_photo_url,
+                   user_groups_members.email      AS user_group_user_email,
+                   user_groups_members.created_at AS user_group_user_created_at
+            FROM ( $innerQueryStatement ) user_groups
+                     INNER JOIN users user_groups_author ON user_groups.user_id = user_groups_author.id
+                     LEFT JOIN user_groups_users ON user_groups.id = user_groups_users.user_group_id
+                     LEFT JOIN users AS user_groups_members ON user_groups_members.id = user_groups_users.user_id
+            WHERE 1 = 1
+            ORDER BY user_groups.name ASC
+        """
     }
 }

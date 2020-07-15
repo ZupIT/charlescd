@@ -297,9 +297,7 @@ class JdbcModuleRepository(
         name: String?,
         pageRequest: PageRequest
     ): Page<Module> {
-        val statement = StringBuilder(BASE_QUERY_STATEMENT)
-
-        val result = executePageQuery(createStatement(statement, name), encryptionKey, workspaceId, name, pageRequest)
+        val result = executePageQuery(createStatement(name), encryptionKey, workspaceId, name, pageRequest)
 
         return Page(
             result?.toList() ?: emptyList(),
@@ -309,15 +307,18 @@ class JdbcModuleRepository(
         )
     }
 
-    private fun createStatement(statement: StringBuilder, name: String?): StringBuilder {
-        statement.appendln("AND modules.workspace_id = ?")
-        name?.let { statement.appendln("AND modules.name ILIKE ?") }
-        return statement.appendln("LIMIT ?")
+    private fun createInnerQueryStatement(name: String?): String {
+        val innerQueryStatement = StringBuilder("SELECT * FROM modules WHERE 1=1")
+        innerQueryStatement.appendln("AND modules.workspace_id = ?")
+        name?.let { innerQueryStatement.appendln("AND modules.name ILIKE ?") }
+        innerQueryStatement.appendln("LIMIT ?")
             .appendln("OFFSET ?")
+
+        return innerQueryStatement.toString()
     }
 
     private fun executePageQuery(
-        statement: StringBuilder,
+        statement: String,
         encryptionKey: String,
         workspaceId: String,
         name: String?,
@@ -333,7 +334,7 @@ class JdbcModuleRepository(
         workspaceId: String,
         name: String?,
         pageRequest: PageRequest,
-        statement: StringBuilder
+        statement: String
     ): Set<Module>? {
         parameters.add(encryptionKey)
         parameters.add(workspaceId)
@@ -342,7 +343,7 @@ class JdbcModuleRepository(
         parameters.add(pageRequest.offset())
 
         return this.jdbcTemplate.query(
-            statement.toString(),
+            statement,
             parameters.toTypedArray(),
             moduleExtractor
         )
@@ -352,5 +353,48 @@ class JdbcModuleRepository(
         statement.appendln(
             "AND modules.id IN(${ids.joinToString(separator = ",") { "'$it'" }})"
         )
+    }
+
+    private fun createStatement(name: String?): String {
+        val innerQueryStatement = createInnerQueryStatement(name)
+
+        return """
+            SELECT modules.id                                                                      AS module_id,
+                   modules.name                                                                    AS module_name,
+                   modules.created_at                                                              AS module_created_at,
+                   modules.user_id                                                                 AS module_user_id,
+                   modules.git_repository_address                                                  AS module_git_repository_address,
+                   modules.helm_repository                                                         AS module_helm_repository,
+                   modules.workspace_id                                                            AS module_workspace_id,
+                   module_user.id                                                                  AS module_user_id,
+                   module_user.name                                                                AS module_user_name,
+                   module_user.photo_url                                                           AS module_user_photo_url,
+                   module_user.email                                                               AS module_user_email,
+                   module_user.created_at                                                          AS module_user_created_at,
+                   components.id                                                                   AS component_id,
+                   components.name                                                                 AS component_name,
+                   components.module_id                                                            AS component_module_id,
+                   components.created_at                                                           AS component_created_at,
+                   components.workspace_id                                                         AS component_workspace_id,
+                   components.error_threshold                                                      AS component_error_threshold,
+                   components.latency_threshold                                                    AS component_latency_threshold,
+                   git_configurations.id                                                           AS git_configuration_id,
+                   git_configurations.name                                                         AS git_configuration_name,
+                   PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?, 'cipher-algo=aes256') AS git_configuration_credentials,
+                   git_configurations.created_at                                                   AS git_configuration_created_at,
+                   git_configurations.workspace_id                                                 AS git_configuration_workspace_id,
+                   git_configuration_user.id                                                       AS git_configuration_user_id,
+                   git_configuration_user.name                                                     AS git_configuration_user_name,
+                   git_configuration_user.photo_url                                                AS git_configuration_user_photo_url,
+                   git_configuration_user.email                                                    AS git_configuration_user_email,
+                   git_configuration_user.created_at                                               AS git_configuration_user_created_at
+            FROM ( $innerQueryStatement ) modules
+                   LEFT JOIN components ON modules.id = components.module_id
+                   LEFT JOIN users module_user ON module_user.id = modules.user_id
+                   LEFT JOIN workspaces ON modules.workspace_id = workspaces.id
+                   LEFT JOIN git_configurations ON workspaces.git_configuration_id = git_configurations.id
+                   LEFT JOIN users git_configuration_user ON git_configurations.user_id = git_configuration_user.id
+            WHERE 1 = 1
+        """
     }
 }
