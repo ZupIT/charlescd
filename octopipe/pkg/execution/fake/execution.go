@@ -51,7 +51,7 @@ func (executionManagr *ExecutionManagerFake) ExecutionError(executionID *primiti
 	panic("implement me")
 }
 
-func (executionManagr *ExecutionManagerFake) ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error {
+func (executionManagr *ExecutionManagerFake) ExecutionFinished(executionID *primitive.ObjectID, pipelineError chan error) error {
 	panic("implement me")
 }
 

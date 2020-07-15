@@ -54,7 +54,7 @@ func NewMozart(mozartManager *MozartManager, deployment *deployment.Deployment) 
 // TODO: Remove deployment param
 func (mozart *Mozart) Do(deployment *deployment.Deployment) string {
 	errors := make(chan error, 1)
-	go mozart.asyncStartPipeline(deployment,errors)
+	go mozart.asyncStartPipeline(deployment, errors)
 	errObject := <- errors
 	return errObject.Error()
 }
