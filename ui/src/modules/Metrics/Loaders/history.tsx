@@ -21,7 +21,7 @@ export const Loader: FunctionComponent = () => (
   <ContentLoader
     speed={1}
     width="100%"
-    height={160}
+    height="100%"
     viewBox="0 0 1100 190"
     backgroundColor="#3a3a3c"
     foregroundColor="#2c2c2e"

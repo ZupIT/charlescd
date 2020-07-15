@@ -17,6 +17,7 @@
 import { useCallback } from 'react';
 import {
   findAllCirclesMetrics,
+  findAllCirclesHistory,
   findAllCirclesReleases
 } from 'core/providers/metrics';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
@@ -52,7 +53,7 @@ interface CirclesHistory extends FetchProps {
 
 export const useCirclesHistory = (): CirclesHistory => {
   const [circlesData, getCircleData] = useFetch<CirclesMetricData>(
-    findAllCirclesMetrics
+    findAllCirclesHistory
   );
   const { response, loading } = circlesData;
 

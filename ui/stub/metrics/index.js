@@ -31,8 +31,7 @@ const findAllCirclsMetrics = {
       `https://picsum.photos/v2/list?page=${query.page}&limit=10`
     );
     const responseAsJson = await fetchData.json();
-    const { history, ...rest } = mock.allCirclesMetrics;
-    return h.response({ history: responseAsJson, ...rest });
+    return h.response({ history: responseAsJson });
   }
 };
 

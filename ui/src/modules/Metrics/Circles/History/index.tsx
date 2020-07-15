@@ -28,6 +28,8 @@ const HistoryComponent = () => {
   const [circles, setCircles] = useState<History[]>([]);
   const { findCirclesHistory, response } = useCirclesHistory();
 
+  console.log(response);
+
   useEffect(() => {
     findCirclesHistory({ page: 0 });
   }, [findCirclesHistory]);
