@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-export class CreateUndeploymentRequestUsecaseStub {
+import { ReadUndeploymentDto } from '../../../app/api/deployments/dto/read-undeployment'
 
+export class CreateUndeploymentRequestUsecaseStub {
+  public execute(): Promise<ReadUndeploymentDto> {
+    return Promise.resolve({} as ReadUndeploymentDto)
+  }
 }

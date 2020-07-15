@@ -86,7 +86,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
     queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
 
-    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id')
+    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id','dummy-deployment-id')
 
     componentDeployments = [
       new ComponentDeploymentEntity(
@@ -146,6 +146,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         'dummy-id-3'
       )
     ]
+
   })
 
   describe('execute', () => {
@@ -158,7 +159,18 @@ describe('CreateUndeploymentRequestUsecase', () => {
       jest.spyOn(pipelineQueuesService, 'getQueuedPipelineStatus')
         .mockImplementation(() => Promise.resolve(QueuedPipelineStatusEnum.RUNNING))
 
-      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id'))
+        .toEqual(undeployment.toReadDto())
+    })
+
+    it('should handle duplicated module undeployment', async() => {
+
+      jest.spyOn(deploymentsRepository, 'findOneOrFail')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(undeploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(undeployment))
+
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
         .toEqual(undeployment.toReadDto())
     })
 
@@ -175,7 +187,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
         )
         .mockImplementationOnce(() => Promise.resolve(queuedUndeployments[0]))
 
-      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-deployment-id', 'dummy-circle-id'))
+      expect(await createUndeploymentRequestUsecase.execute(createUndeploymentDto, 'dummy-id'))
         .toEqual(undeployment.toReadDto())
     })
   })

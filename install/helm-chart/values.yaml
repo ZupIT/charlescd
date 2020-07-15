@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.2.13
+    name: zupcharles/charlescd-butler:0.2.14
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -40,7 +40,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.2.13
+    name: zupcharles/charlescd-moove:0.2.14
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -71,7 +71,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.2.13
+    name: zupcharles/charlescd-villager:0.2.14
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -94,7 +94,7 @@ ui:
   keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.2.13
+    name: zupcharles/charlescd-ui:0.2.14
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -121,7 +121,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.2.13
+    name: zupcharles/charlescd-circle-matcher:0.2.14
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
