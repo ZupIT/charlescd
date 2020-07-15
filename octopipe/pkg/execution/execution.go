@@ -166,15 +166,16 @@ func (executionManager *ExecutionManager) ExecutionError(executionID *primitive.
 	return nil
 }
 
-func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error {
+func (executionManager *ExecutionManager) ExecutionFinished(executionID *primitive.ObjectID, pipelineError chan error) error {
 	var status string
 	var pipelineErrorMessage string
 	if pipelineError != nil {
 		status = ExecutionFailed
-		pipelineErrorMessage = pipelineError.Error()
+		errorObject := <- pipelineError
+		pipelineErrorMessage = errorObject.Error()
 	} else {
 		status = ExecutionFinished
-		pipelineErrorMessage = ""
+
 	}
 	query := bson.M{"_id": executionID}
 	updateData := bson.M{

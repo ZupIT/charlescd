@@ -20,6 +20,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"octopipe/pkg/deployer"
 	"octopipe/pkg/deployment"
@@ -28,8 +30,6 @@ import (
 	"octopipe/pkg/utils"
 	"strconv"
 	"sync"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -52,11 +52,14 @@ func NewMozart(mozartManager *MozartManager, deployment *deployment.Deployment) 
 }
 
 // TODO: Remove deployment param
-func (mozart *Mozart) Do(deployment *deployment.Deployment) {
-	go mozart.asyncStartPipeline(deployment)
+func (mozart *Mozart) Do(deployment *deployment.Deployment) string {
+	errors := make(chan error, 1)
+	go mozart.asyncStartPipeline(deployment,errors)
+	errObject := <- errors
+	return errObject.Error()
 }
 
-func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
+func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment,errors chan error)  {
 	var err error
 
 	mozart.CurrentExecutionID, err = mozart.executions.Create()
@@ -65,6 +68,7 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 	}
 
 	for _, steps := range mozart.Stages {
+
 		if len(steps) <= 0 {
 			continue
 		}
@@ -72,11 +76,13 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment) {
 		err = mozart.executeSteps(steps)
 		if err != nil {
 			mozart.returnPipelineError(err)
+			 errors <- fmt.Errorf("Error executing step: %s ", err.Error())
 			break
 		}
 	}
 
-	mozart.finishPipeline(deployment, err)
+	mozart.finishPipeline(deployment, errors)
+
 }
 
 func (mozart *Mozart) executeSteps(steps []*pipeline.Step) error {
@@ -98,7 +104,7 @@ func (mozart *Mozart) executeSteps(steps []*pipeline.Step) error {
 	return err
 }
 
-func (mozart *Mozart) finishPipeline(pipeline *deployment.Deployment, pipelineError error) {
+func (mozart *Mozart) finishPipeline(pipeline *deployment.Deployment, pipelineError chan error) {
 	err := mozart.executions.ExecutionFinished(mozart.CurrentExecutionID, pipelineError)
 	if err != nil {
 		utils.CustomLog("error", "executeSteps", err.Error())
@@ -235,7 +241,7 @@ func (mozart *Mozart) getManifestsByTemplateStep(step *pipeline.Step) (map[strin
 	return manifests, nil
 }
 
-func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineError error) error {
+func (mozart *Mozart) triggerWebhook(pipeline *deployment.Deployment, pipelineError chan error) error {
 	var payload map[string]string
 	client := http.Client{}
 

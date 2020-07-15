@@ -26,7 +26,7 @@ import (
 )
 
 type MozartUseCases interface {
-	Start(deployment *deployment.Deployment)
+	Start(deployment *deployment.Deployment) string
 }
 
 type MozartManager struct {
@@ -52,7 +52,8 @@ func NewMozartManager(execution execution.ManagerUseCases,
 	}
 }
 
-func (mozartManager *MozartManager) Start(deployment *deployment.Deployment) {
+func (mozartManager *MozartManager) Start(deployment *deployment.Deployment) string {
 	pipeline := NewMozart(mozartManager, deployment)
-	pipeline.Do(deployment)
+	err := pipeline.Do(deployment)
+	return err
 }

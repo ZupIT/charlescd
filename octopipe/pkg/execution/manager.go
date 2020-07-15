@@ -31,7 +31,7 @@ type ManagerUseCases interface {
 		executionID *primitive.ObjectID, step *pipeline.Step,
 	) (*primitive.ObjectID, error)
 	ExecutionError(executionID *primitive.ObjectID, pipelineError error) error
-	ExecutionFinished(executionID *primitive.ObjectID, pipelineError error) error
+	ExecutionFinished(executionID *primitive.ObjectID, ṕipelineError chan error ) error
 	UpdateExecutionStepStatus(executionID *primitive.ObjectID, stepID *primitive.ObjectID, status string) error
 }
 
