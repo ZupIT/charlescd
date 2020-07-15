@@ -30,7 +30,9 @@ data class DeployRequest(
 data class DeployModuleRequest(
     val moduleId: String,
     val helmRepository: String,
-    val components: List<DeployComponentRequest>
+    val components: List<DeployComponentRequest>,
+    val gatewayName: String? = null,
+    val hostValue: String? = null
 )
 
 data class DeployComponentRequest(

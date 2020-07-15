@@ -59,6 +59,10 @@ export class ModuleDeploymentEntity extends BaseEntity {
   )
   public components: ComponentDeploymentEntity[]
 
+  public gatewayName: string
+
+  public hostValue: string
+
   @CreateDateColumn({ name: 'created_at'})
   public createdAt!: Date
 
@@ -68,7 +72,9 @@ export class ModuleDeploymentEntity extends BaseEntity {
   constructor(
     moduleId: string,
     helmRepository: string,
-    components: ComponentDeploymentEntity[]
+    components: ComponentDeploymentEntity[],
+    gatewayName: string,
+    hostValue: string
   ) {
     super()
     this.id = uuidv4()
@@ -76,6 +82,8 @@ export class ModuleDeploymentEntity extends BaseEntity {
     this.helmRepository = helmRepository
     this.components = components
     this.status = DeploymentStatusEnum.CREATED
+    this.gatewayName = gatewayName
+    this.hostValue = hostValue
   }
 
   public toReadDto(): ReadModuleDeploymentDto {
