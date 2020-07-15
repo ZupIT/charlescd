@@ -186,7 +186,7 @@ const allCirclesMetrics = {
     active: 12,
     inactive: 8
   },
-  averageCircleLifeTime: 26,
+  averageLifeTime: 26,
   history: [
     {
       id: '123',
@@ -296,10 +296,19 @@ const allCircleReleases = [
   }
 ];
 
+const circlesMetricsDashboard = {
+  circleStats: {
+    active: 12,
+    inactive: 8
+  },
+  averageLifeTime: 464047
+};
+
 export default {
   circleMetricsData,
   circlesMetrics,
   deployMetrics,
   allCirclesMetrics,
-  allCircleReleases
+  allCircleReleases,
+  circlesMetricsDashboard
 };

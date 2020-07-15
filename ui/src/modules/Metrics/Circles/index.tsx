@@ -15,21 +15,22 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 import Text from 'core/components/Text';
 import HistoryComponent from './History';
 import Loader from '../Loaders/index';
-import { useCirclesHistory } from './hooks';
+import { useCircles } from './hooks';
 import Styled from './styled';
 
 const Circles = () => {
-  const { findCirclesHistory, response, loading } = useCirclesHistory();
+  const { findAllCirclesData, response, loading } = useCircles();
   const [name, setName] = useState('');
   const totalCircles =
     response?.circleStats?.active + response?.circleStats?.inactive;
 
   useEffect(() => {
-    findCirclesHistory();
-  }, [findCirclesHistory, name]);
+    findAllCirclesData();
+  }, [findAllCirclesData]);
 
   return (
     <>
@@ -60,7 +61,7 @@ const Circles = () => {
               {loading ? (
                 <Loader.CircleAverageTime />
               ) : (
-                `${response?.averageCircleLifeTime} days`
+                `${humanizeDateFromSeconds(response?.averageLifeTime)}`
               )}
             </Text.h1>
           </Styled.CirclesData>
