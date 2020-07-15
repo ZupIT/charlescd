@@ -15,9 +15,15 @@ const findDeployMetrics = {
   handler: (req, h) => h.response(mock.deployMetrics())
 };
 
-const findAllCirclsMetrics = {
+const findAllCirclesMetrics = {
   method: 'GET',
   path: `${API}/circles`,
+  handler: (req, h) => h.response(mock.circlesMetricsDashboard)
+};
+
+const findAllCirclsMetrics = {
+  method: 'GET',
+  path: `${API}/circles/history`,
   handler: async (req, h) => {
     const query = req;
 
@@ -25,8 +31,7 @@ const findAllCirclsMetrics = {
       `https://picsum.photos/v2/list?page=${query.page}&limit=10`
     );
     const responseAsJson = await fetchData.json();
-    const { history, ...rest } = mock.allCirclesMetrics;
-    return h.response({ history: responseAsJson, ...rest });
+    return h.response({ history: responseAsJson });
   }
 };
 
@@ -40,5 +45,6 @@ export default {
   findCircleMetrics,
   findDeployMetrics,
   findAllCirclsMetrics,
-  findAllCirclsReleases
+  findAllCirclsReleases,
+  findAllCirclesMetrics
 };
