@@ -68,7 +68,6 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment,error
 	}
 
 	for _, steps := range mozart.Stages {
-
 		if len(steps) <= 0 {
 			continue
 		}
@@ -82,7 +81,6 @@ func (mozart *Mozart) asyncStartPipeline(deployment *deployment.Deployment,error
 	}
 
 	mozart.finishPipeline(deployment, errors)
-
 }
 
 func (mozart *Mozart) executeSteps(steps []*pipeline.Step) error {

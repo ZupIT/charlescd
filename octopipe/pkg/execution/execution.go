@@ -175,7 +175,7 @@ func (executionManager *ExecutionManager) ExecutionFinished(executionID *primiti
 		pipelineErrorMessage = errorObject.Error()
 	} else {
 		status = ExecutionFinished
-
+		pipelineErrorMessage = ""
 	}
 	query := bson.M{"_id": executionID}
 	updateData := bson.M{

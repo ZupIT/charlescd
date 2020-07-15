@@ -40,7 +40,6 @@ func (api *PipelineAPI) startPipeline(ctx *gin.Context) {
 
 	err := api.mozart.Start(deployment)
 
-
 	if err != "" {
 		ctx.JSON(400, gin.H{ "message": err })
 	}else{
