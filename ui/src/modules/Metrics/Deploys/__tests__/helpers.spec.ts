@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.test;
+import { chartDateFormatter } from '../helpers';
 
-import io.charlescd.villager.interactor.registry.ComponentTagDTO;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInteractor;
-import io.quarkus.test.Mock;
-import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-
-@Mock
-@ApplicationScoped
-public class MockListDockerRegistryTagsInteractor implements ListDockerRegistryTagsInteractor {
-
-    @Override
-    public List<ComponentTagDTO> execute(ListDockerRegistryTagsInput input) {
-        return null;
-    }
-}
+test('must formatte date for chart', () => {
+  expect(chartDateFormatter("2020-08-13")).toEqual("13-08-2020");
+});

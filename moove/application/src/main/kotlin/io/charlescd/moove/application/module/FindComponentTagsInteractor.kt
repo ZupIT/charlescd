@@ -20,5 +20,5 @@ import io.charlescd.moove.application.module.response.ComponentTagResponse
 
 interface FindComponentTagsInteractor {
 
-    fun execute(moduleId: String, componentId: String, workspaceId: String): List<ComponentTagResponse>
+    fun execute(moduleId: String, componentId: String, name: String, workspaceId: String): List<ComponentTagResponse>
 }

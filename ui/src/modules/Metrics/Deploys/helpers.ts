@@ -46,7 +46,7 @@ export const getAverageTimeSeries = (data: DeployMetricData) => [
 ];
 
 export const chartDateFormatter = (date: string) => {
-  return dayjs(date).format('DD/MM');
+  return dayjs(date, 'YYYY-MM-DD').format('DD-MM-YYYY');
 };
 
 export const getPlotOption = (deploySeries: Array<any>) => {
