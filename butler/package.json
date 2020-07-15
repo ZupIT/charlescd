@@ -61,6 +61,7 @@
     "eslint": "^7.1.0",
     "hpropagate": "0.0.6",
     "jest": "^25.5.4",
+    "jest-html-reporters": "^2.0.1",
     "prettier": "^1.19.1",
     "supertest": "4.0.2",
     "ts-jest": "^25.5.1",
@@ -85,6 +86,17 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "reporters": [
+      "default",
+      [
+        "jest-html-reporters",
+        {
+          "publicPath": "./coverage/lcov-report",
+          "filename": "report.html",
+          "expand": true
+        }
+      ]
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "testTimeout": 10000
