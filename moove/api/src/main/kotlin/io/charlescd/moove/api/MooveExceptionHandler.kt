@@ -60,7 +60,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         this.logger.error(ex.message, ex)
         val fields = LinkedHashMap<String, List<String>>()
         ex.bindingResult.fieldErrors.forEach { field: FieldError ->
-            (fields.computeIfAbsent(field?.field!!) { LinkedList<String>() } as LinkedList<String>).add(field?.defaultMessage!!)
+            (fields.computeIfAbsent(field.field) { LinkedList() } as LinkedList<String>).add(field.defaultMessage!!)
         }
         return ErrorMessageResponse.of(MooveErrorCode.INVALID_PAYLOAD, fields)
     }

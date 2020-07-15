@@ -37,6 +37,7 @@ interface VillagerService {
     fun findComponentTags(
         componentName: String,
         registryConfigurationId: String,
+        name: String,
         workspaceId: String
     ): List<SimpleArtifact>
 }
