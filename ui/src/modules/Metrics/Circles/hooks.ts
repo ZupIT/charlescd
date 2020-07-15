@@ -24,11 +24,33 @@ import { CirclesMetricData, CircleRelease } from './interfaces';
 import { buildParams, URLParams } from 'core/utils/query';
 
 interface CirclesMetrics extends FetchProps {
+  findAllCirclesData: Function;
+  response: CirclesMetricData;
+}
+
+export const useCircles = (): CirclesMetrics => {
+  const [circlesData, getCircleData] = useFetch<CirclesMetricData>(
+    findAllCirclesMetrics
+  );
+  const { response, loading } = circlesData;
+
+  const findAllCirclesData = useCallback(() => {
+    getCircleData();
+  }, [getCircleData]);
+
+  return {
+    findAllCirclesData,
+    response,
+    loading
+  };
+};
+
+interface CirclesHistory extends FetchProps {
   findCirclesHistory: Function;
   response: CirclesMetricData;
 }
 
-export const useCirclesHistory = (): CirclesMetrics => {
+export const useCirclesHistory = (): CirclesHistory => {
   const [circlesData, getCircleData] = useFetch<CirclesMetricData>(
     findAllCirclesMetrics
   );
