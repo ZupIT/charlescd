@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, fireEvent } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -66,4 +66,31 @@ test('renders sidebar component with selected workspace', () => {
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
+});
+
+test('renders sidebar component expanded', () => {
+  const onClickExpand = jest.fn();
+
+  const { getByTestId, getByText } = render(
+    <Sidebar
+      isExpanded={true}
+      onClickExpand={onClickExpand}
+      selectedWorkspace="test"
+    />
+  );
+
+  const links = getByTestId('sidebar-links');
+  const workspaceName = getByText('test');
+
+  const workspacesId = genMenuId(routes.workspaces);
+  const accountId = genMenuId(routes.account);
+
+  expect(workspaceName).toBeInTheDocument();
+  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(links.children.length).toBe(3);
+
+  fireEvent.click(links.children[0]);
+
+  expect(onClickExpand).toHaveBeenCalled();
 });
