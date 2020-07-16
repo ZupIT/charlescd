@@ -15,5 +15,6 @@
  */
 
 import AreaChart from './Area';
+import ColumnChart from './Column';
 
-export { AreaChart };
+export { AreaChart, ColumnChart };

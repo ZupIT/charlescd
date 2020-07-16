@@ -36,11 +36,11 @@ interface DeployApi {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/deployments/{id}/undeploy"],
+        value = ["/undeployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun undeploy(@PathVariable("id") id: String, @Valid @RequestBody request: UndeployRequest): UndeployResponse
+    fun undeploy(@Valid @RequestBody request: UndeployRequest): UndeployResponse
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
