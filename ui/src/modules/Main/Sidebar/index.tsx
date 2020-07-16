@@ -39,13 +39,15 @@ import { useWorkspaces } from 'modules/Settings/hooks';
 interface Props {
   isExpanded: boolean;
   onClickExpand: (state: ExpandClick) => void;
+  selectedWorkspace?: string;
 }
 
-const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
+const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>();
   const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
+  const menuWorkspaces = navigate.location.pathname === '/workspaces';
 
   useEffect(() => {
     loadWorkspaces();
@@ -79,18 +81,19 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
   const getIcon = (workspaceId: string) =>
     getWorkspaceId() === workspaceId && 'checkmark';
 
-  const renderDropdown = () => (
-    <Styled.Dropdown icon="workspace">
-      {map(workspaces, workspace => (
-        <Styled.DropdownItem
-          key={workspace.name}
-          name={workspace.name}
-          icon={getIcon(workspace.id)}
-          onSelect={onSelect}
-        />
-      ))}
-    </Styled.Dropdown>
-  );
+  const renderDropdown = () =>
+    !menuWorkspaces && (
+      <Styled.Dropdown icon="workspace">
+        {map(workspaces, workspace => (
+          <Styled.DropdownItem
+            key={workspace.name}
+            name={workspace.name}
+            icon={getIcon(workspace.id)}
+            onSelect={onSelect}
+          />
+        ))}
+      </Styled.Dropdown>
+    );
 
   return (
     <Styled.Nav data-testid="sidebar">
@@ -104,7 +107,11 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
       <Styled.Bottom>
         <Styled.Item>
           {!isEmpty(workspaces) && renderDropdown()}
-          {isExpanded && <Text.h5 color="light">{workspace?.name}</Text.h5>}
+          {isExpanded && (
+            <Text.h5 color="light">
+              {!menuWorkspaces && (workspace?.name || selectedWorkspace)}
+            </Text.h5>
+          )}
         </Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />

@@ -25,12 +25,14 @@ import Styled from './styled';
 interface Props {
   id: string;
   name: string;
+  selectedWorkspace: (name: string) => void;
 }
 
-const MenuItem = ({ id, name }: Props) => {
+const MenuItem = ({ id, name, selectedWorkspace }: Props) => {
   const history = useHistory();
   const handleClick = () => {
     saveWorkspace({ id, name });
+    selectedWorkspace(name);
     setUserAbilities();
     history.push({
       pathname: isRoot() ? routes.credentials : routes.circles
