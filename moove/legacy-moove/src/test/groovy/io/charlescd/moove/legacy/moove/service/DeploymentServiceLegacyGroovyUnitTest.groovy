@@ -87,7 +87,8 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
                 DeploymentStatus.DEPLOYED,
                 circle,
                 build,
-                workspaceId
+                workspaceId,
+                null
         )
 
         Deployment updatedDeployment = new Deployment("deployment-id",
@@ -97,7 +98,8 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
                 DeploymentStatus.UNDEPLOYING,
                 circle,
                 build,
-                workspaceId)
+                workspaceId,
+                null)
 
         when:
         this.service.undeploy("deployment-id", workspaceId)
@@ -109,7 +111,7 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
 
     }
 
-    private Hypothesis createHypothesis(String hypothesisId, User user) {
+    private static Hypothesis createHypothesis(String hypothesisId, User user) {
         new Hypothesis(
                 hypothesisId,
                 "hyp-name",
