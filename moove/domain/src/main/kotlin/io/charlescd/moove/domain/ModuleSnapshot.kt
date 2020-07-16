@@ -28,9 +28,7 @@ data class ModuleSnapshot(
     val helmRepository: String?,
     val components: List<ComponentSnapshot> = listOf(),
     val workspaceId: String,
-    val featureSnapshotId: String,
-    val gatewayName: String? = null,
-    val hostName: String? = null
+    val featureSnapshotId: String
 ) {
 
     companion object {
@@ -45,9 +43,7 @@ data class ModuleSnapshot(
             featureSnapshotId = featureSnapshotId,
             components = module.components.map {
                 ComponentSnapshot.from(UUID.randomUUID().toString(), id, it)
-            },
-            gatewayName = module.gatewayName,
-            hostName = module.hostValue
+            }
         )
     }
 }
