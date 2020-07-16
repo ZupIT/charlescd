@@ -125,7 +125,7 @@ const FormRegistry = ({ onFinish }: Props) => {
         <Popover
           title="Why we need a Registry?"
           icon="info"
-          link={`${CHARLES_DOC}/primeiros-passsos/configurando-workspace/registry`}
+          link={`${CHARLES_DOC}/get-started/defining-a-workspace/docker-registry`}
           linkLabel="View documentation"
           description="Adding your Docker Registry allows Charles to watch for new images being generated and list all the images saved in your registry in order to deploy them. Consult our documentation for further details. "
         />
