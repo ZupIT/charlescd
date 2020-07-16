@@ -88,39 +88,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
     }
 
     private fun findWorkspaceUsers(workspaceId: String, name: String?, email: String?, page: PageRequest): Page<User> {
-        val statement = StringBuilder(
-            """
-            SELECT users.id,
-                   users.name,
-                   users.email,
-                   users.photo_url,
-                   users.is_root,
-                   users.created_at,
-                   workspaces.id                        AS workspace_id,
-                   workspaces.name                      AS workspace_name,
-                   workspaces.created_at                AS workspace_created_at,
-                   workspaces.git_configuration_id      AS workspace_git_configuration_id,
-                   workspaces.registry_configuration_id AS workspace_registry_configuration_id,
-                   workspaces.cd_configuration_id       AS workspace_cd_configuration_id,
-                   workspaces.status                    AS workspace_status,
-                   workspaces.circle_matcher_url        AS workspace_circle_matcher_url,
-                   workspaces.metric_configuration_id   AS workspace_metric_configuration_id,
-                   workspace_user.id                    AS workspace_author_id,
-                   workspace_user.name                  AS workspace_author_name,
-                   workspace_user.created_at            AS workspace_author_created_at,
-                   workspace_user.email                 AS workspace_author_email,
-                   workspace_user.photo_url             AS workspace_author_photo_url
-            FROM users
-                     LEFT JOIN user_groups_users ON users.id = user_groups_users.user_id
-                     LEFT JOIN user_groups ON user_groups_users.user_group_id = user_groups.id
-                     LEFT JOIN workspaces_user_groups ON user_groups.id = workspaces_user_groups.user_group_id
-                     LEFT JOIN workspaces ON workspaces_user_groups.workspace_id = workspaces.id
-                     LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
-            WHERE 1 = 1
-            AND workspaces.id = ?
-        """
-        )
-        val result = executeWorkspacePageQuery(createStatement(statement, name, email), workspaceId, name, email, page)
+        val result = executeWorkspacePageQuery(createStatementWorkspaceUsers(name, email), workspaceId, name, email, page)
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
@@ -130,15 +98,14 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
     }
 
     private fun executeWorkspacePageQuery(
-        statement: StringBuilder,
+        statement: String,
         workspaceId: String,
         name: String?,
         email: String?,
         pageRequest: PageRequest
     ): Set<User>? {
         val parameters = mutableListOf<Any>()
-        parameters.add(workspaceId)
-        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement)
+        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement, workspaceId)
     }
 
     private fun findUserByEmail(email: String): Optional<User> {
@@ -160,8 +127,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
     }
 
     private fun findAllUsers(name: String?, email: String?, page: PageRequest): Page<User> {
-        val statement = StringBuilder(BASE_QUERY_STATEMENT)
-        val result = executePageQuery(createStatement(statement, name, email), name, email, page)
+        val result = executePageQuery(createStatementSelectUsers(name, email), name, email, page)
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
@@ -171,13 +137,13 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
     }
 
     private fun executePageQuery(
-        statement: StringBuilder,
+        statement: String,
         name: String?,
         email: String?,
         pageRequest: PageRequest
     ): Set<User>? {
         val parameters = mutableListOf<Any>()
-        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement)
+        return appendParametersAndRunQuery(name, parameters, email, pageRequest, statement, null)
     }
 
     private fun appendParametersAndRunQuery(
@@ -185,28 +151,103 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         parameters: MutableList<Any>,
         email: String?,
         pageRequest: PageRequest,
-        statement: StringBuilder
+        statement: String,
+        workspaceId: String?
     ): Set<User>? {
         name?.let { parameters.add("%$it%") }
         email?.let { parameters.add("%$it%") }
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.offset())
+        workspaceId?.let { parameters.add(workspaceId) }
 
         return this.jdbcTemplate.query(
-            statement.toString(),
+            statement,
             parameters.toTypedArray(),
             userExtractor
         )
     }
 
-    private fun createStatement(statement: StringBuilder, name: String?, email: String?): StringBuilder {
-        name?.let { statement.appendln("AND users.name ILIKE ?") }
-        email?.let { statement.appendln("AND users.email ILIKE ?") }
+    private fun createStatementSelectUsers(name: String?, email: String?): String {
+        val innerQueryStatement = createInnerQueryStatement(name, email)
 
-        statement.appendln("ORDER BY users.name ASC")
+        return """
+        SELECT users.id,
+               users.name,
+               users.email,
+               users.photo_url,
+               users.is_root,
+               users.created_at,
+               workspaces.id                        AS workspace_id,
+               workspaces.name                      AS workspace_name,
+               workspaces.created_at                AS workspace_created_at,
+               workspaces.git_configuration_id      AS workspace_git_configuration_id,
+               workspaces.registry_configuration_id AS workspace_registry_configuration_id,
+               workspaces.cd_configuration_id       AS workspace_cd_configuration_id,
+               workspaces.status                    AS workspace_status,
+               workspaces.circle_matcher_url        AS workspace_circle_matcher_url,
+               workspaces.metric_configuration_id   AS workspace_metric_configuration_id,
+               workspace_user.id                    AS workspace_author_id,
+               workspace_user.name                  AS workspace_author_name,
+               workspace_user.created_at            AS workspace_author_created_at,
+               workspace_user.email                 AS workspace_author_email,
+               workspace_user.photo_url             AS workspace_author_photo_url
+        FROM ( $innerQueryStatement ) users
+                 LEFT JOIN user_groups_users ON users.id = user_groups_users.user_id
+                 LEFT JOIN user_groups ON user_groups_users.user_group_id = user_groups.id
+                 LEFT JOIN workspaces_user_groups ON user_groups.id = workspaces_user_groups.user_group_id
+                 LEFT JOIN workspaces ON workspaces_user_groups.workspace_id = workspaces.id AND
+                                         (workspaces_user_groups.permissions @> '[{"name": "maintenance_write"}]'
+                                              AND workspaces.status IN ('INCOMPLETE', 'COMPLETE')
+                                             OR workspaces.status = 'COMPLETE')
+                 LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
+        WHERE 1 = 1
+        ORDER BY users.name ASC
+        """
+    }
 
-        return statement.appendln("LIMIT ?")
+    private fun createStatementWorkspaceUsers(name: String?, email: String?): String {
+        val innerQueryStatement = createInnerQueryStatement(name, email)
+
+        return """SELECT users.id,
+                   users.name,
+                   users.email,
+                   users.photo_url,
+                   users.is_root,
+                   users.created_at,
+                   workspaces.id                        AS workspace_id,
+                   workspaces.name                      AS workspace_name,
+                   workspaces.created_at                AS workspace_created_at,
+                   workspaces.git_configuration_id      AS workspace_git_configuration_id,
+                   workspaces.registry_configuration_id AS workspace_registry_configuration_id,
+                   workspaces.cd_configuration_id       AS workspace_cd_configuration_id,
+                   workspaces.status                    AS workspace_status,
+                   workspaces.circle_matcher_url        AS workspace_circle_matcher_url,
+                   workspaces.metric_configuration_id   AS workspace_metric_configuration_id,
+                   workspace_user.id                    AS workspace_author_id,
+                   workspace_user.name                  AS workspace_author_name,
+                   workspace_user.created_at            AS workspace_author_created_at,
+                   workspace_user.email                 AS workspace_author_email,
+                   workspace_user.photo_url             AS workspace_author_photo_url
+            FROM ( $innerQueryStatement ) users
+                     LEFT JOIN user_groups_users ON users.id = user_groups_users.user_id
+                     LEFT JOIN user_groups ON user_groups_users.user_group_id = user_groups.id
+                     LEFT JOIN workspaces_user_groups ON user_groups.id = workspaces_user_groups.user_group_id
+                     LEFT JOIN workspaces ON workspaces_user_groups.workspace_id = workspaces.id
+                     LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
+            WHERE 1 = 1
+            AND workspaces.id = ?
+            ORDER BY users.name ASC"""
+    }
+
+    private fun createInnerQueryStatement(name: String?, email: String?): String {
+        val innerQueryStatement = StringBuilder("SELECT * FROM users WHERE 1 = 1")
+        name?.let { innerQueryStatement.appendln("AND users.name ILIKE ?") }
+        email?.let { innerQueryStatement.appendln("AND users.email ILIKE ?") }
+        innerQueryStatement.appendln("ORDER BY users.name ASC")
+            .appendln("LIMIT ?")
             .appendln("OFFSET ?")
+
+        return innerQueryStatement.toString()
     }
 
     private fun executeCountQuery(name: String?, email: String?): Int? {

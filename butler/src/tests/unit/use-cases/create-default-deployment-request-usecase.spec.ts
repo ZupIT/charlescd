@@ -51,12 +51,12 @@ import {
   QueuedDeploymentEntity,
 } from '../../../app/api/deployments/entity'
 import {
-  CreateCircleDeploymentDto,
-  CreateCircleDeploymentRequestDto
+  CreateCircleDeploymentDto, CreateDeploymentRequestDto
 } from '../../../app/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
+import { InternalServerErrorException } from '@nestjs/common'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
@@ -66,7 +66,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
   let moduleDeployments: ModuleDeploymentEntity[]
   let componentDeployments: ComponentDeploymentEntity[]
   let createCircleDeploymentDto: CreateCircleDeploymentDto
-  let createDeploymentDto: CreateCircleDeploymentRequestDto
+  let createDeploymentDto: CreateDeploymentRequestDto
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
   let modulesService: ModulesService
@@ -85,7 +85,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
         { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
         { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-        { provide: ModulesService, useClass: ModulesServiceStub},
+        { provide: ModulesService, useClass: ModulesServiceStub },
         { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
       ]
     }).compile()
@@ -135,8 +135,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
       'header-value'
     )
 
-    createDeploymentDto = new CreateCircleDeploymentRequestDto(
-      'deployment-id',
+    createDeploymentDto = new CreateDeploymentRequestDto(
       'application-name',
       [],
       'author-id',
@@ -180,6 +179,22 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
 
       expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
         .toEqual(deployment.toReadDto())
+    })
+
+    it('should throw error when unique running insertion fail ', async() => {
+
+      jest.spyOn(deploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(queuedDeploymentsRepository, 'save')
+        .mockImplementationOnce(
+          () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+        ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+        .mockImplementationOnce(() => { throw new Error() })
+
+      jest.spyOn(modulesService, 'createModules')
+        .mockImplementation()
+
+      await expect(createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id')).rejects.toThrow(InternalServerErrorException)
     })
   })
 })

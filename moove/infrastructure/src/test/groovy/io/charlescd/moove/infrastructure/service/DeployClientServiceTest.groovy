@@ -21,6 +21,7 @@ import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.DeployClient
 import io.charlescd.moove.infrastructure.service.client.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.GetDeployCdConfigurationsResponse
+import io.charlescd.moove.infrastructure.service.client.UndeployRequest
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
@@ -163,6 +164,28 @@ class DeployClientServiceTest extends Specification {
         1 * deployClient.getCdConfigurations(workspaceId) >> responseFromDeploy
 
         response == null
+    }
+
+    def 'when undeploy should call undeploy client'() {
+        given:
+        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
+        def user = getDummyUser()
+        def circle = getDummyCircle('Default', user, true)
+        def build = getDummyBuild(user, circle, workspaceId)
+        def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
+                user, circle, workspaceId)
+        def undeployRequestCompare = new UndeployRequest("author-id",deployment.id)
+
+        when:
+        deployClientService.undeploy(deployment.id,"author-id")
+
+        then:
+        1 * deployClient.undeploy(_) >> { arguments ->
+            def undeployRequest = arguments[0]
+            assert undeployRequest instanceof UndeployRequest
+            assert undeployRequest.authorId == undeployRequestCompare.authorId
+            assert undeployRequest.deploymentId == undeployRequestCompare.deploymentId
+        }
     }
 
     private Build getDummyBuild(User user, Circle circle, String workspaceId) {

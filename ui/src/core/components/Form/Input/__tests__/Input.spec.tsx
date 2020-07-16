@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, getByTestId, wait } from 'unit-test/testUtils';
+import { dark as inputTheme } from 'core/assets/themes/input';
 import Input from '..';
 
 const textProps = {
@@ -66,4 +67,30 @@ test('floating label when Input has value', () => {
   const labelElement = container.getElementsByTagName('label').item(0);
   const labelStyle = window.getComputedStyle(labelElement);
   expect(labelStyle.top).toBe('0px');
+});
+
+test('renders Input component loading', () => {
+  const { getByTestId } = render(<Input name="keyName" label="Label" isLoading />);
+  const loading = getByTestId('icon-ellipse-loading');
+
+  expect(loading).toBeInTheDocument();
+});
+
+test('renders Input component error', async () => {
+  const { container, getByTestId } = render(
+    <Input
+      hasError
+      type={textProps.type}
+      name={textProps.name}
+      label="Label"
+    />
+  );
+
+  const inputElement = getByTestId(`input-${textProps.type}-${textProps.name}`);
+  const labelElement = container.getElementsByTagName('label').item(0);
+  const borderColor = inputTheme.error.borderColor.replace(/\ /gi, '');
+  const color = inputTheme.error.color.replace(/\ /gi, '');
+
+  expect(inputElement).toHaveStyle(`border-bottom: 1px solid ${borderColor}`);
+  expect(labelElement).toHaveStyle(`color: ${color}`);
 });
