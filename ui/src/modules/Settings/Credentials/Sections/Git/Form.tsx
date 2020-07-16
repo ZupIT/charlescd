@@ -84,7 +84,7 @@ const FormGit = ({ onFinish }: Props) => {
         <Popover
           title="Why we need a Git?"
           icon="info"
-          link={`${CHARLES_DOC}/primeiros-passsos/configurando-workspace/github`}
+          link={`${CHARLES_DOC}/get-started/defining-a-workspace/github`}
           linkLabel="View documentation"
           description="Adding a Git allows Charles to create, delete and merge branches as well as view repositories and generate releases. Consult our documentation for further details."
         />
