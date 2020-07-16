@@ -28,6 +28,7 @@ const HistoryComponent = () => {
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response } = useCirclesHistory();
   const historyResponse = response?.page?.content;
+  const hasMoreData = !response?.page?.isLast;
 
   useEffect(() => {
     getCirclesHistory({ page: 0 });
@@ -96,9 +97,11 @@ const HistoryComponent = () => {
         {circles?.map((circle: CircleHistory, index: number) => (
           <CircleRow circle={circle} key={index} />
         ))}
-        <div ref={setElement}>
-          <Loader.History />
-        </div>
+        {hasMoreData && (
+          <div ref={setElement}>
+            <Loader.History />
+          </div>
+        )}
       </Styled.CircleRowWrapper>
     </Styled.Table>
   );
