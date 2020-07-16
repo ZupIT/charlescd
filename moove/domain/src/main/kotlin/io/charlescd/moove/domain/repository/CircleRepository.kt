@@ -42,9 +42,11 @@ interface CircleRepository {
 
     fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount>
 
-    fun getCircleAverageLifeTime(workspaceId: String): Duration
+    fun getCirclesAverageLifeTime(workspaceId: String): Duration
 
     fun findCirclesHistory(workspaceId: String, name: String?, pageRequest: PageRequest): Page<CircleHistory>
+
+    fun count(workspaceId: String): Int
 
     fun count(workspaceId: String, name: String?): Int
 }
