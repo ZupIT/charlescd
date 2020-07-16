@@ -20,32 +20,31 @@ import Styled from './styled';
 import CircleRow from './CircleRow';
 import { useCirclesHistory } from '../hooks';
 import Loader from '../../Loaders';
-import { History } from '../interfaces';
+import { CircleHistory } from '../interfaces';
 
 const HistoryComponent = () => {
   const [element, setElement] = useState(null);
   const page = useRef(0);
-  const [circles, setCircles] = useState<History[]>([]);
-  const { findCirclesHistory, response } = useCirclesHistory();
-
-  console.log(response);
-
-  useEffect(() => {
-    findCirclesHistory({ page: 0 });
-  }, [findCirclesHistory]);
+  const [circles, setCircles] = useState<CircleHistory[]>([]);
+  const { getCirclesHistory, response } = useCirclesHistory();
+  const historyResponse = response?.page?.content;
 
   useEffect(() => {
-    if (response) {
-      setCircles((prevCircles: History[]) => [
+    getCirclesHistory({ page: 0 });
+  }, [getCirclesHistory]);
+
+  useEffect(() => {
+    if (historyResponse) {
+      setCircles((prevCircles: CircleHistory[]) => [
         ...prevCircles,
-        ...response.history
+        ...historyResponse
       ]);
     }
-  }, [response]);
+  }, [historyResponse]);
 
   const loadMore = () => {
     page.current++;
-    findCirclesHistory({ page: page.current });
+    getCirclesHistory({ page: page.current });
   };
 
   const prevY = useRef(0);
@@ -94,7 +93,7 @@ const HistoryComponent = () => {
         </Styled.TableColumn>
       </Styled.TableHead>
       <Styled.CircleRowWrapper>
-        {circles?.map((circle: History, index: number) => (
+        {circles?.map((circle: CircleHistory, index: number) => (
           <CircleRow circle={circle} key={index} />
         ))}
         <div ref={setElement}>

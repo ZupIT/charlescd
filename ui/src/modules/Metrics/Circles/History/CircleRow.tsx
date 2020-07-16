@@ -19,9 +19,10 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import CommonStyled from '../styled';
 import CircleReleasesTable from './CircleReleasesTable';
+import { CircleHistory } from '../interfaces';
 
 type Props = {
-  circle: any;
+  circle: CircleHistory;
 };
 
 const CircleRow = ({ circle }: Props) => {
@@ -32,11 +33,11 @@ const CircleRow = ({ circle }: Props) => {
       <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            <CommonStyled.Dot active={circle.circleStatus === 'active'} />
+            <CommonStyled.Dot active={circle.status === 'ACTIVE'} />
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn width={2}>
-          <Text.h5 color="light">{circle.author}</Text.h5>
+          <Text.h5 color="light">{circle.name}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">8-6-2020 15:48:37</Text.h5>

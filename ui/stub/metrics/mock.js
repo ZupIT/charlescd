@@ -181,35 +181,117 @@ const deployMetrics = () => ({
   ]
 });
 
-const allCirclesMetrics = {
-  circleStats: {
-    active: 12,
-    inactive: 8
+const circlesHistory = {
+  summary: {
+    active: 10,
+    inactive: 10
   },
-  averageLifeTime: 26,
-  history: [
-    {
-      id: '123',
-      circleStatus: 'ACTIVE',
-      name: 'Circle',
-      lifeTime: 2400,
-      lastUpdate: '8-6-2020 15:48:37'
-    },
-    {
-      id: '456',
-      circleStatus: 'INACTIVE',
-      name: 'Other Circle',
-      lifeTime: 3670,
-      lastUpdate: '8-7-2020 10:32:28'
-    },
-    {
-      id: '789',
-      circleStatus: 'ACTIVE',
-      name: 'Another Circle',
-      lifeTime: 1860,
-      lastUpdate: '8-7-2020 10:32:28'
-    }
-  ]
+  page: {
+    content: [
+      {
+        id: 'abc-123',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1234',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1235',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-126',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdate: '2020-07-12 10:25:38',
+        lifeTime: 30000
+      }
+    ],
+    page: 0,
+    size: 1,
+    isLast: true,
+    totalPages: 1
+  }
 };
 
 const allCircleReleases = [
@@ -308,7 +390,7 @@ export default {
   circleMetricsData,
   circlesMetrics,
   deployMetrics,
-  allCirclesMetrics,
+  circlesHistory,
   allCircleReleases,
   circlesMetricsDashboard
 };
