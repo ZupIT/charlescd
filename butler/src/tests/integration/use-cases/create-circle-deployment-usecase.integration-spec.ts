@@ -65,10 +65,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
+
   })
 
   it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
+    const createCdConfiguration = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      createCdConfiguration
+    )
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -92,10 +105,10 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           ]
         }
       ],
+      cdConfigurationId: cdConfiguration.id,
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
       circle: {
         headerValue: 'circle-header'
       }
@@ -148,11 +161,44 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
             finishedAt: null
           }
         ]
-      }]
+      }],
+
     })
   })
 
-  it('/POST /deployments in circle should fail when deployment already exists', done => {
+  it('/POST /deployments in circle should fail when deployment already exists', async() => {
+
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const createDeploymentDB = {
+
+      'id': '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment #1',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'circleId': '12345',
+      'cdConfigurationId': '4046f193-9479-48b5-ac29-01f419b64cb5',
+      'circle' : {
+        'headerValue': 'header-value'
+      }
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'DeploymentEntity', tableName: 'cd_configurations' },
+      createDeploymentDB
+    )
     const createDeploymentRequest = {
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -179,7 +225,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }
@@ -189,10 +235,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       .post('/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
-      .expect(409, done)
+      .expect(409)
   })
 
   it('/POST deployments in circle should enqueue RUNNING component deployments correctly', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -219,7 +278,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }
@@ -254,6 +313,30 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const queuedDeploymentDB = {
+      id: 1,
+      componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+      componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+      status: 'RUNNING',
+      type: 'QueuedDeploymentEntity'
+    }
+
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      queuedDeploymentDB
+    )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -292,7 +375,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }
@@ -337,6 +420,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should correctly update component pipeline options', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -375,7 +470,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }
@@ -416,6 +511,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -454,7 +561,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }
@@ -526,7 +633,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should handle deployment failure ', async() => {
-
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -569,7 +687,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circleId: '12345',
       circle: {
         headerValue: 'header-value'
@@ -590,6 +708,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST should handle deployment failure ', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -620,7 +750,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circleId: '12345',
       circle: {
         headerValue: 'header-value'
@@ -640,6 +770,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST deployments/circle with repeated components should return unprocessable entity status', async() => {
+    const cdConfigurationDB = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      cdConfigurationDB
+    )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -672,7 +814,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: {
         headerValue: 'circle-header'
       }

@@ -66,6 +66,14 @@ export class FixtureUtilsService {
     }
   }
 
+  async insertSingleFixture(entity: DatabaseEntity, params: Record<string, unknown>) : Promise<Record<string, unknown>> {
+    const repository =  await this.connection.getRepository(entity.name)
+    return await repository
+      .save(
+        params
+      )
+  }
+
   private getOrderedLoadDbEntities(): DatabaseEntity[] {
     return [
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
@@ -96,4 +104,5 @@ export class FixtureUtilsService {
       { name: 'UndeploymentEntity', tableName: 'undeployments' }
     ]
   }
+
 }
