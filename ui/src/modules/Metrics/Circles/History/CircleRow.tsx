@@ -17,7 +17,6 @@
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import CommonStyled from '../styled';
 import CircleReleasesTable from './CircleReleasesTable';
 import { CircleHistory } from '../interfaces';
 
@@ -33,7 +32,7 @@ const CircleRow = ({ circle }: Props) => {
       <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            <CommonStyled.Dot active={circle.status === 'ACTIVE'} />
+            <Styled.Dot active={circle.status === 'ACTIVE'} />
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn width={2}>
