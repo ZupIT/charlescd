@@ -45,7 +45,11 @@ export interface ISpinnakerPipelineConfiguration {
 
   helmRepository: string
 
-  hosts?: string[]
+  gatewayName: string
+
+  hostValue: string
+
+  hosts: string[]
 
   url: string
 }

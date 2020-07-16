@@ -14,31 +14,23 @@
  * limitations under the License.
  */
 
-import { IPipelineOptions } from '../interfaces'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class ReadComponentDto {
+export class AddVirtualserviceFieldsToComponents20200716121700 implements MigrationInterface {
 
-  public readonly id: string
+    public async up(queryRunner: QueryRunner) {
+        await queryRunner.addColumn('components', new TableColumn({
+          name: 'host_value',
+          type: 'varchar',
+          isNullable: true,
+        }))
+        await queryRunner.addColumn('components', new TableColumn({
+          name: 'gateway_name',
+          type: 'varchar',
+          isNullable: true
+        }))
+    }
 
-  public readonly pipelineOptions: IPipelineOptions
-
-  public readonly createdAt: Date
-
-  public readonly hostValue: string
-  
-  public readonly gatewayName: string
-
-  constructor(
-    id: string,
-    pipelineOptions: IPipelineOptions,
-    createdAt: Date,
-    hostValue: string,
-    gatewayName: string
-  ) {
-    this.id = id
-    this.pipelineOptions = pipelineOptions
-    this.createdAt = createdAt
-    this.gatewayName = gatewayName
-    this.hostValue = hostValue
-  }
+    public async down(queryRunner: QueryRunner) {
+    }
 }

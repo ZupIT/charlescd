@@ -157,7 +157,8 @@ export default class TotalPipeline {
       this.contract.versions.length === 0
         ? createEmptyVirtualService(this.contract.appName, this.contract.appNamespace)
         : createVirtualService(
-          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.hosts
+          this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.hosts,
+          this.contract.hostValue, this.contract.gatewayName
         )
     const virtualServiceStage = baseStage(
       virtualService,
