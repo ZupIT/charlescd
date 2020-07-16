@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -43,9 +43,8 @@ test('renders sidebar component', async () => {
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
-
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
-  expect(getByTestId(accountId)).toBeInTheDocument();
-  expect(links.children.length).toBe(3);
+  wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
+  wait(() => expect(getByTestId(accountId)).toBeInTheDocument());
+  wait(() => expect(links.children.length).toBe(3));
 });
 

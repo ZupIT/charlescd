@@ -34,6 +34,7 @@ import { Workspace } from 'modules/Users/interfaces/User';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
+import { useWorkspaces } from 'modules/Settings/hooks';
 
 interface Props {
   isExpanded: boolean;
@@ -42,12 +43,19 @@ interface Props {
 
 const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>();
+  const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
 
   useEffect(() => {
-    setWorkspaces(getProfileByKey('workspaces'));
-  }, []);
+    loadWorkspaces();
+  }, [loadWorkspaces]);
+
+  useEffect(() => {
+    isRoot()
+      ? setWorkspaces(loadWorkspacesResponse?.content)
+      : setWorkspaces(getProfileByKey('workspaces'));
+  }, [loadWorkspacesResponse]);
 
   useEffect(() => {
     setWorkspace(find(workspaces, ['id', getWorkspaceId()]));

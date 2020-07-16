@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import Main from '../index';
@@ -52,6 +52,8 @@ test('render menu component', () => {
   const sidebar = getByTestId('sidebar');
   const content = getByTestId('main-content');
   const footer = getByTestId('footer');
+  
+  wait();
 
   expect(sidebar.tagName).toBe('NAV');
   expect(content.tagName).toBe('SECTION');
