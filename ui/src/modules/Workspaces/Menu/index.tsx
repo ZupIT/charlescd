@@ -35,9 +35,15 @@ interface Props {
   items: WorkspacePaginationItem[];
   onSearch: (name: string) => void;
   isLoading?: boolean;
+  selectedWorkspace: (name: string) => void;
 }
 
-const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
+const WorkspaceMenu = ({
+  items,
+  onSearch,
+  isLoading,
+  selectedWorkspace
+}: Props) => {
   const MAX_LENGTH_NAME = 50;
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -58,7 +64,12 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
 
   const renderWorkspaces = () =>
     map(items, ({ id, name }: WorkspacePaginationItem) => (
-      <MenuItem key={id} id={id} name={name} />
+      <MenuItem
+        key={id}
+        id={id}
+        name={name}
+        selectedWorkspace={(name: string) => selectedWorkspace(name)}
+      />
     ));
 
   const openWorkspaceModal = () => setToggleModal(true);

@@ -35,7 +35,7 @@ afterEach(() => {
   window = originalWindow;
 });
 
-test('renders sidebar component', async () => {
+test('renders sidebar component', () => {
   const { getByTestId } = render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
@@ -43,8 +43,27 @@ test('renders sidebar component', async () => {
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
-  wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
-  wait(() => expect(getByTestId(accountId)).toBeInTheDocument());
-  wait(() => expect(links.children.length).toBe(3));
+
+  wait();
+
+  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(links.children.length).toBe(3);
 });
 
+test('renders sidebar component with selected workspace', () => {
+  const { getByTestId, getByText } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} selectedWorkspace="test" />
+  );
+
+  const links = getByTestId('sidebar-links');
+  const workspaceName = getByText('test');
+
+  const workspacesId = genMenuId(routes.workspaces);
+  const accountId = genMenuId(routes.account);
+
+  expect(workspaceName).toBeInTheDocument();
+  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  expect(getByTestId(accountId)).toBeInTheDocument();
+  expect(links.children.length).toBe(3);
+});
