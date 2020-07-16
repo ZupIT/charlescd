@@ -289,7 +289,7 @@ const circlesHistory = {
     ],
     page: 0,
     size: 1,
-    isLast: true,
+    isLast: false,
     totalPages: 1
   }
 };
