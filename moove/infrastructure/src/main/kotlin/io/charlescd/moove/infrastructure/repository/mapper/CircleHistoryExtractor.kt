@@ -20,10 +20,10 @@ package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.CircleHistory
 import io.charlescd.moove.domain.CircleStatusEnum
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.time.Duration
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.stereotype.Component
 
 @Component
 class CircleHistoryExtractor : ResultSetExtractor<Set<CircleHistory>> {

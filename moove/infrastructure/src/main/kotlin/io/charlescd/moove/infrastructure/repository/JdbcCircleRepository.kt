@@ -23,12 +23,12 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleHistoryExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 import java.sql.Types
 import java.time.Duration
 import java.util.*
 import kotlin.collections.ArrayList
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 
 @Repository
 class JdbcCircleRepository(
@@ -336,24 +336,16 @@ class JdbcCircleRepository(
     }
 
     override fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount> {
-        val query = this.createCountCircleWithStatusByWorkspaceQuery()
-        query.append(" GROUP BY circle_status ")
-
-        return this.jdbcTemplate.query(
-            query.toString(),
-            arrayOf(workspaceId),
-            circleMetricExtractor
-        )?.toList()
-            ?: emptyList()
+        return this.countByWorkspaceGroupedByStatus(workspaceId, null)
     }
 
     override fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount> {
         val query = this.createCountCircleWithStatusByWorkspaceQuery()
-        val parameters = mutableListOf(workspaceId)
+        val parameters = mutableListOf(workspaceId, workspaceId)
 
         name?.let {
             query.append(" AND circles.name ILIKE ? ")
-            parameters.add("'%${name}%'")
+            parameters.add("%$name%")
         }
         query.append(" GROUP BY circle_status ")
 
@@ -376,11 +368,21 @@ class JdbcCircleRepository(
                     FROM circles circles
                             LEFT JOIN deployments deployments ON circles.id = deployments.circle_id
                     WHERE circles.workspace_id = ?
+                        AND (
+                            deployments.id IN 
+                                (
+                                    SELECT DISTINCT ON (circle_id) id 
+                                    FROM deployments
+                                    WHERE workspace_id = ?
+                                    ORDER BY circle_id , created_at DESC
+                                )
+                            OR deployments.id IS NULL
+                        )
             """
         )
     }
 
-    override fun getCircleAverageLifeTime(workspaceId: String): Duration {
+    override fun getCirclesAverageLifeTime(workspaceId: String): Duration {
         val query = """
                 SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', AVG((NOW() - circles.created_at)))) AS average_life_time 
                 FROM circles circles
@@ -397,15 +399,17 @@ class JdbcCircleRepository(
 
     override fun findCirclesHistory(workspaceId: String, name: String?, pageRequest: PageRequest): Page<CircleHistory> {
         val totalItems = this.count(workspaceId, name)
-        val parameters = mutableListOf(workspaceId, workspaceId)
+        val parameters = mutableListOf<Any>(workspaceId, workspaceId)
         val query = createFindCirclesHistoryQuery()
 
         name?.let {
             query.append(" AND circles.name ILIKE ? ")
-            parameters.add("'%${name}%'")
+            parameters.add("%$name%")
         }
 
-        parameters.add(pageRequest.size, (pageRequest.size * pageRequest.page).toString())
+        query.append(createPaginationAppend())
+        parameters.add(pageRequest.size)
+        parameters.add(pageRequest.size * pageRequest.page)
 
         val result = this.jdbcTemplate.query(
             query.toString(),
@@ -417,16 +421,23 @@ class JdbcCircleRepository(
         return Page(result, pageRequest.page, pageRequest.size, totalItems)
     }
 
+    private fun createPaginationAppend(): String {
+        return """  
+                    LIMIT ?
+                    OFFSET ? 
+                """
+    }
+
     private fun createFindCirclesHistoryQuery() = StringBuilder(
         """
-                SELECT  circles.id                                                                      AS circle_id,
-                        circles.name                                                                    AS circle_name,
-                        EXTRACT(epoch FROM DATE_TRUNC('second', (NOW() - circles.created_at)))          AS circle_life_time,
+                SELECT  circles.id                                                                                                  AS circle_id,
+                        circles.name                                                                                                AS circle_name,
+                        EXTRACT(epoch FROM DATE_TRUNC('second', (NOW() - circles.created_at)))                                      AS circle_life_time,
                         CASE deployments.status 
                             WHEN 'DEPLOYED' THEN 'ACTIVE'
                             ELSE 'INACTIVE'
-                        END                                                                             AS circle_status,
-                        GREATEST(circles.created_at, deployments.deployed_at, deployments.created_at)   AS last_updated_at
+                        END                                                                                                         AS circle_status,
+                        GREATEST(circles.created_at, deployments.deployed_at, deployments.created_at, deployments.undeployed_at)    AS last_updated_at
                 FROM circles circles
                         LEFT JOIN deployments deployments ON deployments.circle_id = circles.id
                 WHERE circles.workspace_id = ?
@@ -440,16 +451,18 @@ class JdbcCircleRepository(
                                 )
                             OR deployments.id IS NULL
                         )
-                LIMIT ?
-                OFFSET ?
         """
     )
+
+    override fun count(workspaceId: String): Int {
+        return this.count(workspaceId, null)
+    }
 
     override fun count(workspaceId: String, name: String?): Int {
         val parameters = mutableListOf(workspaceId)
         val query = StringBuilder(
             """
-                    SELECT  COUNT(circles.id)   AS total,
+                    SELECT  COUNT(circles.id)   AS total
                     FROM circles circles
                     WHERE circles.workspace_id = ?
             """
@@ -457,7 +470,7 @@ class JdbcCircleRepository(
 
         name?.let {
             query.append(" AND circles.name ILIKE ? ")
-            parameters.add("'%${name}%'")
+            parameters.add("%$name%")
         }
 
         return this.jdbcTemplate.queryForObject(
@@ -467,5 +480,4 @@ class JdbcCircleRepository(
             rs.getInt(1)
         } ?: 0
     }
-
 }
