@@ -161,10 +161,10 @@ export type FetchStatuses = 'idle' | 'pending' | 'resolved' | 'rejected';
 export const useFetchStatus = (): FetchStatus => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
 
-  const idle = (): void => setStatus('idle');
-  const pending = (): void => setStatus('pending');
-  const resolved = (): void => setStatus('resolved');
-  const rejected = (): void => setStatus('rejected');
+  const idle = () => setStatus('idle');
+  const pending = () => setStatus('pending');
+  const resolved = () => setStatus('resolved');
+  const rejected = () => setStatus('rejected');
 
   const isIdle = status === 'idle';
   const isPending = status === 'pending';
