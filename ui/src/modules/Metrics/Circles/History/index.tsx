@@ -18,21 +18,23 @@ import React, { useRef, useState, useEffect } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CircleRow from './CircleRow';
+import Summary from './Summary';
 import { useCirclesHistory } from '../hooks';
 import Loader from '../../Loaders';
 import { CircleHistory } from '../interfaces';
 
 const HistoryComponent = () => {
   const [element, setElement] = useState(null);
+  const [name, setName] = useState('');
   const page = useRef(0);
   const [circles, setCircles] = useState<CircleHistory[]>([]);
-  const { getCirclesHistory, response } = useCirclesHistory();
+  const { getCirclesHistory, response, loading } = useCirclesHistory();
   const historyResponse = response?.page?.content;
   const hasMoreData = !response?.page?.isLast;
 
   useEffect(() => {
-    getCirclesHistory({ page: 0 });
-  }, [getCirclesHistory]);
+    getCirclesHistory({ page: 0, name });
+  }, [getCirclesHistory, name]);
 
   useEffect(() => {
     if (historyResponse) {
@@ -45,7 +47,7 @@ const HistoryComponent = () => {
 
   const loadMore = () => {
     page.current++;
-    getCirclesHistory({ page: page.current });
+    getCirclesHistory({ page: page.current, name });
   };
 
   const prevY = useRef(0);
@@ -78,32 +80,37 @@ const HistoryComponent = () => {
   }, [element]);
 
   return (
-    <Styled.Table>
-      <Styled.TableHead>
-        <Styled.TableColumn>
-          <Text.h5 color="dark">Status</Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn width={2}>
-          <Text.h5 color="dark">Circles</Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn>
-          <Text.h5 color="dark">Last update</Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn>
-          <Text.h5 color="dark">Life time</Text.h5>
-        </Styled.TableColumn>
-      </Styled.TableHead>
-      <Styled.CircleRowWrapper>
-        {circles?.map((circle: CircleHistory, index: number) => (
-          <CircleRow circle={circle} key={index} />
-        ))}
-        {hasMoreData && (
+    <Styled.HistoryWrapper>
+      <Summary
+        legend={response?.summary}
+        legendLoading={loading}
+        onSearch={setName}
+      />
+      <Styled.Table>
+        <Styled.TableHead>
+          <Styled.TableColumn>
+            <Text.h5 color="dark">Status</Text.h5>
+          </Styled.TableColumn>
+          <Styled.TableColumn width={2}>
+            <Text.h5 color="dark">Circles</Text.h5>
+          </Styled.TableColumn>
+          <Styled.TableColumn>
+            <Text.h5 color="dark">Last update</Text.h5>
+          </Styled.TableColumn>
+          <Styled.TableColumn>
+            <Text.h5 color="dark">Life time</Text.h5>
+          </Styled.TableColumn>
+        </Styled.TableHead>
+        <Styled.CircleRowWrapper>
+          {circles?.map((circle: CircleHistory, index: number) => (
+            <CircleRow circle={circle} key={index} />
+          ))}
           <div ref={setElement}>
             <Loader.History />
           </div>
-        )}
-      </Styled.CircleRowWrapper>
-    </Styled.Table>
+        </Styled.CircleRowWrapper>
+      </Styled.Table>
+    </Styled.HistoryWrapper>
   );
 };
 

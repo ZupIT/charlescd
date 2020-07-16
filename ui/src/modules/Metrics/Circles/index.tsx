@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import Text from 'core/components/Text';
 import HistoryComponent from './History';
@@ -24,7 +24,6 @@ import Styled from './styled';
 
 const Circles = () => {
   const { findAllCirclesData, response, loading } = useCircles();
-  const [name, setName] = useState('');
   const totalCircles =
     response?.circleStats?.active + response?.circleStats?.inactive;
 
@@ -68,33 +67,7 @@ const Circles = () => {
         </Styled.MiniCard>
       </Styled.Content>
       <Styled.Content>
-        <Styled.HistoryWrapper>
-          <Styled.HistoryHeader>
-            <Text.h2 color="light" weight="bold">
-              History
-            </Text.h2>
-            <Styled.HistorySearchInput
-              resume
-              onSearch={setName}
-              placeholder={'Search circle'}
-            />
-          </Styled.HistoryHeader>
-          {loading ? (
-            <Loader.Legend />
-          ) : (
-            <Styled.HistoryLegend>
-              <Styled.Dot active={true} />
-              <Text.h5 color="dark">
-                Active: {response?.circleStats?.active}
-              </Text.h5>
-              <Styled.Dot active={false} />
-              <Text.h5 color="dark">
-                Inactive: {response?.circleStats?.inactive}
-              </Text.h5>
-            </Styled.HistoryLegend>
-          )}
-          <HistoryComponent />
-        </Styled.HistoryWrapper>
+        <HistoryComponent />
       </Styled.Content>
     </>
   );
