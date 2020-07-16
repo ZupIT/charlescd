@@ -28,9 +28,7 @@ data class Module(
     val labels: List<Label>? = emptyList(),
     val gitConfiguration: GitConfiguration? = null,
     val components: List<Component> = emptyList(),
-    val workspaceId: String,
-    val gatewayName: String? = null,
-    val hostValue: String? = null
+    val workspaceId: String
 ) {
 
     fun findComponentById(componentId: String): Component? {

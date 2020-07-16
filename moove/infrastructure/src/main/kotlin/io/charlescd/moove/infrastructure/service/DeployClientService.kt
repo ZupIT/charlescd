@@ -109,9 +109,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             DeployModuleRequest(
                 moduleId = module.moduleId,
                 helmRepository = module.helmRepository!!,
-                components = buildComponentsDeployRequest(module),
-                gatewayName = module.gatewayName,
-                hostValue = module.hostName
+                components = buildComponentsDeployRequest(module)
             )
         }
 
@@ -127,7 +125,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             componentId = component.componentId,
             componentName = component.name,
             buildImageUrl = component.artifact!!.artifact,
-            buildImageTag = component.artifact!!.version
+            buildImageTag = component.artifact!!.version,
+            hostValue = component.hostValue,
+            gatewayName = component.gatewayName
         )
     }
 

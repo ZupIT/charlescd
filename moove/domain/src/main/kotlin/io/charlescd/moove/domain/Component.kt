@@ -25,5 +25,7 @@ data class Component(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val workspaceId: String,
     val errorThreshold: Int,
-    val latencyThreshold: Int
+    val latencyThreshold: Int,
+    val hostValue: String?,
+    val gatewayName: String?
 )

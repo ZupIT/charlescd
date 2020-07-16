@@ -30,16 +30,16 @@ data class DeployRequest(
 data class DeployModuleRequest(
     val moduleId: String,
     val helmRepository: String,
-    val components: List<DeployComponentRequest>,
-    val gatewayName: String? = null,
-    val hostValue: String? = null
+    val components: List<DeployComponentRequest>
 )
 
 data class DeployComponentRequest(
     val componentId: String,
     val componentName: String,
     val buildImageUrl: String,
-    val buildImageTag: String
+    val buildImageTag: String,
+    val hostValue: String?,
+    val gatewayName: String?
 )
 
 data class DeployCircleRequest(

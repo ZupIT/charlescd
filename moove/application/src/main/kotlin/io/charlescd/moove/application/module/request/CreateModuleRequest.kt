@@ -43,10 +43,7 @@ data class CreateModuleRequest(
 
     @field:Valid
     @field:NotEmpty
-    val components: List<ComponentRequest>,
-
-    val gatewayName: String,
-    val hostValue: String
+    val components: List<ComponentRequest>
 ) {
     fun toDomain(moduleId: String, workspaceId: String, author: User) = Module(
         id = moduleId,
@@ -56,9 +53,7 @@ data class CreateModuleRequest(
         helmRepository = this.helmRepository,
         author = author,
         components = this.components.map { it.toDomain(moduleId, workspaceId) },
-        workspaceId = workspaceId,
-        gatewayName = this.gatewayName,
-        hostValue = this.hostValue
+        workspaceId = workspaceId
     )
 }
 
@@ -70,7 +65,11 @@ data class ComponentRequest(
     val errorThreshold: Int,
 
     @field:NotNull
-    val latencyThreshold: Int
+    val latencyThreshold: Int,
+
+    val hostValue: String?,
+
+    val gatewayName: String?
 ) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(
         id = UUID.randomUUID().toString(),
@@ -79,6 +78,8 @@ data class ComponentRequest(
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId,
         errorThreshold = this.errorThreshold,
-        latencyThreshold = this.latencyThreshold
+        latencyThreshold = this.latencyThreshold,
+        hostValue = this.hostValue,
+        gatewayName = this.gatewayName
     )
 }
