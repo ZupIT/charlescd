@@ -22,14 +22,19 @@ import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.impl.RetrieveDeploymentsMetricsInteractorImpl
 import spock.lang.Specification
+
+import java.time.LocalDate
 
 class MetricsControllerUnitTest extends Specification {
 
     def retrieveCircleComponentsPeriodMetric = Mock(RetrieveCircleComponentsPeriodMetricInteractor)
     def retrieveCirclePeriodMetric = Mock(RetrieveCirclePeriodMetricInteractor)
     def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
-    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth)
+    def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
+    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth, retrieveDeploymentsMetric)
+
 
     def circleId = "circle-id"
     def workspaceId = "workspace-id"
@@ -126,6 +131,40 @@ class MetricsControllerUnitTest extends Specification {
         response.errors.circleComponents.get(0).status == HealthStatus.WARNING
         response.errors.circleComponents.get(0).threshold == 10
         response.errors.circleComponents.get(0).value == 8D
+    }
+
+    def 'should get deployments metrics'() {
+        given:
+        def period = PeriodType.ONE_MONTH
+
+        def deploymentsAverageTimeInPeriod = [new DeploymentAverageTimeInPeriodRepresentation(200, LocalDate.of(2020, 06, 22)),
+                                              new DeploymentAverageTimeInPeriodRepresentation(175, LocalDate.of(2020, 06, 21)),
+                                              new DeploymentAverageTimeInPeriodRepresentation(230, LocalDate.of(2020, 06, 20))]
+
+        def successfulDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(32, 155, LocalDate.of(2020, 06, 22)),
+                                                  new DeploymentStatsInPeriodRepresentation(28, 235, LocalDate.of(2020, 06, 21)),
+                                                  new DeploymentStatsInPeriodRepresentation(17, 200, LocalDate.of(2020, 06, 20))]
+
+        def failedDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(8, 0, LocalDate.of(2020, 06, 22)),
+                                              new DeploymentStatsInPeriodRepresentation(5, 0, LocalDate.of(2020, 06, 20))]
+
+        def deploymentMetricsRepresentation = new DeploymentMetricsRepresentation(123, 12, 300,
+                successfulDeploymentsStatsInPeriod, failedDeploymentsStatsInPeriod, deploymentsAverageTimeInPeriod)
+
+        when:
+        def response = metricsController.getDeploymentsMetrics(workspaceId, period, null)
+
+        then:
+        1 * retrieveDeploymentsMetric.execute(workspaceId, period, null) >> deploymentMetricsRepresentation
+        0 * _
+
+        response != null
+        response.successfulDeployments == 123
+        response.failedDeployments == 12
+        response.successfulDeploymentsAverageTime == 300
+        response.successfulDeploymentsInPeriod.size() == 3
+        response.failedDeploymentsInPeriod.size() == 2
+        response.deploymentsAverageTimeInPeriod.size() == 3
     }
 
 }

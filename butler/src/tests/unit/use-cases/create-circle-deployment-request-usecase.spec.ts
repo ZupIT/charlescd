@@ -16,7 +16,7 @@
 
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
-import { CreateCircleDeploymentDto, CreateCircleDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
+import { CreateCircleDeploymentDto, CreateDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
@@ -63,7 +63,7 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
   let moduleDeployments: ModuleDeploymentEntity[]
   let componentDeployments: ComponentDeploymentEntity[]
   let createCircleDeploymentDto: CreateCircleDeploymentDto
-  let createDeploymentDto: CreateCircleDeploymentRequestDto
+  let createDeploymentDto: CreateDeploymentRequestDto
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
   let modulesService: ModulesService
@@ -134,8 +134,7 @@ describe('CreateCircleDeploymentRequestUsecase', () => {
       'header-value'
     )
 
-    createDeploymentDto = new CreateCircleDeploymentRequestDto(
-      'deployment-id',
+    createDeploymentDto = new CreateDeploymentRequestDto(
       'application-name',
       [],
       'author-id',

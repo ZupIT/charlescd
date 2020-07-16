@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
-import ComponentSelect from 'core/components/Form/Select';
+import SelectComponent from 'core/components/Form/Select';
 import { fadeIn } from 'core/assets/style/animate';
 
 const Content = styled.div`
@@ -49,7 +49,7 @@ const Input = styled(ComponentInput)`
   margin-bottom: 20px;
 `;
 
-const Select = styled(ComponentSelect)`
+const Select = styled(SelectComponent.Single)`
   margin-bottom: 20px;
   width: 271px;
 `;

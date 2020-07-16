@@ -1064,7 +1064,7 @@ spec:
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.2.13
+          image: zupcharles/charlescd-butler:0.2.14
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1097,6 +1097,8 @@ spec:
               value: 3f2Yq8R4HhDCnefR
             - name: DATABASE_NAME
               value: charlescd_butler
+            - name: DATABASE_SSL
+              value: "false"
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
@@ -1147,7 +1149,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.2.13
+          image: zupcharles/charlescd-circle-matcher:0.2.14
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1178,6 +1180,8 @@ spec:
               value: "6379"
             - name: SPRING_REDIS_PASSWORD
               value: hb2Fj9MGKjBkZ6zV
+            - name: SPRING_REDIS_SSL
+              value: "false"
             - name: ALLOWED_ORIGINS
               value: http://charles.info.example
           resources:
@@ -1213,7 +1217,7 @@ spec:
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.2.13
+          image: zupcharles/charlescd-moove:0.2.14
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1292,7 +1296,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.2.13
+          image: zupcharles/charlescd-ui:0.2.14
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1356,7 +1360,7 @@ spec:
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.2.13
+          image: zupcharles/charlescd-villager:0.2.14
           livenessProbe:
             failureThreshold: 3
             httpGet:

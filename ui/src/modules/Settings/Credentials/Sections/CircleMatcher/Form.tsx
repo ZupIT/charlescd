@@ -57,7 +57,7 @@ const FormCircleMatcher = ({ onFinish }: Props) => {
         <Popover
           title="Why we ask for Circle Matcher?"
           icon="info"
-          link={`${CHARLES_DOC}/referencia-1/circle-matcher`}
+          link={`${CHARLES_DOC}/reference/circle-matcher`}
           linkLabel="View documentation"
           description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. Consult the our documentation for further details."
         />
