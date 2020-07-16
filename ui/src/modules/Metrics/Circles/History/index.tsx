@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, RefObject, useCallback } from 'react';
+import { useInfiniteScroll } from 'react-infinite-scroll-hook';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CircleRow from './CircleRow';
@@ -24,17 +25,26 @@ import Loader from '../../Loaders';
 import { CircleHistory } from '../interfaces';
 
 const HistoryComponent = () => {
-  const [element, setElement] = useState(null);
+  const [hasNextPage, setHasNextPage] = useState(true);
   const [name, setName] = useState('');
   const page = useRef(0);
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
   const historyResponse = response?.page?.content;
-  const hasMoreData = !response?.page?.isLast;
 
-  useEffect(() => {
-    getCirclesHistory({ page: 0, name });
-  }, [getCirclesHistory, name]);
+  const handleLoadMore = useCallback(() => {
+    console.log('should load more');
+
+    getCirclesHistory({ page: page.current, name });
+    page.current++;
+  }, []);
+
+  const infiniteRef = useInfiniteScroll({
+    loading,
+    hasNextPage,
+    onLoadMore: handleLoadMore,
+    scrollContainer: 'parent'
+  });
 
   useEffect(() => {
     if (historyResponse) {
@@ -42,42 +52,9 @@ const HistoryComponent = () => {
         ...prevCircles,
         ...historyResponse
       ]);
+      setHasNextPage(!response?.page?.isLast);
     }
   }, [historyResponse]);
-
-  const loadMore = () => {
-    page.current++;
-    getCirclesHistory({ page: page.current, name });
-  };
-
-  const prevY = useRef(0);
-  const observer = useRef(
-    new IntersectionObserver(
-      ([firstEntry]) => {
-        const y = firstEntry.boundingClientRect.y;
-        if (prevY.current > y) {
-          loadMore();
-        }
-        prevY.current = y;
-      },
-      { threshold: 0.2 }
-    )
-  );
-
-  useEffect(() => {
-    const currentElement = element;
-    const currentObserver = observer.current;
-
-    if (currentElement) {
-      currentObserver.observe(currentElement);
-    }
-
-    return () => {
-      if (currentElement) {
-        currentObserver.unobserve(currentElement);
-      }
-    };
-  }, [element]);
 
   return (
     <Styled.HistoryWrapper>
@@ -101,14 +78,14 @@ const HistoryComponent = () => {
             <Text.h5 color="dark">Life time</Text.h5>
           </Styled.TableColumn>
         </Styled.TableHead>
-        <Styled.CircleRowWrapper>
-          {circles?.map((circle: CircleHistory, index: number) => (
-            <CircleRow circle={circle} key={index} />
-          ))}
-          <div ref={setElement}>
+        <div ref={infiniteRef as RefObject<HTMLDivElement>}>
+          <Styled.CircleRowWrapper>
+            {circles?.map((circle: CircleHistory, index: number) => (
+              <CircleRow circle={circle} key={index} />
+            ))}
             <Loader.History />
-          </div>
-        </Styled.CircleRowWrapper>
+          </Styled.CircleRowWrapper>
+        </div>
       </Styled.Table>
     </Styled.HistoryWrapper>
   );
