@@ -44,7 +44,9 @@ const PrivateRoute = ({
 
   useEffect(() => {
     if (workspace) {
-     setIsAuthorizedByWorkspace(workspace?.status === WORKSPACE_STATUS.COMPLETE)
+      setIsAuthorizedByWorkspace(
+        workspace?.status === WORKSPACE_STATUS.COMPLETE
+      );
     }
   }, [workspace]);
 
