@@ -57,22 +57,34 @@ export class ComponentEntity extends BaseEntity {
   })
   public pipelineOptions: IPipelineOptions
 
+  @Column({ name: 'gateway_name', nullable: true })
+  public gatewayName: string
+
+  @Column({ name: 'host_value', nullable: true })
+  public hostValue: string
+
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(
-    componentId: string
+    componentId: string,
+    hostValue: string,
+    gatewayName: string
   ) {
     super()
     this.id = componentId
     this.pipelineOptions = { pipelineCircles: [], pipelineVersions: [], pipelineUnusedVersions: [] }
+    this.hostValue = hostValue
+    this.gatewayName = gatewayName
   }
 
   public toReadDto(): ReadComponentDto {
     return new ReadComponentDto(
       this.id,
       this.pipelineOptions,
-      this.createdAt
+      this.createdAt,
+      this.hostValue,
+      this.gatewayName
     )
   }
 
