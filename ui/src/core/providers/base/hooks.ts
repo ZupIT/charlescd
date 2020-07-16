@@ -145,3 +145,40 @@ export const useFetch = <T>(
 
   return [{ response, error, loading }, trigger, promise];
 };
+
+export interface FetchStatus {
+  idle: () => void;
+  pending: () => void;
+  resolved: () => void;
+  rejected: () => void;
+  isIdle: boolean;
+  isPending: boolean;
+  isResolved: boolean;
+  isRejected: boolean;
+}
+export type FetchStatuses = 'idle' | 'pending' | 'resolved' | 'rejected';
+
+export const useFetchStatus = (): FetchStatus => {
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+
+  const idle = (): void => setStatus('idle');
+  const pending = (): void => setStatus('pending');
+  const resolved = (): void => setStatus('resolved');
+  const rejected = (): void => setStatus('rejected');
+
+  const isIdle = status === 'idle';
+  const isPending = status === 'pending';
+  const isResolved = status === 'resolved';
+  const isRejected = status === 'rejected';
+
+  return {
+    idle,
+    pending,
+    resolved,
+    rejected,
+    isIdle,
+    isPending,
+    isResolved,
+    isRejected
+  };
+};
