@@ -70,5 +70,3 @@ data class HistorySummaryResponse(
     val active: Int,
     val inactive: Int
 )
-
-

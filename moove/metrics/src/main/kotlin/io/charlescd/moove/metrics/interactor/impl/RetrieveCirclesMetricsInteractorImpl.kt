@@ -27,7 +27,7 @@ class RetrieveCirclesMetricsInteractorImpl(val circleRepository: CircleRepositor
     override fun execute(workspaceId: String): CirclesMetricsRepresentation {
         return CirclesMetricsRepresentation.from(
             this.circleRepository.countByWorkspaceGroupedByStatus(workspaceId),
-            this.circleRepository.getCircleAverageLifeTime(workspaceId)
+            this.circleRepository.getCirclesAverageLifeTime(workspaceId)
         )
     }
 }

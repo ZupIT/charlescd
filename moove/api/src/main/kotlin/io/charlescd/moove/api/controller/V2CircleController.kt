@@ -174,7 +174,7 @@ class V2CircleController(
     }
 
     @ApiOperation(value = "Identify Circles by WorkspaceId")
-    @PostMapping(path = ["/history"])
+    @GetMapping(path = ["/history"])
     @ResponseStatus(HttpStatus.OK)
     fun getHistory(
         @RequestHeader("x-workspace-id") workspaceId: String,
