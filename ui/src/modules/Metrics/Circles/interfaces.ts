@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import { Pagination } from 'core/interfaces/Pagination';
+
 export interface CirclesMetricData {
   circleStats: Stats;
   averageLifeTime: number;
-  history: History[];
+  history: CircleHistory[];
 }
 
 export interface Stats {
@@ -25,13 +27,23 @@ export interface Stats {
   inactive: number;
 }
 
-export interface History {
+export interface CircleHistory {
   id: string;
-  circleStatus: string;
+  status: 'ACTIVE' | 'INACTIVE';
   name: string;
   lifeTime: number;
-  lastUpdate: string;
+  lastUpdate: Date;
 }
+
+export type CircleSummary = {
+  active: number;
+  inactive: number;
+};
+
+export type CirclesHistoryResponse = {
+  summary: CircleSummary;
+  page: Pagination<CircleHistory>;
+};
 
 export interface CircleRelease {
   id: string;

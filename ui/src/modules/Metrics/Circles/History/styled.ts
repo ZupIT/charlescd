@@ -15,6 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
+import SearchInputComponent from 'core/components/Form/SearchInput';
 
 type ColumnProps = {
   width?: number;
@@ -79,6 +80,50 @@ const CircleRowWrapper = styled.div`
   overflow: auto;
 `;
 
+const HistoryWrapper = styled.div`
+  background: ${({ theme }) => theme.metrics.dashboard.card};
+  height: auto;
+  width: 1220px;
+  border-radius: 5px;
+  padding-bottom: 20px;
+`;
+
+const HistoryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 20px 0 20px;
+`;
+
+const HistoryLegend = styled.div`
+  display: flex;
+  padding-left: 20px;
+
+  span {
+    margin-right: 15px;
+  }
+`;
+
+interface Dot {
+  active: boolean;
+}
+
+const Dot = styled.div<Dot>`
+  height: 15px;
+  width: 15px;
+  background-color: ${({ theme, active }) =>
+    active ? theme.metrics.circles.active : theme.metrics.circles.inactive};
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
+const HistorySearchInput = styled(SearchInputComponent)`
+  background: ${({ theme }) => theme.metrics.circles.filter};
+  width: 250px;
+  border-radius: 5px;
+  padding-left: 15px;
+`;
+
 export default {
   Table,
   TableRow,
@@ -88,5 +133,10 @@ export default {
   ReleaseRow,
   ReleasesWrapper,
   ComponentsRow,
-  CircleRowWrapper
+  CircleRowWrapper,
+  HistoryWrapper,
+  HistoryHeader,
+  HistoryLegend,
+  HistorySearchInput,
+  Dot
 };

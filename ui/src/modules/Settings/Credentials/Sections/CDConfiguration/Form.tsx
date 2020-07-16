@@ -195,7 +195,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
         <Popover
           title="Why we need a CD Configuration?"
           icon="info"
-          link={`${CHARLES_DOC}/referencia-1/cd-configuration`}
+          link={`${CHARLES_DOC}/reference/cd-configuration`}
           linkLabel="View documentation"
           description="Add your Continuous Deployment (CD) tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. Consult our documentation for further details."
         />
