@@ -19,7 +19,7 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity } from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ModuleDeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
@@ -29,6 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -37,6 +38,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let deploymentsRepository: Repository<DeploymentEntity>
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
+  let moduleDeploymentRepository: Repository<ModuleDeploymentEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -57,6 +59,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
+    moduleDeploymentRepository = app.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
@@ -196,7 +199,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       cdConfigurationDB
     )
     await fixtureUtilsService.insertSingleFixture(
-      { name: 'DeploymentEntity', tableName: 'cd_configurations' },
+      { name: 'DeploymentEntity', tableName: 'deployments' },
       createDeploymentDB
     )
     const createDeploymentRequest = {
@@ -428,10 +431,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       name: 'config-name',
       authorId: 'author'
     }
+    const queuedDeploymentDB = {
+      id: 1,
+      componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+      componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+      status: 'RUNNING',
+      type: 'QueuedDeploymentEntity'
+    }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       cdConfigurationDB
     )
+
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      queuedDeploymentDB
+    )
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -511,6 +527,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
+
     const cdConfigurationDB = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
@@ -519,9 +536,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       name: 'config-name',
       authorId: 'author'
     }
+
+    const queuedDeploymentDB = {
+      id: 1,
+      componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+      componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+      status: 'RUNNING',
+      type: 'QueuedDeploymentEntity'
+    }
+
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       cdConfigurationDB
+    )
+
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      queuedDeploymentDB
     )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -632,7 +663,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
   })
 
-  it('/POST /deployments in circle should handle deployment failure ', async() => {
+  it('/POST /deployments in circle should not set failed the  module of queued component', async() => {
     const cdConfigurationDB = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
@@ -641,9 +672,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       name: 'config-name',
       authorId: 'author'
     }
+
+    const queuedDeploymentDB = {
+      id: 1,
+      componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+      componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+      status: 'RUNNING',
+      type: 'QueuedDeploymentEntity'
+    }
+
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       cdConfigurationDB
+    )
+
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      queuedDeploymentDB
     )
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -697,14 +742,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500).set('x-circle-id', '123456')
 
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
-      { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
+      { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules'] }
     )
 
+    const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
+      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+    )
+    console.log(deployment)
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
-    expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.CREATED)
-    expect(deployment.modules[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)
-    expect(deployment.modules[1].components[0].status).toBe(DeploymentStatusEnum.FAILED)
-    expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
+    expect(modulesDeployment[0].status).toBe(DeploymentStatusEnum.CREATED)
+    expect(modulesDeployment[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)
+    expect(modulesDeployment[1].components[0].status).toBe(DeploymentStatusEnum.FAILED)
+    expect(modulesDeployment[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
   it('/POST should handle deployment failure ', async() => {
@@ -762,6 +811,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
+    console.log(deployment)
 
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
