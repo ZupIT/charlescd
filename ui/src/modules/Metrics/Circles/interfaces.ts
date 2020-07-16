@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Pagination } from "core/interfaces/Pagination";
+import { Pagination } from 'core/interfaces/Pagination';
 
 export interface CirclesMetricData {
   circleStats: Stats;
