@@ -29,7 +29,6 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -68,7 +67,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-
   })
 
   it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
@@ -80,7 +78,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       name: 'config-name',
       authorId: 'author'
     }
-    const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
+    const cdConfigurationDB = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       createCdConfiguration
     )
@@ -108,7 +106,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           ]
         }
       ],
-      cdConfigurationId: cdConfiguration.id,
+      cdConfigurationId: cdConfigurationDB.id,
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
@@ -171,7 +169,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle should fail when deployment already exists', async() => {
 
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -196,7 +194,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
     await fixtureUtilsService.insertSingleFixture(
       { name: 'DeploymentEntity', tableName: 'deployments' },
@@ -242,7 +240,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST deployments in circle should enqueue RUNNING component deployments correctly', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -252,7 +250,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
 
     const createDeploymentRequest = {
@@ -316,7 +314,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -334,7 +332,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
     await fixtureUtilsService.insertSingleFixture(
       { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
@@ -423,7 +421,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should correctly update component pipeline options', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -440,7 +438,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
 
     await fixtureUtilsService.insertSingleFixture(
@@ -528,7 +526,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
 
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -547,7 +545,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
 
     await fixtureUtilsService.insertSingleFixture(
@@ -664,7 +662,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should not set failed the  module of queued component', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -683,7 +681,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
 
     await fixtureUtilsService.insertSingleFixture(
@@ -757,7 +755,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST should handle deployment failure ', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -767,7 +765,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -811,7 +809,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail(
       { where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] }
     )
-    console.log(deployment)
 
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.FAILED)
@@ -820,7 +817,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST deployments/circle with repeated components should return unprocessable entity status', async() => {
-    const cdConfigurationDB = {
+    const createCdConfiguration = {
       id: '4046f193-9479-48b5-ac29-01f419b64cb5',
       workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
       type: 'OCTOPIPE',
@@ -830,7 +827,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     }
     const cdConfiguration = await fixtureUtilsService.insertSingleFixture(
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      cdConfigurationDB
+      createCdConfiguration
     )
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',

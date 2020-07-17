@@ -20,9 +20,9 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity} from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentsRepository} from '../../../app/api/deployments/repository'
+import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
@@ -76,18 +76,47 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   it('/POST undeploy should call octopipe for each RUNNING component undeployment', async() => {
 
-    jest.spyOn(octopipeApiService, 'deploy').
-      mockImplementation( () => of({} as AxiosResponse))
+    const createCdConfiguration = {
+      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
+      type: 'OCTOPIPE',
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    }
+
+    const createDeployment = {
+      'id': '014742a1-34a6-46b5-a24e-1a61ce945803',
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment #2',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': true,
+      'cdConfigurationId': '4046f193-9479-48b5-ac29-01f419b64cb5',
+      'circleId': null
+    }
+
+    await fixtureUtilsService.insertSingleFixture(
+      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
+      createCdConfiguration
+    )
+    await fixtureUtilsService.insertSingleFixture(
+      { name : 'DeploymentEntity', tableName: 'deployments' }, 
+      createDeployment
+    )
 
     const createUndeploymentRequest = {
       authorId : 'author-id',
       deploymentId : 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     }
+
+    jest.spyOn(octopipeApiService, 'deploy').
+      mockImplementation( () => of({} as AxiosResponse))
     const octopipeServiceSpy = jest.spyOn(octopipeApiService, 'deploy')
 
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(201)
@@ -224,8 +253,8 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   })
 
-
   it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
+    
     const createUndeploymentRequest = {
       authorId : 'author-id',
       deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24'
@@ -317,7 +346,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
     const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
-    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
+    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id }, relations: ['componentUndeployments'] })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
