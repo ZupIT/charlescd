@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-import { Component as IComponent } from 'modules/Modules/interfaces/Component';
-import { Module } from 'modules/Modules/interfaces/Module';
-import Can from 'core/components/Can';
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
+import { Component as IComponent } from "modules/Modules/interfaces/Component";
+import { Module } from "modules/Modules/interfaces/Module";
+import Can from "core/components/Can";
 import {
   useSaveComponent,
   useUpdateComponent
-} from 'modules/Modules/hooks/component';
-import routes from 'core/constants/routes';
-import { updateParam } from 'core/utils/path';
-import { validFields } from './helpers';
-import Styled from './styled';
+} from "modules/Modules/hooks/component";
+import routes from "core/constants/routes";
+import { updateParam } from "core/utils/path";
+import { validFields } from "./helpers";
+import Styled from "./styled";
 
 interface Props {
   component: IComponent;
@@ -55,9 +55,9 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
     const form = getValues();
     const isInvalid = !validFields(form);
     const comp = {
-      name: component?.name || '',
-      latencyThreshold: component?.latencyThreshold?.toString() || '',
-      errorThreshold: component?.errorThreshold?.toString() || ''
+      name: component?.name || "",
+      latencyThreshold: component?.latencyThreshold?.toString() || "",
+      errorThreshold: component?.errorThreshold?.toString() || ""
     };
     setIsDisabled(isEqual(comp, form) || isInvalid);
   }, [watchFields, getValues, component]);
@@ -65,7 +65,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   useEffect(() => {
     if (savedComponent) {
       updateParam(
-        'module',
+        "module",
         routes.modulesComparation,
         history,
         module?.id,
@@ -92,7 +92,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
     <Styled.Content>
       <Styled.Icon name="arrow-left" color="dark" onClick={() => onClose()} />
       <Styled.Title color="light">
-        {isEdit ? 'Edit component' : 'Create component'}
+        {isEdit ? "Edit component" : "Create component"}
       </Styled.Title>
       <Styled.Subtitle color="dark">
         use the fields below to add the component:
@@ -118,9 +118,25 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             ref={register({ required: true })}
           />
         </Styled.FieldPopover>
+        {component?.hostName && (
+          <Styled.Input
+            label="Enter name component"
+            name="name"
+            defaultValue={component?.name}
+            ref={register({ required: true })}
+          />
+        )}
+        {component?.gatewayName && (
+          <Styled.Input
+            label="Enter name component"
+            name="name"
+            defaultValue={component?.name}
+            ref={register({ required: true })}
+          />
+        )}
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
           <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
-            {isEdit ? 'Edit' : 'Save'}
+            {isEdit ? "Edit" : "Save"}
           </Styled.Button>
         </Can>
       </Styled.Form>
