@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect, RefObject, useCallback } from 'react';
-import { useInfiniteScroll } from 'react-infinite-scroll-hook';
+import React, { useRef, useState, useEffect } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CircleRow from './CircleRow';
-import Summary from './Summary';
 import { useCirclesHistory } from '../hooks';
 import Loader from '../../Loaders';
 import { CircleHistory } from '../interfaces';
+import Summary from './Summary';
 
 const HistoryComponent = () => {
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const [name, setName] = useState('');
+  const [element, setElement] = useState(null);
   const page = useRef(0);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [name, setName] = useState('');
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
   const historyResponse = response?.page?.content;
+  const hasMoreData = !response?.page?.isLast;
 
-  const handleLoadMore = useCallback(() => {
-    console.log('should load more');
-
+  useEffect(() => {
+    setCircles([]);
+    page.current = 0;
     getCirclesHistory({ page: page.current, name });
-    page.current++;
-  }, []);
-
-  const infiniteRef = useInfiniteScroll({
-    loading,
-    hasNextPage,
-    onLoadMore: handleLoadMore,
-    scrollContainer: 'parent'
-  });
+  }, [getCirclesHistory, name]);
 
   useEffect(() => {
     if (historyResponse) {
@@ -52,9 +45,45 @@ const HistoryComponent = () => {
         ...prevCircles,
         ...historyResponse
       ]);
-      setHasNextPage(!response?.page?.isLast);
+      setIsIntersecting(false);
     }
   }, [historyResponse]);
+
+  useEffect(() => {
+    if (isIntersecting) {
+      page.current++;
+      getCirclesHistory({ page: page.current, name });
+    }
+  }, [isIntersecting, getCirclesHistory, name]);
+
+  const prevY = useRef(0);
+  const observer = useRef(
+    new IntersectionObserver(
+      ([firstEntry]) => {
+        const y = firstEntry.boundingClientRect.y;
+        if (prevY.current > y) {
+          setIsIntersecting(true);
+        }
+        prevY.current = y;
+      },
+      { threshold: 0.2 }
+    )
+  );
+
+  useEffect(() => {
+    const currentElement = element;
+    const currentObserver = observer.current;
+
+    if (currentElement) {
+      currentObserver.observe(currentElement);
+    }
+
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement);
+      }
+    };
+  }, [element]);
 
   return (
     <Styled.HistoryWrapper>
@@ -78,14 +107,17 @@ const HistoryComponent = () => {
             <Text.h5 color="dark">Life time</Text.h5>
           </Styled.TableColumn>
         </Styled.TableHead>
-        <div ref={infiniteRef as RefObject<HTMLDivElement>}>
-          <Styled.CircleRowWrapper>
-            {circles?.map((circle: CircleHistory, index: number) => (
-              <CircleRow circle={circle} key={index} />
-            ))}
-            <Loader.History />
-          </Styled.CircleRowWrapper>
-        </div>
+        <Styled.CircleRowWrapper>
+          {circles?.map((circle: CircleHistory, index: number) => (
+            <CircleRow circle={circle} key={index} />
+          ))}
+          {hasMoreData && circles?.length > 0 && (
+            <div ref={setElement}>
+              <Loader.History />
+            </div>
+          )}
+          {loading && circles?.length === 0 && <Loader.History />}
+        </Styled.CircleRowWrapper>
       </Styled.Table>
     </Styled.HistoryWrapper>
   );
