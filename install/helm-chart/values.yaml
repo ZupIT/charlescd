@@ -1,5 +1,5 @@
 butler:
-  enabled: true
+  enabled: false
   name: "charlescd-butler"
   octopipeHost: "http://charlescd-octopipe:8080/"
   database:
@@ -28,7 +28,7 @@ butler:
     memory: 128Mi
 
 moove:
-  enabled: true
+  enabled: false
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charles.info.example/keycloak/auth"
@@ -60,7 +60,7 @@ sidecarIstio:
   enabled: false
 
 villager:
-  enabled: true
+  enabled: false
   name: "charlescd-villager"
   database:
     name: charlescd_villager
@@ -88,7 +88,7 @@ villager:
     memory: 128Mi   
 
 ui:
-  enabled: true
+  enabled: false
   name: charlescd-ui
   apiHost: http://charles.info.example
   keycloakHost: http://charles.info.example/keycloak
@@ -111,7 +111,7 @@ ui:
     memory: 64Mi
 
 circlematcher:
-  enabled: true
+  enabled: false
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -169,28 +169,28 @@ postgresql:
   postgresqlPassword: "firstpassword"
 
 redis:
-  enabled: true
+  enabled: false
   password: "hb2Fj9MGKjBkZ6zV"
 
 mongodb:
-  enabled: true
+  enabled: false
   mongodbRootPassword: "octopipe"
 
 nginx:
   enabled: true
   ui:
-    enabled: true
+    enabled: false
   moove:
-    enabled: true
+    enabled: false
   circlematcher:
-    enabled: true
+    enabled: false
   keycloak:
     enabled: true
   octopipe:
-    enabled: true
+    enabled: false
 
 octopipe:
-  enabled: true
+  enabled: false
   envVars:
     - name: APP_PORT
       value: "8080"

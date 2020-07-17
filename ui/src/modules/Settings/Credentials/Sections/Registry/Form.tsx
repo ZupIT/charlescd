@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import first from 'lodash/first';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
@@ -75,6 +74,23 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  // const renderDockerFields = () => {
+  //   unregister('accessKey');
+  //   unregister('secretKey');
+  //   unregister('region');
+
+  //   return (
+  //     <>
+  //       <Form.Input ref={register} name="username" label="Enter the username" />
+  //       <Form.Password
+  //         ref={register}
+  //         name="password"
+  //         label="Enter the password"
+  //       />
+  //     </>
+  //   );
+  // };
+
   const renderAzureFields = () => {
     unregister('accessKey');
     unregister('secretKey');
@@ -92,6 +108,16 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  const handleFields = () => {
+    // if (registryType === "DOCKER") {
+    //   return renderDockerFields()
+    // }
+    if (registryType === 'AWS') {
+      return renderAwsFields();
+    }
+    return renderAzureFields();
+  };
+
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
@@ -99,18 +125,16 @@ const FormRegistry = ({ onFinish }: Props) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register}
+          ref={register({ required: true })}
           name="name"
           label="Type a name for Registry"
         />
         <Form.Input
-          ref={register}
+          ref={register({ required: true })}
           name="address"
           label="Enter the registry url"
         />
-        {registryType === first(radios).value
-          ? renderAwsFields()
-          : renderAzureFields()}
+        {handleFields()}
       </Styled.Fields>
       <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
         Save

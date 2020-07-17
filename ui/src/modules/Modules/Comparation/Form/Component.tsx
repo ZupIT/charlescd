@@ -118,6 +118,22 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             ref={register({ required: true })}
           />
         </Styled.FieldPopover>
+        {component?.hostValue && (
+          <Styled.Input
+            label="Enter name component"
+            name="name"
+            defaultValue={component?.name}
+            ref={register({ required: true })}
+          />
+        )}
+        {component?.gatewayName && (
+          <Styled.Input
+            label="Enter name component"
+            name="name"
+            defaultValue={component?.name}
+            ref={register({ required: true })}
+          />
+        )}
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
           <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
             {isEdit ? 'Edit' : 'Save'}
