@@ -225,7 +225,7 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
+      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.hostValue, componentEntity.gatewayName
     )
 
     await cdService.createDeployment(connectorConfiguration)
@@ -249,7 +249,7 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      undeploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
+      undeploymentEntity.circleId, pipelineCallbackUrl, componentEntity.hostValue, componentEntity.gatewayName
     )
     await cdService.createUndeployment(connectorConfiguration)
   }
@@ -273,7 +273,7 @@ export class PipelineDeploymentsService {
 
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
+      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.hostValue, componentEntity.gatewayName
     )
 
     await cdService.createIstioDeployment(connectorConfiguration)
