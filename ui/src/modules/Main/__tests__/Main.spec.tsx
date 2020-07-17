@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { render, wait } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
-import Main from '../index';
+import Main, {
+  Workspaces,
+  Users,
+  Groups,
+  Account,
+  Hypotheses,
+  Circles,
+  Modules,
+  Settings,
+  Metrics
+} from '../index';
 
 jest.mock('modules/Workspaces', () => {
   return {
@@ -52,7 +62,7 @@ test('render menu component', () => {
   const sidebar = getByTestId('sidebar');
   const content = getByTestId('main-content');
   const footer = getByTestId('footer');
-  
+
   wait();
 
   expect(sidebar.tagName).toBe('NAV');
@@ -79,6 +89,34 @@ test('render menu in expanded mode with the workspaces screen active', () => {
   const { getByTestId } = render(<Main />);
   const icon = getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
-
   expect(iconStyle.color).toBe(dark.menuIconActive);
+});
+
+test('render menu in expanded mode with the workspaces screen active', () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
+  const { getByTestId } = render(<Main />);
+
+  const icon = getByTestId('icon-workspaces');
+  const iconStyle = window.getComputedStyle(icon);
+  expect(iconStyle.color).toBe(dark.menuIconActive);
+});
+
+test('lazy loading', async () => {
+  const { getByText } = await render(
+    <Suspense fallback={<div>loading...</div>}>
+      <Workspaces selectedWorkspace={jest.fn()} />
+      <Users />
+      <Groups />
+      <Account />
+      <Hypotheses />
+      <Circles />
+      <Modules />
+      <Settings />
+      <Metrics />
+    </Suspense>
+  );
+
+  const lazyLoading = getByText('loading...');
+
+  expect(lazyLoading).toBeInTheDocument();
 });

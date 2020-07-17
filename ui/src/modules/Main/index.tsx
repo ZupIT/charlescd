@@ -25,15 +25,15 @@ import routes from 'core/constants/routes';
 import { ExpandClick } from './Sidebar/Types';
 import Styled from './styled';
 
-const Workspaces = lazy(() => import('modules/Workspaces'));
-const Users = lazy(() => import('modules/Users'));
-const Groups = lazy(() => import('modules/Groups'));
-const Account = lazy(() => import('modules/Account'));
-const Hypotheses = lazy(() => import('modules/Hypotheses'));
-const Circles = lazy(() => import('modules/Circles'));
-const Modules = lazy(() => import('modules/Modules'));
-const Settings = lazy(() => import('modules/Settings'));
-const Metrics = lazy(() => import('modules/Metrics'));
+export const Workspaces = lazy(() => import('modules/Workspaces'));
+export const Users = lazy(() => import('modules/Users'));
+export const Groups = lazy(() => import('modules/Groups'));
+export const Account = lazy(() => import('modules/Account'));
+export const Hypotheses = lazy(() => import('modules/Hypotheses'));
+export const Circles = lazy(() => import('modules/Circles'));
+export const Modules = lazy(() => import('modules/Modules'));
+export const Settings = lazy(() => import('modules/Settings'));
+export const Metrics = lazy(() => import('modules/Metrics'));
 
 const Main = () => {
   const [isExpanded, setSideExpanded] = useState(getExpandMode());
