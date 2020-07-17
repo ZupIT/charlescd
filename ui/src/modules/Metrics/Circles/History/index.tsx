@@ -80,7 +80,7 @@ const HistoryComponent = () => {
             next={loadMore}
             hasMore={hasMoreData}
             loader={<Loader.History />}
-            height={400}
+            height={500}
           >
             {circles?.map((circle: CircleHistory, index: number) => (
               <CircleRow circle={circle} key={index} />

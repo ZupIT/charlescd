@@ -75,10 +75,7 @@ const TableColumn = styled.div<ColumnProps>`
   }
 `;
 
-const CircleRowWrapper = styled.div`
-  max-height: 400px;
-  overflow: auto;
-`;
+const CircleRowWrapper = styled.div``;
 
 const HistoryWrapper = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
@@ -86,6 +83,7 @@ const HistoryWrapper = styled.div`
   width: 1220px;
   border-radius: 5px;
   padding-bottom: 20px;
+  margin-bottom: 50px;
 `;
 
 const HistoryHeader = styled.div`

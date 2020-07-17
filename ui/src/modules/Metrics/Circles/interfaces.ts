@@ -45,6 +45,8 @@ export type CirclesHistoryResponse = {
   page: Pagination<CircleHistory>;
 };
 
+export type CircleReleasesResponse = Pagination<CircleRelease>;
+
 export interface CircleRelease {
   id: string;
   name: string;
