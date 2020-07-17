@@ -49,3 +49,7 @@ jobs:
         fail_ci_if_error: true
         file: ./butler/coverage/coverage-final.json
         flags: butler
+    - uses: actions/upload-artifact@v2
+      with:
+        name: unit-test-coverage
+        path: ./butler/coverage/lcov-report/
