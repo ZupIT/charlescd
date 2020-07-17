@@ -239,7 +239,9 @@ describe('PipelineQueuesService', () => {
     componentUndeployment.moduleUndeployment = moduleUndeployment
 
     componentEntity = new ComponentEntity(
-      'component-id'
+      'component-id',
+      undefined,
+      undefined
     )
   })
 

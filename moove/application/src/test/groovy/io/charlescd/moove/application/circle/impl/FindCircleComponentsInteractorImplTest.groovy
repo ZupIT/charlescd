@@ -249,7 +249,7 @@ class FindCircleComponentsInteractorImplTest extends Specification {
     private ComponentSnapshot getDummyComponentSnapshot(String id, String name, String componentId, String workspaceId, ArtifactSnapshot artifact) {
         return new ComponentSnapshot(id, componentId,
                 name, LocalDateTime.now(), artifact,
-                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7')
+                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway')
     }
 
     private ModuleSnapshot getDummyModuleSnapshot(String id, String moduleId, String name, String workspaceId, List<ComponentSnapshot> componentSnapshotList) {
