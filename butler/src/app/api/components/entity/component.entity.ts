@@ -58,18 +58,18 @@ export class ComponentEntity extends BaseEntity {
   public pipelineOptions: IPipelineOptions
 
   @Column({ name: 'gateway_name', nullable: true })
-  public gatewayName: string
+  public gatewayName: string | undefined
 
   @Column({ name: 'host_value', nullable: true })
-  public hostValue: string
+  public hostValue: string | undefined
 
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(
     componentId: string,
-    hostValue: string,
-    gatewayName: string
+    hostValue: string | undefined,
+    gatewayName: string | undefined
   ) {
     super()
     this.id = componentId
