@@ -57,10 +57,10 @@ export class ComponentEntity extends BaseEntity {
   })
   public pipelineOptions: IPipelineOptions
 
-  @Column({ name: 'gateway_name', nullable: true })
+  @Column({ name: 'gateway_name', type: 'varchar', nullable: true })
   public gatewayName: string | undefined
 
-  @Column({ name: 'host_value', nullable: true })
+  @Column({ name: 'host_value', type: 'varchar', nullable: true })
   public hostValue: string | undefined
 
   @CreateDateColumn({ name: 'created_at' })
