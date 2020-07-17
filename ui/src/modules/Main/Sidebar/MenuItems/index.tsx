@@ -21,9 +21,9 @@ import useOutsideClick from 'core/hooks/useClickOutside';
 import { getExpandMode } from 'core/utils/sidebar';
 import { getActiveMenuId } from 'core/utils/menu';
 import Can from 'core/components/Can';
-import { Link as LinkProps, ExpandClick } from './Types';
-import { getExpandIcon, getItems } from './helpers';
-import Styled from './styled';
+import { Link as LinkProps, ExpandClick } from '../Types';
+import { getExpandIcon, getItems } from '../helpers';
+import Styled from '../styled';
 
 interface Props {
   isExpanded: boolean;
