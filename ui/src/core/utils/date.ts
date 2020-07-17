@@ -58,3 +58,6 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   return `${seconds}s`;
 };
 
+export const dateTimeFormatter = (date: string | Date) => {
+  return dayjs(date, 'YYYY-MM-DD HH:MM:SS').format('DD/MM/YYYY HH:MM');
+};

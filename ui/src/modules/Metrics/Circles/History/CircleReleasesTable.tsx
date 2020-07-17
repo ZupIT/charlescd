@@ -14,23 +14,45 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import ReleaseRow from './ReleaseRow';
 import Loader from '../../Loaders/index';
 import { useCirclesReleases } from '../hooks';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { CircleRelease } from '../interfaces';
 
 type Props = {
   circleId: string;
 };
 
 const CircleReleasesTable = ({ circleId }: Props) => {
-  const { getCircleReleases, releases, loading } = useCirclesReleases();
+  const page = useRef(0);
+  const [releases, setReleases] = useState<CircleRelease[]>([]);
+  const { getCircleReleases, response } = useCirclesReleases();
+  const releasesResponse = response?.content;
+  const hasMoreData = !response?.isLast;
 
   useEffect(() => {
-    getCircleReleases(circleId);
-  }, [circleId, getCircleReleases]);
+    if (releasesResponse) {
+      setReleases((prevCircles: CircleRelease[]) => [
+        ...prevCircles,
+        ...releasesResponse
+      ]);
+    }
+  }, [releasesResponse]);
+
+  useEffect(() => {
+    page.current = 0;
+    setReleases([]);
+    getCircleReleases(circleId, { page: 0 });
+  }, [getCircleReleases, circleId]);
+
+  const loadMore = () => {
+    page.current++;
+    getCircleReleases(circleId, { page: page.current });
+  };
 
   return (
     <>
@@ -48,15 +70,17 @@ const CircleReleasesTable = ({ circleId }: Props) => {
           <Text.h5 color="dark">Last editor</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {loading ? (
-        <Loader.Releases />
-      ) : (
-        <>
-          {releases?.map(release => (
-            <ReleaseRow release={release} key={release.id} />
-          ))}
-        </>
-      )}
+      <InfiniteScroll
+        dataLength={releases.length}
+        next={loadMore}
+        hasMore={hasMoreData}
+        loader={<Loader.Releases />}
+        height={300}
+      >
+        {releases?.map((release, index) => (
+          <ReleaseRow release={release} key={index} />
+        ))}
+      </InfiniteScroll>
     </>
   );
 };
