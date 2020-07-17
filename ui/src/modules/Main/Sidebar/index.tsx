@@ -47,7 +47,12 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
-  const menuWorkspaces = navigate.location.pathname === '/workspaces';
+  const pathname = navigate.location.pathname;
+  const menu =
+    pathname === routes.workspaces ||
+    pathname === routes.users ||
+    pathname === routes.account ||
+    pathname === routes.groups;
 
   useEffect(() => {
     loadWorkspaces();
@@ -82,7 +87,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     getWorkspaceId() === workspaceId && 'checkmark';
 
   const renderDropdown = () =>
-    !menuWorkspaces && (
+    !menu && (
       <Styled.Dropdown icon="workspace">
         {map(workspaces, workspace => (
           <Styled.DropdownItem
@@ -109,7 +114,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
           {!isEmpty(workspaces) && renderDropdown()}
           {isExpanded && (
             <Text.h5 color="light">
-              {!menuWorkspaces && (workspace?.name || selectedWorkspace)}
+              {!menu && (workspace?.name || selectedWorkspace)}
             </Text.h5>
           )}
         </Styled.Item>
