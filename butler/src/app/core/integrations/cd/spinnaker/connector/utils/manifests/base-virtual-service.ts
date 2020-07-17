@@ -33,7 +33,6 @@ const baseVirtualService = (appName: string, appNamespace: string): IBaseVirtual
     namespace: appNamespace
   },
   spec: {
-    gateways: [],
     hosts: [appName],
     http: []
   }
@@ -198,21 +197,21 @@ export const createVirtualService = (
   appName: string,
   appNamespace: string,
   circles: IPipelineCircle[],
-  hosts: string[],
-  hostValue: string,
-  gatewayName: string,
+  hosts: string[] | undefined,
+  hostValue: string | undefined,
+  gatewayName: string | undefined,
 ) : IBaseVirtualService => {
   const newVirtualService = baseVirtualService(appName, appNamespace)
   const matchers = createHttpMatchers(circles, appName)
-  if (hosts.length > 0) {
+  if (hosts) {
     newVirtualService.spec.hosts = hosts
   }
 
-  if (hostValue !== '') {
+  if (hostValue) {
     newVirtualService.spec.hosts = [hostValue]
   }
 
-  if (gatewayName !== '') {
+  if (gatewayName) {
     newVirtualService.spec.gateways = [gatewayName]
   }
 
