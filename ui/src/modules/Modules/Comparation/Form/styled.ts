@@ -75,7 +75,7 @@ const Icon = styled(IconComponent)`
 const ComponentsColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 const ComponentsWrapper = styled.div`
   display: flex;
@@ -107,7 +107,7 @@ const ComponentButton = styled(ButtonComponent.Default)`
   color: ${({ theme }) => theme.button.default.outline.color};
   box-sizing: content-box;
   background: none;
-  margin-top:10px;
+  margin-top: 10px;
   margin-bottom: 40px;
 
   > i {

@@ -17,5 +17,5 @@
 export const component = {
   name: '',
   latencyThreshold: '',
-  errorThreshold: '',
+  errorThreshold: ''
 };
