@@ -51,7 +51,7 @@ class CreateModuleInteractorImplTest extends Specification {
 
     def "should create a new module"() {
         given:
-        def component = new ComponentRequest("Application", 10, 10)
+        def component = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
 
         def workspaceId = "de891f75-6c8b-4bc3-89c7-d2d58942d404"
         def authorId = "cf3a837e-4b19-474f-95c8-7ba6ba4b3b28"

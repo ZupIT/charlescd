@@ -193,12 +193,28 @@ const pushCircleIdHttpMatcher = (circle: IPipelineCircle, appName: string, match
   }
 }
 
-export const createVirtualService = (appName: string, appNamespace: string, circles: IPipelineCircle[], hosts?: string[]) : IBaseVirtualService => {
+export const createVirtualService = (
+  appName: string,
+  appNamespace: string,
+  circles: IPipelineCircle[],
+  hosts: string[] | undefined,
+  hostValue: string | undefined,
+  gatewayName: string | undefined,
+) : IBaseVirtualService => {
   const newVirtualService = baseVirtualService(appName, appNamespace)
   const matchers = createHttpMatchers(circles, appName)
   if (hosts) {
     newVirtualService.spec.hosts = hosts
   }
+
+  if (hostValue) {
+    newVirtualService.spec.hosts = [hostValue]
+  }
+
+  if (gatewayName) {
+    newVirtualService.spec.gateways = [gatewayName]
+  }
+
   newVirtualService.spec.http = matchers
   return newVirtualService
 }

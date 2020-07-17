@@ -56,7 +56,7 @@ describe('Pipeline Deployments Service', () => {
       'module-id',
       []
     )
-    const componentEntity = new ComponentEntity('component-id')
+    const componentEntity = new ComponentEntity('component-id', undefined, undefined)
     componentEntity.module = moduleEntity
 
     const componentDeployment = new ComponentDeploymentEntity(

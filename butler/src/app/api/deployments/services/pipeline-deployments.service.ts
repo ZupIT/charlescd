@@ -225,7 +225,7 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl
+      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
     )
 
     await cdService.createDeployment(connectorConfiguration)
@@ -249,7 +249,7 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      undeploymentEntity.circleId, pipelineCallbackUrl
+      undeploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
     )
     await cdService.createUndeployment(connectorConfiguration)
   }
@@ -273,7 +273,7 @@ export class PipelineDeploymentsService {
 
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl
+      deploymentEntity.circleId, pipelineCallbackUrl, componentEntity.gatewayName, componentEntity.hostValue
     )
 
     await cdService.createIstioDeployment(connectorConfiguration)
@@ -284,7 +284,9 @@ export class PipelineDeploymentsService {
     cdConfiguration: CdConfigurationEntity,
     componentDeployment: ComponentDeploymentEntity,
     callbackCircleId: string,
-    pipelineCallbackUrl: string
+    pipelineCallbackUrl: string,
+    hostValue: string | undefined,
+    gatewayName :string | undefined,
   ): IConnectorConfiguration {
 
     return {
@@ -295,7 +297,9 @@ export class PipelineDeploymentsService {
       componentName: componentDeployment.componentName,
       helmRepository: componentDeployment.moduleDeployment.helmRepository,
       callbackCircleId,
-      pipelineCallbackUrl
+      pipelineCallbackUrl,
+      hostValue,
+      gatewayName,
     }
   }
 }
