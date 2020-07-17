@@ -54,9 +54,9 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const handleFields = () => {
-      if (registryType === "DOCKER") {
-        return renderDockerFields()
-      }
+      // if (registryType === "DOCKER") {
+      //   return renderDockerFields()
+      // }
       if (registryType === "AWS") {
         return renderAwsFields()
       }
@@ -84,23 +84,22 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  // const renderDockerFields = () => {
+  //   unregister('accessKey');
+  //   unregister('secretKey');
+  //   unregister('region');
 
-  const renderDockerFields = () => {
-    unregister('accessKey');
-    unregister('secretKey');
-    unregister('region');
-
-    return (
-      <>
-        <Form.Input ref={register} name="username" label="Enter the username" />
-        <Form.Password
-          ref={register}
-          name="password"
-          label="Enter the password"
-        />
-      </>
-    );
-  };
+  //   return (
+  //     <>
+  //       <Form.Input ref={register} name="username" label="Enter the username" />
+  //       <Form.Password
+  //         ref={register}
+  //         name="password"
+  //         label="Enter the password"
+  //       />
+  //     </>
+  //   );
+  // };
 
   const renderAzureFields = () => {
     unregister('accessKey');

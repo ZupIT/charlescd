@@ -20,6 +20,5 @@ export const FORM_REGISTRY = 'registry';
 
 export const radios: Radio[] = [
   { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'docker', name: 'Docker', value: 'DOCKER' }
+  { icon: 'azure', name: 'Azure', value: 'AZURE' }
 ];
