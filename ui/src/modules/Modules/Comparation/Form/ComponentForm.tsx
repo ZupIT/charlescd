@@ -17,12 +17,12 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
 
   const handleMoreOptions = (index: number) => {
     if (editMoreOptions) {
-      unregister(`components[${index}].hostName`);
+      unregister(`components[${index}].hostValue`);
       unregister(`components[${index}].gatewayName`);
       return setEditMoreOptions(!editMoreOptions);
     }
     setEditMoreOptions(!editMoreOptions);
-    register(`components[${index}].hostName`, { required: true });
+    register(`components[${index}].hostValue`, { required: true });
     register(`components[${index}].gatewayName`, { required: true });
   };
 
@@ -63,7 +63,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           <Styled.FieldPopover>
             <Styled.Input
               label="Insert a host for virtual service use"
-              name={`components[${index}].hostName`}
+              name={`components[${index}].hostValue`}
               ref={register({ required: true })}
             />
             <Styled.Popover
