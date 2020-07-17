@@ -118,7 +118,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             ref={register({ required: true })}
           />
         </Styled.FieldPopover>
-        {component?.hostName && (
+        {component?.hostValue && (
           <Styled.Input
             label="Enter name component"
             name="name"
