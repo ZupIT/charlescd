@@ -22,11 +22,11 @@ import Styled from './styled';
 
 type Props = {
   legend: CircleSummary;
-  legendLoading: boolean;
+  isLoading: boolean;
   onSearch: (name: string) => void;
 };
 
-const Summary = ({ legend, legendLoading, onSearch }: Props) => {
+const Summary = ({ legend, isLoading, onSearch }: Props) => {
   return (
     <>
       <Styled.HistoryHeader>
@@ -39,8 +39,10 @@ const Summary = ({ legend, legendLoading, onSearch }: Props) => {
           placeholder={'Search circle'}
         />
       </Styled.HistoryHeader>
-      {legendLoading ? (
-        <Loader.Legend />
+      {isLoading ? (
+        <div data-testid="loader-legend">
+          <Loader.Legend />
+        </div>
       ) : (
         <Styled.HistoryLegend>
           <Styled.Dot active={true} />
