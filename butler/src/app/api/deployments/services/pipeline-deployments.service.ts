@@ -285,8 +285,8 @@ export class PipelineDeploymentsService {
     componentDeployment: ComponentDeploymentEntity,
     callbackCircleId: string,
     pipelineCallbackUrl: string,
-    hostValue: string,
-    gatewayName :string,
+    hostValue: string | undefined,
+    gatewayName :string | undefined,
   ): IConnectorConfiguration {
 
     return {
