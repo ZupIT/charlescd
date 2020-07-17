@@ -77,7 +77,7 @@ keycloak:
   terminationGracePeriodSeconds: 60
 
   ## Additional arguments to start command e.g. -Dkeycloak.import= to load a realm
-  extraArgs: "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/realm/keycloakimport.json -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+  extraArgs: "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/realm/keycloakimport.json -Dkeycloak.migration.strategy=IGNORE_EXISTING"
 
   ## Username for the initial Keycloak admin user
   username: keycloak

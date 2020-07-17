@@ -56,8 +56,10 @@ spec:
               value: {{ .Values.butler.database.password}}
             - name: DATABASE_NAME
               value: {{ .Values.butler.database.name}}
+            {{ if .Values.butler.database.ssl }}
             - name: DATABASE_SSL
               value: "{{ .Values.butler.database.ssl}}"
+            {{ end }}
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL

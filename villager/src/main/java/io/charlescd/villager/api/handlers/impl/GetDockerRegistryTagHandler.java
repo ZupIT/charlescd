@@ -17,33 +17,30 @@
 package io.charlescd.villager.api.handlers.impl;
 
 import io.charlescd.villager.api.handlers.RequestHandler;
-import io.charlescd.villager.interactor.registry.ListDockerRegistryTagsInput;
+import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 
-public class ListDockerRegistryTagsRequestHandler implements RequestHandler<ListDockerRegistryTagsInput> {
+public class GetDockerRegistryTagHandler implements RequestHandler<GetDockerRegistryTagInput> {
 
     private String workspaceId;
     private String registryConfigurationId;
     private String componentName;
-    private Integer max;
-    private String last;
+    private String name;
 
-    public ListDockerRegistryTagsRequestHandler(String workspaceId, String registryConfigurationId,
-                                                String componentName, Integer max, String last) {
+    public GetDockerRegistryTagHandler(String workspaceId, String registryConfigurationId,
+                                       String componentName, String name) {
         this.workspaceId = workspaceId;
         this.registryConfigurationId = registryConfigurationId;
         this.componentName = componentName;
-        this.max = max;
-        this.last = last;
+        this.name = name;
     }
 
     @Override
-    public ListDockerRegistryTagsInput handle() {
-        return ListDockerRegistryTagsInput.builder()
+    public GetDockerRegistryTagInput handle() {
+        return GetDockerRegistryTagInput.builder()
                 .withWorkspaceId(workspaceId)
                 .withArtifactRepositoryConfigurationId(registryConfigurationId)
                 .withArtifactName(componentName)
-                .withMax(max)
-                .withLast(last)
+                .withName(name)
                 .build();
     }
 }
