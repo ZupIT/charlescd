@@ -192,99 +192,99 @@ const circlesHistory = {
         id: 'abc-123',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1234',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1235',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-126',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       }
     ],
     page: 0,
@@ -294,89 +294,257 @@ const circlesHistory = {
   }
 };
 
-const allCircleReleases = [
-  {
-    id: 'dnsafjhf',
-    name: 'release-darwin-new-repos',
-    deployed: '16/03/2020 • 15:01:26',
-    undeployed: '16/03/2020 • 15:01:26',
-    lastEditor: 'Leandro Latini',
-    components: [
-      {
-        id: 'fgfdgjkii',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.1'
-      },
-      {
-        id: 'llllllllll',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.2'
-      },
-      {
-        id: '0000000000000',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.3'
-      }
-    ]
-  },
-  {
-    id: 'jfdhfuhfds',
-    name: 'release-darwin-new-test',
-    deployed: '16/03/2020 • 15:01:26',
-    undeployed: '16/03/2020 • 15:01:26',
-    lastEditor: 'Leandro Latini',
-    components: [
-      {
-        id: 'fgfdgjkii',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.1'
-      },
-      {
-        id: 'llllllllll',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.2'
-      },
-      {
-        id: '0000000000000',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.3'
-      }
-    ]
-  },
-  {
-    id: 'dnsafjhffdsfjdsbh',
-    name: 'release-darwin-new-gmfgoij',
-    deployed: '16/03/2020 • 15:01:26',
-    undeployed: '16/03/2020 • 15:01:26',
-    lastEditor: 'Leandro Latini',
-    components: [
-      {
-        id: 'fgfdgjkii',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.1'
-      },
-      {
-        id: 'llllllllll',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.2'
-      },
-      {
-        id: '0000000000000',
-        moduleName: 'ZupIT/darwin-ui',
-        componentName: 'component1',
-        version: 'v.1.2.3'
-      }
-    ]
-  }
-];
+const allCircleReleases = {
+  content: [
+    {
+      id: 'dnsafjhf',
+      name: 'release-darwin-new-repos',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      name: 'release-darwin-new-test',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      name: 'release-darwin-new-gmfgoij',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhf',
+      name: 'release-darwin-new-repos',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      name: 'release-darwin-new-test',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      name: 'release-darwin-new-gmfgoij',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhf',
+      name: 'release-darwin-new-repos',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      name: 'release-darwin-new-test',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      name: 'release-darwin-new-gmfgoij',
+      deployed: '16/03/2020 • 15:01:26',
+      undeployed: '16/03/2020 • 15:01:26',
+      lastEditor: 'Leandro Latini',
+      components: [
+        {
+          id: 'fgfdgjkii',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          id: 'llllllllll',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          id: '0000000000000',
+          moduleName: 'ZupIT/darwin-ui',
+          componentName: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    }
+  ],
+  page: 0,
+  size: 1,
+  isLast: false,
+  totalPages: 1
+};
 
 const circlesMetricsDashboard = {
   circleStats: {

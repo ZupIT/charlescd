@@ -14,37 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect, RefObject, useCallback } from 'react';
-import { useInfiniteScroll } from 'react-infinite-scroll-hook';
+import React, { useRef, useState, useEffect } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CircleRow from './CircleRow';
-import Summary from './Summary';
 import { useCirclesHistory } from '../hooks';
 import Loader from '../../Loaders';
 import { CircleHistory } from '../interfaces';
+import Summary from './Summary';
 
 const HistoryComponent = () => {
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const [name, setName] = useState('');
   const page = useRef(0);
+  const [name, setName] = useState('');
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
   const historyResponse = response?.page?.content;
-
-  const handleLoadMore = useCallback(() => {
-    console.log('should load more');
-
-    getCirclesHistory({ page: page.current, name });
-    page.current++;
-  }, []);
-
-  const infiniteRef = useInfiniteScroll({
-    loading,
-    hasNextPage,
-    onLoadMore: handleLoadMore,
-    scrollContainer: 'parent'
-  });
+  const hasMoreData = !response?.page?.isLast;
 
   useEffect(() => {
     if (historyResponse) {
@@ -52,9 +38,19 @@ const HistoryComponent = () => {
         ...prevCircles,
         ...historyResponse
       ]);
-      setHasNextPage(!response?.page?.isLast);
     }
   }, [historyResponse]);
+
+  useEffect(() => {
+    page.current = 0;
+    setCircles([]);
+    getCirclesHistory({ page: 0, name });
+  }, [getCirclesHistory, name]);
+
+  const loadMore = () => {
+    page.current++;
+    getCirclesHistory({ page: page.current, name });
+  };
 
   return (
     <Styled.HistoryWrapper>
@@ -78,14 +74,19 @@ const HistoryComponent = () => {
             <Text.h5 color="dark">Life time</Text.h5>
           </Styled.TableColumn>
         </Styled.TableHead>
-        <div ref={infiniteRef as RefObject<HTMLDivElement>}>
-          <Styled.CircleRowWrapper>
+        <Styled.CircleRowWrapper>
+          <InfiniteScroll
+            dataLength={circles.length}
+            next={loadMore}
+            hasMore={hasMoreData}
+            loader={<Loader.History />}
+            height={500}
+          >
             {circles?.map((circle: CircleHistory, index: number) => (
               <CircleRow circle={circle} key={index} />
             ))}
-            <Loader.History />
-          </Styled.CircleRowWrapper>
-        </div>
+          </InfiniteScroll>
+        </Styled.CircleRowWrapper>
       </Styled.Table>
     </Styled.HistoryWrapper>
   );
