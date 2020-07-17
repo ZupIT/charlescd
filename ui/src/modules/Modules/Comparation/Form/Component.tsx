@@ -68,7 +68,6 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
       errorThreshold: ""
     };
     const restForm = pick(form, keys(moreOptionsModel));
-    console.log(restForm)
     const isInvalid = !validFields(restForm);
     const comp = {
       name: component?.name || '',
