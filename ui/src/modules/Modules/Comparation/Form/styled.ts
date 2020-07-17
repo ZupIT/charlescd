@@ -129,6 +129,14 @@ const MoreOptionsButton = styled(ButtonComponent.Default)`
   }
 `;
 
+interface MoreOptions {
+  showMoreOptions: boolean;
+}
+
+const AdvancedOptionWrapper = styled('div')<MoreOptions>`
+  display: ${({ showMoreOptions }) => (showMoreOptions ? 'initial' : 'none')};
+`;
+
 export default {
   Content,
   Title,
@@ -147,6 +155,7 @@ export default {
     Number: ComponentNumber,
     Button: ComponentButton,
     MoreOptionsButton: MoreOptionsButton,
-    Trash: ComponentTrash
+    Trash: ComponentTrash,
+    AdvancedOptionWrapper: AdvancedOptionWrapper
   }
 };
