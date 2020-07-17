@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import isEqual from "lodash/isEqual";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, FormContext } from "react-hook-form";
 import { useSaveModule, useUpdateModule } from "modules/Modules/hooks/module";
 import { Module } from "modules/Modules/interfaces/Module";
 import { getProfileByKey } from "core/utils/profile";
@@ -42,14 +42,15 @@ const FormModule = ({ module, onChange }: Props) => {
   const authorId = getProfileByKey("id");
   const isEdit = !isEmpty(module);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [editMoreOptions, setEditMoreOptions] = useState(false);
   const history = useHistory();
 
-  const { register, control, getValues, handleSubmit, watch } = useForm<Module>(
+  const form  = useForm<Module>(
     {
       defaultValues: { components: [component] }
     }
   );
+
+  const { register, control, getValues, handleSubmit, watch } = form
   const fieldArray = useFieldArray({ control, name: "components" });
   const watchFields = watch();
 
@@ -74,10 +75,10 @@ const FormModule = ({ module, onChange }: Props) => {
   const onSubmit = (data: Module) => {
     if (isEdit) {
       console.log(data)
-      // updateModule(module?.id, data);
+      updateModule(module?.id, data);
     } else {
       console.log(data)
-      // saveModule({ ...data, authorId });
+      saveModule({ ...data, authorId });
     }
   };
 
@@ -111,103 +112,48 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Input
-          label="Name the module"
-          name="name"
-          defaultValue={module?.name}
-          ref={register({ required: true })}
-        />
-        <Styled.Input
-          label="URL git"
-          name="gitRepositoryAddress"
-          defaultValue={module?.gitRepositoryAddress}
-          ref={register({ required: true })}
-        />
-        {!isEdit && <Components register={register} fieldArray={fieldArray} />}
-        <Styled.FieldPopover>
+      <FormContext {...form}>
+        <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Input
-            label="Insert a helm repository link"
-            name="helmRepository"
-            defaultValue={module?.helmRepository}
+            label="Name the module"
+            name="name"
+            defaultValue={module?.name}
             ref={register({ required: true })}
           />
-          <Styled.Popover
-            title="Helm"
-            icon="info"
-            size="20px"
-            link="https://helm.sh/docs/"
-            linkLabel="View documentation"
-            description="Helm helps you manage Kubernetes applications"
+          <Styled.Input
+            label="URL git"
+            name="gitRepositoryAddress"
+            defaultValue={module?.gitRepositoryAddress}
+            ref={register({ required: true })}
           />
-        </Styled.FieldPopover>
-        {/* <Styled.Components.MoreOptionsButton
-          size="EXTRA_SMALL"
-          onClick={() => setEditMoreOptions(true)}
-        >
-          <Icon name="add" size="15px" />
-          More Options
-        </Styled.Components.MoreOptionsButton> */}
-        {
-          <>
-            <Styled.Subtitle
-              onClick={() => setEditMoreOptions(!editMoreOptions)}
-              color="dark"
+          {!isEdit && <Components fieldArray={fieldArray} />}
+          <Styled.FieldPopover>
+            <Styled.Input
+              label="Insert a helm repository link"
+              name="helmRepository"
+              defaultValue={module?.helmRepository}
+              ref={register({ required: true })}
+            />
+            <Styled.Popover
+              title="Helm"
+              icon="info"
+              size="20px"
+              link="https://helm.sh/docs/"
+              linkLabel="View documentation"
+              description="Helm helps you manage Kubernetes applications"
+            />
+          </Styled.FieldPopover>
+          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+            <Styled.Button
+              type="submit"
+              size="EXTRA_SMALL"
+              isLoading={saveLoading || updateStatus === "pending"}
             >
-              {editMoreOptions 
-                ? "Hide " 
-                : "Show "}
-              advanced options (be careful, do not change this if you are not using istio gateway)
-            </Styled.Subtitle>
-            {editMoreOptions && (
-              <>
-                <Styled.FieldPopover>
-                  <Styled.Input
-                    label="Insert a host for virtual service use"
-                    name="hostName"
-                    defaultValue={module?.hostValue}
-                    ref={register({ required: false })}
-                  />
-                  <Styled.Popover
-                    title="Host name"
-                    icon="info"
-                    size="20px"
-                    link="https://istio.io/latest/docs/reference/config/networking/virtual-service/"
-                    linkLabel="View documentation"
-                    description="In some cases it will be necessary to change the host to expose your application, by default leave it empty.."
-                  />
-                </Styled.FieldPopover>{" "}
-                <Styled.FieldPopover>
-                  <Styled.Input
-                    label="Insert a ingress name if necessary"
-                    name="gatewayName"
-                    defaultValue={module?.gatewayName}
-                    ref={register({ required: false })}
-                  />
-                  <Styled.Popover
-                    title="Istio ingress"
-                    icon="info"
-                    size="20px"
-                    link="https://istio.io/latest/docs/reference/config/networking/gateway/"
-                    linkLabel="View documentation"
-                    description="If your application use ingress gateway to be exposed it will be necessary to link with a virtual service using ingress name"
-                  />
-                </Styled.FieldPopover>
-              </>
-            )}
-          </>
-        }
-
-        <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
-          <Styled.Button
-            type="submit"
-            size="EXTRA_SMALL"
-            isLoading={saveLoading || updateStatus === "pending"}
-          >
-            {isEdit ? "Edit module" : "Create module"}
-          </Styled.Button>
-        </Can>
-      </Styled.Form>
+              {isEdit ? "Edit module" : "Create module"}
+            </Styled.Button>
+          </Can>
+        </Styled.Form>
+      </FormContext>
     </Styled.Content>
   );
 };
