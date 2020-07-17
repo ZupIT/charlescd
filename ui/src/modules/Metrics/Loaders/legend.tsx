@@ -23,8 +23,8 @@ export const Loader: FunctionComponent = () => (
     width={350}
     height={20}
     viewBox="0 0 350 20"
-    backgroundColor="#2c2c2e"
-    foregroundColor="#3a3a3c"
+    backgroundColor="#3a3a3c"
+    foregroundColor="#2c2c2e"
   >
     <rect x="35" y="5" rx="2" ry="2" width="80" height="10" />
     <rect x="155" y="5" rx="2" ry="2" width="80" height="10" />

@@ -192,99 +192,99 @@ const circlesHistory = {
         id: 'abc-123',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1234',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1235',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-126',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-1237',
         status: 'ACTIVE',
         name: 'Circle A',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       },
       {
         id: 'abc-123',
         status: 'INACTIVE',
         name: 'Circle B',
-        lastUpdate: '2020-07-12 10:25:38',
-        lifeTime: 30000
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
       }
     ],
     page: 0,
