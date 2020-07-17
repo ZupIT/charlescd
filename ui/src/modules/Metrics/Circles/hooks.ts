@@ -23,8 +23,8 @@ import {
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import {
   CirclesMetricData,
-  CircleRelease,
-  CirclesHistoryResponse
+  CirclesHistoryResponse,
+  CircleReleasesResponse
 } from './interfaces';
 import { buildParams, URLParams } from 'core/utils/query';
 
@@ -62,9 +62,9 @@ export const useCirclesHistory = () => {
   const { response, loading } = circlesData;
 
   const getCirclesHistory = useCallback(
-    (payload: URLParams) => {
-      const params = buildParams(payload);
-      getCircleData(params);
+    (params: URLParams) => {
+      const queryParams = buildParams(params);
+      getCircleData(queryParams);
     },
     [getCircleData]
   );
@@ -77,21 +77,22 @@ export const useCirclesHistory = () => {
 };
 
 export const useCirclesReleases = () => {
-  const [releasesData, getCircleData] = useFetch<CircleRelease[]>(
+  const [releasesData, getCircleData] = useFetch<CircleReleasesResponse>(
     findAllCirclesReleases
   );
-  const { response: releases, loading } = releasesData;
+  const { response, loading } = releasesData;
 
   const getCircleReleases = useCallback(
-    (circleId: string) => {
-      getCircleData(circleId);
+    (circleId: string, params: URLParams) => {
+      const urlParams = buildParams(params);
+      getCircleData(circleId, urlParams);
     },
     [getCircleData]
   );
 
   return {
     getCircleReleases,
-    releases,
+    response,
     loading
   };
 };

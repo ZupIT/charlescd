@@ -31,7 +31,7 @@ const findAllCirclsMetrics = {
 
 const findAllCirclsReleases = {
   method: 'GET',
-  path: `${API}/circles/{circleId}/releases`,
+  path: `${CIRCLES_API}/history/{circleId}/releases`,
   handler: (req, h) => h.response(mock.allCircleReleases)
 };
 
