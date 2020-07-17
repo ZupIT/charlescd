@@ -24,16 +24,16 @@ export class ReadComponentDto {
 
   public readonly createdAt: Date
 
-  public readonly hostValue: string
+  public readonly hostValue: string | undefined
   
-  public readonly gatewayName: string
+  public readonly gatewayName: string | undefined
 
   constructor(
     id: string,
     pipelineOptions: IPipelineOptions,
     createdAt: Date,
-    hostValue: string,
-    gatewayName: string
+    hostValue: string | undefined,
+    gatewayName: string | undefined
   ) {
     this.id = id
     this.pipelineOptions = pipelineOptions
