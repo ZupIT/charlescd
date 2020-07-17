@@ -53,16 +53,6 @@ const FormRegistry = ({ onFinish }: Props) => {
     save(registry);
   };
 
-  const handleFields = () => {
-      // if (registryType === "DOCKER") {
-      //   return renderDockerFields()
-      // }
-      if (registryType === "AWS") {
-        return renderAwsFields()
-      }
-      return renderAzureFields()
-  }
-
   const renderAwsFields = () => {
     unregister('username');
     unregister('password');
@@ -118,6 +108,16 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  const handleFields = () => {
+    // if (registryType === "DOCKER") {
+    //   return renderDockerFields()
+    // }
+    if (registryType === 'AWS') {
+      return renderAwsFields();
+    }
+    return renderAzureFields();
+  };
+
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
@@ -125,12 +125,12 @@ const FormRegistry = ({ onFinish }: Props) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true})}
+          ref={register({ required: true })}
           name="name"
           label="Type a name for Registry"
         />
         <Form.Input
-          ref={register({ required: true})}
+          ref={register({ required: true })}
           name="address"
           label="Enter the registry url"
         />

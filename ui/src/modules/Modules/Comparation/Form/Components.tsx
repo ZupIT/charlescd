@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React from "react";
-import { ArrayField } from "react-hook-form";
-import Icon from "core/components/Icon";
-import { Component } from "modules/Circles/interfaces/Circle";
-import { component } from "./constants";
-import Styled from "./styled";
-import ComponentForm from "./ComponentForm";
+import React from 'react';
+import { ArrayField } from 'react-hook-form';
+import Icon from 'core/components/Icon';
+import { Component } from 'modules/Circles/interfaces/Circle';
+import { component } from './constants';
+import Styled from './styled';
+import ComponentForm from './ComponentForm';
 
 interface Props {
   fieldArray: {
@@ -40,7 +40,13 @@ const Components = ({ fieldArray }: Props) => {
         Add components and enter SLO metrics:
       </Styled.Subtitle>
       {fields.map((field: Component, index: number) => (
-        <ComponentForm field={field} fields={fields} remove={remove} index= {index} />
+        <ComponentForm
+          key={index}
+          field={field}
+          fields={fields}
+          remove={remove}
+          index={index}
+        />
       ))}
       <Styled.Components.Button
         size="EXTRA_SMALL"

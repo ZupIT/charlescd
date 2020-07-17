@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import Styled from "./styled";
-import { useFormContext, ArrayField } from "react-hook-form";
-import { Component } from "modules/Modules/interfaces/Component";
+import React, { useState } from 'react';
+import Styled from './styled';
+import { useFormContext, ArrayField } from 'react-hook-form';
+import { Component } from 'modules/Modules/interfaces/Component';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
   field: Component;
   fields: Partial<ArrayField>;
-  index: number
+  index: number;
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
@@ -54,7 +54,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         />
       </Styled.Components.Wrapper>
       <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
-        {editMoreOptions ? "Hide and clean " : "Show "}
+        {editMoreOptions ? 'Hide and clean ' : 'Show '}
         advanced options (be careful, do not change this if you are not using
         istio gateway)
       </Styled.Subtitle>
@@ -74,7 +74,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
               linkLabel="View documentation"
               description="In some cases it will be necessary to change the host to expose your application, by default leave it empty.."
             />
-          </Styled.FieldPopover>{" "}
+          </Styled.FieldPopover>{' '}
           <Styled.FieldPopover>
             <Styled.Input
               label="Insert a ingress name if necessary"
@@ -96,4 +96,4 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
   );
 };
 
-export default ComponentForm
+export default ComponentForm;
