@@ -52,11 +52,11 @@ test('should check if onSearch is called', async () => {
 });
 
 test('render Summary when is loading', async () => {
-  const { getAllByTestId  } = render(
+  const { getByTestId  } = render(
     <Summary legend={legendAsMock} isLoading onSearch={() => null} />
   );
 
-  const loaderWrapper = getAllByTestId('loader-legend') as unknown as HTMLElement;
+  const loaderWrapper = getByTestId('loader-legend');
   const loading = loaderWrapper.querySelector('svg');
   expect(loading).toBeTruthy();
 });
