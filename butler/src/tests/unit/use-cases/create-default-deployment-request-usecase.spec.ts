@@ -56,6 +56,7 @@ import {
 import { Repository, QueryFailedError } from 'typeorm'
 import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
 import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
+import { InternalServerErrorException } from '@nestjs/common'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
@@ -178,6 +179,22 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
 
       expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
         .toEqual(deployment.toReadDto())
+    })
+
+    it('should throw error when unique running insertion fail ', async() => {
+
+      jest.spyOn(deploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(queuedDeploymentsRepository, 'save')
+        .mockImplementationOnce(
+          () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+        ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+        .mockImplementationOnce(() => { throw new Error() })
+
+      jest.spyOn(modulesService, 'createModules')
+        .mockImplementation()
+
+      await expect(createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id')).rejects.toThrow(InternalServerErrorException)
     })
   })
 })

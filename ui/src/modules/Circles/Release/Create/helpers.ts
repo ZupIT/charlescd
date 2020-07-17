@@ -104,8 +104,8 @@ export const formatDataModules = ({ modules }: { modules: IModule[] }) => {
     const [module] = modules;
     const components = map(modules, module => ({
       id: module.component,
-      version: getVersion(module.version),
-      artifact: module.version
+      version: getVersion(module.tag),
+      artifact: module.tag
     }));
 
     return {
