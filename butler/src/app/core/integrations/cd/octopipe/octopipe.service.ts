@@ -244,8 +244,8 @@ export class OctopipeService implements ICdServiceStrategy {
     circles: IPipelineCircle[],
     hosts: string[],
     versions: IOctopipeVersion[],
-    hostValue: string,
-    gatewayName: string
+    hostValue: string | undefined,
+    gatewayName: string | undefined
   ): IBaseVirtualService | IEmptyVirtualService {
 
     return versions.length === 0
