@@ -292,8 +292,10 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                     "name," +
                     "created_at," +
                     "workspace_id," +
-                    "module_snapshot_id) VALUES(" +
-                    "?,?,?,?,?,?)"
+                    "module_snapshot_id," +
+                    "host_value," +
+                    "gateway_name) VALUES(" +
+                    "?,?,?,?,?,?,?,?)"
 
             this.jdbcTemplate.batchUpdate(
                 statement,
@@ -304,7 +306,9 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                         it.name,
                         it.createdAt,
                         it.workspaceId,
-                        it.moduleSnapshotId
+                        it.moduleSnapshotId,
+                        it.hostValue,
+                        it.gatewayName
                     )
                 }
             )
