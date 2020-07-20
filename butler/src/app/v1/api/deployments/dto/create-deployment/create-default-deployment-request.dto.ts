@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CreateModuleDeploymentDto } from '../'
-import { CreateDeploymentRequestDto } from './'
+import { CreateModuleDeploymentDto } from '../index'
+import { CreateDeploymentRequestDto } from './index'
 import { DeploymentEntity } from '../../entity'
 
 export class CreateDefaultDeploymentRequestDto extends CreateDeploymentRequestDto {
