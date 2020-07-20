@@ -52,7 +52,7 @@ class CircleHistoryContentResponse(
     val name: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val lastUpdatedAt: LocalDateTime,
-    val lifetime: Long,
+    val lifeTime: Long,
     val status: CircleStatusEnum
 ) {
     companion object {
@@ -60,7 +60,7 @@ class CircleHistoryContentResponse(
             id = circleHistory.id,
             name = circleHistory.name,
             lastUpdatedAt = circleHistory.lastUpdatedAt,
-            lifetime = circleHistory.lifeTime.seconds,
+            lifeTime = circleHistory.lifeTime.seconds,
             status = circleHistory.status
         )
     }

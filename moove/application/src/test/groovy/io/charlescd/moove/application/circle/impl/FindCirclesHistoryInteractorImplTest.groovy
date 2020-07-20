@@ -129,7 +129,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         result.page.isLast
         result.page.totalPages == 1
         result.page.content.size() == 1
-        result.page.content[0].lifetime == 120
+        result.page.content[0].lifeTime == 120
     }
 
     private static CircleHistory buildCircleHistory(String id, CircleStatusEnum status) {
