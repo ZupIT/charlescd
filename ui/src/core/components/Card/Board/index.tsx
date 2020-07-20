@@ -89,7 +89,6 @@ const CardBoard = forwardRef(
 
     const renderLastMember = () => {
       const member = last(members);
-      console.log('member', member);
 
       return (
         <AvatarName
