@@ -157,7 +157,8 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.componentName,
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue
     )
 
     return payload
@@ -195,7 +196,8 @@ export class OctopipeService implements ICdServiceStrategy {
       configuration.componentName,
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue
     )
     return payload
   }

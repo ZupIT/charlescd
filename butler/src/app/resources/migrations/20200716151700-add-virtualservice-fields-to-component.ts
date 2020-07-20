@@ -32,5 +32,7 @@ export class AddVirtualserviceFieldsToComponents20200716121700 implements Migrat
     }
 
     public async down(queryRunner: QueryRunner) {
+      await queryRunner.dropColumn('components', 'host_value')
+      await queryRunner.dropColumn('components', 'gateway_name')
     }
 }

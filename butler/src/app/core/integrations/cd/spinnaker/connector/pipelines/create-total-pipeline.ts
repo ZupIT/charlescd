@@ -131,7 +131,8 @@ export default class TotalPipeline {
   private buildDestinationRules(): IBuildReturn {
     const stageName = 'Deploy Destination Rules'
     const { account } = this.contract
-    const destinationRules = createDestinationRules(this.contract.appName, this.contract.appNamespace, this.contract.circles, this.contract.versions)
+    const destinationRules = createDestinationRules(this.contract.appName, this.contract.appNamespace, this.contract.circles,
+      this.contract.versions, this.contract.hostValue)
     const destinationRulesStage = baseStage(
       destinationRules,
       stageName,
