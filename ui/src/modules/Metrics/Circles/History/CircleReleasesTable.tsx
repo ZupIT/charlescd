@@ -46,12 +46,12 @@ const CircleReleasesTable = ({ circleId }: Props) => {
   useEffect(() => {
     page.current = 0;
     setReleases([]);
-    getCircleReleases(circleId, { page: 0 });
+    getCircleReleases({ page: 0, circleId });
   }, [getCircleReleases, circleId]);
 
   const loadMore = () => {
     page.current++;
-    getCircleReleases(circleId, { page: page.current });
+    getCircleReleases({ page: page.current, circleId });
   };
 
   return (
