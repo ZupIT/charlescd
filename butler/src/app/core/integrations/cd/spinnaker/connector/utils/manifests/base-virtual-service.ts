@@ -33,6 +33,7 @@ const baseVirtualService = (appName: string, appNamespace: string): IBaseVirtual
     namespace: appNamespace
   },
   spec: {
+    gateways: [],
     hosts: [appName],
     http: []
   }
