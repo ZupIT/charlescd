@@ -227,6 +227,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
@@ -507,6 +508,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
@@ -768,6 +770,7 @@ describe('Octopipe Service', () => {
               namespace: 'some-app-namespace'
             },
             spec: {
+              gateways: [],
               hosts: [
                 'some-app-name'
               ],
