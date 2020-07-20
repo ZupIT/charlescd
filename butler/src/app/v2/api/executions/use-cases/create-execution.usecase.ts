@@ -19,7 +19,7 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class CreateExecutionUsecase {
 
-  public execute() {
+  public execute(): void {
     return
   }
 }
