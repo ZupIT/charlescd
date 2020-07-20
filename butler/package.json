@@ -37,6 +37,7 @@
     "morgan": "^1.10.0",
     "mustache": "^3.2.1",
     "pg": "^7.18.2",
+    "pg-boss": "^5.0.1",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.5.5",
