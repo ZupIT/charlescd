@@ -248,6 +248,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'
@@ -274,6 +279,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'
@@ -518,6 +528,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'
@@ -544,6 +559,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'
@@ -769,6 +789,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'
@@ -795,6 +820,11 @@ describe('Octopipe Service', () => {
                         subset: 'v1'
                       },
                       headers: {
+                        response: {
+                          set: {
+                            'x-circle-source': 'dummy-value'
+                          }
+                        },
                         request: {
                           set: {
                             'x-circle-source': 'dummy-value'

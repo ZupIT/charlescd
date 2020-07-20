@@ -26,7 +26,6 @@ import { QueuedDeploymentsRepository} from '../../../app/api/deployments/reposit
 import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
-  DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
   UndeploymentStatusEnum
 } from '../../../app/api/deployments/enums'
@@ -35,7 +34,7 @@ import {  of } from 'rxjs'
 import { PipelineErrorHandlerService } from '../../../app/api/deployments/services'
 
 import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
-import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository';
+import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
@@ -86,12 +85,12 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       mockImplementation( () => of({} as AxiosResponse))
 
     const createUndeploymentRequest = {
-      authorId : 'author-id'
+      authorId : 'author-id',
+      deploymentId : 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     }
-    const id = 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     const octopipeServiceSpy = jest.spyOn(octopipeApiService, 'deploy')
 
-    await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(201)
+    await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(201)
     expect(octopipeServiceSpy).toHaveBeenCalledTimes(2)
     const expectedOctopipePayload1 = {
       appName: 'componentName2',
@@ -225,16 +224,16 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   })
 
-  it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
 
+  it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
     const createUndeploymentRequest = {
-      authorId : 'author-id'
+      authorId : 'author-id',
+      deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24'
     }
-    const id = '2adc7ac1-61ff-4630-8ba9-eba33c00ad24'
-    const { body: responseData } = await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest)
+    const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest)
     const undeployment = responseData
     const deployment = await deploymentsRepository.findOne(
-      { id },
+      { id: createUndeploymentRequest.deploymentId },
       { relations: ['modules', 'modules.components'] }
     )
 
@@ -261,12 +260,11 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /undeploy should fail when creating undeploy on  default circle ', async() => {
-
     const createUndeploymentRequest = {
-      authorId : 'author-id'
+      authorId : 'author-id',
+      deploymentId : '014742a1-34a6-46b5-a24e-1a61ce945803'
     }
-    const id = '014742a1-34a6-46b5-a24e-1a61ce945803'
-    await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(400)
+    await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(400)
   })
 
   it('/POST /undeploy should enqueue QUEUED and RUNNING component undeployments correctly', async() => {
@@ -274,11 +272,11 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     jest.spyOn(octopipeApiService, 'deploy')
       .mockImplementation( () => of({} as AxiosResponse))
     const createUndeploymentRequest = {
-      authorId : 'author-id'
+      authorId : 'author-id',
+      deploymentId : 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     }
-    const id = 'a17d4352-568a-4abb-a45a-a03da11c80b8'
 
-    const { body: responseData } = await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(201)
+    const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(201)
     const undeployment = responseData
     const queuedUnDeployment1 = await queuedDeploymentsRepository.findOne( {
       where: {
@@ -313,21 +311,23 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     const spyHandleUndeployment = jest.spyOn(pipelineErrorHandlerService, 'handleUndeploymentFailure')
     const spyHandleComponentUndeployment = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
     const createUndeploymentRequest = {
-      authorId : 'author-id'
+      authorId : 'author-id',
+      deploymentId: 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     }
-    const id = 'a17d4352-568a-4abb-a45a-a03da11c80b8'
 
-    await request(app.getHttpServer()).post(`/deployments/${id}/undeploy`).send(createUndeploymentRequest).expect(500)
-    const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: id, status: DeploymentStatusEnum.FAILED } })
+
+    await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
+    const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
     const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
+    expect(undeployment.finishedAt).not.toBeNull()
     expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.CREATED)
-    expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.FAILED)
+    expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[3].status).toBe(UndeploymentStatusEnum.CREATED)
-    expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.CREATED)
+    expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.FAILED)
 
   })
 
