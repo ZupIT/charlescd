@@ -26,13 +26,13 @@ import routes from 'core/constants/routes';
 import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
-import { WorkspacePaginationItem } from '../interfaces/WorkspacePagination';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import Loader from './Loaders';
 
 interface Props {
-  items: WorkspacePaginationItem[];
+  items: Workspace[];
   onSearch: (name: string) => void;
   isLoading?: boolean;
 }
@@ -57,8 +57,8 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
   }, [name, setIsDisabled]);
 
   const renderWorkspaces = () =>
-    map(items, ({ id, name }: WorkspacePaginationItem) => (
-      <MenuItem key={id} id={id} name={name} />
+    map(items, ({ id, name, status }: Workspace) => (
+      <MenuItem key={id} id={id} name={name} status={status} />
     ));
 
   const openWorkspaceModal = () => setToggleModal(true);
