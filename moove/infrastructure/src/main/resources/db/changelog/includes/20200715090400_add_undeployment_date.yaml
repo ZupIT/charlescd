@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 20200513160800-1
+      id: 20200715090400-1
       author: arthur.pucci
       changes:
       - sql:
