@@ -19,22 +19,25 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
-import { ComponentDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
 import { ComponentEntity } from '../../../app/api/components/entity'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
+import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
 
 describe('DeploymentCallbackUsecase Integration Test', () => {
 
   let app: INestApplication
   let fixtureUtilsService: FixtureUtilsService
   let queuedDeploymentsRepository: Repository<QueuedDeploymentEntity>
+  let queuedIstioDeploymentsRepository: QueuedIstioDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
   let componentDeploymentsRepository: ComponentDeploymentsRepository
+  let moduleDeploymentsRepository: ModuleDeploymentsRepository
   let httpService: HttpService
   let mooveService: MooveService
 
@@ -54,7 +57,9 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
     componentDeploymentsRepository = app.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
+    moduleDeploymentsRepository = app.get<ModuleDeploymentsRepository>(ModuleDeploymentsRepository)
     queuedDeploymentsRepository = app.get<Repository<QueuedDeploymentEntity>>('QueuedDeploymentEntityRepository')
+    queuedIstioDeploymentsRepository = app.get<QueuedIstioDeploymentsRepository>(QueuedIstioDeploymentsRepository)
     httpService = app.get<HttpService>(HttpService)
     mooveService = app.get<MooveService>(MooveService)
   })
@@ -267,6 +272,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       findOneOrFail({
         where : { id: componentDeploymentEntity.componentId } }
       )
+
     expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
@@ -278,6 +284,180 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         pipelineUnusedVersions: []
       }
     )
+  })
+
+  it('/POST when have success in all callbacks, deployment status should not Be SUCCEEDED yet ', async() => {
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'SUCCEEDED'
+    }
+
+    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    queuedDeploymentSearch = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.FINISHED,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
+      )
+
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const deployment = componentDeploymentEntity.moduleDeployment.deployment
+    expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+  })
+
+  it('/POST when all callbacks have success, each istio queued deployment should be RUNNING ', async() => {
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'SUCCEEDED'
+    }
+
+    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    queuedDeploymentSearch = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.FINISHED,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      }
+      )
+
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const deployment = componentDeploymentEntity.moduleDeployment.deployment
+    const istioQueuedDeployments = await queuedIstioDeploymentsRepository.find({ where : { deploymentId : componentDeploymentEntity.moduleDeployment.deployment.id } })
+    expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(istioQueuedDeployments[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[1].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[2].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(istioQueuedDeployments[3].status).toBe(QueuedPipelineStatusEnum.RUNNING)
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+  })
+
+  it('/POST when one callback fails, each istio queued deployment should be QUEUED ', async() => {
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const finishDeploymentDto = {
+      status : 'FAILED'
+    }
+
+    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.RUNNING,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+      .send(finishDeploymentDto).expect(204)
+
+    queuedDeploymentSearch = await queuedDeploymentsRepository.
+      findOneOrFail( {
+        where : {
+          componentDeploymentId: '065c8d19-734f-425c-addf-21307f407467',
+          status: QueuedPipelineStatusEnum.FINISHED,
+          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
+        }
+      })
+
+    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
+      findOneOrFail({
+        where : {
+          id: queuedDeploymentSearch.componentDeploymentId
+        },
+        relations: ['moduleDeployment', 'moduleDeployment.deployment']
+      }
+      )
+
+    const moduleDeploymentEntities: ModuleDeploymentEntity[] = await moduleDeploymentsRepository.
+      find({
+        where : {
+          deployment: componentDeploymentEntity.moduleDeployment.deployment.id
+        },
+        relations: ['components'] }
+      )
+
+    const deployment = componentDeploymentEntity.moduleDeployment.deployment
+    const istioQueuedDeployments = await queuedIstioDeploymentsRepository.find({ where : { deploymentId : componentDeploymentEntity.moduleDeployment.deployment.id } })
+    expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
+    expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
+    expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(moduleDeploymentEntities[1].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
+    expect(istioQueuedDeployments[0].status).toBe(QueuedPipelineStatusEnum.QUEUED)
+    expect(istioQueuedDeployments[1].status).toBe(QueuedPipelineStatusEnum.QUEUED)
+    expect(istioQueuedDeployments[2].status).toBe(QueuedPipelineStatusEnum.QUEUED)
+    expect(istioQueuedDeployments[3].status).toBe(QueuedPipelineStatusEnum.QUEUED)
+    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
   })
 
   afterAll(async() => {
