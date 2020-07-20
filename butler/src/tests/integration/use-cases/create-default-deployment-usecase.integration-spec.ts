@@ -30,6 +30,7 @@ import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -38,6 +39,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
   let deploymentsRepository: Repository<DeploymentEntity>
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
+  let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -59,6 +61,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
+    modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
@@ -153,6 +156,71 @@ describe('CreateDefaultDeploymentUsecase', () => {
     }]
 
     expect(deployment.modules).toMatchObject(expectedModules)
+  })
+
+  it('/POST deployments/default should do a upsert if a module already exists and has new components ', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'component-id-upsert',
+              componentName: 'component-upsert',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      circle: null
+    }
+    const moduleEntity = await modulesRepository.findOneOrFail({
+      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      relations: ['components']
+    })
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
+
+    const moduleEntityUpdated = await modulesRepository.findOneOrFail({
+      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      relations: ['components'],
+
+    })
+    const componentsModuleEntities = await componentsRepository.find({
+      where :{ module: '23776617-7840-4819-b356-30e165b7ebb9' },
+      order: { createdAt: 'ASC' },
+    })
+    const deployment = await deploymentsRepository.findOne(
+      { id: createDeploymentRequest.deploymentId },
+      { relations: ['modules', 'modules.components'],
+      },
+    )
+
+    if (!deployment) {
+      fail('Deployment entity was not saved')
+    }
+
+    expect(moduleEntity.components.length).not.toEqual(moduleEntityUpdated.components.length)
+    expect(moduleEntity.components.length).toBe(1)
+    expect(moduleEntityUpdated.components.length).toBe(2)
+    expect(componentsModuleEntities[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(componentsModuleEntities[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
   })
 
   it('/POST /deployments in default circle should fail if already exists deployment ', done => {

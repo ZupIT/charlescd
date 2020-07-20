@@ -57,7 +57,7 @@ describe('PipelinesService', () => {
   let componentDeploymentsRepository: ComponentDeploymentsRepository
   let componentUndeploymentsRepository: ComponentUndeploymentsRepository
   let moduleDeploymentsRepository: Repository<ModuleDeploymentEntity>
-  let moduleUndeploymentsRepository: Repository<ModuleUndeploymentEntity>
+  let moduleUndeploymentsRepository: ModuleUndeploymentsRepository
   let deploymentsRepository: Repository<DeploymentEntity>
   let undeploymentsRepository: Repository<UndeploymentEntity>
   let deployment: DeploymentEntity
@@ -93,7 +93,7 @@ describe('PipelinesService', () => {
     statusManagementService = module.get<StatusManagementService>(StatusManagementService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
     componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
-    moduleUndeploymentsRepository = module.get<Repository<ModuleUndeploymentEntity>>(ModuleUndeploymentsRepository)
+    moduleUndeploymentsRepository = module.get<ModuleUndeploymentsRepository>(ModuleUndeploymentsRepository)
     deploymentsRepository = module.get<Repository<DeploymentEntity>>(DeploymentsRepository)
     undeploymentsRepository = module.get<Repository<UndeploymentEntity>>(UndeploymentsRepository)
     moduleDeploymentsRepository = module.get<Repository<ModuleDeploymentEntity>>(ModuleDeploymentsRepository)
@@ -277,4 +277,28 @@ describe('PipelinesService', () => {
       expect(queueSpy).toHaveBeenCalledWith('dummy-component-undeployment-id', UndeploymentStatusEnum.FAILED)
     })
   })
+
+  describe('deepUpdateModuleUndeploymentStatus', () => {
+    it('should correctly update module undeployment and component undeployment status to FAILED', async() => {
+
+      jest.spyOn(componentUndeploymentsRepository, 'getOneWithRelations')
+        .mockImplementation(() => Promise.resolve(componentUndeployment))
+      jest.spyOn(moduleUndeploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(moduleUndeploymentWithRelations))
+      jest.spyOn(undeploymentsRepository, 'findOne')
+        .mockImplementation(() => Promise.resolve(undeployment))
+
+      const queueSpy = jest.spyOn(componentUndeploymentsRepository, 'updateStatus')
+      const queueSpy2 = jest.spyOn(moduleUndeploymentsRepository, 'updateStatus')
+      await statusManagementService.deepUpdateModuleUndeploymentStatus(
+        moduleUndeployment, UndeploymentStatusEnum.FAILED
+      )
+
+      expect(queueSpy).toHaveBeenCalledWith(componentUndeployment.id, UndeploymentStatusEnum.FAILED)
+      expect(queueSpy).toBeCalledTimes(1)
+      expect(queueSpy2).toBeCalledTimes(1)
+      expect(queueSpy2).toHaveBeenCalledWith(moduleUndeployment.id, UndeploymentStatusEnum.FAILED)
+    })
+  })
+
 })
