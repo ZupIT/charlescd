@@ -74,6 +74,7 @@ export class FixtureUtilsService {
       { name: 'DeploymentEntity', tableName: 'deployments' },
       { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
       { name: 'QueuedUndeploymentEntity', tableName: 'queued_undeployments' },
+      { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
       { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
       { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
       { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
@@ -91,6 +92,8 @@ export class FixtureUtilsService {
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       { name: 'ComponentEntity', tableName: 'components' },
       { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'QueuedUndeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
       { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
       { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
       { name: 'UndeploymentEntity', tableName: 'undeployments' }
