@@ -36,7 +36,11 @@ const MenuItem = ({ id, name, onClick }: Props) => {
 
   return (
     <Styled.Link onClick={() => onClick()} isActive={isActive}>
-      <Styled.ListItem icon="workspace" marginContent="8px" isActive={isActive}>
+      <Styled.ListItem
+        icon="hypotheses"
+        marginContent="8px"
+        isActive={isActive}
+      >
         <Styled.Item color="light">{name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>

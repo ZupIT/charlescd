@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -381,28 +403,6 @@ spec:
   resources:
     requests:
       storage: "8Gi"
----
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1097,8 +1097,7 @@ spec:
               value: 3f2Yq8R4HhDCnefR
             - name: DATABASE_NAME
               value: charlescd_butler
-            - name: DATABASE_SSL
-              value: "false"
+            
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
