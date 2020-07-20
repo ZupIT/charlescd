@@ -38,7 +38,10 @@ const ReleaseComponentsTable = ({ components }: Props) => {
         </Styled.TableColumn>
       </Styled.TableHead>
       {components.map(component => (
-        <Styled.ComponentsRow key={component.id}>
+        <Styled.ComponentsRow
+          key={component.id}
+          data-testid={`components-row-${component.id}`}
+        >
           <Styled.TableColumn width={1}>
             <Text.h5 color="light">{component.moduleName}</Text.h5>
           </Styled.TableColumn>
