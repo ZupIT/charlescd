@@ -175,11 +175,15 @@ describe('Pipeline Error Handler Service specs', () => {
     deploymentFailed.status = DeploymentStatusEnum.FAILED
 
     componentEntity = new ComponentEntity(
-      'component-id'
+      'component-id',
+      undefined,
+      undefined
     )
 
     componentEntityUpdated = new ComponentEntity(
-      'component-id'
+      'component-id',
+      undefined,
+      undefined
     )
     const pipelineCircle = {
       header :

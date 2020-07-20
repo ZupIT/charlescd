@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { ArrayField, FieldElement, ValidationOptions } from 'react-hook-form';
+import { ArrayField } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Component } from 'modules/Circles/interfaces/Circle';
 import { component } from './constants';
 import Styled from './styled';
+import ComponentForm from './ComponentForm';
 
 interface Props {
   fieldArray: {
@@ -28,14 +29,10 @@ interface Props {
     remove: (index?: number | number[] | undefined) => void;
     fields: Partial<ArrayField>;
   };
-  register: <Element extends FieldElement = FieldElement>(
-    validationOptions: ValidationOptions
-  ) => (ref: Element | null) => void;
 }
 
-const Components = ({ fieldArray, register }: Props) => {
+const Components = ({ fieldArray }: Props) => {
   const { fields, append, remove } = fieldArray;
-  const one = 1;
 
   return (
     <>
@@ -43,31 +40,13 @@ const Components = ({ fieldArray, register }: Props) => {
         Add components and enter SLO metrics:
       </Styled.Subtitle>
       {fields.map((field: Component, index: number) => (
-        <Styled.Components.Wrapper key={field.id}>
-          {fields.length > one && (
-            <Styled.Components.Trash
-              name="trash"
-              size="15px"
-              color="light"
-              onClick={() => remove(index)}
-            />
-          )}
-          <Styled.Components.Input
-            label="Enter name"
-            name={`components[${index}].name`}
-            ref={register({ required: true })}
-          />
-          <Styled.Components.Number
-            name={`components[${index}].latencyThreshold`}
-            label="Latency Threshold (ms)"
-            ref={register({ required: true })}
-          />
-          <Styled.Components.Number
-            name={`components[${index}].errorThreshold`}
-            label="Http Error Threshold (%)"
-            ref={register({ required: true })}
-          />
-        </Styled.Components.Wrapper>
+        <ComponentForm
+          key={index}
+          field={field}
+          fields={fields}
+          remove={remove}
+          index={index}
+        />
       ))}
       <Styled.Components.Button
         size="EXTRA_SMALL"

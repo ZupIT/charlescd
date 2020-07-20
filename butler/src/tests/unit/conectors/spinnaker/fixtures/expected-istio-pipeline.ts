@@ -131,6 +131,7 @@ const istioPipeline = {
             namespace: 'app-namespace'
           },
           spec: {
+            gateways: [],
             hosts: [
               'app-name'
             ],
