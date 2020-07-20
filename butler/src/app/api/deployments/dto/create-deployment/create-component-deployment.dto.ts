@@ -58,8 +58,8 @@ export class CreateComponentDeploymentDto {
   public toComponentEntity(): ComponentEntity {
     return new ComponentEntity(
       this.componentId, 
-      this.hostValue || '', 
-      this.gatewayName || ''
+      this.hostValue, 
+      this.gatewayName
     )
   }
 }

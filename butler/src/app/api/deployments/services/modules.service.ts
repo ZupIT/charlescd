@@ -8,7 +8,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -48,7 +48,7 @@ export class ModulesService {
     }
   }
 
-  private async compareComponentsAndSave(newComponent: ComponentEntity, module: ModuleEntity) {
+  private async compareComponentsAndSave(newComponent: ComponentEntity, module: ModuleEntity): Promise<void> {
     if (!module?.components.some(component=>component.id === newComponent.id)) {
       await this.componentEntityRepository.save({ ...newComponent, module: module })
     } else {
@@ -56,7 +56,7 @@ export class ModulesService {
     }
   }
 
-  private async updateModuleComponents(newComponent: ComponentEntity, module: ModuleEntity) {
+  private async updateModuleComponents(newComponent: ComponentEntity, module: ModuleEntity): Promise<void> {
     module.components.map(async oldComponent => {
       if (newComponent.id === oldComponent.id) {
         await this.componentEntityRepository.save({...newComponent, pipelineOptions: oldComponent.pipelineOptions})
