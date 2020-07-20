@@ -63,7 +63,6 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         val method = httpRequest.method
 
         try {
-            this.keycloakCustomService.hitUserInfo(authorization)
             doAuthorization(workspaceId, authorization, path, method)
         } catch (feignException: FeignException) {
             createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
@@ -92,6 +91,8 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         if (parsedAccessToken?.isRoot == true) {
             return
         }
+
+        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) }
 
         val workspace = parsedAccessToken?.workspaces?.firstOrNull { it.id == workspaceId }
 
