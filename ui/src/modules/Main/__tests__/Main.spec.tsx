@@ -16,7 +16,7 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, act } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import Main, {
@@ -104,7 +104,7 @@ test('render menu in expanded mode with the workspaces screen active', () => {
 test('lazy loading', async () => {
   const { getByText } = await render(
     <Suspense fallback={<div>loading...</div>}>
-      <Workspaces selectedWorkspace={jest.fn()} />
+      <Workspaces selectedWorkspace={() => act(() => jest.fn())} />
       <Users />
       <Groups />
       <Account />
