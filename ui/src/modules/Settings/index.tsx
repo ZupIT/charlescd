@@ -40,6 +40,7 @@ const Settings = () => {
             path={routes.credentials}
             component={Credentials}
             allowedRoles={['maintenance_write']}
+            allowedRoute
           />
           <Route>
             <Placeholder
