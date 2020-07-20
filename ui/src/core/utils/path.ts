@@ -35,7 +35,7 @@ export const generatePathV1 = (
   return generatePath(path, { ...skipLegacyPort, ...params });
 };
 
-export const goToV2 = (path: string) => {
+export const pushTo = (path: string) => {
   window.location.href = path;
 };
 
