@@ -79,40 +79,25 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST undeploy should call octopipe for each RUNNING component undeployment', async() => {
-
-    const createCdConfiguration = {
-      id: '4046f193-9479-48b5-ac29-01f419b64cb5',
-      workspaceId: '7af831f6-2206-4ab0-866b-f47bc7f91e7e',
-      type: 'OCTOPIPE',
-      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
-      name: 'config-name',
-      authorId: 'author'
-    }
-
-    const createDeployment = {
-      'id': '014742a1-34a6-46b5-a24e-1a61ce945803',
-      'applicationName': 'application-name',
-      'authorId': 'author-id',
-      'description': 'fake deployment #2',
-      'callbackUrl': 'callback-url',
-      'status': 'CREATED',
-      'defaultCircle': true,
-      'cdConfigurationId': '4046f193-9479-48b5-ac29-01f419b64cb5',
-      'circleId': null
-    }
-
-    await fixtureUtilsService.insertSingleFixture(
-      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      createCdConfiguration
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const module = await fixtureUtilsService.createModule()
+    const component = await fixtureUtilsService.createComponent(module.id)
+    const component2 = await fixtureUtilsService.createComponent(module.id)
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, module.id)
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'componentName'
     )
-    await fixtureUtilsService.insertSingleFixture(
-      { name : 'DeploymentEntity', tableName: 'deployments' }, 
-      createDeployment
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component2.id,
+      'componentName2'
     )
-
     const createUndeploymentRequest = {
       authorId : 'author-id',
-      deploymentId : 'a17d4352-568a-4abb-a45a-a03da11c80b8'
+      deploymentId : deployment.id
     }
 
     jest.spyOn(octopipeApiService, 'deploy').
@@ -254,14 +239,24 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
-    
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const module = await fixtureUtilsService.createModule()
+    const component = await fixtureUtilsService.createComponent(module.id)
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, module.id)
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'componentName'
+    )
     const createUndeploymentRequest = {
       authorId : 'author-id',
-      deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24'
+      deploymentId: deployment.id
     }
+
     const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest)
     const undeployment = responseData
-    const deployment = await deploymentsRepository.findOne(
+    const deploymentDB = await deploymentsRepository.findOne(
       { id: createUndeploymentRequest.deploymentId },
       { relations: ['modules', 'modules.components'] }
     )
@@ -269,16 +264,16 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     if (!undeployment) {
       fail('Undeployment was not saved')
     }
-    if (!deployment) {
+    if (!deploymentDB) {
       fail('Undeployment has no deployment')
     }
     expect(undeployment).toMatchObject({
       authorId: createUndeploymentRequest.authorId,
       modulesUndeployments: [{
-        moduleUndeployment: deployment.modules[0].id,
+        moduleUndeployment: deploymentDB.modules[0].id,
         componentsUndeployments: [
           {
-            componentDeployment: deployment.modules[0].components[0].id,
+            componentDeployment: deploymentDB.modules[0].components[0].id,
             status: UndeploymentStatusEnum.CREATED
           }
         ]
@@ -289,20 +284,46 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /undeploy should fail when creating undeploy on  default circle ', async() => {
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const deployment = await fixtureUtilsService.createDefaultDeployment(cdConfiguration.id)
+
     const createUndeploymentRequest = {
       authorId : 'author-id',
-      deploymentId : '014742a1-34a6-46b5-a24e-1a61ce945803'
+      deploymentId: deployment.id
     }
+
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(400)
   })
 
   it('/POST /undeploy should enqueue QUEUED and RUNNING component undeployments correctly', async() => {
 
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const module = await fixtureUtilsService.createModule()
+    const component = await fixtureUtilsService.createComponent(module.id)
+    const component2 = await fixtureUtilsService.createComponent(module.id)
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, module.id)
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'componentNameRUNNING'
+    )
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component2.id,
+      'componentNameRUNNING'
+    )
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component2.id,
+      'componentNameQUEUED'
+    )
+
     jest.spyOn(octopipeApiService, 'deploy')
       .mockImplementation( () => of({} as AxiosResponse))
     const createUndeploymentRequest = {
       authorId : 'author-id',
-      deploymentId : 'a17d4352-568a-4abb-a45a-a03da11c80b8'
+      deploymentId : deployment.id
     }
 
     const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(201)
@@ -331,7 +352,28 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     expect(queuedUnDeployment3.status).toBe(QueuedPipelineStatusEnum.QUEUED)
   })
 
-  it('/POST /undeploy should handle  undeployment  failure', async() => {
+  it('/POST /undeploy should handle  undeployment  failure and set only failed the module that failed', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const module = await fixtureUtilsService.createModule()
+    const module2 = await fixtureUtilsService.createModule()
+    const moduleFails = await fixtureUtilsService.createModule()
+    const componentFails = await fixtureUtilsService.createComponent(moduleFails.id)
+    const componentFails2 = await fixtureUtilsService.createComponent(moduleFails.id)
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, module.id)
+    await fixtureUtilsService.createModuleDeployment(deployment.id, module2.id)
+    await fixtureUtilsService.createModuleDeployment(deployment.id, moduleFails.id)
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      componentFails.id,
+      'componentName'
+    )
+    await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      componentFails2.id,
+      'componentName'
+    )
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
@@ -341,12 +383,19 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     const spyHandleComponentUndeployment = jest.spyOn(pipelineErrorHandlerService, 'handleComponentUndeploymentFailure')
     const createUndeploymentRequest = {
       authorId : 'author-id',
-      deploymentId: 'a17d4352-568a-4abb-a45a-a03da11c80b8'
+      deploymentId: deployment.id
     }
 
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
     const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
-    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id }, relations: ['componentUndeployments'] })
+    const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find(
+      { where :
+          { undeploymentId: undeployment.id },
+      relations: ['componentUndeployments'],
+      order: {
+        status: 'ASC'
+      }
+      })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
@@ -354,8 +403,6 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.FAILED)
-    expect(moduleUndeployment[3].status).toBe(UndeploymentStatusEnum.CREATED)
-    expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.CREATED)
   })
 
   afterAll(async() => {

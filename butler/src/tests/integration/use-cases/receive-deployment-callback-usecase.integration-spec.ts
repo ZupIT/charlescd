@@ -61,115 +61,98 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
-  })
-
-  it.skip('/POST  deploy/callback in circle success should update status and notify moove - notification happens only on istio deployment', async() => {
-
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
-    const finishDeploymentDto = {
-      status : 'SUCCEEDED'
-    }
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
-
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
-      .send(finishDeploymentDto).expect(204)
-
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.FINISHED,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
-    const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          id: queuedDeploymentSearch.componentDeploymentId
-        },
-        relations: ['moduleDeployment']
-      })
-
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
-    expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.SUCCEEDED)
-    expect(spy).toBeCalledTimes(1)
   })
 
   it('/POST a default circle deploy  callback fails should update status and notify moove ', async() => {
+    const component = await fixtureUtilsService.createComponent('module-id')
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const deployment = await fixtureUtilsService.createDefaultDeployment(cdConfiguration.id)
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, 'module-id')
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'component-name'
+    )
+
+    let queuedDeployment = await fixtureUtilsService.createQueuedDeployment(
+      component.id,
+      componentDeployment.id,
+      'RUNNING'
+    )
+
     const finishDeploymentDto = {
       status : 'FAILED'
     }
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
+    queuedDeployment = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          componentDeploymentId: queuedDeployment.componentDeploymentId,
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail( {
         where : {
-          id: queuedDeploymentSearch.componentDeploymentId
+          id: queuedDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment']
       })
 
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedDeployment.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()
   })
 
   it('/POST a default deploy callback success should update status and notify moove ', async() => {
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const component = await fixtureUtilsService.createComponent('module-id')
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const deployment = await fixtureUtilsService.createDefaultDeployment(cdConfiguration.id)
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, 'module-id')
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'component-name'
+    )
+
+    let queuedDeployment = await fixtureUtilsService.createQueuedDeployment(
+      component.id,
+      componentDeployment.id,
+      'RUNNING'
+    )
+
     const finishDeploymentDto = {
       status : 'SUCCEEDED'
     }
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
+    queuedDeployment = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '8f6dc70d-e49e-4fb9-b92e-0d9cd3018428',
+          componentDeploymentId: queuedDeployment.componentDeploymentId,
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
@@ -177,40 +160,52 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail( {
         where : {
-          id: queuedDeploymentSearch.componentDeploymentId
+          id: queuedDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment']
       })
 
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedDeployment.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.SUCCEEDED)
   })
 
   it('/POST a circle deploy callback fail should update status and notify moove ', async() => {
+    const component = await fixtureUtilsService.createComponent('module-id')
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, 'module-id')
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'component-name'
+    )
+
+    let queuedDeployment = await fixtureUtilsService.createQueuedDeployment(
+      component.id,
+      componentDeployment.id,
+      'RUNNING'
+    )
+
     const finishDeploymentDto = {
       status : 'FAILED'
     }
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
+    queuedDeployment = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+          componentDeploymentId: queuedDeployment.componentDeploymentId,
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
@@ -218,56 +213,73 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail( {
         where : {
-          id: queuedDeploymentSearch.componentDeploymentId
+          id: queuedDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment']
       })
 
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+    expect(queuedDeployment.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()
   })
 
   it('/POST deploy/callback in circle  should remove pipeline options when deployment failure', async() => {
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+
+    const component = await fixtureUtilsService.createComponent('module-id')
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(deployment.id, 'module-id')
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
+      moduleDeployment.id,
+      component.id,
+      'component-name'
+    )
+
+    let queuedDeployment = await fixtureUtilsService.createQueuedDeployment(
+      component.id,
+      componentDeployment.id,
+      'RUNNING'
+    )
+
     const finishDeploymentDto = {
       status : 'FAILED'
     }
-    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedDeploymentEntity  = await queuedDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
-        }
-      })
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeploymentSearch.id}`)
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+    const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
+
+    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
-    queuedDeploymentSearch = await queuedDeploymentsRepository.
+    queuedDeployment = await queuedDeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentDeploymentId: '88a33b0c-c974-4ed7-8c49-c5fa342744af',
+          componentDeploymentId: queuedDeployment.componentDeploymentId,
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedDeploymentEntity
         }
       })
+
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
-          id: queuedDeploymentSearch.componentDeploymentId
+          id: queuedDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment'] }
       )
+
     const componentEntity: ComponentEntity = await componentsRepository.
       findOneOrFail({
         where : { id: componentDeploymentEntity.componentId } }
       )
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+    expect(queuedDeployment.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentDeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(componentDeploymentEntity.moduleDeployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(spy).toBeCalled()

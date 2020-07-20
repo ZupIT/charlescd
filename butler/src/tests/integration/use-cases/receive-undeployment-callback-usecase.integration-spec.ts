@@ -31,7 +31,7 @@ import {
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/core/integrations/moove'
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
+import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 
@@ -66,52 +66,87 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   it('/POST a circle undeploy callback fails should update status only the component and module that failed ', async() => {
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+
+    const undeployment = await fixtureUtilsService.createUndeployment(deployment.id)
+
+    const moduleUndeployment = await fixtureUtilsService.createModuleUndeployment(
+      undeployment.id,
+      'module-deployment')
+
+    const moduleUndeployment2 = await fixtureUtilsService.createModuleUndeployment(
+      undeployment.id,
+      'module-deployment-2')
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
+      'module-deployment-id',
+      'component-id',
+      'component-name'
+    )
+
+    const componentDeployment2 = await fixtureUtilsService.createComponentDeployment(
+      'module-deployment-id',
+      'component-id',
+      'component-name'
+    )
+
+    const componentUndeployment = await fixtureUtilsService.createComponentUndeployment(
+      moduleUndeployment.id,
+      componentDeployment.id)
+
+    await fixtureUtilsService.createComponentUndeployment(
+      moduleUndeployment2.id,
+      componentDeployment2.id)
+
+    let queuedUndeployment = await fixtureUtilsService.createQueuedUndeployment(
+      'component-id',
+      'component-deployment-id',
+      'RUNNING',
+      componentUndeployment.id
+    )
+
     const finishDeploymentDto = {
       status : 'FAILED'
     }
+
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
-    let queuedDeploymentSearch: QueuedUndeploymentEntity  = await queuedUndeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          componentUndeploymentId: '00a86675-49a2-48ad-b46c-0fa437a3cd3b',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          type: QueuedPipelineTypesEnum.QueuedUndeploymentEntity
-        }
-      })
 
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/undeployment?queuedUndeploymentId=${queuedDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications/undeployment?queuedUndeploymentId=${queuedUndeployment.id}`)
       .send(finishDeploymentDto)
 
-    queuedDeploymentSearch = await queuedUndeploymentsRepository.
+    queuedUndeployment = await queuedUndeploymentsRepository.
       findOneOrFail( {
         where : {
-          componentUndeploymentId: '00a86675-49a2-48ad-b46c-0fa437a3cd3b',
+          componentUndeploymentId: queuedUndeployment.componentUndeploymentId,
           status: QueuedPipelineStatusEnum.FINISHED,
           type: QueuedPipelineTypesEnum.QueuedUndeploymentEntity
         }
       })
+
     const componentUndeploymentEntity: ComponentUndeploymentEntity = await componentUndeploymentsRepository.
       findOneOrFail( {
         where : {
-          id: queuedDeploymentSearch.componentUndeploymentId
+          id: queuedUndeployment.componentUndeploymentId
         },
-        relations: ['moduleUndeployment','moduleUndeployment.undeployment']
+        relations: ['moduleUndeployment', 'moduleUndeployment.undeployment']
       })
+
     const moduleUndeploymentEntities : ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({
       where: {
         undeploymentId : componentUndeploymentEntity.moduleUndeployment.undeployment.id,
       },
       relations: ['componentUndeployments']
     })
-    expect(queuedDeploymentSearch.status).toBe(QueuedPipelineStatusEnum.FINISHED)
+
+    expect(queuedUndeployment.status).toBe(QueuedPipelineStatusEnum.FINISHED)
     expect(componentUndeploymentEntity.status).toBe(DeploymentStatusEnum.FAILED)
     expect(moduleUndeploymentEntities[0].status).toBe(DeploymentStatusEnum.CREATED)
     expect(moduleUndeploymentEntities[0].componentUndeployments[0].status).toBe(DeploymentStatusEnum.CREATED)
