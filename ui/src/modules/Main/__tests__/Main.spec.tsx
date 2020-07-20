@@ -128,5 +128,5 @@ test('selecting workspace', async () => {
 
   const wrapper = render(<Main />);
 
-  await wait(() => expect(setState).toHaveBeenCalled());
+  await wait(() => expect(setState).toHaveBeenCalledTimes(3));
 });
