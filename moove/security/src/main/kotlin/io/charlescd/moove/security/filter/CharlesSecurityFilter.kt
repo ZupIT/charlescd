@@ -88,11 +88,11 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
             return
         }
 
+        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) }
+
         if (parsedAccessToken?.isRoot == true) {
             return
         }
-
-        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) }
 
         val workspace = parsedAccessToken?.workspaces?.firstOrNull { it.id == workspaceId }
 
