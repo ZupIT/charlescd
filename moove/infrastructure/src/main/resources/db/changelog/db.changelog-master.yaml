@@ -241,3 +241,6 @@ databaseChangeLog:
       file: db/changelog/includes/20200508152500_rename_column_roles_from_workspace_associations.yaml
   - include:
       file: db/changelog/includes/20200513160800_alter_analyst_roles_and_description.yaml
+  - include:
+      file: db/changelog/includes/20200620103400_update_admin_email.yaml
+
