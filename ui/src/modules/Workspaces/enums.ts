@@ -14,25 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
-import ButtonIconRounded from '..';
-
-test('render ButtonIconRounded default component', async () => {
-  const click = jest.fn();
-  const props = {
-    name: 'add',
-    children: 'button'
-  };
-  const { getByTestId } = render(
-    <ButtonIconRounded onClick={click} name={props.name}>
-      {props.children}
-    </ButtonIconRounded>
-  );
-
-  const Button = getByTestId(`button-iconRounded-${props.name}`);
-
-  expect(Button).toBeInTheDocument();
-  fireEvent.click(Button);
-  wait(() => expect(click).toBeCalled());
-});
+export enum WORKSPACE_STATUS {
+  COMPLETE = 'COMPLETE',
+  INCOMPLETE = 'INCOMPLETE'
+}
