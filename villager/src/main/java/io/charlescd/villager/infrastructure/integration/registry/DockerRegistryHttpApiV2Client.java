@@ -46,7 +46,10 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
                     this.client
                             .register(
-                                    new AWSBasicAuthenticator(awsConfig.region, awsConfig.accessKey, awsConfig.secretKey));
+                                    new AWSBasicAuthenticator(
+                                      awsConfig.region, 
+                                      awsConfig.accessKey, 
+                                      awsConfig.secretKey));
                 }
                 break;
             case AZURE:
