@@ -82,6 +82,7 @@ const Main = () => {
               path={routes.settings}
               component={Settings}
               allowedRoles={['maintenance_write']}
+              allowedRoute
             />
             <PrivateRoute
               path={routes.metrics}
