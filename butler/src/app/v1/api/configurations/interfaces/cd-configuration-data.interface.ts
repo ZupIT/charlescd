@@ -17,7 +17,7 @@
 import {
   OctopipeConfigurationData,
   ISpinnakerConfigurationData
-} from './'
+} from './index'
 
 export type ICdConfigurationData =
     ISpinnakerConfigurationData |

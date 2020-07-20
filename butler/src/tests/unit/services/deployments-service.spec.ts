@@ -18,7 +18,7 @@ import { Test } from '@nestjs/testing'
 import {
   DeploymentsService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import { DeploymentsRepositoryStub } from '../../stubs/repository'
 import {
   ConsoleLoggerServiceStub,
@@ -26,16 +26,16 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { StatusManagementService } from '../../../app/core/services/deployments'
-import { MooveService } from '../../../app/core/integrations/moove'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
+import { MooveService } from '../../../app/v1/core/integrations/moove'
 
 describe('Deployments service specs', () => {
   let deploymentsService: DeploymentsService
