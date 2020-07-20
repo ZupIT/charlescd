@@ -114,7 +114,11 @@ const WorkspaceMenu = ({
     <>
       {isRoot() && renderModal()}
       <Styled.Actions>
-        <Styled.Button onClick={openWorkspaceModal} isDisabled={!isRoot()}>
+        <Styled.Button
+          id="workspaceModal"
+          onClick={openWorkspaceModal}
+          isDisabled={!isRoot()}
+        >
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create workspace</Text.h5>
           </LabeledIcon>
