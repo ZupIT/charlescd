@@ -299,8 +299,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhf',
       name: 'release-darwin-new-repos',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -326,8 +326,8 @@ const allCircleReleases = {
     {
       id: 'jfdhfuhfds',
       name: 'release-darwin-new-test',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -353,8 +353,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhffdsfjdsbh',
       name: 'release-darwin-new-gmfgoij',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -380,8 +380,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhf',
       name: 'release-darwin-new-repos',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -407,8 +407,8 @@ const allCircleReleases = {
     {
       id: 'jfdhfuhfds',
       name: 'release-darwin-new-test',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -434,8 +434,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhffdsfjdsbh',
       name: 'release-darwin-new-gmfgoij',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -461,8 +461,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhf',
       name: 'release-darwin-new-repos',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -488,8 +488,8 @@ const allCircleReleases = {
     {
       id: 'jfdhfuhfds',
       name: 'release-darwin-new-test',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {
@@ -515,8 +515,8 @@ const allCircleReleases = {
     {
       id: 'dnsafjhffdsfjdsbh',
       name: 'release-darwin-new-gmfgoij',
-      deployed: '16/03/2020 • 15:01:26',
-      undeployed: '16/03/2020 • 15:01:26',
+      deployed: '2020-07-12 10:25:38',
+      undeployed: '2020-07-12 10:25:38',
       lastEditor: 'Leandro Latini',
       components: [
         {

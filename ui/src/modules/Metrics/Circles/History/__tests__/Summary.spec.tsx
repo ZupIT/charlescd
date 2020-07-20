@@ -16,7 +16,6 @@
 
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
-import { within } from '@testing-library/dom'
 import Summary from '../Summary';
 import { CircleSummary } from '../../interfaces';
 
