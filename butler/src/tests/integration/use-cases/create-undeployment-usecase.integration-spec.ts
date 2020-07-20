@@ -315,6 +315,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       deploymentId: 'a17d4352-568a-4abb-a45a-a03da11c80b8'
     }
 
+
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
     const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
     const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({ where : { undeploymentId: undeployment.id } , relations: ['componentUndeployments'] })
@@ -324,9 +325,10 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
     expect(undeployment.finishedAt).not.toBeNull()
     expect(moduleUndeployment[0].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[1].status).toBe(UndeploymentStatusEnum.CREATED)
-    expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.FAILED)
+    expect(moduleUndeployment[2].status).toBe(UndeploymentStatusEnum.CREATED)
     expect(moduleUndeployment[3].status).toBe(UndeploymentStatusEnum.CREATED)
-    expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.CREATED)
+    expect(moduleUndeployment[4].status).toBe(UndeploymentStatusEnum.FAILED)
+
   })
 
   afterAll(async() => {
