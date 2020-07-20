@@ -56,7 +56,6 @@ export class CreateComponentDeploymentDto {
   }
 
   public toComponentEntity(): ComponentEntity {
-    console.log("HOST", this.hostValue, this.gatewayName)
     return new ComponentEntity(
       this.componentId, 
       this.hostValue || '', 
