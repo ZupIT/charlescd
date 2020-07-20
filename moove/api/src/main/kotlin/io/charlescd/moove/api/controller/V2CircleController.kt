@@ -173,7 +173,7 @@ class V2CircleController(
         return identifyCircleInteractor.execute(workspaceId, request)
     }
 
-    @ApiOperation(value = "Identify Circles by WorkspaceId")
+    @ApiOperation(value = "Find circle history")
     @GetMapping(path = ["/history"])
     @ResponseStatus(HttpStatus.OK)
     fun getHistory(
