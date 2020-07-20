@@ -24,7 +24,6 @@ data class DeploymentCallbackRequest(
 ) {
 
     fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
-
 }
 
 enum class DeploymentRequestStatus {
