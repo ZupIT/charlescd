@@ -59,12 +59,17 @@ const createSubsets = (versions: IDeploymentVersion[], appName: string): ISubset
   }))
 }
 
-const createDestinationRules = (appName: string, appNamespace: string, circles: IPipelineCircle[], versions: IDeploymentVersion[]) : IDestinationRule => {
+const createDestinationRules = (appName: string, appNamespace: string, circles: IPipelineCircle[], versions: IDeploymentVersion[], hostValue: string | undefined,) : IDestinationRule => {
   const newDestinationRule = baseDestinationRules(appName, appNamespace)
   if (circles) {
     const subsetsToAdd = createSubsets(versions, appName)
     newDestinationRule.spec.subsets = subsetsToAdd
   }
+
+  if (hostValue) {
+    newDestinationRule.spec.host = hostValue
+  }
+
   return newDestinationRule
 }
 
