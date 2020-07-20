@@ -15,24 +15,23 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
-import ButtonIconRounded from '..';
+import { render } from 'unit-test/testUtils';
+import Menu from '../index';
+import workspaces from '../../../../../stub/workspaces/mock';
 
-test('render ButtonIconRounded default component', async () => {
-  const click = jest.fn();
+test('renders Workspace menu', async () => {
   const props = {
-    name: 'add',
-    children: 'button'
+    items: workspaces.workspaces.content,
+    onSearch: jest.fn()
   };
-  const { getByTestId } = render(
-    <ButtonIconRounded onClick={click} name={props.name}>
-      {props.children}
-    </ButtonIconRounded>
+  const { getByTestId, getAllByText } = render(
+    <Menu items={props.items} onSearch={props.onSearch} />
   );
+  const createButton = getByTestId('labeledIcon-plus-circle');
+  const searchInput = getByTestId('input-text-search');
+  const workspacesArray = getAllByText(/Workspace/);
 
-  const Button = getByTestId(`button-iconRounded-${props.name}`);
-
-  expect(Button).toBeInTheDocument();
-  fireEvent.click(Button);
-  wait(() => expect(click).toBeCalled());
+  expect(createButton).toBeInTheDocument();
+  expect(searchInput).toBeInTheDocument();
+  expect(workspacesArray.length).toBe(5);
 });
