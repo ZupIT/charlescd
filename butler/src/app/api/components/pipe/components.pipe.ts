@@ -27,7 +27,7 @@ export class ComponentsExistencePipe implements PipeTransform {
   }
 
   async transform(idComponent: string) : Promise<string> {
-    await this.componentRepository.findOneOrFail({id: idComponent})
+    await this.componentRepository.findOneOrFail({ id: idComponent })
     return idComponent
   }
 }

@@ -86,7 +86,7 @@ describe('CreateUndeploymentRequestUsecase', () => {
     undeploymentsRepository = module.get<Repository<UndeploymentEntity>>('UndeploymentEntityRepository')
     queuedUndeploymentRepository = module.get<Repository<QueuedUndeploymentEntity>>('QueuedUndeploymentEntityRepository')
 
-    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id','dummy-deployment-id')
+    createUndeploymentDto = new CreateUndeploymentDto('dummy-author-id', 'dummy-deployment-id')
 
     componentDeployments = [
       new ComponentDeploymentEntity(
