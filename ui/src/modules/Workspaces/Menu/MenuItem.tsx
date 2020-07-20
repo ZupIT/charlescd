@@ -17,25 +17,29 @@
 import React, { memo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
-import { isRoot } from 'core/utils/auth';
 import routes from 'core/constants/routes';
 import { setUserAbilities } from 'core/utils/abilities';
+import { WORKSPACE_STATUS } from '../enums';
 import Styled from './styled';
 
 interface Props {
   id: string;
   name: string;
+  status: string;
   selectedWorkspace: (name: string) => void;
 }
 
-const MenuItem = ({ id, name, selectedWorkspace }: Props) => {
+const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const history = useHistory();
   const handleClick = () => {
     saveWorkspace({ id, name });
     selectedWorkspace(name);
     setUserAbilities();
     history.push({
-      pathname: isRoot() ? routes.credentials : routes.circles
+      pathname:
+        status === WORKSPACE_STATUS.COMPLETE
+          ? routes.circles
+          : routes.credentials
     });
   };
 

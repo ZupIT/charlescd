@@ -17,47 +17,41 @@
 import React from 'react';
 import { render } from 'unit-test/testUtils';
 import Menu from '../index';
+import workspaces from '../../../../../stub/workspaces/mock';
 
-const mockItem = [
-  {
-    id: '1',
-    name: 'workspace',
-    users: {
-      id: '21',
-      name: 'User',
-      email: 'user.test@zup.com.br',
-      photoUrl: '',
-      createdAt: '2020-05-07 20:24:46'
-    }
-  }
-];
-
-test('render Workspace Menu', () => {
-  const { getByText } = render(
+test('renders Workspace menu', async () => {
+  const props = {
+    items: workspaces.workspaces.content,
+    onSearch: jest.fn()
+  };
+  const { getByTestId, getAllByText } = render(
     <Menu
-      items={mockItem}
-      onSearch={jest.fn()}
+      items={props.items}
+      onSearch={props.onSearch}
       selectedWorkspace={jest.fn()}
-      isLoading={false}
     />
   );
+  const createButton = getByTestId('labeledIcon-plus-circle');
+  const searchInput = getByTestId('input-text-search');
+  const workspacesArray = getAllByText(/Workspace/);
 
-  const workspace = getByText('workspace');
-
-  expect(workspace).toBeInTheDocument();
+  expect(createButton).toBeInTheDocument();
+  expect(searchInput).toBeInTheDocument();
+  expect(workspacesArray.length).toBe(5);
 });
 
-test('render Workspace Menu on loading', () => {
+test('renders Workspace menu on loading', async () => {
+  const props = {
+    items: workspaces.workspaces.content,
+    onSearch: jest.fn()
+  };
   const { getByText } = render(
     <Menu
-      items={mockItem}
-      onSearch={jest.fn()}
+      items={props.items}
+      onSearch={props.onSearch}
       selectedWorkspace={jest.fn()}
       isLoading
     />
   );
-
-  const loading = getByText('Loading...');
-
-  expect(loading).toBeInTheDocument();
+  expect(getByText('Loading...')).toBeInTheDocument();
 });
