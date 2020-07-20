@@ -120,3 +120,13 @@ test('lazy loading', async () => {
 
   expect(lazyLoading).toBeInTheDocument();
 });
+
+test('selecting workspace', async () => {
+  const setState = jest.fn();
+  const useStateMock: any = (state: string) => [state, setState];
+  jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+
+  const wrapper = render(<Main />);
+
+  await wait(() => expect(setState).toHaveBeenCalled());
+});
