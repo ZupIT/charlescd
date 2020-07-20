@@ -1,6 +1,23 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
 import ReleaseRow from '../ReleaseRow';
+import { releaseComponentsMock } from './ReleaseComponentsTable.spec';
 
 const circleReleaseMock = {
   id: '1',
@@ -8,20 +25,7 @@ const circleReleaseMock = {
   deployed: '2020-07-12 10:25:38',
   undeployed: '2020-07-11 10:25:38',
   lastEditor: 'Jhon Doe',
-  components: [
-    {
-      id: '1',
-      moduleName: 'module a1',
-      componentName: 'component 1',
-      version: '1.0'
-    },
-    {
-      id: '2',
-      moduleName: 'module a2',
-      componentName: 'component 2',
-      version: '1.0'
-    }
-  ]
+  components: releaseComponentsMock
 }
 
 test('render default ReleaseRow', () => {
@@ -34,10 +38,9 @@ test('render default ReleaseRow', () => {
   expect(screen.getByText('11/07/2020 10:07')).toBeInTheDocument();
   expect(screen.getByText('Jhon Doe')).toBeInTheDocument();
   expect(screen.queryAllByText(/module a/)).toHaveLength(0);
-  expect(() => screen.getByText('your text')).toThrow();
 });
 
-test('render default ReleaseRow and show components table', () => {
+test('render ReleaseRow and show components table', () => {
   render(
     <ReleaseRow release={circleReleaseMock} />
   );
