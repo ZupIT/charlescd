@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-import { ICdConfigurationData } from '../../../../api/configurations/interfaces'
-import { IPipelineOptions } from '../../../../api/components/interfaces'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export interface IConnectorConfiguration {
+export class AddVirtualserviceFieldsToComponents20200716121700 implements MigrationInterface {
 
-    pipelineCirclesOptions: IPipelineOptions
+    public async up(queryRunner: QueryRunner) {
+        await queryRunner.addColumn('components', new TableColumn({
+          name: 'host_value',
+          type: 'varchar',
+          isNullable: true,
+        }))
+        await queryRunner.addColumn('components', new TableColumn({
+          name: 'gateway_name',
+          type: 'varchar',
+          isNullable: true
+        }))
+    }
 
-    cdConfiguration: ICdConfigurationData
-
-    componentId: string
-
-    applicationName: string
-
-    componentName: string
-
-    helmRepository: string
-
-    callbackCircleId: string
-
-    pipelineCallbackUrl: string
-
-    hostValue?: string
-
-    gatewayName?: string
+    public async down(queryRunner: QueryRunner) {
+    }
 }

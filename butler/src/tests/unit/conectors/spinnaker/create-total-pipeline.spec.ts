@@ -35,7 +35,7 @@ it('compiles the pipeline', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
   }
 
   const totalPipeline = new TotalPipeline(contract)

@@ -41,7 +41,7 @@ class AddComponentInteractorImplTest extends Specification {
         given:
         def moduleId = "ef5ea1ef-11a9-4f74-b95f-9944cc7390a1"
         def workspaceId = "038fed80-5565-4813-baa5-ae7ed6684159"
-        def request = new ComponentRequest("Application", 10, 10)
+        def request = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
 
         def author = getDummyUser()
 
@@ -50,7 +50,7 @@ class AddComponentInteractorImplTest extends Specification {
 
         def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
 
-        def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", moduleId, "Villager", LocalDateTime.now(), workspaceId, 10, 10)
+        def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", moduleId, "Villager", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "Villager", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
@@ -90,7 +90,7 @@ class AddComponentInteractorImplTest extends Specification {
         given:
         def moduleId = "ef5ea1ef-11a9-4f74-b95f-9944cc7390a1"
         def workspaceId = "038fed80-5565-4813-baa5-ae7ed6684159"
-        def request = new ComponentRequest("Application", 10, 10)
+        def request = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
 
         def author = getDummyUser()
 
@@ -99,7 +99,7 @@ class AddComponentInteractorImplTest extends Specification {
 
         def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
 
-        def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10)
+        def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
@@ -126,7 +126,7 @@ class AddComponentInteractorImplTest extends Specification {
         given:
         def moduleId = "ef5ea1ef-11a9-4f74-b95f-9944cc7390a1"
         def workspaceId = "038fed80-5565-4813-baa5-ae7ed6684159"
-        def request = new ComponentRequest("Application", 10, 10)
+        def request = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
 
         when:
         addComponentInteractor.execute(moduleId, workspaceId, request)

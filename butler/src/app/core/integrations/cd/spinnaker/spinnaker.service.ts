@@ -77,7 +77,10 @@ export class SpinnakerService implements ICdServiceStrategy {
       githubAccount: cdConfiguration.gitAccount,
       helmRepository: configuration.helmRepository,
       circleId: configuration.callbackCircleId,
-      url: cdConfiguration.url
+      url: cdConfiguration.url,
+      hosts: [],
+      hostValue: configuration.hostValue,
+      gatewayName: configuration.gatewayName
     }
   }
 

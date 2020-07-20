@@ -45,14 +45,14 @@ export class CreateModuleDeploymentDto {
     return new ModuleDeploymentEntity(
       this.moduleId,
       this.helmRepository,
-      this.components.map(component => component.toComponentModuleEntity())
+      this.components.map(component => component.toComponentModuleEntity()),
     )
   }
 
   public toModuleEntity(): ModuleEntity {
     return new ModuleEntity(
       this.moduleId,
-      this.components.map(component => component.toComponentEntity())
+      this.components.map(component => component.toComponentEntity()),
     )
   }
 

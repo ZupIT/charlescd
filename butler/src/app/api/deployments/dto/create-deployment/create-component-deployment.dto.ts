@@ -15,7 +15,7 @@
  */
 
 import { ComponentDeploymentEntity } from '../../entity'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, ValidateIf } from 'class-validator'
 import { ComponentEntity } from '../../../components/entity'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -37,7 +37,16 @@ export class CreateComponentDeploymentDto {
   @IsNotEmpty()
   public readonly buildImageTag!: string
 
+  @ApiProperty()
+  @ValidateIf((obj, value) => { return value })
+  public readonly hostValue!: string
+
+  @ApiProperty()
+  @ValidateIf((obj, value) => { return value })
+  public readonly gatewayName!: string
+
   public toComponentModuleEntity(): ComponentDeploymentEntity {
+    
     return new ComponentDeploymentEntity(
       this.componentId,
       this.componentName,
@@ -47,6 +56,11 @@ export class CreateComponentDeploymentDto {
   }
 
   public toComponentEntity(): ComponentEntity {
-    return new ComponentEntity(this.componentId)
+    console.log("HOST", this.hostValue, this.gatewayName)
+    return new ComponentEntity(
+      this.componentId, 
+      this.hostValue || '', 
+      this.gatewayName || ''
+    )
   }
 }
