@@ -34,7 +34,7 @@ import {
   QueuedDeploymentsRepository,
   QueuedIstioDeploymentsRepository
 } from '../repository'
-import { PipelineDeploymentsService } from './index'
+import { PipelineDeploymentsService } from './'
 
 @Injectable()
 export class PipelineQueuesService {

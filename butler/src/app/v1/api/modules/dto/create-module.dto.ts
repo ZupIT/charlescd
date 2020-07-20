@@ -20,7 +20,7 @@ import {
   IsNotEmpty,
   ValidateNested
 } from 'class-validator'
-import { CreateComponentDto } from './index'
+import { CreateComponentDto } from './'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 

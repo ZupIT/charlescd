@@ -17,10 +17,10 @@
 import {
   CreateCircleDeploymentDto,
   CreateModuleDeploymentDto
-} from '../index'
+} from '../'
 import {
   CreateDeploymentRequestDto
-} from './index'
+} from './'
 import { DeploymentEntity } from '../../entity'
 import {
   IsDefined,
