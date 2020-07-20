@@ -19,6 +19,7 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import { CircleRelease } from '../interfaces';
 import ReleaseComponentsTable from './ReleaseComponentsTable';
+import { dateTimeFormatter } from 'core/utils/date';
 
 type Props = {
   release: CircleRelease;
@@ -28,16 +29,21 @@ const CircleReleasesTable = ({ release }: Props) => {
   const [activeRow, setActiveRow] = useState(false);
 
   return (
-    <Styled.ReleaseRow key={release.id}>
-      <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
+    <Styled.ReleaseRow>
+      <Styled.TableRow
+        onClick={() => setActiveRow(!activeRow)}
+        data-testid={`release-table-row-${release.id}`}
+      >
         <Styled.TableColumn>
           <Text.h5 color="light">{release.name}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.deployed}</Text.h5>
+          <Text.h5 color="light">{dateTimeFormatter(release.deployed)}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.undeployed}</Text.h5>
+          <Text.h5 color="light">
+            {dateTimeFormatter(release.undeployed)}
+          </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">{release.lastEditor}</Text.h5>
