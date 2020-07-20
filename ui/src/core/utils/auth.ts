@@ -25,6 +25,7 @@ import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
 import { getCookieOptions } from './domain';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 
 type AccessToken = {
   id?: string;
@@ -96,4 +97,10 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 export const logout = () => {
   clearSession();
   window.location.href = routes.login;
+};
+
+export const checkStatus = (status: number) => {
+  if (status === HTTP_STATUS.unauthorized) {
+    logout();
+  }
 };
