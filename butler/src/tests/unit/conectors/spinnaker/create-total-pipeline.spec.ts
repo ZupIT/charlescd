@@ -19,7 +19,7 @@ import TotalPipeline from '../../../../app/v1/core/integrations/cd/spinnaker/con
 import expectedTotalPipeline from './fixtures/expected-total-pipeline'
 import { ISpinnakerPipelineConfiguration } from '../../../../app/v1/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
-import istioPipeline from './fixtures/expected-istio-pipeline'
+import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
@@ -83,4 +83,27 @@ it('builds istio pipeline', () => {
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
   expect(result).toEqual(istioPipeline)
+})
+
+it('build istio pipeline by hostValue and gatewayName', () => {
+  const contract: ISpinnakerPipelineConfiguration = {
+    account: 'account',
+    pipelineName: 'pipeline-name',
+    applicationName: 'application-name',
+    appName: 'app-name',
+    appNamespace: 'app-namespace',
+    webhookUri: 'webhook.uri',
+    versions: [{ version: 'v1', versionUrl: '/v1' }],
+    unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
+    circles: [{ destination: { version: 'v3' } }, { destination: { version: 'v4' } }],
+    githubAccount: 'github-acc',
+    helmRepository: 'https://api.github.com/repos/org/repo/contents/',
+    circleId: 'circle-id',
+    url: 'http://spinnaker.url.com',
+    hostValue: 'hostValue',
+    gatewayName: 'gatewayName'
+  }
+  const totalPipeline = new TotalPipeline(contract)
+  const result = totalPipeline.buildIstioPipeline()
+  expect(result).toEqual(istioPipelineHostValueAndGateway)
 })
