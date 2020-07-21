@@ -44,7 +44,7 @@ jobs:
       working-directory: ./butler
     - run: npm run lint
       working-directory: ./butler
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v1.0.7
       with:
         fail_ci_if_error: true
         file: ./butler/coverage/coverage-final.json
