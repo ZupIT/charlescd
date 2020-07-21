@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export enum HTTP_STATUS {
-  unauthorized = 401,
-  forbidden = 403
+export enum WORKSPACE_STATUS {
+  COMPLETE = 'COMPLETE',
+  INCOMPLETE = 'INCOMPLETE'
 }
