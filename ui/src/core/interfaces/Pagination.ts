@@ -19,5 +19,5 @@ export interface Pagination<T> {
   page: number;
   size: number;
   totalPages: number;
-  isLast: boolean;
+  last: boolean;
 }

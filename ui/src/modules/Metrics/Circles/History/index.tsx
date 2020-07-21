@@ -30,7 +30,7 @@ const HistoryComponent = () => {
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
   const historyResponse = response?.page?.content;
-  const hasMoreData = !response?.page?.isLast;
+  const hasMoreData = !response?.page?.last;
 
   useEffect(() => {
     if (historyResponse) {

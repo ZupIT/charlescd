@@ -83,7 +83,7 @@ fileExist(configPath);
 
 if (ENVIRONMENT) {
   const variables = sourceFile();
-  variables.map(line => createEnvValueFromOS(line, configPath));
+  variables.map(line => line && createEnvValueFromOS(line, configPath));
   fs.appendFileSync(configPath, `}`);
 } else {
   readFile(envPath, configPath);
