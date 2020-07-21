@@ -24,7 +24,6 @@ import ComponentForm from './ComponentForm';
 
 interface Props {
   fieldArray: {
-    prepend: (value: Partial<ArrayField> | Partial<ArrayField>[]) => void;
     append: (value: Partial<ArrayField> | Partial<ArrayField>[]) => void;
     remove: (index?: number | number[] | undefined) => void;
     fields: Partial<ArrayField>;
@@ -50,6 +49,7 @@ const Components = ({ fieldArray }: Props) => {
       ))}
       <Styled.Components.Button
         size="EXTRA_SMALL"
+        id="add-component"
         onClick={() => append(component)}
       >
         <Icon name="add" size="15px" />
