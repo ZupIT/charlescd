@@ -15,8 +15,8 @@
  */
 
 import { Test } from '@nestjs/testing'
-import { ReceiveDeploymentCallbackUsecase } from '../../../app/api/notifications/use-cases'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ReceiveDeploymentCallbackUsecase } from '../../../app/v1/api/notifications/use-cases'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   ConsoleLoggerServiceStub,
   MooveServiceStub,
@@ -24,12 +24,12 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { StatusManagementService } from '../../../app/core/services/deployments'
+import { MooveService } from '../../../app/v1/core/integrations/moove'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
 import {
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import {
   ComponentDeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
@@ -38,16 +38,16 @@ import {
 import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository
-} from '../../../app/api/deployments/repository'
-import { FinishDeploymentDto } from '../../../app/api/notifications/dto'
+} from '../../../app/v1/api/deployments/repository'
+import { FinishDeploymentDto } from '../../../app/v1/api/notifications/dto'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   CircleDeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+} from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 
 describe('ReceiveDeploymentCallbackUsecase', () => {
 
