@@ -25,6 +25,10 @@ const Button = styled.button<ButtonProps>`
   border: none;
   background: ${({ backgroundColor, theme }) =>
     theme.button.rounded.background[backgroundColor]};
+<<<<<<< HEAD
+=======
+  height: 50px;
+>>>>>>> c28bd678b5ac7ebad946ed1da7dd8912c3466be3
   border-radius: ${({ size }) => (size === 'default' ? '30px' : '15px')};
   height: ${({ size }) => (size === 'default' ? '50px' : '30px')};
   display: flex;

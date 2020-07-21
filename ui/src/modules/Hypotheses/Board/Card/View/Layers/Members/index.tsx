@@ -58,6 +58,7 @@ const Members = ({ cardId, members, onFinish }: Props) => {
         <Text.h2 color="light">Members</Text.h2>
         <Styled.ButtonAdd
           name="plus-circle"
+          icon="plus-circle"
           color="dark"
           isLoading={loadingUsers}
           onClick={() => getAllUsers()}

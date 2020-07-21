@@ -9,7 +9,11 @@ export interface Props {
   isLoading?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   className?: string;
+<<<<<<< HEAD
   name?: string;
+=======
+  name: string;
+>>>>>>> c28bd678b5ac7ebad946ed1da7dd8912c3466be3
   icon?: string;
   color?: PrimaryColors;
   isDisabled?: boolean;

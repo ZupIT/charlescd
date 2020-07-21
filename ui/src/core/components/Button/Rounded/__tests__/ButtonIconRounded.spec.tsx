@@ -25,16 +25,53 @@ test('render ButtonIconRounded default component', async () => {
     icon: 'add',
     children: 'button'
   };
+<<<<<<< HEAD
   const { getByTestId, debug } = render(
+=======
+  const { getByTestId } = render(
+>>>>>>> c28bd678b5ac7ebad946ed1da7dd8912c3466be3
     <ButtonIconRounded onClick={click} name={props.name} icon={props.name}>
       {props.children}
     </ButtonIconRounded>
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
   const IconAdd = getByTestId(`icon-${props.name}`);
+<<<<<<< HEAD
   expect(Button && IconAdd).toBeInTheDocument();
   fireEvent.click(Button);
   wait(() => expect(click).toBeCalled());
+=======
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
+  fireEvent.click(Button);
+  await wait(() => expect(click).toBeCalled());
+});
+
+test('render ButtonIconRounded default component without default props', async () => {
+  const click = jest.fn();
+  const props = {
+    name: 'add',
+    icon: 'add',
+    children: 'button'
+  };
+  const { getByTestId } = render(
+    <ButtonIconRounded
+      onClick={click}
+      name={props.name}
+      icon={props.name}
+      size="small"
+      backgroundColor="primary"
+    >
+      {props.children}
+    </ButtonIconRounded>
+  );
+  const Button = getByTestId(`button-iconRounded-${props.name}`);
+  const IconAdd = getByTestId(`icon-${props.name}`);
+  await wait(() => expect(Button).toBeInTheDocument());
+  await wait(() => expect(IconAdd).toBeInTheDocument());
+  fireEvent.click(Button);
+  await wait(() => expect(click).toBeCalled());
+>>>>>>> c28bd678b5ac7ebad946ed1da7dd8912c3466be3
 });
 
 test('render ButtonIconRounded on loading mode', async () => {
@@ -56,5 +93,10 @@ test('render ButtonIconRounded on loading mode', async () => {
   );
   const Button = getByTestId(`button-iconRounded-${props.name}`);
   const IconLoading = getByTestId('icon-loading');
+<<<<<<< HEAD
   expect(Button && IconLoading).toBeInTheDocument();
+=======
+  expect(Button).toBeInTheDocument();
+  expect(IconLoading).toBeInTheDocument();
+>>>>>>> c28bd678b5ac7ebad946ed1da7dd8912c3466be3
 });
