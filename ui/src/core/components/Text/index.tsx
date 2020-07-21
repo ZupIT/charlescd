@@ -27,6 +27,7 @@ interface Props {
   children: ReactNode;
   className?: string;
   title?: string;
+  onClick?: () => void;
 }
 
 const Text = (props: Props) => {
@@ -37,13 +38,15 @@ const Text = (props: Props) => {
     fontStyle = 'normal',
     fontSize,
     children,
-    className
+    className,
+    onClick
   } = props;
 
   return (
     <Styled.Text
       {...props}
       color={color}
+      onClick={onClick}
       align={align}
       weight={weight}
       fontSize={fontSize}
