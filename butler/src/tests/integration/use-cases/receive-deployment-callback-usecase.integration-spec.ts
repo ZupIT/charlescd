@@ -408,7 +408,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       )
 
     const deploymentDB = componentDeploymentEntity.moduleDeployment.deployment
-
     expect(deploymentDB.status).toBe(DeploymentStatusEnum.CREATED)
     console.log(moduleDeploymentEntities)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)

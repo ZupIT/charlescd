@@ -71,7 +71,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-
   })
 
   it('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
@@ -216,7 +215,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
-      { relations: ['modules', 'modules.components'],
+      { relations: ['modules', 'modules.components']
       },
     )
 
@@ -349,6 +348,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       'component-name',
       'RUNNING'
     )
+
     await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {

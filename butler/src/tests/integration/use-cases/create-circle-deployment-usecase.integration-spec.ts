@@ -153,7 +153,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           }
         ]
       }],
-
     })
   })
 
@@ -207,15 +206,13 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
-      { relations: ['modules', 'modules.components'],
-      }
+      { relations: ['modules', 'modules.components'] }
     )
     if (!deployment) {
 
       fail('Deployment entity was not saved')
     }
     expect(componentsUpdated.length).toBe(2)
-
     expect(componentsUpdated[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(componentsUpdated[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
     expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
