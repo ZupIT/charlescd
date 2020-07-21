@@ -148,14 +148,17 @@ export class OctopipeService implements ICdServiceStrategy {
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
       [configuration.componentName],
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue,
+      configuration.gatewayName,
     )
 
     payload.istio.destinationRules = createDestinationRules(
       configuration.componentName,
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue
     )
 
     return payload
@@ -184,14 +187,17 @@ export class OctopipeService implements ICdServiceStrategy {
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
       [configuration.componentName],
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue,
+      configuration.gatewayName,
     )
 
     payload.istio.destinationRules = createDestinationRules(
       configuration.componentName,
       deploymentConfiguration.namespace,
       configuration.pipelineCirclesOptions.pipelineCircles,
-      configuration.pipelineCirclesOptions.pipelineVersions
+      configuration.pipelineCirclesOptions.pipelineVersions,
+      configuration.hostValue
     )
     return payload
   }
@@ -239,11 +245,13 @@ export class OctopipeService implements ICdServiceStrategy {
     appNamespace: string,
     circles: IPipelineCircle[],
     hosts: string[],
-    versions: IOctopipeVersion[]
+    versions: IOctopipeVersion[],
+    hostValue: string | undefined,
+    gatewayName: string | undefined
   ): IBaseVirtualService | IEmptyVirtualService {
 
     return versions.length === 0
       ? createEmptyVirtualService(appName, appNamespace)
-      : createVirtualService(appName, appNamespace, circles, hosts)
+      : createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
   }
 }
