@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReadDeploymentDto } from '../../../app/api/deployments/dto/read-deployment'
+import { ReadDeploymentDto } from '../../../app/v1/api/deployments/dto/read-deployment'
 
 export class CreateCircleDeploymentRequestUsecaseStub {
   public execute(): Promise<ReadDeploymentDto> {

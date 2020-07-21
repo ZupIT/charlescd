@@ -19,16 +19,16 @@ import {
   CreateCdConfigurationUsecaseStub, DeleteCdConfigurationUsecaseStub,
   GetCdConfigurationUsecaseStub
 } from '../../stubs/use-cases'
-import { ConfigurationsController } from '../../../app/api/configurations/controller'
+import { ConfigurationsController } from '../../../app/v1/api/configurations/controller'
 import {
   CreateCdConfigurationUsecase, DeleteCdConfigurationUsecase,
   GetCdConfigurationsUsecase
-} from '../../../app/api/configurations/use-cases'
+} from '../../../app/v1/api/configurations/use-cases'
 import {
   CreateCdConfigurationDto,
   ReadCdConfigurationDto
-} from '../../../app/api/configurations/dto'
-import { CdTypeEnum } from '../../../app/api/configurations/enums'
+} from '../../../app/v1/api/configurations/dto'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('ConfigurationsController', () => {
 
