@@ -34,7 +34,7 @@ import {  of } from 'rxjs'
 import { PipelineErrorHandlerService } from '../../../app/v1/api/deployments/services'
 import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/v1/api/deployments/repository/undeployments.repository'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 

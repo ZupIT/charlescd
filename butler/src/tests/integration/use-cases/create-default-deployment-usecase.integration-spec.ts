@@ -30,7 +30,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 

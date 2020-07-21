@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { NotificationsController } from '../../../app/api/notifications/controller'
+import { NotificationsController } from '../../../app/v1/api/notifications/controller'
 import {
   ReceiveDeploymentCallbackUsecase,
   ReceiveIstioDeploymentCallbackUsecase,
   ReceiveUndeploymentCallbackUsecase
-} from '../../../app/api/notifications/use-cases'
+} from '../../../app/v1/api/notifications/use-cases'
 import { ReceiveDeploymentCallbackUseCaseStub } from '../../stubs/use-cases/receive-deployment-callback-usecase.stub'
-import { FinishDeploymentDto } from '../../../app/api/notifications/dto'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
+import { FinishDeploymentDto } from '../../../app/v1/api/notifications/dto'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('DeploymentsController', () => {
 
