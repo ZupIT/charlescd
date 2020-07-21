@@ -16,21 +16,21 @@
 
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
-import { CreateUndeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateUndeploymentDto } from '../../../app/v1/api/deployments/dto'
 import {
   ComponentDeploymentEntity, DeploymentEntity,
   ModuleDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity, CircleDeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+} from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository
-} from '../../../app/api/deployments/repository'
-import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
-import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import { StatusManagementService } from '../../../app/core/services/deployments'
+} from '../../../app/v1/api/deployments/repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/v1/api/deployments/services'
+import { CreateUndeploymentRequestUsecase } from '../../../app/v1/api/deployments/use-cases'
+import { MooveService } from '../../../app/v1/core/integrations/moove'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
 import {
   ComponentDeploymentsRepositoryStub,
   ComponentsRepositoryStub,
@@ -44,7 +44,7 @@ import {
   PipelineDeploymentsServiceStub, PipelineErrorHandlerServiceStub,
   PipelineQueuesServiceStub, StatusManagementServiceStub
 } from '../../stubs/services'
-import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
+import { QueuedDeploymentsConstraints } from '../../../app/v1/core/integrations/databases/constraints'
 
 describe('CreateUndeploymentRequestUsecase', () => {
 

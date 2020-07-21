@@ -1,8 +1,8 @@
 import { ComponentsRepositoryStub, ModulesRepositoryStub } from '../../stubs/repository'
 import { Repository } from 'typeorm'
-import { ModuleEntity } from '../../../app/api/modules/entity'
-import {  ModulesService } from '../../../app/api/deployments/services'
-import { ComponentEntity } from '../../../app/api/components/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import {  ModulesService } from '../../../app/v1/api/deployments/services'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
 
 
 describe('Module service spec', () => {

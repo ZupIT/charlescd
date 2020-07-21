@@ -20,21 +20,21 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity } from '../../../app/api/deployments/entity'
+import { DeploymentEntity, ModuleUndeploymentEntity, UndeploymentEntity} from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
-import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
+import { QueuedDeploymentsRepository} from '../../../app/v1/api/deployments/repository'
+import { IoCTokensConstants } from '../../../app/v1/core/constants/ioc'
+import IEnvConfiguration from '../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import {
   QueuedPipelineStatusEnum,
   UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
-import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+} from '../../../app/v1/api/deployments/enums'
+import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import {  of } from 'rxjs'
-import { PipelineErrorHandlerService } from '../../../app/api/deployments/services'
+import { PipelineErrorHandlerService } from '../../../app/v1/api/deployments/services'
 
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
-import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
+import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
+import { UndeploymentsRepository } from '../../../app/v1/api/deployments/repository/undeployments.repository'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
