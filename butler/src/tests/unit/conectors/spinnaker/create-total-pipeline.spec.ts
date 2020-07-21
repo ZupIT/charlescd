@@ -15,9 +15,9 @@
  */
 
 import 'jest'
-import TotalPipeline from '../../../../app/core/integrations/cd/spinnaker/connector'
+import TotalPipeline from '../../../../app/v1/core/integrations/cd/spinnaker/connector'
 import expectedTotalPipeline from './fixtures/expected-total-pipeline'
-import { ISpinnakerPipelineConfiguration } from '../../../../app/core/integrations/cd/spinnaker/interfaces'
+import { ISpinnakerPipelineConfiguration } from '../../../../app/v1/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 import istioPipeline from './fixtures/expected-istio-pipeline'
 
