@@ -10,7 +10,7 @@ import javax.inject.Named
 class FindCirclesHistoryInteractorImpl(private val circleRepository: CircleRepository) : FindCirclesHistoryInteractor {
     override fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): CircleHistoryResponse {
         val historyItems = circleRepository.findCirclesHistory(workspaceId, name, pageRequest)
-        val summaryItems = circleRepository.countNotDefaultByWorkspaceGroupedByStatus(workspaceId, name)
+        val summaryItems = circleRepository.countByWorkspaceGroupedByStatus(workspaceId, name)
 
         return CircleHistoryResponse.from(summaryItems, historyItems)
     }

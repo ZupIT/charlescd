@@ -38,7 +38,7 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
 
         then:
-        1 * circleRepository.countNotDefaultByWorkspaceGroupedByStatus(workspaceId) >> [inactiveCircleMetric]
+        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId) >> [inactiveCircleMetric]
         1 * circleRepository.getNotDefaultCirclesAverageLifeTime(workspaceId) >> Duration.ofSeconds(30000)
         0 * _
 
@@ -55,7 +55,7 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
 
         then:
-        1 * circleRepository.countNotDefaultByWorkspaceGroupedByStatus(workspaceId) >> [activeCircleMetric]
+        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId) >> [activeCircleMetric]
         1 * circleRepository.getNotDefaultCirclesAverageLifeTime(workspaceId) >> Duration.ofSeconds(30000)
         0 * _
 
@@ -73,7 +73,7 @@ class RetrieveCircleMetricsInteractorImplUnitTest extends Specification {
         def result = retrieveCirclesMetricsInteractorImpl.execute(workspaceId)
 
         then:
-        1 * circleRepository.countNotDefaultByWorkspaceGroupedByStatus(workspaceId) >> [activeCircleMetric, inactiveCircleMetric]
+        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId) >> [activeCircleMetric, inactiveCircleMetric]
         1 * circleRepository.getNotDefaultCirclesAverageLifeTime(workspaceId) >> Duration.ofSeconds(30000)
         0 * _
 
