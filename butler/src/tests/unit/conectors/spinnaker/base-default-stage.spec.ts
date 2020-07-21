@@ -15,11 +15,11 @@
  */
 
 import 'jest'
-import baseStage from '../../../../app/core/integrations/cd/spinnaker/connector/utils/base-default-stage'
+import baseStage from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/base-default-stage'
 import expectedEmpty from './fixtures/expected-stage-empty'
 import expectedSingle from './fixtures/expected-single-expression'
 import expectedMultiple from './fixtures/expected-multiple-expressions'
-import { ISpinnakerBaseService } from '../../../../app/core/integrations/cd/spinnaker/connector/utils/manifests/base-service'
+import { ISpinnakerBaseService } from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-service'
 
 const manifest: ISpinnakerBaseService = {
   apiVersion: 'v1',

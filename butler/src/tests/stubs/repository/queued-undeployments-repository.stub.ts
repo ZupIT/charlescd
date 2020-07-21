@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { QueuedUndeploymentEntity } from '../../../app/api/deployments/entity'
+import { QueuedUndeploymentEntity } from '../../../app/v1/api/deployments/entity'
 
 export class QueuedUndeploymentsRepositoryStub {
 
