@@ -36,7 +36,7 @@ export const dateFrom = (date: string) => {
 };
 
 export const humanizeDateFromSeconds = (timeInSeconds: number) => {
-  if(!timeInSeconds) {
+  if (!timeInSeconds) {
     return;
   }
 
@@ -49,7 +49,7 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   }
   if (minutes) {
     return `${minutes}:${seconds}m`;
-  }  
+  }
 
   return `${seconds}s`;
 };
