@@ -1,8 +1,8 @@
 import 'jest'
-import { DeploymentUniquenessPipe } from '../../../app/api/deployments/pipes'
+import { DeploymentUniquenessPipe } from '../../../app/v1/api/deployments/pipes'
 import { Repository } from 'typeorm'
-import { DeploymentEntity, ComponentDeploymentEntity, ModuleDeploymentEntity, CircleDeploymentEntity } from '../../../app/api/deployments/entity'
-import { CreateDeploymentRequestDto } from '../../../app/api/deployments/dto'
+import { DeploymentEntity, ComponentDeploymentEntity, ModuleDeploymentEntity, CircleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { CreateDeploymentRequestDto } from '../../../app/v1/api/deployments/dto'
 
 describe('uniqueness pipe', () => {
   it('should return the same request passed', async() => {

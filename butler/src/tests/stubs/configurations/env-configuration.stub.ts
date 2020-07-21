@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import IEnvConfiguration from '../../../app/core/integrations/configuration/interfaces/env-configuration.interface'
+import IEnvConfiguration from '../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
 
 export const EnvConfigurationStub: IEnvConfiguration = {
 
