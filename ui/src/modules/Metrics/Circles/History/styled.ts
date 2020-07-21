@@ -47,18 +47,25 @@ const CircleRow = styled.div`
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.circleRow.background};
   margin-bottom: 5px;
+  border-radius: 4px;
+
+  :hover {
+    opacity: 0.7;
+  }
 `;
 
 const ReleaseRow = styled.div`
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.releaseRow.background};
   margin-bottom: 5px;
+  border-radius: 4px;
 `;
 
 const ComponentsRow = styled.div`
   ${defaultTableRow}
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.componentRow.background};
+  border-radius: 4px;
 `;
 
 const ReleasesWrapper = styled.div`
