@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { GetComponentQueueUseCase } from '../../../app/api/components/use-cases/get-component-queue.usecase'
-import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { GetComponentQueueUseCase } from '../../../app/v1/api/components/use-cases/get-component-queue.usecase'
+import { ComponentDeploymentEntity, QueuedDeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { ComponentDeploymentsRepository, QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
 import { ComponentDeploymentsRepositoryStub, QueuedDeploymentsRepositoryStub } from '../../stubs/repository'
 
 describe('execute', () => {
