@@ -50,11 +50,6 @@ export const useCircles = (): CirclesMetrics => {
   };
 };
 
-interface CirclesHistory extends FetchProps {
-  findCirclesHistory: Function;
-  response: CirclesMetricData;
-}
-
 export const useCirclesHistory = () => {
   const [circlesData, getCircleData] = useFetch<CirclesHistoryResponse>(
     findAllCirclesHistory
@@ -83,9 +78,9 @@ export const useCirclesReleases = () => {
   const { response, loading } = releasesData;
 
   const getCircleReleases = useCallback(
-    (circleId: string, params: URLParams) => {
+    (params: URLParams) => {
       const urlParams = buildParams(params);
-      getCircleData(circleId, urlParams);
+      getCircleData(urlParams);
     },
     [getCircleData]
   );
