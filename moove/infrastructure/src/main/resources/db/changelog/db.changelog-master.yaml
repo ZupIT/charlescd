@@ -247,3 +247,5 @@ databaseChangeLog:
       file: db/changelog/includes/20200717170000_alter_table_component_snapshot_add_host_value_and_gateway_name.yaml
   - include:
       file: db/changelog/includes/20200620103400_update_admin_email.yaml
+  - include:
+      file: db/changelog/includes/20200713113020_change_tag_name_column_length.yaml
