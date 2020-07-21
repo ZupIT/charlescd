@@ -25,7 +25,9 @@ data class ComponentSnapshot(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val artifact: ArtifactSnapshot? = null,
     val workspaceId: String,
-    val moduleSnapshotId: String
+    val moduleSnapshotId: String,
+    val hostValue: String?,
+    val gatewayName: String?
 ) {
     companion object {
         fun from(id: String, moduleSnapshotId: String, component: Component) = ComponentSnapshot(
@@ -34,7 +36,9 @@ data class ComponentSnapshot(
             name = component.name,
             createdAt = component.createdAt,
             workspaceId = component.workspaceId,
-            moduleSnapshotId = moduleSnapshotId
+            moduleSnapshotId = moduleSnapshotId,
+            hostValue = component.hostValue,
+            gatewayName = component.gatewayName
         )
     }
 }

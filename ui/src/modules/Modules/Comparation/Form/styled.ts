@@ -31,7 +31,7 @@ const Title = styled(Text.h2)`
 `;
 
 const Subtitle = styled(Text.h5)`
-  margin: 20px 0;
+  margin: 10px 0px;
 `;
 
 const Content = styled.div`
@@ -72,10 +72,16 @@ const Icon = styled(IconComponent)`
   margin-bottom: 30px;
 `;
 
+const ComponentsColumnWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const ComponentsWrapper = styled.div`
   display: flex;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+  flex-direction: row;
 `;
 
 const ComponentInput = styled(FormComponent.Input)`
@@ -101,11 +107,34 @@ const ComponentButton = styled(ButtonComponent.Default)`
   color: ${({ theme }) => theme.button.default.outline.color};
   box-sizing: content-box;
   background: none;
+  margin-top: 10px;
   margin-bottom: 40px;
 
   > i {
     margin-right: 5px;
   }
+`;
+
+const MoreOptionsButton = styled(ButtonComponent.Default)`
+  display: flex;
+  align-items: center;
+  border: 2px solid ${({ theme }) => theme.button.default.outline.border};
+  color: ${({ theme }) => theme.button.default.outline.color};
+  box-sizing: content-box;
+  background: none;
+  margin-bottom: 20px;
+
+  > i {
+    margin-right: 5px;
+  }
+`;
+
+interface MoreOptions {
+  showMoreOptions: boolean;
+}
+
+const AdvancedOptionWrapper = styled('div')<MoreOptions>`
+  display: ${({ showMoreOptions }) => (showMoreOptions ? 'initial' : 'none')};
 `;
 
 export default {
@@ -121,9 +150,12 @@ export default {
   Button,
   Components: {
     Wrapper: ComponentsWrapper,
+    ColumnWrapper: ComponentsColumnWrapper,
     Input: ComponentInput,
     Number: ComponentNumber,
     Button: ComponentButton,
-    Trash: ComponentTrash
+    MoreOptionsButton: MoreOptionsButton,
+    Trash: ComponentTrash,
+    AdvancedOptionWrapper: AdvancedOptionWrapper
   }
 };
