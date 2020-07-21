@@ -335,11 +335,11 @@ class JdbcCircleRepository(
         return statement
     }
 
-    override fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount> {
-        return this.countByWorkspaceGroupedByStatus(workspaceId, null)
+    override fun countNotDefaultByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount> {
+        return this.countNotDefaultByWorkspaceGroupedByStatus(workspaceId, null)
     }
 
-    override fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount> {
+    override fun countNotDefaultByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount> {
         val query = this.createCountCircleWithStatusByWorkspaceQuery()
         val parameters = mutableListOf(workspaceId, workspaceId)
 
@@ -378,15 +378,17 @@ class JdbcCircleRepository(
                                 )
                             OR deployments.id IS NULL
                         )
+                        AND NOT circles.default_circle
             """
         )
     }
 
-    override fun getCirclesAverageLifeTime(workspaceId: String): Duration {
+    override fun getNotDefaultCirclesAverageLifeTime(workspaceId: String): Duration {
         val query = """
                 SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', AVG((NOW() - circles.created_at)))) AS average_life_time 
                 FROM circles circles
-                WHERE circles.workspace_id = ? 
+                WHERE circles.workspace_id = ?
+                    AND NOT circles.default_circle
         """
 
         return this.jdbcTemplate.queryForObject(
