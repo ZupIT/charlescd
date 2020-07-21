@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReadDeploymentDto } from '../../../app/api/deployments/dto'
+import { ReadDeploymentDto } from '../../../app/v1/api/deployments/dto'
 
 export class DeploymentsServiceStub {
 

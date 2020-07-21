@@ -15,17 +15,17 @@
  */
 
 import { Test } from '@nestjs/testing'
-import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
+import { SpinnakerService } from '../../../app/v1/core/integrations/cd/spinnaker'
 import {
   ConsoleLoggerServiceStub,
   HttpServiceStub,
   SpinnakerApiServiceStub
 } from '../../stubs/services'
 import { EnvConfigurationStub } from '../../stubs/configurations'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { AxiosResponse } from 'axios'
 import { HttpService } from '@nestjs/common'
-import { IPipelineOptions } from '../../../app/api/components/interfaces'
+import { IPipelineOptions } from '../../../app/v1/api/components/interfaces'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
@@ -34,13 +34,13 @@ import {
   ModuleUndeploymentEntity,
   QueuedUndeploymentEntity,
   UndeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { SpinnakerApiService } from '../../../app/core/integrations/cd/spinnaker/spinnaker-api.service'
+} from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { IoCTokensConstants } from '../../../app/v1/core/constants/ioc'
+import { SpinnakerApiService } from '../../../app/v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { of } from 'rxjs'
-import { IConnectorConfiguration } from '../../../app/core/integrations/cd/interfaces'
-import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
+import { IConnectorConfiguration } from '../../../app/v1/core/integrations/cd/interfaces'
+import { ICdConfigurationData } from '../../../app/v1/api/configurations/interfaces'
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
