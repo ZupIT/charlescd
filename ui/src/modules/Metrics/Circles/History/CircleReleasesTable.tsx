@@ -77,8 +77,8 @@ const CircleReleasesTable = ({ circleId }: Props) => {
         loader={<Loader.Releases />}
         height={300}
       >
-        {releases?.map((release, index) => (
-          <ReleaseRow release={release} key={index} />
+        {releases?.map(release => (
+          <ReleaseRow release={release} key={release.id} />
         ))}
       </InfiniteScroll>
     </>

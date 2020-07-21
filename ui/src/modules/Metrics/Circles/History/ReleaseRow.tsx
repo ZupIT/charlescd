@@ -35,7 +35,7 @@ const CircleReleasesTable = ({ release }: Props) => {
         data-testid={`release-table-row-${release.id}`}
       >
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.name}</Text.h5>
+          <Text.h5 color="light">{release.tag}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">{dateTimeFormatter(release.deployed)}</Text.h5>
@@ -46,7 +46,7 @@ const CircleReleasesTable = ({ release }: Props) => {
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.lastEditor}</Text.h5>
+          <Text.h5 color="light">{release.authorName}</Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
       {activeRow && (

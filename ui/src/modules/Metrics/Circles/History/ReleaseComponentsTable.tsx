@@ -37,13 +37,13 @@ const ReleaseComponentsTable = ({ components }: Props) => {
           <Text.h5 color="dark">Version</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
-      {components.map(component => (
-        <Styled.ComponentsRow key={component.id}>
+      {components.map((component, index) => (
+        <Styled.ComponentsRow key={index}>
           <Styled.TableColumn width={1}>
             <Text.h5 color="light">{component.moduleName}</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.componentName}</Text.h5>
+            <Text.h5 color="light">{component.name}</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn width={1}>
             <Text.h5 color="light">{component.version}</Text.h5>

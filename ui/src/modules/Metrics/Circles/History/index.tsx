@@ -82,8 +82,8 @@ const HistoryComponent = () => {
             loader={<Loader.History />}
             height={500}
           >
-            {circles?.map((circle: CircleHistory, index: number) => (
-              <CircleRow circle={circle} key={index} />
+            {circles?.map(circle => (
+              <CircleRow circle={circle} key={circle.id} />
             ))}
           </InfiniteScroll>
         </Styled.CircleRowWrapper>
