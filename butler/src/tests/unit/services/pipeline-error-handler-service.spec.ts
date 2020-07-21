@@ -18,7 +18,7 @@ import { Test } from '@nestjs/testing'
 import {
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import {
   ComponentsRepositoryStub,
   DeploymentsRepositoryStub,
@@ -31,7 +31,7 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
@@ -39,19 +39,19 @@ import {
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   UndeploymentEntity
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 
 import { Repository } from 'typeorm'
-import { StatusManagementService } from '../../../app/core/services/deployments'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { QueuedDeploymentsRepository } from '../../../app/api/deployments/repository'
-import { ComponentEntity } from '../../../app/api/components/entity'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
+import { MooveService } from '../../../app/v1/core/integrations/moove'
+import { QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import {
   DeploymentStatusEnum,
   QueuedPipelineStatusEnum,
   UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
-import { IPipelineOptions } from '../../../app/api/components/interfaces'
+} from '../../../app/v1/api/deployments/enums'
+import { IPipelineOptions } from '../../../app/v1/api/components/interfaces'
 
 describe('Pipeline Error Handler Service specs', () => {
 

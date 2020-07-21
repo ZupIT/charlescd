@@ -16,8 +16,8 @@
 
 import {
     CdConfigurationEntity
-} from '../../../app/api/configurations/entity'
-import { ICdConfigurationData } from '../../../app/api/configurations/interfaces'
+} from '../../../app/v1/api/configurations/entity'
+import { ICdConfigurationData } from '../../../app/v1/api/configurations/interfaces'
 import {DeleteResult} from 'typeorm'
 
 export class CdConfigurationsRepositoryStub {
