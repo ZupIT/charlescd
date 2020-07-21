@@ -116,7 +116,7 @@ class BuildCallbackInteractorImplTest extends Specification {
         notThrown()
     }
 
-    def "when artifact snapshot already exists should throw an exception"() {
+    def "when artifact snapshot already exists should not throw an exception"() {
         given:
         def buildId = "5ac7c34a-33dc-4bde-8161-e84d829561bb"
         def buildCallbackComponentPart = new BuildCallbackRequest.ComponentPart("Component snapshot name", "v-1.0.0")
@@ -155,9 +155,7 @@ class BuildCallbackInteractorImplTest extends Specification {
             throw new ConstraintViolationException("Unique constraint violation", null, "const_unique_artifact")
         }
 
-        def exception = thrown(BusinessException.class)
-
-        assert exception.errorCode == MooveErrorCode.ARTIFACT_ALREADY_CREATED
+        notThrown()
     }
 
     private Build getDummyBuild(String workspaceId, User author, BuildStatusEnum buildStatusEnum, DeploymentStatusEnum deploymentStatusEnum) {

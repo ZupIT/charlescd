@@ -22,16 +22,17 @@ import io.charlescd.moove.application.build.request.BuildCallbackRequest
 import io.charlescd.moove.domain.ArtifactSnapshot
 import io.charlescd.moove.domain.Build
 import io.charlescd.moove.domain.BuildStatusEnum
-import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.exceptions.BusinessException
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
 import org.hibernate.exception.ConstraintViolationException
+import org.slf4j.LoggerFactory
 
 @Named
 open class BuildCallbackInteractorImpl(private val buildService: BuildService) : BuildCallbackInteractor {
+
+    private val logger = LoggerFactory.getLogger(BuildCallbackInteractorImpl::class.java)
 
     @Transactional
     override fun execute(id: String, request: BuildCallbackRequest) {
@@ -52,7 +53,7 @@ open class BuildCallbackInteractorImpl(private val buildService: BuildService) :
             try {
                 buildService.saveArtifacts(artifacts)
             } catch (exception: ConstraintViolationException) {
-                throw BusinessException.of(MooveErrorCode.ARTIFACT_ALREADY_CREATED)
+                this.logger.warn("One of the build artifacts already exists")
             }
         }
     }
