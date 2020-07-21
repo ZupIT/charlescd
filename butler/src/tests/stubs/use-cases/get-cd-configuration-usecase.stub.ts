@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReadCdConfigurationDto } from '../../../app/api/configurations/dto'
+import { ReadCdConfigurationDto } from '../../../app/v1/api/configurations/dto'
 
 export class GetCdConfigurationUsecaseStub {
 
