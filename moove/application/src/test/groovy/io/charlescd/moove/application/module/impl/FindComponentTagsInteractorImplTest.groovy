@@ -62,7 +62,7 @@ class FindComponentTagsInteractorImplTest extends Specification {
                 LocalDateTime.now(), author, workspaceId)
 
         def component = new Component(componentId, moduleId, "component", LocalDateTime.now(),
-                workspaceId, 10, 10)
+                workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
