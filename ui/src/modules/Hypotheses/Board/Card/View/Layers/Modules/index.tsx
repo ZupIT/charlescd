@@ -60,6 +60,7 @@ const Modules = ({ card, onFinish }: Props) => {
         <Text.h2 color="light">Modules</Text.h2>
         <Styled.ButtonAdd
           name="plus-circle"
+          icon="plus-circle"
           color="dark"
           isLoading={loading}
           onClick={() => getAllModules()}
