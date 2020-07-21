@@ -24,6 +24,7 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
 import org.hibernate.exception.ConstraintViolationException
+import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -152,7 +153,7 @@ class BuildCallbackInteractorImplTest extends Specification {
         }
 
         1 * this.buildRepository.saveArtifacts(_) >> {
-            throw new ConstraintViolationException("Unique constraint violation", null, "const_unique_artifact")
+            throw new DuplicateKeyException("Unique constraint violation")
         }
 
         notThrown()

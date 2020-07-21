@@ -26,8 +26,8 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
-import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.LoggerFactory
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class BuildCallbackInteractorImpl(private val buildService: BuildService) : BuildCallbackInteractor {
@@ -52,7 +52,7 @@ open class BuildCallbackInteractorImpl(private val buildService: BuildService) :
         if (artifacts.isNotEmpty()) {
             try {
                 buildService.saveArtifacts(artifacts)
-            } catch (exception: ConstraintViolationException) {
+            } catch (exception: DuplicateKeyException) {
                 this.logger.warn("One of the build artifacts already exists")
             }
         }
