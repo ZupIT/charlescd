@@ -25,6 +25,7 @@ export class CreateV2Circles20200715112000 implements MigrationInterface {
         "id" Character Varying NOT NULL,
         "header_name" Character Varying NOT NULL,
         "header_value" Character Varying NOT NULL,
+        "created_at" timestamp without time zone DEFAULT now() NOT NULL,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "unique_circles_id" UNIQUE( "id" ) );
         `)

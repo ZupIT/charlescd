@@ -28,6 +28,7 @@ export class CreateV2Components20200715114000 implements MigrationInterface {
         "helm_url" Character Varying NOT NULL,
         "deployment_id" Character Varying NOT NULL,
         "running" Boolean NOT NULL,
+        "created_at" timestamp without time zone DEFAULT now() NOT NULL,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "fk_v2deployments" FOREIGN KEY ( "deployment_id" ) REFERENCES "public"."v2deployments" ( "id" )
       );
