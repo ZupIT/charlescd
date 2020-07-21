@@ -86,7 +86,7 @@ class JdbcComponentRepository(
         val query = StringBuilder(
             """
                      SELECT deployments.id                  AS deployment_id,
-	                        component_snapshots.name        AS components_name,
+	                        component_snapshots.name        AS component_name,
                             module_snapshots."name"         AS module_name,
 	                        artifact_snapshots."version"    AS artifact_version
                     FROM component_snapshots component_snapshots
