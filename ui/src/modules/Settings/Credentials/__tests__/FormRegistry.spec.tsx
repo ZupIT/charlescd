@@ -17,6 +17,9 @@
 import React from 'react';
 import { render, fireEvent, wait, act, cleanup } from 'unit-test/testUtils';
 import FormRegistry from '../Sections/Registry/Form';
+import MutationObserver from 'mutation-observer'
+
+(global as any).MutationObserver = MutationObserver
 
 const mockOnFinish = jest.fn();
 const mockSave = jest.fn()
