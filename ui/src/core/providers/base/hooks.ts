@@ -77,6 +77,22 @@ const getResponse = async (response: Response) => {
   }
 };
 
+export const useFetchData = <T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  req: (...args: any) => (options: RequestInit) => Promise<Response>
+): ((...args: unknown[]) => Promise<T>) => {
+  const isLoginRequest = login === req;
+
+  return async (...args: unknown[]) => {
+    const response = await renewTokenByCb(
+      () => req(...args)({}),
+      isLoginRequest
+    );
+    const data = await getResponse(response);
+    return data;
+  };
+};
+
 export const useFetch = <T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: (...args: any) => (options: RequestInit) => Promise<Response>
@@ -128,4 +144,41 @@ export const useFetch = <T>(
   }, []);
 
   return [{ response, error, loading }, trigger, promise];
+};
+
+export interface FetchStatus {
+  idle: () => void;
+  pending: () => void;
+  resolved: () => void;
+  rejected: () => void;
+  isIdle: boolean;
+  isPending: boolean;
+  isResolved: boolean;
+  isRejected: boolean;
+}
+export type FetchStatuses = 'idle' | 'pending' | 'resolved' | 'rejected';
+
+export const useFetchStatus = (): FetchStatus => {
+  const [status, setStatus] = useState<FetchStatuses>('idle');
+
+  const idle = () => setStatus('idle');
+  const pending = () => setStatus('pending');
+  const resolved = () => setStatus('resolved');
+  const rejected = () => setStatus('rejected');
+
+  const isIdle = status === 'idle';
+  const isPending = status === 'pending';
+  const isResolved = status === 'resolved';
+  const isRejected = status === 'rejected';
+
+  return {
+    idle,
+    pending,
+    resolved,
+    rejected,
+    isIdle,
+    isPending,
+    isResolved,
+    isRejected
+  };
 };

@@ -63,9 +63,9 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   useEffect(() => {
     const form = getValues();
     const moreOptionsModel: MoreOptionsModel = {
-      name: "",
-      latencyThreshold: "",
-      errorThreshold: ""
+      name: '',
+      latencyThreshold: '',
+      errorThreshold: ''
     };
     const restForm = pick(form, keys(moreOptionsModel));
     const isInvalid = !validFields(restForm);
