@@ -22,7 +22,7 @@ import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity, ModuleUndeploymentEntity,
-  QueuedDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+  QueuedDeploymentEntity, QueuedIstioDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
 } from '../../../app/api/deployments/entity'
 import { CdConfigurationEntity } from '../../../app/api/configurations/entity'
 import { ComponentEntity } from '../../../app/api/components/entity'
@@ -50,13 +50,13 @@ export class FixtureUtilsService {
       throw new Error(`ERROR: Cleaning test db: ${error}`)
     }
   }
-
   async insertSingleFixture(entity: DatabaseEntity, params: Record<string, unknown>) : Promise<Record<string, unknown>> {
     const repository =  await this.connection.getRepository(entity.name)
     return await repository
       .save(
         params
       )
+
   }
 
   private getOrderedClearDbEntities(): DatabaseEntity[] {
@@ -68,6 +68,8 @@ export class FixtureUtilsService {
       { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       { name: 'ComponentEntity', tableName: 'components' },
       { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'QueuedUndeploymentEntity', tableName: 'queued_deployments' },
+      { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
       { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
       { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
       { name: 'UndeploymentEntity', tableName: 'undeployments' }
@@ -140,7 +142,10 @@ export class FixtureUtilsService {
     return plainToClass(DeploymentEntity, insertion)
   }
 
-  public async createModuleDeployment(deploymentId: unknown, moduleId: unknown): Promise<ModuleDeploymentEntity> {
+  public async createModuleDeployment(
+    deploymentId: unknown,
+    moduleId: unknown,
+    status: string): Promise<ModuleDeploymentEntity> {
     const databaseEntity = {
       name: 'ModuleDeploymentEntity',
       tableName: 'module_deployments'
@@ -149,7 +154,7 @@ export class FixtureUtilsService {
       'id': uuid.v4(),
       'deployment': deploymentId,
       'moduleId': moduleId,
-      'status': 'CREATED',
+      'status': status,
       'helmRepository': 'helm-repository'
     }
 
@@ -207,7 +212,8 @@ export class FixtureUtilsService {
   public async createComponentDeployment(
     moduleDeploymentId: unknown,
     componentId: unknown,
-    name: string
+    name: string,
+    status: string
   ): Promise<ComponentDeploymentEntity> {
     const databaseEntity = {
       name: 'ComponentDeploymentEntity',
@@ -220,7 +226,7 @@ export class FixtureUtilsService {
       'buildImageUrl': 'build-image-url',
       'buildImageTag': 'build-image-tag',
       'componentName': name,
-      'status': 'CREATED'
+      'status': status
     }
     const insertion = await this.insertSingleFixture(databaseEntity, createComponentDeployment)
     return plainToClass(ComponentDeploymentEntity, insertion)
@@ -286,6 +292,28 @@ export class FixtureUtilsService {
 
     const insertion = await this.insertSingleFixture(databaseEntity, createQueuedUndeployment)
     return plainToClass(QueuedUndeploymentEntity, insertion)
+  }
+
+  public async createQueuedIstioDeployment(
+    deploymentId: string,
+    componentId: string,
+    componentDeploymentId: string,
+    status: string
+  ): Promise<QueuedIstioDeploymentEntity> {
+    const databaseEntity = {
+      name: 'QueuedIstioDeploymentEntity',
+      tableName: 'queued_istio_deployments'
+    }
+
+    const createQueuedIstioDeployment = {
+      'deploymentId': deploymentId,
+      'componentId': componentId,
+      'componentDeploymentId': componentDeploymentId,
+      'status': status,
+      'type': 'QueuedIstioDeploymentEntity'
+    }
+    const insertion = await this.insertSingleFixture(databaseEntity, createQueuedIstioDeployment)
+    return plainToClass(QueuedIstioDeploymentEntity, insertion)
   }
 
   public async createUndeployment(

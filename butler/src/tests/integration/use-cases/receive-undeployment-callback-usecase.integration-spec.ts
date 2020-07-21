@@ -81,18 +81,21 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
 
     const moduleUndeployment2 = await fixtureUtilsService.createModuleUndeployment(
       undeployment.id,
-      'module-deployment-2')
+      'module-deployment-2'
+    )
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
 
     const componentDeployment2 = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
 
     const componentUndeployment = await fixtureUtilsService.createComponentUndeployment(

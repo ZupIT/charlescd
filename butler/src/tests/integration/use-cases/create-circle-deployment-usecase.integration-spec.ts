@@ -29,6 +29,7 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -38,6 +39,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
   let moduleDeploymentRepository: Repository<ModuleDeploymentEntity>
+  let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -59,6 +61,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
     moduleDeploymentRepository = app.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
+    modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
@@ -70,6 +73,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
+
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
 
     const createDeploymentRequest = {
@@ -156,9 +160,75 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
+  it('/POST deployments/circle should do a upsert if a module already exists and has new components ', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const module = await fixtureUtilsService.createModule()
+
+    const component = await fixtureUtilsService.createComponent(module.id)
+
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: module.id,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: component.id,
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'component-id-upsert',
+              componentName: 'component-upsert',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: cdConfiguration.id,
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345').expect(201)
+
+    const componentsUpdated = await componentsRepository.find({
+      where :{ module: module.id },
+      order: {
+        createdAt: 'ASC'
+      }
+    })
+    const deployment = await deploymentsRepository.findOne(
+      { id: createDeploymentRequest.deploymentId },
+      { relations: ['modules', 'modules.components'],
+      }
+    )
+    if (!deployment) {
+
+      fail('Deployment entity was not saved')
+    }
+    expect(componentsUpdated.length).toBe(2)
+
+    expect(componentsUpdated[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(componentsUpdated[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+  })
+
   it('/POST /deployments in circle should fail when deployment already exists', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const deploymentDB = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
 
     const createDeploymentRequest = {
@@ -266,13 +336,17 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'CREATED'
     )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+
+    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
 
     const createDeploymentRequest = {
@@ -359,13 +433,17 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle should correctly update component pipeline options', async() => {
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'CREATED'
     )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+
+    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -448,13 +526,17 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'CREATED'
     )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+
+   await  fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -568,11 +650,14 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   it('/POST /deployments in circle should not set failed the  module of queued component', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'CREATED'
     )
     fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
@@ -634,7 +719,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
       { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
     )
-    console.log(deployment)
+
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(modulesDeployment[0].status).toBe(DeploymentStatusEnum.CREATED)
     expect(modulesDeployment[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)

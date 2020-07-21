@@ -30,6 +30,7 @@ import { IoCTokensConstants } from '../../../app/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
+import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -39,6 +40,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
   let moduleDeploymentRepository: Repository<ModuleDeploymentEntity>
+  let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -61,6 +63,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     moduleDeploymentRepository = app.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
+    modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
@@ -156,9 +159,84 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules).toMatchObject(expectedModules)
   })
 
+  it('/POST /deployments in default circle should do a upsert if module already exists ', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
+    const module = await fixtureUtilsService.createModule()
+
+    const component = await fixtureUtilsService.createComponent(module.id)
+
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: module.id,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: component.id,
+              componentName: 'component-name',
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'component-id-upsert',
+              componentName: 'component-upsert',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: cdConfiguration.id,
+      circle: null
+    }
+    const moduleEntity = await modulesRepository.findOneOrFail({
+      where :{ id: module.id },
+      relations: ['components']
+    })
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
+
+    const moduleEntityUpdated = await modulesRepository.findOneOrFail({
+      where :{ id: module.id },
+      relations: ['components'],
+
+    })
+
+    const componentsModuleEntities = await componentsRepository.find({
+      where :{ module: module.id },
+      order: { createdAt: 'ASC' },
+    })
+
+    const deployment = await deploymentsRepository.findOne(
+      { id: createDeploymentRequest.deploymentId },
+      { relations: ['modules', 'modules.components'],
+      },
+    )
+
+    if (!deployment) {
+      fail('Deployment entity was not saved')
+    }
+
+    expect(moduleEntity.components.length).not.toEqual(moduleEntityUpdated.components.length)
+    expect(moduleEntity.components.length).toBe(1)
+    expect(moduleEntityUpdated.components.length).toBe(2)
+    expect(componentsModuleEntities[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(componentsModuleEntities[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
+    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+  })
+
   it('/POST /deployments in default circle should fail if already exists deployment ', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const deploymentDB = await fixtureUtilsService.createDefaultDeployment(cdConfiguration.id)
 
     const createDeploymentRequest = {
@@ -262,13 +340,16 @@ describe('CreateDefaultDeploymentUsecase', () => {
   it('/POST /deployments in default circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       'component-id',
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -353,13 +434,17 @@ describe('CreateDefaultDeploymentUsecase', () => {
   it('/POST /deployments in default circle should correctly update component pipeline options', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       component.id,
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+
+    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -439,12 +524,16 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
   it('/POST /deployments in default circle should call octopipe for each RUNNING component deployment', async() => {
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       component.id,
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
+
     await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
@@ -603,12 +692,16 @@ describe('CreateDefaultDeploymentUsecase', () => {
   it('/POST deployments in default  should handle deployment failure ', async() => {
 
     const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+
     const component = await fixtureUtilsService.createComponent('module-id')
+
     const componentDeployment = await fixtureUtilsService.createComponentDeployment(
       'module-deployment-id',
       component.id,
-      'component-name'
+      'component-name',
+      'RUNNING'
     )
+
     await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     jest.spyOn(octopipeApiService, 'deploy').
