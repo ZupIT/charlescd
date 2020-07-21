@@ -79,7 +79,6 @@ const LayerMetrics = ({ id }: Props) => {
     <Button.Rounded
       icon={'add'}
       name={'add'}
-      icon={'add'}
       color={'dark'}
       onClick={() => handleAddMetrics()}
     >
