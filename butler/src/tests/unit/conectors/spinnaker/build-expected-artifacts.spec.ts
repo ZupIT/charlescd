@@ -15,7 +15,7 @@
  */
 
 import 'jest'
-import buildExpectedArtifacts from '../../../../app/core/integrations/cd/spinnaker/connector/utils/helpers/build-expected-artifacts'
+import buildExpectedArtifacts from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/helpers/build-expected-artifacts'
 import expectedArtifactTemplate from './fixtures/expected-artifacts-template'
 import expectedArtifactValue from './fixtures/expected-artifacts-value'
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CreateCircleDeploymentDto, CreateModuleDeploymentDto } from '../index'
+import { CreateCircleDeploymentDto, CreateModuleDeploymentDto } from '../'
 import { Type } from 'class-transformer'
 import {
   IsDefined,
