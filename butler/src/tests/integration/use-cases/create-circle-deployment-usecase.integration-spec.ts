@@ -20,7 +20,6 @@ import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
 import { DeploymentEntity, ModuleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
-
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/v1/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
