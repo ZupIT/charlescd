@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentEntity } from '../../../app/api/components/entity'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
 
 export class ComponentsRepositoryStub {
 

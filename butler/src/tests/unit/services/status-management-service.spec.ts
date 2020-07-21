@@ -24,7 +24,7 @@ import {
   UndeploymentsRepositoryStub,
   QueuedIstioDeploymentsRepositoryStub
 } from '../../stubs/repository'
-import { StatusManagementService } from '../../../app/core/services/deployments'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
 import {
   CircleDeploymentEntity,
   ComponentDeploymentEntity,
@@ -33,22 +33,22 @@ import {
   ModuleDeploymentEntity,
   ModuleUndeploymentEntity,
   UndeploymentEntity
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
   QueuedIstioDeploymentsRepository
-} from '../../../app/api/deployments/repository'
+} from '../../../app/v1/api/deployments/repository'
 import { Repository } from 'typeorm'
 import {
   DeploymentStatusEnum,
   UndeploymentStatusEnum
-} from '../../../app/api/deployments/enums'
-import { DeploymentsRepository } from '../../../app/api/deployments/repository/deployments.repository'
-import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository'
-import { UndeploymentsRepository } from '../../../app/api/deployments/repository/undeployments.repository'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+} from '../../../app/v1/api/deployments/enums'
+import { DeploymentsRepository } from '../../../app/v1/api/deployments/repository/deployments.repository'
+import { ModuleDeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-deployments.repository'
+import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
+import { UndeploymentsRepository } from '../../../app/v1/api/deployments/repository/undeployments.repository'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { ConsoleLoggerServiceStub } from '../../stubs/services'
 
 describe('PipelinesService', () => {
