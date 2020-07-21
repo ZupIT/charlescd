@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IDeploymentConfiguration } from '../../../app/core/integrations/configuration/interfaces'
+import { IDeploymentConfiguration } from '../../../app/v1/core/integrations/configuration/interfaces'
 
 export class DeploymentConfigurationServiceStub {
 

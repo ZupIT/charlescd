@@ -46,6 +46,7 @@ const Actions = ({
     <Styled.Action.Content>
       <Styled.Action.Button
         name="release"
+        icon="release"
         color="light"
         onClick={() => setStatus(STATUS_SELECTING)}
       >
@@ -53,6 +54,7 @@ const Actions = ({
       </Styled.Action.Button>
       <Styled.Action.Button
         name="package"
+        icon="package"
         color="light"
         onClick={() => toggleModal(true)}
       >
@@ -67,6 +69,7 @@ const Actions = ({
       {isEqual(status, STATUS_HOVERING) && renderActions()}
       <Styled.Button
         name="package"
+        icon="package"
         color="light"
         isDisabled={!isReady}
         onClick={() => onAction()}

@@ -15,22 +15,22 @@
  */
 
 import { Test } from '@nestjs/testing'
-import { ComponentEntity } from '../../../app/api/components/entity'
-import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 import {
   CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { ComponentUndeploymentsRepository } from '../../../app/api/deployments/repository'
-import { PipelineDeploymentsService, PipelineErrorHandlerService } from '../../../app/api/deployments/services'
-import { IoCTokensConstants } from '../../../app/core/constants/ioc'
-import { CdStrategyFactory } from '../../../app/core/integrations/cd'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+} from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { ComponentUndeploymentsRepository } from '../../../app/v1/api/deployments/repository'
+import { PipelineDeploymentsService, PipelineErrorHandlerService } from '../../../app/v1/api/deployments/services'
+import { IoCTokensConstants } from '../../../app/v1/core/constants/ioc'
+import { CdStrategyFactory } from '../../../app/v1/core/integrations/cd'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { CdStrategyFactoryStub } from '../../stubs/integrations/cd-strategy.factory.stub'
 import { CdConfigurationsRepositoryStub, ComponentsRepositoryStub, ComponentUndeploymentsRepositoryStub } from '../../stubs/repository'
 import { ConsoleLoggerServiceStub, PipelineErrorHandlerServiceStub } from '../../stubs/services'
-import { ModuleEntity } from '../../../app/api/modules/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 
 describe('Pipeline Deployments Service', () => {
   let pipelineDeploymentsService: PipelineDeploymentsService
