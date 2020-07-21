@@ -48,10 +48,6 @@ const CircleRow = styled.div`
     theme.metrics.circles.history.circleRow.background};
   margin-bottom: 5px;
   border-radius: 4px;
-
-  :hover {
-    opacity: 0.7;
-  }
 `;
 
 const ReleaseRow = styled.div`
