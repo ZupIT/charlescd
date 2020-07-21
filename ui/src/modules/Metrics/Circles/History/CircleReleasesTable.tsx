@@ -32,7 +32,7 @@ const CircleReleasesTable = ({ circleId }: Props) => {
   const [releases, setReleases] = useState<CircleRelease[]>([]);
   const { getCircleReleases, response } = useCirclesReleases();
   const releasesResponse = response?.content;
-  const hasMoreData = !response?.isLast;
+  const hasMoreData = !response?.last;
 
   useEffect(() => {
     if (releasesResponse) {
