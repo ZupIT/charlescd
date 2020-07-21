@@ -351,8 +351,8 @@ class JdbcDeploymentRepository(
 	                        deployments.deployed_at     AS deployed_at,
                             deployments.undeployed_at   AS undeployed_at,
 	                        users.name                  AS user_name,
-	                        builds.tag                  AS build_tag,
-	                        deployments.status          AS deployment_version
+	                        builds.tag                  AS deployment_version,
+	                        deployments.status          AS deployment_status
                     FROM deployments deployments
                         INNER JOIN users users      ON users.id = deployments.user_id
                         INNER JOIN builds builds    ON builds.id = deployments.build_id

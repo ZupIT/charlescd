@@ -19,13 +19,13 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/api/deployments/entity'
+import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedIstioDeploymentEntity } from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { DeploymentStatusEnum, QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/api/deployments/repository'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { ModuleDeploymentsRepository } from '../../../app/api/deployments/repository/module-deployments.repository'
+import { ModuleDeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-deployments.repository'
 
 describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
