@@ -382,11 +382,12 @@ class JdbcCircleRepository(
         )
     }
 
-    override fun getCirclesAverageLifeTime(workspaceId: String): Duration {
+    override fun getNotDefaultCirclesAverageLifeTime(workspaceId: String): Duration {
         val query = """
                 SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', AVG((NOW() - circles.created_at)))) AS average_life_time 
                 FROM circles circles
-                WHERE circles.workspace_id = ? 
+                WHERE circles.workspace_id = ?
+                    AND NOT circles.default_circle
         """
 
         return this.jdbcTemplate.queryForObject(
