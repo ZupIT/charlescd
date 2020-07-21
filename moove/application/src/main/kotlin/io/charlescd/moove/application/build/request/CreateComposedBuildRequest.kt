@@ -24,8 +24,10 @@ import java.time.LocalDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 
 data class CreateComposedBuildRequest(
+    @field:Size(min = 1, max = 50)
     @field:NotBlank
     val releaseName: String,
 

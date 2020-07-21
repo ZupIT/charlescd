@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../app/api/configurations/enums'
-import { SpinnakerService } from '../../../app/core/integrations/cd/spinnaker'
-import { OctopipeService } from '../../../app/core/integrations/cd/octopipe'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { SpinnakerService } from '../../../app/v1/core/integrations/cd/spinnaker'
+import { OctopipeService } from '../../../app/v1/core/integrations/cd/octopipe'
 
 const serviceStub = {
     createDeployment: () => Promise.resolve(undefined)
