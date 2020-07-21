@@ -71,6 +71,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
           <Can I="write" a="modules" passThrough>
             <Styled.ButtonRounded
               name="add"
+              icon="add"
               color="dark"
               onClick={() =>
                 updateParam(
