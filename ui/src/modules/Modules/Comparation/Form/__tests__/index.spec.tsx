@@ -16,7 +16,7 @@
 
 import React, { ReactElement } from "react";
 import { render, act, fireEvent, cleanup, wait } from "@testing-library/react";
-import Component from "../Component";
+import FormModule from "../";
 import { Component as ComponentInterface } from "modules/Modules/interfaces/Component";
 import { AllTheProviders } from "unit-test/testUtils";
 import { Module, Author } from "modules/Modules/interfaces/Module";
@@ -50,14 +50,6 @@ const fakeComponent: ComponentInterface = {
   gatewayName: "fakeGateway"
 };
 
-const fakeComponentWithoutMoreOptions: ComponentInterface = {
-  id: "fake-id",
-  name: "fake-name",
-  latencyThreshold: "30",
-  errorThreshold: "30",
-};
-
-
 const fakeModule: Module = {
   gitRepositoryAddress: "fake-github",
   helmRepository: "fake-api",
@@ -67,8 +59,7 @@ const fakeModule: Module = {
   components: [fakeComponent]
 }
 
-const mockOnClose = jest.fn()
-const mockOnUpdate = jest.fn()
+const mockOnChange = jest.fn()
 
 jest.mock('core/components/Can', () => {
   return {
@@ -83,94 +74,28 @@ jest.mock('core/components/Can', () => {
 test("Test component for edit mode render", async () => {
   const { container } = render(
     <AllTheProviders>
-      <Component
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        component={fakeComponent}
+      <FormModule
+        onChange={mockOnChange}
         module={fakeModule}
         key={"fake-key"}
       />
     </AllTheProviders>
   );
   await wait()
-  expect(container.innerHTML).toMatch("Edit component");
+  expect(container.innerHTML).toMatch("Edit module");
 });
 
-test("Test component for create mode render", async () => {
+
+test("Test component for edit mode render", async () => {
   const { container } = render(
     <AllTheProviders>
-      <Component
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        component={{}}
-        module={fakeModule}
+      <FormModule
+        onChange={mockOnChange}
+        module={null}
         key={"fake-key"}
       />
     </AllTheProviders>
   );
   await wait()
-  expect(container.innerHTML).toMatch("Create component");
+  expect(container.innerHTML).toMatch("Create module");
 });
-
-test("Test component for show advanced options", async () => {
-  const { container } = render(
-    <AllTheProviders>
-      <Component
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        component={fakeComponent}
-        module={fakeModule}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-  await wait()
-  const componentButton: any = container.querySelector("span");
-  expect(container.innerHTML).toMatch("Show");
-  fireEvent.click(componentButton);
-  wait(() => expect(container.innerHTML).toMatch("Hide"))
-});
-
-test("Test component to not render more options", async () => {
-  const { container } = render(
-    <AllTheProviders>
-      <Component
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        component={fakeComponent}
-        module={fakeModule}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-  await wait()
-
-  const componentHostValue: any = container.querySelector(
-    "input[name='hostValue']"
-  );
-
-  expect(componentHostValue.value).not.toEqual("")
-});
-
-test("Test component to not render more options", async () => {
-  const { container } = render(
-    <AllTheProviders>
-      <Component
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        component={fakeComponentWithoutMoreOptions}
-        module={fakeModule}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-  await wait()
-
-  const componentHostValue: any = container.querySelector(
-    "input[name='hostValue']"
-  );
-
-  expect(componentHostValue.value).toEqual("")
-});
-
-

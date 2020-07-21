@@ -105,7 +105,6 @@
     "jest-fetch-mock": "^3.0.3",
     "lodash": "^4.17.15",
     "mutation-observer": "^1.0.3",
-    "mutationobserver-shim": "^0.3.7",
     "nodemon": "^2.0.4",
     "prettier": "^1.19.1",
     "react-content-loader": "^5.0.2",
