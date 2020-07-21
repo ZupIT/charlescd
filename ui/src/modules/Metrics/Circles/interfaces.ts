@@ -49,16 +49,15 @@ export type CircleReleasesResponse = Pagination<CircleRelease>;
 
 export interface CircleRelease {
   id: string;
-  name: string;
+  tag: string;
   deployed: string;
   undeployed: string;
-  lastEditor: string;
+  authorName: string;
   components: ReleaseComponent[];
 }
 
 export interface ReleaseComponent {
-  id: string;
+  name: string;
   moduleName: string;
-  componentName: string;
   version: string;
 }
