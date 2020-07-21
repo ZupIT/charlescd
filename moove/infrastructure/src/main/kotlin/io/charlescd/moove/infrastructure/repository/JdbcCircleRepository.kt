@@ -378,7 +378,6 @@ class JdbcCircleRepository(
                                 )
                             OR deployments.id IS NULL
                         )
-                        AND NOT circles.default_circle
             """
         )
     }
