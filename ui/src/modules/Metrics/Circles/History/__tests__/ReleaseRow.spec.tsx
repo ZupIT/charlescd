@@ -40,6 +40,14 @@ test('render default ReleaseRow', () => {
   expect(screen.queryAllByText(/module a/)).toHaveLength(0);
 });
 
+test('render ReleaseRow without dates', () => {
+  render(
+    <ReleaseRow release={{ ...circleReleaseMock, deployedAt: null, undeployedAt: null }} />
+  );
+
+  expect(screen.getAllByText('-')).toHaveLength(2);
+});
+
 test('render ReleaseRow and show components table', () => {
   render(
     <ReleaseRow release={circleReleaseMock} />
