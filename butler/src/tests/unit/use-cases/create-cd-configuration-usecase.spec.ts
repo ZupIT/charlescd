@@ -16,12 +16,12 @@
 
 import { Test } from '@nestjs/testing'
 import { CdConfigurationsRepositoryStub } from '../../stubs/repository'
-import { CreateCdConfigurationUsecase } from '../../../app/api/configurations/use-cases'
-import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
-import { CdConfigurationEntity } from '../../../app/api/configurations/entity'
-import { CreateCdConfigurationDto } from '../../../app/api/configurations/dto'
-import { CdTypeEnum } from '../../../app/api/configurations/enums'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { CreateCdConfigurationUsecase } from '../../../app/v1/api/configurations/use-cases'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { CreateCdConfigurationDto } from '../../../app/v1/api/configurations/dto'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { ConsoleLoggerServiceStub } from '../../stubs/services'
 
 describe('CreateCdConfigurationUsecase', () => {

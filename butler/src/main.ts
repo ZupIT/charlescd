@@ -23,7 +23,7 @@ import {
   ValidationError,
   ValidationPipe
 } from '@nestjs/common'
-import { AppConstants } from './app/core/constants'
+import { AppConstants } from './app/v1/core/constants'
 import { registerSchema } from 'class-validator'
 import * as morgan from 'morgan'
 import * as hpropagate from 'hpropagate'
@@ -33,9 +33,9 @@ import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
-} from './app/core/validations/schemas'
-import { EntityNotFoundExceptionFilter } from './app/core/filters/entity-not-found-exception.filter'
-import { ConsoleLoggerService } from './app/core/logs/console'
+} from './app/v1/core/validations/schemas'
+import { EntityNotFoundExceptionFilter } from './app/v1/core/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from './app/v1/core/logs/console'
 
 async function bootstrap() {
 
