@@ -21,10 +21,10 @@ import { releaseComponentsMock } from './ReleaseComponentsTable.spec';
 
 const circleReleaseMock = {
   id: '1',
-  name: 'release 1',
-  deployed: '2020-07-12 10:25:38',
-  undeployed: '2020-07-11 10:25:38',
-  lastEditor: 'Jhon Doe',
+  tag: 'release 1',
+  deployedAt: '2020-07-12 19:10:26',
+  undeployedAt: '2020-07-11 19:10:26',
+  authorName: 'Jhon Doe',
   components: releaseComponentsMock
 }
 
@@ -34,8 +34,8 @@ test('render default ReleaseRow', () => {
   );
 
   expect(screen.getByText('release 1')).toBeInTheDocument();
-  expect(screen.getByText('12/07/2020 10:07')).toBeInTheDocument();
-  expect(screen.getByText('11/07/2020 10:07')).toBeInTheDocument();
+  expect(screen.getByText('12/07/2020 • 16:07')).toBeInTheDocument();
+  expect(screen.getByText('11/07/2020 • 16:07')).toBeInTheDocument();
   expect(screen.getByText('Jhon Doe')).toBeInTheDocument();
   expect(screen.queryAllByText(/module a/)).toHaveLength(0);
 });
