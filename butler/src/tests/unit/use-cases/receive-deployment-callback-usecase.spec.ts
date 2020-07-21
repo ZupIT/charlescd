@@ -27,19 +27,15 @@ import {
 import { MooveService } from '../../../app/v1/core/integrations/moove'
 import { StatusManagementService } from '../../../app/v1/core/services/deployments'
 import {
-<<<<<<< HEAD
-=======
   PipelineErrorHandlerService,
   PipelineQueuesService
 } from '../../../app/v1/api/deployments/services'
 import {
->>>>>>> 6e849fbc3595cd6abfa2c2dd11e48250574d4a8f
   ComponentDeploymentsRepositoryStub,
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository
@@ -51,13 +47,9 @@ import {
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   CircleDeploymentEntity
-<<<<<<< HEAD
-} from '../../../app/api/deployments/entity'
-import { PipelineErrorHandlerService, PipelineQueuesService } from '../../../app/api/deployments/services'
-=======
+
 } from '../../../app/v1/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
->>>>>>> 6e849fbc3595cd6abfa2c2dd11e48250574d4a8f
 
 describe('ReceiveDeploymentCallbackUsecase', () => {
 

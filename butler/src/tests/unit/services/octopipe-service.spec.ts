@@ -28,7 +28,7 @@ import { IOctopipePayload, ClusterProviderEnum } from '../../../app/v1/core/inte
 import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
-import { CallbackTypeEnum } from '../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('Octopipe Service', () => {
   let octopipeService: OctopipeService

@@ -17,7 +17,7 @@
 import 'jest'
 import baseDeleteDeployments from '../../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-delete-deployment'
 import expectedBaseDeleteDeployment from '../fixtures/manifests/expected-base-delete-deployment'
-import { CallbackTypeEnum } from '../../../../../app/api/notifications/enums/callback-type.enum'
+import { CallbackTypeEnum } from '../../../../../app/v1/api/notifications/enums/callback-type.enum'
 it('builds base deployment delete manifest', () => {
 
   expect(
