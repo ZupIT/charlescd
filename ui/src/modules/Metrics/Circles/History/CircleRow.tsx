@@ -30,10 +30,16 @@ const CircleRow = ({ circle }: Props) => {
 
   return (
     <Styled.CircleRow>
-      <Styled.TableRow onClick={() => setActiveRow(!activeRow)}>
+      <Styled.TableRow
+        onClick={() => setActiveRow(!activeRow)}
+        data-testid={`circle-row-${circle.id}`}
+      >
         <Styled.TableColumn>
           <Text.h5 color="light">
-            <Styled.Dot active={circle.status === 'ACTIVE'} />
+            <Styled.Dot
+              active={circle.status === 'ACTIVE'}
+              data-testid="circle-row-dot"
+            />
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn width={2}>

@@ -32,7 +32,7 @@ export interface CircleHistory {
   status: 'ACTIVE' | 'INACTIVE';
   name: string;
   lifeTime: number;
-  lastUpdatedAt: Date;
+  lastUpdatedAt: string;
 }
 
 export type CircleSummary = {
