@@ -19,4 +19,6 @@ export interface Component {
   name?: string;
   latencyThreshold?: string;
   errorThreshold?: string;
+  hostValue?: string;
+  gatewayName?: string;
 }
