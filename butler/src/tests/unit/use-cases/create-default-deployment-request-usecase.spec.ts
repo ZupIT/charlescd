@@ -17,7 +17,7 @@
 import { Test } from '@nestjs/testing'
 import {
   CreateDefaultDeploymentRequestUsecase
-} from '../../../app/api/deployments/use-cases'
+} from '../../../app/v1/api/deployments/use-cases'
 import {
   ComponentDeploymentsRepositoryStub,
   ComponentsRepositoryStub,
@@ -30,32 +30,32 @@ import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository,
   QueuedIstioDeploymentsRepository
-} from '../../../app/api/deployments/repository'
+} from '../../../app/v1/api/deployments/repository'
 import {
   ModulesService,
   PipelineDeploymentsService,
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import {
   ConsoleLoggerServiceStub, ModulesServiceStub,
   PipelineDeploymentsServiceStub,
   PipelineErrorHandlerServiceStub,
   PipelineQueuesServiceStub
 } from '../../stubs/services'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import {
   CreateCircleDeploymentDto, CreateDeploymentRequestDto
-} from '../../../app/api/deployments/dto/create-deployment'
+} from '../../../app/v1/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { QueuedDeploymentsConstraints } from '../../../app/v1/core/integrations/databases/constraints'
 import { InternalServerErrorException } from '@nestjs/common'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {

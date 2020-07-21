@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { UndeploymentsController } from '../../../app/api/deployments/controller/undeployments.controller'
-import { CreateUndeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
+import { UndeploymentsController } from '../../../app/v1/api/deployments/controller/undeployments.controller'
+import { CreateUndeploymentRequestUsecase } from '../../../app/v1/api/deployments/use-cases'
 import { CreateUndeploymentRequestUsecaseStub } from '../../stubs/use-cases'
-import { ReadUndeploymentDto } from '../../../app/api/deployments/dto/read-undeployment'
-import {  UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
-import { CreateUndeploymentDto } from '../../../app/api/deployments/dto/create-undeployment'
+import { ReadUndeploymentDto } from '../../../app/v1/api/deployments/dto/read-undeployment'
+import {  UndeploymentStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { CreateUndeploymentDto } from '../../../app/v1/api/deployments/dto/create-undeployment'
 
 describe('DeploymentsController', () => {
 
