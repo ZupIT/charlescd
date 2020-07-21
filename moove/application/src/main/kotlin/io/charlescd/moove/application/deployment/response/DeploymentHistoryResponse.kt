@@ -16,15 +16,18 @@
 
 package io.charlescd.moove.application.deployment.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.DeploymentHistory
 import java.time.LocalDateTime
 
 class DeploymentHistoryResponse(
     val id: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val deployedAt: LocalDateTime?,
     val authorName: String,
     val tag: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val undeployedAt: LocalDateTime?,
     val components: List<ComponentHistoryResponse>
 ) {
