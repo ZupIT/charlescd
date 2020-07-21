@@ -1,9 +1,10 @@
 import mock from './mock';
-import fetch from 'node-fetch';
 
 const API = '/moove/metrics';
 
 const CIRCLES_API = '/moove/v2/circles';
+
+const DEPLOYMENTS_API = '/moove/v2/deployments';
 
 const findCircleMetrics = {
   method: 'GET',
@@ -31,8 +32,8 @@ const findAllCirclsMetrics = {
 
 const findAllCirclsReleases = {
   method: 'GET',
-  path: `${CIRCLES_API}/history/{circleId}/releases`,
-  handler: (req, h) => h.response(mock.allCircleReleases)
+  path: `${DEPLOYMENTS_API}/history`,
+  handler: async (req, h) => h.response(mock.allCircleReleases)
 };
 
 export default {
