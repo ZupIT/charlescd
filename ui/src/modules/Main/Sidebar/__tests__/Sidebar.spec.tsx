@@ -46,7 +46,7 @@ test('renders sidebar component', () => {
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  wait();
+  wait()
 
   expect(getByTestId(workspacesId)).toBeInTheDocument();
   expect(getByTestId(accountId)).toBeInTheDocument();
