@@ -38,11 +38,15 @@ const CircleReleasesTable = ({ release }: Props) => {
           <Text.h5 color="light">{release.tag}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{dateTimeFormatter(release.deployed)}</Text.h5>
+          <Text.h5 color="light">
+            {release.deployedAt ? dateTimeFormatter(release.deployedAt) : '-'}
+          </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            {dateTimeFormatter(release.undeployed)}
+            {release.undeployedAt
+              ? dateTimeFormatter(release.undeployedAt)
+              : '-'}
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>

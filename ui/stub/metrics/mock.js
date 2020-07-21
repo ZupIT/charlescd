@@ -298,243 +298,216 @@ const allCircleReleases = {
   content: [
     {
       id: 'dnsafjhf',
-      name: 'release-darwin-new-repos',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-repos',
+      deployedAt: null,
+      undeployedAt: null,
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'jfdhfuhfds',
-      name: 'release-darwin-new-test',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'dnsafjhffdsfjdsbh',
-      name: 'release-darwin-new-gmfgoij',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'dnsafjhf',
-      name: 'release-darwin-new-repos',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-repos',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'jfdhfuhfds',
-      name: 'release-darwin-new-test',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'dnsafjhffdsfjdsbh',
-      name: 'release-darwin-new-gmfgoij',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'dnsafjhf',
-      name: 'release-darwin-new-repos',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-repos',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'jfdhfuhfds',
-      name: 'release-darwin-new-test',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
     },
     {
       id: 'dnsafjhffdsfjdsbh',
-      name: 'release-darwin-new-gmfgoij',
-      deployed: '2020-07-12 10:25:38',
-      undeployed: '2020-07-12 10:25:38',
-      lastEditor: 'Leandro Latini',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
       components: [
         {
-          id: 'fgfdgjkii',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.1'
         },
         {
-          id: 'llllllllll',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.2'
         },
         {
-          id: '0000000000000',
           moduleName: 'ZupIT/darwin-ui',
-          componentName: 'component1',
+          name: 'component1',
           version: 'v.1.2.3'
         }
       ]
