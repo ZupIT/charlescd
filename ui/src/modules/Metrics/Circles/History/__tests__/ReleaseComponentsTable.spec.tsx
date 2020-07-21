@@ -20,15 +20,13 @@ import ReleaseComponentsTable from '../ReleaseComponentsTable';
 
 export const releaseComponentsMock = [
   {
-    id: '1',
     moduleName: 'module a1',
-    componentName: 'component a1',
+    name: 'component a1',
     version: '1.0'
   },
   {
-    id: '2',
     moduleName: 'module a2',
-    componentName: 'component a2',
+    name: 'component a2',
     version: '1.0'
   }
 ]
