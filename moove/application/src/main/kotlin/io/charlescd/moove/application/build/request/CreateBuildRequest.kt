@@ -26,6 +26,7 @@ import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 data class CreateBuildRequest(
 
@@ -36,6 +37,7 @@ data class CreateBuildRequest(
     @field:NotEmpty
     val features: List<String>,
 
+    @field:Size(min = 1, max = 50)
     @field:NotBlank
     val tagName: String,
 

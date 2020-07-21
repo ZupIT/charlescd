@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReadModuleDto } from '../../../app/api/modules/dto'
+import { ReadModuleDto } from '../../../app/v1/api/modules/dto'
 
 export class CreateModuleUsecaseStub {
 

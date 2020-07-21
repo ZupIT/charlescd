@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReadUndeploymentDto } from '../../../app/api/deployments/dto/read-undeployment'
+import { ReadUndeploymentDto } from '../../../app/v1/api/deployments/dto/read-undeployment'
 
 export class CreateUndeploymentRequestUsecaseStub {
   public execute(): Promise<ReadUndeploymentDto> {
