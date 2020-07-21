@@ -19,11 +19,12 @@ import { render } from 'unit-test/testUtils';
 import Menu from '../index';
 import workspaces from '../../../../../stub/workspaces/mock';
 
+const props = {
+  items: workspaces.workspaces.content,
+  onSearch: jest.fn()
+};
+
 test('renders Workspace menu', async () => {
-  const props = {
-    items: workspaces.workspaces.content,
-    onSearch: jest.fn()
-  };
   const { getByTestId, getAllByText } = render(
     <Menu
       items={props.items}
@@ -41,10 +42,6 @@ test('renders Workspace menu', async () => {
 });
 
 test('renders Workspace menu on loading', async () => {
-  const props = {
-    items: workspaces.workspaces.content,
-    onSearch: jest.fn()
-  };
   const { getByText } = render(
     <Menu
       items={props.items}
