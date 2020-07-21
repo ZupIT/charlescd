@@ -160,7 +160,12 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           />
         </Styled.Components.AdvancedOptionWrapper>
         <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
-          <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
+          <Styled.Button
+            id="save-edit-module"
+            type="submit"
+            size="EXTRA_SMALL"
+            isLoading={loading}
+          >
             {isEdit ? 'Edit' : 'Save'}
           </Styled.Button>
         </Can>

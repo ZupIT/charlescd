@@ -72,10 +72,8 @@ const FormModule = ({ module, onChange }: Props) => {
 
   const onSubmit = (data: Module) => {
     if (isEdit) {
-      console.log(data);
       updateModule(module?.id, data);
     } else {
-      console.log(data);
       saveModule({ ...data, authorId });
     }
   };
