@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200713113020-1
+      author: adauto.paula
+      comment: "Limiting tag name column length to 50 characters"
+      changes:
+        - modifyDataType:
+            tableName: builds
+            columnName: tag
+            newDataType: varchar(50)

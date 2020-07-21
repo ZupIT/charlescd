@@ -22,16 +22,16 @@ import { TestSetupUtils } from '../utils/test-setup-utils'
 import {
   ComponentUndeploymentEntity, ModuleUndeploymentEntity,
   QueuedUndeploymentEntity,
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/api/deployments/enums'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/v1/api/deployments/enums'
 import {
   ComponentUndeploymentsRepository,
-} from '../../../app/api/deployments/repository'
+} from '../../../app/v1/api/deployments/repository'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { ModuleUndeploymentsRepository } from '../../../app/api/deployments/repository/module-undeployments.repository';
+import { MooveService } from '../../../app/v1/core/integrations/moove'
+import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository';
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 

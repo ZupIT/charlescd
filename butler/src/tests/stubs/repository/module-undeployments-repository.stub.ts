@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ModuleUndeploymentEntity } from '../../../app/api/deployments/entity'
+import { ModuleUndeploymentEntity } from '../../../app/v1/api/deployments/entity'
 
 export class ModuleUndeploymentsRepositoryStub {
     public async updateStatus(): Promise<void> {
