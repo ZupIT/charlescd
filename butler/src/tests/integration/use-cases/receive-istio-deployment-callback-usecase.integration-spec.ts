@@ -187,7 +187,7 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
     }
 
     jest.spyOn(httpService, 'post').
-    mockImplementation( () => of({} as AxiosResponse) )
+      mockImplementation( () => of({} as AxiosResponse) )
 
     await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeployment.id}`)
       .send(finishDeploymentDto).expect(204)

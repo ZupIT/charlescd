@@ -29,7 +29,6 @@ import IEnvConfiguration from '../../../app/core/integrations/configuration/inte
 import { OctopipeApiService } from '../../../app/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { ModuleEntity } from '../../../app/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -39,7 +38,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
   let moduleDeploymentRepository: Repository<ModuleDeploymentEntity>
-  let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
@@ -61,7 +59,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
     moduleDeploymentRepository = app.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
-    modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
@@ -348,7 +345,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
-
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -536,7 +532,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       'CREATED'
     )
 
-   await  fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    await  fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',

@@ -409,7 +409,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
     const deploymentDB = componentDeploymentEntity.moduleDeployment.deployment
 
-    expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(deploymentDB.status).toBe(DeploymentStatusEnum.CREATED)
     console.log(moduleDeploymentEntities)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
@@ -512,7 +512,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const istioQueuedDeployments = await queuedIstioDeploymentsRepository.find(
       { where : { deploymentId : deployment.id }
       })
-    expect(deployment.status).toBe(DeploymentStatusEnum.CREATED)
+    expect(deploymentDB.status).toBe(DeploymentStatusEnum.CREATED)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(moduleDeploymentEntities[1].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(istioQueuedDeployments[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
