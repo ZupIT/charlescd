@@ -15,7 +15,12 @@
  */
 
 import { useCallback, useState } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import { findComponentTags } from 'core/providers/modules';
 import {
   composeBuild as postComposeBuild,
@@ -30,36 +35,38 @@ import { Deployment } from '../interfaces/Circle';
 import { Tag } from './interfaces/Tag';
 
 export const useComponentTags = (): {
-  getComponentTags: Function;
-  tags: Tag[];
-  status: string;
+  getComponentTag: Function;
+  tag: Tag;
+  status: FetchStatus;
 } => {
-  const [, , getTags] = useFetch<Tag[]>(findComponentTags);
-  const [status, setStatus] = useState('idle');
-  const [tags, setTags] = useState(null);
+  const getTags = useFetchData<Tag[]>(findComponentTags);
+  const status = useFetchStatus();
+  const [tag, setTag] = useState(null);
 
-  const getComponentTags = async (
+  const getComponentTag = async (
     moduleId: string,
     componentId: string,
     params: URLParams
   ) => {
     try {
       if (params.name) {
-        setStatus('pending');
+        status.pending();
         const res = await getTags(moduleId, componentId, params);
-        setTags(res);
-        setStatus('resolved');
+        const [tag] = res;
 
-        return res;
+        setTag(tag);
+        status.resolved();
+
+        return tag;
       }
     } catch (e) {
-      setStatus('rejected');
+      status.rejected();
     }
   };
 
   return {
-    getComponentTags,
-    tags,
+    getComponentTag,
+    tag,
     status
   };
 };
