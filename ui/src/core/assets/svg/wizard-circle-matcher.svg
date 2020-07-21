@@ -2,7 +2,7 @@
 <svg width="131px" height="199px" viewBox="0 0 131 199" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <title>A769ABD9-C181-48A3-A1D0-B8D0D7D6BE90</title>
     <defs>
-        <path d="M0.496903226,5.33051348 L0.496903226,-4.94277374e-15 L5.82722581,-4.94277374e-15 L5.82722581,5.33051348 L0.496903226,5.33051348 Z" id="path-1"></path>
+        <path d="M0.496903226,5.33051348 L0.496903226,-4.94277374e-15 L5.82722581,-4.94277374e-15 L5.82722581,5.33051348 L0.496903226,5.33051348 Z" id="path-wizard-circle-matcher"></path>
     </defs>
     <g id="Primeiro-acesso---Setiings" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Wizard---Config-workspace---0.5" transform="translate(-1007.000000, -247.000000)">
@@ -35,9 +35,9 @@
                             <path d="M4.43119753,41.8563168 C5.4448608,42.8699801 5.4448608,44.5136036 4.43119753,45.5272669 C3.41753425,46.5409302 1.77391074,46.5409302 0.760247459,45.5272669 C-0.25341582,44.5136036 -0.25341582,42.8699801 0.760247459,41.8563168 C1.77391074,40.8424149 3.41753425,40.8424149 4.43119753,41.8563168" id="Fill-27" fill="#0A84FF"></path>
                             <g id="Group-31" transform="translate(123.646932, 22.260274)">
                                 <mask id="mask-2" fill="white">
-                                    <use xlink:href="#path-1"></use>
+                                    <use xlink:href="#path-wizard-circle-matcher"></use>
                                 </mask>
-                                <use id="Combined-Shape" fill="#10AA80" xlink:href="#path-1"></use>
+                                <use id="Combined-Shape" fill="#10AA80" xlink:href="#path-wizard-circle-matcher"></use>
                             </g>
                             <g id="Group-34" transform="translate(12.842466, 13.994697)" fill="#FF375F">
                                 <path d="M3.63483977e-13,0.560097216 L1.93521874,7.78244808 L7.22235086,2.49531595 L3.63483977e-13,0.560097216 Z M1.18618648,1.74628369 L5.60187362,2.9293681 L2.36927088,6.16197084 L1.18618648,1.74628369 Z" id="Fill-32"></path>

@@ -26,7 +26,7 @@ test('render Section default component', async () => {
     action: () => {}
   }
 
-  const { queryByTestId, debug } = render(
+  const { queryByTestId } = render(
     <Section
       name={props.name}
       icon={props.icon}
