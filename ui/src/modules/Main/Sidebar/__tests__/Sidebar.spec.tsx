@@ -15,28 +15,14 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
-import { saveProfile } from 'core/utils/profile';
+import { FetchMock } from 'jest-fetch-mock/types';
+import * as utilsAuth from 'core/utils/auth';
 
 const originalWindow = { ...window };
-
-const mockProfile = {
-  id: '1',
-  name: 'Non Root',
-  email: 'email@zup.com.br',
-  photoUrl: '',
-  createdAt: '2020-07-07 17:30:02',
-  workspaces: [
-    {
-      id: '1',
-      name: 'test'
-    }
-  ],
-  isRoot: true
-};
 
 beforeEach(() => {
   delete window.location;
@@ -67,7 +53,7 @@ test('renders sidebar component', () => {
   expect(links.children.length).toBe(3);
 });
 
-test('renders sidebar component with selected workspace', () => {
+test('renders sidebar componen( with selected workspace', async () => {
   delete window.location;
 
   window.location = {
@@ -75,14 +61,27 @@ test('renders sidebar component with selected workspace', () => {
     pathname: routes.credentials
   };
 
-  saveProfile(btoa(JSON.stringify(mockProfile)));
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({
+      content: [
+        {
+          id: 1,
+          name: 'workspace',
+          status: 'COMPLETE'
+        }
+      ]
+    })
+  );
 
-  const { getByTestId, getByText, debug } = render(
+  jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
+
+  const { queryByTestId } = render(
     <Sidebar
       isExpanded={true}
       onClickExpand={jest.fn()}
       selectedWorkspace="test"
     />
   );
-  debug();
+
+  await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
 });
