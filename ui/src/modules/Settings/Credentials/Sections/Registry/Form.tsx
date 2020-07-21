@@ -116,7 +116,11 @@ const FormRegistry = ({ onFinish }: Props) => {
         />
         {handleFields()}
       </Styled.Fields>
-      <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
+      <Button.Default
+        id="submit-registry"
+        type="submit"
+        isLoading={loadingSave || loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>
