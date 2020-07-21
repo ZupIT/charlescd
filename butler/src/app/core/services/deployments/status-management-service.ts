@@ -24,11 +24,7 @@ import {
   ModuleUndeploymentEntity,
   UndeploymentEntity
 } from '../../../api/deployments/entity'
-import {
-  DeploymentStatusEnum,
-  UndeploymentStatusEnum,
-  QueuedPipelineStatusEnum
-} from '../../../api/deployments/enums'
+import { DeploymentStatusEnum, QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../api/deployments/enums'
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository,
