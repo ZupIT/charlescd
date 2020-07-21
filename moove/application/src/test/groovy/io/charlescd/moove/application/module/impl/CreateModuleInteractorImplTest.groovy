@@ -19,9 +19,11 @@ package io.charlescd.moove.application.module.impl
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
+import io.charlescd.moove.application.build.response.ComponentResponse
 import io.charlescd.moove.application.module.CreateModuleInteractor
 import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.application.module.request.CreateModuleRequest
+import io.charlescd.moove.application.module.response.ModuleResponse
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
@@ -84,11 +86,13 @@ class CreateModuleInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
         assert response != null
+        assert response instanceof ModuleResponse
         assert response.id != null
         assert response.name == request.name
         assert response.createdAt != null
         assert response.gitRepositoryAddress == request.gitRepositoryAddress
         assert response.components[0].id != null
+        assert response.components[0] instanceof ComponentResponse
         assert response.components[0].name == request.components[0].name
         assert response.components[0].createdAt != null
     }
