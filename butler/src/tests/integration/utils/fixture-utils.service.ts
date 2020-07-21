@@ -23,10 +23,10 @@ import {
   DeploymentEntity,
   ModuleDeploymentEntity, ModuleUndeploymentEntity,
   QueuedDeploymentEntity, QueuedIstioDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { CdConfigurationEntity } from '../../../app/api/configurations/entity'
-import { ComponentEntity } from '../../../app/api/components/entity'
-import { ModuleEntity } from '../../../app/api/modules/entity'
+} from '../../../app/v1/api/deployments/entity'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 
 interface DatabaseEntity {
     name: string,
@@ -77,12 +77,10 @@ export class FixtureUtilsService {
   }
 
   public async createCdConfigurationOctopipe(): Promise<CdConfigurationEntity> {
-
     const databaseEntity = {
       name: 'CdConfigurationEntity',
       tableName: 'cd_configurations'
     }
-
     const createCdConfiguration = {
       id: uuid.v4(),
       workspaceId: uuid.v4(),
@@ -97,13 +95,11 @@ export class FixtureUtilsService {
   }
 
   public async createCircleDeployment(cdConfigurationId: unknown): Promise<DeploymentEntity> {
-
     const databaseEntity = {
       name: 'DeploymentEntity',
       tableName: 'deployments'
     }
     const createDeploymentDB = {
-
       'id': uuid.v4(),
       'applicationName': 'application-name',
       'authorId': 'author-id',
@@ -116,17 +112,16 @@ export class FixtureUtilsService {
         'headerValue' : 'headerValue'
       }
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createDeploymentDB)
     return plainToClass(DeploymentEntity, insertion)
   }
 
   public async createDefaultDeployment(cdConfigurationId: unknown) : Promise<DeploymentEntity> {
-
     const databaseEntity = {
       name: 'DeploymentEntity',
       tableName: 'deployments'
     }
-
     const createDeploymentDB = {
       'id': uuid.v4(),
       'applicationName': 'application-name',
@@ -138,6 +133,7 @@ export class FixtureUtilsService {
       'cdConfigurationId': cdConfigurationId,
       'circle': null
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createDeploymentDB)
     return plainToClass(DeploymentEntity, insertion)
   }
@@ -166,12 +162,10 @@ export class FixtureUtilsService {
     undeploymentId: unknown,
     moduleDeployment: unknown
   ): Promise<ModuleUndeploymentEntity> {
-
     const databaseEntity = {
       name: 'ModuleUndeploymentEntity',
       tableName: 'module_undeploymen1ts'
     }
-
     const createModuleUndeployment = {
       'id': uuid.v4(),
       'undeployment': undeploymentId,
@@ -191,6 +185,7 @@ export class FixtureUtilsService {
     const createModule = {
       'id': uuid.v4()
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createModule)
     return plainToClass(ModuleEntity, insertion)
   }
@@ -205,6 +200,7 @@ export class FixtureUtilsService {
       'module': moduleId,
       'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createComponent)
     return plainToClass(ComponentEntity, insertion)
   }
@@ -228,6 +224,7 @@ export class FixtureUtilsService {
       'componentName': name,
       'status': status
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createComponentDeployment)
     return plainToClass(ComponentDeploymentEntity, insertion)
   }
@@ -236,18 +233,17 @@ export class FixtureUtilsService {
     moduleUndeploymentId: string,
     componentDeploymentId: string,
   ): Promise<ComponentUndeploymentEntity> {
-
     const databaseEntity = {
       name: 'ComponentUndeploymentEntity',
       tableName: 'component_undeployments'
     }
-
     const createComponentUndeployment = {
       'id': uuid.v4(),
       'moduleUndeployment': moduleUndeploymentId,
       'componentDeployment':  componentDeploymentId,
       'status': 'CREATED'
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createComponentUndeployment)
     return plainToClass(ComponentUndeploymentEntity, insertion)
   }
@@ -304,7 +300,6 @@ export class FixtureUtilsService {
       name: 'QueuedIstioDeploymentEntity',
       tableName: 'queued_istio_deployments'
     }
-
     const createQueuedIstioDeployment = {
       'deploymentId': deploymentId,
       'componentId': componentId,
@@ -312,6 +307,7 @@ export class FixtureUtilsService {
       'status': status,
       'type': 'QueuedIstioDeploymentEntity'
     }
+
     const insertion = await this.insertSingleFixture(databaseEntity, createQueuedIstioDeployment)
     return plainToClass(QueuedIstioDeploymentEntity, insertion)
   }
@@ -319,12 +315,10 @@ export class FixtureUtilsService {
   public async createUndeployment(
     deploymentId: string
   ): Promise<UndeploymentEntity> {
-
     const databaseEntity = {
       name: 'UndeploymentEntity',
       tableName: 'undeployments'
     }
-
     const createUndeployment = 
     {
       'id': uuid.v4(),
