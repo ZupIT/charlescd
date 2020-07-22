@@ -55,7 +55,7 @@ class MetricServiceImplUnitTest extends Specification {
         def todayDate = LocalDate.now()
         def period = PeriodType.ONE_WEEK
 
-        def dates = new HashSet<LocalDate>([todayDate.minusDays(7), todayDate.minusDays(4)])
+        def dates = new HashSet<LocalDate>([todayDate.minusDays(7), todayDate.minusDays(4), todayDate.minusDays(3)])
 
         when:
         def result = metricService.fillMissingDates(dates, period)
