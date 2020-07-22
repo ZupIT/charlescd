@@ -73,7 +73,7 @@ class V2DeploymentController(
     @ApiOperation(value = "Get Deployment History for Circle")
     @GetMapping("/circle/{circleId}/history")
     @ResponseStatus(HttpStatus.OK)
-    fun deploymentHistory(
+    fun deploymentHistoryForCircle(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathParam(value = "circleId") circle: String,
         pageRequest: PageRequest
