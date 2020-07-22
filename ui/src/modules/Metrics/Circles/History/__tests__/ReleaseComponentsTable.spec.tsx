@@ -17,19 +17,7 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import ReleaseComponentsTable from '../ReleaseComponentsTable';
-
-export const releaseComponentsMock = [
-  {
-    moduleName: 'module a1',
-    name: 'component a1',
-    version: '1.0'
-  },
-  {
-    moduleName: 'module a2',
-    name: 'component a2',
-    version: '1.0'
-  }
-]
+import { releaseComponentsMock } from './fixtures';
 
 test('render default ReleaseComponentsTable', () => {
   render(
