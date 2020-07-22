@@ -66,6 +66,8 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                    component_snapshots.created_at           AS component_snapshot_created_at,
                    component_snapshots.workspace_id         AS component_snapshot_workspace_id,
                    component_snapshots.module_snapshot_id   AS component_snapshot_module_snapshot_id,
+                   component_snapshots.host_value           AS component_snapshot_host_value,
+                   component_snapshots.gateway_name         AS component_snapshot_gateway_name, 
                    artifact_snapshots.id                    AS artifact_snapshot_id,
                    artifact_snapshots.artifact              AS artifact_snapshot_artifact,
                    artifact_snapshots.version               AS artifact_snapshot_version,
@@ -290,8 +292,10 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                     "name," +
                     "created_at," +
                     "workspace_id," +
-                    "module_snapshot_id) VALUES(" +
-                    "?,?,?,?,?,?)"
+                    "module_snapshot_id," +
+                    "host_value," +
+                    "gateway_name) VALUES(" +
+                    "?,?,?,?,?,?,?,?)"
 
             this.jdbcTemplate.batchUpdate(
                 statement,
@@ -302,7 +306,9 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                         it.name,
                         it.createdAt,
                         it.workspaceId,
-                        it.moduleSnapshotId
+                        it.moduleSnapshotId,
+                        it.hostValue,
+                        it.gatewayName
                     )
                 }
             )
@@ -544,6 +550,8 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                    component_snapshots.created_at           AS component_snapshot_created_at,
                    component_snapshots.workspace_id         AS component_snapshot_workspace_id,
                    component_snapshots.module_snapshot_id   AS component_snapshot_module_snapshot_id,
+                   component_snapshots.host_value           AS component_snapshot_host_value,
+                   component_snapshots.gateway_name         AS component_snapshot_gateway_name,
                    artifact_snapshots.id                    AS artifact_snapshot_id,
                    artifact_snapshots.artifact              AS artifact_snapshot_artifact,
                    artifact_snapshots.version               AS artifact_snapshot_version,

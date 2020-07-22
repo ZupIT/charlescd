@@ -44,6 +44,7 @@ export interface IBaseVirtualService {
     namespace: string
   }
   spec: {
+    gateways?: string[]
     hosts: string[]
     http: HttpMatcherUnion[]
   }
