@@ -863,8 +863,9 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
         where : {
           deployment: componentDeploymentEntity.moduleDeployment.deployment.id
         },
-        relations: ['components'] }
-      )
+        relations: ['components'],
+        order: { status: 'ASC' }
+      })
 
     const deploymentDB = componentDeploymentEntity.moduleDeployment.deployment
     const istioQueuedDeployments = await queuedIstioDeploymentsRepository.find(

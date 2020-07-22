@@ -163,7 +163,8 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
       find( {
         where : {
           deploymentId: deployment.id,
-        }
+        },
+        order: { status: 'DESC' }
       })
 
     const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : deployment.id })

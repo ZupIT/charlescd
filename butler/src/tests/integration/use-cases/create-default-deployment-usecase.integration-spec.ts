@@ -183,7 +183,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     })
 
     const component = await fixtureUtilsService.createComponent({
-      'id': uuid.v4(),
+      'id': 'a3dc04bb-f8c5-4942-a4bf-2c35220a3f28',
       'module': module.id,
       'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
@@ -232,7 +232,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     const componentsModuleEntities = await componentsRepository.find({
       where :{ module: module.id },
-      order: { createdAt: 'ASC' },
+      order: { id: 'ASC' },
     })
 
     const deployment = await deploymentsRepository.findOne(

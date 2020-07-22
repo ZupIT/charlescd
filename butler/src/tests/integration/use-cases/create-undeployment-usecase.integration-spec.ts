@@ -631,9 +631,8 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       { where :
           { undeploymentId: undeployment.id },
       relations: ['componentUndeployments'],
-      order: {
-        status: 'ASC'
-      }
+      order : { status: 'ASC' }
+
       })
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
