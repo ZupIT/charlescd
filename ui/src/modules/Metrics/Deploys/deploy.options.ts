@@ -59,7 +59,8 @@ export default {
       }
     },
     padding: {
-      left: 30
+      left: 5,
+      right: 10
     }
   },
   legend: {
@@ -90,16 +91,51 @@ export default {
       }
     ]
   },
-  yaxis: {
-    show: true,
-    showAlways: true,
-    tickAmount: 6,
-    labels: {
-      style: {
-        fontSize: '10px'
+  yaxis: [
+    {
+      seriesName: 'Deploy',
+      showAlways: true,
+      tickAmount: 6,
+      min: 0,
+      axisTicks: {
+        show: true
+      },
+      axisBorder: {
+        show: true,
+        color: theme.metrics.dashboard.chart.label
+      },
+      labels: {
+        style: {
+          colors: theme.metrics.dashboard.chart.label
+        }
+      }
+    },
+    {
+      seriesName: 'Deploy',
+      show: false
+    },
+    {
+      seriesName: 'Avagere Time',
+      tickAmount: 6,
+      min: 0,
+      opposite: true,
+      axisTicks: {
+        show: true
+      },
+      axisBorder: {
+        show: true,
+        color: theme.metrics.dashboard.chart.label
+      },
+      labels: {
+        style: {
+          colors: theme.metrics.dashboard.chart.label
+        },
+        formatter: function(value: number) {
+          return humanizeDateFromSeconds(value);
+        }
       }
     }
-  },
+  ],
   xaxis: {
     type: 'datetime',
     tickAmount: 'dataPoints',
