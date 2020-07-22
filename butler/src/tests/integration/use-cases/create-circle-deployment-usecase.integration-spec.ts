@@ -20,7 +20,7 @@ import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
 import { DeploymentEntity, ModuleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
-import { Connection, createQueryBuilder, EntityManager, getConnection, getManager, Repository } from 'typeorm'
+import { EntityManager, Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/v1/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
 import { ComponentEntity } from '../../../app/v1/api/components/entity'
@@ -30,9 +30,7 @@ import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopip
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import * as uuid from 'uuid'
-import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
-import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -45,7 +43,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
-  let entityManager: EntityManager
+  
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [

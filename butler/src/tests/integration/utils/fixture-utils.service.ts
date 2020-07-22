@@ -15,7 +15,7 @@
  */
 
 import { Inject, Injectable } from '@nestjs/common'
-import { Connection, EntityManager, getManager } from 'typeorm'
+import { Connection, EntityManager } from 'typeorm'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
   DeploymentEntity,
@@ -32,11 +32,10 @@ interface DatabaseEntity {
 }
 @Injectable()
 export class FixtureUtilsService {
-  private readonly manager: EntityManager
   constructor(
         @Inject('Connection') public connection: Connection,
+        private readonly manager: EntityManager
   ) {
-    this.manager = getManager()
   }
 
   public async clearDatabase(): Promise<void> {
