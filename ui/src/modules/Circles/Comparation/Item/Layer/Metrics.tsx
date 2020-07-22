@@ -99,7 +99,7 @@ const LayerMetrics = ({ id }: Props) => {
   };
 
   return (
-    <Layer>
+    <Layer data-testid="layer-metrics">
       <Styled.MetricsTitle>
         <ContentIcon icon="activity">
           <Text.h2 color="light">Health</Text.h2>
