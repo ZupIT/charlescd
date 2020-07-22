@@ -32,6 +32,8 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/v1/core/integrations/moove'
 import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
+import * as uuid from 'uuid'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('UndeploymentCallbackUsecase Integration Test', () => {
 
@@ -69,49 +71,92 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
   })
 
   it('/POST a circle undeploy callback fails should update status only the component and module that failed ', async() => {
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration({
+      id: uuid.v4(),
+      workspaceId: uuid.v4(),
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
-    const undeployment = await fixtureUtilsService.createUndeployment(deployment.id)
+    const undeployment = await fixtureUtilsService.createUndeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'authorId': 'author-id',
+      'status': 'CREATED',
+      'circleId': '123456'
+    })
 
-    const moduleUndeployment = await fixtureUtilsService.createModuleUndeployment(
-      undeployment.id,
-      'module-deployment')
+    const moduleUndeployment = await fixtureUtilsService.createModuleUndeployment( {
+      'id': uuid.v4(),
+      'undeployment': undeployment.id,
+      'moduleDeployment': 'module-deployment-id',
+      'status': 'CREATED'
+    })
 
-    const moduleUndeployment2 = await fixtureUtilsService.createModuleUndeployment(
-      undeployment.id,
-      'module-deployment-2'
-    )
+    const moduleUndeployment2 = await fixtureUtilsService.createModuleUndeployment({
+      'id': uuid.v4(),
+      'undeployment': undeployment.id,
+      'moduleDeployment': 'module-deployment-id2',
+      'status': 'CREATED'
+    })
 
-    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'RUNNING'
-    )
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    const componentDeployment2 = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'RUNNING'
-    )
+    const componentDeployment2 = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    const componentUndeployment = await fixtureUtilsService.createComponentUndeployment(
-      moduleUndeployment.id,
-      componentDeployment.id)
+    const componentUndeployment = await fixtureUtilsService.createComponentUndeployment({
+      'id': uuid.v4(),
+      'moduleUndeployment': moduleUndeployment.id,
+      'componentDeployment':  componentDeployment.id,
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createComponentUndeployment(
-      moduleUndeployment2.id,
-      componentDeployment2.id)
+    await fixtureUtilsService.createComponentUndeployment({
+      'id': uuid.v4(),
+      'moduleUndeployment': moduleUndeployment2.id,
+      'componentDeployment':  componentDeployment2.id,
+      'status': 'CREATED'
+    })
 
-    let queuedUndeployment = await fixtureUtilsService.createQueuedUndeployment(
-      'component-id',
-      'component-deployment-id',
-      'RUNNING',
-      componentUndeployment.id
-    )
+    let queuedUndeployment = await fixtureUtilsService.createQueuedUndeployment({
+      'componentId': 'component-id',
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedUndeploymentEntity',
+      'componentUndeploymentId': componentUndeployment.id
+    })
 
     const finishDeploymentDto = {
       status : 'FAILED'

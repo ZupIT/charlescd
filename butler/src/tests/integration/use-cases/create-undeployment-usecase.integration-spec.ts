@@ -35,6 +35,8 @@ import { PipelineErrorHandlerService } from '../../../app/v1/api/deployments/ser
 
 import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/v1/api/deployments/repository/undeployments.repository'
+import * as uuid from 'uuid'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('CreateUnDeploymentUsecase Integration Test', () => {
 
@@ -80,35 +82,72 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   it('/POST undeploy should call octopipe for each RUNNING component undeployment', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
-    const module = await fixtureUtilsService.createModule()
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
 
-    const component = await fixtureUtilsService.createComponent(module.id)
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const component2 = await fixtureUtilsService.createComponent(module.id)
+    const component2 = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(
-      deployment.id,
-      module.id,
-      'RUNNING'
-    )
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component.id,
-      'componentName',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'componentName',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component2.id,
-      'componentName2',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment,
+      'componentId':  component2.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'componentName2',
+      'status': 'CREATED'
+    })
 
     const createUndeploymentRequest = {
       authorId : 'author-id',
@@ -257,34 +296,63 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   it('/POST /undeploy should create undeployment, componentundeployment and moduleundeployment of a circle deployment', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
-    const module = await fixtureUtilsService.createModule()
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
 
-    const component = await fixtureUtilsService.createComponent(module.id)
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(
-      deployment.id,
-      module.id,
-      'RUNNING'
-    )
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component.id,
-      'componentName',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
     const createUndeploymentRequest = {
       authorId : 'author-id',
       deploymentId: deployment.id
     }
 
-    const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest)
-
+    const { body: responseData } = await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(201)
     const undeployment = responseData
     const deploymentDB = await deploymentsRepository.findOne(
       { id: createUndeploymentRequest.deploymentId },
@@ -315,9 +383,26 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   it('/POST /undeploy should fail when creating undeploy on  default circle ', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createDefaultDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : null
+    })
 
     const createUndeploymentRequest = {
       authorId : 'author-id',
@@ -329,42 +414,82 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   it('/POST /undeploy should enqueue QUEUED and RUNNING component undeployments correctly', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
-    const module = await fixtureUtilsService.createModule()
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
 
-    const component = await fixtureUtilsService.createComponent(module.id)
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const component2 = await fixtureUtilsService.createComponent(module.id)
+    const component2 = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(
-      deployment.id,
-      module.id,
-      'RUNNING'
-    )
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component.id,
-      'componentNameRUNNING',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component2.id,
-      'componentNameRUNNING',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  component2.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      component2.id,
-      'componentNameQUEUED',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
     jest.spyOn(octopipeApiService, 'deploy')
       .mockImplementation( () => of({} as AxiosResponse))
@@ -401,50 +526,88 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
   it('/POST /undeploy should handle  undeployment  failure and set only failed the module that failed', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deployment = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
-    const module = await fixtureUtilsService.createModule()
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
 
-    const module2 = await fixtureUtilsService.createModule()
+    const componentFails = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const moduleFails = await fixtureUtilsService.createModule()
+    const componentFails2 = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const componentFails = await fixtureUtilsService.createComponent(moduleFails.id)
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    const componentFails2 = await fixtureUtilsService.createComponent(moduleFails.id)
+    await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    const moduleDeployment = await fixtureUtilsService.createModuleDeployment(
-      deployment.id,
-      module.id,
-      'RUNNING'
-    )
+    await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
 
-    await fixtureUtilsService.createModuleDeployment(deployment.id,
-      module2.id,
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  componentFails.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createModuleDeployment(
-      deployment.id,
-      moduleFails.id,
-      'RUNNING'
-    )
-
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      componentFails.id,
-      'componentName',
-      'RUNNING'
-    )
-
-    await fixtureUtilsService.createComponentDeployment(
-      moduleDeployment.id,
-      componentFails2.id,
-      'componentName',
-      'RUNNING'
-    )
+    await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  componentFails2.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })

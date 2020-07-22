@@ -20,7 +20,7 @@ import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
 import { DeploymentEntity, ModuleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
-import { Repository } from 'typeorm'
+import { Connection, createQueryBuilder, EntityManager, getConnection, getManager, Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/v1/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
 import { ComponentEntity } from '../../../app/v1/api/components/entity'
@@ -29,6 +29,10 @@ import IEnvConfiguration from '../../../app/v1/core/integrations/configuration/i
 import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
+import * as uuid from 'uuid'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 
 describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
@@ -41,7 +45,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
   let octopipeApiService: OctopipeApiService
-
+  let entityManager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -54,7 +58,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
-
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
@@ -67,11 +70,18 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
+
   })
 
   it('/POST deployments in circle should create deployment, module deployment and component deployment entities', async() => {
-
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration =  await fixtureUtilsService.createCdConfiguration( {
+      id: uuid.v4(),
+      workspaceId: uuid.v4(),
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -158,11 +168,23 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST deployments/circle should do a upsert if a module already exists and has new components ', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration =  await fixtureUtilsService.createCdConfiguration({
+      id: uuid.v4(),
+      workspaceId: uuid.v4(),
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    })
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
 
-    const module = await fixtureUtilsService.createModule()
-
-    const component = await fixtureUtilsService.createComponent(module.id)
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -221,9 +243,28 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle should fail when deployment already exists', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const deploymentDB = await fixtureUtilsService.createCircleDeployment(cdConfiguration.id)
+    const deploymentDB = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
 
     const createDeploymentRequest = {
       deploymentId: deploymentDB.id,
@@ -266,7 +307,14 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST deployments in circle should enqueue RUNNING component deployments correctly', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -329,18 +377,40 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
 
-    const component = await fixtureUtilsService.createComponent('module-id')
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id,
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'CREATED'
-    )
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -425,18 +495,37 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST /deployments in circle should correctly update component pipeline options', async() => {
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const component = await fixtureUtilsService.createComponent('module-id')
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id',
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'CREATED'
-    )
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -518,18 +607,37 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle  should call octopipe for each RUNNING component deployment', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const component = await fixtureUtilsService.createComponent('module-id')
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id',
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'CREATED'
-    )
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
 
-    await  fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    await  fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -642,17 +750,36 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST /deployments in circle should not set failed the  module of queued component', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
-    const component = await fixtureUtilsService.createComponent('module-id')
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id',
+      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+    })
 
-    const componentDeployment = await fixtureUtilsService.createComponentDeployment(
-      'module-deployment-id',
-      'component-id',
-      'component-name',
-      'CREATED'
-    )
-    fixtureUtilsService.createQueuedDeployment(component.id, componentDeployment.id, 'RUNNING')
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+    fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -721,7 +848,14 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
   })
 
   it('/POST should handle deployment failure ', async() => {
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation(() => { throw new Error() })
@@ -774,7 +908,14 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   it('/POST deployments/circle with repeated components should return unprocessable entity status', async() => {
 
-    const cdConfiguration = await fixtureUtilsService.createCdConfigurationOctopipe()
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
