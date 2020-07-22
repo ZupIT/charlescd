@@ -20,7 +20,7 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
 import io.charlescd.moove.domain.PageRequest
 
-interface FindDeploymentsHistoryInteractor {
+interface FindDeploymentsHistoryForCircleInteractor {
 
-    fun execute(workspaceId: String, circles: List<String>?, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse>
+    fun execute(workspaceId: String, circle: String, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse>
 }
