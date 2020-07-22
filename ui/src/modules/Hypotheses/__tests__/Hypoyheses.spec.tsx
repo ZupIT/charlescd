@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Hypotheses from '..';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
-}
+test('render Hypotheses default empty page', async () => {
+  const { getByText } = render(
+    <Hypotheses />
+  );
 
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
-
-export default Layer;
+  await wait(() => expect(getByText('Select a hypothesis and keep evolving.')).toBeInTheDocument());
+});

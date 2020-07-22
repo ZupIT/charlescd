@@ -26,9 +26,13 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Named
 import javax.transaction.Transactional
+import org.slf4j.LoggerFactory
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class BuildCallbackInteractorImpl(private val buildService: BuildService) : BuildCallbackInteractor {
+
+    private val logger = LoggerFactory.getLogger(BuildCallbackInteractorImpl::class.java)
 
     @Transactional
     override fun execute(id: String, request: BuildCallbackRequest) {
@@ -46,7 +50,11 @@ open class BuildCallbackInteractorImpl(private val buildService: BuildService) :
         val artifacts = createArtifactsSnapshots(build, request)
 
         if (artifacts.isNotEmpty()) {
-            buildService.saveArtifacts(artifacts)
+            try {
+                buildService.saveArtifacts(artifacts)
+            } catch (exception: DuplicateKeyException) {
+                this.logger.warn("One of the build artifacts already exists")
+            }
         }
     }
 

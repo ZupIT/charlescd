@@ -3,5 +3,7 @@ description: CharlesCD chart
 name: Charles-CD
 version: 1.0.4
 
-appVersion: 0.2.13
+
+
+appVersion: 0.2.14
 
