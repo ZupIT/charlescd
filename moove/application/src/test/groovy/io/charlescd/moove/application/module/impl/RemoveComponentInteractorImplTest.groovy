@@ -50,8 +50,8 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
 
-        def componentOne = new Component(componentOneId, moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10)
-        def componentTwo = new Component(componentTwoId, moduleId, "Batch-Application", LocalDateTime.now(), workspaceId, 10, 10)
+        def componentOne = new Component(componentOneId, moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def componentTwo = new Component(componentTwoId, moduleId, "Batch-Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
@@ -86,7 +86,7 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
 
-        def componentOne = new Component("afd9d0ae-a0f4-4b78-86b1-24baf1270e8c", moduleId, "Batch-Application", LocalDateTime.now(), workspaceId, 10, 10)
+        def componentOne = new Component("afd9d0ae-a0f4-4b78-86b1-24baf1270e8c", moduleId, "Batch-Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
@@ -118,7 +118,7 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
 
-        def componentOne = new Component(componentOneId, moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10)
+        def componentOne = new Component(componentOneId, moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
