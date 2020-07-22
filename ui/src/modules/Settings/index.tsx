@@ -29,10 +29,11 @@ const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
 const Settings = () => {
   const profileName = getProfileByKey('name');
+  const veteranUser = localStorage.getItem('wizard');
 
   return (
     <Page>
-      <Modal.Wizard />
+      {!veteranUser && <Modal.Wizard />}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
