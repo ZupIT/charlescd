@@ -18,12 +18,14 @@ import {
   BaseEntity,
   Column,
   Entity,
-  PrimaryColumn
+
+  OneToMany, PrimaryColumn
 } from 'typeorm'
-import { ReadCdConfigurationDto } from '../dto'
 import { v4 as uuidv4 } from 'uuid'
-import { ICdConfigurationData } from '../interfaces'
+import { DeploymentEntity } from '../../../v2/entities/deployment.entity'
+import { ReadCdConfigurationDto } from '../dto'
 import { CdTypeEnum } from '../enums'
+import { ICdConfigurationData } from '../interfaces'
 
 @Entity('cd_configurations')
 export class CdConfigurationEntity extends BaseEntity {
@@ -48,6 +50,9 @@ export class CdConfigurationEntity extends BaseEntity {
 
     @Column({ name: 'created_at'})
     public createdAt!: Date
+
+    @OneToMany(() => DeploymentEntity, deployment => deployment.cdConfiguration)
+    public deployments!: DeploymentEntity[]
 
     constructor(
       type: CdTypeEnum,
