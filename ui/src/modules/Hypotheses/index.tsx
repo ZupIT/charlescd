@@ -68,8 +68,6 @@ const Hypotheses = () => {
         <Route exact path={routes.hypothesesEdit}>
           <Styled.ScrollableX>
             <Board id={hypothesis.id} name={hypothesis.name} />
-
-            {/* <Moove id={hypothesis.id} name={hypothesis.name} /> */}
           </Styled.ScrollableX>
         </Route>
       ) : (
