@@ -24,8 +24,8 @@ import io.charlescd.moove.metrics.api.PeriodType
 import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
 import io.charlescd.moove.metrics.domain.service.MetricService
 import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
-import org.springframework.stereotype.Component
 import java.time.Duration
+import org.springframework.stereotype.Component
 
 @Component
 class RetrieveDeploymentsMetricsInteractorImpl(
@@ -55,7 +55,6 @@ class RetrieveDeploymentsMetricsInteractorImpl(
 
         var deploymentsAverageTime = deploymentRepository
             .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
-
         if (deploymentsAverageTime.isNotEmpty() && deploymentsAverageTime.size <= period.numberOfDays) {
             deploymentsAverageTime = fillDeploymentsAverageTimeWithZeroesdValues(deploymentsAverageTime, period)
         }
