@@ -58,6 +58,8 @@ class JdbcModuleRepository(
                            components.workspace_id                                                         AS component_workspace_id,
                            components.error_threshold                                                      AS component_error_threshold,
                            components.latency_threshold                                                    AS component_latency_threshold,
+                           components.host_value                                                           AS component_host_value,
+                           components.gateway_name                                                         AS component_gateway_name,
                            git_configurations.id                                                           AS git_configuration_id,
                            git_configurations.name                                                         AS git_configuration_name,
                            PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?, 'cipher-algo=aes256') AS git_configuration_credentials,
@@ -185,7 +187,9 @@ class JdbcModuleRepository(
             UPDATE components
             SET name              = ?,
                 error_threshold   = ?,
-                latency_threshold = ?
+                latency_threshold = ?,
+                host_value        = ?,
+                gateway_name      = ?
             WHERE id = ?
         """
 
@@ -194,6 +198,8 @@ class JdbcModuleRepository(
             component.name,
             component.errorThreshold,
             component.latencyThreshold,
+            component.hostValue,
+            component.gatewayName,
             component.id
         )
     }
@@ -261,8 +267,10 @@ class JdbcModuleRepository(
                            workspace_id,
                            error_threshold,
                            latency_threshold,
+                           host_value,
+                           gateway_name,
                            created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
         this.jdbcTemplate.batchUpdate(
@@ -275,6 +283,8 @@ class JdbcModuleRepository(
                     it.workspaceId,
                     it.errorThreshold,
                     it.latencyThreshold,
+                    it.hostValue,
+                    it.gatewayName,
                     LocalDateTime.now()
                 )
             })
@@ -378,6 +388,8 @@ class JdbcModuleRepository(
                    components.workspace_id                                                         AS component_workspace_id,
                    components.error_threshold                                                      AS component_error_threshold,
                    components.latency_threshold                                                    AS component_latency_threshold,
+                   components.host_value                                                           AS component_host_value,
+                   components.gateway_name                                                         AS component_gateway_name,
                    git_configurations.id                                                           AS git_configuration_id,
                    git_configurations.name                                                         AS git_configuration_name,
                    PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?, 'cipher-algo=aes256') AS git_configuration_credentials,

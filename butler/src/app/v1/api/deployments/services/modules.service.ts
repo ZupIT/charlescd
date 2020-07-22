@@ -40,27 +40,27 @@ export class ModulesService {
 
   private async saveModule(moduleEntity: ModuleEntity) {
     const module = await this.moduleEntityRepository.findOne({ id: moduleEntity.id })
-    const newComponents: ComponentEntity[] = moduleEntity.components.filter(
-      componentCompare => !module?.components.some(component=>component.id === componentCompare.id )
-    )
-
-    if (module && newComponents.length === 0) {
-      return
-    }
 
     if (!module) {
       await this.moduleEntityRepository.save(moduleEntity)
     } else {
-      newComponents.forEach(
-        newComponent => this.updateAndSaveComponent(newComponent, module)
-      )
+      moduleEntity.components.map(async newComponent => await this.compareComponentsAndSave(newComponent, module))
     }
-
   }
 
-  private async updateAndSaveComponent(newComponent: ComponentEntity, module: ModuleEntity) {
-    newComponent.module = module
-    await this.componentEntityRepository.save(newComponent)
+  private async compareComponentsAndSave(newComponent: ComponentEntity, module: ModuleEntity): Promise<void> {
+    if (!module?.components.some(component=>component.id === newComponent.id)) {
+      await this.componentEntityRepository.save({ ...newComponent, module: module })
+    } else {
+      await this.updateModuleComponents(newComponent, module)
+    }
   }
 
+  private async updateModuleComponents(newComponent: ComponentEntity, module: ModuleEntity): Promise<void> {
+    module.components.map(async oldComponent => {
+      if (newComponent.id === oldComponent.id) {
+        await this.componentEntityRepository.save({...newComponent, pipelineOptions: oldComponent.pipelineOptions})
+      }
+    })
+  }
 }

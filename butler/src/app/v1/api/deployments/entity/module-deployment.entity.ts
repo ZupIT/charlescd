@@ -68,7 +68,7 @@ export class ModuleDeploymentEntity extends BaseEntity {
   constructor(
     moduleId: string,
     helmRepository: string,
-    components: ComponentDeploymentEntity[]
+    components: ComponentDeploymentEntity[],
   ) {
     super()
     this.id = uuidv4()

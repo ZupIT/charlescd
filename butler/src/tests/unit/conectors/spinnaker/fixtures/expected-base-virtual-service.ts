@@ -22,6 +22,7 @@ const expectedBaseVirtualService = {
     namespace: 'app-namespace'
   },
   spec: {
+    gateways: [],
     hosts: [
       'app-name'
     ],

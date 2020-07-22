@@ -24,15 +24,27 @@ export class CreateComponentDto {
     @Allow()
     public readonly id: string
 
+    @ApiProperty()
+    public readonly hostValue: string
+
+    @ApiProperty()
+    public readonly gatewayName: string
+
     constructor(
-      id: string
+      id: string,
+      hostValue: string,
+      gatewayName: string
     ) {
       this.id = id
+      this.hostValue = hostValue
+      this.gatewayName = gatewayName
     }
 
     public toEntity(): ComponentEntity {
       return new ComponentEntity(
-        this.id
+        this.id,
+        this.hostValue,
+        this.gatewayName
       )
     }
 }
