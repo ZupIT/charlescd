@@ -25,7 +25,7 @@ const legendAsMock: CircleSummary = {
 };
 
 test('render default Summary', async () => {
-  const { getByText, getByTestId ,debug } = render(
+  const { getByText, getByTestId } = render(
     <Summary legend={legendAsMock} isLoading={false} onSearch={() => null} />
   );
 

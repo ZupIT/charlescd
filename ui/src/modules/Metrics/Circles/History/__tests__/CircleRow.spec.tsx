@@ -15,9 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import CircleRow from '../CircleRow';
 import { CircleHistory } from '../../interfaces';
+import { FetchMock } from 'jest-fetch-mock';
+import { circlesReleasesMock } from './fixtures';
 
 const circleHistoryMock: CircleHistory = {
   id: '1',
@@ -36,4 +38,22 @@ test('render default ReleaseRow', () => {
   expect(screen.getByText('21/07/2020 • 16:07')).toBeInTheDocument();
   expect(screen.getByText('7 days')).toBeInTheDocument();
   expect(screen.getByTestId('circle-row-dot')).toHaveStyle('background-color: rgb(100, 210, 255)');
+});
+
+test('render active ReleaseRow and show releases table', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(circlesReleasesMock)
+  );
+
+  render(
+    <CircleRow circle={{ ...circleHistoryMock, status: 'ACTIVE' }} />
+  );
+
+  const tableRow = screen.getByTestId('circle-row-1');
+  fireEvent.click(tableRow);
+
+  await wait();
+
+  expect(screen.getAllByText(/release /)).toHaveLength(2);
+  expect(screen.getByTestId('circle-row-dot')).toHaveStyle('background-color: rgb(57, 69, 216)');
 });
