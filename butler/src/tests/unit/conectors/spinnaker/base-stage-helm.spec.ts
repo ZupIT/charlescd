@@ -15,7 +15,7 @@
  */
 
 import 'jest'
-import baseStageHelm from '../../../../app/core/integrations/cd/spinnaker/connector/utils/base-stage-helm'
+import baseStageHelm from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/base-stage-helm'
 import expectedBaseStageHelm from './fixtures/expected-base-stage-helm'
 import expectedBaseHelmPreviousStages from './fixtures/expected-base-helm-previous-stages'
 

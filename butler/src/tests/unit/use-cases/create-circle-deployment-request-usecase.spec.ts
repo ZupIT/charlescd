@@ -16,29 +16,29 @@
 
 import { Test } from '@nestjs/testing'
 import { QueryFailedError, Repository } from 'typeorm'
-import { CreateCircleDeploymentDto, CreateDeploymentRequestDto } from '../../../app/api/deployments/dto/create-deployment'
+import { CreateCircleDeploymentDto, CreateDeploymentRequestDto } from '../../../app/v1/api/deployments/dto/create-deployment'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   CircleDeploymentEntity
-} from '../../../app/api/deployments/entity'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
+} from '../../../app/v1/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository,
   QueuedIstioDeploymentsRepository
-} from '../../../app/api/deployments/repository'
+} from '../../../app/v1/api/deployments/repository'
 import {
   ModulesService,
   PipelineDeploymentsService,
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
-import { CreateCircleDeploymentRequestUsecase } from '../../../app/api/deployments/use-cases'
-import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+} from '../../../app/v1/api/deployments/services'
+import { CreateCircleDeploymentRequestUsecase } from '../../../app/v1/api/deployments/use-cases'
+import { QueuedDeploymentsConstraints } from '../../../app/v1/core/integrations/databases/constraints'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   ComponentDeploymentsRepositoryStub,
   ComponentsRepositoryStub,

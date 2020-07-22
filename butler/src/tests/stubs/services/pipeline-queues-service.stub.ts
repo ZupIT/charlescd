@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../app/api/deployments/entity'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../app/v1/api/deployments/entity'
 
 export class PipelineQueuesServiceStub {
 
