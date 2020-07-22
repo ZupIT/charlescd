@@ -16,25 +16,17 @@
 
 import React from 'react';
 import { render, wait } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer'
-import CirclesComparationItem from '..';
-
-(global as any).MutationObserver = MutationObserver
+import Board from '..';
 
 const props = {
-  id: 'circle-001'
+  id: '123-456',
+  name: 'board-001'
 }
 
-test('render CirclesComparationItem default component', async () => {
-  const handleChange = jest.fn();
-
+test('render Board default component', async () => {
   const { getByTestId } = render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+    <Board {...props}  />
   );
 
-  await wait();
-
-  expect(getByTestId(`circles-comparation-item-${props.id}`)).toBeInTheDocument();
-  expect(getByTestId(`tabpanel-Untitled`)).toBeInTheDocument();
+  await wait(() => expect(getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument());
 });
-

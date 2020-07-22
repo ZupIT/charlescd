@@ -16,25 +16,12 @@
 
 import React from 'react';
 import { render, wait } from 'unit-test/testUtils';
-import MutationObserver from 'mutation-observer'
-import CirclesComparationItem from '..';
+import Hypotheses from '..';
 
-(global as any).MutationObserver = MutationObserver
-
-const props = {
-  id: 'circle-001'
-}
-
-test('render CirclesComparationItem default component', async () => {
-  const handleChange = jest.fn();
-
-  const { getByTestId } = render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+test('render Hypotheses default empty page', async () => {
+  const { getByText } = render(
+    <Hypotheses />
   );
 
-  await wait();
-
-  expect(getByTestId(`circles-comparation-item-${props.id}`)).toBeInTheDocument();
-  expect(getByTestId(`tabpanel-Untitled`)).toBeInTheDocument();
+  await wait(() => expect(getByText('Select a hypothesis and keep evolving.')).toBeInTheDocument());
 });
-
