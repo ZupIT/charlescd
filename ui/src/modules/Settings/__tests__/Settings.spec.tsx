@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
+import React from 'react';
+import MutationObserver from 'mutation-observer'
+import { render, wait } from 'unit-test/testUtils';
+import Settings from '..';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
-}
+(global as any).MutationObserver = MutationObserver
 
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
+test('render Settings default component', async () => {
+  const { getByTestId } = render(
+    <Settings />
+  );
 
-export default Layer;
+  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
+});

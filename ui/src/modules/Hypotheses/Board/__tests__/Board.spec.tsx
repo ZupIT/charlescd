@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Board from '..';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
+const props = {
+  id: '123-456',
+  name: 'board-001'
 }
 
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
+test('render Board default component', async () => {
+  const { getByTestId } = render(
+    <Board {...props}  />
+  );
 
-export default Layer;
+  await wait(() => expect(getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument());
+});
