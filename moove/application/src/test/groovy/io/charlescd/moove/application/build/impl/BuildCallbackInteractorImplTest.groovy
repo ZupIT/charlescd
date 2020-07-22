@@ -20,8 +20,11 @@ import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.build.BuildCallbackInteractor
 import io.charlescd.moove.application.build.request.BuildCallbackRequest
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.BuildRepository
+import org.hibernate.exception.ConstraintViolationException
+import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -109,6 +112,48 @@ class BuildCallbackInteractorImplTest extends Specification {
             assert artifacts[0].createdAt != null
             assert artifacts[0].artifact == buildCallbackRequest.modules[0].components[0].name
             assert artifacts[0].version == buildCallbackRequest.modules[0].components[0].tagName
+        }
+
+        notThrown()
+    }
+
+    def "when artifact snapshot already exists should not throw an exception"() {
+        given:
+        def buildId = "5ac7c34a-33dc-4bde-8161-e84d829561bb"
+        def buildCallbackComponentPart = new BuildCallbackRequest.ComponentPart("Component snapshot name", "v-1.0.0")
+        def buildCallbackModulePart = new BuildCallbackRequest.ModulePart(
+                "c22f321d-d2c6-4ebc-a212-c36740257f9e", BuildCallbackRequest.Status.SUCCESS, [buildCallbackComponentPart]
+        )
+        def buildCallbackRequest = new BuildCallbackRequest(BuildCallbackRequest.Status.SUCCESS, [buildCallbackModulePart])
+        def author = new User("0d2260ff-9a4c-425c-9402-c43cfda97b92", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def build = getDummyBuild("46ecf2cb-62a5-4978-90dc-3bce0d48cabd", author, BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED)
+
+        when:
+        this.buildCallbackInteractor.execute(buildId, buildCallbackRequest)
+
+        then:
+        1 * this.buildRepository.findById(_) >> { argument ->
+            def id = argument[0]
+
+            assert id == buildId
+            assert id instanceof String
+
+            return Optional.of(build)
+        }
+
+        1 * this.buildRepository.updateStatus(_, _) >> { argument ->
+            def id = argument[0]
+            def status = argument[1]
+
+            assert id instanceof String
+            assert status instanceof BuildStatusEnum
+
+            assert id == buildId
+            assert status == BuildStatusEnum.BUILT
+        }
+
+        1 * this.buildRepository.saveArtifacts(_) >> {
+            throw new DuplicateKeyException("Unique constraint violation")
         }
 
         notThrown()
