@@ -14,8 +14,30 @@
  * limitations under the License.
  */
 
-import AreaChart from './Area';
-import ColumnChart from './Column';
-import MixedChart from './Mixed';
+import styled from 'styled-components';
+import Charts from 'react-apexcharts';
 
-export { AreaChart, ColumnChart, MixedChart };
+interface ChartProps {
+  className?: string;
+}
+
+const Chart = styled(Charts)<ChartProps>`
+  padding-right: 15px;
+  .apexcharts-canvas,
+  .apexcharts-canvas.apexcharts-theme-dark {
+    background-color: transparent;
+  }
+  .apexcharts-xaxis-tick {
+    display: none;
+  }
+  .apexcharts-yaxistooltip {
+    display: none;
+  }
+  .apexcharts-xaxistooltip {
+    display: none;
+  }
+`;
+
+export default {
+  Chart
+};

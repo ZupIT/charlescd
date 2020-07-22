@@ -14,8 +14,33 @@
  * limitations under the License.
  */
 
-import AreaChart from './Area';
-import ColumnChart from './Column';
-import MixedChart from './Mixed';
+import React from 'react';
+import defaultsDeep from 'lodash/defaultsDeep';
+import defaultConfig from './config';
+import Styled from './styled';
 
-export { AreaChart, ColumnChart, MixedChart };
+export interface Props {
+  series: object[];
+  options?: object;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+const MixedChart = ({
+  className,
+  options,
+  series,
+  width = '100%',
+  height
+}: Props) => (
+  <Styled.Chart
+    className={className}
+    options={defaultsDeep(options, defaultConfig.options)}
+    width={width}
+    height={height}
+    series={series}
+  />
+);
+
+export default MixedChart;
