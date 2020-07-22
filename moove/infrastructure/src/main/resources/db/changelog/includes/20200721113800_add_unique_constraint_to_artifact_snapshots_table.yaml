@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200721113800-1
+      author: adauto.paula
+      comment: "Removing duplicated artifact snapshots"
+      changes:
+        - sql:
+            sql: "delete from artifact_snapshots a using artifact_snapshots b
+            where a.created_at > b.created_at and a.artifact = b.artifact
+            and a.component_snapshot_id = b.component_snapshot_id"
+
+  - changeSet:
+      id: 20200721113800-2
+      author: adauto.paula
+      comment: "Adding unique constraint to artifact snapshots table"
+      changes:
+        - addUniqueConstraint:
+            columnNames: artifact, component_snapshot_id
+            constraintName: const_unique_artifact
+            tableName: artifact_snapshots
+
