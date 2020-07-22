@@ -315,7 +315,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   );
 
   return (
-    <Styled.Wrapper data-testid={`circles-comparation-item-${id}`}>
+    <Styled.Wrapper data-testid={`circle-comparation-item-${id}`}>
       {loading && isEditing ? <Loader.Tab /> : renderPanel()}
     </Styled.Wrapper>
   );
