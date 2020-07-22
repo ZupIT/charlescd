@@ -249,3 +249,5 @@ databaseChangeLog:
       file: db/changelog/includes/20200620103400_update_admin_email.yaml
   - include:
       file: db/changelog/includes/20200713113020_change_tag_name_column_length.yaml
+  - include:
+      file: db/changelog/includes/20200721113800_add_unique_constraint_to_artifact_snapshots_table.yaml
