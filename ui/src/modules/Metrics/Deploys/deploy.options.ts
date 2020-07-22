@@ -15,6 +15,7 @@
  */
 
 import { chartDateFormatter as formatter } from './helpers';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 import { getTheme } from 'core/utils/themes';
 
 const theme = getTheme();
@@ -28,8 +29,25 @@ export default {
   },
   colors: [
     theme.metrics.dashboard.chart.deploy,
-    theme.metrics.dashboard.chart.error
+    theme.metrics.dashboard.chart.error,
+    theme.metrics.dashboard.chart.averageTime
   ],
+  stroke: {
+    curve: 'smooth',
+    dashArray: [0, 0, 5]
+  },
+  fill: {
+    opacity: [1, 1, 1],
+    type: ['fill', 'fill', 'gradient'],
+    gradient: {
+      inverseColors: false,
+      shade: 'dark',
+      type: 'vertical',
+      opacityFrom: 0.6,
+      opacityTo: 0.2,
+      stops: [0, 80]
+    }
+  },
   theme: {
     mode: 'dark'
   },
@@ -62,9 +80,15 @@ export default {
     toggleDataSeries: true
   },
   tooltip: {
-    x: {
-      formatter
-    }
+    y: [
+      '',
+      '',
+      {
+        formatter: function(value: number) {
+          return humanizeDateFromSeconds(value);
+        }
+      }
+    ]
   },
   yaxis: {
     show: true,
@@ -77,6 +101,7 @@ export default {
     }
   },
   xaxis: {
+    type: 'datetime',
     tickAmount: 'dataPoints',
     labels: {
       hideOverlappingLabels: false,
