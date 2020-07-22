@@ -25,6 +25,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang.StringUtils;
 
 @ApplicationScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
@@ -42,9 +43,14 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         switch (type) {
             case AWS:
                 var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
-                this.client
-                        .register(
-                                new AWSBasicAuthenticator(awsConfig.region, awsConfig.accessKey, awsConfig.secretKey));
+                if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
+                    this.client
+                            .register(
+                                    new AWSBasicAuthenticator(
+                                      awsConfig.region, 
+                                      awsConfig.accessKey, 
+                                      awsConfig.secretKey));
+                }
                 break;
             case AZURE:
                 var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
