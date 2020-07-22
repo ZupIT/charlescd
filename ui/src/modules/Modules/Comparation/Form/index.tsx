@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FormContext } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { getProfileByKey } from 'core/utils/profile';
@@ -44,11 +44,11 @@ const FormModule = ({ module, onChange }: Props) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const history = useHistory();
 
-  const { register, control, getValues, handleSubmit, watch } = useForm<Module>(
-    {
-      defaultValues: { components: [component] }
-    }
-  );
+  const form = useForm<Module>({
+    defaultValues: { components: [component] }
+  });
+
+  const { register, control, getValues, handleSubmit, watch } = form;
   const fieldArray = useFieldArray({ control, name: 'components' });
   const watchFields = watch();
 
@@ -108,46 +108,48 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
-      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Input
-          label="Name the module"
-          name="name"
-          defaultValue={module?.name}
-          ref={register({ required: true })}
-        />
-        <Styled.Input
-          label="URL git"
-          name="gitRepositoryAddress"
-          defaultValue={module?.gitRepositoryAddress}
-          ref={register({ required: true })}
-        />
-        {!isEdit && <Components register={register} fieldArray={fieldArray} />}
-        <Styled.FieldPopover>
+      <FormContext {...form}>
+        <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Input
-            label="Insert a helm repository link"
-            name="helmRepository"
-            defaultValue={module?.helmRepository}
+            label="Name the module"
+            name="name"
+            defaultValue={module?.name}
             ref={register({ required: true })}
           />
-          <Styled.Popover
-            title="Helm"
-            icon="info"
-            size="20px"
-            link="https://helm.sh/docs/"
-            linkLabel="View documentation"
-            description="Helm helps you manage Kubernetes applications"
+          <Styled.Input
+            label="URL git"
+            name="gitRepositoryAddress"
+            defaultValue={module?.gitRepositoryAddress}
+            ref={register({ required: true })}
           />
-        </Styled.FieldPopover>
-        <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
-          <Styled.Button
-            type="submit"
-            size="EXTRA_SMALL"
-            isLoading={saveLoading || updateStatus === 'pending'}
-          >
-            {isEdit ? 'Edit module' : 'Create module'}
-          </Styled.Button>
-        </Can>
-      </Styled.Form>
+          {!isEdit && <Components fieldArray={fieldArray} />}
+          <Styled.FieldPopover>
+            <Styled.Input
+              label="Insert a helm repository link"
+              name="helmRepository"
+              defaultValue={module?.helmRepository}
+              ref={register({ required: true })}
+            />
+            <Styled.Popover
+              title="Helm"
+              icon="info"
+              size="20px"
+              link="https://helm.sh/docs/"
+              linkLabel="View documentation"
+              description="Helm helps you manage Kubernetes applications"
+            />
+          </Styled.FieldPopover>
+          <Can I="write" a="modules" isDisabled={isDisabled} passThrough>
+            <Styled.Button
+              type="submit"
+              size="EXTRA_SMALL"
+              isLoading={saveLoading || updateStatus === 'pending'}
+            >
+              {isEdit ? 'Edit module' : 'Create module'}
+            </Styled.Button>
+          </Can>
+        </Styled.Form>
+      </FormContext>
     </Styled.Content>
   );
 };
