@@ -25,7 +25,7 @@ type Props = {
   release: CircleRelease;
 };
 
-const CircleReleasesTable = ({ release }: Props) => {
+const ReleaseRow = ({ release }: Props) => {
   const [activeRow, setActiveRow] = useState(false);
 
   return (
@@ -62,4 +62,4 @@ const CircleReleasesTable = ({ release }: Props) => {
   );
 };
 
-export default CircleReleasesTable;
+export default ReleaseRow;

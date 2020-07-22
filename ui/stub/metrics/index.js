@@ -24,13 +24,13 @@ const findAllCirclesMetrics = {
   handler: (req, h) => h.response(mock.circlesMetricsDashboard)
 };
 
-const findAllCirclsMetrics = {
+const findAllCirclesHistory = {
   method: 'GET',
   path: `${CIRCLES_API}/history`,
   handler: async (req, h) => h.response(mock.circlesHistory)
 };
 
-const findAllCirclsReleases = {
+const findAllCirclesReleases = {
   method: 'GET',
   path: `${DEPLOYMENTS_API}/history`,
   handler: async (req, h) => h.response(mock.allCircleReleases)
@@ -39,7 +39,7 @@ const findAllCirclsReleases = {
 export default {
   findCircleMetrics,
   findDeployMetrics,
-  findAllCirclsMetrics,
-  findAllCirclsReleases,
+  findAllCirclesHistory,
+  findAllCirclesReleases,
   findAllCirclesMetrics
 };

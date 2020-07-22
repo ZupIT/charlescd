@@ -17,16 +17,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
 import ReleaseRow from '../ReleaseRow';
-import { releaseComponentsMock } from './ReleaseComponentsTable.spec';
-
-const circleReleaseMock = {
-  id: '1',
-  tag: 'release 1',
-  deployedAt: '2020-07-12 19:10:26',
-  undeployedAt: '2020-07-11 19:10:26',
-  authorName: 'Jhon Doe',
-  components: releaseComponentsMock
-}
+import { circleReleaseMock } from './fixtures';
 
 test('render default ReleaseRow', () => {
   render(
