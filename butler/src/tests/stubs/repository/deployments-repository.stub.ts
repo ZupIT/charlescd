@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DeploymentEntity } from '../../../app/api/deployments/entity'
+import { DeploymentEntity } from '../../../app/v1/api/deployments/entity'
 
 export class DeploymentsRepositoryStub {
 
