@@ -388,7 +388,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({
@@ -613,7 +613,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': 'module-id',
+      'module': 'module-id'
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({

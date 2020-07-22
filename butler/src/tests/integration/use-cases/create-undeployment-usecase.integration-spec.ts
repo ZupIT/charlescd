@@ -111,12 +111,12 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const component2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
@@ -323,7 +323,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
@@ -440,7 +440,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const component2 = await fixtureUtilsService.createComponent({
@@ -550,12 +550,12 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     const componentFails = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const componentFails2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({

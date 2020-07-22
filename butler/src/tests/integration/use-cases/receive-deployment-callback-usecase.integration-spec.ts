@@ -73,7 +73,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
   it('/POST a default circle deploy  callback fails should update status and notify moove ', async() => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -159,7 +159,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
   it('/POST a default deploy callback success should update status and notify moove ', async() => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -242,7 +242,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
   it('/POST a circle deploy callback fail should update status and notify moove ', async() => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -330,7 +330,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -462,7 +462,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const component2 = await fixtureUtilsService.createComponent({
@@ -605,7 +605,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const component2 = await fixtureUtilsService.createComponent({
@@ -755,12 +755,12 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
+      'module': module.id
     })
 
     const component2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module2.id,
+      'module': module2.id
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
