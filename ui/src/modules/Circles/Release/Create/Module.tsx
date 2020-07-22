@@ -37,7 +37,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const [componentOptions, setComponentOptions] = useState([]);
   const [isEmptyTag, setIsEmptyTag] = useState(false);
   const prefixName = `modules[${index}]`;
-  const { getComponentTags, tags, status } = useComponentTags();
+  const { getComponentTag, status } = useComponentTags();
   const { errors, register, control, getValues, setValue } = useFormContext();
 
   useEffect(() => {
@@ -50,20 +50,29 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     }
   }, [modules]);
 
-  useEffect(() => {
-    if (status === 'resolved') {
-      const [tag] = tags;
-      setValue(`${prefixName}.tag`, tag?.artifact);
-      setIsEmptyTag(isEmpty(tag?.artifact));
-    }
-  }, [status, tags, setValue, prefixName]);
+  const resetVersion = () => {
+    setValue(`${prefixName}.tag`, '');
+    setValue(`${prefixName}.version`, '');
+  };
 
   const updateComponents = (option: Option) => {
     setComponentOptions(formatComponentOptions(modules.content, option?.value));
+    resetVersion();
   };
 
   const getErrorMessage = (name: string) => {
     return errors?.modules?.[index]?.[name]?.message;
+  };
+
+  const checkTagByName = async (
+    moduleId: string,
+    componentId: string,
+    name: string
+  ) => {
+    setValue(`${prefixName}.tag`, '');
+    const tag = await getComponentTag(moduleId, componentId, { name });
+    setValue(`${prefixName}.tag`, tag?.artifact);
+    setIsEmptyTag(isEmpty(tag?.artifact));
   };
 
   const onSearchTag = () => {
@@ -71,8 +80,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     const moduleId = getValues(`${prefixName}.module`);
     const name = getValues(`${prefixName}.version`);
 
-    setValue(`${prefixName}.tag`, '');
-    getComponentTags(moduleId, componentId, { name });
+    checkTagByName(moduleId, componentId, name);
   };
 
   return (
@@ -101,6 +109,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           name={`${prefixName}.component`}
           label="Select a component"
           options={componentOptions}
+          onChange={resetVersion}
           rules={{ required: true }}
           control={control}
         />
@@ -118,7 +127,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           name={`${prefixName}.version`}
           ref={register({ required: true })}
           onChange={useCallback(debounce(onSearchTag, 300), [])}
-          isLoading={status === 'pending'}
+          isLoading={status.isPending}
           hasError={isEmptyTag}
           label="Version name"
         />

@@ -57,7 +57,7 @@ moove:
     memory: 128Mi
   
 sidecarIstio:
-  enabled: false
+  enabled: true
 
 villager:
   enabled: true
