@@ -41,7 +41,7 @@ test('renders Workspace menu', async () => {
   expect(workspacesArray.length).toBe(5);
 });
 
-test('renders Workspace menu on loading', async () => {
+test('renders Workspace menu on loading', () => {
   const { getByText } = render(
     <Menu
       items={props.items}
