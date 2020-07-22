@@ -43,12 +43,12 @@ class UpdateComponentInteractorImplTest extends Specification {
         def moduleId = "module-id"
         def workspaceId = "workspace-id"
         def componentId = "component-id"
-        def request = new ComponentRequest("new-component-name", 20, 20)
+        def request = new ComponentRequest("new-component-name", 20, 20, 'host', 'gateway')
 
         def author = getDummyUser()
 
-        def component = new Component(componentId, moduleId, "component-name", LocalDateTime.now(), workspaceId, 10, 10)
-        def updatedComponent = new Component(componentId, moduleId, "new-component-name", LocalDateTime.now(), workspaceId, 20, 20)
+        def component = new Component(componentId, moduleId, "component-name", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def updatedComponent = new Component(componentId, moduleId, "new-component-name", LocalDateTime.now(), workspaceId, 20, 20, 'host', 'gateway')
 
         def module = new Module(moduleId, "module-name", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
@@ -84,7 +84,7 @@ class UpdateComponentInteractorImplTest extends Specification {
         def moduleId = "module-not-found"
         def workspaceId = "workspace-id"
         def componentId = "component-id"
-        def request = new ComponentRequest("new-component-name", 20, 20)
+        def request = new ComponentRequest("new-component-name", 20, 20, 'host', 'gateway')
 
         when:
         updateComponentInteractor.execute(moduleId, componentId, workspaceId, request)
@@ -104,11 +104,11 @@ class UpdateComponentInteractorImplTest extends Specification {
         def moduleId = "module-id"
         def workspaceId = "workspace-id"
         def componentId = "component-not-found"
-        def request = new ComponentRequest("new-component-name", 20, 20)
+        def request = new ComponentRequest("new-component-name", 20, 20, 'host', 'gateway')
 
         def author = getDummyUser()
 
-        def component = new Component("component-id", moduleId, "component-name", LocalDateTime.now(), workspaceId, 10, 10)
+        def component = new Component("component-id", moduleId, "component-name", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
 
         def module = new Module(moduleId, "module-name", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,

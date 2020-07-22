@@ -54,7 +54,9 @@ class UpdateComponentInteractorImpl @Inject constructor(private val moduleServic
         return component.copy(
             name = request.name,
             errorThreshold = request.errorThreshold,
-            latencyThreshold = request.latencyThreshold
+            latencyThreshold = request.latencyThreshold,
+            hostValue = request.hostValue,
+            gatewayName = request.gatewayName
         )
     }
 
