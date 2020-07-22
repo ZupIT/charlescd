@@ -22,10 +22,10 @@ import {
   OneToMany, PrimaryColumn
 } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
-import { DeploymentEntity } from '../../../v2/entities/deployment.entity'
 import { ReadCdConfigurationDto } from '../dto'
 import { CdTypeEnum } from '../enums'
 import { ICdConfigurationData } from '../interfaces'
+import { DeploymentEntity } from '../../../../v2/entities/deployment.entity'
 
 @Entity('cd_configurations')
 export class CdConfigurationEntity extends BaseEntity {

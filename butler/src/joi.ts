@@ -4,6 +4,7 @@ import Joi = require('joi');
 
 import { flatten } from 'lodash';
 import { createConnection } from 'typeorm';
+import { CdConfigurationEntity } from './app/v1/api/configurations/entity';
 import { DeploymentEntity } from './app/v2/entities/deployment.entity';
 
 
@@ -65,7 +66,7 @@ interface DeploymentParams {
 }
 
 const params : DeploymentParams = {
-  deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+  deploymentId: '8ba3691b-d647-4a36-9f6d-c089f114e476',
   modules: [
     {
       moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
@@ -108,24 +109,29 @@ async function main() {
     username: 'darwin',
     password: 'darwin',
     database: 'darwin',
-    entities: [`${rootPath}/app/v2/entities/*.{ts,js}`, `${rootPath}/app/api/configurations/entity/cd-configuration.entity.ts`]
+    entities: [`${rootPath}/app/v2/entities/*.{ts,js}`, `${rootPath}/app/v1/api/configurations/entity/cd-configuration.entity.ts`]
   });
-  console.log(`${rootPath}/app/v2/entities`)
 
   const manager = connection.manager
-
-  console.log(deploymentCreateDTOFromParams(params))
-  const deploymentParams = deploymentCreateDTOFromParams(params)
+  const cdConfig = await manager.findOneOrFail(CdConfigurationEntity, params.cdConfigurationId)
+  const existingDeployment = await manager.findOne(DeploymentEntity, params.deploymentId)
+  if (existingDeployment) {
+    console.log(existingDeployment)
+    throw new Error('ja tem deploy com esse id')
+  }
+  const deploymentParams = deploymentCreateDTOFromParams(params, cdConfig)
   const deployment = manager.create(DeploymentEntity, deploymentParams)
-  manager.save(deployment)
+  deployment.cdConfiguration = cdConfig
+  console.log(deployment)
+  console.log(await manager.save(deployment))
 }
 
-const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams) => {
+const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams, cdConfiguration: CdConfigurationEntity) => {
   return {
     id: deploymentParams.deploymentId,
     authorId: deploymentParams.authorId,
     callbackUrl: deploymentParams.callbackUrl,
-    cdConfigurationId: deploymentParams.cdConfigurationId,
+    cdConfiguration: cdConfiguration,
     circleId: deploymentParams.circle.headerValue,
     components: flatten(
       deploymentParams.modules.map((m) => m.components.map((c) => {
@@ -136,7 +142,7 @@ const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams) => {
 
 const componentCreateDTOFromParams = (componentParams: DeploymentComponent, helmUrl: string) => {
   return {
-    id: componentParams.componentId,
+    componentId: componentParams.componentId,
     name: componentParams.componentName,
     imageUrl: componentParams.buildImageUrl,
     imageTag: componentParams.buildImageTag,

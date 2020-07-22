@@ -21,12 +21,13 @@ export class CreateV2Components20200715114000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner) {
       await queryRunner.query(`
       CREATE TABLE "public"."v2components" (
+        "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
+        "deployment_id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
+        "component_id" uuid NOT NULL,
         "name" Character Varying NOT NULL,
         "image_url" Character Varying NOT NULL,
         "image_tag" Character Varying NOT NULL,
-        "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
         "helm_url" Character Varying NOT NULL,
-        "deployment_id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
         "running" Boolean DEFAULT false NOT NULL,
         "created_at" timestamp without time zone DEFAULT now() NOT NULL,
         PRIMARY KEY ( "id" ),
