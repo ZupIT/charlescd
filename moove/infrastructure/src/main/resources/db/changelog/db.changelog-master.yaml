@@ -241,3 +241,11 @@ databaseChangeLog:
       file: db/changelog/includes/20200508152500_rename_column_roles_from_workspace_associations.yaml
   - include:
       file: db/changelog/includes/20200513160800_alter_analyst_roles_and_description.yaml
+  - include:
+      file: db/changelog/includes/20200716170000_alter_table_component_add_host_value_and_gateway_name.yaml
+  - include:
+      file: db/changelog/includes/20200717170000_alter_table_component_snapshot_add_host_value_and_gateway_name.yaml
+  - include:
+      file: db/changelog/includes/20200620103400_update_admin_email.yaml
+  - include:
+      file: db/changelog/includes/20200713113020_change_tag_name_column_length.yaml

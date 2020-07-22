@@ -51,6 +51,7 @@ const ResultList = ({ isLoading, circles }: Props) => {
           </div>
           <div>
             <Styled.ButtonOutlineRounded
+              name="circle-matcher"
               color="light"
               onClick={() => addCircleParam(circle.id)}
             >
