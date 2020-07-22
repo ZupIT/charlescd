@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IReadHealthcheckStatus } from '../../../app/api/healthcheck/interfaces'
+import { IReadHealthcheckStatus } from '../../../app/v1/api/healthcheck/interfaces'
 
 export class HealthcheckServiceStub {
 
