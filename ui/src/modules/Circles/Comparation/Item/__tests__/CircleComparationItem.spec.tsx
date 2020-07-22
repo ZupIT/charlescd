@@ -14,18 +14,49 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { render, wait } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
+import { AllTheProviders } from "unit-test/testUtils";
 import CirclesComparationItem from '..';
+import { FetchMock } from 'jest-fetch-mock/types';
+import { Actions, Subjects } from 'core/utils/abilities';
 
 (global as any).MutationObserver = MutationObserver
+
+interface fakeCanProps {
+  I?: Actions;
+  a?: Subjects;
+  passThrough?: boolean;
+  isDisabled?: boolean;
+  allowedRoutes?: boolean;
+  children: ReactElement;
+}
+
+jest.mock('core/components/Can', () => {
+  return {
+    __esModule: true,
+    default:  ({children}: fakeCanProps) => {
+      return <div>{children}</div>;
+    }
+  };
+});
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
 const props = {
   id: 'circle-001'
 }
 
-test('render CirclesComparationItem default component', async () => {
+const circle = {
+  deployment: {
+    status: 'DEPLOYED'
+  }
+}
+
+test('render CircleComparationItem default component', async () => {
   const handleChange = jest.fn();
 
   const { getByTestId } = render(
@@ -34,7 +65,24 @@ test('render CirclesComparationItem default component', async () => {
 
   await wait();
 
-  expect(getByTestId(`circles-comparation-item-${props.id}`)).toBeInTheDocument();
+  expect(getByTestId(`circle-comparation-item-${props.id}`)).toBeInTheDocument();
   expect(getByTestId(`tabpanel-Untitled`)).toBeInTheDocument();
+});
+
+test('render CircleComparationItem with release', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(circle));
+  const handleChange = jest.fn();
+
+  const { getByTestId, getByText } = render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} />
+    </AllTheProviders>
+  );
+
+  await wait();
+
+  expect(getByText('Override release')).toBeInTheDocument();
+  expect(getByText('Last release deployed')).toBeInTheDocument();
+  expect(getByText('Add Metrics Configuration')).toBeInTheDocument();
 });
 
