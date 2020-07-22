@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { chartDateFormatter } from '../helpers';
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import Deploy from '..';
 
-test('must formatte date for chart', () => {
-  expect(chartDateFormatter("2020-08-13")).toEqual("13/08/2020");
-});
+test('render Deploy default screen', async () => {
+  const { getByTestId } = render(<Deploy />);
+
+  await wait();
+
+  expect(getByTestId("metrics-deploy")).toBeInTheDocument();
+  expect(getByTestId("metrics-filter")).toBeInTheDocument();
+  expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
+})
