@@ -37,7 +37,7 @@ afterEach(() => {
   window = originalWindow;
 });
 
-test('renders sidebar component', () => {
+test('renders sidebar component', async () => {
   const { getByTestId } = render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
@@ -46,9 +46,7 @@ test('renders sidebar component', () => {
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  wait()
-
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  await wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 });
