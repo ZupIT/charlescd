@@ -21,21 +21,17 @@ export class CreateV2Deployments20200715113000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner) {
       await queryRunner.query(`
         CREATE TABLE "public"."v2deployments" (
-        "id" Character Varying NOT NULL,
-        "application_name" Character Varying NOT NULL,
+        "id" uuid NOT NULL,
         "author_id" Character Varying NOT NULL,
-        "description" Character Varying NOT NULL,
         "callback_url" Character Varying NOT NULL,
         "circle_id" Character Varying NOT NULL,
-        "user_id" Character Varying NOT NULL,
-        "status" Character Varying NOT NULL,
-        "active" Boolean NOT NULL,
+        "status" Character Varying DEFAULT 'CREATED' NOT NULL,
+        "active" Boolean DEFAULT false NOT NULL,
         "cd_configuration_id" Character Varying NOT NULL,
         "created_at" timestamp without time zone DEFAULT now() NOT NULL,
         "finished_at" timestamp without time zone DEFAULT now() NOT NULL,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "unique_deployments_id" UNIQUE( "id" ),
-        CONSTRAINT "fk_v2circles_deployments" FOREIGN KEY ( "circle_id" ) REFERENCES "public"."v2circles" ( "id" ),
         CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" )
         );
         CREATE INDEX "index_v2_deployments_id" ON "public"."v2deployments" USING btree( "id" );

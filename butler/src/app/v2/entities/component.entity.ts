@@ -33,7 +33,7 @@ export class ComponentEntity {
   }
 
   public fromDto(dto: ComponentCreateDTO) : ComponentEntity{
-    return new ComponentEntity(dto.helmRepository, dto.buildImageTag, dto.buildImageUrl, dto.componentName)
+    return new ComponentEntity(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name)
   }
 
   public toDto() : ReadComponentDTO {
@@ -49,16 +49,16 @@ export class ComponentEntity {
 }
 
 
-interface ComponentCreateDTO {
-  componentId: string
-  componentName: string
-  buildImageUrl: string
-  buildImageTag: string
-  helmRepository: string
+export interface ComponentCreateDTO {
+  id: string
+  name: string
+  imageUrl: string
+  imageTag: string
+  helmUrl: string
 
 }
 
-interface ReadComponentDTO {
+export interface ReadComponentDTO {
   id: string
   helmUrl: string
   imageTag: string

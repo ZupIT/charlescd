@@ -1,48 +1,69 @@
-// //Insert your joi schema here
-// import Joi = require('joi');
+import Joi = require('joi');
 
-import { createConnection } from 'typeorm';
-import { ComponentEntity } from './app/v2/entities/component.entity';
-import { DeploymentEntity } from './app/v2/entities/deployment.entity';
 import { flatten } from 'lodash';
+import { createConnection } from 'typeorm';
+import { DeploymentEntity } from './app/v2/entities/deployment.entity';
 
 
 
-// const component = Joi.object(
-//   {
-//     componentId: Joi.string(),
-//     componentName: Joi.string(),
-//     buildImageUrl: Joi.string(),
-//     buildImageTag: Joi.string()
-//   }
-// )
-// const componentModule = Joi.object(
-//   {
-//     moduleId: Joi.string().required(),
-//     helmRepository: Joi.string().required(),
-//     components: Joi.array().items(component).required()
-//   }
-// )
+const component = Joi.object(
+  {
+    componentId: Joi.string(),
+    componentName: Joi.string(),
+    buildImageUrl: Joi.string(),
+    buildImageTag: Joi.string()
+  }
+)
+const componentModule = Joi.object(
+  {
+    moduleId: Joi.string().required(),
+    helmRepository: Joi.string().required(),
+    components: Joi.array().items(component).required()
+  }
+)
 
-// const circle = Joi.object({
-//   headerValue: Joi.string().required()
-// })
+const circle = Joi.object({
+  headerValue: Joi.string().required()
+})
 
-// const schema = Joi.object({
-//   deploymentId: Joi.string().required(),
-//   applicationName: Joi.string().required(),
-//   authorId: Joi.string().required(),
-//   description: Joi.string().required(),
-//   callbackUrl: Joi.string().required(),
-//   cdConfigurationId: Joi.string().required(),
-//   circle: circle,
-//   modules: Joi.array().items(componentModule).required()
-// })
+const schema = Joi.object({
+  deploymentId: Joi.string().required(),
+  applicationName: Joi.string().required(),
+  authorId: Joi.string().required(),
+  description: Joi.string().required(),
+  callbackUrl: Joi.string().required(),
+  cdConfigurationId: Joi.string().required(),
+  circle: circle,
+  modules: Joi.array().items(componentModule).required()
+})
 
 
-const params = {
+interface DeploymentModules {
+  moduleId: string
+  helmRepository: string
+  components: DeploymentComponent[]
+}
+
+interface DeploymentComponent {
+  componentId: string
+  componentName: string
+  buildImageUrl: string
+  buildImageTag: string
+}
+
+interface DeploymentParams {
+  deploymentId: string
+  authorId: string
+  callbackUrl: string
+  cdConfigurationId: string
+  modules: DeploymentModules[]
+  circle: {
+    headerValue: string
+  }
+}
+
+const params : DeploymentParams = {
   deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
-  applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
   modules: [
     {
       moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
@@ -64,18 +85,19 @@ const params = {
     }
   ],
   authorId: 'author-id',
-  description: 'Deployment from Charles C.D.',
   callbackUrl: 'http://localhost:8883/moove',
-  cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+  cdConfigurationId: 'id-123-123-132',
   circle: {
     headerValue: 'circle-header'
   }
 }
 
+
 // // console.log(JSON.stringify(schema.validate(params)))
 // console.log(schema.validate(params))
 
 async function main() {
+  const validatedParams = await schema.validate(params)
   const rootPath = __dirname
   const connection = await createConnection({
     type: 'postgres',
@@ -84,19 +106,40 @@ async function main() {
     username: 'darwin',
     password: 'darwin',
     database: 'darwin',
-    entities: [`${rootPath}/app/v2/entities/*.{ts,js}`]
+    entities: [`${rootPath}/app/v2/entities/*.{ts,js}`, `${rootPath}/app/api/configurations/entity/cd-configuration.entity.ts`]
   });
   console.log(`${rootPath}/app/v2/entities`)
 
   const manager = connection.manager
-  // const deployment = new DeploymentEntity()
-  // console.log(flatten(params.modules.map( m => m.components)))
-  const components = manager.create(ComponentEntity, [{componentId: 'aaa'}])
-  // const components = manager.create(ComponentEntity, flatten(params.modules.map( m => m.components)))
-  console.log(components)
-  // const deployment = manager.save(DeploymentEntity, params)
-  // console.log(deployment)
 
+  console.log(deploymentCreateDTOFromParams(params))
+  const deploymentParams = deploymentCreateDTOFromParams(params)
+  const deployment = manager.create(DeploymentEntity, deploymentParams)
+  manager.save(deployment)
+}
+
+const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams) => {
+  return {
+    id: deploymentParams.deploymentId,
+    authorId: deploymentParams.authorId,
+    callbackUrl: deploymentParams.callbackUrl,
+    cdConfigurationId: deploymentParams.cdConfigurationId,
+    circleId: deploymentParams.circle.headerValue,
+    components: flatten(
+      deploymentParams.modules.map((m) => m.components.map((c) => {
+        return componentCreateDTOFromParams(c, m.helmRepository)
+      })))
+  }
+}
+
+const componentCreateDTOFromParams = (componentParams: DeploymentComponent, helmUrl: string) => {
+  return {
+    id: componentParams.componentId,
+    name: componentParams.componentName,
+    imageUrl: componentParams.buildImageUrl,
+    imageTag: componentParams.buildImageTag,
+    helmUrl: helmUrl
+  }
 }
 
 main()

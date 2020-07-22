@@ -19,29 +19,28 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  JoinColumn,
   ManyToOne
 } from 'typeorm'
 import { DeploymentStatusEnum } from '../../api/deployments/enums'
-import { CircleEntity } from './circle.entity'
-import { ComponentEntity } from './component.entity'
+import { ComponentEntity, ReadComponentDTO } from './component.entity'
+import { CdConfigurationEntity } from '../../api/configurations/entity'
+import { ReadCdConfigurationDto } from '../../api/configurations/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntity {
 
-  @PrimaryColumn({ name: 'id' })
+  @PrimaryGeneratedColumn('uuid')
   public id!: string
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'author_id' })
   public authorId!: string
-
-  @Column({ name: 'description' })
-  public description!: string
 
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
-  @Column({ name: 'status', default: DeploymentStatusEnum.CREATED })
+  @Column({ name: 'status', nullable: false, type: 'varchar' })
   public status!: DeploymentStatusEnum
 
   @CreateDateColumn({ name: 'created_at' })
@@ -50,14 +49,42 @@ export class DeploymentEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
-  @Column({ name: 'cd_configuration_id', type: 'varchar'})
+  @Column({ name: 'cd_configuration_id' })
   public cdConfigurationId!: string
 
-  @OneToMany(() => CircleEntity, circle => circle.deployments)
-  circle!: CircleEntity | null
+  @JoinColumn({ name: 'cd_configuration_id' })
+  @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
+  cdConfiguration!: CdConfigurationEntity
 
-  @OneToMany(() => ComponentEntity, component => component.deployment)
+
+  @Column({ name: 'circle_id', nullable: true, type: 'varchar'})
+  public circleId!: string | null
+
+  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: true})
   public components!: ComponentEntity[]
+
+  constructor(id: string, authorId: string, status: DeploymentStatusEnum, circleId: string | null) {
+    this.id = id
+    this.authorId = authorId
+    this.status = status
+    this.circleId = circleId
+  }
+
+  public fromDto(dto: CreateDeploymentDTO) : DeploymentEntity{
+    return new DeploymentEntity(dto.id, dto.authorId, dto.status, dto.circleId)
+  }
+
+  public toDto() : ReadDeploymentDTO{
+    return {
+      id: this.id,
+      authorId: this.authorId,
+      callbackUrl: this.callbackUrl,
+      cdConfiguration: this.cdConfiguration,
+      circleId: this.circleId,
+      status: this.status ? this.status : DeploymentStatusEnum.CREATED,
+      components: this.components
+    }
+  }
 
   public hasSucceeded(): boolean {
     return this.status === DeploymentStatusEnum.SUCCEEDED
@@ -67,3 +94,22 @@ export class DeploymentEntity {
     return this.status === DeploymentStatusEnum.FAILED
   }
 }
+
+  interface CreateDeploymentDTO {
+    id: string
+    authorId: string
+    callbackUrl: string
+    cdConfigurationId: string
+    circleId: string | null
+    status: DeploymentStatusEnum
+  }
+
+  interface ReadDeploymentDTO {
+    id: string
+    authorId: string
+    callbackUrl: string
+    cdConfiguration: ReadCdConfigurationDto
+    circleId: string | null
+    status: DeploymentStatusEnum
+    components: ReadComponentDTO[]
+  }
