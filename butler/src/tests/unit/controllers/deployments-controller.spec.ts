@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import { DeploymentsController } from '../../../app/api/deployments/controller'
-import { DeploymentsService } from '../../../app/api/deployments/services'
+import { DeploymentsController } from '../../../app/v1/api/deployments/controller'
+import { DeploymentsService } from '../../../app/v1/api/deployments/services'
 import { DeploymentsServiceStub } from '../../stubs'
-import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../../../app/api/deployments/dto'
+import { CreateDeploymentRequestDto, ReadDeploymentDto } from '../../../app/v1/api/deployments/dto'
 import {
   CreateCircleDeploymentRequestUsecase,
   CreateDefaultDeploymentRequestUsecase,
   CreateUndeploymentRequestUsecase
-} from '../../../app/api/deployments/use-cases'
+} from '../../../app/v1/api/deployments/use-cases'
 import {
   CreateCircleDeploymentRequestUsecaseStub,
   CreateUndeploymentRequestUsecaseStub
 } from '../../stubs/use-cases'
-import { DeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../app/v1/api/deployments/enums'
 
 describe('DeploymentsController', () => {
 

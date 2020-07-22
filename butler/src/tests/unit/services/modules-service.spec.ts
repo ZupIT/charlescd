@@ -1,8 +1,8 @@
 import { ComponentsRepositoryStub, ModulesRepositoryStub } from '../../stubs/repository'
 import { Repository } from 'typeorm'
-import { ModuleEntity } from '../../../app/api/modules/entity'
-import {  ModulesService } from '../../../app/api/deployments/services'
-import { ComponentEntity } from '../../../app/api/components/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import {  ModulesService } from '../../../app/v1/api/deployments/services'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
 
 
 describe('Module service spec', () => {
@@ -23,7 +23,7 @@ describe('Module service spec', () => {
       new ModuleEntity(
         'module-id',
         [
-          new ComponentEntity('component-id')
+          new ComponentEntity('component-id', undefined, undefined)
         ])
     ]
 
@@ -35,7 +35,7 @@ describe('Module service spec', () => {
 
     await modulesService.createModules(moduleEntities)
     expect(spyModule).not.toBeCalled()
-    expect(spyComponent).not.toBeCalled()
+    expect(spyComponent).toBeCalled()
   })
   it('when module  have new components should save that new component', async() => {
 
@@ -43,13 +43,13 @@ describe('Module service spec', () => {
       new ModuleEntity(
         'module-id',
         [
-          new ComponentEntity('component-id')
+          new ComponentEntity('component-id', undefined, undefined)
         ])
     ]
     const moduleEntitiesUpdated = [
       new ModuleEntity('moduleId-2',[
-        new ComponentEntity('component-id'),
-        new ComponentEntity('component-id-2')
+        new ComponentEntity('component-id', undefined, undefined),
+        new ComponentEntity('component-id-2', undefined, undefined)
       ])
     ]
     jest.spyOn(moduleRepository,'findOne').mockImplementation(
