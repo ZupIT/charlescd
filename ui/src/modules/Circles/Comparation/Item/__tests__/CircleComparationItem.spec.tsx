@@ -15,14 +15,26 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
+import MutationObserver from 'mutation-observer'
 import CirclesComparationItem from '..';
 
-test('render ButtonBase default component', () => {
+(global as any).MutationObserver = MutationObserver
+
+const props = {
+  id: 'hypothesis-001'
+}
+
+test('render CirclesComparationItem default component', async () => {
   const handleChange = jest.fn();
 
   const { getByTestId } = render(
-    <CirclesComparationItem id="circles-comparation-item" onChange={handleChange} />
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
   );
-  expect(getByTestId('circles-comparation')).toBeInTheDocument();
+
+  await wait();
+
+  expect(getByTestId(`circles-comparation-item-${props.id}`)).toBeInTheDocument();
+  expect(getByTestId(`tabpanel-Untitled`)).toBeInTheDocument();
 });
+
