@@ -51,6 +51,7 @@ const props = {
 }
 
 const circle = {
+  name: 'Circle',
   deployment: {
     status: 'DEPLOYED'
   }
@@ -73,7 +74,7 @@ test('render CircleComparationItem with release', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
 
-  const { getByTestId, getByText } = render(
+  const { getByText, getByTestId } = render(
     <AllTheProviders>
       <CirclesComparationItem id={props.id} onChange={handleChange} />
     </AllTheProviders>
@@ -81,8 +82,19 @@ test('render CircleComparationItem with release', async () => {
 
   await wait();
 
+  expect(getByTestId('layer-metrics')).toBeInTheDocument();
   expect(getByText('Override release')).toBeInTheDocument();
   expect(getByText('Last release deployed')).toBeInTheDocument();
   expect(getByText('Add Metrics Configuration')).toBeInTheDocument();
 });
 
+test('render CircleComparationItem Default Circle', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
+  const handleChange = jest.fn();
+
+  const { queryByTestId } = render(
+    <CirclesComparationItem id={props.id} onChange={handleChange} />
+  );
+
+  await wait(() => expect(queryByTestId('layer-metrics')).not.toBeInTheDocument());
+});

@@ -22,8 +22,10 @@ interface Props {
   className?: string;
 }
 
-const Layer = ({ children, className }: Props) => (
-  <Styled.Layer className={className}>{children}</Styled.Layer>
+const Layer = ({ children, className, ...rest }: Props) => (
+  <Styled.Layer className={className} {...rest}>
+    {children}
+  </Styled.Layer>
 );
 
 export default Layer;
