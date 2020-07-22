@@ -180,8 +180,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+      'module': module.id
     })
 
     const createDeploymentRequest = {
@@ -390,7 +389,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({
@@ -504,8 +502,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': 'module-id',
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+      'module': 'module-id'
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({
@@ -617,7 +614,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': 'module-id',
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({
@@ -759,8 +755,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
-      'module': 'module-id',
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
+      'module': 'module-id'
     })
 
     const componentDeployment = await fixtureUtilsService.createComponentDeployment({

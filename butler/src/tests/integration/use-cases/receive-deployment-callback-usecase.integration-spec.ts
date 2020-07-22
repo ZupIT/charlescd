@@ -74,7 +74,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -161,7 +160,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -245,7 +243,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -334,7 +331,6 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
@@ -467,13 +463,11 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const component2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module2.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
@@ -612,13 +606,11 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const component2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module2.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
@@ -764,13 +756,11 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     const component = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const component2 = await fixtureUtilsService.createComponent({
       'id': uuid.v4(),
       'module': module2.id,
-      'pipelineOptions': { 'pipelineCircles': [], 'pipelineVersions': [], 'pipelineUnusedVersions': [] }
     })
 
     const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
