@@ -173,7 +173,9 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         createdAt = resultSet.getTimestamp("component_snapshot_created_at").toLocalDateTime(),
         artifact = resultSet.getString("artifact_snapshot_id")?.let { mapArtifactSnapshot(resultSet) },
         workspaceId = resultSet.getString("component_snapshot_workspace_id"),
-        moduleSnapshotId = resultSet.getString("component_snapshot_module_snapshot_id")
+        moduleSnapshotId = resultSet.getString("component_snapshot_module_snapshot_id"),
+        hostValue = resultSet.getString("component_snapshot_host_value"),
+        gatewayName = resultSet.getString("component_snapshot_gateway_name")
     )
 
     private fun mapArtifactSnapshot(resultSet: ResultSet) = ArtifactSnapshot(
