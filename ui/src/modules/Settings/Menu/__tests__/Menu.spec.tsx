@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Menu from '..';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
+const props = {
+  items: [
+    {
+      id: '123',
+      icon: 'charles',
+      name: 'menu',
+      path: '/',
+    }
+  ]
 }
 
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
+test('render Menu default component with one item link', async () => {
+  const { getByTestId } = render(
+    <Menu {...props} />
+  );
 
-export default Layer;
+  await wait(() => expect(getByTestId('menu-item-link-menu')).toBeInTheDocument());
+});
