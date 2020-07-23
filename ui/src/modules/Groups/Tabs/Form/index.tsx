@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
@@ -31,17 +31,27 @@ interface Props {
 
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
   const { register, handleSubmit } = useForm();
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    let count = 0;
+    map(userGroup?.users, (user, index) => {
+      if (index > 7) {
+        count = count + 1;
+      }
+    });
+    setCounter(count);
+  }, [userGroup]);
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
     onEdit(name);
   };
 
   const renderUsers = (userGroup: UserGroup) => {
-    let count = 0;
     return (
       <Styled.UserList>
         {map(userGroup?.users, (user, index) => {
-          if (index <= 7)
+          if (index <= 7) {
             return (
               <Styled.UserAvatarNoPhoto
                 key={user?.name}
@@ -49,13 +59,11 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
                 name={user?.name}
               />
             );
-          else if (index > 7) {
-            count = count + 1;
           }
         })}
-        {count > 0 && (
+        {counter > 0 && (
           <Styled.UsersCounter onClick={onAddUser} data-testid={'count-users'}>
-            +{count}
+            +{counter}
           </Styled.UsersCounter>
         )}
       </Styled.UserList>

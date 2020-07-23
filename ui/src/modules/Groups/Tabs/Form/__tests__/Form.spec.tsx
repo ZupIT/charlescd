@@ -18,20 +18,21 @@ import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer';
 import Form from '../index';
-import userGroups from '../../../../../../stub/user-groups/mock';
+import { mockUserGroup1, mockUserGroup2 } from './fixtures';
 
 (global as any).MutationObserver = MutationObserver;
 
 test('render user group Form ', () => {
   const { getByTestId } = render(
     <Form
-      userGroup={userGroups.userGroups.content[0]}
+      userGroup={mockUserGroup1}
       onAddUser={jest.fn()}
       onEdit={jest.fn()}
     />
   );
+
   expect(
-    getByTestId(`${userGroups.userGroups.content[0].name}`)
+    getByTestId(`${mockUserGroup1.name}`)
   ).toBeInTheDocument();
 });
 
@@ -40,13 +41,13 @@ test('render user group Form with more then 8 users', async () => {
 
   const { getByTestId } = render(
     <Form
-      userGroup={userGroups.userGroups.content[1]}
+      userGroup={mockUserGroup2}
       onAddUser={onAddUser}
       onEdit={jest.fn()}
     />
   );
 
-  const userGroupForm = getByTestId(`${userGroups.userGroups.content[1].name}`);
+  const userGroupForm = getByTestId(`${mockUserGroup2.name}`);
   const countButton = getByTestId('count-users');
 
   expect(userGroupForm).toBeInTheDocument();
