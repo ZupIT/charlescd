@@ -46,7 +46,7 @@ export const getDeploySeries = (data: DeployMetricData) => [
 ];
 
 export const chartDateFormatter = (date: string) => {
-  return dayjs(date, 'YYYY-MM-DD').format('DD/MM');
+  return dayjs(date, 'YYYY-MM-DD').format('DDMMM');
 };
 
 export const getPlotOption = (deploySeries: Array<any>) => {

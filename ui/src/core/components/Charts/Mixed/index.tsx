@@ -32,7 +32,7 @@ const MixedChart = ({
   options,
   series,
   width = '100%',
-  height
+  height = '100%'
 }: Props) => (
   <Styled.Chart
     className={className}

@@ -60,8 +60,6 @@ const Card = styled.div<Card>`
 `;
 
 const MixedChart = styled(MixedChartComponent)`
-  margin-top: 20px;
-  margin-left: -15px;
   .apexcharts-gridlines-horizontal > .apexcharts-gridline {
     opacity: 0.2;
   }
@@ -95,11 +93,11 @@ const FilterForm = styled.form`
 
 const ChartControls = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 `;
 
 const ChartMenu = styled.div`
-  margin-right: 7px;
+  position: absolute;
 `;
 
 export default {
