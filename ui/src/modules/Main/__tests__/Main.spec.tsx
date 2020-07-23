@@ -19,6 +19,7 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import { render, wait, act } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
+import routes from 'core/constants/routes';
 import Main, {
   Workspaces,
   Users,
