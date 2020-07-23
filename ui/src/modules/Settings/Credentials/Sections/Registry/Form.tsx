@@ -15,7 +15,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import first from 'lodash/first';
 import { useForm } from 'react-hook-form';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
@@ -92,6 +91,13 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
+  const handleFields = () => {
+    if (registryType === 'AWS') {
+      return renderAwsFields();
+    }
+    return renderAzureFields();
+  };
+
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Text.h5 color="dark">
@@ -99,20 +105,22 @@ const FormRegistry = ({ onFinish }: Props) => {
       </Text.h5>
       <Styled.Fields>
         <Form.Input
-          ref={register}
+          ref={register({ required: true })}
           name="name"
           label="Type a name for Registry"
         />
         <Form.Input
-          ref={register}
+          ref={register({ required: true })}
           name="address"
           label="Enter the registry url"
         />
-        {registryType === first(radios).value
-          ? renderAwsFields()
-          : renderAzureFields()}
+        {handleFields()}
       </Styled.Fields>
-      <Button.Default type="submit" isLoading={loadingSave || loadingAdd}>
+      <Button.Default
+        id="submit-registry"
+        type="submit"
+        isLoading={loadingSave || loadingAdd}
+      >
         Save
       </Button.Default>
     </Styled.Form>

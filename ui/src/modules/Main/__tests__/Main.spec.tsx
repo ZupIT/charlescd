@@ -19,6 +19,7 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import { render } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
+import routes from 'core/constants/routes';
 import Main from '../index';
 
 jest.mock('modules/Workspaces', () => {
@@ -37,7 +38,7 @@ beforeEach(() => {
 
   window.location = {
     ...window.location,
-    pathname: '/workspaces'
+    pathname: routes.workspaces
   };
 });
 
