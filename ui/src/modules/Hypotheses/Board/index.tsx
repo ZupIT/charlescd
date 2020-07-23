@@ -67,7 +67,7 @@ const Board = ({ id, name }: Props) => {
   const renderLoading = () => <Loader />;
 
   const renderColumns = () => (
-    <Styled.Board>
+    <Styled.Board data-testid={`board-hypothesis-${id}`}>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Columns.ToDo
           hypothesisId={id}
