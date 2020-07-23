@@ -28,7 +28,7 @@ interface Props {
 }
 
 const Placeholder = ({ icon, title, subtitle, children, className }: Props) => (
-  <Styled.Wrapper className={className}>
+  <Styled.Wrapper data-testid={`placeholder-${icon}`} className={className}>
     <Icon name={icon} />
     <Styled.Empty>
       {title && (
