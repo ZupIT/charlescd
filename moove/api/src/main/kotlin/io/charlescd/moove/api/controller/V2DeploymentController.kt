@@ -29,7 +29,6 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
-import javax.ws.rs.PathParam
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
