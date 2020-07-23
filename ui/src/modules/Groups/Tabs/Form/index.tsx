@@ -36,9 +36,35 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
     onEdit(name);
   };
 
+  const renderUsers = (userGroup: UserGroup) => {
+    let count = 0;
+    return (
+      <Styled.UserList>
+        {map(userGroup?.users, (user, index) => {
+          if (index <= 7)
+            return (
+              <Styled.UserAvatarNoPhoto
+                key={user?.name}
+                src={user?.photoUrl}
+                name={user?.name}
+              />
+            );
+          else if (index > 7) {
+            count = count + 1;
+          }
+        })}
+        {count > 0 && (
+          <Styled.UsersCounter onClick={onAddUser} data-testid={'count-users'}>
+            +{count}
+          </Styled.UsersCounter>
+        )}
+      </Styled.UserList>
+    );
+  };
+
   return (
     <>
-      <Styled.Layer.Title>
+      <Styled.Layer.Title data-testid={userGroup?.name}>
         <ContentIcon icon="user-groups">
           <InputTitle
             resume
@@ -60,15 +86,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           >
             Add / Remove user
           </Styled.ButtonAdd>
-          <Styled.UserList>
-            {map(userGroup?.users, user => (
-              <Styled.UserAvatarNoPhoto
-                key={user?.name}
-                src={user?.photoUrl}
-                name={user?.name}
-              />
-            ))}
-          </Styled.UserList>
+          {renderUsers(userGroup)}
         </ContentIcon>
       </Styled.Layer.Users>
     </>
