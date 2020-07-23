@@ -23,6 +23,7 @@ import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircle
 import io.charlescd.moove.application.deployment.FindDeploymentsHistoryInteractor
 import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
 import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
@@ -30,10 +31,9 @@ import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import javax.validation.Valid
-import javax.ws.rs.PathParam
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @Api(value = "Deployment Endpoints", tags = ["Deployment"])
 @RestController
@@ -85,11 +85,11 @@ class V2DeploymentController(
     }
 
     @ApiOperation(value = "Get Deployment History")
-    @GetMapping("/history")
+    @PostMapping("/history")
     @ResponseStatus(HttpStatus.OK)
     fun deploymentsHistory(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestParam filters: Map<String, Any>,
+        @RequestBody filters: DeploymentHistoryFilterRequest,
         pageRequest: PageRequest
     ): SummarizedDeploymentHistoryResponse {
         return this.findDeploymentsHistoryInteractor.execute(workspaceId, filters, pageRequest)

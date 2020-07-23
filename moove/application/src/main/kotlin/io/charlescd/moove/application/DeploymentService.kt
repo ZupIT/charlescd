@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application
 
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
@@ -60,17 +61,5 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         return this.deploymentRepository.findActiveByCircleId(
             circleId
         )
-    }
-
-    fun findDeploymentsHistory(workspaceId: String, circleId: String, pageRequest: PageRequest): Page<DeploymentHistory> {
-        return this.findDeploymentsHistory(workspaceId, listOf(circleId), pageRequest)
-    }
-
-    fun findDeploymentsHistory(workspaceId: String, filters: Map<String, Any>, pageRequest: PageRequest): Page<DeploymentHistory> {
-        return this.deploymentRepository.findDeploymentsHistory(workspaceId, DeploymentHistoryFilterRequest.filterBy(filters), pageRequest)
-    }
-
-    fun findDeploymentsHistory(workspaceId: String, circles: List<String>, pageRequest: PageRequest): Page<DeploymentHistory> {
-        return this.deploymentRepository.findDeploymentsHistory(workspaceId, DeploymentHistoryFilterRequest.filterByCirclesIds(circles), pageRequest)
     }
 }

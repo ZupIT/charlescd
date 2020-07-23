@@ -16,10 +16,11 @@
 
 package io.charlescd.moove.application.deployment
 
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
 import io.charlescd.moove.domain.PageRequest
 
 interface FindDeploymentsHistoryInteractor {
 
-    fun execute(workspaceId: String, filters: Map<String, Any>, pageRequest: PageRequest): SummarizedDeploymentHistoryResponse
+    fun execute(workspaceId: String, filters: DeploymentHistoryFilterRequest, pageRequest: PageRequest): SummarizedDeploymentHistoryResponse
 }

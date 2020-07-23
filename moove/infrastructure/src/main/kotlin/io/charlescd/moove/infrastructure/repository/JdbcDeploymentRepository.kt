@@ -21,9 +21,9 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.*
-import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class JdbcDeploymentRepository(
@@ -338,39 +338,54 @@ class JdbcDeploymentRepository(
     }
 
     private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
-        return " circle_id IN (${circlesId.joinToString(separator = ",") { "?" }}) "
+        return createInQuery("circle_id", circlesId)
     }
 
-    override fun findDeploymentsHistory(workspaceId: String, filters: DeploymentHistoryFilterRequest?, pageRequest: PageRequest): Page<DeploymentHistory> {
-        val totalItems = this.count(workspaceId, filters!!.circlesIds!!)
+    private fun mountDeploymentStatusSearch(statuses: List<DeploymentStatusEnum>): String {
+        return createInQuery("status", statuses)
+    }
+
+    private fun createInQuery(parameter: String, items: List<Any>): String {
+        return " $parameter IN (${items.joinToString(separator = ",") { "?" }}) "
+    }
+
+    override fun findDeploymentsHistory(workspaceId: String, filters: DeploymentHistoryFilter, pageRequest: PageRequest): Page<DeploymentHistory> {
+        val totalItems = this.count(workspaceId, filters)
         val parameters = mutableListOf<Any>(workspaceId)
 
-        val query = StringBuilder(
-            """
-                    SELECT  deployments.id              AS deployment_id,
-	                        deployments.deployed_at     AS deployed_at,
-                            deployments.undeployed_at   AS undeployed_at,
-	                        users.name                  AS user_name,
-	                        builds.tag                  AS deployment_version,
-	                        deployments.status          AS deployment_status
-                    FROM deployments deployments
-                        INNER JOIN users users      ON users.id = deployments.user_id
-                        INNER JOIN builds builds    ON builds.id = deployments.build_id
-                    WHERE deployments.workspace_id = ? 
-            """
-        )
+        val queryBuilder = deploymentHistoryQuery()
 
-        if (!filters!!.circlesIds!!.isNullOrEmpty()) {
-            query.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+        if (!filters.circlesIds.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
             parameters.addAll(filters.circlesIds!!)
         }
 
-        query.append(createPaginationAppend())
+        if (!filters.deploymentStatus.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
+            parameters.addAll(filters.deploymentStatus!!)
+        }
+
+        if (!filters.deploymentName.isNullOrBlank()) {
+            queryBuilder.appendln(" AND builds.tag ILIKE ? ")
+            parameters.add(filters.deploymentName!!)
+        }
+
+        if (filters.periodBefore != null) {
+            queryBuilder.appendln(
+                """
+                        AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days') 
+                """
+            )
+            parameters.add(filters.periodBefore!!)
+        }
+
+        queryBuilder.append(createPaginationAppend())
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.size * pageRequest.page)
 
         val result = this.jdbcTemplate.query(
-            query.toString(),
+            queryBuilder.toString(),
             parameters.toTypedArray(),
             deploymentHistoryExtractor
         )?.toList()
@@ -379,6 +394,22 @@ class JdbcDeploymentRepository(
         return Page(result, pageRequest.page, pageRequest.size, totalItems)
     }
 
+    fun deploymentHistoryQuery() = StringBuilder(
+        """
+                    SELECT  deployments.id                                      AS deployment_id,
+	                        deployments.deployed_at                             AS deployed_at,
+                            deployments.undeployed_at                           AS undeployed_at,
+                            COALESCE(deployed_at - created_at, '00:00:00')      AS deployment_average_time,
+	                        users.name                                          AS user_name,
+	                        builds.tag                                          AS deployment_version,
+	                        deployments.status                                  AS deployment_status
+                    FROM deployments deployments
+                        INNER JOIN users users      ON users.id = deployments.user_id
+                        INNER JOIN builds builds    ON builds.id = deployments.build_id
+                    WHERE deployments.workspace_id = ? 
+            """
+    )
+
     private fun createPaginationAppend(): String {
         return """  
                     LIMIT ?
@@ -386,30 +417,54 @@ class JdbcDeploymentRepository(
                 """
     }
 
-    override fun count(workspaceId: String): Int {
-        return this.count(workspaceId, null)
-    }
-
-    override fun count(workspaceId: String, circles: List<String>?): Int {
+    override fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int {
         val parameters = mutableListOf<Any>(workspaceId)
-        val query = StringBuilder(
+        val queryBuilder = StringBuilder(
             """
                     SELECT  count (deployments.id)              
                     FROM deployments deployments
+                        {${buildJoinAppender(filters.deploymentName)}}
                     WHERE deployments.workspace_id = ? 
             """
         )
 
-        if (!circles.isNullOrEmpty()) {
-            query.appendln(" AND ${mountCircleIdQuerySearch(circles)} ")
-            parameters.addAll(circles)
+        if (!filters.circlesIds.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+            parameters.addAll(filters.circlesIds!!)
+        }
+
+        if (!filters.deploymentStatus.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
+            parameters.addAll(filters.deploymentStatus!!)
+        }
+
+        if (!filters.deploymentName.isNullOrBlank()) {
+            queryBuilder.appendln(" AND builds.tag ILIKE ? ")
+            parameters.add(filters.deploymentName!!)
+        }
+
+        if (filters.periodBefore != null) {
+            queryBuilder.appendln(
+                """
+                        AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
+                        AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days') 
+                """
+            )
+            parameters.add(filters.periodBefore!!)
         }
 
         return this.jdbcTemplate.queryForObject(
-            query.toString(),
+            queryBuilder.toString(),
             parameters.toTypedArray()
         ) { rs, _ ->
             rs.getInt(1)
         } ?: 0
+    }
+
+    private fun buildJoinAppender(name: String?): String {
+        return when (!name.isNullOrBlank()){
+            true -> " INNER JOIN builds builds    ON builds.id = deployments.build_id "
+            false -> ""
+        }
     }
 }
