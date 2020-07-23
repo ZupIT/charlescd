@@ -20,6 +20,7 @@ import CircleRow from '../CircleRow';
 import { CircleHistory } from '../../interfaces';
 import { FetchMock } from 'jest-fetch-mock';
 import { circlesReleasesMock } from './fixtures';
+import * as DateUtils from 'core/utils/date';
 
 const circleHistoryMock: CircleHistory = {
   id: '1',
@@ -30,6 +31,8 @@ const circleHistoryMock: CircleHistory = {
 }
 
 test('render default ReleaseRow', () => {
+  jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('21/07/2020 • 16:07');
+
   render(
     <CircleRow circle={circleHistoryMock} />
   );
