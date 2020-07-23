@@ -1,11 +1,10 @@
 // playground file
 
-import Joi = require('joi');
-
 import { flatten } from 'lodash';
 import { createConnection } from 'typeorm';
 import { CdConfigurationEntity } from './app/v1/api/configurations/entity';
-import { DeploymentEntity } from './app/v2/entities/deployment.entity';
+import { DeploymentEntity } from './app/v2/api/deployments/entity/deployment.entity';
+import Joi = require('@hapi/joi');
 
 
 
@@ -31,9 +30,7 @@ const circle = Joi.object({
 
 const schema = Joi.object({
   deploymentId: Joi.string().required(),
-  applicationName: Joi.string().required(),
   authorId: Joi.string().required(),
-  description: Joi.string().required(),
   callbackUrl: Joi.string().required(),
   cdConfigurationId: Joi.string().required(),
   circle: circle,
@@ -66,7 +63,7 @@ interface DeploymentParams {
 }
 
 const params : DeploymentParams = {
-  deploymentId: '8ba3691b-d647-4a36-9f6d-c089f114e476',
+  deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
   modules: [
     {
       moduleId: 'e2c937cb-d77e-48db-b1ea-7d3df16fd02c',
@@ -89,65 +86,66 @@ const params : DeploymentParams = {
   ],
   authorId: 'author-id',
   callbackUrl: 'http://localhost:8883/moove',
-  cdConfigurationId: 'id-123-123-132',
+  cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
   circle: {
     headerValue: 'circle-header'
   }
 }
 
 
-// // console.log(JSON.stringify(schema.validate(params)))
-// console.log(schema.validate(params))
+const validatedSchema = schema.validate(params)
+// console.log(JSON.stringify(schema.validate(params)))
+console.log(validatedSchema)
 
-async function main() {
-  const validatedParams = await schema.validate(params)
-  const rootPath = __dirname
-  const connection = await createConnection({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'darwin',
-    password: 'darwin',
-    database: 'darwin',
-    entities: [`${rootPath}/app/v2/entities/*.{ts,js}`, `${rootPath}/app/v1/api/configurations/entity/cd-configuration.entity.ts`]
-  });
+// async function main() {
+//   const validatedParams = await schema.validate(params)
+//   const rootPath = __dirname
+//   const connection = await createConnection({
+//     type: 'postgres',
+//     host: 'localhost',
+//     port: 5432,
+//     username: 'darwin',
+//     password: 'darwin',
+//     database: 'darwin',
+//     entities: [`${rootPath}/app/v2/entities/*.{ts,js}`, `${rootPath}/app/v1/api/configurations/entity/cd-configuration.entity.ts`]
+//   });
 
-  const manager = connection.manager
-  const cdConfig = await manager.findOneOrFail(CdConfigurationEntity, params.cdConfigurationId)
-  const existingDeployment = await manager.findOne(DeploymentEntity, params.deploymentId)
-  if (existingDeployment) {
-    console.log(existingDeployment)
-    throw new Error('ja tem deploy com esse id')
-  }
-  const deploymentParams = deploymentCreateDTOFromParams(params, cdConfig)
-  const deployment = manager.create(DeploymentEntity, deploymentParams)
-  deployment.cdConfiguration = cdConfig
-  console.log(deployment)
-  console.log(await manager.save(deployment))
-}
+//   const manager = connection.manager
+//   const cdConfig = await manager.findOneOrFail(CdConfigurationEntity, params.cdConfigurationId)
+// const existingDeployment = await manager.findOne(DeploymentEntity, params.deploymentId)
+//   if (existingDeployment) {
+//     console.log(existingDeployment)
+//     throw new Error('ja tem deploy com esse id')
+//   }
+//   const deploymentParams = deploymentCreateDTOFromParams(params, cdConfig)
+//   const deployment = manager.create(DeploymentEntity, deploymentParams)
+//   deployment.cdConfiguration = cdConfig
+//   console.log(deployment)
+//   console.log(await manager.save(deployment))
+// }
 
-const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams, cdConfiguration: CdConfigurationEntity) => {
-  return {
-    id: deploymentParams.deploymentId,
-    authorId: deploymentParams.authorId,
-    callbackUrl: deploymentParams.callbackUrl,
-    cdConfiguration: cdConfiguration,
-    circleId: deploymentParams.circle.headerValue,
-    components: flatten(
-      deploymentParams.modules.map((m) => m.components.map((c) => {
-        return componentCreateDTOFromParams(c, m.helmRepository)
-      })))
-  }
-}
+// const deploymentCreateDTOFromParams = (deploymentParams: DeploymentParams, cdConfiguration: CdConfigurationEntity) => {
+//   return {
+//     id: deploymentParams.deploymentId,
+//     authorId: deploymentParams.authorId,
+//     callbackUrl: deploymentParams.callbackUrl,
+//     cdConfiguration: cdConfiguration,
+//     circleId: deploymentParams.circle.headerValue,
+//     components: flatten(
+//       deploymentParams.modules.map((m) => m.components.map((c) => {
+//         return componentCreateDTOFromParams(c, m.helmRepository)
+//       })))
+//   }
+// }
 
-const componentCreateDTOFromParams = (componentParams: DeploymentComponent, helmUrl: string) => {
-  return {
-    componentId: componentParams.componentId,
-    name: componentParams.componentName,
-    imageUrl: componentParams.buildImageUrl,
-    imageTag: componentParams.buildImageTag,
-    helmUrl: helmUrl
-  }
-}
+// const componentCreateDTOFromParams = (componentParams: DeploymentComponent, helmUrl: string) => {
+//   return {
+//     componentId: componentParams.componentId,
+//     name: componentParams.componentName,
+//     imageUrl: componentParams.buildImageUrl,
+//     imageTag: componentParams.buildImageTag,
+//     helmUrl: helmUrl
+//   }
+// }
 
-main()
+// main()
