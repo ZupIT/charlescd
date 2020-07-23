@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
-
-interface Props {
-  children: ReactNode;
-  className?: string;
+export enum DEPLOYMENT_STATUS {
+  deploying = 'DEPLOYING',
+  undeploying = 'UNDEPLOYING'
 }
-
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
-
-export default Layer;
