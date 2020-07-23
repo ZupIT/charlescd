@@ -19,12 +19,16 @@ import { FetchMock } from 'jest-fetch-mock';
 import CircleReleasesTable from '../CircleReleasesTable';
 import { render, screen, wait } from 'unit-test/testUtils';
 import { circlesReleasesMock } from './fixtures';
+import * as DateUtils from 'core/utils/date';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
 test('render default CircleReleasesTable', async () => {
+  jest.spyOn(DateUtils, 'dateTimeFormatter')
+    .mockReturnValueOnce('12/07/2020 • 16:07')
+    .mockReturnValueOnce('11/07/2020 • 16:07');
 
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(circlesReleasesMock)

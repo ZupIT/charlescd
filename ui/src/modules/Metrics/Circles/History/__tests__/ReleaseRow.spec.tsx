@@ -18,8 +18,13 @@ import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
 import ReleaseRow from '../ReleaseRow';
 import { circleReleaseMock } from './fixtures';
+import * as DateUtils from 'core/utils/date';
 
 test('render default ReleaseRow', () => {
+  jest.spyOn(DateUtils, 'dateTimeFormatter')
+    .mockReturnValueOnce('12/07/2020 • 16:07')
+    .mockReturnValueOnce('11/07/2020 • 16:07');
+
   render(
     <ReleaseRow release={circleReleaseMock} />
   );
