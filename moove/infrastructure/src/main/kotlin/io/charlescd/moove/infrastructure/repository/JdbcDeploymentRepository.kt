@@ -341,8 +341,8 @@ class JdbcDeploymentRepository(
         return " circle_id IN (${circlesId.joinToString(separator = ",") { "?" }}) "
     }
 
-    override fun findDeploymentsHistory(workspaceId: String, circles: List<String>?, pageRequest: PageRequest): Page<DeploymentHistory> {
-        val totalItems = this.count(workspaceId, circles)
+    override fun findDeploymentsHistory(workspaceId: String, filters: DeploymentHistoryFilterRequest?, pageRequest: PageRequest): Page<DeploymentHistory> {
+        val totalItems = this.count(workspaceId, filters!!.circlesIds!!)
         val parameters = mutableListOf<Any>(workspaceId)
 
         val query = StringBuilder(
@@ -360,9 +360,9 @@ class JdbcDeploymentRepository(
             """
         )
 
-        if (!circles.isNullOrEmpty()) {
-            query.appendln(" AND ${mountCircleIdQuerySearch(circles)} ")
-            parameters.addAll(circles)
+        if (!filters!!.circlesIds!!.isNullOrEmpty()) {
+            query.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+            parameters.addAll(filters.circlesIds!!)
         }
 
         query.append(createPaginationAppend())
