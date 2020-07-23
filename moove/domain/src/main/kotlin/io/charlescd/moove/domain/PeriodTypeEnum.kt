@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment
+package io.charlescd.moove.domain
 
-import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
-import io.charlescd.moove.domain.PageRequest
+enum class PeriodTypeEnum(val numberOfDays: Int) {
 
-interface FindDeploymentsHistoryInteractor {
-
-    fun execute(workspaceId: String, filters: Map<String, Any>, pageRequest: PageRequest): SummarizedDeploymentHistoryResponse
+    ONE_WEEK(7),
+    TWO_WEEKS(14),
+    ONE_MONTH(30),
+    THREE_MONTHS(90)
 }

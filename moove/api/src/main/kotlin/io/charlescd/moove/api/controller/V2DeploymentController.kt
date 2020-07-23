@@ -89,7 +89,7 @@ class V2DeploymentController(
     @ResponseStatus(HttpStatus.OK)
     fun deploymentsHistory(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestParam filters: Map<String, String>,
+        @RequestParam filters: Map<String, Any>,
         pageRequest: PageRequest
     ): SummarizedDeploymentHistoryResponse {
         return this.findDeploymentsHistoryInteractor.execute(workspaceId, filters, pageRequest)
