@@ -39,7 +39,6 @@ func (main ManagerMain) NewManager() UseCases {
 }
 
 func (manager Manager) Start(pipeline pipelinePKG.Pipeline) {
-	fmt.Println(pipeline)
 	go manager.executeStages(pipeline)
 }
 
