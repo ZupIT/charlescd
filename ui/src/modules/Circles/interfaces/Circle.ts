@@ -15,6 +15,7 @@
  */
 
 import { Rules } from 'modules/Circles/Segments';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 
 export interface Build {
   id: string;
@@ -41,7 +42,7 @@ export interface Component {
 export interface Deployment {
   id: string;
   deployedAt: string;
-  status: string;
+  status: DEPLOYMENT_STATUS;
   tag: string;
   circle?: Circle;
   artifacts: Artifact[];
