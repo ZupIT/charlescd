@@ -30,9 +30,9 @@ const circleHistoryMock: CircleHistory = {
   lastUpdatedAt: '2020-07-21 19:10:26',
 }
 
-jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('21/07/2020 • 16:07');
-
 test('render default ReleaseRow', () => {
+  jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('21/07/2020 • 16:07');
+
   render(
     <CircleRow circle={circleHistoryMock} />
   );
