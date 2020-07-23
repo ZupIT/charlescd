@@ -18,7 +18,7 @@ import React from 'react';
 import { render } from 'unit-test/testUtils';
 import CirclesComparation from '..';
 
-test('render ButtonBase default component', () => {
+test('render CirclesComparation default component', () => {
   const handleChange = jest.fn();
 
   const { getByTestId } = render(
