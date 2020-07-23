@@ -337,11 +337,11 @@ class JdbcDeploymentRepository(
     }
 
     private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
-        return createInQuery("circle_id", circlesId)
+        return createInQuery("deployments.circle_id", circlesId)
     }
 
     private fun mountDeploymentStatusSearch(statuses: List<DeploymentStatusEnum>): String {
-        return createInQuery("status", statuses)
+        return createInQuery("deployments.status", statuses)
     }
 
     private fun createInQuery(parameter: String, items: List<Any>): String {
@@ -361,7 +361,7 @@ class JdbcDeploymentRepository(
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
             queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
-            parameters.addAll(filters.deploymentStatus!!)
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
         if (!filters.deploymentName.isNullOrBlank()) {
@@ -417,7 +417,7 @@ class JdbcDeploymentRepository(
             """
                     SELECT  count (deployments.id)              
                     FROM deployments deployments
-                        {${buildJoinAppender(filters.deploymentName)}}
+                        ${buildJoinAppender(filters.deploymentName)}
                     WHERE deployments.workspace_id = ? 
             """
         )
@@ -429,7 +429,7 @@ class JdbcDeploymentRepository(
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
             queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
-            parameters.addAll(filters.deploymentStatus!!)
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
         if (!filters.deploymentName.isNullOrBlank()) {
@@ -468,10 +468,11 @@ class JdbcDeploymentRepository(
         val parameters = mutableListOf<Any>(workspaceId)
         val queryBuilder = StringBuilder(
             """
-                    SELECT  COUNT(id                AS deployment_quantity,
-                            deployments.status      AS deployment_status
+                    SELECT  COUNT(deployments.id)               AS deployment_quantity,
+                            deployments.status                  AS deployment_status
                     FROM deployments
-                    WHERE   workspace_id = ?
+                        ${buildJoinAppender(filters.deploymentName)}
+                    WHERE   deployments.workspace_id = ?
             """
         )
 
@@ -482,7 +483,7 @@ class JdbcDeploymentRepository(
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
             queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
-            parameters.addAll(filters.deploymentStatus!!)
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
         if (!filters.deploymentName.isNullOrBlank()) {
@@ -494,6 +495,8 @@ class JdbcDeploymentRepository(
             queryBuilder.appendln(createBetweenDeploymentCreatedDateAndDaysPastQuery())
             parameters.add(filters.periodBefore!!)
         }
+
+        queryBuilder.appendln(" GROUP BY deployment_status ")
 
         return this.jdbcTemplate.query(
             queryBuilder.toString(),
