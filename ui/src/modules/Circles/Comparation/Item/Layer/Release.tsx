@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Card from 'core/components/Card';
 import ContentIcon from 'core/components/ContentIcon';
 import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
-import { useCirclePolling } from 'modules/Circles/hooks';
 
 interface Props {
   onClickCreate: (
@@ -31,40 +30,10 @@ interface Props {
 }
 
 const LayerRelease = ({ circle, onClickCreate }: Props) => {
-  const [deployStatus, setDeployStatus] = useState('');
-  const [deployment, setDeployment] = useState<Deployment>(null);
-  const { pollingCircle, status, response } = useCirclePolling();
-  const delay = 15000;
-
-  useEffect(() => {
-    if (circle) {
-      setDeployStatus(circle?.deployment?.status);
-      setDeployment(circle?.deployment);
-    }
-  }, [circle]);
-
-  useEffect(() => {
-    if (status === 'resolved') {
-      setDeployStatus(response.deployment?.status);
-      setDeployment(response?.deployment);
-    }
-  }, [status, response]);
-
-  useEffect(() => {
-    let timeout = 0;
-    if (deployStatus === 'DEPLOYING' || deployStatus === 'UNDEPLOYING') {
-      timeout = setTimeout(() => {
-        pollingCircle(circle?.id);
-      }, delay);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [deployStatus, pollingCircle, circle]);
-
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
       <Card.Release
-        status={deployStatus}
+        status={circle?.deployment?.status}
         description={tag}
         expandItems={artifacts}
       />
@@ -87,11 +56,13 @@ const LayerRelease = ({ circle, onClickCreate }: Props) => {
     <Styled.Layer>
       <ContentIcon icon="release">
         <Text.h2 color="light">
-          {deployment ? 'Last release deployed' : 'Release'}
+          {circle?.deployment ? 'Last release deployed' : 'Release'}
         </Text.h2>
       </ContentIcon>
       <Styled.Content>
-        {deployment ? renderRelease(circle?.deployment) : renderButton()}
+        {circle?.deployment
+          ? renderRelease(circle?.deployment)
+          : renderButton()}
       </Styled.Content>
     </Styled.Layer>
   );

@@ -4,6 +4,6 @@
     "onlyMilestones": false,
     "changelogFilename": "CHANGELOG.md",
     "template": {
-        "issue": "- [{{text}}]({{url}}) {{name}} {{labels}}"
+        "issue": "- [{{text}}]({{url}}) {{name}}"
     }
 }

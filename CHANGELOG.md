@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.3.0 (22/07/2020)
+- [#251](https://github.com/ZupIT/charlescd/pull/251) Improve Circle Comparation Item options
+- [#307](https://github.com/ZupIT/charlescd/pull/307) Add access token signature validation
+- [#285](https://github.com/ZupIT/charlescd/pull/285) Correcting circle matcher on credentials layout
+- [#318](https://github.com/ZupIT/charlescd/pull/318) Adding unique constraint to artifact snapshots
+- [#314](https://github.com/ZupIT/charlescd/pull/314) New ingress options
+- [#300](https://github.com/ZupIT/charlescd/pull/300) UI improve use fetch
+- [#313](https://github.com/ZupIT/charlescd/pull/313) New butler deploy structure
+- [#287](https://github.com/ZupIT/charlescd/pull/287) Improving Button Rounded Component
+- [#286](https://github.com/ZupIT/charlescd/pull/286) Limiting release tag name length to 50 characters
+- [#276](https://github.com/ZupIT/charlescd/pull/276) update keycloak realm and moove admin user
+- [#248](https://github.com/ZupIT/charlescd/pull/248) Issue logout session
+- [#272](https://github.com/ZupIT/charlescd/pull/272) Feature Redirect Home Page
+- [#309](https://github.com/ZupIT/charlescd/pull/309) Bump lodash from 4.17.15 to 4.17.19 in /butler
+- [#250](https://github.com/ZupIT/charlescd/pull/250) Improve update deployment status
+- [#216](https://github.com/ZupIT/charlescd/pull/216) Make upsert modules
+- [#306](https://github.com/ZupIT/charlescd/pull/306) Update icon for Menu Item Hypotheses
+- [#303](https://github.com/ZupIT/charlescd/pull/303) Fix keycloak reset on chart upgrade
+- [#297](https://github.com/ZupIT/charlescd/pull/297) Preventing wrong parse of boolean string on butler
+- [#282](https://github.com/ZupIT/charlescd/pull/282) Update doc link
+- [#289](https://github.com/ZupIT/charlescd/pull/289) Upload coverage report
+- [#295](https://github.com/ZupIT/charlescd/pull/295) CI Update of charts and changelog
+
+---
+
 ## 0.2.14 (14/07/2020)
 - [#294](https://github.com/ZupIT/charlescd/pull/294) Cd/changelog [**closed**]
 - [#288](https://github.com/ZupIT/charlescd/pull/288) Fix invalid date deploy metrics [**bug**][**moove**][**ui**]
