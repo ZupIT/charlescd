@@ -62,4 +62,6 @@ interface DeploymentRepository {
     ): Page<DeploymentHistory>
 
     fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int
+
+    fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount>
 }
