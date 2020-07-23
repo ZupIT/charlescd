@@ -231,7 +231,9 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.DEPLOYMENT
+      deploymentEntity.circleId, pipelineCallbackUrl,
+      CallbackTypeEnum.DEPLOYMENT,
+      componentEntity.hostValue, componentEntity.gatewayName
     )
 
     await cdService.createDeployment(connectorConfiguration)
@@ -255,7 +257,8 @@ export class PipelineDeploymentsService {
     this.consoleLoggerService.log('FINISH:INSTANTIATE_CD_SERVICE', cdConfiguration)
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      undeploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.UNDEPLOYMENT
+      undeploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.UNDEPLOYMENT,
+      componentEntity.hostValue, componentEntity.gatewayName
     )
     await cdService.createUndeployment(connectorConfiguration)
   }
@@ -279,7 +282,8 @@ export class PipelineDeploymentsService {
 
     const connectorConfiguration: IConnectorConfiguration = this.getConnectorConfiguration(
       componentEntity, cdConfiguration, componentDeployment,
-      deploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.ISTIO_DEPLOYMENT
+      deploymentEntity.circleId, pipelineCallbackUrl, CallbackTypeEnum.ISTIO_DEPLOYMENT,
+      componentEntity.hostValue, componentEntity.gatewayName
     )
 
     await cdService.createIstioDeployment(connectorConfiguration)
@@ -292,6 +296,8 @@ export class PipelineDeploymentsService {
     callbackCircleId: string,
     pipelineCallbackUrl: string,
     callbackType: CallbackTypeEnum,
+    hostValue: string | undefined,
+    gatewayName :string | undefined
   ): IConnectorConfiguration {
 
     return {
@@ -303,7 +309,9 @@ export class PipelineDeploymentsService {
       helmRepository: componentDeployment.moduleDeployment.helmRepository,
       callbackCircleId,
       pipelineCallbackUrl,
-      callbackType
+      callbackType,
+      hostValue,
+      gatewayName
     }
   }
 }

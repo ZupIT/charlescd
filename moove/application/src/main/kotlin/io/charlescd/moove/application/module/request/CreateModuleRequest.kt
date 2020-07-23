@@ -65,7 +65,11 @@ data class ComponentRequest(
     val errorThreshold: Int,
 
     @field:NotNull
-    val latencyThreshold: Int
+    val latencyThreshold: Int,
+
+    val hostValue: String?,
+
+    val gatewayName: String?
 ) {
     fun toDomain(moduleId: String, workspaceId: String) = Component(
         id = UUID.randomUUID().toString(),
@@ -74,6 +78,8 @@ data class ComponentRequest(
         createdAt = LocalDateTime.now(),
         workspaceId = workspaceId,
         errorThreshold = this.errorThreshold,
-        latencyThreshold = this.latencyThreshold
+        latencyThreshold = this.latencyThreshold,
+        hostValue = this.hostValue,
+        gatewayName = this.gatewayName
     )
 }

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class KeycloakClientService(private val keycloak: Keycloak) : KeycloakService {
+class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
 
     @Value("\${charlescd.keycloak.realm}")
     lateinit var realm: String
