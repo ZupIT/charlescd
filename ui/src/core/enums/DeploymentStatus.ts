@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment
-
-import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
-import io.charlescd.moove.domain.PageRequest
-
-interface FindDeploymentsHistoryInteractor {
-
-    fun execute(workspaceId: String, circles: List<String>?, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse>
+export enum DEPLOYMENT_STATUS {
+  deploying = 'DEPLOYING',
+  undeploying = 'UNDEPLOYING'
 }

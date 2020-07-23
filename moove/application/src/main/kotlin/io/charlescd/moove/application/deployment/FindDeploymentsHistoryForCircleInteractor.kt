@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Styled from './styled';
+package io.charlescd.moove.application.deployment
 
-interface Props {
-  children: ReactNode;
-  className?: string;
+import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
+import io.charlescd.moove.domain.PageRequest
+
+interface FindDeploymentsHistoryForCircleInteractor {
+
+    fun execute(workspaceId: String, circle: String, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse>
 }
-
-const Layer = ({ children, className, ...rest }: Props) => (
-  <Styled.Layer className={className} {...rest}>
-    {children}
-  </Styled.Layer>
-);
-
-export default Layer;

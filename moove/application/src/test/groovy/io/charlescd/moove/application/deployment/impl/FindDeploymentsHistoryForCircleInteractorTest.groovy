@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
@@ -25,25 +26,25 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class FindDeploymentsHistoryInteractorTest extends Specification {
+class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
 
     def componentRepository = Mock(ComponentRepository)
     def deploymentRepository = Mock(DeploymentRepository)
 
-    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryInteractorImpl(deploymentRepository, componentRepository)
+    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryForCircleInteractorImpl(new DeploymentService(deploymentRepository), componentRepository)
 
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
 
     def 'should return not search for components when no deployment found'() {
         given:
-        def circles = ["circle-id-1", "circle-id-2"]
+        def circle = "circle-id-1"
 
         when:
-        def result = findDeploymentHistoryIteractor.execute(workspaceId, circles, pageRequest)
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, circles, pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
         0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
         0 * _
 
@@ -56,7 +57,7 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
 
     def 'should return when deployments found'() {
         given:
-        def circles = ["circle-id-1", "circle-id-2"]
+        def circle = "circle-id-1"
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
         def secondDate = LocalDateTime.of(LocalDate.of(2020, 07, 20), LocalTime.now())
         def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null),
@@ -67,10 +68,10 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
                           new ComponentHistory("deployment-id-2", "component-1", "charles", "version 413")]
 
         when:
-        def result = findDeploymentHistoryIteractor.execute(workspaceId, circles, pageRequest)
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, circles, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
         1 * componentRepository.findComponentsAtDeployments(workspaceId, ["deployment-id-1", "deployment-id-2"]) >> components
         0 * _
 

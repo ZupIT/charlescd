@@ -33,19 +33,26 @@ import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Dropdown from 'core/components/Dropdown';
 import Modal from 'core/components/Modal';
+import { NEW_TAB } from 'core/components/TabPanel/constants';
+import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
+import CreateRelease from 'modules/Circles/Release';
+import { updateCirclesAction } from 'modules/Circles/state/actions';
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
+import { useCirclePolling } from 'modules/Circles/hooks';
 import LayerName from './Layer/Name';
 import LayerSegments from './Layer/Segments';
 import LayerRelease from './Layer/Release';
 import LayerComponents from './Layer/Components';
 import LayerMetrics from './Layer/Metrics';
-import { isDefaultCircle, pathCircleById } from './helpers';
-import Loader from './Loaders';
-import { SECTIONS } from './enums';
-import { NEW_TAB } from 'core/components/TabPanel/constants';
-import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
-import CreateRelease from 'modules/Circles/Release';
 import CreateSegments from './CreateSegments';
-import { updateCirclesAction } from 'modules/Circles/state/actions';
+import Loader from './Loaders';
+import {
+  isDefaultCircle,
+  pathCircleById,
+  isUndeployable,
+  isBusy
+} from './helpers';
+import { SECTIONS } from './enums';
 import Styled from './styled';
 
 interface Props {
@@ -73,12 +80,31 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   const [, updateCircleWithFile] = useSaveCircleWithFile(id);
   const [action, setAction] = useState('');
   const [circle, setCircle] = useState<Circle>();
+  const { pollingCircle, response } = useCirclePolling();
+  const POLLING_DELAY = 15000;
 
   useEffect(() => {
     if (circleResponse) {
       setCircle(circleResponse);
     }
   }, [circleResponse]);
+
+  useEffect(() => {
+    if (response) {
+      setCircle(response);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    let timeout = 0;
+    if (isBusy(circle?.deployment?.status)) {
+      timeout = setTimeout(() => {
+        pollingCircle(circle?.id);
+      }, POLLING_DELAY);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [pollingCircle, circle]);
 
   useEffect(() => {
     if (updateManualResponse) {
@@ -98,7 +124,10 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
       resetUndeployStatus();
       setCircle({
         ...circle,
-        deployment: { ...circle.deployment, status: 'UNDEPLOYING' }
+        deployment: {
+          ...circle.deployment,
+          status: DEPLOYMENT_STATUS.undeploying
+        }
       });
     }
   }, [undeployStatus, setCircle, circle, resetUndeployStatus]);
@@ -163,7 +192,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
           onClick={() => setActiveSection(SECTIONS.SEGMENTS)}
         />
       </Can>
-      {!isDefaultCircle(circle?.name) && (
+      {isUndeployable(circle) && (
         <Can I="write" a="deploy" passThrough>
           <Dropdown.Item
             icon="undeploy"
@@ -211,7 +240,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
 
   const renderActions = () => (
     <Styled.Actions>
-      {circle?.deployment && (
+      {circle?.deployment && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
           <LabeledIcon
             icon="override"
@@ -286,7 +315,7 @@ const CirclesComparationItem = ({ id, onChange }: Props) => {
   );
 
   return (
-    <Styled.Wrapper data-testid={`circles-comparation-item-${id}`}>
+    <Styled.Wrapper data-testid={`circle-comparation-item-${id}`}>
       {loading && isEditing ? <Loader.Tab /> : renderPanel()}
     </Styled.Wrapper>
   );
