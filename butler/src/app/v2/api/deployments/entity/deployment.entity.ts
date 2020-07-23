@@ -25,9 +25,9 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ComponentEntity, ReadComponentDTO } from './component.entity'
-import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
-import { CdConfigurationEntity } from '../../v1/api/configurations/entity'
-import { ReadCdConfigurationDto } from '../../v1/api/configurations/dto'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntity {
