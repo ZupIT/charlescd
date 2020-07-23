@@ -15,14 +15,18 @@ class FindDeploymentsHistoryInteractorImpl(
 ) : FindDeploymentsHistoryInteractor {
 
     override fun execute(workspaceId: String, filters: DeploymentHistoryFilterRequest, pageRequest: PageRequest): SummarizedDeploymentHistoryResponse {
-        val pagedDeploymentsHistory = this.deploymentRepository.findDeploymentsHistory(workspaceId, filters.toDeploymentHistoryFilter(), pageRequest)
+        val filter = filters.toDeploymentHistoryFilter()
 
+        val pagedDeploymentsHistory = this.deploymentRepository.findDeploymentsHistory(workspaceId, filter, pageRequest)
         val componentsMap = when (pagedDeploymentsHistory.content.isNotEmpty()) {
             true -> this.componentRepository.findComponentsAtDeployments(workspaceId, pagedDeploymentsHistory.content.map { it.id })
                 .groupBy { it.deploymentId }
             false -> emptyMap()
         }
 
-        TODO("Not yet implemented")
+        val deploymentSummary = this.deploymentRepository.countGroupedByStatus(workspaceId, filter)
+
+        return SummarizedDeploymentHistoryResponse.from(deploymentSummary, pagedDeploymentsHistory, componentsMap)
     }
+
 }

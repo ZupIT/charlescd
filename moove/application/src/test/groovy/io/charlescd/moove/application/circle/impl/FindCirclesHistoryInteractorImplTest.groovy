@@ -41,7 +41,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         def result = findCirclesHistoryInteractor.execute(workspaceId, null, pageRequest)
 
         then:
-        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId, null) >> [new CircleCount(2, CircleStatusEnum.INACTIVE)]
+        1 * circleRepository.countGroupedByStatus(workspaceId, null) >> [new CircleCount(2, CircleStatusEnum.INACTIVE)]
         1 * circleRepository.findCirclesHistory(workspaceId, null, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
         0 * _
 
@@ -65,7 +65,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         def result = findCirclesHistoryInteractor.execute(workspaceId, null, pageRequest)
 
         then:
-        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId, null) >> [new CircleCount(2, CircleStatusEnum.ACTIVE)]
+        1 * circleRepository.countGroupedByStatus(workspaceId, null) >> [new CircleCount(2, CircleStatusEnum.ACTIVE)]
         1 * circleRepository.findCirclesHistory(workspaceId, null, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
         0 * _
 
@@ -94,7 +94,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         def result = findCirclesHistoryInteractor.execute(workspaceId, nameForSearch, pageRequest)
 
         then:
-        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId, nameForSearch) >> summary
+        1 * circleRepository.countGroupedByStatus(workspaceId, nameForSearch) >> summary
         1 * circleRepository.findCirclesHistory(workspaceId, nameForSearch, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
         0 * _
 
@@ -118,7 +118,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         def result = findCirclesHistoryInteractor.execute(workspaceId, nameForSearch, pageRequest)
 
         then:
-        1 * circleRepository.countByWorkspaceGroupedByStatus(workspaceId, nameForSearch) >> summary
+        1 * circleRepository.countGroupedByStatus(workspaceId, nameForSearch) >> summary
         1 * circleRepository.findCirclesHistory(workspaceId, nameForSearch, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
         0 * _
 

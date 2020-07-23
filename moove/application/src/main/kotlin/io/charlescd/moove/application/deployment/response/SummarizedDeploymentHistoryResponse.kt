@@ -17,9 +17,27 @@
 package io.charlescd.moove.application.deployment.response
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.*
 
 class SummarizedDeploymentHistoryResponse(
     val summary: Map<DeploymentStatusEnum, Int>,
     val content: ResourcePageResponse<DeploymentHistoryResponse>
-)
+) {
+    companion object {
+        fun from(deploymentCount: List<DeploymentCount>, historyPage: Page<DeploymentHistory>, components: Map<String, List<ComponentHistory>>) =
+            SummarizedDeploymentHistoryResponse(
+                summary = summaryFrom(deploymentCount),
+                content = ResourcePageResponse.from(
+                    historyPage.content.map { DeploymentHistoryResponse.from(it, components.getValue(it.id)) }.sortedByDescending { it.deployedAt },
+                    historyPage.pageNumber,
+                    historyPage.pageSize,
+                    historyPage.isLast(),
+                    historyPage.totalPages()
+                )
+            )
+
+        private fun summaryFrom(deploymentCount: List<DeploymentCount>): Map<DeploymentStatusEnum, Int> {
+            return deploymentCount.associateBy({ it.status }, { it.total })
+        }
+    }
+}
