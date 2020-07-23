@@ -105,16 +105,13 @@ const Deploys = () => {
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
         <Styled.ChartControls>
-          <Text.h2 color="light" weight="bold">
-            Deploy
-          </Text.h2>
           <ChartMenu onReset={() => resetChart('chartDeploy')} />
         </Styled.ChartControls>
         <Styled.MixedChart
           options={deployChartOption}
           series={deploySeries}
           width={1180}
-          height={450}
+          height={495}
         />
       </Styled.Card>
     </Styled.Content>
@@ -122,3 +119,5 @@ const Deploys = () => {
 };
 
 export default Deploys;
+
+// cbb2f6e9-0322-4e67-98f3-26746409673e

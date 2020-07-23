@@ -69,7 +69,8 @@ export const dark = {
       averageTime: COLOR_MAYA_BLUE,
       deploy: COLOR_MOUNTAIN_MEADOW,
       error: COLOR_RED_ORANGE,
-      labels: COLOR_WHITE
+      labels: COLOR_WHITE,
+      border: COLOR_PAYNES_GREY
     }
   }
 };
