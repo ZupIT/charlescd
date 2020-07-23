@@ -97,7 +97,8 @@ const ChartControls = styled.div`
 `;
 
 const ChartMenu = styled.div`
-  position: absolute;
+  position: relative;
+  top: 15px;
 `;
 
 export default {
