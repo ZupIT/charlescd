@@ -18,7 +18,13 @@ import { Test } from '@nestjs/testing'
 import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 import {
-  CircleDeploymentEntity, ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity, QueuedDeploymentEntity
+  CircleDeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity,
+  QueuedDeploymentEntity,
+  QueuedIstioDeploymentEntity,
+  QueuedUndeploymentEntity, UndeploymentEntity
 } from '../../../app/v1/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 import { ComponentUndeploymentsRepository } from '../../../app/v1/api/deployments/repository'
@@ -152,6 +158,115 @@ describe('Pipeline Deployments Service', () => {
     await expect(
       pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
     ).rejects.toThrow()
+
+  })
+
+  it('should trigger istio deployment without error', async() => {
+
+    const moduleEntity = new ModuleEntity(
+      'module-id',
+      []
+    )
+    const componentEntity = new ComponentEntity('component-id', undefined, undefined)
+    componentEntity.module = moduleEntity
+
+    const componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
+
+    const moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
+
+    const circle = new CircleDeploymentEntity('header-value')
+
+    const deploymentEntity = new DeploymentEntity(
+      'deployment-id',
+      'application-name',
+      [moduleDeployment],
+      'author-id',
+      'description',
+      'callback-url',
+      circle,
+      false,
+      'incoming-circle-id',
+      'cd-configuration-id'
+    )
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
+
+    const queuedIstioDeploymentEntity = new QueuedIstioDeploymentEntity(
+      'dummy-component-id',
+      'dummy-component-deployment-id3',
+      'dummy-component-deployment-id',
+      QueuedPipelineStatusEnum.QUEUED
+    )
+
+    await expect(
+      pipelineDeploymentsService.triggerIstioDefaultDeployment(componentDeployment, componentEntity, deploymentEntity, queuedIstioDeploymentEntity)
+    ).resolves.not.toThrow()
+
+  })
+
+  it('should trigger undeployment without error', async() => {
+
+    const moduleEntity = new ModuleEntity(
+      'module-id',
+      []
+    )
+    const componentEntity = new ComponentEntity('component-id', undefined, undefined)
+    componentEntity.module = moduleEntity
+
+    const componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
+
+    const moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
+
+    const circle = new CircleDeploymentEntity('header-value')
+
+    const deploymentEntity = new DeploymentEntity(
+      'deployment-id',
+      'application-name',
+      [moduleDeployment],
+      'author-id',
+      'description',
+      'callback-url',
+      circle,
+      false,
+      'incoming-circle-id',
+      'cd-configuration-id'
+    )
+    const undeployment = new UndeploymentEntity(
+      'author-id',
+      deploymentEntity,
+      'circle-id'
+    )
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
+
+    const queuedUndeploymentEntity = new QueuedUndeploymentEntity(
+      'dummy-component-id',
+      'dummy-component-deployment-id3',
+      QueuedPipelineStatusEnum.QUEUED,
+      'dummy-component-undeployment-id'
+    )
+
+    await expect(
+      pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, componentEntity, queuedUndeploymentEntity, circle)
+    ).resolves.not.toThrow()
 
   })
 
