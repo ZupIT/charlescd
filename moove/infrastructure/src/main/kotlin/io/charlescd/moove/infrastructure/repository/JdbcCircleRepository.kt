@@ -448,7 +448,7 @@ class JdbcCircleRepository(
                                     SELECT DISTINCT ON (circle_id) id 
                                     FROM deployments
                                     WHERE workspace_id = ?
-                                    ORDER BY circle_id , created_at DESC
+                                    ORDER BY circle_id, status, created_at DESC
                                 )
                             OR deployments.id IS NULL
                         )
