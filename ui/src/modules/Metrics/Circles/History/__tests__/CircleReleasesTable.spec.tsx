@@ -19,12 +19,14 @@ import { FetchMock } from 'jest-fetch-mock';
 import CircleReleasesTable from '../CircleReleasesTable';
 import { render, screen, wait } from 'unit-test/testUtils';
 import { circlesReleasesMock } from './fixtures';
+import * as DateUtils from 'core/utils/date';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
 test('render default CircleReleasesTable', async () => {
+  jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('12/07/2020 • 16:07');
 
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(circlesReleasesMock)
@@ -37,7 +39,6 @@ test('render default CircleReleasesTable', async () => {
   await wait();
 
   expect(screen.getAllByText(/release/)).toHaveLength(2);
-  expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(2);
-  expect(screen.getAllByText('11/07/2020 • 16:07')).toHaveLength(2);
+  expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(4);
   expect(screen.getAllByText('Jhon Doe')).toHaveLength(2);
 });

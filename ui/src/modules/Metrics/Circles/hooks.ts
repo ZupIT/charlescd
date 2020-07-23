@@ -78,9 +78,9 @@ export const useCirclesReleases = () => {
   const { response, loading } = releasesData;
 
   const getCircleReleases = useCallback(
-    (params: URLParams) => {
+    (params: URLParams, circleId: string) => {
       const urlParams = buildParams(params);
-      getCircleData(urlParams);
+      getCircleData(urlParams, circleId);
     },
     [getCircleData]
   );
