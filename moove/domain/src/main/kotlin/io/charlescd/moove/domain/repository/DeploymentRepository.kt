@@ -57,11 +57,9 @@ interface DeploymentRepository {
 
     fun findDeploymentsHistory(
         workspaceId: String,
-        deploymentHistoryFilterRequest: DeploymentHistoryFilterRequest?,
+        filters: DeploymentHistoryFilter,
         pageRequest: PageRequest
     ): Page<DeploymentHistory>
 
-    fun count(workspaceId: String): Int
-
-    fun count(workspaceId: String, circles: List<String>?): Int
+    fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int
 }
