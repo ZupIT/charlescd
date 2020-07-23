@@ -97,6 +97,7 @@ func (deprecatedPipeline NonAdjustablePipeline) ToPipeline() Pipeline {
 				"Content-Type": "application/json",
 				"x-circle-id":  deprecatedPipeline.CircleID,
 			},
+			Method: "POST",
 		},
 		Config: deprecatedPipeline.K8s,
 	}
