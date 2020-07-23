@@ -119,5 +119,3 @@ const Deploys = () => {
 };
 
 export default Deploys;
-
-// cbb2f6e9-0322-4e67-98f3-26746409673e
