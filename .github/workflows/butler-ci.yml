@@ -54,4 +54,6 @@ jobs:
         name: unit-test-coverage
         path: ./butler/coverage/lcov-report/
     - run: docker-compose up -d
+      working-directory: ./butler
     - run: docker-compose exec -T app npm ci && npm run test:all:cov
+      working-directory: ./butler
