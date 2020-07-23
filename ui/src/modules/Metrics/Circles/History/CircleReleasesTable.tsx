@@ -46,12 +46,12 @@ const CircleReleasesTable = ({ circleId }: Props) => {
   useEffect(() => {
     page.current = 0;
     setReleases([]);
-    getCircleReleases({ page: 0, circles: circleId });
+    getCircleReleases({ page: 0 }, circleId);
   }, [getCircleReleases, circleId]);
 
   const loadMore = () => {
     page.current++;
-    getCircleReleases({ page: page.current, circles: circleId });
+    getCircleReleases({ page: page.current }, circleId);
   };
 
   return (
@@ -77,8 +77,8 @@ const CircleReleasesTable = ({ circleId }: Props) => {
         loader={<Loader.Releases />}
         height={300}
       >
-        {releases?.map(release => (
-          <ReleaseRow release={release} key={release.id} />
+        {releases?.map((release, index) => (
+          <ReleaseRow release={release} key={index} />
         ))}
       </InfiniteScroll>
     </>
