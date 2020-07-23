@@ -26,9 +26,7 @@ beforeEach(() => {
 });
 
 test('render default CircleReleasesTable', async () => {
-  jest.spyOn(DateUtils, 'dateTimeFormatter')
-    .mockReturnValueOnce('12/07/2020 • 16:07')
-    .mockReturnValueOnce('11/07/2020 • 16:07');
+  jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('12/07/2020 • 16:07');
 
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(circlesReleasesMock)
@@ -41,7 +39,6 @@ test('render default CircleReleasesTable', async () => {
   await wait();
 
   expect(screen.getAllByText(/release/)).toHaveLength(2);
-  expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(2);
-  expect(screen.getAllByText('11/07/2020 • 16:07')).toHaveLength(2);
+  expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(4);
   expect(screen.getAllByText('Jhon Doe')).toHaveLength(2);
 });
