@@ -78,7 +78,7 @@ class V2DeploymentController(
     @ResponseStatus(HttpStatus.OK)
     fun deploymentHistoryForCircle(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @PathParam(value = "circleId") circle: String,
+        @PathVariable("circleId") circle: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<DeploymentHistoryResponse> {
         return this.findDeploymentsHistoryForCircleInteractor.execute(workspaceId, circle, pageRequest)
