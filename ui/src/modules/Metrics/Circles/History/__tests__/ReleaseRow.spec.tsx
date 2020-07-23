@@ -21,17 +21,14 @@ import { circleReleaseMock } from './fixtures';
 import * as DateUtils from 'core/utils/date';
 
 test('render default ReleaseRow', () => {
-  jest.spyOn(DateUtils, 'dateTimeFormatter')
-    .mockReturnValueOnce('12/07/2020 • 16:07')
-    .mockReturnValueOnce('11/07/2020 • 16:07');
+  jest.spyOn(DateUtils, 'dateTimeFormatter').mockReturnValue('12/07/2020 • 16:07')
 
   render(
     <ReleaseRow release={circleReleaseMock} />
   );
 
   expect(screen.getByText('release 1')).toBeInTheDocument();
-  expect(screen.getByText('12/07/2020 • 16:07')).toBeInTheDocument();
-  expect(screen.getByText('11/07/2020 • 16:07')).toBeInTheDocument();
+  expect(screen.getAllByText('12/07/2020 • 16:07')).toHaveLength(2);
   expect(screen.getByText('Jhon Doe')).toBeInTheDocument();
   expect(screen.queryAllByText(/module a/)).toHaveLength(0);
 });
