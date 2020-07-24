@@ -21,7 +21,10 @@ import javax.validation.constraints.NotNull
 data class DeploymentCallbackRequest(
     @NotNull
     val deploymentStatus: DeploymentRequestStatus
-)
+) {
+
+    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+}
 
 enum class DeploymentRequestStatus {
     SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
