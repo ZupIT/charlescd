@@ -34,7 +34,9 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
         val deployment = updateDeploymentInfo(findDeployment(id), request)
-        updateStatusOfPreviousDeployment(deployment.circle.id)
+        if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
+            updateStatusOfPreviousDeployment(deployment.circle.id)
+        }
         updateDeployment(deployment)
     }
 
