@@ -19,11 +19,11 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.DeploymentAverageTimeStats
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.stereotype.Component
 import java.sql.ResultSet
 import java.time.Duration
 import java.time.LocalDate
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.stereotype.Component
 
 @Component
 class DeploymentAverageTimeStatsExtractor : ResultSetExtractor<Set<DeploymentAverageTimeStats>> {

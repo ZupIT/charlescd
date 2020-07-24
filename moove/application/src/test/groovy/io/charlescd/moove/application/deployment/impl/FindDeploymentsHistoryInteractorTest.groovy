@@ -16,12 +16,13 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -36,54 +37,115 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
 
-    def 'should return not search for components when no deployment found'() {
+    def 'should not call components search when no deployment found'() {
         given:
-        def circle = "circle-id-1"
+        def filter = new DeploymentHistoryFilterRequest("some-name", PeriodTypeEnum.ONE_MONTH, ["circle-1"], [DeploymentStatusEnum.DEPLOYED])
 
         when:
-        def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, filter, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
-        0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
+        0 * componentRepository.findComponentsAtDeployments(workspaceId, _ as List<String>)
+        1 * deploymentRepository.countGroupedByStatus(workspaceId, _ as DeploymentHistoryFilter) >> []
         0 * _
 
-        result.content.isEmpty()
-        result.page == 0
-        result.size == 10
-        result.totalPages == 1
-        result.isLast
+        result.summary.isEmpty()
+        result.page.page == 0
+        result.page.size == 10
+        result.page.isLast
+        result.page.totalPages == 1
+        result.page.content.isEmpty()
     }
 
-    def 'should return when deployments found'() {
+    def 'should return ok when deployments found'() {
         given:
-        def circle = "circle-id-1"
-        def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
-        def secondDate = LocalDateTime.of(LocalDate.of(2020, 07, 20), LocalTime.now())
-        def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null),
-                           new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null)]
+        def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
 
-        def components = [new ComponentHistory("deployment-id-1", "component-1", "charles", "version 413"),
-                          new ComponentHistory("deployment-id-1", "component-2", "charles", "version 413"),
-                          new ComponentHistory("deployment-id-2", "component-1", "charles", "version 413")]
+        def deployments = [new DeploymentHistory("abc-123", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
+                null, Duration.ofSeconds(120), "circle-1"),
+                           new DeploymentHistory("abc-456", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
+                                   null, Duration.ofSeconds(120), "circle-2")]
+
+        def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
+                          new ComponentHistory("abc-456", "component 2", "module-1", "version 18.09")]
 
         when:
-        def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, filter, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
-        1 * componentRepository.findComponentsAtDeployments(workspaceId, ["deployment-id-1", "deployment-id-2"]) >> components
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
+        1 * componentRepository.findComponentsAtDeployments(workspaceId, ["abc-123", "abc-456"]) >> components
+        1 * deploymentRepository.countGroupedByStatus(workspaceId, _ as DeploymentHistoryFilter) >> [new DeploymentCount(2, DeploymentStatusEnum.DEPLOYED)]
         0 * _
 
-        result.content.size() == 2
-        result.page == 0
-        result.size == 10
-        result.totalPages == 1
-        result.isLast
-
-        result.content[0].id == "deployment-id-2"
-        result.content[0].components.size() == 1
-        result.content[1].id == "deployment-id-1"
-        result.content[1].components.size() == 2
+        result.summary.size() == 1
+        result.summary[DeploymentStatusEnum.DEPLOYED] == 2
+        result.page.page == 0
+        result.page.size == 10
+        result.page.isLast
+        result.page.totalPages == 1
+        result.page.content.size() == 2
     }
+
+    def 'should return deploy duration in seconds'() {
+        given:
+        def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
+
+        def deployments = [new DeploymentHistory("abc-123", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
+                null, Duration.ofMinutes(2), "circle-1")]
+
+        def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09")]
+
+        when:
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, filter, pageRequest)
+
+        then:
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 1)
+        1 * componentRepository.findComponentsAtDeployments(workspaceId, ["abc-123"]) >> components
+        1 * deploymentRepository.countGroupedByStatus(workspaceId, _ as DeploymentHistoryFilter) >> [new DeploymentCount(1, DeploymentStatusEnum.DEPLOYED)]
+        0 * _
+
+        result.summary.size() == 1
+        result.summary[DeploymentStatusEnum.DEPLOYED] == 1
+        result.page.page == 0
+        result.page.size == 10
+        result.page.isLast
+        result.page.totalPages == 1
+        result.page.content.size() == 1
+        result.page.content[0].deployDuration == 120
+    }
+
+    def 'should return ordered by deploy date descending'() {
+        given:
+        def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
+
+        def deployments = [new DeploymentHistory("abc-123", LocalDateTime.of(LocalDate.of(1809, 2, 12), LocalTime.now()),
+                DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, Duration.ofSeconds(120), "circle-1"),
+                           new DeploymentHistory("abc-456", LocalDateTime.of(LocalDate.of(1859, 2, 12), LocalTime.now()),
+                                   DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, Duration.ofSeconds(120), "circle-2")]
+
+        def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
+                          new ComponentHistory("abc-456", "component 2", "module-1", "version 18.09"),]
+
+        when:
+        def result = findDeploymentHistoryIteractor.execute(workspaceId, filter, pageRequest)
+
+        then:
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
+        1 * componentRepository.findComponentsAtDeployments(workspaceId, ["abc-123", "abc-456"]) >> components
+        1 * deploymentRepository.countGroupedByStatus(workspaceId, _ as DeploymentHistoryFilter) >> [new DeploymentCount(2, DeploymentStatusEnum.DEPLOYED)]
+        0 * _
+
+        result.summary.size() == 1
+        result.summary[DeploymentStatusEnum.DEPLOYED] == 2
+        result.page.page == 0
+        result.page.size == 10
+        result.page.isLast
+        result.page.totalPages == 1
+        result.page.content.size() == 2
+        result.page.content[0].id == "abc-456"
+        result.page.content[1].id == "abc-123"
+    }
+
 }

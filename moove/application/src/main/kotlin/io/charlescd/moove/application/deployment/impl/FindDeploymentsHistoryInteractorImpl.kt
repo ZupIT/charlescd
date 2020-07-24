@@ -28,5 +28,4 @@ class FindDeploymentsHistoryInteractorImpl(
 
         return SummarizedDeploymentHistoryResponse.from(deploymentSummary, pagedDeploymentsHistory, componentsMap)
     }
-
 }

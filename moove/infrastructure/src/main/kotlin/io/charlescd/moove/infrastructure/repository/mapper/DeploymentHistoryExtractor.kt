@@ -21,9 +21,9 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import io.charlescd.moove.domain.DeploymentHistory
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
+import java.time.Duration
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
-import java.time.Duration
 
 @Component
 class DeploymentHistoryExtractor : ResultSetExtractor<Set<DeploymentHistory>> {
