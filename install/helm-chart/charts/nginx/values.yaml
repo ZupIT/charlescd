@@ -8,4 +8,6 @@ keycloak:
   enabled: true
 octopipe:
   enabled: true
-
+samples:
+  circles:
+    enabled: true
