@@ -151,7 +151,7 @@ export default {
     }
   ],
   xaxis: {
-    type: 'datetime',
+    type: 'category',
     tickAmount: 'dataPoints',
     axisBorder: {
       show: false,
