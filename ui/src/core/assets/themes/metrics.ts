@@ -31,7 +31,8 @@ import {
   COLOR_PAYNES_GREY,
   COLOR_BASTILLE,
   COLOR_FREE_SPEECH_BLUE,
-  COLOR_WHITE
+  COLOR_WHITE,
+  COLOR_PURPLE_HEART
 } from 'core/assets/colors';
 
 export const light = {};
@@ -86,6 +87,21 @@ export const dark = {
       },
       componentRow: {
         background: COLOR_BLACK_MARLIN
+      }
+    }
+  },
+  deploy: {
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deploying: COLOR_DODGER_BLUE,
+    error: COLOR_RED_ORANGE,
+    undeployed: COLOR_PURPLE_HEART,
+    undeploying: COLOR_FREE_SPEECH_BLUE,
+    release: {
+      releaseRow: {
+        background: COLOR_BLACK_MARLIN
+      },
+      componentRow: {
+        background: COLOR_PAYNES_GREY
       }
     }
   }

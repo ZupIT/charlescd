@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
@@ -33,11 +33,12 @@ import {
 } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import isUndefined from 'lodash/isUndefined';
+import ReleasesHistoryComponent from './Release';
+import { ReleaseHistoryRequest } from './interfaces';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
-
   const deploySeries = getDeploySeries(response);
   const averageTimeSeries = getAverageTimeSeries(response);
 
@@ -50,10 +51,16 @@ const Deploys = () => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
   }, [searchDeployMetrics]);
 
+  const [filter, setFilter] = useState<ReleaseHistoryRequest>({
+    period: periodFilterItems[0].value,
+    circles: []
+  });
+
   const onSubmit = () => {
     const { circles, period } = getValues();
     const circleIds = normalizeCircleParams(circles);
-    searchDeployMetrics({ period: period, circles: circleIds });
+    setFilter({ period, circles: circleIds });
+    searchDeployMetrics({ period, circles: circleIds });
   };
 
   const resetChart = (chartId: string) => {
@@ -141,6 +148,7 @@ const Deploys = () => {
           height={450}
         />
       </Styled.Card>
+      <ReleasesHistoryComponent filter={filter} />
     </Styled.Content>
   );
 };
