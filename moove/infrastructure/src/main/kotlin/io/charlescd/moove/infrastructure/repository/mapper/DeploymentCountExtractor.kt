@@ -19,7 +19,6 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.DeploymentCount
-import io.charlescd.moove.domain.DeploymentHistory
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor

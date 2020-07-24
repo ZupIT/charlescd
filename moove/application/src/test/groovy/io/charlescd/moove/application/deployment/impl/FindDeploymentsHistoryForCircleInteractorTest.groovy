@@ -45,7 +45,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
         0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
         0 * _
 
@@ -74,7 +74,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
         1 * componentRepository.findComponentsAtDeployments(workspaceId, ["deployment-id-1", "deployment-id-2"]) >> components
         0 * _
 
