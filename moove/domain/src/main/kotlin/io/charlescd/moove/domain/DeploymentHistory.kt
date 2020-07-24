@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.domain
 
+import java.time.Duration
 import java.time.LocalDateTime
 
 data class DeploymentHistory(
@@ -24,5 +25,7 @@ data class DeploymentHistory(
     val status: DeploymentStatusEnum,
     val authorName: String,
     val tag: String,
-    val undeployedAt: LocalDateTime?
+    val undeployedAt: LocalDateTime?,
+    val deploymentDuration: Duration?,
+    val circleName: String
 )

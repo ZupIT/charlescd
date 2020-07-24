@@ -247,12 +247,12 @@ class JdbcDeploymentRepository(
     ): List<DeploymentGeneralStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COUNT(id)                                               AS deployment_quantity,
-                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
+                SELECT  COUNT(id)                                                                                           AS deployment_quantity,
+                        EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
                         CASE status 
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
-                        END                                                     AS deployment_status
+                        END                                                                                                 AS deployment_status
                 FROM deployments
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
@@ -281,13 +281,13 @@ class JdbcDeploymentRepository(
     ): List<DeploymentStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COUNT(id)                                               AS deployment_quantity,
-                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date,
+                SELECT  COUNT(id)                                                                                           AS deployment_quantity,
+                        EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                   AS deployment_date,
                         CASE status 
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
-                        END                                                     AS deployment_status
+                        END                                                                                                 AS deployment_status
                 FROM deployments
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
@@ -315,8 +315,8 @@ class JdbcDeploymentRepository(
     ): List<DeploymentAverageTimeStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date
+                SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                   AS deployment_date
                 FROM deployments
                 WHERE workspace_id = ?
                     ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}                    
@@ -390,16 +390,18 @@ class JdbcDeploymentRepository(
 
     fun deploymentHistoryQuery() = StringBuilder(
         """
-                    SELECT  deployments.id                                                              AS deployment_id,
-	                        deployments.deployed_at                                                     AS deployed_at,
-                            deployments.undeployed_at                                                   AS undeployed_at,
-                            COALESCE(deployments.deployed_at - deployments.created_at, '00:00:00')      AS deployment_average_time,
-	                        users.name                                                                  AS user_name,
-	                        builds.tag                                                                  AS deployment_version,
-	                        deployments.status                                                          AS deployment_status
+                    SELECT  deployments.id                                                                                      AS deployment_id,
+	                        deployments.deployed_at                                                                             AS deployed_at,
+                            deployments.undeployed_at                                                                           AS undeployed_at,
+                            EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
+                            deployments.status                                                                                  AS deployment_status,	                        
+                            users.name                                                                                          AS user_name,
+	                        builds.tag                                                                                          AS deployment_version,
+	                        circles.name                                                                                        AS circle_name
                     FROM deployments deployments
-                        INNER JOIN users users      ON users.id = deployments.user_id
-                        INNER JOIN builds builds    ON builds.id = deployments.build_id
+                        INNER JOIN users users          ON users.id = deployments.user_id
+                        INNER JOIN builds builds        ON builds.id = deployments.build_id
+                        INNER JOIN circles circles      ON circles.id = deployments.circle_id
                     WHERE deployments.workspace_id = ? 
             """
     )
