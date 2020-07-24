@@ -34,8 +34,8 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
 
     def 'should return active summary zeroed when status not present'() {
         given:
-        def circles = [buildCircleHistory("1", CircleStatusEnum.INACTIVE),
-                       buildCircleHistory("2", CircleStatusEnum.INACTIVE)]
+        def circles = [buildCircleHistory("1", CircleStatusEnum.INACTIVE, Duration.ofSeconds(120)),
+                       buildCircleHistory("2", CircleStatusEnum.INACTIVE, Duration.ofSeconds(120))]
 
         when:
         def result = findCirclesHistoryInteractor.execute(workspaceId, null, pageRequest)
@@ -58,8 +58,8 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
 
     def 'should return inactive summary zeroed when status not present'() {
         given:
-        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE),
-                       buildCircleHistory("2", CircleStatusEnum.ACTIVE)]
+        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofSeconds(120)),
+                       buildCircleHistory("2", CircleStatusEnum.ACTIVE, Duration.ofSeconds(120))]
 
         when:
         def result = findCirclesHistoryInteractor.execute(workspaceId, null, pageRequest)
@@ -83,9 +83,9 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
     def 'should return ok when found everything'() {
         given:
         def nameForSearch = "name"
-        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE),
-                       buildCircleHistory("2", CircleStatusEnum.ACTIVE),
-                       buildCircleHistory("3", CircleStatusEnum.INACTIVE)]
+        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofSeconds(120)),
+                       buildCircleHistory("2", CircleStatusEnum.ACTIVE, Duration.ofSeconds(130)),
+                       buildCircleHistory("3", CircleStatusEnum.INACTIVE, Duration.ofSeconds(150))]
 
         def summary = [new CircleCount(2, CircleStatusEnum.ACTIVE),
                        new CircleCount(1, CircleStatusEnum.INACTIVE)]
@@ -110,7 +110,7 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
     def 'should return the lifetime in seconds'() {
         given:
         def nameForSearch = "name"
-        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE)]
+        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofMinutes(2))]
 
         def summary = [new CircleCount(1, CircleStatusEnum.ACTIVE)]
 
@@ -132,12 +132,41 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
         result.page.content[0].lifeTime == 120
     }
 
-    private static CircleHistory buildCircleHistory(String id, CircleStatusEnum status) {
+    def 'should return the ordered by lifetime descending'() {
+        given:
+        def nameForSearch = "name"
+        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofSeconds(120)),
+                       buildCircleHistory("2", CircleStatusEnum.ACTIVE, Duration.ofSeconds(150)),
+                       buildCircleHistory("3", CircleStatusEnum.ACTIVE, Duration.ofSeconds(130))]
+
+        def summary = [new CircleCount(3, CircleStatusEnum.ACTIVE)]
+
+        when:
+        def result = findCirclesHistoryInteractor.execute(workspaceId, nameForSearch, pageRequest)
+
+        then:
+        1 * circleRepository.countGroupedByStatus(workspaceId, nameForSearch) >> summary
+        1 * circleRepository.findCirclesHistory(workspaceId, nameForSearch, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
+        0 * _
+
+        result.summary.active == 3
+        result.summary.inactive == 0
+        result.page.page == 0
+        result.page.size == 10
+        result.page.isLast
+        result.page.totalPages == 1
+        result.page.content.size() == 3
+        result.page.content[0].lifeTime == 150
+        result.page.content[1].lifeTime == 130
+        result.page.content[2].lifeTime == 120
+    }
+
+    private static CircleHistory buildCircleHistory(String id, CircleStatusEnum status, Duration lifeTime) {
         return new CircleHistory(id,
                 status,
                 "name ".concat(id),
                 LocalDateTime.now(),
-                Duration.ofMinutes(2))
+                lifeTime)
     }
 
 }
