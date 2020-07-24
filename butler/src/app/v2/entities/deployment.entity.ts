@@ -28,9 +28,10 @@ import { ComponentEntity, ReadComponentDTO } from './component.entity'
 import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
 import { CdConfigurationEntity } from '../../v1/api/configurations/entity'
 import { ReadCdConfigurationDto } from '../../v1/api/configurations/dto'
+import { Deployment } from '../interfaces'
 
 @Entity('v2deployments')
-export class DeploymentEntity {
+export class DeploymentEntity implements Deployment {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string
@@ -53,7 +54,6 @@ export class DeploymentEntity {
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
-
 
   @Column({ name: 'circle_id', nullable: true, type: 'varchar'})
   public circleId!: string | null

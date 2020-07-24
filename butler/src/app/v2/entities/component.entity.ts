@@ -1,8 +1,10 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { DeploymentEntity } from './deployment.entity';
+import { Component } from '../interfaces'
 
 @Entity('v2components')
-export class ComponentEntity {
+export class ComponentEntity implements Component {
+
   @PrimaryColumn('uuid')
   public id!: string
 
