@@ -335,11 +335,11 @@ class JdbcCircleRepository(
         return statement
     }
 
-    override fun countByWorkspaceGroupedByStatus(workspaceId: String): List<CircleCount> {
-        return this.countByWorkspaceGroupedByStatus(workspaceId, null)
+    override fun countGroupedByStatus(workspaceId: String): List<CircleCount> {
+        return this.countGroupedByStatus(workspaceId, null)
     }
 
-    override fun countByWorkspaceGroupedByStatus(workspaceId: String, name: String?): List<CircleCount> {
+    override fun countGroupedByStatus(workspaceId: String, name: String?): List<CircleCount> {
         val query = this.createCountCircleWithStatusByWorkspaceQuery()
         val parameters = mutableListOf(workspaceId, workspaceId)
 
@@ -374,7 +374,7 @@ class JdbcCircleRepository(
                                     SELECT DISTINCT ON (circle_id) id 
                                     FROM deployments
                                     WHERE workspace_id = ?
-                                    ORDER BY circle_id , created_at DESC
+                                    ORDER BY circle_id, status, created_at DESC
                                 )
                             OR deployments.id IS NULL
                         )
