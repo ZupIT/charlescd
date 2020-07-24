@@ -40,7 +40,7 @@ const ReleaseRow = ({ release }: Props) => {
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            {release.circle ? release.circle : '-'}
+            {release.circleName ? release.circleName : '-'}
           </Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>

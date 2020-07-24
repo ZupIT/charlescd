@@ -60,7 +60,7 @@ export interface ReleaseHistory {
   deployedAt: string;
   undeployedAt: string;
   authorName: string;
-  circle: string;
+  circleName: string;
   tag: string;
   status: string;
   deployDuration: number;
