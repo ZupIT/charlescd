@@ -21,13 +21,13 @@ import io.charlescd.moove.domain.*
 
 class SummarizedDeploymentHistoryResponse(
     val summary: Map<DeploymentStatusEnum, Int>,
-    val content: ResourcePageResponse<DeploymentHistoryResponse>
+    val page: ResourcePageResponse<DeploymentHistoryResponse>
 ) {
     companion object {
         fun from(deploymentCount: List<DeploymentCount>, historyPage: Page<DeploymentHistory>, components: Map<String, List<ComponentHistory>>) =
             SummarizedDeploymentHistoryResponse(
                 summary = summaryFrom(deploymentCount),
-                content = ResourcePageResponse.from(
+                page = ResourcePageResponse.from(
                     historyPage.content.map { DeploymentHistoryResponse.from(it, components.getValue(it.id)) }.sortedByDescending { it.deployedAt },
                     historyPage.pageNumber,
                     historyPage.pageSize,

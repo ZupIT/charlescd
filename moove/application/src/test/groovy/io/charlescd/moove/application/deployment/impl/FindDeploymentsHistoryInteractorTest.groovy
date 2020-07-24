@@ -22,17 +22,16 @@ import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
+class FindDeploymentsHistoryInteractorTest extends Specification {
 
     def componentRepository = Mock(ComponentRepository)
     def deploymentRepository = Mock(DeploymentRepository)
 
-    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryForCircleInteractorImpl(deploymentRepository, componentRepository)
+    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryInteractorImpl(componentRepository, deploymentRepository)
 
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
@@ -61,10 +60,8 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def circle = "circle-id-1"
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
         def secondDate = LocalDateTime.of(LocalDate.of(2020, 07, 20), LocalTime.now())
-        def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
-                null, Duration.ofSeconds(120), "abc123"),
-                           new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
-                                   null, Duration.ofSeconds(120), "abc123")]
+        def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null),
+                           new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null)]
 
         def components = [new ComponentHistory("deployment-id-1", "component-1", "charles", "version 413"),
                           new ComponentHistory("deployment-id-1", "component-2", "charles", "version 413"),
