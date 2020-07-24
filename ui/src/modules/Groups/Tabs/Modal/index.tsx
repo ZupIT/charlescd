@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
 import Icon from 'core/components/Icon';
