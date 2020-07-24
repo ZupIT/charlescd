@@ -21,19 +21,24 @@ export class ComponentEntity {
   @Column({ name: 'running', default: false})
   public running!: boolean
 
+  @Column({ name: 'component_id' })
+  public componentId! : string
+
+
   @JoinColumn({name: 'deployment_id'})
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   deployment!: DeploymentEntity
 
-  constructor(helmUrl: string, buildImageTag: string, buildImageUrl: string, componentName: string) {
+  constructor(helmUrl: string, buildImageTag: string, buildImageUrl: string, componentName: string, componentId: string) {
     this.helmUrl = helmUrl
     this.imageTag = buildImageTag
     this.imageUrl = buildImageUrl
     this.name = componentName
+    this.componentId = componentId
   }
 
   public fromDto(dto: ComponentCreateDTO) : ComponentEntity{
-    return new ComponentEntity(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name)
+    return new ComponentEntity(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name, dto.componentId)
   }
 
   public toDto() : ReadComponentDTO {
@@ -55,7 +60,7 @@ export interface ComponentCreateDTO {
   imageUrl: string
   imageTag: string
   helmUrl: string
-
+  componentId: string
 }
 
 export interface ReadComponentDTO {

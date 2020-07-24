@@ -18,15 +18,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
+
+
   JoinColumn,
-  ManyToOne
+  ManyToOne, OneToMany,
+  PrimaryGeneratedColumn
 } from 'typeorm'
-import { DeploymentStatusEnum } from '../../api/deployments/enums'
 import { ComponentEntity, ReadComponentDTO } from './component.entity'
-import { CdConfigurationEntity } from '../../api/configurations/entity'
-import { ReadCdConfigurationDto } from '../../api/configurations/dto'
+import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
+import { CdConfigurationEntity } from '../../v1/api/configurations/entity'
+import { ReadCdConfigurationDto } from '../../v1/api/configurations/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntity {
@@ -49,9 +50,6 @@ export class DeploymentEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
-  @Column({ name: 'cd_configuration_id' })
-  public cdConfigurationId!: string
-
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
@@ -60,18 +58,19 @@ export class DeploymentEntity {
   @Column({ name: 'circle_id', nullable: true, type: 'varchar'})
   public circleId!: string | null
 
-  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: true})
+  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade:  ['insert']})
   public components!: ComponentEntity[]
 
-  constructor(id: string, authorId: string, status: DeploymentStatusEnum, circleId: string | null) {
+  constructor(id: string, authorId: string, status: DeploymentStatusEnum, circleId: string | null, cdConfiguration: CdConfigurationEntity) {
     this.id = id
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
+    this.cdConfiguration = cdConfiguration
   }
 
   public fromDto(dto: CreateDeploymentDTO) : DeploymentEntity{
-    return new DeploymentEntity(dto.id, dto.authorId, dto.status, dto.circleId)
+    return new DeploymentEntity(dto.id, dto.authorId, dto.status, dto.circleId, dto.cdConfiguration)
   }
 
   public toDto() : ReadDeploymentDTO{
@@ -99,7 +98,7 @@ export class DeploymentEntity {
     id: string
     authorId: string
     callbackUrl: string
-    cdConfigurationId: string
+    cdConfiguration: CdConfigurationEntity
     circleId: string | null
     status: DeploymentStatusEnum
   }
