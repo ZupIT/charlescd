@@ -36,7 +36,7 @@ class CircleHistoryResponse(
                 summary.firstOrNull { it.circleStatus == CircleStatusEnum.INACTIVE }?.total ?: 0
             ),
             page = ResourcePageResponse.from(
-                page.content.map { CircleHistoryContentResponse.from(it) },
+                page.content.map { CircleHistoryContentResponse.from(it) }.sortedByDescending { it.lifeTime },
                 page.pageNumber,
                 page.pageSize,
                 page.isLast(),
