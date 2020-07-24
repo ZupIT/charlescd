@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
-
-import javax.validation.constraints.NotNull
-
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
-}
-
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
+export enum DEPLOYMENT_STATUS {
+  deploying = 'DEPLOYING',
+  undeploying = 'UNDEPLOYING'
 }

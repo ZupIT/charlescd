@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import MutationObserver from 'mutation-observer'
+import { render, wait } from 'unit-test/testUtils';
+import Settings from '..';
 
-import javax.validation.constraints.NotNull
+(global as any).MutationObserver = MutationObserver
 
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
+test('render Settings default component', async () => {
+  const { getByTestId } = render(
+    <Settings />
+  );
 
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
-}
-
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
+});

@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Menu from '..';
 
-import javax.validation.constraints.NotNull
-
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+const props = {
+  items: [
+    {
+      id: '123',
+      icon: 'charles',
+      name: 'menu',
+      path: '/',
+    }
+  ]
 }
 
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+test('render Menu default component with one item link', async () => {
+  const { getByTestId } = render(
+    <Menu {...props} />
+  );
+
+  await wait(() => expect(getByTestId('menu-item-link-menu')).toBeInTheDocument());
+});

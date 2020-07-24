@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Hypotheses from '..';
 
-import javax.validation.constraints.NotNull
+test('render Hypotheses default empty page', async () => {
+  const { getByText } = render(
+    <Hypotheses />
+  );
 
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
-}
-
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+  await wait(() => expect(getByText('Select a hypothesis and keep evolving.')).toBeInTheDocument());
+});
