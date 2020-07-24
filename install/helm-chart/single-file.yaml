@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -381,28 +403,6 @@ spec:
   resources:
     requests:
       storage: "8Gi"
----
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1250,7 +1250,7 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://nginx/keycloak/auth"
+              value: "http://charles.info.example/keycloak/auth"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
