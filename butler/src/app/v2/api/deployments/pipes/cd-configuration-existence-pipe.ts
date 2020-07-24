@@ -30,6 +30,7 @@ export class CdConfigurationExistencePipe implements PipeTransform {
   async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const cdConfiguration = await this.componentRepository.findOne({ id: createDeploymentDto.cdConfigurationId })
     if (cdConfiguration) {
+      createDeploymentDto.cdConfiguration = cdConfiguration
       return createDeploymentDto
     }
 

@@ -51,9 +51,6 @@ export class DeploymentEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
-  @Column({ name: 'cd_configuration_id'})
-  public cdConfigurationId: string
-
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
@@ -66,16 +63,18 @@ export class DeploymentEntity {
   public components!: ComponentEntity[]
 
   constructor(
-    deploymentId: string, authorId: string,
-    status: DeploymentStatusEnum, circleId: string | null,
-    cdConfigurationId: string,
+    deploymentId: string,
+    authorId: string,
+    status: DeploymentStatusEnum,
+    circleId: string | null,
+    cdConfiguration: CdConfigurationEntity,
     components: ComponentEntity[]
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
-    this.cdConfigurationId = cdConfigurationId
+    this.cdConfiguration = cdConfiguration
     this.components = components
   }
 

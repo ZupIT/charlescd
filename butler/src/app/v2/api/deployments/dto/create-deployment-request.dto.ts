@@ -76,7 +76,7 @@ export class CreateDeploymentRequestDto {
       this.authorId,
       DeploymentStatusEnum.CREATED,
       this.circle.headerValue,
-      this.cdConfigurationId,
+      this.cdConfiguration,
       flatten(this.modules.map(m => m.toEntity()))
     )
   }
