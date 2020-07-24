@@ -2,6 +2,7 @@
 import { Injectable, PipeTransform, UnprocessableEntityException } from '@nestjs/common';
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto';
 import Joi = require('@hapi/joi');
+import { plainToClass } from 'class-transformer';
 @Injectable()
 export class DeployValidationPipe implements PipeTransform {
 

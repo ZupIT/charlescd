@@ -18,8 +18,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-
-
   JoinColumn,
   ManyToOne, OneToMany,
   PrimaryGeneratedColumn
@@ -34,6 +32,9 @@ export class DeploymentEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string
+
+  @Column({ name: 'deployment_id'})
+  public deploymentId!: string
 
   @Column({ name: 'author_id' })
   public authorId!: string
@@ -50,6 +51,9 @@ export class DeploymentEntity {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
+  @Column({ name: 'cd_configuration_id'})
+  public cdConfigurationId: string
+
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
@@ -61,16 +65,18 @@ export class DeploymentEntity {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade:  ['insert']})
   public components!: ComponentEntity[]
 
-  constructor(id: string, authorId: string, status: DeploymentStatusEnum, circleId: string | null, cdConfiguration: CdConfigurationEntity) {
-    this.id = id
+  constructor(
+    deploymentId: string, authorId: string,
+    status: DeploymentStatusEnum, circleId: string | null,
+    cdConfigurationId: string,
+    components: ComponentEntity[]
+  ) {
+    this.deploymentId = deploymentId
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
-    this.cdConfiguration = cdConfiguration
-  }
-
-  public fromDto(dto: CreateDeploymentDTO) : DeploymentEntity{
-    return new DeploymentEntity(dto.id, dto.authorId, dto.status, dto.circleId, dto.cdConfiguration)
+    this.cdConfigurationId = cdConfigurationId
+    this.components = components
   }
 
   public toDto() : ReadDeploymentDTO{

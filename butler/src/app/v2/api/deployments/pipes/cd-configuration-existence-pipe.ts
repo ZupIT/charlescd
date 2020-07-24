@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Injectable, PipeTransform, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { CreateDeploymentRequestDto } from '../../../../v1/api/deployments/dto'
+import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 
 @Injectable()
 export class CdConfigurationExistencePipe implements PipeTransform {
@@ -27,10 +27,10 @@ export class CdConfigurationExistencePipe implements PipeTransform {
         private componentRepository: Repository<CdConfigurationEntity>) {
   }
 
-  async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CdConfigurationEntity> {
+  async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const cdConfiguration = await this.componentRepository.findOne({ id: createDeploymentDto.cdConfigurationId })
     if (cdConfiguration) {
-      return cdConfiguration
+      return createDeploymentDto
     }
 
     throw new NotFoundException(`Configuration with the id ${createDeploymentDto.cdConfigurationId} was not found`)

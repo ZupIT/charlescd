@@ -44,17 +44,17 @@ describe('DeploymentController v2', () => {
     )
     await manager.save(cdConfiguration)
     const createDeploymentRequest = {
-      deploymentId: 'deployment-id',
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
-        headerValue: '123123-4324234-42342-3423'
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
       },
       modules: [
         {
-          moduleId: 'module-id',
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: 'https://some-helm.repo',
           components: [
             {
-              componentId: '{{componentId}}',
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
               componentName: 'component-name'
@@ -62,7 +62,7 @@ describe('DeploymentController v2', () => {
           ]
         }
       ],
-      authorId: 'author-id',
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
@@ -75,17 +75,17 @@ describe('DeploymentController v2', () => {
 
   it('returns not found error for valid params without existing cdConfiguration', async() => {
     const createDeploymentRequest = {
-      deploymentId: 'deployment-id',
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
-        headerValue: '123123-4324234-42342-3423'
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
       },
       modules: [
         {
-          moduleId: 'module-id',
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: 'https://some-helm.repo',
           components: [
             {
-              componentId: '{{componentId}}',
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
               componentName: 'component-name'
@@ -93,7 +93,7 @@ describe('DeploymentController v2', () => {
           ]
         }
       ],
-      authorId: 'author-id',
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: '067765f8-aa29-49f7-bf2b-3ec676a71583',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
@@ -115,19 +115,24 @@ describe('DeploymentController v2', () => {
   it('returns error message for malformed payload', async() => {
     const createDeploymentRequest = {}
     const errorMessages = [
-      '"deploymentId" is required',
-      '"authorId" is required',
-      '"callbackUrl" is required',
-      '"cdConfigurationId" is required',
-      '"modules" is required'
+      'deploymentId should not be empty',
+      'deploymentId must be an UUID',
+      'authorId should not be empty',
+      'authorId must be an UUID',
+      'callbackUrl should not be empty',
+      'callbackUrl must be a string',
+      'cdConfigurationId should not be empty',
+      'cdConfigurationId must be an UUID',
+      'circle should not be empty',
+      'modules should not be empty'
     ]
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
-      .expect(422)
+      .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({error: 'Unprocessable Entity', message: errorMessages, statusCode: 422})
+        expect(response.body).toEqual({error: 'Bad Request', message: errorMessages, statusCode: 400})
       })
   })
 })

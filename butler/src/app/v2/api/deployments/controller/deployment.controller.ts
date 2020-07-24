@@ -1,14 +1,13 @@
-import { Body, Controller, Headers, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Headers, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto';
-import { DeployValidationPipe } from '../pipes/deploy-validation.pipe';
-import { CdConfigurationExistencePipe } from '../pipes/cd-configuration-presence.pipe';
+import { CdConfigurationExistencePipe } from '../pipes/cd-configuration-existence-pipe';
 
 @Controller('v2/deployments')
 export class DeploymentsController {
 
   @Post()
   @UsePipes(CdConfigurationExistencePipe)
-  @UsePipes(new DeployValidationPipe())
+  @UsePipes(new ValidationPipe({transform: true}))
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') incomingCircleId: string,
