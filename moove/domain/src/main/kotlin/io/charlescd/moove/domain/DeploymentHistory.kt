@@ -26,5 +26,6 @@ data class DeploymentHistory(
     val authorName: String,
     val tag: String,
     val undeployedAt: LocalDateTime?,
-    val averageTime: Duration?
+    val deploymentDuration: Duration?,
+    val circleName: String
 )
