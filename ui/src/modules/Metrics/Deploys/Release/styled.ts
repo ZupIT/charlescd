@@ -44,6 +44,7 @@ const TableHead = styled.div`
 `;
 
 const ReleaseRow = styled.div`
+  position: relative;
   background-color: ${({ theme }) =>
     theme.metrics.deploy.release.releaseRow.background};
   margin-bottom: 5px;
@@ -114,8 +115,9 @@ interface Line {
 }
 
 const StatusLine = styled.div<Line>`
-  height: auto;
-  max-height: 85%;
+  position: absolute;
+  left: 0;
+  height: calc(100% - 6px);
   width: 5px;
   background-color: ${({ theme, status }) => theme.metrics.deploy[status]};
   margin: 3px 10px 0 5px;
