@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import { render, wait } from 'unit-test/testUtils';
+import Board from '..';
 
-import javax.validation.constraints.NotNull
-
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+const props = {
+  id: '123-456',
+  name: 'board-001'
 }
 
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+test('render Board default component', async () => {
+  const { getByTestId } = render(
+    <Board {...props}  />
+  );
+
+  await wait(() => expect(getByTestId(`tabpanel-${props.name}`)).toBeInTheDocument());
+});

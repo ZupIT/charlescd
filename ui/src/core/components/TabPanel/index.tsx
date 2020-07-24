@@ -36,7 +36,7 @@ const TabPanel = ({
   className,
   size
 }: Props & IconProps) => (
-  <Styled.Panel className={className}>
+  <Styled.Panel className={className} data-testid={`tabpanel-${title}`}>
     <Styled.Header>
       <Styled.Tab>
         <Styled.Title>

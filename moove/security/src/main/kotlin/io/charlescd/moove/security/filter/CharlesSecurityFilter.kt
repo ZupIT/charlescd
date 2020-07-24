@@ -16,8 +16,10 @@
 
 package io.charlescd.moove.security.filter
 
+import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.security.CharlesAccessToken
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.WorkspacePermissionsMapping
@@ -39,7 +41,7 @@ import org.yaml.snakeyaml.constructor.Constructor
 
 @Component
 @Profile("!local")
-class CharlesSecurityFilter : GenericFilterBean() {
+class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : GenericFilterBean() {
 
     private lateinit var constraints: SecurityConstraints
 
@@ -61,36 +63,40 @@ class CharlesSecurityFilter : GenericFilterBean() {
         val method = httpRequest.method
 
         try {
-            doAuthorization(workspaceId, parseAccessToken(authorization), path, method)
+            doAuthorization(workspaceId, authorization, path, method)
+        } catch (feignException: FeignException) {
+            createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
         } catch (businessException: BusinessException) {
-            createResponse(response, businessException, HttpStatus.FORBIDDEN)
+            createResponse(response, businessException.message, HttpStatus.FORBIDDEN)
         } catch (exception: Exception) {
-            createResponse(response, exception, HttpStatus.UNAUTHORIZED)
+            createResponse(response, exception.message, HttpStatus.UNAUTHORIZED)
         }
 
         chain.doFilter(request, response)
     }
 
-    private fun createResponse(response: ServletResponse, exception: Exception, httpStatus: HttpStatus) {
+    private fun createResponse(response: ServletResponse, message: String?, httpStatus: HttpStatus) {
         (response as HttpServletResponse).status = httpStatus.value()
-        response.writer.print(exception.message)
+        response.writer.print(message)
         response.writer.flush()
     }
 
-    private fun doAuthorization(workspaceId: String?, authorization: CharlesAccessToken?, path: String, method: String) {
+    private fun doAuthorization(workspaceId: String?, authorization: String?, path: String, method: String) {
+        val parsedAccessToken = parseAccessToken(authorization)
 
         if (checkIfIsOpenPath(constraints, path, method)) {
             return
         }
 
-        if (authorization?.isRoot == true) {
+        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) }
+
+        if (parsedAccessToken?.isRoot == true) {
             return
         }
 
-        val workspace = authorization?.workspaces?.firstOrNull { it.id == workspaceId }
+        val workspace = parsedAccessToken?.workspaces?.firstOrNull { it.id == workspaceId }
 
         workspace?.let {
-
             if (!isValidToken(constraints, path, workspace, method)) {
                 throw BusinessException.of(MooveErrorCode.FORBIDDEN)
             }
