@@ -40,4 +40,4 @@ const MenuItem = ({ route, id, name }: Props) => {
   );
 };
 
-export default memo(MenuItem);
+export default MenuItem;
