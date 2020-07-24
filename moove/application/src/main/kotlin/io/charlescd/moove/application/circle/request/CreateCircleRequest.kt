@@ -26,8 +26,8 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
-import org.jetbrains.annotations.NotNull
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.NotEmpty
 
 class CreateCircleRequest(
 
@@ -37,6 +37,7 @@ class CreateCircleRequest(
     @field:NotBlank
     val authorId: String,
 
+    @field:Valid
     val rules: NodePart
 ) {
     fun toDomain(user: User, workspaceId: String) = Circle(
@@ -70,8 +71,8 @@ data class NodePart(
     }
 
     data class RulePart(
-        @field:[NotNull Size(min = 0)] val key: String?,
-        @field:[NotNull Size(min = 0)] val condition: String?,
-        @field:[NotNull Size(min = 0)] val value: List<String>?
+        @field:[NotNull NotBlank] val key: String?,
+        @field:[NotNull NotBlank] val condition: String?,
+        @field:[NotNull NotEmpty] val value: List<String>?
     )
 }
