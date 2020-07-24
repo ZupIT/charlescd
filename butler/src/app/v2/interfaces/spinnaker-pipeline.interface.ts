@@ -1,19 +1,19 @@
-interface DefaultArtifact2 {
+interface StageDefaultArtifact {
     customKind: boolean
     id: string
 }
 
-interface MatchArtifact2 {
+interface StageMatchArtifact {
     id: string
     name: string
     type: string
 }
 
-interface ExpectedArtifact2 {
-    defaultArtifact: DefaultArtifact2
+interface StageExpectedArtifact {
+    defaultArtifact: StageDefaultArtifact
     displayName: string
     id: string
-    matchArtifact: MatchArtifact2
+    matchArtifact: StageMatchArtifact
     useDefaultArtifact: boolean
     usePriorArtifact: boolean
 }
@@ -29,8 +29,8 @@ interface Overrides {
 }
 
 interface StageEnabled {
-    expression: string
-    type: string
+    expression?: string
+    type?: string
 }
 
 interface Moniker {
@@ -70,8 +70,8 @@ interface XCircleId {
 }
 
 interface Headers {
-    cookie: Cookie
-    'x-circle-id': XCircleId
+    cookie?: Cookie
+    'x-circle-id'?: XCircleId
 }
 
 interface Match {
@@ -83,30 +83,30 @@ interface Destination {
     subset: string
 }
 
-interface Set {
+interface RequestSet {
     'x-circle-source': string
 }
 
 interface Request {
-    set: Set
+    set: RequestSet
 }
 
-interface Set2 {
+interface ResponseSet {
     'x-circle-source': string
 }
 
 interface Response {
-    set: Set2
+    set: ResponseSet
 }
 
-interface Headers2 {
+interface RouteHeaders {
     request: Request
     response: Response
 }
 
 interface Route {
     destination: Destination
-    headers: Headers2
+    headers: RouteHeaders
 }
 
 interface Http {
@@ -115,10 +115,10 @@ interface Http {
 }
 
 interface Spec {
-    host: string
-    subsets: Subset[]
-    hosts: string[]
-    http: Http[]
+    host?: string
+    subsets?: Subset[]
+    hosts?: string[]
+    http?: Http[]
 }
 
 interface Manifest {
@@ -132,11 +132,11 @@ interface CustomHeaders {
     'x-circle-id': string
 }
 
-interface Payload {
+interface StagePayload {
     status: string
 }
 
-interface Variable {
+interface StageVariable {
     key: string
     value: string
 }
@@ -151,51 +151,49 @@ interface LabelSelectors {
     selectors: Selector[]
 }
 
-interface Options2 {
+interface StageOptions {
     cascading: boolean
 }
 
 interface Stage {
-    completeOtherBranchesThenFail: boolean
-    continuePipeline: boolean
-    expectedArtifacts: ExpectedArtifact2[]
-    failPipeline: boolean
-    inputArtifacts: InputArtifact[]
+    completeOtherBranchesThenFail?: boolean
+    continuePipeline?: boolean
+    expectedArtifacts?: StageExpectedArtifact[]
+    failPipeline?: boolean
+    inputArtifacts?: InputArtifact[]
     name: string
-    namespace: string
-    outputName: string
-    overrides: Overrides
+    namespace?: string
+    outputName?: string
+    overrides?: Overrides
     refId: string
     requisiteStageRefIds: string[]
-    stageEnabled: StageEnabled
-    templateRenderer: string
+    stageEnabled?: StageEnabled
+    templateRenderer?: string
     type: string
-    account: string
-    cloudProvider: string
-    manifestArtifactAccount: string
-    manifestArtifactId: string
-    moniker: Moniker
+    account?: string
+    cloudProvider?: string
+    manifestArtifactAccount?: string
+    manifestArtifactId?: string
+    moniker?: Moniker
     skipExpressionEvaluation?: boolean
-    source: string
-    trafficManagement: TrafficManagement
-    manifests: Manifest[]
-    customHeaders: CustomHeaders
-    method: string
-    payload: Payload
-    statusUrlResolution: string
-    url: string
+    source?: string
+    trafficManagement?: TrafficManagement
+    manifests?: Manifest[]
+    customHeaders?: CustomHeaders
+    method?: string
+    payload?: StagePayload
+    statusUrlResolution?: string
+    url?: string
     failOnFailedExpressions?: boolean
-    variables: Variable[]
-    app: string
-    kinds: string[]
-    labelSelectors: LabelSelectors
-    location: string
-    mode: string
-    nameStage: string
-    options: Options2
+    variables?: StageVariable[]
+    app?: string
+    kinds?: string[]
+    labelSelectors?: LabelSelectors
+    location?: string
+    mode?: string
+    nameStage?: string
+    options?: StageOptions
 }
-
-/** expected artifact stuff **/
 
 interface MatchArtifact {
     artifactAccount: string
@@ -222,9 +220,7 @@ interface ExpectedArtifact {
     usePriorArtifact: boolean
 }
 
-/** main obj **/
-
-interface SpinnakerPipeline {
+export interface SpinnakerPipeline {
     application: string
     name: string
     expectedArtifacts: ExpectedArtifact[]

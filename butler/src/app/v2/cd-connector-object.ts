@@ -1,3 +1,5 @@
+import { SpinnakerPipeline } from './interfaces'
+
 export const spinObject: SpinnakerPipeline = {
   application: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
   name: '68577698-84b7-4300-914d-2b1203955a2f',

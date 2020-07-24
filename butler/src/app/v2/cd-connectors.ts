@@ -1,4 +1,6 @@
-const createV2Deployment = () => {
+import { Component, Deployment, SpinnakerPipeline } from './interfaces'
+
+const createV2Deployment = (deployment: Deployment, previousVersions: Component[]): SpinnakerPipeline => {
 
 }
 
