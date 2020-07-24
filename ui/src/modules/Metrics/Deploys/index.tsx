@@ -104,9 +104,7 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
-        <Styled.ChartControls>
-          <ChartMenu onReset={() => resetChart('chartDeploy')} />
-        </Styled.ChartControls>
+        <ChartMenu onReset={() => resetChart('chartDeploy')} />
         <Styled.MixedChart
           options={deployChartOption}
           series={deploySeries}

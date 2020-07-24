@@ -57,6 +57,7 @@ const Card = styled.div<Card>`
   padding: 16px 25px;
   border-radius: 4px;
   box-sizing: border-box;
+  position: relative;
 `;
 
 const MixedChart = styled(MixedChartComponent)`
@@ -97,8 +98,10 @@ const ChartControls = styled.div`
 `;
 
 const ChartMenu = styled.div`
-  position: relative;
+  position: absolute;
   top: 15px;
+  right: 50px;
+  z-index: 999;
 `;
 
 export default {
