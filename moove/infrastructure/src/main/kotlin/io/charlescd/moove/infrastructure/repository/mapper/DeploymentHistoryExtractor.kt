@@ -45,6 +45,7 @@ class DeploymentHistoryExtractor : ResultSetExtractor<Set<DeploymentHistory>> {
         status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
         deployedAt = resultSet.getTimestamp("deployed_at")?.toLocalDateTime(),
         undeployedAt = resultSet.getTimestamp("undeployed_at")?.toLocalDateTime(),
-        averageTime = Duration.ofSeconds(resultSet.getLong("deployment_average_time"))
+        deploymentDuration = Duration.ofSeconds(resultSet.getLong("deployment_average_time")),
+        circleName = resultSet.getString("circle_name")
     )
 }
