@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
 import { normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
@@ -34,11 +34,11 @@ import {
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import isUndefined from 'lodash/isUndefined';
 import ReleasesHistoryComponent from './Release';
+import { ReleaseHistoryRequest } from './interfaces';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
-  const formMethods = useForm();
-  const { control, handleSubmit, getValues, setValue } = formMethods;
+  const { control, handleSubmit, getValues, setValue } = useForm();
   const deploySeries = getDeploySeries(response);
   const averageTimeSeries = getAverageTimeSeries(response);
 
@@ -51,10 +51,16 @@ const Deploys = () => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
   }, [searchDeployMetrics]);
 
+  const [filter, setFilter] = useState<ReleaseHistoryRequest>({
+    period: periodFilterItems[0].value,
+    circles: []
+  });
+
   const onSubmit = () => {
     const { circles, period } = getValues();
     const circleIds = normalizeCircleParams(circles);
-    searchDeployMetrics({ period: period, circles: circleIds });
+    setFilter({ period, circles: circleIds });
+    searchDeployMetrics({ period, circles: circleIds });
   };
 
   const resetChart = (chartId: string) => {
@@ -62,94 +68,88 @@ const Deploys = () => {
   };
 
   return (
-    <FormContext {...formMethods}>
-      <Styled.Content data-testid="metrics-deploy">
-        <Styled.Card width="531px" height="79px">
-          <Styled.FilterForm
-            onSubmit={handleSubmit(onSubmit)}
-            data-testid="metrics-filter"
-          >
-            <Styled.SingleSelect
-              label="Select a timestamp"
-              name="period"
-              options={periodFilterItems}
-              control={control}
-              defaultValue={periodFilterItems[0]}
-            />
-            <CircleFilter control={control} setValue={setValue} />
-            <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
-              <Text.h5 weight="bold" align="center" color="light">
-                Apply
-              </Text.h5>
-            </Styled.Button>
-          </Styled.FilterForm>
-        </Styled.Card>
+    <Styled.Content data-testid="metrics-deploy">
+      <Styled.Card width="531px" height="79px">
+        <Styled.FilterForm
+          onSubmit={handleSubmit(onSubmit)}
+          data-testid="metrics-filter"
+        >
+          <Styled.SingleSelect
+            label="Select a timestamp"
+            name="period"
+            options={periodFilterItems}
+            control={control}
+            defaultValue={periodFilterItems[0]}
+          />
+          <CircleFilter control={control} setValue={setValue} />
+          <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
+            <Text.h5 weight="bold" align="center" color="light">
+              Apply
+            </Text.h5>
+          </Styled.Button>
+        </Styled.FilterForm>
+      </Styled.Card>
 
-        <Styled.Plates>
-          <Styled.Card width="175px" height="94px">
-            <Text.h4 color="dark">Deploy</Text.h4>
-            <Text.h1 color="light">
-              {loading ? <Loader.Card /> : response?.successfulDeployments}
-            </Text.h1>
-          </Styled.Card>
-          <Styled.Card width="175px" height="94px">
-            <Text.h4 color="dark">Error</Text.h4>
-            <Text.h1 color="light">
-              {loading ? <Loader.Card /> : response?.failedDeployments}
-            </Text.h1>
-          </Styled.Card>
-          <Styled.Card width="175px" height="94px">
-            <Text.h4 color="dark">Average time</Text.h4>
-            <Text.h1 color="light">
-              {loading ? (
-                <Loader.Card />
-              ) : (
-                humanizeDateFromSeconds(
-                  response?.successfulDeploymentsAverageTime
-                )
-              )}
-            </Text.h1>
-          </Styled.Card>
-        </Styled.Plates>
-        <Styled.Card
-          width="1220px"
-          height="521px"
-          data-testid="apexchart-deploy"
-        >
-          <Styled.ChartControls>
-            <Text.h2 color="light" weight="bold">
-              Deploy
-            </Text.h2>
-            <ChartMenu onReset={() => resetChart('chartDeploy')} />
-          </Styled.ChartControls>
-          <Styled.ColumnChart
-            options={deployChartOption}
-            series={deploySeries}
-            width={1180}
-            height={450}
-          />
+      <Styled.Plates>
+        <Styled.Card width="175px" height="94px">
+          <Text.h4 color="dark">Deploy</Text.h4>
+          <Text.h1 color="light">
+            {loading ? <Loader.Card /> : response?.successfulDeployments}
+          </Text.h1>
         </Styled.Card>
-        <Styled.Card
-          width="1220px"
-          height="521px"
-          data-testid="apexchart-average-time"
-        >
-          <Styled.ChartControls>
-            <Text.h2 color="light" weight="bold">
-              Average time
-            </Text.h2>
-            <ChartMenu onReset={() => resetChart('chartAverageTime')} />
-          </Styled.ChartControls>
-          <Styled.AreaChart
-            options={averageTimeOptions}
-            series={averageTimeSeries}
-            width={1180}
-            height={450}
-          />
+        <Styled.Card width="175px" height="94px">
+          <Text.h4 color="dark">Error</Text.h4>
+          <Text.h1 color="light">
+            {loading ? <Loader.Card /> : response?.failedDeployments}
+          </Text.h1>
         </Styled.Card>
-        <ReleasesHistoryComponent />
-      </Styled.Content>
-    </FormContext>
+        <Styled.Card width="175px" height="94px">
+          <Text.h4 color="dark">Average time</Text.h4>
+          <Text.h1 color="light">
+            {loading ? (
+              <Loader.Card />
+            ) : (
+              humanizeDateFromSeconds(
+                response?.successfulDeploymentsAverageTime
+              )
+            )}
+          </Text.h1>
+        </Styled.Card>
+      </Styled.Plates>
+      <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
+        <Styled.ChartControls>
+          <Text.h2 color="light" weight="bold">
+            Deploy
+          </Text.h2>
+          <ChartMenu onReset={() => resetChart('chartDeploy')} />
+        </Styled.ChartControls>
+        <Styled.ColumnChart
+          options={deployChartOption}
+          series={deploySeries}
+          width={1180}
+          height={450}
+        />
+      </Styled.Card>
+      <Styled.Card
+        width="1220px"
+        height="521px"
+        data-testid="apexchart-average-time"
+      >
+        <Styled.ChartControls>
+          <Text.h2 color="light" weight="bold">
+            Average time
+          </Text.h2>
+          <ChartMenu onReset={() => resetChart('chartAverageTime')} />
+        </Styled.ChartControls>
+        <Styled.AreaChart
+          options={averageTimeOptions}
+          series={averageTimeSeries}
+          width={1180}
+          height={450}
+        />
+      </Styled.Card>
+      <ReleasesHistoryComponent filter={filter} />
+    </Styled.Content>
   );
 };
 

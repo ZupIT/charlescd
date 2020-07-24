@@ -15,7 +15,6 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import ReleaseRow from './ReleaseRow';
@@ -23,14 +22,16 @@ import Summary from './Summary';
 import Loader from '../../Loaders/index';
 import { useReleaseHistory } from '../hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ReleaseHistory } from '../interfaces';
-import { normalizeCircleParams } from 'modules/Metrics/helpers';
+import { ReleaseHistory, ReleaseHistoryRequest } from '../interfaces';
 
-const ReleasesHistoryComponent = () => {
+type Props = {
+  filter: ReleaseHistoryRequest;
+};
+
+const ReleasesHistoryComponent = ({ filter }: Props) => {
   const page = useRef(0);
   const [releases, setReleases] = useState<ReleaseHistory[]>([]);
   const { getReleaseHistory, response, loading } = useReleaseHistory();
-  const { getValues } = useFormContext();
   const releasesResponse = response?.page?.content;
   const hasMoreData = !response?.page?.last;
 
@@ -44,20 +45,16 @@ const ReleasesHistoryComponent = () => {
   }, [releasesResponse]);
 
   useEffect(() => {
-    const { circles, period } = getValues();
-    const circleIds = normalizeCircleParams(circles);
-
+    const { period, circles } = filter;
     page.current = 0;
     setReleases([]);
-    getReleaseHistory({ page: 0 }, { circles: circleIds, period });
-  }, [getReleaseHistory, getValues]);
+    getReleaseHistory({ page: 0 }, { circles, period });
+  }, [getReleaseHistory, filter]);
 
   const loadMore = () => {
-    const { circles, period } = getValues();
-    const circleIds = normalizeCircleParams(circles);
-
+    const { period, circles } = filter;
     page.current++;
-    getReleaseHistory({ page: page.current }, { circles: circleIds, period });
+    getReleaseHistory({ page: page.current }, { circles, period });
   };
 
   return (
