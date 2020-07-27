@@ -20,6 +20,7 @@ import map from 'lodash/map';
 import Text from 'core/components/Text';
 import { WizardItems } from './constants';
 import Styled from './styled';
+import { isEmpty } from 'lodash';
 
 interface Item {
   icon: string;
@@ -34,7 +35,6 @@ const Wizard = () => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [localStorageValue, setLocalStorageValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -46,16 +46,8 @@ const Wizard = () => {
   }, [indexOfItemSelect]);
 
   useEffect(() => {
-    setLocalStorageValue(localStorage.getItem('wizard'));
+    isEmpty(localStorage.getItem('wizard')) ? setIsOpen(true) : setIsOpen(false);
   }, []);
-
-  useEffect(() => {
-    if (!localStorageValue) {
-      setIsOpen(true);
-    } else if (localStorageValue === 'true') {
-      setIsOpen(false);
-    }
-  }, [localStorageValue]);
 
   const isFinalStep = () => itemSelect.name === 'metrics-provider';
 
