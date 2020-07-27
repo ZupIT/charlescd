@@ -530,7 +530,10 @@ const circlesMetricsDashboard = {
 const allDeployReleases = {
   summary: {
     DEPLOYED: 10,
-    NOT_DEPLOYED: 15
+    DEPLOYING: 5,
+    ERROR: 2,
+    UNDEPLOYING: 0,
+    UNDEPLOYED: 5
   },
   page: {
     content: [

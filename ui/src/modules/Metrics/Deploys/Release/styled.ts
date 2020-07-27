@@ -98,13 +98,13 @@ const ReleaseHistoryLegend = styled.div`
 `;
 
 interface Dot {
-  active: string;
+  status: string;
 }
 
 const Dot = styled.div<Dot>`
   height: 15px;
   width: 15px;
-  background-color: ${({ theme, active }) => theme.metrics.deploy[active]};
+  background-color: ${({ theme, status }) => theme.metrics.deploy[status]};
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
