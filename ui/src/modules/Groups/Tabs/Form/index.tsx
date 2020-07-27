@@ -33,19 +33,19 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
   const { register, handleSubmit } = useForm();
   const [counter, setCounter] = useState(0);
 
-  const implementCounter = () => {
-    let count = 0;
-    map(userGroup?.users, (user, index) => {
-      if (index > 7) {
-        count = count + 1;
-      }
-    });
-    return count;
-  };
-
   useEffect(() => {
+    const implementCounter = () => {
+      let count = 0;
+      map(userGroup?.users, (user, index) => {
+        if (index > 7) {
+          count = count + 1;
+        }
+      });
+      return count;
+    };
+
     setCounter(implementCounter());
-  }, [userGroup, implementCounter]);
+  }, [userGroup]);
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
     onEdit(name);
