@@ -30,7 +30,7 @@ const ReleaseRow = ({ release }: Props) => {
 
   return (
     <Styled.ReleaseRow>
-      <Styled.StatusLine status={release.status.toLocaleLowerCase()} />
+      <Styled.StatusLine status={release?.status?.toLocaleLowerCase()} />
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`release-table-row-${release.id}`}

@@ -46,11 +46,11 @@ export interface ReleaseHistoryRequest {
 }
 
 export interface ReleaseHistorySummary {
-  DEPLOYED: number;
-  DEPLOYING: number;
-  ERROR: number;
-  UNDEPLOYING: number;
-  UNDEPLOYED: number;
+  deployed: number;
+  deploying: number;
+  failed: number;
+  undeploying: number;
+  notDeploying: number;
 }
 
 export interface ReleaseHistoryResponse {
