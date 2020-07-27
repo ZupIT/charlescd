@@ -54,7 +54,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           if (index <= 7) {
             return (
               <Styled.UserAvatarNoPhoto
-                key={user?.name}
+                key={user?.id}
                 src={user?.photoUrl}
                 name={user?.name}
               />
