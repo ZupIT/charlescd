@@ -20,7 +20,7 @@ import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { UserGroup } from '../../interfaces/UserGroups';
-import { implementCounter } from './helpers';
+import { counter } from 'core/utils/counter';
 import map from 'lodash/map';
 import Styled from './styled';
 
@@ -32,10 +32,10 @@ interface Props {
 
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
   const { register, handleSubmit } = useForm();
-  const [counter, setCounter] = useState(0);
+  const [userCounter, setUserCounter] = useState(0);
 
   useEffect(() => {
-    setCounter(implementCounter(userGroup));
+    return setUserCounter(counter(userGroup?.users, 8));
   }, [userGroup]);
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
@@ -56,9 +56,9 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
             );
           }
         })}
-        {counter > 0 && (
+        {userCounter > 0 && (
           <Styled.UsersCounter onClick={onAddUser} data-testid="count-users">
-            +{counter}
+            +{userCounter}
           </Styled.UsersCounter>
         )}
       </Styled.UserList>
