@@ -14,11 +14,30 @@
  * limitations under the License.
  */
 
-import { humanizeDateFromSeconds } from '../date';
+import styled from 'styled-components';
+import Charts from 'react-apexcharts';
 
-test('should return time formated correctly', async () => {
-  expect(humanizeDateFromSeconds(0)).toEqual('0s');
-  expect(humanizeDateFromSeconds(72)).toEqual('1:12m');
-  expect(humanizeDateFromSeconds(53)).toEqual('53s');
-  expect(humanizeDateFromSeconds(4365)).toEqual('1:12:45h');
-})
+interface ChartProps {
+  className?: string;
+}
+
+const Chart = styled(Charts)<ChartProps>`
+  padding-right: 15px;
+  .apexcharts-canvas,
+  .apexcharts-canvas.apexcharts-theme-dark {
+    background-color: transparent;
+  }
+  .apexcharts-xaxis-tick {
+    display: none;
+  }
+  .apexcharts-yaxistooltip {
+    display: none;
+  }
+  .apexcharts-xaxistooltip {
+    display: none;
+  }
+`;
+
+export default {
+  Chart
+};
