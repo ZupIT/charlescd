@@ -17,5 +17,5 @@
 import { chartDateFormatter } from '../helpers';
 
 test('must formatte date for chart', () => {
-  expect(chartDateFormatter("2020-08-13")).toEqual("13-08-2020");
+  expect(chartDateFormatter("2020-08-13")).toEqual("13Aug");
 });
