@@ -95,8 +95,8 @@ export const dark = {
     deployed: COLOR_MOUNTAIN_MEADOW,
     deploying: COLOR_DODGER_BLUE,
     error: COLOR_RED_ORANGE,
-    undeployed: COLOR_PURPLE_HEART,
     undeploying: COLOR_FREE_SPEECH_BLUE,
+    undeployed: COLOR_PURPLE_HEART,
     release: {
       releaseRow: {
         background: COLOR_BLACK_MARLIN
