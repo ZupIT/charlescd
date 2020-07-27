@@ -27,17 +27,17 @@ const buildSeriesData = (metricData: MetricDataInPeriod[]) =>
 export const getDeploySeries = (data: DeployMetricData) => [
   {
     name: 'Deploy',
+    type: 'column',
     data: buildSeriesData(data?.successfulDeploymentsInPeriod)
   },
   {
     name: 'Error',
+    type: 'column',
     data: buildSeriesData(data?.failedDeploymentsInPeriod)
-  }
-];
-
-export const getAverageTimeSeries = (data: DeployMetricData) => [
+  },
   {
-    name: 'Elapse time',
+    name: 'Avarege time',
+    type: 'area',
     data: map(data?.deploymentsAverageTimeInPeriod, DeploymentAverageTime => ({
       x: DeploymentAverageTime.period,
       y: DeploymentAverageTime.averageTime
@@ -46,7 +46,7 @@ export const getAverageTimeSeries = (data: DeployMetricData) => [
 ];
 
 export const chartDateFormatter = (date: string) => {
-  return dayjs(date, 'YYYY-MM-DD').format('DD-MM-YYYY');
+  return dayjs(date, 'YYYY-MM-DD').format('DDMMM');
 };
 
 export const getPlotOption = (deploySeries: Array<any>) => {
