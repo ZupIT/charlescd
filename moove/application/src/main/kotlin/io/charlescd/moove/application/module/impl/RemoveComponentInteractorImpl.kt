@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.module.impl
 
+import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.module.RemoveComponentInteractor
 import io.charlescd.moove.domain.Module
@@ -26,13 +27,15 @@ import javax.inject.Named
 import javax.transaction.Transactional
 
 @Named
-open class RemoveComponentInteractorImpl(private val moduleService: ModuleService) : RemoveComponentInteractor {
+open class RemoveComponentInteractorImpl(
+    private val moduleService: ModuleService,
+    private val deploymentsService: DeploymentService) : RemoveComponentInteractor {
 
     @Transactional
     override fun execute(moduleId: String, componentId: String, workspaceId: String) {
         val module = moduleService.find(moduleId, workspaceId)
         checkIfComponentExists(module, componentId)
-        checkIfCanBeRemoved(module)
+        checkIfCanBeRemoved(module, componentId)
         moduleService.removeComponents(
             module.copy(components = module.findComponentsByIds(listOf(componentId)))
         )
@@ -44,9 +47,13 @@ open class RemoveComponentInteractorImpl(private val moduleService: ModuleServic
         }
     }
 
-    private fun checkIfCanBeRemoved(module: Module) {
+    private fun checkIfCanBeRemoved(module: Module, componentId: String) {
         if (module.components.size == 1) {
             throw BusinessException.of(MooveErrorCode.MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT)
+        }
+        val deployment = deploymentsService.findActiveByComponentId(componentId)
+        deployment.let {
+            throw BusinessException.of(MooveErrorCode.COMPONENT_HAVE_ACTIVE_RELEASES)
         }
     }
 }

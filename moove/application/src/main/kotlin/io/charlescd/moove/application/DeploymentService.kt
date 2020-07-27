@@ -62,4 +62,10 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
             circleId
         )
     }
+
+    fun findActiveByComponentId(componentId: String): Set<Deployment>? {
+        return this.deploymentRepository.findActiveByComponentId(
+            componentId
+        )
+    }
 }

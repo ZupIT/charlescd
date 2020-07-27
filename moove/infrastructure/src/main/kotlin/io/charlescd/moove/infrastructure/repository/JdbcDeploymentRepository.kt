@@ -333,4 +333,28 @@ class JdbcDeploymentRepository(
     private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
         return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
     }
+
+    override fun findActiveByComponentId(componentId: String): Set<Deployment>? {
+        val statement = """
+                SELECT  deployments.id                        AS deployment_id,
+                        deployments.created_at                AS deployment_created_at,
+                        deployments.deployed_at               AS deployment_deployed_at,
+                        deployments.status                    AS deployment_status,
+                        deployments.circle_id                 AS deployment_circle_id,
+                        deployments.build_id                  AS deployment_build_id,
+                        deployments.workspace_id              AS deployment_workspace_id 
+                FROM deployments
+                    INNER JOIN modules deployment_module ON deployment_module.workspace_id = deployments.workspace_id
+                    INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
+                    INNER JOIN builds deployment_builds ON deployment_builds.id = deployment.build_id
+                    INNER JOIN builds_features build_features ON builds_features.id = deployment.build_id
+                    INNER JOIN feature_modules feature_modules ON feature_modules.module_id = modules.id
+                WHERE deployment_component.id  = ? AND STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
+        """
+        return this.jdbcTemplate.query(
+            statement,
+            arrayOf(componentId),
+            deploymentExtractor
+        )
+    }
 }
