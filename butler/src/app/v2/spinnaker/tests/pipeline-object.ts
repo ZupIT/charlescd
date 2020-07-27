@@ -1209,5 +1209,4 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       url: 'http://localhost:8883/deploy/notifications/istio-deployment?queuedIstioDeploymentId=1'
     } // 21
   ]
-  ]
 }

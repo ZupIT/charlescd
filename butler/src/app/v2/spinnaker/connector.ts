@@ -7,6 +7,8 @@ import { getVirtualServiceStage } from './templates/virtual-service-stage'
 
 export class SpinnakerConnector {
 
+  private currentStageId = 1
+
   public createV2Deployment(deployment: Deployment, activeComponents: Component[]): ConnectorResult {
     const pipeline: SpinnakerPipeline = this.buildSpinnakerPipeline(deployment, activeComponents)
     console.log(JSON.stringify(pipeline))
@@ -32,28 +34,28 @@ export class SpinnakerConnector {
   }
 
   private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
-    const stageId = 1
+    this.currentStageId = 1
     return [
-      ...this.getDeploymentStages(deployment, stageId),
-      ...this.getProxyDeploymentStages(deployment, activeComponents, stageId)
+      ...this.getDeploymentStages(deployment),
+      ...this.getProxyDeploymentStages(deployment, activeComponents)
     ]
   }
 
-  private getDeploymentStages(deployment: Deployment, stageId: number): Stage[] {
+  private getDeploymentStages(deployment: Deployment): Stage[] {
     const deploymentStages: Stage[] = []
     deployment.components?.forEach(component => {
-      deploymentStages.push(getBakeStage(component, stageId++))
-      deploymentStages.push(getDeploymentStage(component, deployment.cdConfiguration, stageId++))
+      deploymentStages.push(getBakeStage(component, this.currentStageId++))
+      deploymentStages.push(getDeploymentStage(component, deployment.cdConfiguration, this.currentStageId++))
     })
     return deploymentStages
   }
 
-  private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[], stageId: number): Stage[] {
+  private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     const proxyStages: Stage[] = []
     deployment.components?.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name) // TODO maybe filter by moove id?
-      proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, stageId++))
-      proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, stageId++))
+      proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, this.currentStageId++))
+      proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
     })
     return proxyStages
   }
