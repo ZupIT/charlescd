@@ -120,11 +120,17 @@ func (deployment *Deployment) updateNonReplicationControllerResource(
 }
 
 func (deployment *Deployment) updateReplicationControllerResource(
+	resource *unstructured.Unstructured,
 	manifest *unstructured.Unstructured,
 	resourceInterface dynamic.ResourceInterface,
 ) error {
 
-	resourceBytes, err := runtime.Encode(unstructured.UnstructuredJSONScheme, manifest)
+	err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride)
+	if err != nil {
+		return deployment.getDeploymentError("Failed to merge resource for patch action", err, manifest)
+	}
+
+	resourceBytes, err := runtime.Encode(unstructured.UnstructuredJSONScheme, resource)
 	if err != nil {
 		return deployment.getDeploymentError("Failed to encode resource for patch action", err, manifest)
 	}
@@ -161,7 +167,7 @@ func (deployment *Deployment) deploy() error {
 	}
 
 	if isResourController(resourceInCluster) {
-		return deployment.updateReplicationControllerResource(manifest, resourceInterface)
+		return deployment.updateReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
 	}
 
 	return deployment.updateNonReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
