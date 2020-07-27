@@ -261,7 +261,7 @@ class JdbcDeploymentRepository(
         """
 
         if (!circlesId.isNullOrEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
             parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status "
@@ -294,7 +294,7 @@ class JdbcDeploymentRepository(
         """
 
         if (!circlesId.isNullOrEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
             parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status, deployment_date "
@@ -322,7 +322,7 @@ class JdbcDeploymentRepository(
         """
 
         if (!circlesId.isNullOrEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
             parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_date "
@@ -333,14 +333,6 @@ class JdbcDeploymentRepository(
             deploymentAverageTimeStatsExtractor
         )?.toList()
             ?: emptyList()
-    }
-
-    private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
-        return createInQuery("deployments.circle_id", circlesId)
-    }
-
-    private fun mountDeploymentStatusSearch(statuses: List<DeploymentStatusEnum>): String {
-        return createInQuery("deployments.status", statuses)
     }
 
     private fun createInQuery(parameter: String, items: List<Any>): String {
@@ -354,12 +346,12 @@ class JdbcDeploymentRepository(
         val queryBuilder = deploymentHistoryQuery()
 
         if (!filters.circlesIds.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
             parameters.addAll(filters.circlesIds!!)
         }
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
             parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
@@ -424,12 +416,12 @@ class JdbcDeploymentRepository(
         )
 
         if (!filters.circlesIds.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
             parameters.addAll(filters.circlesIds!!)
         }
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
             parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
@@ -478,12 +470,12 @@ class JdbcDeploymentRepository(
         )
 
         if (!filters.circlesIds.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountCircleIdQuerySearch(filters.circlesIds!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
             parameters.addAll(filters.circlesIds!!)
         }
 
         if (!filters.deploymentStatus.isNullOrEmpty()) {
-            queryBuilder.appendln(" AND ${mountDeploymentStatusSearch(filters.deploymentStatus!!)} ")
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
             parameters.addAll(filters.deploymentStatus!!.map { it.name })
         }
 
