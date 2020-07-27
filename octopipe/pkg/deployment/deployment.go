@@ -129,11 +129,7 @@ func (deployment *Deployment) updateReplicationControllerResource(
 		return deployment.getDeploymentError("Failed to encode resource for patch action", err, manifest)
 	}
 
-	var forceMerge = true
-	_, err = resourceInterface.Patch(context.TODO(), manifest.GetName(), types.ApplyPatchType, resourceBytes, metav1.PatchOptions{
-		Force:        &forceMerge,
-		FieldManager: "unknown",
-	})
+	_, err = resourceInterface.Patch(context.TODO(), manifest.GetName(), types.MergePatchType, resourceBytes, metav1.PatchOptions{})
 	if err != nil {
 		return deployment.getDeploymentError("Failed to apply resource in cluster", err, manifest)
 	}
