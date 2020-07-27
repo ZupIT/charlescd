@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"testing"
 
@@ -197,57 +196,12 @@ func TestCreateResource(t *testing.T) {
 	client.Fake.ClearActions()
 }
 
-func TestUpdateResource(t *testing.T) {
+func TestUpdateNonResourceController(t *testing.T) {
 	scheme := runtime.NewScheme()
 	client := fake.NewSimpleDynamicClient(scheme)
-
-	deployment := deploymentMain.NewDeployment(
-		DeployAction,
-		false,
-		"default",
-		toJSON(simpleManifestForUpdate),
-		client,
-	)
 
 	unstructuredObj := &unstructured.Unstructured{
 		Object: toJSON(simpleManifest),
-	}
-
-	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = deployment.Do()
-	if err != nil {
-		t.Error(err)
-	}
-
-	res, err := client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	containers, _, _ := unstructured.NestedSlice(res.Object, "spec", "template", "spec", "containers")
-	for _, container := range containers {
-		c := container.(map[string]interface{})
-		if c["image"] != "nginx:1.14.1" {
-			t.Error("Can not update resource")
-		}
-	}
-}
-
-func TestRedeployResourceControllerFailed(t *testing.T) {
-	scheme := runtime.NewScheme()
-	client := fake.NewSimpleDynamicClient(scheme)
-
-	unstructuredObj := &unstructured.Unstructured{
-		Object: toJSON(simpleManifestForRedeploy),
-	}
-
-	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
-	if err != nil {
-		t.Error(err)
 	}
 
 	deployment := deploymentMain.NewDeployment(
@@ -258,51 +212,43 @@ func TestRedeployResourceControllerFailed(t *testing.T) {
 		client,
 	)
 
-	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
-
-	err = deployment.Do()
-	if err != nil {
-		t.Error(err)
-	}
-}
-
-func TestRedeployTerminatingResourceController(t *testing.T) {
-	scheme := runtime.NewScheme()
-	client := fake.NewSimpleDynamicClient(scheme)
-
-	unstructuredObj := &unstructured.Unstructured{
-		Object: toJSON(simpleManifestTerminatingForRedeploy),
-	}
-
 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
 	if err != nil {
 		t.Error(err)
 	}
 
-	deployment := deploymentMain.NewDeployment(
-		DeployAction,
-		false,
-		"default",
-		toJSON(simpleManifest),
-		client,
-	)
-
-	unstructuredObj = &unstructured.Unstructured{
-		Object: toJSON(simpleManifest),
-	}
-
-	_, err = client.Resource(deploymentRes).Namespace("default").Update(context.TODO(), unstructuredObj, metav1.UpdateOptions{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
-
 	err = deployment.Do()
 	if err != nil {
 		t.Error(err)
 	}
 }
+
+// func TestUpdateResourceController(t *testing.T) {
+// 	scheme := runtime.NewScheme()
+// 	client := fake.NewSimpleDynamicClient(scheme)
+
+// 	unstructuredObj := &unstructured.Unstructured{
+// 		Object: toJSON(simpleManifestForRedeploy),
+// 	}
+
+// 	deployment := deploymentMain.NewDeployment(
+// 		DeployAction,
+// 		false,
+// 		"default",
+// 		toJSON(simpleManifest),
+// 		client,
+// 	)
+
+// 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+
+// 	err = deployment.Do()
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// }
 
 func TestUndeploySuccess(t *testing.T) {
 	scheme := runtime.NewScheme()

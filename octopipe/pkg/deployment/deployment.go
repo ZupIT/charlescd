@@ -28,7 +28,9 @@ import (
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/util/retry"
 )
@@ -86,7 +88,7 @@ func (deployment *Deployment) createResource(manifest *unstructured.Unstructured
 	return nil
 }
 
-func (deployment *Deployment) updateResource(
+func (deployment *Deployment) updateNonReplicationControllerResource(
 	resource *unstructured.Unstructured,
 	manifest *unstructured.Unstructured,
 	resourceInterface dynamic.ResourceInterface,
@@ -117,62 +119,31 @@ func (deployment *Deployment) updateResource(
 	return nil
 }
 
-func (deployment *Deployment) isFailedResourceController(resource *unstructured.Unstructured) bool {
-	_, isResourceController, _ := unstructured.NestedInt64(resource.Object, "status", "replicas")
-	if !isResourceController {
-		return false
-	}
-
-	_, foundUnavailableReplicas, _ := unstructured.NestedInt64(resource.Object, "status", "unavailableReplicas")
-	return foundUnavailableReplicas
-}
-
-func (deployment *Deployment) isTerminating(resource *unstructured.Unstructured) bool {
-	_, foundFinalizers, _ := unstructured.NestedSlice(resource.Object, "metadata", "finalizers")
-	return foundFinalizers
-}
-
-func (deployment *Deployment) addWatcherToTerminatingResourceController(
-	resource *unstructured.Unstructured, resourceInterface dynamic.ResourceInterface,
-) (bool, error) {
-	if !deployment.isTerminating(resource) {
-		return false, nil
-	}
-
-	if err := newTerminatingWatcher(resource, resourceInterface); err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-func (deployment Deployment) undeployResourceControllerFailed(resource *unstructured.Unstructured) (bool, error) {
-	if !deployment.isFailedResourceController(resource) {
-		return false, nil
-	}
-
-	if err := deployment.undeploy(); err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-func (deployment *Deployment) prepareForRedeploy(
-	resource *unstructured.Unstructured,
+func (deployment *Deployment) updateReplicationControllerResource(
+	manifest *unstructured.Unstructured,
 	resourceInterface dynamic.ResourceInterface,
-) (bool, error) {
-	isFailedResourceController, err := deployment.undeployResourceControllerFailed(resource)
+) error {
+
+	resourceBytes, err := runtime.Encode(unstructured.UnstructuredJSONScheme, manifest)
 	if err != nil {
-		return false, err
+		return deployment.getDeploymentError("Failed to encode resource for patch action", err, manifest)
 	}
 
-	isTerminatingResourceController, err := deployment.addWatcherToTerminatingResourceController(resource, resourceInterface)
+	var forceMerge = true
+	_, err = resourceInterface.Patch(context.TODO(), manifest.GetName(), types.ApplyPatchType, resourceBytes, metav1.PatchOptions{
+		Force:        &forceMerge,
+		FieldManager: "unknown",
+	})
 	if err != nil {
-		return false, err
+		return deployment.getDeploymentError("Failed to apply resource in cluster", err, manifest)
 	}
 
-	return isFailedResourceController || isTerminatingResourceController, nil
+	err = newCreateOrUpdateWatcher(manifest, resourceInterface)
+	if err != nil {
+		return deployment.getDeploymentError("Patch failed", err, manifest)
+	}
+
+	return nil
 }
 
 func (deployment *Deployment) deploy() error {
@@ -180,25 +151,24 @@ func (deployment *Deployment) deploy() error {
 	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
 	resourceInterface := deployment.config.Resource(resourceSchema).Namespace(deployment.namespace)
 
-	resource, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
+	resourceInCluster, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return deployment.createResource(manifest, resourceInterface)
 	}
 
 	if err != nil {
-		return deployment.getDeploymentError("Failed to get latest version of resource", err, manifest)
+		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
 	}
 
-	isRedeploy, err := deployment.prepareForRedeploy(resource, resourceInterface)
-	if err != nil {
-		return err
+	if err != nil && !k8sErrors.IsAlreadyExists(err) {
+		return deployment.getDeploymentError("Failed to create resource in deploy", err, manifest)
 	}
 
-	if isRedeploy {
-		return deployment.createResource(manifest, resourceInterface)
+	if isResourController(resourceInCluster) {
+		return deployment.updateReplicationControllerResource(manifest, resourceInterface)
 	}
 
-	return deployment.updateResource(resource, manifest, resourceInterface)
+	return deployment.updateNonReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
 }
 
 func (deployment *Deployment) undeploy() error {
