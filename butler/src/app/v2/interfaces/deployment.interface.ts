@@ -19,5 +19,5 @@ export interface Deployment {
 
     circleId: string | null
 
-    components: Component[]
+    components?: Component[]
 }

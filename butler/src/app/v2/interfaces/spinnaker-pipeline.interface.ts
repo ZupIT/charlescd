@@ -110,7 +110,7 @@ interface Route {
 }
 
 interface Http {
-    match: Match[]
+    match?: Match[]
     route: Route[]
 }
 
@@ -228,6 +228,7 @@ interface SpinnakerPipeline {
 }
 
 export {
+  Http,
   Stage,
   ExpectedArtifact,
   SpinnakerPipeline

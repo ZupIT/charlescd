@@ -26,8 +26,7 @@ export class ComponentEntity implements Component {
   @Column({ name: 'component_id' })
   public componentId! : string
 
-
-  @JoinColumn({name: 'deployment_id'})
+  @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   deployment!: DeploymentEntity
 

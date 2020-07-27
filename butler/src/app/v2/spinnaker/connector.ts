@@ -2,6 +2,8 @@ import { CdConfiguration, Component, ConnectorResult, Deployment, SpinnakerPipel
 import { ExpectedArtifact, Stage } from '../interfaces/spinnaker-pipeline.interface'
 import { ICdConfigurationData, ISpinnakerConfigurationData } from '../../v1/api/configurations/interfaces'
 import { getBakeStage, getDeploymentStage, getHelmTemplateObject, getHelmValueObject } from './templates'
+import { getDestinationRulesStage } from './templates/destination-rules-stage'
+import { getVirtualServiceStage } from './templates/virtual-service-stage'
 
 export class SpinnakerConnector {
 
@@ -22,7 +24,7 @@ export class SpinnakerConnector {
 
   private getExpectedArtifacts(deployment: Deployment): ExpectedArtifact[] {
     const expectedArtifacts: ExpectedArtifact[] = []
-    deployment.components.forEach(component => {
+    deployment.components?.forEach(component => {
       expectedArtifacts.push(getHelmTemplateObject(component, deployment.cdConfiguration))
       expectedArtifacts.push(getHelmValueObject(component, deployment.cdConfiguration))
     })
@@ -32,16 +34,27 @@ export class SpinnakerConnector {
   private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     const stageId = 1
     return [
-      ...this.getDeploymentStages(deployment, stageId)
+      ...this.getDeploymentStages(deployment, stageId),
+      ...this.getProxyDeploymentStages(deployment, activeComponents, stageId)
     ]
   }
 
   private getDeploymentStages(deployment: Deployment, stageId: number): Stage[] {
     const deploymentStages: Stage[] = []
-    deployment.components.forEach(component => {
+    deployment.components?.forEach(component => {
       deploymentStages.push(getBakeStage(component, stageId++))
       deploymentStages.push(getDeploymentStage(component, deployment.cdConfiguration, stageId++))
     })
     return deploymentStages
+  }
+
+  private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[], stageId: number): Stage[] {
+    const proxyStages: Stage[] = []
+    deployment.components?.forEach(component => {
+      const filteredComponents: Component[] = activeComponents.filter(activeComponent => activeComponent.name === component.name)
+      proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, stageId++))
+      proxyStages.push(getVirtualServiceStage(component, deployment, filteredComponents, stageId++))
+    })
+    return proxyStages
   }
 }

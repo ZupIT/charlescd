@@ -1,3 +1,5 @@
+import { Deployment } from './deployment.interface'
+
 export interface Component {
     id: string
 
@@ -10,4 +12,6 @@ export interface Component {
     name: string
 
     running: boolean
+
+    deployment?: Deployment
 }
