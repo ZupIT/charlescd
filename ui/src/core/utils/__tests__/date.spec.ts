@@ -17,7 +17,7 @@
 import { humanizeDateFromSeconds } from '../date';
 
 test('should return time formated correctly', async () => {
-  expect(humanizeDateFromSeconds(0)).toEqual(undefined);
+  expect(humanizeDateFromSeconds(0)).toEqual('0s');
   expect(humanizeDateFromSeconds(72)).toEqual('1:12m');
   expect(humanizeDateFromSeconds(53)).toEqual('53s');
   expect(humanizeDateFromSeconds(4365)).toEqual('1:12:45h');
