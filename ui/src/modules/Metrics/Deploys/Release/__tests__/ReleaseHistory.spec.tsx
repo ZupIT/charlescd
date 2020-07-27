@@ -38,6 +38,5 @@ test('render default ReleaseTable', async () => {
   await wait();
 
   expect(getByTestId("release-history")).toBeInTheDocument();
-
 });
 
