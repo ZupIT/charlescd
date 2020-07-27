@@ -240,7 +240,7 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatus(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentGeneralStats> {
         var query = """
@@ -250,14 +250,14 @@ class JdbcDeploymentRepository(
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
                         END                                                     AS deployment_status
-                FROM deployments
+                FROM deployments 
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
                     AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
                     AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
         }
         query += " GROUP BY deployment_status "
@@ -272,7 +272,7 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentStats> {
         var query = """
@@ -290,7 +290,7 @@ class JdbcDeploymentRepository(
                     AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
         }
         query += " GROUP BY deployment_status, deployment_date "
@@ -305,7 +305,7 @@ class JdbcDeploymentRepository(
 
     override fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats> {
         var query = """
@@ -317,7 +317,7 @@ class JdbcDeploymentRepository(
                     AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
         }
         query += " GROUP BY deployment_date "
