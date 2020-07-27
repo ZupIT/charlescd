@@ -38,7 +38,7 @@ class DeploymentCountExtractor : ResultSetExtractor<Set<DeploymentCount>> {
     }
 
     private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentCount(
-        total = resultSet.getInt("total"),
-        status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_quantity"))
+        total = resultSet.getInt("deployment_quantity"),
+        status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status"))
     )
 }
