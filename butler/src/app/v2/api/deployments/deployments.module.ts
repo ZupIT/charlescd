@@ -21,6 +21,7 @@ import { DeploymentEntity } from './entity/deployment.entity';
 import { ComponentEntity } from './entity/component.entity';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
+import { DeploymentUseCase } from './use-cases/deployment-use-case';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { CdConfigurationsRepository } from '../../../v1/api/configurations/repos
     DeploymentsController
   ],
   providers: [
+    DeploymentUseCase
   ],
   exports: [
   ]

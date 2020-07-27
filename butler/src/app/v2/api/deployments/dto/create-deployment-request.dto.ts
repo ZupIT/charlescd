@@ -77,6 +77,7 @@ export class CreateDeploymentRequestDto {
       DeploymentStatusEnum.CREATED,
       this.circle.headerValue,
       this.cdConfiguration,
+      this.callbackUrl,
       flatten(this.modules.map(m => m.toEntity()))
     )
   }

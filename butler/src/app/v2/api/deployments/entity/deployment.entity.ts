@@ -33,7 +33,7 @@ export class DeploymentEntity {
   @PrimaryGeneratedColumn('uuid')
   public id!: string
 
-  @Column({ name: 'deployment_id'})
+  @Column({ name: 'external_id'})
   public deploymentId!: string
 
   @Column({ name: 'author_id' })
@@ -68,6 +68,7 @@ export class DeploymentEntity {
     status: DeploymentStatusEnum,
     circleId: string | null,
     cdConfiguration: CdConfigurationEntity,
+    callbackUrl: string,
     components: ComponentEntity[]
   ) {
     this.deploymentId = deploymentId
@@ -75,6 +76,7 @@ export class DeploymentEntity {
     this.status = status
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
+    this.callbackUrl = callbackUrl
     this.components = components
   }
 
