@@ -1,5 +1,6 @@
 import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
 import { Component } from './component.interface'
+import { CdConfiguration } from './'
 
 export interface Deployment {
     id: string
@@ -12,9 +13,9 @@ export interface Deployment {
 
     createdAt: Date
 
-    finishedAt: Date
+    finishedAt: Date | null
 
-    cdConfigurationId: string
+    cdConfiguration: CdConfiguration
 
     circleId: string | null
 

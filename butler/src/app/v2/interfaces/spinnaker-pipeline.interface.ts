@@ -220,10 +220,15 @@ interface ExpectedArtifact {
     usePriorArtifact: boolean
 }
 
-export interface SpinnakerPipeline {
+interface SpinnakerPipeline {
     application: string
     name: string
     expectedArtifacts: ExpectedArtifact[]
     stages: Stage[]
 }
 
+export {
+  Stage,
+  ExpectedArtifact,
+  SpinnakerPipeline
+}
