@@ -43,7 +43,7 @@ export const getVirtualServiceStage = (
   skipExpressionEvaluation: false,
   source: 'text',
   stageEnabled: {
-    expression: '${ #stage(\'Deploy Destination Rules A\').status.toString() == \'SUCCEEDED\'}',
+    expression: '${ #stage(\'' + `Deploy Destination Rules ${component.name}` + '\').status.toString() == \'SUCCEEDED\'}',
     type: 'expression'
   },
   trafficManagement: {
