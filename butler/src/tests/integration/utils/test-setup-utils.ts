@@ -29,15 +29,15 @@ export class TestSetupUtils {
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))
-      app.useGlobalPipes(
-        new ValidationPipe({
-          transform: true,
-          whitelist: true,
-          exceptionFactory: (errors: ValidationError[]) => {
-            return new UnprocessableEntityException(errors)
-          }
-        })
-      )
+      // app.useGlobalPipes(
+      //   new ValidationPipe({
+      //     transform: true,
+      //     whitelist: false,
+      //     exceptionFactory: (errors: ValidationError[]) => {
+      //       return new UnprocessableEntityException(errors)
+      //     }
+      //   })
+      // ) TODO apply this pipe on all v1 controllers
       await app.init()
       return app
     } catch (error) {

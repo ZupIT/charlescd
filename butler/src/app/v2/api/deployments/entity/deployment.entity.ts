@@ -18,22 +18,23 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-
-
   JoinColumn,
   ManyToOne, OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { ComponentEntity, ReadComponentDTO } from './component.entity'
-import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
-import { CdConfigurationEntity } from '../../v1/api/configurations/entity'
-import { ReadCdConfigurationDto } from '../../v1/api/configurations/dto'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string
+
+  @Column({ name: 'external_id'})
+  public deploymentId!: string
 
   @Column({ name: 'author_id' })
   public authorId!: string
@@ -61,16 +62,22 @@ export class DeploymentEntity {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade:  ['insert']})
   public components!: ComponentEntity[]
 
-  constructor(id: string, authorId: string, status: DeploymentStatusEnum, circleId: string | null, cdConfiguration: CdConfigurationEntity) {
-    this.id = id
+  constructor(
+    deploymentId: string,
+    authorId: string,
+    status: DeploymentStatusEnum,
+    circleId: string | null,
+    cdConfiguration: CdConfigurationEntity,
+    callbackUrl: string,
+    components: ComponentEntity[]
+  ) {
+    this.deploymentId = deploymentId
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
-  }
-
-  public fromDto(dto: CreateDeploymentDTO) : DeploymentEntity{
-    return new DeploymentEntity(dto.id, dto.authorId, dto.status, dto.circleId, dto.cdConfiguration)
+    this.callbackUrl = callbackUrl
+    this.components = components
   }
 
   public toDto() : ReadDeploymentDTO{

@@ -46,7 +46,7 @@ export class FixtureUtilsService {
       const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
       for (const entity of entities) {
         const repository = await this.connection.getRepository(entity.name)
-        await repository.query(`DELETE FROM ${entity.tableName};`)
+        await repository.query(`TRUNCATE ${entity.tableName} CASCADE;`)
       }
     } catch (error) {
       throw new Error(`ERROR: Cleaning test db: ${error}`)

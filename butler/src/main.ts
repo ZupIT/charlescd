@@ -63,15 +63,15 @@ async function bootstrap() {
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
   app.use(rTracer.expressMiddleware())
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      exceptionFactory: (errors: ValidationError[]) => {
-        return new UnprocessableEntityException(errors)
-      }
-    })
-  )
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //     whitelist: false,
+  //     exceptionFactory: (errors: ValidationError[]) => {
+  //       return new UnprocessableEntityException(errors)
+  //     }
+  //   })
+  // ) TODO apply this pipe on all v1 controllers
   SwaggerModule.setup('/api/swagger', app, document)
 
   await app.listen(3000)
