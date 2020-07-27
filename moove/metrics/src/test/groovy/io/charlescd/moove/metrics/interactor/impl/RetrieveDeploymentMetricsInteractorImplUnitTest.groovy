@@ -102,11 +102,11 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
                                               new DeploymentAverageTimeStats(Duration.ofSeconds(175), todayDate.minusDays(2)),
                                               new DeploymentAverageTimeStats(Duration.ofSeconds(230), todayDate.minusDays(3))]
 
-        def deploymentsStatsInPeriod = [new DeploymentStats(32, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(155), todayDate.minusDays(4)),
-                                        new DeploymentStats(28, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(235), todayDate.minusDays(2)),
-                                        new DeploymentStats(17, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(200), todayDate.minusDays(3)),
-                                        new DeploymentStats(5, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), todayDate.minusDays(4)),
-                                        new DeploymentStats(8, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), todayDate.minusDays(2))]
+        def deploymentsStatsInPeriod = [new DeploymentStats(32, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(4)),
+                                        new DeploymentStats(28, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(2)),
+                                        new DeploymentStats(17, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(3)),
+                                        new DeploymentStats(5, DeploymentStatusEnum.DEPLOY_FAILED, todayDate.minusDays(4)),
+                                        new DeploymentStats(8, DeploymentStatusEnum.DEPLOY_FAILED, todayDate.minusDays(2))]
 
         when:
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, searchPeriod, null)
@@ -143,11 +143,11 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
                                               new DeploymentAverageTimeStats(Duration.ofSeconds(175), todayDate.minusDays(2)),
                                               new DeploymentAverageTimeStats(Duration.ofSeconds(230), todayDate.minusDays(3))]
 
-        def deploymentsStatsInPeriod = [new DeploymentStats(32, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(155), todayDate.minusDays(4)),
-                                        new DeploymentStats(28, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(235), todayDate.minusDays(2)),
-                                        new DeploymentStats(17, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(200), todayDate.minusDays(3)),
-                                        new DeploymentStats(5, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), todayDate.minusDays(4)),
-                                        new DeploymentStats(8, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0), todayDate.minusDays(2))]
+        def deploymentsStatsInPeriod = [new DeploymentStats(32, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(4)),
+                                        new DeploymentStats(28, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(2)),
+                                        new DeploymentStats(17, DeploymentStatusEnum.DEPLOYED, todayDate.minusDays(3)),
+                                        new DeploymentStats(5, DeploymentStatusEnum.DEPLOY_FAILED, todayDate.minusDays(4)),
+                                        new DeploymentStats(8, DeploymentStatusEnum.DEPLOY_FAILED, todayDate.minusDays(2))]
 
         when:
         def result = retrieveDeploymentMetricsInteractorImpl.execute(workspaceId, period, null)
