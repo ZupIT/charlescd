@@ -64,7 +64,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Key"
-        ref={register}
+        ref={register({ required: true })}
         disabled={viewMode}
         name={`${prefixName}.content.key`}
         defaultValue={rule?.content?.key}
@@ -72,6 +72,7 @@ const Rule = ({
       <Styled.Select
         options={options}
         control={control}
+        rules={{ required: true }}
         label="Conditional"
         isDisabled={viewMode}
         defaultValue={getCondition(rule?.content?.condition)}
@@ -79,7 +80,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Value"
-        ref={register}
+        ref={register({ required: true })}
         disabled={viewMode}
         name={`${prefixName}.content.value[0]`}
         defaultValue={rule?.content?.value}
