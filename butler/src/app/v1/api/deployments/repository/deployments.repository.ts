@@ -15,8 +15,10 @@
  */
 
 import { EntityRepository, Repository } from 'typeorm'
-import { DeploymentEntity, } from '../entity'
+import { ComponentDeploymentEntity, DeploymentEntity } from '../entity'
 import { DeploymentStatusEnum } from '../enums'
+import { ComponentEntity } from '../../components/entity'
+import { ModuleEntity } from '../../modules/entity'
 
 @EntityRepository(DeploymentEntity)
 export class DeploymentsRepository extends Repository<DeploymentEntity> {
@@ -26,5 +28,20 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
     status: DeploymentStatusEnum
   ): Promise<void> {
     await this.update(deploymentId, { status, finishedAt: new Date() })
+  }
+
+  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string) {
+
+    const deployment  =  await this.createQueryBuilder('deployments')
+      .innerJoinAndSelect('deployments.modules', 'moduleDeployment')
+      .innerJoinAndSelect('moduleDeployment.components', 'componentDeployment', 'moduleDeployment.id = componentDeployment.moduleDeployment')
+      .innerJoinAndSelect(ComponentEntity, 'component', 'componentDeployment.componentId = component.id')
+      .innerJoinAndSelect(ModuleEntity, 'module',  'moduleDeployment.moduleId = module.id')
+      .andWhere('moduleDeployment.moduleId = :moduleId', { moduleId: moduleId })
+      .andWhere('componentDeployment.componentName = :name', { name: component.componentName })
+      .andWhere('component.id != :componentId', { componentId: component.componentId })
+      .andWhere('deployments.cdConfigurationId = :cdConfigurationId', { cdConfigurationId: cdConfigurationId })
+      .getOne()
+    return deployment
   }
 }

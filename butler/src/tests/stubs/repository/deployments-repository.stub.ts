@@ -22,6 +22,10 @@ export class DeploymentsRepositoryStub {
         return Promise.resolve({} as DeploymentEntity)
     }
 
+    public async findWithAllRelations(): Promise<DeploymentEntity> {
+        return Promise.resolve({} as DeploymentEntity)
+    }
+
     public async findOneOrFail(): Promise<DeploymentEntity> {
         return Promise.resolve({} as DeploymentEntity)
     }
