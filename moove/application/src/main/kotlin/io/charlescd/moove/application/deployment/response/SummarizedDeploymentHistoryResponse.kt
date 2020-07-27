@@ -20,7 +20,7 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.domain.*
 
 class SummarizedDeploymentHistoryResponse(
-    val summary: Map<DeploymentStatusEnum, Int>,
+    val summary: DeploymentHistorySummary,
     val page: ResourcePageResponse<DeploymentHistoryResponse>
 ) {
     companion object {
@@ -36,8 +36,12 @@ class SummarizedDeploymentHistoryResponse(
                 )
             )
 
-        private fun summaryFrom(deploymentCount: List<DeploymentCount>): Map<DeploymentStatusEnum, Int> {
-            return deploymentCount.associateBy({ it.status }, { it.total })
-        }
+        private fun summaryFrom(deploymentCount: List<DeploymentCount>) = DeploymentHistorySummary(
+            deployed = deploymentCount.find { it.status == DeploymentStatusEnum.DEPLOYED }?.total ?: 0,
+            notDeployed = deploymentCount.find { it.status == DeploymentStatusEnum.NOT_DEPLOYED }?.total ?: 0,
+            undeploying = deploymentCount.find { it.status == DeploymentStatusEnum.UNDEPLOYING }?.total ?: 0,
+            deploying = deploymentCount.find { it.status == DeploymentStatusEnum.DEPLOYING }?.total ?: 0,
+            failed = deploymentCount.find { it.status == DeploymentStatusEnum.DEPLOY_FAILED }?.total ?: 0
+        )
     }
 }

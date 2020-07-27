@@ -242,7 +242,7 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatus(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentGeneralStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
@@ -260,7 +260,7 @@ class JdbcDeploymentRepository(
                     AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
             parameters.addAll(circlesId)
         }
@@ -276,7 +276,7 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
@@ -293,7 +293,7 @@ class JdbcDeploymentRepository(
                     ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}       
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
             parameters.addAll(circlesId)
         }
@@ -309,7 +309,7 @@ class JdbcDeploymentRepository(
 
     override fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
@@ -321,7 +321,7 @@ class JdbcDeploymentRepository(
                     ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}                    
         """
 
-        if (circlesId.isNotEmpty()) {
+        if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
             parameters.addAll(circlesId)
         }
