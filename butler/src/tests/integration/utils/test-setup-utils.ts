@@ -38,6 +38,7 @@ export class TestSetupUtils {
       //     }
       //   })
       // ) TODO apply this pipe on all v1 controllers
+      app.enableShutdownHooks();
       await app.init()
       return app
     } catch (error) {

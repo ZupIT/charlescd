@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import { DeploymentEntity } from '../entity/deployment.entity';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
+import { DeploymentEntity } from '../entity/deployment.entity';
+import { PgBossWorker } from '../jobs/pgboss.worker';
 
 @Injectable()
 export class DeploymentUseCase {
   constructor(
     @InjectRepository(DeploymentEntity)
-      private deploymentRepository: Repository<DeploymentEntity>,
-  ) { }
+    private deploymentRepository: Repository<DeploymentEntity>,
+    private pgBoss: PgBossWorker,
+    private readonly consoleLoggerService: ConsoleLoggerService
+  ) {
 
-  public async save(deployment: DeploymentEntity ) : Promise<DeploymentEntity> {
-    return await this.deploymentRepository.save(deployment)
+  }
+
+  public async save(deployment: DeploymentEntity): Promise<DeploymentEntity> {
+    const deploymentEntity =  await this.deploymentRepository.save(deployment)
+    const jobId = await this.pgBoss.publish(deployment)
+    this.consoleLoggerService.log('Publishing new deployment job', {jobId: jobId, deployment: deploymentEntity.id})
+    return deploymentEntity
   }
 }

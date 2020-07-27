@@ -22,6 +22,9 @@ import { ComponentEntity } from './entity/component.entity';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
 import { DeploymentUseCase } from './use-cases/deployment-use-case';
+import { PgBossWorker } from './jobs/pgboss.worker';
+import { ConsoleLoggerService } from '../../../v1/core/logs/console';
+import { DeploymentHandler } from './use-cases/deployment-handler';
 
 
 @Module({
@@ -37,7 +40,10 @@ import { DeploymentUseCase } from './use-cases/deployment-use-case';
     DeploymentsController
   ],
   providers: [
-    DeploymentUseCase
+    DeploymentUseCase,
+    DeploymentHandler,
+    PgBossWorker,
+    ConsoleLoggerService
   ],
   exports: [
   ]

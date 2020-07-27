@@ -17,12 +17,14 @@
 import { Module } from '@nestjs/common';
 import { DeploymentsModule } from './deployments/deployments.module';
 import { ConfigurationsModule } from '../../v1/api/configurations/configurations.module';
+import { DeploymentHandler } from './deployments/use-cases/deployment-handler';
 
 
 @Module({
   imports: [
     DeploymentsModule,
-    ConfigurationsModule
+    ConfigurationsModule,
+    DeploymentHandler
   ]
 })
 export class ApiModule {}
