@@ -70,7 +70,7 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
     }
   })
 
-  const defaultComponent: Component | undefined = activeComponents.find(component => !component.deployment?.circleId)
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
   if (defaultComponent) {
     rules.push(getHTTPDefaultRule(defaultComponent.name, defaultComponent.imageTag))
   }
