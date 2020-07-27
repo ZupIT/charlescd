@@ -14,11 +14,33 @@
  * limitations under the License.
  */
 
-import { humanizeDateFromSeconds } from '../date';
+import React from 'react';
+import defaultsDeep from 'lodash/defaultsDeep';
+import defaultConfig from './config';
+import Styled from './styled';
 
-test('should return time formated correctly', async () => {
-  expect(humanizeDateFromSeconds(0)).toEqual('0s');
-  expect(humanizeDateFromSeconds(72)).toEqual('1:12m');
-  expect(humanizeDateFromSeconds(53)).toEqual('53s');
-  expect(humanizeDateFromSeconds(4365)).toEqual('1:12:45h');
-})
+export interface Props {
+  series: object[];
+  options?: object;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+const MixedChart = ({
+  className,
+  options,
+  series,
+  width = '100%',
+  height = '100%'
+}: Props) => (
+  <Styled.Chart
+    className={className}
+    options={defaultsDeep(options, defaultConfig.options)}
+    width={width}
+    height={height}
+    series={series}
+  />
+);
+
+export default MixedChart;

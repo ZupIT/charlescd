@@ -15,21 +15,51 @@
  */
 
 import { chartDateFormatter as formatter } from './helpers';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 import { getTheme } from 'core/utils/themes';
 
 const theme = getTheme();
 
 export default {
   chart: {
-    width: 1180,
-    height: 450,
     id: 'chartDeploy',
-    background: 'transparent'
+    background: 'transparent',
+    type: 'line',
+    stacked: false
+  },
+  title: {
+    text: 'Deploy',
+    offsetY: -5,
+    offsetX: 10,
+    style: {
+      fontSize: '18px',
+      fontWeight: 'bold',
+      color: theme.metrics.dashboard.chart.label
+    }
   },
   colors: [
     theme.metrics.dashboard.chart.deploy,
-    theme.metrics.dashboard.chart.error
+    theme.metrics.dashboard.chart.error,
+    theme.metrics.dashboard.chart.averageTime
   ],
+  stroke: {
+    width: [5, 5, 2],
+    curve: 'smooth',
+    dashArray: [0, 0, 5],
+    colors: ['00', '00', theme.metrics.dashboard.chart.averageTime]
+  },
+  fill: {
+    opacity: 1,
+    type: ['fill', 'fill', 'gradient'],
+    gradient: {
+      inverseColors: false,
+      shade: 'dark',
+      type: 'vertical',
+      opacityFrom: 0.4,
+      opacityTo: 0.35,
+      stops: [0, 80]
+    }
+  },
   theme: {
     mode: 'dark'
   },
@@ -41,7 +71,8 @@ export default {
       }
     },
     padding: {
-      left: 30
+      left: 8,
+      right: 14
     }
   },
   legend: {
@@ -49,6 +80,7 @@ export default {
     showForNullSeries: true,
     showForSingleSeries: true,
     showForZeroSeries: true,
+    offsetY: -10,
     position: 'top',
     horizontalAlign: 'left',
     markers: {
@@ -62,22 +94,69 @@ export default {
     toggleDataSeries: true
   },
   tooltip: {
-    x: {
-      formatter
-    }
+    y: [
+      '',
+      '',
+      {
+        formatter: function(value: number) {
+          return humanizeDateFromSeconds(value);
+        }
+      }
+    ]
   },
-  yaxis: {
-    show: true,
-    showAlways: true,
-    tickAmount: 6,
-    labels: {
-      style: {
-        fontSize: '10px'
+  yaxis: [
+    {
+      seriesName: 'Deploy',
+      showAlways: true,
+      tickAmount: 6,
+      min: 0,
+      axisTicks: {
+        show: false
+      },
+      axisBorder: {
+        show: true,
+        color: theme.metrics.dashboard.chart.border
+      },
+      labels: {
+        style: {
+          colors: theme.metrics.dashboard.chart.label
+        }
+      }
+    },
+    {
+      seriesName: 'Deploy',
+      show: false
+    },
+    {
+      seriesName: 'Avagere Time',
+      showAlways: true,
+      tickAmount: 6,
+      min: 0,
+      opposite: true,
+      axisTicks: {
+        show: false
+      },
+      axisBorder: {
+        show: true,
+        color: theme.metrics.dashboard.chart.border
+      },
+      labels: {
+        style: {
+          colors: theme.metrics.dashboard.chart.label
+        },
+        formatter: function(value: number) {
+          return humanizeDateFromSeconds(value);
+        }
       }
     }
-  },
+  ],
   xaxis: {
+    type: 'category',
     tickAmount: 'dataPoints',
+    axisBorder: {
+      show: false,
+      offsetY: -10
+    },
     labels: {
       hideOverlappingLabels: false,
       style: {

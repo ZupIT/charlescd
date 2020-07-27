@@ -425,7 +425,7 @@ class JdbcCircleRepository(
 
     private fun createPaginationAppend(): String {
         return """  
-                    LIMIT ?
+                    LIMIT ? 
                     OFFSET ? 
                 """
     }

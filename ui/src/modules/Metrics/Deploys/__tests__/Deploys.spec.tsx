@@ -16,29 +16,14 @@
 
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
-import Deploys from '..';
+import Deploy from '..';
 
-test('render Deploy dashboard compomnent', async () => {
-  const { getByTestId } = render(<Deploys />);
+test('render Deploy default screen', async () => {
+  const { getByTestId } = render(<Deploy />);
 
   await wait();
 
   expect(getByTestId("metrics-deploy")).toBeInTheDocument();
-})
-
-test('test Deploy filter compomnent', async () => {
-  const { getByTestId } = render(<Deploys />);
-
-  await wait();
-
   expect(getByTestId("metrics-filter")).toBeInTheDocument();
-})
-
-test('test Deploy charts compomnent', async () => {
-  const { getByTestId } = render(<Deploys />);
-
-  await wait();
-
   expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
-  expect(getByTestId("apexchart-average-time")).toBeInTheDocument();
 })

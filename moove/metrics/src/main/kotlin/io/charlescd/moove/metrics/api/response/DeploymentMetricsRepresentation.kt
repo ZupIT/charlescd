@@ -35,8 +35,8 @@ data class DeploymentMetricsRepresentation(
         fun from(
             successfulDeploymentGeneralStats: DeploymentGeneralStats?,
             failedDeploymentGeneralStats: DeploymentGeneralStats?,
-            successfulDeploymentsInPeriod: List<DeploymentStats>,
-            failedDeploymentsInPeriod: List<DeploymentStats>,
+            successfulDeploymentsInPeriod: List<DeploymentStats>?,
+            failedDeploymentsInPeriod: List<DeploymentStats>?,
             deploymentsAverageTimeInPeriod: List<DeploymentAverageTimeStats>
         ) = DeploymentMetricsRepresentation(
             successfulDeployments = successfulDeploymentGeneralStats?.total ?: 0,
@@ -46,11 +46,11 @@ data class DeploymentMetricsRepresentation(
                 .map { DeploymentAverageTimeInPeriodRepresentation.from(it) }
                 .sortedBy { it.period },
             successfulDeploymentsInPeriod = successfulDeploymentsInPeriod
-                .map { DeploymentStatsInPeriodRepresentation.from(it) }
-                .sortedBy { it.period },
+                ?.map { DeploymentStatsInPeriodRepresentation.from(it) }
+                ?.sortedBy { it.period } ?: emptyList(),
             failedDeploymentsInPeriod = failedDeploymentsInPeriod
-                .map { DeploymentStatsInPeriodRepresentation.from(it) }
-                .sortedBy { it.period }
+                ?.map { DeploymentStatsInPeriodRepresentation.from(it) }
+                ?.sortedBy { it.period } ?: emptyList()
         )
     }
 }

@@ -20,17 +20,12 @@ import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
 import { normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
-import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
-import {
-  getDeploySeries,
-  getAverageTimeSeries,
-  getPlotOption
-} from './helpers';
+import { getDeploySeries, getPlotOption } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import isUndefined from 'lodash/isUndefined';
 import ReleasesHistoryComponent from './Release';
@@ -40,7 +35,6 @@ const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
   const deploySeries = getDeploySeries(response);
-  const averageTimeSeries = getAverageTimeSeries(response);
 
   const plotOptions = getPlotOption(deploySeries);
   const deployChartOption = isUndefined(plotOptions)
@@ -117,35 +111,12 @@ const Deploys = () => {
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
-        <Styled.ChartControls>
-          <Text.h2 color="light" weight="bold">
-            Deploy
-          </Text.h2>
-          <ChartMenu onReset={() => resetChart('chartDeploy')} />
-        </Styled.ChartControls>
-        <Styled.ColumnChart
+        <ChartMenu onReset={() => resetChart('chartDeploy')} />
+        <Styled.MixedChart
           options={deployChartOption}
           series={deploySeries}
           width={1180}
-          height={450}
-        />
-      </Styled.Card>
-      <Styled.Card
-        width="1220px"
-        height="521px"
-        data-testid="apexchart-average-time"
-      >
-        <Styled.ChartControls>
-          <Text.h2 color="light" weight="bold">
-            Average time
-          </Text.h2>
-          <ChartMenu onReset={() => resetChart('chartAverageTime')} />
-        </Styled.ChartControls>
-        <Styled.AreaChart
-          options={averageTimeOptions}
-          series={averageTimeSeries}
-          width={1180}
-          height={450}
+          height={495}
         />
       </Styled.Card>
       <ReleasesHistoryComponent filter={filter} />
