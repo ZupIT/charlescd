@@ -57,6 +57,7 @@ import { ModulesService } from './services/modules.service'
 import { UndeploymentsController } from './controller/undeployments.controller'
 import { ComponentUniquenessPipe } from './pipes/component-uniqueness.pipe'
 import { DeploymentsRepository } from './repository/deployments.repository'
+import { ComponentRepository } from './repository/components.repository'
 
 @Module({
   imports: [
@@ -78,7 +79,8 @@ import { DeploymentsRepository } from './repository/deployments.repository'
       CdConfigurationsRepository,
       QueuedIstioDeploymentsRepository,
       QueuedIstioDeploymentEntity,
-      DeploymentsRepository
+      DeploymentsRepository,
+      ComponentRepository
     ])
   ],
   controllers: [

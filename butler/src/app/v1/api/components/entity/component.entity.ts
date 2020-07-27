@@ -165,4 +165,9 @@ export class ComponentEntity extends BaseEntity {
       version: componentDeployment.buildImageTag
     })
   }
+
+  public isActive() {
+    return this.pipelineOptions.pipelineVersions.length
+  }
+
 }
