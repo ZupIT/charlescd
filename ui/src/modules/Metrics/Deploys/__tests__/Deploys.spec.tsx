@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import Deploy from '..';
 
-import javax.validation.constraints.NotNull
+test('render Deploy default screen', async () => {
+  const { getByTestId } = render(<Deploy />);
 
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
+  await wait();
 
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
-}
-
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+  expect(getByTestId("metrics-deploy")).toBeInTheDocument();
+  expect(getByTestId("metrics-filter")).toBeInTheDocument();
+  expect(getByTestId("apexchart-deploy")).toBeInTheDocument();
+})
