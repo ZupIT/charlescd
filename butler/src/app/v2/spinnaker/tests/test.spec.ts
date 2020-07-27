@@ -1,9 +1,9 @@
 import 'jest'
-import { Component, Deployment } from '../interfaces'
-import { SpinnakerConnector } from './connector'
-import { DeploymentStatusEnum } from '../../v1/api/deployments/enums'
+import { Component, Deployment } from '../../interfaces'
+import { SpinnakerConnector } from '../connector'
+import { DeploymentStatusEnum } from '../../../v1/api/deployments/enums'
 import { spinnakerPipeline } from './pipeline-object'
-import { CdTypeEnum } from '../../v1/api/configurations/enums'
+import { CdTypeEnum } from '../../../v1/api/configurations/enums'
 
 describe('V2 Spinnaker Connector', () => {
   it('should create the correct pipeline object', async() => {

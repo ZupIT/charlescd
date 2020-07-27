@@ -51,10 +51,14 @@ export class SpinnakerConnector {
   private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[], stageId: number): Stage[] {
     const proxyStages: Stage[] = []
     deployment.components?.forEach(component => {
-      const filteredComponents: Component[] = activeComponents.filter(activeComponent => activeComponent.name === component.name)
+      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name) // TODO maybe filter by moove id?
       proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, stageId++))
-      proxyStages.push(getVirtualServiceStage(component, deployment, filteredComponents, stageId++))
+      proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, stageId++))
     })
     return proxyStages
+  }
+
+  private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {
+    return activeComponents.filter(component => component.name === name)
   }
 }

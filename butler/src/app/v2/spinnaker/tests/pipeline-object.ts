@@ -1,4 +1,4 @@
-import { SpinnakerPipeline } from '../interfaces'
+import { SpinnakerPipeline } from '../../interfaces'
 
 export const spinnakerPipeline: SpinnakerPipeline = {
   application: '',

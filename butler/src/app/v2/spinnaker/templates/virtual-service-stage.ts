@@ -63,13 +63,14 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
   rules.push(getHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
 
   activeComponents.forEach(component => {
-    if (component.deployment?.circleId) {
-      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, component.deployment.circleId))
-      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment.circleId))
+    const activeCircleId = component.deployment?.circleId
+    if (activeCircleId && activeCircleId !== circleId) {
+      rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
+      rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
     }
   })
 
-  const defaultComponent: Component | undefined = activeComponents.find(component => !component.deployment.circleId)
+  const defaultComponent: Component | undefined = activeComponents.find(component => !component.deployment?.circleId)
   if (defaultComponent) {
     rules.push(getHTTPDefaultRule(defaultComponent.name, defaultComponent.imageTag))
   }
