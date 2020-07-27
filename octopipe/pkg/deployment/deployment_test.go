@@ -223,6 +223,8 @@ func TestUpdateNonResourceController(t *testing.T) {
 	}
 }
 
+// This test is not running because the library's patch action doesn't have its fake for testing
+
 // func TestUpdateResourceController(t *testing.T) {
 // 	scheme := runtime.NewScheme()
 // 	client := fake.NewSimpleDynamicClient(scheme)
