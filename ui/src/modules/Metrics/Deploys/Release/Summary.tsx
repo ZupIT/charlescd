@@ -42,11 +42,11 @@ const Summary = ({ legend, isLoading }: Props) => {
           <Styled.Dot status={'deployed'} />
           <Text.h5 color="dark">Deployed: {legend?.deployed}</Text.h5>
           <Styled.Dot status={'deploying'} />
-          <Text.h5 color="dark">Deploying {legend?.deploying}</Text.h5>
+          <Text.h5 color="dark">Deploying: {legend?.deploying}</Text.h5>
           <Styled.Dot status={'error'} />
           <Text.h5 color="dark">Error: {legend?.failed}</Text.h5>
           <Styled.Dot status={'notDeployed'} />
-          <Text.h5 color="dark">Undeployed: {legend?.notDeploying}</Text.h5>
+          <Text.h5 color="dark">Undeployed: {legend?.notDeployed}</Text.h5>
           <Styled.Dot status={'undeploying'} />
           <Text.h5 color="dark">Undeploying: {legend?.undeploying}</Text.h5>
         </Styled.ReleaseHistoryLegend>

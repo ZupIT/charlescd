@@ -50,7 +50,7 @@ export interface ReleaseHistorySummary {
   deploying: number;
   failed: number;
   undeploying: number;
-  notDeploying: number;
+  notDeployed: number;
 }
 
 export interface ReleaseHistoryResponse {
