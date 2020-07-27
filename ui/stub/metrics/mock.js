@@ -151,31 +151,31 @@ const DeployMetrics = () => ({
   ],
   deploymentsAverageTimeInPeriod: [
     {
-      averageTime: 203,
+      averageTime: random(0, 203),
       period: '08-12-2020'
     },
     {
-      averageTime: 102,
+      averageTime: random(0, 102),
       period: '08-13-2020'
     },
     {
-      averageTime: 330,
+      averageTime: random(0, 330),
       period: '08-14-2020'
     },
     {
-      averageTime: 83,
+      averageTime: random(0, 83),
       period: '08-15-2020'
     },
     {
-      averageTime: 26,
+      averageTime: random(0, 26),
       period: '08-16-2020'
     },
     {
-      averageTime: 150,
+      averageTime: random(0, 150),
       period: '08-17-2020'
     },
     {
-      averageTime: 203,
+      averageTime: random(0, 203),
       period: '08-18-2020'
     }
   ]
