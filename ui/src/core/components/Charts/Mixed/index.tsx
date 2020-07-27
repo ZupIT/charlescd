@@ -14,18 +14,33 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import React from 'react';
+import defaultsDeep from 'lodash/defaultsDeep';
+import defaultConfig from './config';
+import Styled from './styled';
 
-import javax.validation.constraints.NotNull
-
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+export interface Props {
+  series: object[];
+  options?: object;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+const MixedChart = ({
+  className,
+  options,
+  series,
+  width = '100%',
+  height = '100%'
+}: Props) => (
+  <Styled.Chart
+    className={className}
+    options={defaultsDeep(options, defaultConfig.options)}
+    width={width}
+    height={height}
+    series={series}
+  />
+);
+
+export default MixedChart;
