@@ -58,7 +58,7 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
   };
 
   return (
-    <Styled.ReleaseHistoryWrapper>
+    <Styled.ReleaseHistoryWrapper data-testid="release-history">
       <Summary legend={response?.summary} isLoading={loading} />
       <Styled.Table>
         <Styled.TableHead>
@@ -86,7 +86,7 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
           next={loadMore}
           hasMore={hasMoreData}
           loader={<Loader.Releases />}
-          height={300}
+          height={540}
         >
           {releases?.map((release, index) => (
             <ReleaseRow release={release} key={index} />

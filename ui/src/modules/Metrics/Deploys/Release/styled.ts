@@ -74,7 +74,7 @@ const TableColumn = styled.div<ColumnProps>`
 
 const ReleaseHistoryWrapper = styled.div`
   background: ${({ theme }) => theme.metrics.dashboard.card};
-  height: auto;
+  height: 660px;
   width: 1220px;
   border-radius: 5px;
   padding-bottom: 20px;
