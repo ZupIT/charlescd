@@ -19,6 +19,7 @@ package io.charlescd.moove.application.deployment.response
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.DeploymentHistory
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.time.LocalDateTime
 
 class DeploymentHistoryResponse(
@@ -31,7 +32,8 @@ class DeploymentHistoryResponse(
     val undeployedAt: LocalDateTime?,
     val deployDuration: Long,
     val circleName: String,
-    val components: List<ComponentHistoryResponse>
+    val components: List<ComponentHistoryResponse>,
+    val status: DeploymentStatusEnum
 ) {
     companion object {
         fun from(deploymentHistory: DeploymentHistory, componentsHistory: List<ComponentHistory>): DeploymentHistoryResponse {
@@ -43,7 +45,8 @@ class DeploymentHistoryResponse(
                 tag = deploymentHistory.tag,
                 deployDuration = deploymentHistory.deploymentDuration?.seconds ?: 0,
                 circleName = deploymentHistory.circleName,
-                components = componentsHistory.map { ComponentHistoryResponse.from(it) }
+                components = componentsHistory.map { ComponentHistoryResponse.from(it) },
+                status = deploymentHistory.status
             )
         }
     }
