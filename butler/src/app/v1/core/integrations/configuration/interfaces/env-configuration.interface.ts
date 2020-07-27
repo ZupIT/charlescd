@@ -49,4 +49,13 @@ export default interface IEnvConfiguration {
   helmPrefixUrl: string
 
   helmRepoBranch: string
+
+  pgBossConfig: {
+    host: string,
+    database: string,
+    user: string,
+    password: string
+    max: number
+    retentionDays: number
+  }
 }

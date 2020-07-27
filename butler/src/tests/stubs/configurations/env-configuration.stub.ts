@@ -50,5 +50,14 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
     helmTemplateUrl: 'helm-template',
 
-    spinnakerGithubAccount: 'spinnaker-github-account'
+    spinnakerGithubAccount: 'spinnaker-github-account',
+
+    pgBossConfig: {
+        database: 'postgresdbname',
+        host: 'postgreshost.com',
+        max: 5,
+        password: 'postgrespass',
+        retentionDays: 7,
+        user: 'postgresuser'
+    }
 }
