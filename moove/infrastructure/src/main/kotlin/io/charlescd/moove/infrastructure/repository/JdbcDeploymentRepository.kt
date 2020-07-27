@@ -250,7 +250,7 @@ class JdbcDeploymentRepository(
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
                         END                                                     AS deployment_status
-                FROM deployments
+                FROM deployments 
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
                     AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
