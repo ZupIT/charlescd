@@ -37,7 +37,7 @@ export const dateFrom = (date: string) => {
 
 export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   if (!timeInSeconds) {
-    return;
+    return `0s`;
   }
 
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
