@@ -365,8 +365,8 @@ class JdbcDeploymentRepository(
             parameters.add(filters.periodBefore!!)
         }
 
-        queryBuilder.append(createPaginationAppend())
         queryBuilder.append(createHistoryOrderByClause())
+        queryBuilder.append(createPaginationAppend())
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.size * pageRequest.page)
 
