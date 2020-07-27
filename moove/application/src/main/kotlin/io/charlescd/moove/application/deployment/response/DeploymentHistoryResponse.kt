@@ -30,6 +30,8 @@ class DeploymentHistoryResponse(
     val tag: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val undeployedAt: LocalDateTime?,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime,
     val deployDuration: Long,
     val circleName: String,
     val components: List<ComponentHistoryResponse>,
@@ -46,7 +48,8 @@ class DeploymentHistoryResponse(
                 deployDuration = deploymentHistory.deploymentDuration?.seconds ?: 0,
                 circleName = deploymentHistory.circleName,
                 components = componentsHistory.map { ComponentHistoryResponse.from(it) },
-                status = deploymentHistory.status
+                status = deploymentHistory.status,
+                createdAt = deploymentHistory.createdAt
             )
         }
     }

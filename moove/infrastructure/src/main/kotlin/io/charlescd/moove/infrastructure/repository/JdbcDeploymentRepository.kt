@@ -366,6 +366,7 @@ class JdbcDeploymentRepository(
         }
 
         queryBuilder.append(createPaginationAppend())
+        queryBuilder.append(createHistoryOrderByClause())
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.size * pageRequest.page)
 
@@ -384,6 +385,7 @@ class JdbcDeploymentRepository(
                     SELECT  deployments.id                                                                                      AS deployment_id,
 	                        deployments.deployed_at                                                                             AS deployed_at,
                             deployments.undeployed_at                                                                           AS undeployed_at,
+                            deployments.created_at                                                                              AS deployment_created_at,
                             EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
                             deployments.status                                                                                  AS deployment_status,	                        
                             users.name                                                                                          AS user_name,
@@ -396,6 +398,13 @@ class JdbcDeploymentRepository(
                     WHERE deployments.workspace_id = ? 
             """
     )
+
+    private fun createHistoryOrderByClause(): String {
+        return """
+                ORDER BY deployments.created_at
+             
+        """
+    }
 
     private fun createPaginationAppend(): String {
         return """  

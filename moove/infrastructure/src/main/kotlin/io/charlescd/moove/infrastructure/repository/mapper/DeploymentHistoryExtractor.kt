@@ -46,6 +46,7 @@ class DeploymentHistoryExtractor : ResultSetExtractor<Set<DeploymentHistory>> {
         deployedAt = resultSet.getTimestamp("deployed_at")?.toLocalDateTime(),
         undeployedAt = resultSet.getTimestamp("undeployed_at")?.toLocalDateTime(),
         deploymentDuration = Duration.ofSeconds(resultSet.getLong("deployment_average_time")),
-        circleName = resultSet.getString("circle_name")
+        circleName = resultSet.getString("circle_name"),
+        createdAt = resultSet.getTimestamp("deployment_created_at").toLocalDateTime()
     )
 }

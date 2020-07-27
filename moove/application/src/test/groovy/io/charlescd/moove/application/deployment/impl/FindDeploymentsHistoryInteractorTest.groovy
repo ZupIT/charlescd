@@ -67,9 +67,9 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
         def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
 
         def deployments = [new DeploymentHistory("abc-123", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
-                null, Duration.ofSeconds(120), "circle-1"),
+                null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-1"),
                            new DeploymentHistory("abc-456", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
-                                   null, Duration.ofSeconds(120), "circle-2")]
+                                   null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-2")]
 
         def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
                           new ComponentHistory("abc-456", "component 2", "module-1", "version 18.09")]
@@ -100,7 +100,7 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
         def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
 
         def deployments = [new DeploymentHistory("abc-123", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
-                null, Duration.ofMinutes(2), "circle-1")]
+                null, LocalDateTime.now(), Duration.ofMinutes(2), "circle-1")]
 
         def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09")]
 
@@ -131,9 +131,9 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
         def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
 
         def deployments = [new DeploymentHistory("abc-123", LocalDateTime.of(LocalDate.of(1809, 2, 12), LocalTime.now()),
-                DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, Duration.ofSeconds(120), "circle-1"),
+                DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-1"),
                            new DeploymentHistory("abc-456", LocalDateTime.of(LocalDate.of(1859, 2, 12), LocalTime.now()),
-                                   DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, Duration.ofSeconds(120), "circle-2")]
+                                   DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-2")]
 
         def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
                           new ComponentHistory("abc-456", "component 2", "module-1", "version 18.09"),]
@@ -166,15 +166,15 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
         def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
 
         def deployments = [new DeploymentHistory("abc-123", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora",
-                null, Duration.ofSeconds(120), "circle-1"),
+                null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-1"),
                            new DeploymentHistory("abc-456", LocalDateTime.now(), DeploymentStatusEnum.NOT_DEPLOYED, "Fulano", "release-ayora",
-                                   null, Duration.ofSeconds(120), "circle-1"),
+                                   null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-1"),
                            new DeploymentHistory("abc-789", LocalDateTime.now(), DeploymentStatusEnum.DEPLOYING, "Fulano", "release-ayora",
-                                   null, Duration.ofSeconds(120), "circle-2"),
+                                   null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-2"),
                            new DeploymentHistory("abc-098", LocalDateTime.now(), DeploymentStatusEnum.UNDEPLOYING, "Fulano", "release-ayora",
-                                   null, Duration.ofSeconds(120), "circle-3"),
+                                   null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-3"),
                            new DeploymentHistory("abc-476", LocalDateTime.now(), DeploymentStatusEnum.DEPLOY_FAILED, "Fulano", "release-ayora",
-                                   null, Duration.ofSeconds(120), "circle-2")]
+                                   null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-2")]
 
         def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
                           new ComponentHistory("abc-456", "component 1", "module-1", "version 18.09"),

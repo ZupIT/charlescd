@@ -62,9 +62,9 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
         def secondDate = LocalDateTime.of(LocalDate.of(2020, 07, 20), LocalTime.now())
         def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
-                null, Duration.ofSeconds(120), "abc123"),
+                null, firstDate, Duration.ofSeconds(120), "abc123"),
                            new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
-                                   null, Duration.ofSeconds(120), "abc123")]
+                                   null, secondDate, Duration.ofSeconds(120), "abc123")]
 
         def components = [new ComponentHistory("deployment-id-1", "component-1", "charles", "version 413"),
                           new ComponentHistory("deployment-id-1", "component-2", "charles", "version 413"),
