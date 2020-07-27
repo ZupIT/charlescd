@@ -144,12 +144,12 @@ class MetricsControllerUnitTest extends Specification {
                                               new DeploymentAverageTimeInPeriodRepresentation(175, LocalDate.of(2020, 06, 21)),
                                               new DeploymentAverageTimeInPeriodRepresentation(230, LocalDate.of(2020, 06, 20))]
 
-        def successfulDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(32, 155, LocalDate.of(2020, 06, 22)),
-                                                  new DeploymentStatsInPeriodRepresentation(28, 235, LocalDate.of(2020, 06, 21)),
-                                                  new DeploymentStatsInPeriodRepresentation(17, 200, LocalDate.of(2020, 06, 20))]
+        def successfulDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(32, LocalDate.of(2020, 06, 22)),
+                                                  new DeploymentStatsInPeriodRepresentation(28, LocalDate.of(2020, 06, 21)),
+                                                  new DeploymentStatsInPeriodRepresentation(17, LocalDate.of(2020, 06, 20))]
 
-        def failedDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(8, 0, LocalDate.of(2020, 06, 22)),
-                                              new DeploymentStatsInPeriodRepresentation(5, 0, LocalDate.of(2020, 06, 20))]
+        def failedDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(8, LocalDate.of(2020, 06, 22)),
+                                              new DeploymentStatsInPeriodRepresentation(5, LocalDate.of(2020, 06, 20))]
 
         def deploymentMetricsRepresentation = new DeploymentMetricsRepresentation(123, 12, 300,
                 successfulDeploymentsStatsInPeriod, failedDeploymentsStatsInPeriod, deploymentsAverageTimeInPeriod)

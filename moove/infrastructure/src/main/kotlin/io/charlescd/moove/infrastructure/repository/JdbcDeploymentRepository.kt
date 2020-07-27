@@ -281,13 +281,12 @@ class JdbcDeploymentRepository(
     ): List<DeploymentStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COUNT(id)                                                                                           AS deployment_quantity,
-                        EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                   AS deployment_date,
+                SELECT  COUNT(id)                                                                                                               AS deployment_quantity,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                                       AS deployment_date,
                         CASE status 
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
-                        END                                                                                                 AS deployment_status
+                        END                                                                                                                     AS deployment_status
                 FROM deployments
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
@@ -315,8 +314,8 @@ class JdbcDeploymentRepository(
     ): List<DeploymentAverageTimeStats> {
         val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                   AS deployment_date
+                SELECT  COALESCE(EXTRACT(epoch FROM DATE_TRUNC('second', AVG(deployments.deployed_at - deployments.created_at))), '0')          AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                                       AS deployment_date
                 FROM deployments
                 WHERE workspace_id = ?
                     ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}                    

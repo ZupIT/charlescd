@@ -57,7 +57,6 @@ data class DeploymentMetricsRepresentation(
 
 data class DeploymentStatsInPeriodRepresentation(
     val total: Int,
-    val averageTime: Long,
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     val period: LocalDate
@@ -65,7 +64,6 @@ data class DeploymentStatsInPeriodRepresentation(
     companion object {
         fun from(deploymentStats: DeploymentStats) = DeploymentStatsInPeriodRepresentation(
             total = deploymentStats.total,
-            averageTime = deploymentStats.averageTime.seconds,
             period = deploymentStats.date
         )
     }
