@@ -20,7 +20,7 @@ import map from 'lodash/map';
 import Text from 'core/components/Text';
 import { WizardItems } from './constants';
 import Styled from './styled';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 interface Item {
   icon: string;
