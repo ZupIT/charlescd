@@ -28,9 +28,7 @@ import (
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/util/retry"
 )
@@ -119,35 +117,6 @@ func (deployment *Deployment) updateNonReplicationControllerResource(
 	return nil
 }
 
-func (deployment *Deployment) updateReplicationControllerResource(
-	resource *unstructured.Unstructured,
-	manifest *unstructured.Unstructured,
-	resourceInterface dynamic.ResourceInterface,
-) error {
-
-	err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride)
-	if err != nil {
-		return deployment.getDeploymentError("Failed to merge resource for patch action", err, manifest)
-	}
-
-	resourceBytes, err := runtime.Encode(unstructured.UnstructuredJSONScheme, resource)
-	if err != nil {
-		return deployment.getDeploymentError("Failed to encode resource for patch action", err, manifest)
-	}
-
-	_, err = resourceInterface.Patch(context.TODO(), manifest.GetName(), types.MergePatchType, resourceBytes, metav1.PatchOptions{})
-	if err != nil {
-		return deployment.getDeploymentError("Failed to apply resource in cluster", err, manifest)
-	}
-
-	err = newCreateOrUpdateWatcher(manifest, resourceInterface)
-	if err != nil {
-		return deployment.getDeploymentError("Patch failed", err, manifest)
-	}
-
-	return nil
-}
-
 func (deployment *Deployment) deploy() error {
 	manifest := deployment.getUnstructuredManifest()
 	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
@@ -162,14 +131,6 @@ func (deployment *Deployment) deploy() error {
 		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
 	}
 
-	if err != nil && !k8sErrors.IsAlreadyExists(err) {
-		return deployment.getDeploymentError("Failed to create resource in deploy", err, manifest)
-	}
-
-	if isResourController(resourceInCluster) {
-		return deployment.updateReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
-	}
-
 	return deployment.updateNonReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
 }
 
@@ -178,10 +139,10 @@ func (deployment *Deployment) undeploy() error {
 	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
 	resourceInterface := deployment.config.Resource(resourceSchema).Namespace(deployment.namespace)
 
-	deletePolicy := metav1.DeletePropagationForeground
-	deleteOptions := metav1.DeleteOptions{
-		PropagationPolicy: &deletePolicy,
-	}
+	deletePolicy := metav1.DeletePropagationBackground
+	gracefullPeriod := 1
+	deleteOptions := *metav1.NewDeleteOptions(int64(gracefullPeriod))
+	deleteOptions.PropagationPolicy = &deletePolicy
 
 	err := resourceInterface.Delete(context.TODO(), manifest.GetName(), deleteOptions)
 	if err != nil && k8sErrors.IsNotFound(err) {
