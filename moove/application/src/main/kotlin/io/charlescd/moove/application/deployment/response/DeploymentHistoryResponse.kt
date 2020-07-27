@@ -48,3 +48,11 @@ class DeploymentHistoryResponse(
         }
     }
 }
+
+data class DeploymentHistorySummary(
+    val deployed: Int,
+    val notDeployed: Int,
+    val failed: Int,
+    val deploying: Int,
+    val undeploying: Int
+)
