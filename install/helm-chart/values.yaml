@@ -188,9 +188,6 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
-  samples:
-    circles:
-      enabled: true
 
 octopipe:
   enabled: true
