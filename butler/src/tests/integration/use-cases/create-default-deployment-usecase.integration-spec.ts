@@ -20,7 +20,7 @@ import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { AppModule } from '../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { DeploymentEntity, ModuleDeploymentEntity } from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
 import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../app/v1/api/deployments/enums'
 import { QueuedDeploymentsRepository } from '../../../app/v1/api/deployments/repository'
@@ -31,6 +31,8 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import * as uuid from 'uuid'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -39,6 +41,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
   let deploymentsRepository: Repository<DeploymentEntity>
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let componentsRepository: Repository<ComponentEntity>
+  let moduleDeploymentRepository: Repository<ModuleDeploymentEntity>
   let modulesRepository: Repository<ModuleEntity>
   let envConfiguration: IEnvConfiguration
   let httpService: HttpService
@@ -60,21 +63,27 @@ describe('CreateDefaultDeploymentUsecase', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentsRepository = app.get<Repository<DeploymentEntity>>('DeploymentEntityRepository')
     queuedDeploymentsRepository = app.get<QueuedDeploymentsRepository>(QueuedDeploymentsRepository)
+    moduleDeploymentRepository = app.get<Repository<ModuleDeploymentEntity>>('ModuleDeploymentEntityRepository')
     componentsRepository = app.get<Repository<ComponentEntity>>('ComponentEntityRepository')
     modulesRepository = app.get<Repository<ModuleEntity>>('ModuleEntityRepository')
     envConfiguration = app.get(IoCTokensConstants.ENV_CONFIGURATION)
     httpService = app.get<HttpService>(HttpService)
     octopipeApiService = app.get<OctopipeApiService>(OctopipeApiService)
-    await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   it('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration({
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': 'OCTOPIPE',
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
     const createDeploymentRequest = {
       deploymentId: 'e4c41beb-0a77-44c4-8d77-9addf3fc8ea9',
@@ -102,7 +111,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
     }
 
     await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
@@ -158,17 +167,36 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules).toMatchObject(expectedModules)
   })
 
-  it('/POST deployments/default should do a upsert if a module already exists and has new components ', async() => {
+  it('/POST /deployments in default circle should do a upsert if module already exists ', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
+
+    const component = await fixtureUtilsService.createComponent({
+      'id': 'a3dc04bb-f8c5-4942-a4bf-2c35220a3f28',
+      'module': module.id
+    })
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
       modules: [
         {
-          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          moduleId: module.id,
           helmRepository: 'helm-repository.com',
           components: [
             {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
+              componentId: component.id,
               componentName: 'component-name',
               buildImageUrl: 'image-url',
               buildImageTag: 'image-tag'
@@ -185,28 +213,30 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: null
     }
     const moduleEntity = await modulesRepository.findOneOrFail({
-      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      where :{ id: module.id },
       relations: ['components']
     })
 
     await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(201)
 
     const moduleEntityUpdated = await modulesRepository.findOneOrFail({
-      where :{ id: '23776617-7840-4819-b356-30e165b7ebb9' },
+      where :{ id: module.id },
       relations: ['components'],
 
     })
+
     const componentsModuleEntities = await componentsRepository.find({
-      where :{ module: '23776617-7840-4819-b356-30e165b7ebb9' },
-      order: { createdAt: 'ASC' },
+      where :{ module: module.id },
+      order: { id: 'ASC' },
     })
+
     const deployment = await deploymentsRepository.findOne(
       { id: createDeploymentRequest.deploymentId },
-      { relations: ['modules', 'modules.components'],
+      { relations: ['modules', 'modules.components']
       },
     )
 
@@ -223,9 +253,31 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
   })
 
-  it('/POST /deployments in default circle should fail if already exists deployment ', done => {
+  it('/POST /deployments in default circle should fail if already exists deployment ', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const deploymentDB = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : null
+    })
+
     const createDeploymentRequest = {
-      deploymentId: '2adc7ac1-61ff-4630-8ba9-eba33c00ad24',
+      deploymentId: deploymentDB.id,
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
       modules: [
         {
@@ -249,18 +301,27 @@ describe('CreateDefaultDeploymentUsecase', () => {
       ],
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/moove',
     }
 
     return request(app.getHttpServer())
       .post('/deployments')
       .send(createDeploymentRequest)
-      .expect(409, done)
+      .expect(409)
 
   })
 
   it('/POST /deployments in default circle  should enqueue RUNNING component deployments correctly', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
 
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
@@ -288,7 +349,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       ],
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/moove',
     }
 
@@ -321,6 +382,38 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST /deployments in default circle should enqueue QUEUED and RUNNING component deployments correctly', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id'
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -348,8 +441,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
           helmRepository: 'helm-repository.com',
           components: [
             {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
-              componentName: 'component-name',
+              componentId: component.id,
+              componentName: componentDeployment.componentName,
               buildImageUrl: 'image-url',
               buildImageTag: 'image-tag'
             }
@@ -358,7 +451,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       ],
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/moove',
     }
 
@@ -402,6 +495,38 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST /deployments in default circle should correctly update component pipeline options', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id'
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -425,12 +550,12 @@ describe('CreateDefaultDeploymentUsecase', () => {
           ]
         },
         {
-          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          moduleId: componentDeployment.moduleDeployment,
           helmRepository: 'helm-repository.com',
           components: [
             {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
-              componentName: 'component-name',
+              componentId: componentDeployment.componentId,
+              componentName: componentDeployment.componentName,
               buildImageUrl: 'image-url',
               buildImageTag: 'image-tag'
             }
@@ -440,7 +565,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
 
     }
 
@@ -479,6 +604,37 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST /deployments in default circle should call octopipe for each RUNNING component deployment', async() => {
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      id: uuid.v4(),
+      workspaceId: uuid.v4(),
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    })
+
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id'
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -502,12 +658,12 @@ describe('CreateDefaultDeploymentUsecase', () => {
           ]
         },
         {
-          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          moduleId: componentDeployment.moduleDeployment,
           helmRepository: 'helm-repository.com',
           components: [
             {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
-              componentName: 'component-name',
+              componentId: componentDeployment.componentId,
+              componentName: componentDeployment.componentName,
               buildImageUrl: 'image-url',
               buildImageTag: 'image-tag'
             }
@@ -516,7 +672,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       ],
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/moove',
     }
 
@@ -585,10 +741,21 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST deployments in default should handle deployment failure ', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      id: uuid.v4(),
+      workspaceId: uuid.v4(),
+      type: CdTypeEnum.OCTOPIPE,
+      configurationData: '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      name: 'config-name',
+      authorId: 'author'
+    })
+
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
       mockImplementation( () =>  of({} as AxiosResponse) )
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -615,7 +782,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circleId : null,
       circle : null
     }
@@ -629,6 +796,38 @@ describe('CreateDefaultDeploymentUsecase', () => {
   })
 
   it('/POST deployments in default  should handle deployment failure ', async() => {
+
+    const cdConfiguration = await  fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': 'module-id'
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': 'module-deployment-id',
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+    await fixtureUtilsService.createQueuedDeployment({
+      'componentId': component.id,
+      'componentDeploymentId': componentDeployment.id,
+      'status': 'RUNNING',
+      'type': 'QueuedDeploymentEntity'
+    })
+
     jest.spyOn(octopipeApiService, 'deploy').
       mockImplementation( () => { throw new Error() })
     jest.spyOn(httpService, 'post').
@@ -656,12 +855,12 @@ describe('CreateDefaultDeploymentUsecase', () => {
           ]
         },
         {
-          moduleId: '23776617-7840-4819-b356-30e165b7ebb9',
+          moduleId: componentDeployment.moduleDeployment,
           helmRepository: 'helm-repository.com',
           components: [
             {
-              componentId: '68335d19-ce03-4cf8-84b4-5574257c982e',
-              componentName: 'component-name',
+              componentId: componentDeployment.componentId,
+              componentName: componentDeployment.componentName,
               buildImageUrl: 'image-url',
               buildImageTag: 'image-tag'
             }
@@ -671,21 +870,37 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circleId : null,
       circle : null
     }
 
     await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(500)
-    const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({ where: { id: createDeploymentRequest.deploymentId }, relations: ['modules', 'modules.components'] })
+    const deployment: DeploymentEntity = await deploymentsRepository.findOneOrFail({
+      where: { id: createDeploymentRequest.deploymentId },
+      relations: ['modules', 'modules.components'] })
+
+    const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
+      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+    )
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
-    expect(deployment.modules[0].status).toBe(DeploymentStatusEnum.CREATED)
-    expect(deployment.modules[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)
-    expect(deployment.modules[1].components[0].status).toBe(DeploymentStatusEnum.FAILED)
-    expect(deployment.modules[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
+    expect(modulesDeployment[0].status).toBe(DeploymentStatusEnum.CREATED)
+    expect(modulesDeployment[0].components[0].status).toBe(DeploymentStatusEnum.CREATED)
+    expect(modulesDeployment[1].components[0].status).toBe(DeploymentStatusEnum.FAILED)
+    expect(modulesDeployment[1].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
   it('/POST deployments in default with repeated components should return unprocessable entity status', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
     const createDeploymentRequest = {
       deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
       applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
@@ -718,7 +933,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       authorId: 'author-id',
       description: 'Deployment from Charles C.D.',
       callbackUrl: 'http://localhost:8883/moove',
-      cdConfigurationId: '4046f193-9479-48b5-ac29-01f419b64cb5',
+      cdConfigurationId: cdConfiguration.id,
       circle: null
     }
     const response  = await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).expect(422)
