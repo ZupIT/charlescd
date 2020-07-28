@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import { useForm } from 'react-hook-form';
@@ -9,7 +9,6 @@ const ChangePassword = () => {
   const { register, handleSubmit, watch } = useForm();
   const password = watch('password');
   const confirmPass = watch('confirmPassword');
-  const [isCheckedPassword, setCheckedPassword] = useState(false);
 
   const onSubmit = (data: any) => {
     console.log('data', data);
@@ -41,11 +40,7 @@ const ChangePassword = () => {
         ref={register({ required: true })}
       />
       <CheckPassword password={password} confirmPass={confirmPass} />
-      <Button.Default
-        type="submit"
-        size="EXTRA_SMALL"
-        isDisabled={!isCheckedPassword}
-      >
+      <Button.Default type="submit" size="EXTRA_SMALL">
         Save
       </Button.Default>
     </Styled.ChangePassword>
