@@ -253,3 +253,6 @@ databaseChangeLog:
       file: db/changelog/includes/20200721113800_add_unique_constraint_to_artifact_snapshots_table.yaml
   - include:
       file: db/changelog/includes/20200715090400_add_undeployment_date.yaml
+  - include:
+      file: db/changelog/includes/20200728104400_add_unique_constraint_to_components_table.yaml
+

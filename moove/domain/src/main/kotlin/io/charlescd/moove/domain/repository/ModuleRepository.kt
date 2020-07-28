@@ -46,5 +46,4 @@ interface ModuleRepository {
 
     fun findByIds(ids: List<String>): List<Module>
 
-     fun findByComponentNameAndWorkspaceId(workspaceId: String, name: String): Module?
 }

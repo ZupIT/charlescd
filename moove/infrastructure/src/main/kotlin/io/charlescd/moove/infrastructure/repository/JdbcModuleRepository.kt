@@ -124,14 +124,6 @@ class JdbcModuleRepository(
         return findModulesByIdList(ids)
     }
 
-    override fun findByComponentNameAndWorkspaceId(workspaceId: String, name: String): Module? {
-        val statement = StringBuilder(BASE_QUERY_STATEMENT)
-            .appendln("AND modules.workspace_id = ?")
-            .appendln("AND components.name = ?")
-
-        return this.jdbcTemplate.query(statement.toString(), arrayOf(workspaceId, name), moduleExtractor)?.firstOrNull()
-    }
-
     private fun deleteModule(id: String, workspaceId: String) {
         val statement = "DELETE FROM modules WHERE id = ? AND workspace_id = ?"
 
