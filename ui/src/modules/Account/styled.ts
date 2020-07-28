@@ -18,6 +18,8 @@ import styled from 'styled-components';
 import Page from 'core/components/Page';
 import ComponentLayer from 'core/components/Layer';
 import ComponentContentIcon from 'core/components/ContentIcon';
+import Text from 'core/components/Text';
+import FormComponent from 'core/components/Form';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 
 const Wrapper = styled.div`
@@ -53,11 +55,48 @@ const Form = styled.div`
   }
 `;
 
+const Actions = styled.div`
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+
+  > :last-child {
+    margin-left: 36px;
+  }
+`;
+
+const ChangePassword = styled.form`
+  width: 320px;
+`;
+
+const ModalSubtitle = styled(Text.h5)`
+  margin: 20px 0 10px;
+`;
+
+const ModalInfo = styled(Text.h5)`
+  margin: 20px 0 10px;
+  line-height: 14px;
+`;
+
+const Password = styled(FormComponent.Password)`
+  margin-bottom: 20px;
+  input {
+    background-color: transparent;
+  }
+`;
+
 export default {
   Wrapper,
   Content,
   ContentIcon,
   Layer,
   Scrollable,
-  Form
+  Form,
+  Actions,
+  ChangePassword,
+  Password,
+  Modal: {
+    Subtitle: ModalSubtitle,
+    Info: ModalInfo
+  }
 };
