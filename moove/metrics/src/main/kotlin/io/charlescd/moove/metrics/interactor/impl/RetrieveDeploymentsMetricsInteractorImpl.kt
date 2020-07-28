@@ -17,18 +17,21 @@
 package io.charlescd.moove.metrics.interactor.impl
 
 import io.charlescd.moove.domain.DeploymentAverageTimeStats
+import io.charlescd.moove.domain.DeploymentStats
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.metrics.api.PeriodType
 import io.charlescd.moove.metrics.api.response.DeploymentMetricsRepresentation
+import io.charlescd.moove.metrics.domain.service.MetricService
 import io.charlescd.moove.metrics.interactor.RetrieveDeploymentsMetricsInteractor
 import java.time.Duration
-import java.time.LocalDate
-import java.util.*
 import org.springframework.stereotype.Component
 
 @Component
-class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: DeploymentRepository) : RetrieveDeploymentsMetricsInteractor {
+class RetrieveDeploymentsMetricsInteractorImpl(
+    private val deploymentRepository: DeploymentRepository,
+    private val metricService: MetricService
+) : RetrieveDeploymentsMetricsInteractor {
 
     override fun execute(workspaceId: String, period: PeriodType, circlesIds: List<String>?): DeploymentMetricsRepresentation {
         val deploymentGeneralStats = deploymentRepository
@@ -38,14 +41,22 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
 
         val deploymentsStats = deploymentRepository
             .countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
-        val successDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOYED }
-        val failedDeploymentsInPeriod = deploymentsStats.filter { it.deploymentStatus == DeploymentStatusEnum.DEPLOY_FAILED }
+            .groupBy { it.deploymentStatus }
+
+        var successDeploymentsInPeriod = deploymentsStats[DeploymentStatusEnum.DEPLOYED]
+        if (!successDeploymentsInPeriod.isNullOrEmpty() && successDeploymentsInPeriod.size <= period.numberOfDays) {
+            successDeploymentsInPeriod = fillDeploymentsWithZeroedValues(successDeploymentsInPeriod, period, DeploymentStatusEnum.DEPLOYED)
+        }
+
+        var failedDeploymentsInPeriod = deploymentsStats[DeploymentStatusEnum.DEPLOY_FAILED]
+        if (!failedDeploymentsInPeriod.isNullOrEmpty() && failedDeploymentsInPeriod.size <= period.numberOfDays) {
+            failedDeploymentsInPeriod = fillDeploymentsWithZeroedValues(failedDeploymentsInPeriod, period, DeploymentStatusEnum.DEPLOY_FAILED)
+        }
 
         var deploymentsAverageTime = deploymentRepository
             .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
-
         if (deploymentsAverageTime.isNotEmpty() && deploymentsAverageTime.size <= period.numberOfDays) {
-            deploymentsAverageTime = fillMissingItemsInAverageTimeList(deploymentsAverageTime, period)
+            deploymentsAverageTime = fillDeploymentsAverageTimeWithZeroesdValues(deploymentsAverageTime, period)
         }
 
         return DeploymentMetricsRepresentation.from(
@@ -57,48 +68,28 @@ class RetrieveDeploymentsMetricsInteractorImpl(val deploymentRepository: Deploym
         )
     }
 
-    private fun fillMissingItemsInAverageTimeList(
+    private fun fillDeploymentsAverageTimeWithZeroesdValues(
         deploymentsAverageTime: List<DeploymentAverageTimeStats>,
         period: PeriodType
     ): List<DeploymentAverageTimeStats> {
+        val dateMetricMap = deploymentsAverageTime.associateByTo(mutableMapOf()) { it.date }
+        val completeDates = metricService.fillMissingDates(dateMetricMap.keys, period)
 
-        val deploymentsStack = deploymentsAverageTime
-            .sortedByDescending { it.date }
-            .toCollection(Stack())
+        completeDates.forEach { dateMetricMap.putIfAbsent(it, DeploymentAverageTimeStats(Duration.ZERO, it)) }
 
-        val firstDay = LocalDate.now().minusDays(period.numberOfDays.toLong())
-        val lastDay = LocalDate.now()
-
-        val filledList = when (deploymentsStack.peek().date == firstDay) {
-            true -> mutableListOf(deploymentsStack.pop())
-            false -> mutableListOf(DeploymentAverageTimeStats(Duration.ZERO, firstDay))
-        }
-
-        var lastAddedItemDate = filledList.last().date
-        while (lastAddedItemDate < lastDay) {
-            if (deploymentsStack.isEmpty()) {
-                filledList.addAll(getValuesUntilDate(lastAddedItemDate.plusDays(1), lastDay.plusDays(1)))
-            } else {
-                if (lastAddedItemDate.until(deploymentsStack.peek().date).days > 1) {
-                    filledList.addAll(getValuesUntilDate(lastAddedItemDate.plusDays(1), deploymentsStack.peek().date))
-                }
-
-                filledList.add(deploymentsStack.pop())
-            }
-            lastAddedItemDate = filledList.last().date
-        }
-
-        return filledList
+        return dateMetricMap.values.toList()
     }
 
-    private fun getValuesUntilDate(fromDate: LocalDate, toDate: LocalDate): List<DeploymentAverageTimeStats> {
-        val valuesUntilToday = mutableListOf<DeploymentAverageTimeStats>()
-        var fromDay = fromDate
-        while (fromDay < toDate) {
-            valuesUntilToday.add(DeploymentAverageTimeStats(Duration.ZERO, fromDay))
-            fromDay = fromDay.plusDays(1)
-        }
+    private fun fillDeploymentsWithZeroedValues(
+        deploymentsStats: List<DeploymentStats>,
+        period: PeriodType,
+        deploymentStatus: DeploymentStatusEnum
+    ): List<DeploymentStats> {
+        val dateMetricMap = deploymentsStats.associateByTo(mutableMapOf()) { it.date }
+        val completeDates = metricService.fillMissingDates(dateMetricMap.keys, period)
 
-        return valuesUntilToday
+        completeDates.forEach { dateMetricMap.putIfAbsent(it, DeploymentStats(0, deploymentStatus, Duration.ZERO, it)) }
+
+        return dateMetricMap.values.toList()
     }
 }
