@@ -18,7 +18,6 @@ import { Module } from '@nestjs/common';
 import { DeploymentsModule } from './deployments/deployments.module';
 import { ConfigurationsModule } from '../../v1/api/configurations/configurations.module';
 
-
 @Module({
   imports: [
     DeploymentsModule,
