@@ -25,6 +25,8 @@ import TabPanel from 'core/components/TabPanel';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
+import LabeledIcon from 'core/components/LabeledIcon';
+import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import InputTitle from 'core/components/Form/InputTitle';
@@ -41,6 +43,7 @@ interface Props {
 
 const UsersComparationItem = ({ email, onChange }: Props) => {
   const history = useHistory();
+  const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
   const [user, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
@@ -110,7 +113,16 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   );
 
   const renderActions = () => (
-    <Styled.Actions>{renderDropdown()}</Styled.Actions>
+    <Styled.Actions>
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text.h5 color="dark">Change password</Text.h5>
+      </LabeledIcon>
+      {renderDropdown()}
+    </Styled.Actions>
   );
 
   const renderPanel = () => (
@@ -165,6 +177,19 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   return (
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
       {!user ? <Loader.Tab /> : renderPanel()}
+      {isOpenModalPassword && (
+        <Modal.Default onClose={() => toggleModalPassword(false)}>
+          <Text.h2 weight="bold" color="light">
+            Reset password
+          </Text.h2>
+          <Text.h4 color="dark">
+            Are you sure you want to reset (email)s password?
+          </Text.h4>
+          <Button.Default size="EXTRA_SMALL" isLoading={false}>
+            Yes, reset password
+          </Button.Default>
+        </Modal.Default>
+      )}
     </Styled.Wrapper>
   );
 };
