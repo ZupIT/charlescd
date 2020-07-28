@@ -16,11 +16,13 @@
 
 package io.charlescd.moove.application.module.impl
 
+import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.module.RemoveComponentInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.domain.repository.ModuleRepository
 import spock.lang.Specification
 
@@ -31,9 +33,10 @@ class RemoveComponentInteractorImplTest extends Specification {
     private RemoveComponentInteractor removeComponentInteractor
 
     private ModuleRepository moduleRepository = Mock(ModuleRepository)
+    private DeploymentRepository deploymentsRepository = Mock(DeploymentRepository)
 
     void setup() {
-        removeComponentInteractor = new RemoveComponentInteractorImpl(new ModuleService(moduleRepository))
+        removeComponentInteractor = new RemoveComponentInteractorImpl(new ModuleService(moduleRepository), new DeploymentService(deploymentsRepository))
     }
 
     def "should remove only the component sent in the request from module"() {
@@ -62,6 +65,7 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         then:
         1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
+        1 * deploymentsRepository.findActiveByComponentId(_) >> null
 
         1 * moduleRepository.removeComponents(_) >> { arguments ->
             def moduleArg = arguments[0]
@@ -134,6 +138,41 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         def exception = thrown(BusinessException)
         assert exception.message == "module.must.have.at.least.one.component"
+    }
+
+    def "when component has deployment  should throw an exception"() {
+        given:
+        def moduleId = "e874aae3-d1a0-4334-879b-8687b3e638cd"
+        def componentOneId = "be4dd50d-2446-4732-8812-bf2943e61008"
+        def componentTwoId = "f474207d-69a2-468f-abd4-48542b72be8f"
+        def workspaceId = "acbd47f7-17ca-4ace-90d4-79b6cbe69ba7"
+        def deploymentId = "573254a9-0864-4f55-a8ee-9896611b36db"
+
+        def author = getDummyUser()
+
+        def gitCredentials = new GitCredentials("address", "username", "password",
+                null, GitServiceProvider.GITHUB)
+
+        def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
+
+        def componentOne = new Component(componentOneId, moduleId, "Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def componentTwo = new Component(componentTwoId, moduleId, "Batch-Application", LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+        def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, workspaceId)
+        def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
+                LocalDateTime.now(), "helm-repository", author,
+                [], gitConfiguration, [componentOne, componentTwo], workspaceId)
+        def deployment = new Deployment(deploymentId,author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, 'build-id',workspaceId)
+
+        when:
+        removeComponentInteractor.execute(moduleId, componentOneId, workspaceId)
+        then:
+        1* deploymentsRepository.findActiveByComponentId(componentOne.id) >> new HashSet([deployment])
+        1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
+        0 * moduleRepository.removeComponents(_) >> _
+        def exception = thrown(BusinessException)
+        assert exception.message == "component.has.active.releases"
+
     }
 
     private User getDummyUser() {

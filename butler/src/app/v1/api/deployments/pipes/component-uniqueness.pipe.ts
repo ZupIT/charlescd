@@ -39,14 +39,14 @@ export class ComponentUniquenessPipe implements PipeTransform {
       return
     }
 
-    const componentDeploymentRequest = deployment.modules[0].components[0]
-    const repeatedComponentsDB = await this.componentsRepository.find(
+    const componentDeploymentRepeated = deployment.modules[0].components[0]
+    const repeatedComponentDB = await this.componentsRepository.findOne(
       { where : {
-        id: componentDeploymentRequest?.componentId
+        id: componentDeploymentRepeated?.componentId
       }
       })
-    const activeComponents = repeatedComponentsDB.filter(component => component.isActive())
-    if (deployment && activeComponents.length) {
+
+    if (deployment && repeatedComponentDB?.isActive()) {
       this.errors.push(new Error(`A component with the name ${componentDeployment.componentName} and module name ${moduleId}  is already registered and has active deployments`))
     }
   }

@@ -51,9 +51,11 @@ open class RemoveComponentInteractorImpl(
         if (module.components.size == 1) {
             throw BusinessException.of(MooveErrorCode.MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT)
         }
+
         val deployment = deploymentsService.findActiveByComponentId(componentId)
-        deployment.let {
-            throw BusinessException.of(MooveErrorCode.COMPONENT_HAVE_ACTIVE_RELEASES)
+
+        deployment?.let{
+            throw BusinessException.of(MooveErrorCode.COMPONENT_HAS_ACTIVE_RELEASES)
         }
     }
 }
