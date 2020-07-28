@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"testing"
 
@@ -110,7 +111,7 @@ status:
   unavailableReplicas: 1
 `
 
-var simpleManifestTerminatingForRedeploy = `
+var simpleManifestRunning = `
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
@@ -134,7 +135,10 @@ spec:
           image: "nginx:1.14.1"
           name: nginx
           ports: 
-        - containerPort: 80
+          - containerPort: 80
+status:
+  replicas: 1
+  availableReplicas: 1
 `
 
 func toJSON(manifest string) map[string]interface{} {
@@ -196,7 +200,7 @@ func TestCreateResource(t *testing.T) {
 	client.Fake.ClearActions()
 }
 
-func TestUpdateNonResourceController(t *testing.T) {
+func TestUpdateResource(t *testing.T) {
 	scheme := runtime.NewScheme()
 	client := fake.NewSimpleDynamicClient(scheme)
 
@@ -208,7 +212,7 @@ func TestUpdateNonResourceController(t *testing.T) {
 		DeployAction,
 		false,
 		"default",
-		toJSON(simpleManifest),
+		toJSON(simpleManifestRunning),
 		client,
 	)
 
@@ -216,6 +220,8 @@ func TestUpdateNonResourceController(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
 	err = deployment.Do()
 	if err != nil {
@@ -223,48 +229,19 @@ func TestUpdateNonResourceController(t *testing.T) {
 	}
 }
 
-// This test is not running because the library's patch action doesn't have its fake for testing
-
-// func TestUpdateResourceController(t *testing.T) {
-// 	scheme := runtime.NewScheme()
-// 	client := fake.NewSimpleDynamicClient(scheme)
-
-// 	unstructuredObj := &unstructured.Unstructured{
-// 		Object: toJSON(simpleManifestForRedeploy),
-// 	}
-
-// 	deployment := deploymentMain.NewDeployment(
-// 		DeployAction,
-// 		false,
-// 		"default",
-// 		toJSON(simpleManifest),
-// 		client,
-// 	)
-
-// 	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-
-// 	err = deployment.Do()
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// }
-
-func TestUndeploySuccess(t *testing.T) {
+func TestUndeployResourceControllerSuccess(t *testing.T) {
 	scheme := runtime.NewScheme()
 	client := fake.NewSimpleDynamicClient(scheme)
 
 	unstructuredObj := &unstructured.Unstructured{
-		Object: toJSON(simpleManifest),
+		Object: toJSON(simpleManifestRunning),
 	}
 
 	deployment := deploymentMain.NewDeployment(
 		UndeployAction,
 		false,
 		"default",
-		toJSON(simpleManifestForUpdate),
+		toJSON(simpleManifestRunning),
 		client,
 	)
 
@@ -272,6 +249,8 @@ func TestUndeploySuccess(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
 
 	err = deployment.Do()
 	if err != nil {
@@ -285,7 +264,42 @@ func TestUndeploySuccess(t *testing.T) {
 
 }
 
-func TestUndeploy(t *testing.T) {
+func TestUndeployNonResourceControllerSuccess(t *testing.T) {
+	scheme := runtime.NewScheme()
+	client := fake.NewSimpleDynamicClient(scheme)
+
+	unstructuredObj := &unstructured.Unstructured{
+		Object: toJSON(simpleManifest),
+	}
+
+	deployment := deploymentMain.NewDeployment(
+		UndeployAction,
+		false,
+		"default",
+		toJSON(simpleManifest),
+		client,
+	)
+
+	_, err := client.Resource(deploymentRes).Namespace("default").Create(context.TODO(), unstructuredObj, metav1.CreateOptions{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	os.Setenv("TIMEOUT_RESOURCE_VERIFICATION", "1")
+
+	err = deployment.Do()
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = client.Resource(deploymentRes).Namespace("default").Get(context.TODO(), "nginx-deployment", metav1.GetOptions{})
+	if err != nil && !k8sErrors.IsNotFound(err) {
+		t.Error(err)
+	}
+
+}
+
+func TestUndeployIfNotExist(t *testing.T) {
 	scheme := runtime.NewScheme()
 	client := fake.NewSimpleDynamicClient(scheme)
 
