@@ -357,7 +357,6 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       type: 'deployManifest'
     }, // 6
-
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -898,7 +897,6 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       type: 'deployManifest'
     }, // 12
-
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -915,7 +913,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       variables: [
         {
           key: 'deploymentResult',
-          value: '${ #stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\' }'
+          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     }, // 13
@@ -1066,10 +1064,10 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       variables: [
         {
           key: 'proxyDeploymentsResult',
-          value: '${ #stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\' }'
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
-    }, // 17
+    }, // 17 ok
 
     {
       account: 'default',

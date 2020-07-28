@@ -1,9 +1,16 @@
 import { CdConfiguration, Component, ConnectorResult, Deployment, SpinnakerPipeline } from '../interfaces'
 import { ExpectedArtifact, Stage } from '../interfaces/spinnaker-pipeline.interface'
 import { ICdConfigurationData, ISpinnakerConfigurationData } from '../../v1/api/configurations/interfaces'
-import { getBakeStage, getDeploymentStage, getHelmTemplateObject, getHelmValueObject } from './templates'
+import {
+  getBakeStage,
+  getDeploymentsEvaluationStage,
+  getDeploymentStage,
+  getHelmTemplateObject,
+  getHelmValueObject, getRollbackDeploymentsStage
+} from './templates'
 import { getDestinationRulesStage } from './templates/destination-rules-stage'
 import { getVirtualServiceStage } from './templates/virtual-service-stage'
+import { getProxyEvaluationStage } from './templates/proxy-evaluation'
 
 export class SpinnakerConnector {
 
@@ -35,9 +42,13 @@ export class SpinnakerConnector {
 
   private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     this.currentStageId = 1
+    // TODO the order of the stages matter. Is this robust enough?
     return [
       ...this.getDeploymentStages(deployment),
-      ...this.getProxyDeploymentStages(deployment, activeComponents)
+      ...this.getProxyDeploymentStages(deployment, activeComponents),
+      ...this.getDeploymentsEvaluationStage(deployment.components),
+      ...this.getRollbackDeploymentsStage(deployment),
+      ...this.getProxyDeploymentsEvaluationStage(deployment.components)
     ]
   }
 
@@ -58,6 +69,27 @@ export class SpinnakerConnector {
       proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
     })
     return proxyStages
+  }
+
+  private getDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+    return components && components.length ?
+      [getDeploymentsEvaluationStage(components, this.currentStageId++)] :
+      []
+  }
+
+  private getRollbackDeploymentsStage(deployment: Deployment): Stage[] {
+    const stages: Stage[] = []
+    const evalStageId: number = this.currentStageId - 1
+    deployment.components?.forEach(component => {
+      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, evalStageId, this.currentStageId++))
+    })
+    return stages
+  }
+
+  private getProxyDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+    return components && components.length ?
+      [getProxyEvaluationStage(components, this.currentStageId++)] :
+      []
   }
 
   private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {
