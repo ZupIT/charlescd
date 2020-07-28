@@ -26,4 +26,8 @@ interface MetricService {
     fun getAverageLatency(searchMetric: SearchMetric, url: String): Metric
 
     fun getAverageHttpErrorsPercentage(searchMetric: SearchMetric, url: String): Metric
+
+    fun healthCheck(url: String): String
+
+    fun readinessCheck(url: String): String
 }
