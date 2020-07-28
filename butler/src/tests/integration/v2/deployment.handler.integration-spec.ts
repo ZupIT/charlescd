@@ -7,8 +7,16 @@ import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 import { PgBossWorker } from '../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../utils/fixture-utils.service'
 import { TestSetupUtils } from '../utils/test-setup-utils'
+import { Execution } from '../../../app/v2/api/deployments/entity/execution.entity'
+import { DeploymentEntity } from '../../../app/v2/api/deployments/entity/deployment.entity'
+import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
+import { DeploymentStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { ComponentEntity } from '../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentHandler } from '../../../app/v2/api/deployments/use-cases/deployment-handler'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
+import { JobWithDoneCallback } from 'pg-boss'
 
-describe('DeploymentController v2', () => {
+describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
@@ -29,6 +37,8 @@ describe('DeploymentController v2', () => {
   })
 
   afterAll(async() => {
+    await fixtureUtilsService.clearDatabase()
+    await worker.pgBoss.clearStorage()
     await worker.pgBoss.stop()
     await app.close()
   })
@@ -36,9 +46,9 @@ describe('DeploymentController v2', () => {
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
-    // await fixtureUtilsService.loadDatabase()
   })
-  it('returns ok for valid params with existing cdConfiguration', async() => {
+
+  it('set deployment status to running', async() => {
     const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
@@ -47,30 +57,79 @@ describe('DeploymentController v2', () => {
       'authorId',
       'workspaceId'
     )
-    await manager.save(cdConfiguration)
-    const createDeploymentRequest = {
+
+    const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
-      },
-      modules: [
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
           helmRepository: 'https://some-helm.repo',
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
-    await request(app.getHttpServer()).post('/v2/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
+
+    const components = params.components.map(c => {
+      return new ComponentEntity(
+        c.helmRepository,
+        c.buildImageTag,
+        c.buildImageUrl,
+        c.componentName,
+        c.componentId)
+    })
+
+    const firstDeploymentEntity = new DeploymentEntity(
+      params.deploymentId,
+      params.authorId,
+      DeploymentStatusEnum.CREATED,
+      params.circle,
+      cdConfiguration,
+      params.callbackUrl,
+      components
+    )
+    const secondsDeploymentEntity = new DeploymentEntity(
+      params.deploymentId,
+      params.authorId,
+      DeploymentStatusEnum.CREATED,
+      params.circle,
+      cdConfiguration,
+      params.callbackUrl,
+      components
+    )
+
+    await manager.save(cdConfiguration)
+    const firstDeployment = await manager.save(firstDeploymentEntity)
+    const secondDeployment = await manager.save(secondsDeploymentEntity)
+
+    const deploymentHandler =  app.get<DeploymentHandler>(DeploymentHandler)
+    const queue = 'deployment-queue'
+
+    await worker.pgBoss.publish(queue, firstDeployment)
+
+    await worker.pgBoss.subscribe(queue, async(job) => {
+      await deploymentHandler.run(job)
+      await worker.pgBoss.onComplete(job.id, async() => {
+        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components']})
+        expect(handledDeployment.components[0].running).toEqual(true)
+        expect(handledDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
+      })
+    })
+
+    await worker.pgBoss.publish(queue, secondDeployment)
+
+    await worker.pgBoss.subscribe(queue, async(job) => {
+      await deploymentHandler.run(job)
+      await worker.pgBoss.onComplete(job.id, async() => {
+        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components']})
+        expect(handledDeployment.components[0].running).toEqual(false)
+        expect(handledDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
+      })
+    })
   })
 })

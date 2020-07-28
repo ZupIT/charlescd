@@ -15,9 +15,9 @@
  */
 
 import { Inject, Injectable } from '@nestjs/common'
-import { Connection } from 'typeorm'
-import * as Path from 'path'
 import * as fs from 'fs'
+import * as Path from 'path'
+import { Connection } from 'typeorm'
 
 interface DatabaseEntity {
     name: string,
@@ -96,7 +96,10 @@ export class FixtureUtilsService {
       { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
       { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
       { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
-      { name: 'UndeploymentEntity', tableName: 'undeployments' }
+      { name: 'UndeploymentEntity', tableName: 'undeployments' },
+      { name: 'Execution', tableName: 'v2executions' },
+      { name: 'DeploymentEntity', tableName: 'v2deployments' },
+      { name: 'ComponentEntity', tableName: 'v2components' },
     ]
   }
 }

@@ -22,10 +22,11 @@ import {
   ManyToOne, OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ComponentEntity, ReadComponentDTO } from './component.entity'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { ComponentEntity, ReadComponentDTO } from './component.entity'
+import { Execution } from './execution.entity'
 
 @Entity('v2deployments')
 export class DeploymentEntity {
@@ -54,6 +55,9 @@ export class DeploymentEntity {
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
+
+  @OneToMany(() => Execution, execution => execution.deployment)
+  public executions!: Execution[]
 
 
   @Column({ name: 'circle_id', nullable: true, type: 'varchar'})

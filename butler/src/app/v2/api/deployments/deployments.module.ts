@@ -16,15 +16,16 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DeploymentsController } from './controller/deployment.controller';
-import { DeploymentEntity } from './entity/deployment.entity';
-import { ComponentEntity } from './entity/component.entity';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
-import { DeploymentUseCase } from './use-cases/deployment-use-case';
-import { PgBossWorker } from './jobs/pgboss.worker';
 import { ConsoleLoggerService } from '../../../v1/core/logs/console';
+import { DeploymentsController } from './controller/deployment.controller';
+import { ComponentEntity } from './entity/component.entity';
+import { DeploymentEntity } from './entity/deployment.entity';
+import { Execution } from './entity/execution.entity';
+import { PgBossWorker } from './jobs/pgboss.worker';
 import { DeploymentHandler } from './use-cases/deployment-handler';
+import { DeploymentUseCase } from './use-cases/deployment-use-case';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { DeploymentHandler } from './use-cases/deployment-handler';
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ComponentEntity,
+      Execution,
       CdConfigurationEntity,
       CdConfigurationsRepository
     ])
