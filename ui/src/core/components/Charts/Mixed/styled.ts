@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.application.deployment.request
+import styled from 'styled-components';
+import Charts from 'react-apexcharts';
 
-import javax.validation.constraints.NotNull
-
-data class DeploymentCallbackRequest(
-    @NotNull
-    val deploymentStatus: DeploymentRequestStatus
-) {
-
-    fun isCallbackStatusSuccessful() = this.deploymentStatus == DeploymentRequestStatus.SUCCEEDED
+interface ChartProps {
+  className?: string;
 }
 
-enum class DeploymentRequestStatus {
-    SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED
-}
+const Chart = styled(Charts)<ChartProps>`
+  padding-right: 15px;
+  .apexcharts-canvas,
+  .apexcharts-canvas.apexcharts-theme-dark {
+    background-color: transparent;
+  }
+  .apexcharts-xaxis-tick {
+    display: none;
+  }
+  .apexcharts-yaxistooltip {
+    display: none;
+  }
+  .apexcharts-xaxistooltip {
+    display: none;
+  }
+`;
+
+export default {
+  Chart
+};
