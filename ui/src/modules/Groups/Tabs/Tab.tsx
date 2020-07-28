@@ -19,6 +19,9 @@ import { useHistory } from 'react-router-dom';
 import split from 'lodash/split';
 import TabPanel from 'core/components/TabPanel';
 import Dropdown from 'core/components/Dropdown';
+import LabeledIcon from 'core/components/LabeledIcon';
+import Button from 'core/components/Button';
+import Text from 'core/components/Text';
 import {
   useFindUserGroupByID,
   useListUser,
@@ -29,7 +32,7 @@ import {
 } from '../hooks';
 import { delParamUserGroup } from '../helpers';
 import Styled from './styled';
-import Modal from './Modal';
+import ModalUsers from './Modal';
 import Form from './Form';
 import { diffCheckedUsers } from './helpers';
 
@@ -40,7 +43,8 @@ interface Props {
 const Tab = ({ param }: Props) => {
   const history = useHistory();
   const [search, setSearch] = useState('');
-  const [isOpenModal, toggleModal] = useState(false);
+  const [isOpenModalUsers, toggleModalUsers] = useState(false);
+  const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [getUserGroup, userGroup] = useFindUserGroupByID();
   const [getAllUserGroups] = useFindAllUserGroup();
   const [editUserGroup, , editStatus] = useUpdateUserGroup();
@@ -82,6 +86,13 @@ const Tab = ({ param }: Props) => {
 
   const renderActions = () => (
     <Styled.Actions>
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text.h5 color="dark">Change password</Text.h5>
+      </LabeledIcon>
       <Dropdown>
         <Dropdown.Item
           icon="delete"
@@ -103,15 +114,28 @@ const Tab = ({ param }: Props) => {
         <Styled.Tab>
           <Form
             userGroup={userGroup}
-            onAddUser={() => toggleModal(true)}
+            onAddUser={() => toggleModalUsers(true)}
             onEdit={name => editUserGroup(id, name)}
           />
         </Styled.Tab>
       </TabPanel>
-      <Modal
+      {isOpenModalPassword && (
+        <Styled.ModalPassword onClose={() => toggleModalPassword(false)}>
+          <Text.h2 weight="bold" color="light">
+            Reset password
+          </Text.h2>
+          <Text.h4 color="dark">
+            Are you sure you want to reset (email)s password?
+          </Text.h4>
+          <Button.Default size="EXTRA_SMALL" isLoading={false}>
+            Yes, reset password
+          </Button.Default>
+        </Styled.ModalPassword>
+      )}
+      <ModalUsers
         users={filteredUsers}
-        isOpen={isOpenModal}
-        onClose={() => toggleModal(false)}
+        isOpen={isOpenModalUsers}
+        onClose={() => toggleModalUsers(false)}
         onSearch={name => setSearch(name)}
         onSelected={handleModalUserSelect}
       />
