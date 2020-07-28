@@ -45,4 +45,6 @@ interface ModuleRepository {
     fun findByWorkspaceId(workspaceId: String, name: String?, pageRequest: PageRequest): Page<Module>
 
     fun findByIds(ids: List<String>): List<Module>
+
+     fun findByComponentNameAndWorkspaceId(workspaceId: String, name: String): Module?
 }
