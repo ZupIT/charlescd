@@ -17,10 +17,10 @@
 import { getReleseStatus } from '../helpers';
 
 test('Enum status', () => {
-  expect(getReleseStatus("NOT_DEPLOYED")).toEqual("notDeployed");
-  expect(getReleseStatus("DEPLOYED")).toEqual("deployed");
-  expect(getReleseStatus("DEPLOYING")).toEqual("deploying");
-  expect(getReleseStatus("DEPLOY_FAILED")).toEqual("error");
-  expect(getReleseStatus("UNDEPLOYING")).toEqual("undeploying");
-  expect(getReleseStatus("")).toEqual("deployed");
+  expect(getReleseStatus('NOT_DEPLOYED')).toEqual('notDeployed');
+  expect(getReleseStatus('DEPLOYED')).toEqual('deployed');
+  expect(getReleseStatus('DEPLOYING')).toEqual('deploying');
+  expect(getReleseStatus('DEPLOY_FAILED')).toEqual('error');
+  expect(getReleseStatus('UNDEPLOYING')).toEqual('undeploying');
+  expect(getReleseStatus('')).toEqual('deployed');
 });

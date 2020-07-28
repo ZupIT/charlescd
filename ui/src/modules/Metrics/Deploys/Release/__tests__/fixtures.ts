@@ -2,12 +2,12 @@ export const releaseComponentsMock = [
   {
     moduleName: 'module a1',
     name: 'component a1',
-    version: '1.0'
+    version: '1'
   },
   {
     moduleName: 'module a2',
     name: 'component a2',
-    version: '1.0'
+    version: '2'
   }
 ]
 
@@ -33,13 +33,14 @@ export const ReleaseSummary = {
 
 export const ReleasesMock = {
   summary: ReleaseSummary,
-  content: [
-    ReleaseContentMock
-  ],
-  page: 0,
-  size: 1,
-  last: false,
-  totalPages: 1
+  page: {
+    content: [ReleaseContentMock],
+    page: 0,
+    size: 1,
+    last: false,
+    totalPages: 1
+  }
+  
 };
 
 export const filter = {
