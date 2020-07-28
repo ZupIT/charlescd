@@ -23,7 +23,6 @@ import (
 	"strconv"
 	"time"
 
-	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/dynamic"
@@ -82,30 +81,6 @@ func newCreateOrUpdateWatcher(manifest *unstructured.Unstructured, resourceInter
 			if isCreatedOrUpdatedResourceController(resource) {
 				ticker.Stop()
 				return nil
-			}
-		}
-	}
-}
-
-func newTerminatingWatcher(manifest *unstructured.Unstructured, resourceInterface dynamic.ResourceInterface) error {
-	ticker := time.NewTicker(500 * time.Millisecond)
-	timeout := time.After(getTimeoutDuration() * time.Second)
-	for {
-		select {
-		case <-timeout:
-			ticker.Stop()
-			return errors.New("Terminating timeout")
-		case <-ticker.C:
-
-			_, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
-			if err != nil && k8sErrors.IsNotFound(err) {
-				ticker.Stop()
-				return nil
-			}
-
-			if err != nil {
-				ticker.Stop()
-				return err
 			}
 		}
 	}
