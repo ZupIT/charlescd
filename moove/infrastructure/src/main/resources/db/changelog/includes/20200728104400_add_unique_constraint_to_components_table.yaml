@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200728104400-1
+      author: thalles.freitas
+      comment: "Adding unique constraint to components table"
+      changes:
+        - addUniqueConstraint:
+            columnNames: name, workspace_id
+            constraintName: const_unique_name_by_workspace
+            tableName: components
+
