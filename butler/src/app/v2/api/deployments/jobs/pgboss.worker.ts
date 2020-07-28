@@ -18,7 +18,7 @@ import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/commo
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc';
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { DeploymentEntity } from '../entity/deployment.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { DeploymentHandler } from '../use-cases/deployment-handler';
 import PgBoss = require('pg-boss');
 

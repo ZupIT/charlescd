@@ -25,7 +25,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ReadCdConfigurationDto } from '../dto'
 import { CdTypeEnum } from '../enums'
 import { ICdConfigurationData } from '../interfaces'
-import { DeploymentEntity } from '../../../../v2/api/deployments/entity/deployment.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../v2/api/deployments/entity/deployment.entity'
 
 @Entity('cd_configurations')
 export class CdConfigurationEntity extends BaseEntity {

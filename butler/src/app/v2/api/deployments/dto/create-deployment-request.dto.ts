@@ -19,7 +19,7 @@ import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
 import { flatten } from 'lodash';
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity';
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
-import { DeploymentEntity } from '../entity/deployment.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { CreateCircleDeploymentDto } from './create-circle-request.dto';
 import { CreateModuleDeploymentDto } from './create-module-request.dto';
 

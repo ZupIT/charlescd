@@ -16,7 +16,7 @@
 
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { ComponentEntity } from '../entity/component.entity';
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
 import { CreateComponentRequestDto } from './create-component-request.dto';
 
 export class CreateModuleDeploymentDto {

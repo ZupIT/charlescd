@@ -17,8 +17,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeploymentsController } from './controller/deployment.controller';
-import { DeploymentEntity } from './entity/deployment.entity';
-import { ComponentEntity } from './entity/component.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity';
+import { ComponentEntityV2 as ComponentEntity } from './entity/component.entity';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
 import { DeploymentUseCase } from './use-cases/deployment-use-case';
