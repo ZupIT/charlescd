@@ -2,16 +2,23 @@ import React from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import { useForm } from 'react-hook-form';
+import CheckPassword, {
+  validationResolver
+} from 'core/components/CheckPassword';
 import Styled from './styled';
-import CheckPassword from 'core/components/CheckPassword';
 
 const ChangePassword = () => {
-  const { register, handleSubmit, watch } = useForm();
-  const password = watch('password');
-  const confirmPass = watch('confirmPassword');
+  const { register, handleSubmit, watch, errors } = useForm({
+    mode: 'onBlur',
+    validationResolver
+  });
+  const password = watch('password') as string;
+  const confirmPass = watch('confirmPassword') as string;
 
-  const onSubmit = (data: any) => {
-    console.log('data', data);
+  console.log('error', errors);
+
+  const onSubmit = () => {
+    console.log('submit');
   };
 
   return (
