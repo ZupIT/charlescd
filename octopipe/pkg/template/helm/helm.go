@@ -19,6 +19,7 @@ package helm
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"strings"
 
 	"github.com/tidwall/sjson"
@@ -42,6 +43,8 @@ func NewHelmTemplate(template HelmTemplate) HelmTemplate {
 }
 
 func (helmTemplate HelmTemplate) GetManifests(templateContent, valueContent string) (map[string]interface{}, error) {
+	ioutil.WriteFile("./pkg/template/helm/dat", []byte(templateContent), 0644)
+
 	chartTemplate, chartValues, err := helmTemplate.getHelmChartAndValues(templateContent, valueContent, helmTemplate.OverrideValues)
 	if err != nil {
 
