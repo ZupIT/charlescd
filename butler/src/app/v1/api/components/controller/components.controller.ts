@@ -17,18 +17,20 @@
 import {
   Controller,
   Get,
-  Param, UsePipes
+  Param, UsePipes, ValidationPipe
 } from '@nestjs/common'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
 import { GetComponentQueueUseCase } from '../use-cases/get-component-queue.usecase'
 import {ComponentsExistencePipe} from '../pipe/components.pipe'
+import { BaseController } from '../../base.controller'
 
 @Controller('components')
-export class ComponentsController {
+export class ComponentsController extends BaseController {
 
-  constructor(private readonly getComponentQueueUseCase: GetComponentQueueUseCase) {}
+  constructor(private readonly getComponentQueueUseCase: GetComponentQueueUseCase) { super() }
 
   @Get(':id/queue')
+  @UsePipes(new ValidationPipe({ transform: true }))
   @UsePipes(ComponentsExistencePipe)
   public async getComponentDeploymentQueue(@Param('id') id: string): Promise<ReadQueuedDeploymentDto[]> {
     return await this.getComponentQueueUseCase.execute(id)

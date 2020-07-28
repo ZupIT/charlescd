@@ -150,5 +150,5 @@ export class FixtureUtilsService {
     const undeployment = this.manager.create(UndeploymentEntity, undeploymentRequest)
     return await this.manager.save(undeployment)
   }
-  
+
 }

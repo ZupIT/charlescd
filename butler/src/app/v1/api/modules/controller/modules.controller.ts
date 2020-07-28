@@ -23,11 +23,12 @@ import {
   ReadModuleDto
 } from '../dto'
 import { ModulesService } from '../services'
+import { BaseController } from '../../base.controller'
 
 @Controller('modules')
-export class ModulesController {
+export class ModulesController extends BaseController {
 
-  constructor(private readonly modulesService: ModulesService) { }
+  constructor(private readonly modulesService: ModulesService) { super() }
 
   @Get()
   public async getModules(): Promise<ReadModuleDto[]> {
