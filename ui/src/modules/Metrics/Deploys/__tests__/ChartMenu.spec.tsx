@@ -15,16 +15,29 @@
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
-import Deploy from '..';
+import { render, wait, fireEvent, screen } from 'unit-test/testUtils';
+import ChartMenu from '../ChartMenu';
 
-test('render Deploy default screen', async () => {
-  render(<Deploy />);
+test('render chart buttons', async () => {
+  const onReset = jest.fn();
+  const { getByTestId } = render(<ChartMenu onReset={onReset}/>);
 
   await wait();
 
-  expect(screen.getByTestId('metrics-deploy')).toBeInTheDocument();
-  expect(screen.getByTestId('metrics-filter')).toBeInTheDocument();
-  expect(screen.getByTestId('apexchart-deploy')).toBeInTheDocument();
-  expect(screen.getByTestId('release-history')).toBeInTheDocument();
-})
+  expect(getByTestId('chart-menu')).toBeInTheDocument();
+});
+
+test('Chart button on click should be call', async () => {
+  const onReset = jest.fn();
+  
+  render(<ChartMenu onReset={onReset}/>);
+
+  await wait();
+
+  const button = screen.getByTestId('icon-horizontal-dots');
+  fireEvent.click(button);
+  const reset = screen.getByText('Reset');
+  fireEvent.click(reset);
+
+  expect(onReset).toHaveBeenCalled();
+});

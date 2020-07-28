@@ -17,7 +17,7 @@
  import React from 'react';
  import { FetchMock } from 'jest-fetch-mock';
  import ReleasesHistory from '../index';
- import { render, screen, wait } from 'unit-test/testUtils';
+ import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
  import { ReleasesMock , filter} from './fixtures';
  import { ReleaseHistoryRequest } from '../../interfaces';
 
@@ -31,12 +31,35 @@ test('render default ReleaseTable', async () => {
     JSON.stringify(ReleasesMock)
   );
 
-  const { getByTestId } = render(
+  render(
     <ReleasesHistory filter={filter as ReleaseHistoryRequest}/>
   );
 
   await wait();
 
-  expect(getByTestId("release-history")).toBeInTheDocument();
+  expect(screen.getByTestId('release-history')).toBeInTheDocument();
+  expect(screen.getByText('release 1')).toBeInTheDocument();
+  expect(screen.getByText('circle 1')).toBeInTheDocument();
+  expect(screen.getByText('12/07/2020 • 16:07')).toBeInTheDocument();
+  expect(screen.getByText('11/07/2020 • 16:07')).toBeInTheDocument();
+  expect(screen.getByText('1:13m')).toBeInTheDocument();
+  expect(screen.getByText('Jhon Doe')).toBeInTheDocument();
+});
+
+test('render Components Row', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(ReleasesMock)
+  );
+
+  render(
+    <ReleasesHistory filter={filter as ReleaseHistoryRequest}/>
+  );
+
+  await wait();
+
+  const release = screen.getByTestId('release-table-row-1');
+  fireEvent.click(release);
+
+  expect(screen.getAllByText(/module a/)).toHaveLength(2);
 });
 
