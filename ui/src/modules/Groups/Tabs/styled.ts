@@ -16,7 +16,6 @@
 
 import styled from 'styled-components';
 import Page from 'core/components/Page';
-import Modal from 'core/components/Modal';
 
 const ScrollX = styled(Page.Content)`
   overflow-y: hidden;
@@ -38,16 +37,11 @@ const Actions = styled.div`
   }
 `;
 
-const ModalPassword = styled(Modal.Default)`
-  min-height: 282px;
-`;
-
 const Tab = styled.div``;
 
 export default {
   ScrollX,
   Wrapper,
   Actions,
-  ModalPassword,
   Tab
 };
