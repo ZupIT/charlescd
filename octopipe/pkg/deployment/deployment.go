@@ -86,7 +86,7 @@ func (deployment *Deployment) createResource(manifest *unstructured.Unstructured
 	return nil
 }
 
-func (deployment *Deployment) updateNonReplicationControllerResource(
+func (deployment *Deployment) updateResource(
 	resource *unstructured.Unstructured,
 	manifest *unstructured.Unstructured,
 	resourceInterface dynamic.ResourceInterface,
@@ -102,12 +102,16 @@ func (deployment *Deployment) updateNonReplicationControllerResource(
 			return deployment.getDeploymentError("Failed to update resource in cluster", err, manifest)
 		}
 
+		log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry update...")
+
 		return nil
 	})
 
 	if retryErr != nil {
 		return deployment.getDeploymentError("Failed to retry update deployment", retryErr, manifest)
 	}
+
+	log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry success...")
 
 	err := newCreateOrUpdateWatcher(manifest, resourceInterface)
 	if err != nil {
@@ -131,7 +135,7 @@ func (deployment *Deployment) deploy() error {
 		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
 	}
 
-	return deployment.updateNonReplicationControllerResource(resourceInCluster, manifest, resourceInterface)
+	return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
 }
 
 func (deployment *Deployment) undeploy() error {
@@ -139,12 +143,21 @@ func (deployment *Deployment) undeploy() error {
 	resourceSchema := deployment.getResourceSchemaByManifest(manifest)
 	resourceInterface := deployment.config.Resource(resourceSchema).Namespace(deployment.namespace)
 
+	resourceInCluster, err := resourceInterface.Get(context.TODO(), manifest.GetName(), metav1.GetOptions{})
+	if err != nil && k8sErrors.IsNotFound(err) {
+		return nil
+	}
+
+	if !isResourController(resourceInCluster) {
+		return nil
+	}
+
 	deletePolicy := metav1.DeletePropagationBackground
 	gracefullPeriod := 1
 	deleteOptions := *metav1.NewDeleteOptions(int64(gracefullPeriod))
 	deleteOptions.PropagationPolicy = &deletePolicy
 
-	err := resourceInterface.Delete(context.TODO(), manifest.GetName(), deleteOptions)
+	err = resourceInterface.Delete(context.TODO(), manifest.GetName(), deleteOptions)
 	if err != nil && k8sErrors.IsNotFound(err) {
 		return nil
 	}
