@@ -54,5 +54,5 @@ enum class MooveErrorCode(val key: String) {
     MISSING_DEFAULT_CIRCLE("missing.default.circle"),
     INVALID_CIRCLE_MATCHER_URL_ERROR("invalid.circle.matcher.url.error"),
     MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT("module.must.have.at.least.one.component"),
-    COMPONENT_HAVE_ACTIVE_RELEASES("component.have.active.releases")
+    COMPONENT_HAS_ACTIVE_RELEASES("component.has.active.releases")
 }
