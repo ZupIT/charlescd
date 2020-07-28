@@ -15,7 +15,7 @@
  */
 
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DeploymentEntity } from './deployment.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity';
 @Entity('v2executions')
 export class Execution {
   @PrimaryGeneratedColumn('uuid')

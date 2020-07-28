@@ -25,11 +25,11 @@ import {
 import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { ComponentEntity, ReadComponentDTO } from './component.entity'
+import { ComponentEntityV2 as ComponentEntity, ReadComponentDTO } from './component.entity'
 import { Execution } from './execution.entity'
 
 @Entity('v2deployments')
-export class DeploymentEntity {
+export class DeploymentEntityV2 {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string

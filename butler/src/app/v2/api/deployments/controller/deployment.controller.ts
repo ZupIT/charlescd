@@ -16,7 +16,7 @@
 
 import { Body, Controller, Headers, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto';
-import { DeploymentEntity } from '../entity/deployment.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { CdConfigurationExistencePipe } from '../pipes/cd-configuration-existence-pipe';
 import { DeploymentUseCase } from '../use-cases/deployment-use-case';
 

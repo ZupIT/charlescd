@@ -19,8 +19,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JobWithDoneCallback } from 'pg-boss';
 import { In, Repository, UpdateResult } from 'typeorm';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { ComponentEntity } from '../entity/component.entity';
-import { DeploymentEntity } from '../entity/deployment.entity';
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 
 
 

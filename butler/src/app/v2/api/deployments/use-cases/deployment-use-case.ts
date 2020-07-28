@@ -18,8 +18,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { DeploymentEntity } from '../entity/deployment.entity';
 import { Execution } from '../entity/execution.entity';
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { PgBossWorker } from '../jobs/pgboss.worker';
 
 @Injectable()

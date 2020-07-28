@@ -75,7 +75,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     await fixtureUtilsService.clearDatabase()
   })
 
-  it('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
+  it.only('/POST /deployments in default circle should create deployment, module deployment and component deployment entities', async() => {
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration({
       'id': uuid.v4(),
       'workspaceId': uuid.v4(),
