@@ -72,4 +72,8 @@ class ModuleService(private val moduleRepository: ModuleRepository) {
     fun findByIds(ids: List<String>): List<Module> {
         return moduleRepository.findByIds(ids)
     }
+
+    fun findComponentByNameAndWorkspaceId(workspaceId: String, name: String): Module? {
+        return  moduleRepository.findByComponentNameAndWorkspaceId(workspaceId, name)
+    }
 }

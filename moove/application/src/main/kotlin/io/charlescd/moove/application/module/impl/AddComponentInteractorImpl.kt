@@ -33,7 +33,7 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
     override fun execute(id: String, workspaceId: String, request: ComponentRequest): ComponentResponse {
         val module = moduleService.find(id, workspaceId)
         checkIfComponentAlreadyExist(module, request)
-
+        checkIfTheComponentNameIsRegisteredInWorkspace(workspaceId,request.name)
         val component = request.toDomain(module.id, workspaceId)
 
         moduleService.addComponents(module.copy(components = listOf(component)))
@@ -47,5 +47,11 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
     ) {
         module.findComponentByName(request.name)
             ?.let { throw BusinessException.of(MooveErrorCode.COMPONENT_ALREADY_REGISTERED) }
+    }
+
+    private fun checkIfTheComponentNameIsRegisteredInWorkspace(workspaceId: String, name: String) {
+        moduleService.findComponentByNameAndWorkspaceId(workspaceId, name)
+            ?.let{ throw BusinessException.of(MooveErrorCode.COMPONENT_ALREADY_REGISTERED_IN_WORKSPACE)}
+
     }
 }
