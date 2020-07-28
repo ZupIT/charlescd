@@ -32,6 +32,7 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Headers('x-circle-id') incomingCircleId: string,
   ): Promise<DeploymentEntity> {
     return this.deploymentUseCase.save(createDeploymentRequestDto.toEntity())
