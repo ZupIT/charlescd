@@ -22,10 +22,9 @@ import {
   ManyToOne, OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { ComponentEntityV2 as ComponentEntity, ReadComponentDTO } from './component.entity'
+import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
 
 @Entity('v2deployments')
@@ -34,7 +33,7 @@ export class DeploymentEntityV2 {
   @PrimaryGeneratedColumn('uuid')
   public id!: string
 
-  @Column({ name: 'external_id'})
+  @Column({ name: 'external_id' })
   public deploymentId!: string
 
   @Column({ name: 'author_id' })
@@ -60,10 +59,10 @@ export class DeploymentEntityV2 {
   public executions!: Execution[]
 
 
-  @Column({ name: 'circle_id', nullable: true, type: 'varchar'})
+  @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
   public circleId!: string | null
 
-  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade:  ['insert']})
+  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert'] })
   public components!: ComponentEntity[]
 
   constructor(
@@ -84,18 +83,6 @@ export class DeploymentEntityV2 {
     this.components = components
   }
 
-  public toDto() : ReadDeploymentDTO{
-    return {
-      id: this.id,
-      authorId: this.authorId,
-      callbackUrl: this.callbackUrl,
-      cdConfiguration: this.cdConfiguration,
-      circleId: this.circleId,
-      status: this.status ? this.status : DeploymentStatusEnum.CREATED,
-      components: this.components
-    }
-  }
-
   public hasSucceeded(): boolean {
     return this.status === DeploymentStatusEnum.SUCCEEDED
   }
@@ -104,22 +91,3 @@ export class DeploymentEntityV2 {
     return this.status === DeploymentStatusEnum.FAILED
   }
 }
-
-  interface CreateDeploymentDTO {
-    id: string
-    authorId: string
-    callbackUrl: string
-    cdConfiguration: CdConfigurationEntity
-    circleId: string | null
-    status: DeploymentStatusEnum
-  }
-
-  interface ReadDeploymentDTO {
-    id: string
-    authorId: string
-    callbackUrl: string
-    cdConfiguration: ReadCdConfigurationDto
-    circleId: string | null
-    status: DeploymentStatusEnum
-    components: ReadComponentDTO[]
-  }

@@ -1,15 +1,15 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { AppModule } from '../../../app/app.module'
-import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
-import { DeploymentStatusEnum } from '../../../app/v1/api/deployments/enums'
-import { ComponentEntityV2 as ComponentEntity } from '../../../app/v2/api/deployments/entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity } from '../../../app/v2/api/deployments/entity/deployment.entity'
-import { PgBossWorker } from '../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { DeploymentHandler } from '../../../app/v2/api/deployments/use-cases/deployment-handler'
-import { FixtureUtilsService } from '../utils/fixture-utils.service'
-import { TestSetupUtils } from '../utils/test-setup-utils'
+import { AppModule } from '../../../../app/app.module'
+import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
+import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentEntityV2 as DeploymentEntity, DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
+import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
+import { FixtureUtilsService } from '../../utils/fixture-utils.service'
+import { TestSetupUtils } from '../../utils/test-setup-utils'
 
 describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -43,7 +43,7 @@ describe('DeploymentHandler', () => {
     await worker.pgBoss.clearStorage()
   })
 
-  it('set deployment status to running', async() => {
+  it('set only one component deployment status to running', async() => {
     const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
@@ -110,9 +110,9 @@ describe('DeploymentHandler', () => {
     await worker.pgBoss.subscribe(queue, async(job) => {
       await deploymentHandler.run(job)
       await worker.pgBoss.onComplete(job.id, async() => {
-        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components']})
-        expect(handledDeployment.components[0].running).toEqual(true)
-        expect(handledDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
+        const jobDeployment = job.data as DeploymentEntityV2
+        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, {id: jobDeployment.id}, { relations: ['components']})
+        expect(handledDeployment.components[0].running).toEqual(false)
       })
     })
 
@@ -120,11 +120,19 @@ describe('DeploymentHandler', () => {
 
     await worker.pgBoss.subscribe(queue, async(job) => {
       await deploymentHandler.run(job)
-      await worker.pgBoss.onComplete(job.id, async() => {
-        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components']})
+      await worker.pgBoss.onComplete(job.id, async() => { // TODO: THIS IS NOT WORKING
+        const jobDeployment = job.data as DeploymentEntityV2
+        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, {id: jobDeployment.id}, { relations: ['components']})
         expect(handledDeployment.components[0].running).toEqual(false)
-        expect(handledDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
       })
     })
+
+    // const currentJobs = await worker.pgBoss.fetch(queue)
+    // if (!currentJobs) {
+    //   fail('Queue is empty')
+    // }
+    // const jobData = currentJobs.data as DeploymentEntity
+    // expect(jobData.components).toEqual(params.components)
+
   })
 })

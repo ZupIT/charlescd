@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobWithDoneCallback } from 'pg-boss';
 import { In, Repository, UpdateResult } from 'typeorm';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-
+import { PgBossWorker } from '../jobs/pgboss.worker';
 
 
 @Injectable()
@@ -30,10 +30,11 @@ export class DeploymentHandler {
     private readonly consoleLoggerService: ConsoleLoggerService,
     @InjectRepository(ComponentEntity)
     private componentsRepository: Repository<ComponentEntity>,
+    @Inject(forwardRef(() => PgBossWorker))
+    private pgBoss: PgBossWorker
+  ) { }
 
-  ) {  }
-
-  async run(job: JobWithDoneCallback<unknown, unknown>): Promise<JobWithDoneCallback<unknown, string>>{
+  async run(job: JobWithDoneCallback<unknown, unknown>): Promise<JobWithDoneCallback<unknown, string>> {
     const cdServiceResponse = true
     const dataAsDeployment = job.data as DeploymentEntity
     if (cdServiceResponse) {
@@ -42,31 +43,31 @@ export class DeploymentHandler {
       const componentsOverlap = await this.checkForRunningComponents(componentNames, dataAsDeployment)
       const deploymentComponents = await this.findComponentsByName(componentNames, dataAsDeployment)
       if (componentsOverlap) {
-        // TODO requeue the deployment
-        job.done()
+        this.pgBoss.publish(dataAsDeployment)
+        // job.done()
       }
       await this.updateComponentsToRunning(deploymentComponents)
       job.done()
     } else {
-      this.consoleLoggerService.log('Error on job', {job: job.id, data: job.data})
+      this.consoleLoggerService.log('Error on job', { job: job.id, data: job.data })
       job.done(new Error('deu ruim no deploy'))
     }
     return job
   }
 
   async findComponentsByName(names: string[], deployment: DeploymentEntity): Promise<ComponentEntity[]> {
-    return await this.componentsRepository.find({where: {name: In(names), deployment: deployment}})
+    return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  async updateComponentsToRunning(components: ComponentEntity[]) : Promise<UpdateResult>{
+  async updateComponentsToRunning(components: ComponentEntity[]): Promise<UpdateResult> {
     const componentsIds = components.map(c => c.id)
-    const updated = await this.componentsRepository.update(componentsIds, {running: true})
+    const updated = await this.componentsRepository.update(componentsIds, { running: true })
     return updated
   }
 
-  async checkForRunningComponents(names: string[], deployment: DeploymentEntity) : Promise<ComponentEntity[]> {
+  async checkForRunningComponents(names: string[], deployment: DeploymentEntity): Promise<ComponentEntity[]> {
     const deploymentComponents = await this.findComponentsByName(names, deployment)
-    const allRunningComponents = await this.componentsRepository.find({where: {running: true}})
+    const allRunningComponents = await this.componentsRepository.find({ where: { running: true } })
     const overlap = allRunningComponents.filter(n => deploymentComponents.includes(n))
     return overlap
   }

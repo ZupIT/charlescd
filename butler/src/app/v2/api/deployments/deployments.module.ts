@@ -20,6 +20,7 @@ import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
 import { ConsoleLoggerService } from '../../../v1/core/logs/console';
 import { DeploymentsController } from './controller/deployment.controller';
+import { NotificationsController } from './controller/notification.controller';
 import { ComponentEntityV2 as ComponentEntity } from './entity/component.entity';
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity';
 import { Execution } from './entity/execution.entity';
@@ -39,15 +40,16 @@ import { DeploymentUseCase } from './use-cases/deployment-use-case';
     ])
   ],
   controllers: [
-    DeploymentsController
+    DeploymentsController,
+    NotificationsController
   ],
   providers: [
+    PgBossWorker,
     DeploymentUseCase,
     DeploymentHandler,
-    PgBossWorker,
     ConsoleLoggerService
   ],
   exports: [
   ]
 })
-export class DeploymentsModule {}
+export class DeploymentsModule { }

@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-import { AppModule } from '../../../app/app.module'
-import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
-import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
-import { PgBossWorker } from '../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../utils/fixture-utils.service'
-import { TestSetupUtils } from '../utils/test-setup-utils'
-import { Execution } from '../../../app/v2/api/deployments/entity/execution.entity'
+import { AppModule } from '../../../../app/app.module'
+import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
+import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
+import { FixtureUtilsService } from '../../utils/fixture-utils.service'
+import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -140,7 +140,7 @@ describe('DeploymentController v2', () => {
       .set('x-circle-id', '12345')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({error: 'Bad Request', message: errorMessages, statusCode: 400})
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
       })
   })
 
@@ -181,6 +181,7 @@ describe('DeploymentController v2', () => {
 
     const executionsCount = await manager.findAndCount(Execution)
     expect(executionsCount[1]).toEqual(1)
-    const execution = await manager.findOneOrFail(Execution, {relations: ['deployment']})
+    const execution = await manager.findOneOrFail(Execution, { relations: ['deployment'] })
     expect(execution.deployment.id).toEqual(response.body.id)
-  })})
+  })
+})

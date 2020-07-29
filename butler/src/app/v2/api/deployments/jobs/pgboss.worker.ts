@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc';
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
@@ -23,10 +23,11 @@ import { DeploymentHandler } from '../use-cases/deployment-handler';
 import PgBoss = require('pg-boss');
 
 @Injectable()
-export class PgBossWorker implements OnModuleInit, OnModuleDestroy{
+export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   public pgBoss: PgBoss
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
+    @Inject(forwardRef(() => DeploymentHandler))
     private readonly deploymentHandler: DeploymentHandler,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     envConfiguration: IEnvConfiguration,
@@ -34,7 +35,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy{
     this.pgBoss = new PgBoss(envConfiguration.pgBossConfig)
   }
 
-  publish(params: DeploymentEntity) : Promise<string| null>{
+  publish(params: DeploymentEntity): Promise<string | null> {
     return this.pgBoss.publish('deployment-queue', params)
   }
 
@@ -50,7 +51,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy{
     })
   }
 
-  async onModuleDestroy(): Promise<void>{
+  async onModuleDestroy(): Promise<void> {
     this.consoleLoggerService.log('Shutting down onModuleDestroy')
     return await this.pgBoss.stop()
   }
