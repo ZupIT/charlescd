@@ -66,7 +66,7 @@ func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 }
 
 func (manager Manager) pipelineOnSuccess(pipeline pipelinePKG.Pipeline) {
-	payload := Payload{Status: "FAILED", CallbackType: pipeline.Webhook.CallbackType }
+	payload := Payload{Status: "SUCCEEDED", CallbackType: pipeline.Webhook.CallbackType }
 
 	manager.triggerWebhook(pipeline, payload)
 }
