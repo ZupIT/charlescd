@@ -18,7 +18,7 @@ export const validationResolver = (data: CheckPassword) => {
   const error: Error = {};
 
   forEach(checkPoints, checkPoint => {
-    const isValid = checkPoint.rule(data.password);
+    const isValid = checkPoint.rule(data.password, data.confirmPassword);
     const field =
       checkPoint.name !== 'Confirm password' ? 'password' : 'confirmPassword';
 
