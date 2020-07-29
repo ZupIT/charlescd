@@ -334,7 +334,7 @@ class JdbcDeploymentRepository(
         return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
     }
 
-    override fun findActiveByComponentId(componentId: String): Set<Deployment>? {
+    override fun findActiveByComponentId(componentId: String): List<Deployment> {
         val statement = """
                 SELECT  deployments.id                        AS deployment_id,
                         deployments.created_at                AS deployment_created_at,
@@ -378,6 +378,6 @@ class JdbcDeploymentRepository(
             statement,
             arrayOf(componentId),
             deploymentExtractor
-        )
+        )?.toList() ?: emptyList()
     }
 }

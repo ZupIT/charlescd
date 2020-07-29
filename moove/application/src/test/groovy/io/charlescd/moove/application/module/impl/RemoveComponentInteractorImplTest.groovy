@@ -65,7 +65,7 @@ class RemoveComponentInteractorImplTest extends Specification {
 
         then:
         1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
-        1 * deploymentsRepository.findActiveByComponentId(_) >> null
+        1 * deploymentsRepository.findActiveByComponentId(_) >> []
 
         1 * moduleRepository.removeComponents(_) >> { arguments ->
             def moduleArg = arguments[0]
@@ -167,7 +167,7 @@ class RemoveComponentInteractorImplTest extends Specification {
         when:
         removeComponentInteractor.execute(moduleId, componentOneId, workspaceId)
         then:
-        1* deploymentsRepository.findActiveByComponentId(componentOne.id) >> new HashSet([deployment])
+        1* deploymentsRepository.findActiveByComponentId(componentOne.id) >> new ArrayList([deployment])
         1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
         0 * moduleRepository.removeComponents(_) >> _
         def exception = thrown(BusinessException)

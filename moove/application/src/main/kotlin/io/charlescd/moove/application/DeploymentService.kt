@@ -63,7 +63,7 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         )
     }
 
-    fun findActiveByComponentId(componentId: String): Set<Deployment>? {
+    fun findActiveByComponentId(componentId: String): List<Deployment> {
         return this.deploymentRepository.findActiveByComponentId(
             componentId
         )

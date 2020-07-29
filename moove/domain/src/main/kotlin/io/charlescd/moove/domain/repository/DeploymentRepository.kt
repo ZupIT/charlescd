@@ -55,5 +55,5 @@ interface DeploymentRepository {
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats>
 
-    fun findActiveByComponentId(componentId: String): Set<Deployment>?
+    fun findActiveByComponentId(componentId: String): List<Deployment>
 }
