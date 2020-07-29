@@ -16,10 +16,11 @@
 
 package io.charlescd.moove.application.circle
 
+import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.response.CircleHistoryResponse
 import io.charlescd.moove.domain.PageRequest
 
 interface FindCirclesHistoryInteractor {
 
-    fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): CircleHistoryResponse
+    fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): ResourcePageResponse<CircleHistoryResponse>
 }

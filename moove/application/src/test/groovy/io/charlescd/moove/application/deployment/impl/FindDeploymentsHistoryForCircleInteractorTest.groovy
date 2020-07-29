@@ -56,6 +56,30 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         result.isLast
     }
 
+    def 'should verify filter passed contains status and circle id'() {
+        given:
+        def circle = "circle-id-1"
+
+        DeploymentHistoryFilter parameteres = null
+
+        when:
+        findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
+
+        then:
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >>
+                { arguments ->
+                    parameteres = (DeploymentHistoryFilter) arguments[1]
+                    return new Page<DeploymentHistory>([], 0, 10, 0)
+                }
+        0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
+        0 * _
+
+        parameteres.deploymentName == null
+        parameteres.periodBefore == null
+        parameteres.deploymentStatus == [DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED]
+        parameteres.circlesIds == [circle]
+    }
+
     def 'should return when deployments found'() {
         given:
         def circle = "circle-id-1"
