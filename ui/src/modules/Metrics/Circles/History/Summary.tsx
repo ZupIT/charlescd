@@ -17,16 +17,14 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Loader from '../../Loaders/index';
-import { CircleSummary } from '../interfaces';
 import Styled from './styled';
 
 type Props = {
-  legend: CircleSummary;
   isLoading: boolean;
   onSearch: (name: string) => void;
 };
 
-const Summary = ({ legend, isLoading, onSearch }: Props) => {
+const Summary = ({ isLoading, onSearch }: Props) => {
   return (
     <>
       <Styled.HistoryHeader>
@@ -46,9 +44,9 @@ const Summary = ({ legend, isLoading, onSearch }: Props) => {
       ) : (
         <Styled.HistoryLegend>
           <Styled.Dot active={true} />
-          <Text.h5 color="dark">Active: {legend?.active}</Text.h5>
+          <Text.h5 color="dark">Active</Text.h5>
           <Styled.Dot active={false} />
-          <Text.h5 color="dark">Inactive: {legend?.inactive}</Text.h5>
+          <Text.h5 color="dark">Inactive</Text.h5>
         </Styled.HistoryLegend>
       )}
     </>
