@@ -99,3 +99,15 @@ test('close UsersComparationItem component', async () => {
     fireEvent.click(tabPanelCloseButton);
     wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).not.toBeInTheDocument())
 });
+
+test('render UsersComparationItem component and trigger ModalResetPassword', async () => {
+  const { queryByTestId, getByTestId } = render(
+    <UsersComparationItem {...props} onChange={jest.fn} />
+  );
+
+  await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+
+  const buttonResetPassword = queryByTestId('labeledIcon-shield');
+  fireEvent.click(buttonResetPassword);
+  await wait(() => expect(queryByTestId('modal-default')).toBeInTheDocument());
+});
