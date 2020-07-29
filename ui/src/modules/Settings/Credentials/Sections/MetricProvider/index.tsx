@@ -60,7 +60,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
   const renderConnectionMessage = () => (
     <Styled.StatusWrapper status="error">
       <Icon size="10px" name="error" />
-      <Text.h5>Major outage.</Text.h5>
+      <Text.h5>Connection to metric provider failed.</Text.h5>
     </Styled.StatusWrapper>
   );
 
@@ -72,15 +72,17 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
       {data && !responseRemove && (
-        <Card.Config
-          icon="metrics"
-          description={data.provider}
-          isLoading={loadingRemove}
-          onClose={() => remove()}
-        />
+        <>
+          <Card.Config
+            icon="metrics"
+            description={data.provider}
+            isLoading={loadingRemove}
+            onClose={() => remove()}
+          />
+          {response?.status === statusConnection.FAILED &&
+            renderConnectionMessage()}
+        </>
       )}
-      {response?.status === statusConnection.FAILED &&
-        renderConnectionMessage()}
     </Section>
   );
 
