@@ -25,6 +25,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import javax.inject.Named
 import javax.transaction.Transactional
+import javax.validation.ConstraintViolationException
 
 @Named
 open class AddComponentInteractorImpl(private val moduleService: ModuleService) : AddComponentInteractor {
@@ -34,8 +35,11 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
         val module = moduleService.find(id, workspaceId)
         checkIfComponentAlreadyExist(module, request)
         val component = request.toDomain(module.id, workspaceId)
-
-        moduleService.addComponents(module.copy(components = listOf(component)))
+        try {
+            moduleService.addComponents(module.copy(components = listOf(component)))
+        } catch (exception: ConstraintViolationException) {
+            throw BusinessException.of(MooveErrorCode.COMPONENT_NAME_ALREADY_REGISTERED_IN_WORKSPACE)
+        }
 
         return ComponentResponse.from(component)
     }
@@ -47,5 +51,4 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
         module.findComponentByName(request.name)
             ?.let { throw BusinessException.of(MooveErrorCode.COMPONENT_ALREADY_REGISTERED) }
     }
-
 }

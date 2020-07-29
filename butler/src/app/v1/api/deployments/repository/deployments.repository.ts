@@ -27,4 +27,23 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
   ): Promise<void> {
     await this.update(deploymentId, { status, finishedAt: new Date() })
   }
+<<<<<<< HEAD
+=======
+
+  public async findWithAllRelations(component: ComponentDeploymentEntity, moduleId: any, cdConfigurationId: string) {
+
+    const deployment  =  await this.createQueryBuilder('deployments')
+      .innerJoinAndSelect('deployments.modules', 'moduleDeployment')
+      .innerJoinAndSelect('moduleDeployment.components', 'componentDeployment', 'moduleDeployment.id = componentDeployment.moduleDeployment')
+      .innerJoinAndSelect(ComponentEntity, 'component', 'componentDeployment.componentId = component.id')
+      .innerJoinAndSelect(ModuleEntity, 'module',  'moduleDeployment.moduleId = module.id')
+      .andWhere('moduleDeployment.moduleId = :moduleId', { moduleId: moduleId })
+      .andWhere('componentDeployment.componentName = :name', { name: component.componentName })
+      .andWhere('component.id != :componentId', { componentId: component.componentId })
+      .andWhere('deployments.cdConfigurationId = :cdConfigurationId', { cdConfigurationId: cdConfigurationId })
+      .addOrderBy('createdAt','DESC')
+      .getOne()
+    return deployment
+  }
+>>>>>>> 73efa1f33... corrections
 }
