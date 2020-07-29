@@ -343,7 +343,30 @@ class JdbcDeploymentRepository(
                         deployments.circle_id                 AS deployment_circle_id,
                         deployments.build_id                  AS deployment_build_id,
                         deployments.workspace_id              AS deployment_workspace_id 
+                        deployment_user.id                    AS deployment_user_id,
+                        deployment_user.name                  AS deployment_user_name,
+                        deployment_user.email                 AS deployment_user_email,
+                        deployment_user.photo_url             AS deployment_user_photo_url,
+                        deployment_user.created_at            AS deployment_user_created_at,
+                        deployment_circle.id                  AS deployment_circle_id,
+                        deployment_circle.name                AS deployment_circle_name,
+                        deployment_circle.reference           AS deployment_circle_reference,
+                        deployment_circle.created_at          AS deployment_circle_created_at,
+                        deployment_circle.matcher_type        AS deployment_circle_matcher_type,
+                        deployment_circle.rules               AS deployment_circle_rules,
+                        deployment_circle.imported_kv_records AS deployment_circle_imported_kv_records,
+                        deployment_circle.imported_at         AS deployment_circle_imported_at,
+                        deployment_circle.default_circle      AS deployment_circle_default_circle,
+                        deployment_circle.workspace_id        AS deployment_circle_workspace_id,
+                        deployment_circle_user.id             AS deployment_circle_user_id,
+                        deployment_circle_user.name           AS deployment_circle_user_name,
+                        deployment_circle_user.email          AS deployment_circle_user_email,
+                        deployment_circle_user.photo_url      AS deployment_circle_user_photo_url,
+                        deployment_circle_user.created_at     AS deployment_circle_user_created_at
                 FROM deployments
+                    LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
+                    LEFT JOIN circles deployment_circle ON deployments.circle_id = deployment_circle.id
+                    LEFT JOIN users deployment_circle_user ON deployment_circle.user_id = deployment_circle_user.id
                     INNER JOIN modules deployment_module ON deployment_module.workspace_id = deployments.workspace_id
                     INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
                     INNER JOIN builds deployment_builds ON deployment_builds.id = deployments.build_id
