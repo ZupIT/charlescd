@@ -18,21 +18,27 @@ import React from 'react';
 import { render, fireEvent } from 'unit-test/testUtils';
 import InputAction from '..';
 
+const onClick = jest.fn();
+
+const props = {
+  name: 'test',
+  icon: 'copy',
+  defaultValue: '123457'
+};
+
 test('render InputAction component and fire action', () => {
-  const onClick = jest.fn();
-
-  const props = {
-    name: 'test',
-    icon: 'copy',
-    defaultValue: '123457'
-  };
-
   const { getByTestId } = render(
     <InputAction { ... props } onClick={onClick} />
   );
 
   const element = getByTestId(`input-action-${props.name}`);
   expect(element).toBeInTheDocument();
+});
+
+test('render InputAction component and fire action', () => {
+  const { getByTestId } = render(
+    <InputAction { ... props } onClick={onClick} />
+  );
   
   const button = getByTestId(`input-action-${props.name}-button`);
   fireEvent.click(button);
