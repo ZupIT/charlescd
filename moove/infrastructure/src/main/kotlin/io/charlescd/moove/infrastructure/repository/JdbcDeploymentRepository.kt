@@ -336,7 +336,7 @@ class JdbcDeploymentRepository(
 
     override fun findActiveByComponentId(componentId: String): Set<Deployment>? {
         val statement = """
-                SELECT deployment_component.name,deployment_component.id, deployments.id                        AS deployment_id,
+                SELECT  deployments.id                        AS deployment_id,
                         deployments.created_at                AS deployment_created_at,
                         deployments.deployed_at               AS deployment_deployed_at,
                         deployments.status                    AS deployment_status,
@@ -349,7 +349,7 @@ class JdbcDeploymentRepository(
                     INNER JOIN builds deployment_builds ON deployment_builds.id = deployments.build_id
                     INNER JOIN builds_features builds_features ON builds_features.build_id = deployments.build_id
                     INNER JOIN features_modules features_modules ON features_modules.module_id = deployment_module.id
-                WHERE deployment_component.id  = ? AND deployments.STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
+                WHERE deployment_component.id = ? AND deployments.STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
         """
         return this.jdbcTemplate.query(
             statement,
