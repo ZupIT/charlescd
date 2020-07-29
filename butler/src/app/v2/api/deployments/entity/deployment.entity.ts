@@ -26,9 +26,10 @@ import { ComponentEntityV2 as ComponentEntity, ReadComponentDTO } from './compon
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { ReadCdConfigurationDto } from '../../../../v1/api/configurations/dto'
+import { Deployment } from '../../../core/integrations/spinnaker/interfaces'
 
 @Entity('v2deployments')
-export class DeploymentEntityV2 {
+export class DeploymentEntityV2 implements Deployment {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string
