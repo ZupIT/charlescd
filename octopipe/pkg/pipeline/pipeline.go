@@ -17,121 +17,142 @@
 package pipeline
 
 import (
-	"context"
-	"log"
 	"octopipe/pkg/cloudprovider"
-	"octopipe/pkg/database"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"octopipe/pkg/deployment"
+	"octopipe/pkg/repository"
+	"octopipe/pkg/repository/github"
+	"octopipe/pkg/template"
+	"octopipe/pkg/template/helm"
 )
 
-type Git struct {
+type NonAdjustablePipelineVersion struct {
+	Version    string `json:"version"`
+	VersionURL string `json:"versionUrl"`
+}
+
+type NonAdjustablePipelineGithub struct {
 	Provider string `json:"provider"`
 	Token    string `json:"token"`
 }
 
-type Template struct {
-	Type       string            `json:"type"`
-	Repository string            `json:"repository"`
-	Override   map[string]string `json:"overrideValues"`
+type NonAdjustablePipeline struct {
+	AppName        string                         `json:"appName"`
+	AppNamespace   string                         `json:"appNamespace"`
+	Git            NonAdjustablePipelineGithub    `json:"git"`
+	HelmURL        string                         `json:"helmUrl"`
+	Istio          map[string]interface{}         `json:"istio"`
+	UnusedVersions []NonAdjustablePipelineVersion `json:"unusedVersions"`
+	Versions       []NonAdjustablePipelineVersion `json:"versions"`
+	WebHookUrl     string                         `json:"webhookUrl"`
+	CircleID       string                         `json:"circleID"`
+	K8s            cloudprovider.Cloudprovider    `json:"k8s"`
+}
+
+type StepTemplate struct {
+	Repository repository.Repository `json:"reposository"`
+	template.Template
+}
+
+type StepWebhook struct {
+	Url     string            `json:"url"`
+	Headers map[string]string `json:"headers"`
+	Method  string            `json:"method"`
 }
 
 type Step struct {
-	Name        string                       `json:"name"`
-	ModuleName  string                       `json:"moduleName"`
-	Namespace   string                       `json:"namespace"`
-	Action      string                       `json:"action"`
-	Webhook     string                       `json:"webhook"`
-	ForceUpdate bool                         `json:"forceUpdate"`
-	Manifest    map[string]interface{}       `json:"manifest"`
-	Template    *Template                    `json:"template"`
-	Git         *Git                         `json:"git"`
-	K8sConfig   *cloudprovider.Cloudprovider `json:"k8s"`
+	Action     string                 `json:"action"`
+	Update     bool                   `json:"update"`
+	Repository repository.Repository  `json:"reposository"`
+	Template   template.Template      `json:"template"`
+	Manifest   map[string]interface{} `json:"manifest"`
 }
 
 type Pipeline struct {
-	ID      primitive.ObjectID `bson:"_id" json:"id,omitempty"`
-	Name    string             `json:"name"`
-	Webhook string             `json:"webhook"`
-	Stages  [][]*Step          `json:"stages"`
+	Name      string                      `json:"name"`
+	Namespace string                      `json:"namespace"`
+	Stages    [][]Step                    `json:"stages"`
+	Webhook   StepWebhook                 `json:"webhook"`
+	Config    cloudprovider.Cloudprovider `json:"config"`
 }
 
-type UseCases interface {
-	FindAll() (*[]Pipeline, error)
-	FindByID(id string) (*Pipeline, error)
-	Create(pipeline *Pipeline) (*primitive.ObjectID, error)
+func (main PipelineMain) NewPipeline() Pipeline {
+	return Pipeline{}
 }
 
-type PipelineManager struct {
-	DB database.UseCases
-}
-
-const (
-	collection = "pipelines"
-)
-
-func NewPipelineManager(db database.UseCases) UseCases {
-	return &PipelineManager{DB: db}
-}
-
-func (executionManager *PipelineManager) FindAll() (*[]Pipeline, error) {
-	executions := []Pipeline{}
-	sort := map[string]int{"starttime": -1}
-	opts := &options.FindOptions{
-		Sort: sort,
+func (deprecatedPipeline NonAdjustablePipeline) ToPipeline() Pipeline {
+	versionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.Versions, deployment.DeployAction)
+	unusedVersionsSteps := deprecatedPipeline.generateVersionSteps(deprecatedPipeline.UnusedVersions, deployment.UndeployAction)
+	istioSteps := deprecatedPipeline.generateIstioSteps()
+	pipeline := Pipeline{
+		Name:      deprecatedPipeline.AppName,
+		Namespace: deprecatedPipeline.AppNamespace,
+		Stages: [][]Step{
+			versionsSteps,
+			unusedVersionsSteps,
+			istioSteps,
+		},
+		Webhook: StepWebhook{
+			Url: deprecatedPipeline.WebHookUrl,
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+				"x-circle-id":  deprecatedPipeline.CircleID,
+			},
+			Method: "POST",
+		},
+		Config: deprecatedPipeline.K8s,
 	}
-	cur, err := executionManager.DB.FindAll(context.TODO(), collection, map[string]string{}, opts)
-	if err != nil {
-		return nil, err
-	}
 
-	for cur.Next(context.TODO()) {
-		var execution Pipeline
-		err := cur.Decode(&execution)
+	return pipeline
+}
 
-		if err != nil {
-			return nil, err
+func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []NonAdjustablePipelineVersion, action string) []Step {
+	steps := []Step{}
+
+	for _, version := range versions {
+		if version.Version == "" {
+			continue
 		}
 
-		executions = append(executions, execution)
+		steps = append(steps, Step{
+			Action: action,
+			Update: false,
+			Repository: repository.Repository{
+				Type: deprecatedPipeline.Git.Provider,
+				GithubRepository: github.GithubRepository{
+					Token: deprecatedPipeline.Git.Token,
+					Url:   deprecatedPipeline.HelmURL,
+				},
+			},
+			Template: template.Template{
+				Type: template.HelmType,
+				HelmTemplate: helm.HelmTemplate{
+					OverrideValues: map[string]string{
+						"Name":      version.Version,
+						"Namespace": deprecatedPipeline.AppNamespace,
+						"image.tag": version.VersionURL,
+					},
+				},
+			},
+		})
 	}
 
-	return &executions, nil
-
+	return steps
 }
 
-func (executionManager *PipelineManager) FindByID(id string) (*Pipeline, error) {
-	pipeline := Pipeline{}
-	objectID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, err
+func (deprecatedPipeline NonAdjustablePipeline) generateIstioSteps() []Step {
+	steps := []Step{}
+
+	for _, version := range deprecatedPipeline.Istio {
+		if len(version.(map[string]interface{})) == 0 {
+			continue
+		}
+
+		steps = append(steps, Step{
+			Action:   deployment.DeployAction,
+			Update:   true,
+			Manifest: version.(map[string]interface{}),
+		})
 	}
 
-	filter := bson.M{"_id": objectID}
-	err = executionManager.DB.FindOne(context.TODO(), collection, filter).Decode(&pipeline)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pipeline, nil
-}
-
-func (executionManager *PipelineManager) Create(pipeline *Pipeline) (*primitive.ObjectID, error) {
-	newPipeline := &Pipeline{
-		Name: pipeline.Name,
-	}
-
-	newPipeline.ID = primitive.NewObjectID()
-	result, err := executionManager.DB.Create(context.TODO(), collection, newPipeline)
-	if err != nil {
-		log.Println("ERROR", err)
-		return nil, err
-	}
-
-	log.Println("RESULT", result)
-
-	objID := result.InsertedID.(primitive.ObjectID)
-	return &objID, nil
+	return steps
 }

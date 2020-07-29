@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package template
+package repository
 
 import (
 	"errors"
-	"octopipe/pkg/template/helm"
+	"octopipe/pkg/repository/github"
 
 	log "github.com/sirupsen/logrus"
 )
 
 const (
-	HelmType = "HELM"
+	GithubType = "GITHUB"
 )
 
 type UseCases interface {
-	GetManifests(templateContent, valueContent string) (map[string]interface{}, error)
+	GetTemplateAndValueByName(name string) (string, string, error)
 }
 
-type Template struct {
+type Repository struct {
 	Type string `json:"type"`
-	helm.HelmTemplate
+	github.GithubRepository
 }
 
-func (main TemplateMain) NewTemplate(template Template) (UseCases, error) {
-	switch template.Type {
-	case HelmType:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("Selected helm template")
-		return helm.NewHelmTemplate(template.HelmTemplate), nil
+func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error) {
+	switch repository.Type {
+	case GithubType:
+		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected github repository")
+		return github.NewGithubRepository(repository.GithubRepository), nil
 	default:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Error("No template selected")
-		return nil, errors.New("Template not found")
+		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("No valid repository")
+		return nil, errors.New("Repository not found")
 	}
 }
