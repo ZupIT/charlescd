@@ -54,11 +54,7 @@ const HistoryComponent = () => {
 
   return (
     <Styled.HistoryWrapper>
-      <Summary
-        legend={response?.summary}
-        isLoading={loading}
-        onSearch={setName}
-      />
+      <Summary isLoading={loading} onSearch={setName} />
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>

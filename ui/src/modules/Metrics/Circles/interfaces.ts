@@ -35,13 +35,7 @@ export interface CircleHistory {
   lastUpdatedAt: string;
 }
 
-export type CircleSummary = {
-  active: number;
-  inactive: number;
-};
-
 export type CirclesHistoryResponse = {
-  summary: CircleSummary;
   page: Pagination<CircleHistory>;
 };
 
