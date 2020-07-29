@@ -22,11 +22,16 @@ package io.charlescd.moove.metrics.api
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
 import io.charlescd.moove.metrics.interactor.VerifyProviderConnectionInteractor
+import io.charlescd.moove.metrics.interactor.VerifyWorkspaceProviderConnectionInteractor
 import spock.lang.Specification
 
 class ConfigControllerUnitTest extends Specification {
     def verifyProviderConnectionInteractor = Mock(VerifyProviderConnectionInteractor)
-    def configController = new ConfigController(verifyProviderConnectionInteractor)
+    def verifyWorkspaceProviderConnectionInteractor = Mock(VerifyWorkspaceProviderConnectionInteractor)
+    def configController = new ConfigController(verifyProviderConnectionInteractor, verifyWorkspaceProviderConnectionInteractor)
+
+    def workspaceId = "workspace-id"
+    def providerId = "provider-id"
 
     def 'should verify provider connection'() {
         given:
@@ -40,6 +45,23 @@ class ConfigControllerUnitTest extends Specification {
 
         then:
         1 * verifyProviderConnectionInteractor.execute(url, providerType) >> connectionRepresentation
+        0 * _
+
+        response != null
+        response.status == "SUCCESS"
+    }
+
+    def 'should verify provider connection in a workspace'() {
+        given:
+        def providerType = MetricConfiguration.ProviderEnum.PROMETHEUS
+
+        def connectionRepresentation = new ProviderConnectionRepresentation("SUCCESS")
+
+        when:
+        def response = configController.verifyProviderConnectionByIdAndWorkspaceId(workspaceId, providerId, providerType)
+
+        then:
+        1 * verifyWorkspaceProviderConnectionInteractor.execute(workspaceId, providerId, providerType) >> connectionRepresentation
         0 * _
 
         response != null
