@@ -41,5 +41,4 @@ class ConfigController(
         @RequestParam providerType: MetricConfiguration.ProviderEnum
     ): ProviderConnectionRepresentation =
         verifyProviderConnectionInteractor.execute(provider, providerType)
-
 }
