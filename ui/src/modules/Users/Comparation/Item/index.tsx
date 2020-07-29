@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import copyToClipboard from 'clipboard-copy';
@@ -44,6 +44,7 @@ interface Props {
 const UsersComparationItem = ({ email, onChange }: Props) => {
   const history = useHistory();
   const [isOpenModalPassword, toggleModalPassword] = useState(false);
+  const [isNewPassword, toggleNewPassword] = useState(false);
   const [action, setAction] = useState('');
   const [user, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
@@ -82,6 +83,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const handleDelete = (userId: string, userName: string) => {
     delUser(userId, userName);
     setAction('');
+  };
+
+  const handleOnClickReset = () => {
+    toggleNewPassword(true);
   };
 
   const renderWarning = () => (
@@ -178,17 +183,30 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
       {!user ? <Loader.Tab /> : renderPanel()}
       {isOpenModalPassword && (
-        <Modal.Default onClose={() => toggleModalPassword(false)}>
+        <Styled.Modal.Default onClose={() => toggleModalPassword(false)}>
           <Text.h2 weight="bold" color="light">
             Reset password
           </Text.h2>
           <Text.h4 color="dark">
-            Are you sure you want to reset (email)s password?
+            Are you sure you want to reset <strong>{user.email}</strong>
+            {`'`}s password?
           </Text.h4>
-          <Button.Default size="EXTRA_SMALL" isLoading={false}>
+          <Button.Default
+            size="EXTRA_SMALL"
+            isLoading={false}
+            onClick={handleOnClickReset}
+          >
             Yes, reset password
           </Button.Default>
-        </Modal.Default>
+          {isNewPassword && (
+            <Fragment>
+              <Text.h4 color="dark">
+                New password generated. Contact the user and send the new
+                password.
+              </Text.h4>
+            </Fragment>
+          )}
+        </Styled.Modal.Default>
       )}
     </Styled.Wrapper>
   );
