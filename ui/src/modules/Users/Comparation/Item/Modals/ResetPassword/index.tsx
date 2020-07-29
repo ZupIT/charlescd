@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import InputAction from 'core/components/Form/InputAction';
@@ -29,6 +29,8 @@ interface Props {
 
 const ModalResetPassword = ({ user, onClose }: Props) => {
   const [isNewPassword, toggleNewPassword] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const TIMEOUT_COPIED = 1500;
   const PASS = 'TODO: new-password';
 
   const handleOnClickReset = () => {
@@ -37,7 +39,19 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
 
   const handleCopyToClipboard = () => {
     copyToClipboard(PASS);
+    setIsCopied(true);
   };
+
+  useEffect(() => {
+    let timeout = 0;
+    if (isCopied) {
+      timeout = setTimeout(() => {
+        setIsCopied(false);
+      }, TIMEOUT_COPIED);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [isCopied]);
 
   return (
     <Styled.Modal onClose={() => onClose(false)}>
@@ -49,6 +63,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
         {`'`}s password?
       </Text.h4>
       <Button.Default
+        id="reset-password"
         size="EXTRA_SMALL"
         isLoading={false}
         isDisabled={isNewPassword}
@@ -64,7 +79,8 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
           <InputAction
             isDisabled
             name="new-password"
-            icon="copy"
+            icon={isCopied ? 'checkmark-circle' : 'copy'}
+            iconColor={isCopied ? 'success' : 'dark'}
             defaultValue={PASS}
             onClick={handleCopyToClipboard}
           />
