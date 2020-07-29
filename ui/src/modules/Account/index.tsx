@@ -45,7 +45,7 @@ const Account = () => {
   const { register, handleSubmit } = useForm<User>();
   const [loadedUser, , loadUser, ,] = useUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
-  const [toggleModal, setToggleModal] = useState(true);
+  const [toggleModal, setToggleModal] = useState(false);
 
   const refresh = useCallback(() => loadUser(email), [loadUser, email]);
 
