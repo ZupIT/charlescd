@@ -1,9 +1,27 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import React from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
+import { getProfileByKey } from 'core/utils/profile';
 import { validationResolver } from 'core/components/CheckPassword';
+import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
 
 const ChangePassword = () => {
@@ -18,11 +36,14 @@ const ChangePassword = () => {
     mode: 'onBlur',
     validationResolver
   });
-  const password = watch('password') as string;
+  const newPassword = watch('newPassword') as string;
   const confirmPass = watch('confirmPassword') as string;
+  const { updatePassword } = useChangePassword();
 
   const onSubmit = () => {
-    console.log('submit', getValues());
+    const id = getProfileByKey('id');
+    const { oldPassword, newPassword } = getValues();
+    updatePassword(id, { oldPassword, newPassword });
   };
 
   return (
@@ -42,12 +63,12 @@ const ChangePassword = () => {
       </Styled.Modal.Info>
       <Styled.Password
         label="New password"
-        name="password"
+        name="newPassword"
         ref={register({ required: true })}
-        hasError={!isEmpty(errors?.password)}
+        hasError={!isEmpty(errors?.newPassword)}
       />
-      {errors?.password && (
-        <Styled.Error color="error">{errors.password.message}</Styled.Error>
+      {errors?.newPassword && (
+        <Styled.Error color="error">{errors.newPassword.message}</Styled.Error>
       )}
       <Styled.Password
         label="Confirm new password"
@@ -60,7 +81,7 @@ const ChangePassword = () => {
           {errors.confirmPassword.message}
         </Styled.Error>
       )}
-      <Styled.CheckPassword password={password} confirmPass={confirmPass} />
+      <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
       <Button.Default
         type="submit"
         size="EXTRA_SMALL"
