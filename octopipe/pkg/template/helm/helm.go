@@ -80,12 +80,12 @@ func (helmTemplate HelmTemplate) getHelmChartAndValues(templateContent, valueCon
 
 	newChart, err := loader.LoadArchive(strings.NewReader(templateContent))
 	if err != nil {
-		return chart.Chart{}, nil, err
+		return chart.Chart{}, nil, errors.New("Error load chart archive. Error: " + err.Error())
 	}
 
 	values, err := chartutil.ReadValues([]byte(valueContent))
 	if err != nil {
-		return chart.Chart{}, nil, err
+		return chart.Chart{}, nil, errors.New("Error load chart values. Error: " + err.Error())
 	}
 
 	renderedValues, err := chartutil.ToRenderValues(newChart, values.AsMap(), chartutil.ReleaseOptions{}, nil)
@@ -95,7 +95,7 @@ func (helmTemplate HelmTemplate) getHelmChartAndValues(templateContent, valueCon
 
 	overridedValues, err := helmTemplate.overrideValues(renderedValues.AsMap(), overrideValues)
 	if err != nil {
-		return chart.Chart{}, nil, err
+		return chart.Chart{}, nil, errors.New("Error override values in template. Error: " + err.Error())
 	}
 
 	return *newChart, overridedValues, nil
