@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
 import Icon from 'core/components/Icon';
@@ -23,6 +23,8 @@ import { UserChecked } from '../../interfaces/UserChecked';
 import Styled from './styled';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Button from 'core/components/Button';
+import isEmpty from 'lodash/isEmpty';
+import { remove } from 'lodash';
 
 interface UserItemProps extends User {
   checked: boolean;
@@ -39,9 +41,14 @@ export interface Props {
   isOpen: boolean;
   onClose?: () => void;
   onSearch: (name: string) => void;
-  onSelected: (id: string, checked: boolean) => void;
+  onSelected: (changedUsers: ChangedUser[]) => void;
   className?: string;
   isOutsideClick?: boolean;
+}
+
+export interface ChangedUser {
+  id: string;
+  checked: boolean;
 }
 
 const MemberChecked = ({ checked }: UserCheckedProps) => (
@@ -54,30 +61,30 @@ const MemberChecked = ({ checked }: UserCheckedProps) => (
   </Styled.Item.Checked>
 );
 
-const UserItem = ({
-  id,
-  name,
-  email,
-  photoUrl,
-  checked,
-  onSelected
-}: UserItemProps) => {
+const UserItem = ({ id, name, email, photoUrl, onSelected }: UserItemProps) => {
   const userItemRef = useRef<HTMLDivElement>();
 
   const [isSelected, setIsSelected] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    onSelected(userId, isChecked);
+  }, [userId, isChecked, onSelected]);
 
   useOutsideClick(userItemRef, () => {
     setIsSelected(false);
   });
 
-  const handleSelected = (id: string, checked: boolean) => {
-    onSelected(id, checked);
+  const handleSelected = (id: string) => {
+    setIsChecked(!isChecked);
     setIsSelected(true);
+    setUserId(id);
   };
 
   return (
     <Styled.Item.Wrapper
-      onClick={() => handleSelected(id, checked)}
+      onClick={() => handleSelected(id)}
       isSelected={isSelected}
       ref={userItemRef}
     >
@@ -88,7 +95,7 @@ const UserItem = ({
           <Styled.Item.Email>{email}</Styled.Item.Email>
         </div>
       </Styled.Item.Profile>
-      <MemberChecked checked={checked} onSelected={onSelected} />
+      <MemberChecked checked={isChecked} onSelected={onSelected} />
     </Styled.Item.Wrapper>
   );
 };
@@ -102,9 +109,8 @@ const AddUserModal = ({
   onSelected,
   isOutsideClick
 }: Props) => {
-  const [userId, setUserId] = useState('');
-  const [userChecked, setUserChecked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [changedUsers, setChangedUsers] = useState<ChangedUser[]>([]);
 
   const handleChange = debounce(onSearch, 500);
 
@@ -120,9 +126,15 @@ const AddUserModal = ({
   useOutsideClick(contentRef, () => setIsDisabled(true));
 
   const setSelected = (id: string, checked: boolean) => {
-    setUserId(id);
-    setUserChecked(checked);
-    setIsDisabled(false);
+    if (!isEmpty(id)) {
+      setIsDisabled(false);
+      map(changedUsers, user => {
+        if (user?.id === id) {
+          remove(changedUsers, user => user.id === id);
+        }
+      });
+      setChangedUsers([...changedUsers, { id, checked }]);
+    }
   };
 
   return (
@@ -159,7 +171,10 @@ const AddUserModal = ({
           <Styled.Button.Update>
             <Button.Default
               isDisabled={isDisabled}
-              onClick={() => onSelected(userId, userChecked)}
+              onClick={() => {
+                onSelected(changedUsers);
+                setChangedUsers([]);
+              }}
             >
               Update
             </Button.Default>
