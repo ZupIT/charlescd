@@ -15,16 +15,16 @@
  */
 
 import React from 'react';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
 import ModalResetPassword from '..';
 
+const onClose = jest.fn();
+
+const props = {
+  user: { id: '123', name: 'user', email: 'user@email.com' },
+};
+
 test('render ModalResetPassword component', () => {
-  const onClose = jest.fn();
-
-  const props = {
-    user: { id: '123', name: 'user', email: 'user@email.com' },
-  };
-
   const { getByTestId } = render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
@@ -34,12 +34,6 @@ test('render ModalResetPassword component', () => {
 });
 
 test('render ModalResetPassword component and trigger reset', () => {
-  const onClose = jest.fn();
-
-  const props = {
-    user: { id: '123', name: 'user', email: 'user@email.com' },
-  };
-
   const { getByTestId } = render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
@@ -51,4 +45,8 @@ test('render ModalResetPassword component and trigger reset', () => {
 
   const inputAction = getByTestId('input-action-new-password')
   expect(inputAction).toBeInTheDocument();
+  
+  const iconCopy = getByTestId('icon-copy')
+  expect(iconCopy).toBeInTheDocument();
 });
+
