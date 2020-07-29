@@ -29,15 +29,6 @@ export class TestSetupUtils {
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))
-      // app.useGlobalPipes(
-      //   new ValidationPipe({
-      //     transform: true,
-      //     whitelist: false,
-      //     exceptionFactory: (errors: ValidationError[]) => {
-      //       return new UnprocessableEntityException(errors)
-      //     }
-      //   })
-      // ) TODO apply this pipe on all v1 controllers
       app.enableShutdownHooks();
       await app.init()
       return app

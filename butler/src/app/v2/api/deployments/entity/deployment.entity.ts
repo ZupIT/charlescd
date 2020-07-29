@@ -24,11 +24,12 @@ import {
 } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { Deployment } from '../../../core/integrations/spinnaker/interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
 
 @Entity('v2deployments')
-export class DeploymentEntityV2 {
+export class DeploymentEntityV2 implements Deployment {
 
   @PrimaryGeneratedColumn('uuid')
   public id!: string

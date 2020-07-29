@@ -1,12 +1,13 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity';
+import { Component } from '../../../core/integrations/spinnaker/interfaces'
 
 @Entity('v2components')
-export class ComponentEntityV2 {
+export class ComponentEntityV2 implements Component {
   @PrimaryColumn('uuid')
   public id!: string
 
-  @Column({ name: 'helm_url'})
+  @Column({ name: 'helm_url' })
   public helmUrl!: string
 
   @Column({ name: 'image_tag' })
@@ -24,8 +25,7 @@ export class ComponentEntityV2 {
   @Column({ name: 'component_id' })
   public componentId! : string
 
-
-  @JoinColumn({name: 'deployment_id'})
+  @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   deployment!: DeploymentEntity
 

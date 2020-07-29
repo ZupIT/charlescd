@@ -11,6 +11,8 @@
   "rules": {
     "indent": ["error", 2],
     "quotes": ["error", "single"],
-    "space-before-function-paren": ["error", "never"]
+    "space-before-function-paren": ["error", "never"],
+    "object-curly-spacing": ["error", "always"],
+    "comma-spacing": ["error", { "before":  false, "after":  true }]
   }
 }
