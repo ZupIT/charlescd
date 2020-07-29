@@ -46,7 +46,7 @@ type NonAdjustablePipeline struct {
 	WebHookUrl     string                         `json:"webhookUrl"`
 	CircleID       string                         `json:"circleID"`
 	K8s            cloudprovider.Cloudprovider    `json:"k8s"`
-	CallbackType   string                      	   `json:"callbackType"`
+	CallbackType   string                         `json:"callbackType"`
 }
 
 type StepTemplate struct {
