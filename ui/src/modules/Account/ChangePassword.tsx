@@ -68,7 +68,9 @@ const ChangePassword = () => {
         hasError={!isEmpty(errors?.newPassword)}
       />
       {errors?.newPassword && (
-        <Styled.Error color="error">{errors.newPassword.message}</Styled.Error>
+        <Styled.Error color="error" data-testid="error-newPassword">
+          {errors.newPassword.message}
+        </Styled.Error>
       )}
       <Styled.Password
         label="Confirm new password"
@@ -77,12 +79,13 @@ const ChangePassword = () => {
         hasError={!isEmpty(errors?.confirmPassword)}
       />
       {errors?.confirmPassword && (
-        <Styled.Error color="error">
+        <Styled.Error color="error" data-testid="error-confirmPassword">
           {errors.confirmPassword.message}
         </Styled.Error>
       )}
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
       <Button.Default
+        id="change-password"
         type="submit"
         size="EXTRA_SMALL"
         isDisabled={!formState.isValid}
