@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import ComponentContentIcon from 'core/components/ContentIcon';
 import ComponentLayer from 'core/components/Layer';
 import { slideInLeft } from 'core/assets/style/animate';
+import Modal from 'core/components/Modal';
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -43,9 +44,27 @@ const Actions = styled.div`
   }
 `;
 
+const ModalDefault = styled(Modal.Default)`
+  .modal-container {
+    min-height: 150px;
+    width: 408px;
+  }
+
+  .modal-content {
+    overflow: unset;
+
+    > * {
+      margin-bottom: 15px;
+    }
+  }
+`;
+
 export default {
   Wrapper,
   ContentIcon,
   Layer,
-  Actions
+  Actions,
+  Modal: {
+    Default: ModalDefault
+  }
 };

@@ -23,7 +23,7 @@ import { Input } from 'core/components/Form';
 const Wrapper = styled(Modal.Default)`
   padding: 0;
 
-  .modal-content {
+  .modal-container {
     padding: 0;
     width: 543px;
   }
