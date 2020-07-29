@@ -17,8 +17,10 @@
 package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.Component
+import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.ComponentExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.ComponentHistoryExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -26,7 +28,8 @@ import org.springframework.stereotype.Repository
 @Repository
 class JdbcComponentRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val componentExtractor: ComponentExtractor
+    private val componentExtractor: ComponentExtractor,
+    private val componentHistoryExtractor: ComponentHistoryExtractor
 ) : ComponentRepository {
 
     override fun findById(componentId: String): Optional<Component> {
@@ -44,11 +47,11 @@ class JdbcComponentRepository(
                 WHERE components.id = ?
         """
         return Optional.ofNullable(
-                this.jdbcTemplate.query(
-                        findByIdQuery,
-                        arrayOf(componentId),
-                        componentExtractor
-                )?.firstOrNull()
+            this.jdbcTemplate.query(
+                findByIdQuery,
+                arrayOf(componentId),
+                componentExtractor
+            )?.firstOrNull()
         )
     }
 
@@ -74,8 +77,42 @@ class JdbcComponentRepository(
 	                AND deployments.status = 'DEPLOYED';
         """
         return this.jdbcTemplate
-                .query(findDeployedComponentsAtCircle, arrayOf(circleId, workspaceID), componentExtractor)
-                ?.toList()
+            .query(
+                findDeployedComponentsAtCircle,
+                arrayOf(circleId, workspaceID),
+                componentExtractor
+            )?.toList()
                 ?: emptyList()
+    }
+
+    override fun findComponentsAtDeployments(workspaceId: String, deployments: List<String>?): List<ComponentHistory> {
+        val parameters = mutableListOf<Any>(workspaceId)
+        val query = StringBuilder(
+            """
+                     SELECT deployments.id                  AS deployment_id,
+	                        component_snapshots.name        AS component_name,
+                            module_snapshots."name"         AS module_name,
+	                        artifact_snapshots."version"    AS artifact_version
+                    FROM component_snapshots component_snapshots
+                        INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
+                        INNER JOIN artifact_snapshots artifact_snapshots    ON artifact_snapshots.component_snapshot_id = component_snapshots.id
+                        INNER JOIN feature_snapshots feature_snapshots      ON feature_snapshots.id = module_snapshots.feature_snapshot_id
+                        INNER JOIN builds_features builds_features          ON builds_features.feature_id = feature_snapshots.feature_id
+                        INNER JOIN deployments deployments                  ON deployments.build_id = builds_features.build_id
+                    WHERE deployments.workspace_id = ?
+            """
+        )
+
+        if (!deployments.isNullOrEmpty()) {
+            query.appendln(" AND deployments.id IN (${deployments.joinToString(separator = ",") { "?" }}) ")
+            parameters.addAll(deployments)
+        }
+
+        return this.jdbcTemplate.query(
+            query.toString(),
+            parameters.toTypedArray(),
+            componentHistoryExtractor
+        )?.toList()
+            ?: emptyList()
     }
 }

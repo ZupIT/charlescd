@@ -18,8 +18,11 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/pt';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc';
+
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 export const dateFrom = (date: string) => {
   const minutesInHours = 60;
@@ -43,7 +46,11 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
   const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes();
   const hours = dayjs.duration(timeInSeconds, 'seconds').hours();
+  const days = dayjs.duration(timeInSeconds, 'seconds').days();
 
+  if (days) {
+    return `${days} days`;
+  }
   if (hours) {
     return `${hours}:${minutes}:${seconds}h`;
   }
@@ -52,4 +59,11 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   }
 
   return `${seconds}s`;
+};
+
+export const dateTimeFormatter = (date: string | Date) => {
+  return dayjs
+    .utc(date, 'YYYY-MM-DD HH:MM:SS')
+    .local()
+    .format('DD/MM/YYYY • HH:MM');
 };
