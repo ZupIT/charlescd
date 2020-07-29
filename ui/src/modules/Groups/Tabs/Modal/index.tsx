@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
-import Icon from 'core/components/Icon';
+import isEmpty from 'lodash/isEmpty';
+import remove from 'lodash/remove';
 import { User } from 'modules/Users/interfaces/User';
 import { UserChecked } from '../../interfaces/UserChecked';
-import Styled from './styled';
+import Icon from 'core/components/Icon';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Button from 'core/components/Button';
-import isEmpty from 'lodash/isEmpty';
-import { remove } from 'lodash';
+import Styled from './styled';
 
 interface UserItemProps extends User {
   checked: boolean;
@@ -66,20 +66,15 @@ const UserItem = ({ id, name, email, photoUrl, onSelected }: UserItemProps) => {
 
   const [isSelected, setIsSelected] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
-  const [userId, setUserId] = useState('');
-
-  useEffect(() => {
-    onSelected(userId, isChecked);
-  }, [userId, isChecked, onSelected]);
 
   useOutsideClick(userItemRef, () => {
     setIsSelected(false);
   });
 
   const handleSelected = (id: string) => {
-    setIsChecked(!isChecked);
     setIsSelected(true);
-    setUserId(id);
+    setIsChecked(!isChecked);
+    onSelected(id, !isChecked);
   };
 
   return (
@@ -159,13 +154,7 @@ const AddUserModal = ({
           </Styled.Header>
           <Styled.Content ref={contentRef}>
             {map(users, user => (
-              <UserItem
-                key={user.id}
-                {...user}
-                onSelected={(id: string, checked: boolean) =>
-                  setSelected(id, checked)
-                }
-              />
+              <UserItem key={user.id} {...user} onSelected={setSelected} />
             ))}
           </Styled.Content>
           <Styled.Button.Update>
@@ -174,6 +163,7 @@ const AddUserModal = ({
               onClick={() => {
                 onSelected(changedUsers);
                 setChangedUsers([]);
+                setIsDisabled(true);
               }}
             >
               Update
