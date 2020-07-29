@@ -4,9 +4,9 @@ import { ICdConfigurationData, ISpinnakerConfigurationData } from '../../v1/api/
 import {
   getBakeStage, getDeleteUnusedStage,
   getDeploymentsEvaluationStage,
-  getDeploymentStage,
+  getDeploymentStage, getFailureWebhookStage,
   getHelmTemplateObject,
-  getHelmValueObject, getRollbackDeploymentsStage
+  getHelmValueObject, getRollbackDeploymentsStage, getSuccessWebhookStage
 } from './templates'
 import { getDestinationRulesStage } from './templates/destination-rules-stage'
 import { getVirtualServiceStage } from './templates/virtual-service-stage'
@@ -49,7 +49,9 @@ export class SpinnakerConnector {
       ...this.getDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment),
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
-      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents)
+      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
+      ...this.getFailureWebhookStage(deployment),
+      ...this.getSuccessWebhookStage(deployment)
     ]
   }
 
@@ -104,6 +106,14 @@ export class SpinnakerConnector {
       }
     })
     return stages
+  }
+
+  private getFailureWebhookStage(deployment: Deployment): Stage[] {
+    return [getFailureWebhookStage(deployment, this.currentStageId++)]
+  }
+
+  private getSuccessWebhookStage(deployment: Deployment): Stage[] {
+    return [getSuccessWebhookStage(deployment, this.currentStageId++)]
   }
 
   private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {

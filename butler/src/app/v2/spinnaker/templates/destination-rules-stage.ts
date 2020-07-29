@@ -35,7 +35,7 @@ export const getDestinationRulesStage = (component: Component, configuration: Cd
   name: `Deploy Destination Rules ${component.name}`,
   refId: `${stageId}`,
   requisiteStageRefIds: [
-    '13'
+    '13' // TODO fix this. How did this pass?
   ],
   skipExpressionEvaluation: false,
   source: 'text',

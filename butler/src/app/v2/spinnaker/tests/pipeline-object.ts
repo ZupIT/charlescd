@@ -917,7 +917,6 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       ]
     }, // 13
-
     {
       account: 'default',
       app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
@@ -1050,7 +1049,6 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       type: 'deleteManifest'
     }, // 16
-
     {
       failOnFailedExpressions: true,
       name: 'Evaluate proxy deployments',
@@ -1068,7 +1066,6 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       ]
     }, // 17 ok
-
     {
       account: 'default',
       app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
@@ -1163,6 +1160,9 @@ export const spinnakerPipeline: SpinnakerPipeline = {
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
+      customHeaders: {
+        'x-circle-id': 'Default'
+      },
       failPipeline: false,
       method: 'POST',
       name: 'Trigger Failure Webhook',
