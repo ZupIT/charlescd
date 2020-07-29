@@ -187,6 +187,13 @@ constraints:
         - POST
         - PATCH
 
+  - pattern: /metrics/{providerId}/config/verify-provider-connection
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+
   - pattern: /v2/workspaces/users
     roles:
       hypothesis_write:
