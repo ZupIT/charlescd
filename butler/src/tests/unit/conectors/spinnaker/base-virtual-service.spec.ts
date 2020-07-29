@@ -18,7 +18,7 @@ import 'jest'
 import {
   createEmptyVirtualService,
   createVirtualService
-} from '../../../../app/core/integrations/cd/spinnaker/connector/utils/manifests/base-virtual-service'
+} from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-virtual-service'
 import expectedBaseVirtualService from './fixtures/expected-base-virtual-service'
 import expectedEmptyVirtualService from './fixtures/expected-empty-virtual-service'
 
@@ -27,7 +27,9 @@ it('creates the virtual service when there is no header on the circle', () => {
   const appNamespace = 'app-namespace'
   const circles = [{ destination: { version: 'v3' }, header: { headerValue: 'header-value', headerName: 'header-name' } }]
   const hosts = undefined
-  const virtualService = createVirtualService(appName, appNamespace, circles, hosts)
+  const hostValue = undefined
+  const gatewayName = undefined
+  const virtualService = createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
 
   expect(virtualService).toEqual(expectedBaseVirtualService)
 })

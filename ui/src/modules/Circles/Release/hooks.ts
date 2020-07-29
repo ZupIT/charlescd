@@ -14,32 +14,60 @@
  * limitations under the License.
  */
 
-import { useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useCallback, useState } from 'react';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import { findComponentTags } from 'core/providers/modules';
 import {
   composeBuild as postComposeBuild,
   findBuilds
 } from 'core/providers/builds';
 import { createDeployment as postCreateDeployment } from 'core/providers/deployment';
-import { Tag } from './interfaces/Tag';
+import { URLParams } from 'core/utils/query';
+import { Pagination } from 'core/interfaces/Pagination';
 import { Build, FilterBuild } from './interfaces/Build';
 import { CreateDeployment } from './interfaces/Deployment';
-import { Pagination } from 'core/interfaces/Pagination';
 import { Deployment } from '../interfaces/Circle';
+import { Tag } from './interfaces/Tag';
 
 export const useComponentTags = (): {
-  getComponentTags: Function;
-  response: Tag[];
-  loading: boolean;
+  getComponentTag: Function;
+  tag: Tag;
+  status: FetchStatus;
 } => {
-  const [data, getComponentTags] = useFetch<Tag[]>(findComponentTags);
-  const { response, loading } = data;
+  const getTags = useFetchData<Tag[]>(findComponentTags);
+  const status = useFetchStatus();
+  const [tag, setTag] = useState(null);
+
+  const getComponentTag = async (
+    moduleId: string,
+    componentId: string,
+    params: URLParams
+  ) => {
+    try {
+      if (params.name) {
+        status.pending();
+        const res = await getTags(moduleId, componentId, params);
+        const [tag] = res;
+
+        setTag(tag);
+        status.resolved();
+
+        return tag;
+      }
+    } catch (e) {
+      status.rejected();
+    }
+  };
 
   return {
-    getComponentTags,
-    response,
-    loading
+    getComponentTag,
+    tag,
+    status
   };
 };
 

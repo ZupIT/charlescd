@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ModuleEntity} from '../../../app/api/modules/entity'
+import {ModuleEntity} from '../../../app/v1/api/modules/entity'
 
 export class ModulesServiceStub {
 

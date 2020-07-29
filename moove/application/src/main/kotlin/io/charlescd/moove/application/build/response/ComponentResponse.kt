@@ -27,14 +27,18 @@ data class ComponentResponse(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime,
     val errorThreshold: Int? = null,
-    val latencyThreshold: Int? = null
+    val latencyThreshold: Int? = null,
+    val hostValue: String?,
+    val gatewayName: String?
 ) {
     companion object {
         fun from(component: ComponentSnapshot): ComponentResponse {
             return ComponentResponse(
                 id = component.componentId,
                 name = component.name,
-                createdAt = component.createdAt
+                createdAt = component.createdAt,
+                hostValue = component.hostValue,
+                gatewayName = component.gatewayName
             )
         }
 
@@ -44,7 +48,9 @@ data class ComponentResponse(
                 name = component.name,
                 createdAt = component.createdAt,
                 errorThreshold = component.errorThreshold,
-                latencyThreshold = component.latencyThreshold
+                latencyThreshold = component.latencyThreshold,
+                hostValue = component.hostValue,
+                gatewayName = component.gatewayName
             )
         }
     }

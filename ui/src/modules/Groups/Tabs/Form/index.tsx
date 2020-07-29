@@ -54,6 +54,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           <Text.h2 color="light">Users</Text.h2>
           <Styled.ButtonAdd
             name="plus-circle"
+            icon="plus-circle"
             color="light"
             onClick={onAddUser}
           >

@@ -55,6 +55,7 @@ const ToDo = ({ hypothesisId, column }: Props) => {
   const renderAction = () => (
     <Styled.Button
       name="card"
+      icon="card"
       color="dark"
       onClick={() => setShowNewCard(true)}
     >

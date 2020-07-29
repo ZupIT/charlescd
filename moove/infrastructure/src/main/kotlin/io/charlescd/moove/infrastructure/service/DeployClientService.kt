@@ -69,7 +69,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     }
 
     override fun undeploy(deploymentId: String, authorId: String) {
-        deployClient.undeploy(deploymentId, UndeployRequest(authorId))
+        deployClient.undeploy(UndeployRequest(authorId, deploymentId))
     }
 
     override fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration? {
@@ -125,7 +125,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             componentId = component.componentId,
             componentName = component.name,
             buildImageUrl = component.artifact!!.artifact,
-            buildImageTag = component.artifact!!.version
+            buildImageTag = component.artifact!!.version,
+            hostValue = component.hostValue,
+            gatewayName = component.gatewayName
         )
     }
 
