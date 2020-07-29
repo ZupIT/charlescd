@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './Password';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import Number from './Number';
-import Link from './Link';
+import React from 'react';
+import { render, fireEvent } from 'unit-test/testUtils';
+import InputAction from '..';
 
-export { Input, Password, SearchInput, Select };
+test('render link component', () => {
+  const onClick = jest.fn();
 
-export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  Number,
-  Link
-};
+  const props = {
+    name: 'test',
+    icon: 'copy',
+    defaultValue: '123457'
+  };
+
+  const { getByTestId } = render(
+    <InputAction { ... props } onClick={onClick} />
+  );
+
+  const element = getByTestId(`input-action-${props.name}`);
+  expect(element).toBeInTheDocument();
+  
+  fireEvent.click(getByTestId(`input-wrapper-${props.name}`));
+  expect(onClick).toBeCalled();
+});

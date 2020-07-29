@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useCallback, Fragment } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import copyToClipboard from 'clipboard-copy';
@@ -26,7 +26,6 @@ import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
-import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import InputTitle from 'core/components/Form/InputTitle';
@@ -34,6 +33,7 @@ import { User } from 'modules/Users/interfaces/User';
 import { isRoot } from 'core/utils/auth';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
+import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 
 interface Props {
@@ -44,7 +44,6 @@ interface Props {
 const UsersComparationItem = ({ email, onChange }: Props) => {
   const history = useHistory();
   const [isOpenModalPassword, toggleModalPassword] = useState(false);
-  const [isNewPassword, toggleNewPassword] = useState(false);
   const [action, setAction] = useState('');
   const [user, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
@@ -83,10 +82,6 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const handleDelete = (userId: string, userName: string) => {
     delUser(userId, userName);
     setAction('');
-  };
-
-  const handleOnClickReset = () => {
-    toggleNewPassword(true);
   };
 
   const renderWarning = () => (
@@ -183,30 +178,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
       {!user ? <Loader.Tab /> : renderPanel()}
       {isOpenModalPassword && (
-        <Styled.Modal.Default onClose={() => toggleModalPassword(false)}>
-          <Text.h2 weight="bold" color="light">
-            Reset password
-          </Text.h2>
-          <Text.h4 color="dark">
-            Are you sure you want to reset <strong>{user.email}</strong>
-            {`'`}s password?
-          </Text.h4>
-          <Button.Default
-            size="EXTRA_SMALL"
-            isLoading={false}
-            onClick={handleOnClickReset}
-          >
-            Yes, reset password
-          </Button.Default>
-          {isNewPassword && (
-            <Fragment>
-              <Text.h4 color="dark">
-                New password generated. Contact the user and send the new
-                password.
-              </Text.h4>
-            </Fragment>
-          )}
-        </Styled.Modal.Default>
+        <ModalResetPassword user={user} onClose={toggleModalPassword} />
       )}
     </Styled.Wrapper>
   );

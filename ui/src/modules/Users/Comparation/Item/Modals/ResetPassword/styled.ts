@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './Password';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import Number from './Number';
-import Link from './Link';
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-export { Input, Password, SearchInput, Select };
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    min-height: 150px;
+    width: 408px;
+  }
+
+  .modal-content {
+    overflow: unset;
+
+    > * {
+      margin-bottom: 15px;
+    }
+  }
+`;
 
 export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  Number,
-  Link
+  Modal
 };

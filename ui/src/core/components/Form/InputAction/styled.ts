@@ -15,37 +15,42 @@
  */
 
 import styled from 'styled-components';
-import ComponentContentIcon from 'core/components/ContentIcon';
-import ComponentLayer from 'core/components/Layer';
-import { slideInLeft } from 'core/assets/style/animate';
+import InputComponent from 'core/components/Form/Input';
+import IconComponent from 'core/components/Icon';
 
 const Wrapper = styled.div`
-  animation: 0.2s ${slideInLeft} linear;
+  position: relative;
 `;
 
-const Layer = styled(ComponentLayer)`
-  span + span {
-    margin-top: 10px;
+const Input = styled(InputComponent)`
+  > input {
+    background-color: ${({ theme }) => theme.input.action.background};
+    height: 34px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 0 35px 0 15px;
   }
 `;
 
-const ContentIcon = styled(ComponentContentIcon)`
-  align-items: center;
+const Icon = styled(IconComponent)`
+  background-color: ${({ theme }) => theme.input.action.background};
+  padding-left: 10px;
 `;
 
-const Actions = styled.div`
-  margin-left: auto;
+const Action = styled.button`
+  background: none;
+  bottom: 8px;
+  border: none;
   display: flex;
-  flex-direction: row;
-
-  > :last-child {
-    margin-left: 36px;
-  }
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
 `;
 
 export default {
   Wrapper,
-  ContentIcon,
-  Layer,
-  Actions
+  Input,
+  Icon,
+  Action
 };
