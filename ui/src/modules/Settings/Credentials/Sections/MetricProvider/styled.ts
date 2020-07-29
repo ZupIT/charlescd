@@ -83,11 +83,26 @@ const StatusMessageWrapper = styled.div<status>`
   display: flex;
 
   span {
+    margin-left: 10px;
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+
+  svg {
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+`;
+
+const StatusWrapper = styled.div<status>`
+  margin-bottom: 20px;
+  display: flex;
+
+  span {
     margin-left: 5px;
     color: ${({ theme, status }) => theme.metrics.provider[status]};
   }
 
   svg {
+    margin-top: 2px;
     color: ${({ theme, status }) => theme.metrics.provider[status]};
   }
 `;
@@ -99,5 +114,6 @@ export default {
   Field,
   Select,
   TestConnectionButton,
-  StatusMessageWrapper
+  StatusMessageWrapper,
+  StatusWrapper
 };
