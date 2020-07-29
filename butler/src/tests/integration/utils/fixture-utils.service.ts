@@ -16,25 +16,27 @@
 
 import { Inject, Injectable } from '@nestjs/common'
 import { Connection, EntityManager } from 'typeorm'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity, ModuleUndeploymentEntity,
   QueuedDeploymentEntity, QueuedIstioDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
 } from '../../../app/v1/api/deployments/entity'
-import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
-import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
+import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
+import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
 
 interface DatabaseEntity {
-    name: string,
-    tableName: string
+  name: string,
+  tableName: string
 }
 @Injectable()
 export class FixtureUtilsService {
   constructor(
-        @Inject('Connection') public connection: Connection,
-        private readonly manager: EntityManager
+    @Inject('Connection') public connection: Connection,
+    private readonly manager: EntityManager
   ) {
   }
 
@@ -63,7 +65,10 @@ export class FixtureUtilsService {
       { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
       { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
       { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
-      { name: 'UndeploymentEntity', tableName: 'undeployments' }
+      { name: 'UndeploymentEntity', tableName: 'undeployments' },
+      { name: 'Execution', tableName: 'v2executions' },
+      { name: 'DeploymentEntity', tableName: 'v2deployments' },
+      { name: 'ComponentEntity', tableName: 'v2components' },
     ]
   }
 
@@ -78,6 +83,13 @@ export class FixtureUtilsService {
     deploymentRequest: Record<string, unknown>
   ): Promise<DeploymentEntity> {
     const deployment = this.manager.create(DeploymentEntity, deploymentRequest)
+    return this.manager.save(deployment)
+  }
+
+  public async createV2Deployment(
+    deploymentRequest: CreateDeploymentRequestDto
+  ): Promise<DeploymentEntityV2> {
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toEntity())
     return this.manager.save(deployment)
   }
 
@@ -104,7 +116,7 @@ export class FixtureUtilsService {
 
   public async createComponent(
     componentRequest: Record<string, unknown>
-  ) : Promise<ComponentEntity> {
+  ): Promise<ComponentEntity> {
     const component = this.manager.create(ComponentEntity, componentRequest)
     return this.manager.save(component)
   }

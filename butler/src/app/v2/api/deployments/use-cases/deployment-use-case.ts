@@ -17,8 +17,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
+import { Execution } from '../entity/execution.entity';
 import { PgBossWorker } from '../jobs/pgboss.worker';
 
 @Injectable()
@@ -26,16 +28,23 @@ export class DeploymentUseCase {
   constructor(
     @InjectRepository(DeploymentEntity)
     private deploymentRepository: Repository<DeploymentEntity>,
+    @InjectRepository(Execution)
+    private executionRepository: Repository<Execution>,
     private pgBoss: PgBossWorker,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) {
-
-  }
+  ) { }
 
   public async save(deployment: DeploymentEntity): Promise<DeploymentEntity> {
-    const deploymentEntity =  await this.deploymentRepository.save(deployment)
+    const deploymentEntity = await this.deploymentRepository.save(deployment)
     const jobId = await this.pgBoss.publish(deployment)
-    this.consoleLoggerService.log('Publishing new deployment job', {jobId: jobId, deployment: deploymentEntity.id})
+    await this.executionRepository.save({ deployment: deploymentEntity, type: 'DEPLOYMENT' }) // TODO create type enum
+    this.consoleLoggerService.log('Publishing new deployment job', { jobId: jobId, deployment: deploymentEntity.id })
     return deploymentEntity
+  }
+
+  public async updateStatus(id: string, status: DeploymentStatusEnum): Promise<DeploymentEntity> {
+    const deployment = await this.deploymentRepository.findOneOrFail(id)
+    deployment.status = status
+    return await this.deploymentRepository.save(deployment)
   }
 }
