@@ -42,7 +42,7 @@ export class SpinnakerConnector {
 
   public buildSpinnakerPipeline(deployment: Deployment, activeComponents: Component[]): SpinnakerPipeline {
     return {
-      application: '',
+      application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
       expectedArtifacts: this.getExpectedArtifacts(deployment),
       stages: this.getStages(deployment, activeComponents)
@@ -60,7 +60,6 @@ export class SpinnakerConnector {
 
   private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     this.currentStageId = 1
-    // TODO the order of the stages matter. Is this robust enough?
     return [
       ...this.getDeploymentStages(deployment),
       ...this.getProxyDeploymentStages(deployment, activeComponents),
@@ -85,7 +84,7 @@ export class SpinnakerConnector {
   private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     const proxyStages: Stage[] = []
     deployment.components?.forEach(component => {
-      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name) // TODO maybe filter by moove id?
+      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, this.currentStageId++))
       proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
     })
@@ -117,7 +116,7 @@ export class SpinnakerConnector {
     const stages: Stage[] = []
     const evalStageId: number = this.currentStageId - 1
     deployment?.components?.forEach(component => {
-      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name) // TODO maybe filter by id?
+      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
       const unusedComponent: Component | undefined = this.getSameCircleActiveComponent(activeByName, deployment.circleId)
       if (unusedComponent) {
         stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))

@@ -17,6 +17,7 @@
 import { Component, Deployment } from '../interfaces'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
 import { Http, Stage } from '../interfaces/spinnaker-pipeline.interface'
+import { AppConstants } from '../../../../../v1/core/constants'
 
 export const getVirtualServiceStage = (
   component: Component,
@@ -182,12 +183,12 @@ const getHTTPDefaultRule = (name: string, tag: string): Http => ({
       headers: {
         request: {
           set: {
-            'x-circle-source': 'default-circle-id' // TODO use constant
+            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
           }
         },
         response: {
           set: {
-            'x-circle-source': 'default-circle-id' // TODO use constant
+            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
           }
         }
       }

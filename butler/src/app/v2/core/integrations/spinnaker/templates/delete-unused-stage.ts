@@ -25,7 +25,7 @@ export const getDeleteUnusedStage = (
   evalStageId: number
 ): Stage => ({
   account: `${(configuration.configurationData as ISpinnakerConfigurationData).account}`,
-  app: '', // TODO is this necessary?
+  app: `app-${configuration.id}`,
   cloudProvider: 'kubernetes',
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
