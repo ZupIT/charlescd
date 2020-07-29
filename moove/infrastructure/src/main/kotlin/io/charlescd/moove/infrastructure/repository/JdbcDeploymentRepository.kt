@@ -336,7 +336,7 @@ class JdbcDeploymentRepository(
 
     override fun findActiveByComponentId(componentId: String): List<Deployment> {
         val statement = """
-                    SELECT 	deployments.id                        AS deployment_id,
+                    SELECT  deployments.id                        AS deployment_id,
                             deployments.created_at                AS deployment_created_at,
                             deployments.deployed_at               AS deployment_deployed_at,
                             deployments.status                    AS deployment_status,
