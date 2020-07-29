@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import CheckPassword from './CheckPassword';
-import { validationResolver } from './validationResolver';
-
-export { validationResolver };
-export default CheckPassword;
+export interface CheckPassword {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
