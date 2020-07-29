@@ -342,7 +342,7 @@ class JdbcDeploymentRepository(
                         deployments.status                    AS deployment_status,
                         deployments.circle_id                 AS deployment_circle_id,
                         deployments.build_id                  AS deployment_build_id,
-                        deployments.workspace_id              AS deployment_workspace_id 
+                        deployments.workspace_id              AS deployment_workspace_id, 
                         deployment_user.id                    AS deployment_user_id,
                         deployment_user.name                  AS deployment_user_name,
                         deployment_user.email                 AS deployment_user_email,
