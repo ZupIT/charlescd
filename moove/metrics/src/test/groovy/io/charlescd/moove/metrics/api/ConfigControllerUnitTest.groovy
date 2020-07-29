@@ -22,24 +22,27 @@ package io.charlescd.moove.metrics.api
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
 import io.charlescd.moove.metrics.interactor.VerifyProviderConnectionInteractor
-import io.swagger.annotations.Api
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import spock.lang.Specification
 
-@Api(value = "Metrics Config", tags = ["Metric Config"])
-@RestController
-@RequestMapping("/metrics/config")
-class ConfigController(
-    private val verifyProviderConnectionInteractor: VerifyProviderConnectionInteractor
-) {
+class ConfigControllerUnitTest extends Specification {
+    def verifyProviderConnectionInteractor = Mock(VerifyProviderConnectionInteractor)
+    def configController = new ConfigController(verifyProviderConnectionInteractor)
 
-    @GetMapping("/verify-provider-connection")
-    fun verifyProviderConnection(
-        @RequestParam provider: String,
-        @RequestParam providerType: MetricConfiguration.ProviderEnum
-    ): ProviderConnectionRepresentation =
-        verifyProviderConnectionInteractor.execute(provider, providerType)
+    def 'should verify provider connection'() {
+        given:
+        def url = "http://prometheus:9090"
+        def providerType = MetricConfiguration.ProviderEnum.PROMETHEUS
 
+        def connectionRepresentation = new ProviderConnectionRepresentation("SUCCESS")
+
+        when:
+        def response = configController.verifyProviderConnection(url, providerType)
+
+        then:
+        1 * verifyProviderConnectionInteractor.execute(url, providerType) >> connectionRepresentation
+        0 * _
+
+        response != null
+        response.status == "SUCCESS"
+    }
 }
