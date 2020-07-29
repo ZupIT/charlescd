@@ -367,11 +367,11 @@ class JdbcDeploymentRepository(
                     LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
                     LEFT JOIN circles deployment_circle ON deployments.circle_id = deployment_circle.id
                     LEFT JOIN users deployment_circle_user ON deployment_circle.user_id = deployment_circle_user.id
-                    INNER JOIN modules deployment_module ON deployment_module.workspace_id = deployments.workspace_id
-                    INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
                     INNER JOIN builds deployment_builds ON deployment_builds.id = deployments.build_id
                     INNER JOIN builds_features builds_features ON builds_features.build_id = deployments.build_id
-                    INNER JOIN features_modules features_modules ON features_modules.module_id = deployment_module.id
+                    INNER JOIN features_modules features_modules ON features_modules.feature_id = builds_features.feature_id
+                    INNER JOIN modules deployment_module ON deployment_module.id = features_modules.module_id
+                    INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
                 WHERE deployment_component.id = ? AND deployments.STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
         """
         return this.jdbcTemplate.query(
