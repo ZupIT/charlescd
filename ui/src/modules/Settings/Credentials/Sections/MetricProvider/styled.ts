@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
+import Button from 'core/components/Button';
 import { fadeIn } from 'core/assets/style/animate';
 
 const Content = styled.div`
@@ -69,10 +70,34 @@ const Field = styled.div`
   }
 `;
 
+const TestConnectionButton = styled(Button.Default)`
+  margin-bottom: 30px;
+`;
+
+type status = {
+  status: string;
+};
+
+const StatusMessageWrapper = styled.div<status>`
+  margin-bottom: 20px;
+  display: flex;
+
+  span {
+    margin-left: 5px;
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+
+  svg {
+    color: ${({ theme, status }) => theme.metrics.provider[status]};
+  }
+`;
+
 export default {
   Form,
   Content,
   Input,
   Field,
-  Select
+  Select,
+  TestConnectionButton,
+  StatusMessageWrapper
 };
