@@ -23,8 +23,9 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useMetricProvider } from './hooks';
+import { useMetricProvider, useSectionTestConnection } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
+import { ConnectionStatusEnum as statusConnection } from './interfaces';
 import FormMetricProvider from './Form';
 import Styled from './styled';
 
@@ -37,16 +38,24 @@ interface Props {
 const MetricProvider = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const { remove, loadingRemove, responseRemove } = useMetricProvider();
+  const {
+    testProviderConnectionSection,
+    response
+  } = useSectionTestConnection();
 
   useEffect(() => {
     setIsAction(true);
   }, [responseRemove]);
 
   useEffect(() => {
-    if (data) setIsAction(false);
-  }, [data]);
-
-  console.log(data, getWorkspaceId());
+    if (data) {
+      setIsAction(false);
+      testProviderConnectionSection(
+        { workspaceId: getWorkspaceId(), providerType: data.provider },
+        data.id
+      );
+    }
+  }, [data, testProviderConnectionSection]);
 
   const renderConnectionMessage = () => (
     <Styled.StatusWrapper status="error">
@@ -70,7 +79,8 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
           onClose={() => remove()}
         />
       )}
-      {true && renderConnectionMessage()}
+      {response?.status === statusConnection.FAILED &&
+        renderConnectionMessage()}
     </Section>
   );
 
