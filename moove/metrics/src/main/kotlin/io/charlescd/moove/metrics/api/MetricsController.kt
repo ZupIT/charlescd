@@ -30,8 +30,8 @@ class MetricsController(
     private val retrieveCircleComponentsPeriodMetric: RetrieveCircleComponentsPeriodMetricInteractor,
     private val retrieveCirclePeriodMetric: RetrieveCirclePeriodMetricInteractor,
     private val retrieveCircleComponentsHealthInteractor: RetrieveCircleComponentsHealthInteractor,
-    private val retrieveDeploymentsMetricsInteractor: RetrieveDeploymentsMetricsInteractor
-
+    private val retrieveDeploymentsMetricsInteractor: RetrieveDeploymentsMetricsInteractor,
+    private val retrieveCirclesMetricsInteractor: RetrieveCirclesMetricsInteractor
 ) {
 
     @ApiOperation(value = "Get Request Metrics by Circle")
@@ -60,6 +60,12 @@ class MetricsController(
     @RequestMapping("/circle/{circleId}/components/health")
     fun getComponentHealth(@PathVariable circleId: String, @RequestHeader("x-workspace-id") workspaceId: String):
             CircleHealthRepresentation = this.retrieveCircleComponentsHealthInteractor.execute(circleId, workspaceId)
+
+    @ApiOperation(value = "Get Circles General Metrics")
+    @GetMapping
+    @RequestMapping("/circles")
+    fun getCircleGeneralMetrics(@RequestHeader("x-workspace-id") workspaceId: String):
+            CirclesMetricsRepresentation = this.retrieveCirclesMetricsInteractor.execute(workspaceId)
 
     @ApiOperation(value = "Get Deployments general Metrics")
     @GetMapping
