@@ -1,10 +1,8 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
-import { DeploymentEntity } from './deployment.entity';
-import { Component } from '../interfaces'
+import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity';
 
 @Entity('v2components')
-export class ComponentEntity implements Component {
-
+export class ComponentEntityV2 {
   @PrimaryColumn('uuid')
   public id!: string
 
@@ -26,7 +24,8 @@ export class ComponentEntity implements Component {
   @Column({ name: 'component_id' })
   public componentId! : string
 
-  @JoinColumn({ name: 'deployment_id' })
+
+  @JoinColumn({name: 'deployment_id'})
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   deployment!: DeploymentEntity
 
@@ -38,8 +37,8 @@ export class ComponentEntity implements Component {
     this.componentId = componentId
   }
 
-  public fromDto(dto: ComponentCreateDTO) : ComponentEntity{
-    return new ComponentEntity(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name, dto.componentId)
+  public fromDto(dto: ComponentCreateDTO) : ComponentEntityV2{
+    return new ComponentEntityV2(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name, dto.componentId)
   }
 
   public toDto() : ReadComponentDTO {

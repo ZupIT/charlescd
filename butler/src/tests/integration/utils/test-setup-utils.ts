@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { INestApplication, UnprocessableEntityException, ValidationError, ValidationPipe } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import { EntityNotFoundExceptionFilter } from '../../../app/v1/core/filters/entity-not-found-exception.filter'
 import { TestingModuleBuilder } from '@nestjs/testing'
-import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { AppConstants } from '../../../app/v1/core/constants'
+import { EntityNotFoundExceptionFilter } from '../../../app/v1/core/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 
 export class TestSetupUtils {
 
@@ -29,15 +29,7 @@ export class TestSetupUtils {
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))
-      app.useGlobalPipes(
-        new ValidationPipe({
-          transform: true,
-          whitelist: true,
-          exceptionFactory: (errors: ValidationError[]) => {
-            return new UnprocessableEntityException(errors)
-          }
-        })
-      )
+      app.enableShutdownHooks();
       await app.init()
       return app
     } catch (error) {

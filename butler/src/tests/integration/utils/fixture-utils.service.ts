@@ -15,9 +15,16 @@
  */
 
 import { Inject, Injectable } from '@nestjs/common'
-import { Connection } from 'typeorm'
-import * as Path from 'path'
-import * as fs from 'fs'
+import { Connection, EntityManager } from 'typeorm'
+import {
+  ComponentDeploymentEntity, ComponentUndeploymentEntity,
+  DeploymentEntity,
+  ModuleDeploymentEntity, ModuleUndeploymentEntity,
+  QueuedDeploymentEntity, QueuedIstioDeploymentEntity, QueuedUndeploymentEntity, UndeploymentEntity
+} from '../../../app/v1/api/deployments/entity'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 
 interface DatabaseEntity {
     name: string,
@@ -25,20 +32,10 @@ interface DatabaseEntity {
 }
 @Injectable()
 export class FixtureUtilsService {
-
   constructor(
-        @Inject('Connection') public connection: Connection
-  ) {}
-
-  public async loadDatabase(): Promise<void> {
-    try {
-      const entities = this.getOrderedLoadDbEntities()
-      for (const entity of entities) {
-        await this.insertFixture(entity)
-      }
-    } catch (error) {
-      throw new Error(`ERROR: Loading fixtures on test db: ${error}`)
-    }
+        @Inject('Connection') public connection: Connection,
+        private readonly manager: EntityManager
+  ) {
   }
 
   public async clearDatabase(): Promise<void> {
@@ -46,41 +43,11 @@ export class FixtureUtilsService {
       const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
       for (const entity of entities) {
         const repository = await this.connection.getRepository(entity.name)
-        await repository.query(`DELETE FROM ${entity.tableName};`)
+        await repository.query(`TRUNCATE ${entity.tableName} CASCADE;`)
       }
     } catch (error) {
       throw new Error(`ERROR: Cleaning test db: ${error}`)
     }
-  }
-
-  private async insertFixture(entity: DatabaseEntity): Promise<void> {
-    const repository = await this.connection.getRepository(entity.name)
-    const fixtureFile = Path.join(__dirname, `../fixtures/${entity.tableName}.json`)
-    if (fs.existsSync(fixtureFile)) {
-      const items = JSON.parse(fs.readFileSync(fixtureFile, 'utf8'))
-      await repository
-        .createQueryBuilder(entity.name)
-        .insert()
-        .values(items)
-        .execute()
-    }
-  }
-
-  private getOrderedLoadDbEntities(): DatabaseEntity[] {
-    return [
-      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
-      { name: 'ModuleEntity', tableName: 'modules' },
-      { name: 'ComponentEntity', tableName: 'components' },
-      { name: 'DeploymentEntity', tableName: 'deployments' },
-      { name: 'QueuedDeploymentEntity', tableName: 'queued_deployments' },
-      { name: 'QueuedUndeploymentEntity', tableName: 'queued_undeployments' },
-      { name: 'QueuedIstioDeploymentEntity', tableName: 'queued_istio_deployments' },
-      { name: 'ModuleDeploymentEntity', tableName: 'module_deployments' },
-      { name: 'ComponentDeploymentEntity', tableName: 'component_deployments' },
-      { name: 'ComponentUndeploymentEntity', tableName: 'component_undeployments' },
-      { name: 'ModuleUndeploymentEntity', tableName: 'module_undeployments' },
-      { name: 'UndeploymentEntity', tableName: 'undeployments' }
-    ]
   }
 
   private getOrderedClearDbEntities(): DatabaseEntity[] {
@@ -99,4 +66,89 @@ export class FixtureUtilsService {
       { name: 'UndeploymentEntity', tableName: 'undeployments' }
     ]
   }
+
+  public async createCdConfiguration(
+    cdConfigurationRequest: Record<string, unknown>
+  ): Promise<CdConfigurationEntity> {
+    const cdConfiguration = this.manager.create(CdConfigurationEntity, cdConfigurationRequest)
+    return this.manager.save(cdConfiguration)
+  }
+
+  public async createDeployment(
+    deploymentRequest: Record<string, unknown>
+  ): Promise<DeploymentEntity> {
+    const deployment = this.manager.create(DeploymentEntity, deploymentRequest)
+    return this.manager.save(deployment)
+  }
+
+  public async createModuleDeployment(
+    moduleDeploymentRequest: Record<string, unknown>
+  ): Promise<ModuleDeploymentEntity> {
+    const moduleDeployment = this.manager.create(ModuleDeploymentEntity, moduleDeploymentRequest)
+    return this.manager.save(moduleDeployment)
+  }
+
+  public async createModuleUndeployment(
+    moduleUndeploymentRequest: Record<string, unknown>
+  ): Promise<ModuleUndeploymentEntity> {
+    const moduleUndeployment = this.manager.create(ModuleUndeploymentEntity, moduleUndeploymentRequest)
+    return this.manager.save(moduleUndeployment)
+  }
+
+  public async createModule(
+    moduleRequest: Record<string, unknown>
+  ): Promise<ModuleEntity> {
+    const module = this.manager.create(ModuleEntity, moduleRequest)
+    return this.manager.save(module)
+  }
+
+  public async createComponent(
+    componentRequest: Record<string, unknown>
+  ) : Promise<ComponentEntity> {
+    const component = this.manager.create(ComponentEntity, componentRequest)
+    return this.manager.save(component)
+  }
+
+  public async createComponentDeployment(
+    componentDeploymentRequest: Record<string, unknown>
+  ): Promise<ComponentDeploymentEntity> {
+    const componentDeployment = this.manager.create(ComponentDeploymentEntity, componentDeploymentRequest)
+    return await this.manager.save(componentDeployment)
+  }
+
+  public async createComponentUndeployment(
+    componentUndeploymentRequest: Record<string, unknown>
+  ): Promise<ComponentUndeploymentEntity> {
+    const componentUndeployment = this.manager.create(ComponentUndeploymentEntity, componentUndeploymentRequest)
+    return await this.manager.save(componentUndeployment)
+  }
+
+  public async createQueuedDeployment(
+    queuedDeploymentRequest: Record<string, unknown>
+  ): Promise<QueuedDeploymentEntity> {
+    const queuedDeployment = this.manager.create(QueuedDeploymentEntity, queuedDeploymentRequest)
+    return await this.manager.save(queuedDeployment)
+  }
+
+  public async createQueuedUndeployment(
+    queuedUndeploymentRequest: Record<string, unknown>
+  ): Promise<QueuedUndeploymentEntity> {
+    const queuedUndeployment = this.manager.create(QueuedUndeploymentEntity, queuedUndeploymentRequest)
+    return await this.manager.save(queuedUndeployment)
+  }
+
+  public async createQueuedIstioDeployment(
+    queuedIstioDeploymentRequest: Record<string, unknown>
+  ): Promise<QueuedIstioDeploymentEntity> {
+    const queuedIstioDeployment = this.manager.create(QueuedIstioDeploymentEntity, queuedIstioDeploymentRequest)
+    return await this.manager.save(queuedIstioDeployment)
+  }
+
+  public async createUndeployment(
+    undeploymentRequest: Record<string, unknown>
+  ): Promise<UndeploymentEntity> {
+    const undeployment = this.manager.create(UndeploymentEntity, undeploymentRequest)
+    return await this.manager.save(undeployment)
+  }
+
 }

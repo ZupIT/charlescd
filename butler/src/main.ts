@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app/app.module'
 import {
   DynamicModule,
-  INestApplication,
-  UnprocessableEntityException,
-  ValidationError,
-  ValidationPipe
+  INestApplication
 } from '@nestjs/common'
-import { AppConstants } from './app/v1/core/constants'
+import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { registerSchema } from 'class-validator'
-import * as morgan from 'morgan'
-import * as hpropagate from 'hpropagate'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import * as rTracer from 'cls-rtracer'
+import * as hpropagate from 'hpropagate'
+import * as morgan from 'morgan'
+import { AppModule } from './app/app.module'
+import { AppConstants } from './app/v1/core/constants'
+import { EntityNotFoundExceptionFilter } from './app/v1/core/filters/entity-not-found-exception.filter'
+import { ConsoleLoggerService } from './app/v1/core/logs/console'
 import {
   OctopipeEKSConfigurationDataSchema,
   OctopipeGenericConfigurationDataSchema,
   SpinnakerConfigurationDataSchema
 } from './app/v1/core/validations/schemas'
-import { EntityNotFoundExceptionFilter } from './app/v1/core/filters/entity-not-found-exception.filter'
-import { ConsoleLoggerService } from './app/v1/core/logs/console'
 
 async function bootstrap() {
 
@@ -63,17 +60,8 @@ async function bootstrap() {
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
   app.use(rTracer.expressMiddleware())
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      exceptionFactory: (errors: ValidationError[]) => {
-        return new UnprocessableEntityException(errors)
-      }
-    })
-  )
   SwaggerModule.setup('/api/swagger', app, document)
-
+  app.enableShutdownHooks()
   await app.listen(3000)
 }
 

@@ -51,5 +51,15 @@ export const Configuration: IEnvConfiguration = {
 
   helmRepoBranch: process.env.HELM_REPO_BRANCH || ConfigurationConstants.HELM_REPO_BRANCH,
 
-  octopipeUrl: process.env.OCTOPIPE_URL || ConfigurationConstants.OCTOPIPE_URL
+  octopipeUrl: process.env.OCTOPIPE_URL || ConfigurationConstants.OCTOPIPE_URL,
+
+  pgBossConfig: {
+    host: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
+    database: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
+    user: process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
+    password: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
+    max: 5,
+    retentionDays: 7
+  }
+
 }
