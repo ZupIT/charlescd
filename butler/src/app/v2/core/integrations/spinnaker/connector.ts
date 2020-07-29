@@ -36,11 +36,11 @@ export class SpinnakerConnector {
   private currentStageId = 1
 
   public createV2Deployment(deployment: Deployment, activeComponents: Component[]): ConnectorResult {
-    const pipeline: SpinnakerPipeline = this.buildSpinnakerPipeline(deployment, activeComponents)
+    const pipeline: SpinnakerPipeline = this.buildSpinnakerDeploymentPipeline(deployment, activeComponents)
     return { status: 'SUCCEEDED' }
   }
 
-  public buildSpinnakerPipeline(deployment: Deployment, activeComponents: Component[]): SpinnakerPipeline {
+  public buildSpinnakerDeploymentPipeline(deployment: Deployment, activeComponents: Component[]): SpinnakerPipeline {
     return {
       application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
