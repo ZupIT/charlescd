@@ -55,5 +55,5 @@ enum class MooveErrorCode(val key: String) {
     INVALID_CIRCLE_MATCHER_URL_ERROR("invalid.circle.matcher.url.error"),
     MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT("module.must.have.at.least.one.component"),
     COMPONENT_HAS_ACTIVE_RELEASES("component.has.active.releases"),
-    COMPONENT_ALREADY_REGISTERED_IN_WORKSPACE("component.already.registered.in.workspace"),
+    COMPONENT_NAME_ALREADY_REGISTERED_IN_WORKSPACE("component.name.already.registered.in.workspace"),
 }

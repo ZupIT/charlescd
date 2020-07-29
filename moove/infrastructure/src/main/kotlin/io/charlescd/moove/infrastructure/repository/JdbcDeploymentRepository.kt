@@ -336,43 +336,44 @@ class JdbcDeploymentRepository(
 
     override fun findActiveByComponentId(componentId: String): List<Deployment> {
         val statement = """
-                SELECT  deployments.id                        AS deployment_id,
-                        deployments.created_at                AS deployment_created_at,
-                        deployments.deployed_at               AS deployment_deployed_at,
-                        deployments.status                    AS deployment_status,
-                        deployments.circle_id                 AS deployment_circle_id,
-                        deployments.build_id                  AS deployment_build_id,
-                        deployments.workspace_id              AS deployment_workspace_id, 
-                        deployment_user.id                    AS deployment_user_id,
-                        deployment_user.name                  AS deployment_user_name,
-                        deployment_user.email                 AS deployment_user_email,
-                        deployment_user.photo_url             AS deployment_user_photo_url,
-                        deployment_user.created_at            AS deployment_user_created_at,
-                        deployment_circle.id                  AS deployment_circle_id,
-                        deployment_circle.name                AS deployment_circle_name,
-                        deployment_circle.reference           AS deployment_circle_reference,
-                        deployment_circle.created_at          AS deployment_circle_created_at,
-                        deployment_circle.matcher_type        AS deployment_circle_matcher_type,
-                        deployment_circle.rules               AS deployment_circle_rules,
-                        deployment_circle.imported_kv_records AS deployment_circle_imported_kv_records,
-                        deployment_circle.imported_at         AS deployment_circle_imported_at,
-                        deployment_circle.default_circle      AS deployment_circle_default_circle,
-                        deployment_circle.workspace_id        AS deployment_circle_workspace_id,
-                        deployment_circle_user.id             AS deployment_circle_user_id,
-                        deployment_circle_user.name           AS deployment_circle_user_name,
-                        deployment_circle_user.email          AS deployment_circle_user_email,
-                        deployment_circle_user.photo_url      AS deployment_circle_user_photo_url,
-                        deployment_circle_user.created_at     AS deployment_circle_user_created_at
-                FROM deployments
-                    LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
-                    LEFT JOIN circles deployment_circle ON deployments.circle_id = deployment_circle.id
-                    LEFT JOIN users deployment_circle_user ON deployment_circle.user_id = deployment_circle_user.id
-                    INNER JOIN builds deployment_builds ON deployment_builds.id = deployments.build_id
-                    INNER JOIN builds_features builds_features ON builds_features.build_id = deployments.build_id
-                    INNER JOIN features_modules features_modules ON features_modules.feature_id = builds_features.feature_id
-                    INNER JOIN modules deployment_module ON deployment_module.id = features_modules.module_id
-                    INNER JOIN components deployment_component ON deployment_component.module_id = deployment_module.id
-                WHERE deployment_component.id = ? AND deployments.STATUS NOT IN('DEPLOY_FAILED','NOT_DEPLOYED')
+                    SELECT 	deployments.id                        AS deployment_id,
+                            deployments.created_at                AS deployment_created_at,
+                            deployments.deployed_at               AS deployment_deployed_at,
+                            deployments.status                    AS deployment_status,
+                            deployments.circle_id                 AS deployment_circle_id,
+                            deployments.build_id                  AS deployment_build_id,
+                            deployments.workspace_id              AS deployment_workspace_id,
+                            deployment_user.id                    AS deployment_user_id,
+                            deployment_user.name                  AS deployment_user_name,
+                            deployment_user.email                 AS deployment_user_email,
+                            deployment_user.photo_url             AS deployment_user_photo_url,
+                            deployment_user.created_at            AS deployment_user_created_at,
+                            deployment_circle.id                  AS deployment_circle_id,
+                            deployment_circle.name                AS deployment_circle_name,
+                            deployment_circle.reference           AS deployment_circle_reference,
+                            deployment_circle.created_at          AS deployment_circle_created_at,
+                            deployment_circle.matcher_type        AS deployment_circle_matcher_type,
+                            deployment_circle.rules               AS deployment_circle_rules,
+                            deployment_circle.imported_kv_records AS deployment_circle_imported_kv_records,
+                            deployment_circle.imported_at         AS deployment_circle_imported_at,
+                            deployment_circle.default_circle      AS deployment_circle_default_circle,
+                            deployment_circle.workspace_id        AS deployment_circle_workspace_id,
+                            deployment_circle_user.id             AS deployment_circle_user_id,
+                            deployment_circle_user.name           AS deployment_circle_user_name,
+                            deployment_circle_user.email          AS deployment_circle_user_email,
+                            deployment_circle_user.photo_url      AS deployment_circle_user_photo_url,
+                            deployment_circle_user.created_at     AS deployment_circle_user_created_at           
+                    FROM components components
+					    INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
+                        INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
+                        INNER JOIN feature_snapshots feature_snapshots      ON feature_snapshots.id = module_snapshots.feature_snapshot_id
+                        INNER JOIN builds_features builds_features          ON builds_features.feature_id = feature_snapshots.feature_id
+                        INNER JOIN deployments deployments                  ON deployments.build_id = builds_features.build_id
+                        LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
+                        LEFT JOIN circles deployment_circle ON deployments.circle_id = deployment_circle.id
+                        LEFT JOIN users deployment_circle_user ON deployment_circle.user_id = deployment_circle_user.id
+                    WHERE components.id = ?
+                        AND deployments.STATUS  NOT IN('NOT_DEPLOYED','DEPLOY_FAILED')
         """
         return this.jdbcTemplate.query(
             statement,

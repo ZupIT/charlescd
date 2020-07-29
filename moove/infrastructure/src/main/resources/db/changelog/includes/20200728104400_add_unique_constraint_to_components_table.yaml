@@ -8,4 +8,3 @@ databaseChangeLog:
             columnNames: name, workspace_id
             constraintName: const_unique_name_by_workspace
             tableName: components
-

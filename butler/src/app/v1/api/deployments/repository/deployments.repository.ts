@@ -41,6 +41,7 @@ export class DeploymentsRepository extends Repository<DeploymentEntity> {
       .andWhere('componentDeployment.componentName = :name', { name: component.componentName })
       .andWhere('component.id != :componentId', { componentId: component.componentId })
       .andWhere('deployments.cdConfigurationId = :cdConfigurationId', { cdConfigurationId: cdConfigurationId })
+      .addOrderBy('createdAt','DESC')
       .getOne()
     return deployment
   }
