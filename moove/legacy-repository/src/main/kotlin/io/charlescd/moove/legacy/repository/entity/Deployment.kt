@@ -47,5 +47,7 @@ data class Deployment(
     @field:JoinColumn(name = "build_id")
     val build: Build,
 
-    val workspaceId: String
+    val workspaceId: String,
+
+    val undeployedAt: LocalDateTime?
 )
