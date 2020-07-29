@@ -15,12 +15,9 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer';
 import { render, wait, fireEvent } from 'unit-test/testUtils';
 import { users } from './fixtures';
 import Modal from '..';
-
-(global as any).MutationObserver = MutationObserver;
 
 test('render users Modal', async () => {
   const { getByTestId } = render(
@@ -32,6 +29,40 @@ test('render users Modal', async () => {
 
   await wait(() => expect(element).toBeInTheDocument());
   await wait(() => expect(button).toBeInTheDocument());
+});
+
+test('testing on selected style', async () => {
+  const { getByText, getByTestId } = render(
+    <Modal users={users} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
+  );
+
+  const user = getByText('User 2');
+  const button = getByTestId('button-default-undefined');
+
+  await wait(() => expect(user).toBeInTheDocument());
+  await wait(() => expect(button).toBeInTheDocument());
+
+  fireEvent.click(user);
+
+  expect(getByTestId('icon-plus-circle')).toBeInTheDocument();
+});
+
+test('testing on click update button', async () => {
+  const onSelected = jest.fn();
+  const { getByText, getByTestId } = render(
+    <Modal users={users} isOpen onSearch={jest.fn()} onSelected={onSelected} />
+  );
+
+  const user = getByText('User 2');
+  const button = getByTestId('button-default-undefined');
+
+  await wait(() => expect(user).toBeInTheDocument());
+  await wait(() => expect(button).toBeInTheDocument());
+
+  fireEvent.click(user);
+  fireEvent.click(button);
+
+  expect(onSelected).toHaveBeenCalled();
 });
 
 test('testing on outside click with isOutsideClick property passed on', async () => {
