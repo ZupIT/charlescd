@@ -20,6 +20,7 @@ import Styled from './styled';
 interface Props {
   name: string;
   icon: string;
+  iconColor?: string;
   defaultValue: string;
   isDisabled?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -29,6 +30,7 @@ interface Props {
 const InputAction = ({
   name,
   icon,
+  iconColor = 'dark',
   defaultValue,
   onClick,
   isDisabled = false,
@@ -41,8 +43,11 @@ const InputAction = ({
         disabled={isDisabled}
         defaultValue={defaultValue}
       />
-      <Styled.Action onClick={onClick}>
-        <Styled.Icon name={icon} color="dark" size="15px" />
+      <Styled.Action
+        data-testid={`input-action-${name}-button`}
+        onClick={onClick}
+      >
+        <Styled.Icon name={icon} color={iconColor} size="15px" />
       </Styled.Action>
     </Styled.Wrapper>
   );

@@ -16,25 +16,39 @@
 
 import React from 'react';
 import { render, fireEvent } from 'unit-test/testUtils';
-import InputAction from '..';
+import ModalResetPassword from '..';
 
-test('render InputAction component and fire action', () => {
-  const onClick = jest.fn();
+test('render ModalResetPassword component', () => {
+  const onClose = jest.fn();
 
   const props = {
-    name: 'test',
-    icon: 'copy',
-    defaultValue: '123457'
+    user: { id: '123', name: 'user', email: 'user@email.com' },
   };
 
   const { getByTestId } = render(
-    <InputAction { ... props } onClick={onClick} />
+    <ModalResetPassword user={props.user} onClose={onClose} />
   );
 
-  const element = getByTestId(`input-action-${props.name}`);
+  const element = getByTestId('modal-default');
   expect(element).toBeInTheDocument();
-  
-  const button = getByTestId(`input-action-${props.name}-button`);
+});
+
+test('render ModalResetPassword component and trigger reset', () => {
+  const onClose = jest.fn();
+
+  const props = {
+    user: { id: '123', name: 'user', email: 'user@email.com' },
+  };
+
+  const { getByTestId } = render(
+    <ModalResetPassword user={props.user} onClose={onClose} />
+  );
+
+  const button = getByTestId('button-default-reset-password');
+  expect(button).toBeInTheDocument();
+
   fireEvent.click(button);
-  expect(onClick).toBeCalled();
+
+  const inputAction = getByTestId('input-action-new-password')
+  expect(inputAction).toBeInTheDocument();
 });
