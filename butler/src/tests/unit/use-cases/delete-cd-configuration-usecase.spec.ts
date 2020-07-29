@@ -16,10 +16,10 @@
 
 import { Test } from '@nestjs/testing'
 import { CdConfigurationsRepositoryStub } from '../../stubs/repository'
-import { CdConfigurationsRepository } from '../../../app/api/configurations/repository'
-import { DeleteCdConfigurationUsecase } from '../../../app/api/configurations/use-cases'
-import { CdConfigurationEntity } from '../../../app/api/configurations/entity'
-import { CdTypeEnum } from '../../../app/api/configurations/enums'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
+import { DeleteCdConfigurationUsecase } from '../../../app/v1/api/configurations/use-cases'
+import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('DeleteCdConfigurationUsecase', () => {
 

@@ -22,6 +22,7 @@ import Button from 'core/components/Button';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import RadioGroup from 'core/components/RadioGroup';
 import Form from 'core/components/Form';
+import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { radios, providers, gitProviders } from './constants';
@@ -111,7 +112,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
 
   const renderCDConfigurationFields = () => (
     <>
-      <Form.Select
+      <Select.Single
         control={control}
         name="configurationData.gitProvider"
         label="Git provider"
@@ -194,7 +195,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
         <Popover
           title="Why we need a CD Configuration?"
           icon="info"
-          link={`${CHARLES_DOC}/referencia-1/cd-configuration`}
+          link={`${CHARLES_DOC}/reference/cd-configuration`}
           linkLabel="View documentation"
           description="Add your Continuous Deployment (CD) tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. Consult our documentation for further details."
         />

@@ -29,6 +29,7 @@ interface Props {
 const Text = styled.span<Props>`
   animation: 0.3s ${fadeIn} linear;
   display: block;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : null)};
   font-style: ${({ fontStyle }) => fontStyle};
   font-size: ${({ fontSize }) => fontSize};
   font-weight: ${({ weight }) => weight};

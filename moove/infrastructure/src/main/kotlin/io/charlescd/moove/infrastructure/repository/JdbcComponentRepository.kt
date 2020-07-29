@@ -37,6 +37,8 @@ class JdbcComponentRepository(
                         components.created_at           AS component_created_at,
                         components.error_threshold      AS component_error_threshold,
                         components.latency_threshold    AS component_latency_threshold,
+                        components.host_value           AS component_host_value,
+                        components.gateway_name         AS component_gateway_name,
                         components.workspace_id         AS component_workspace_id
                 FROM components
                 WHERE components.id = ?
@@ -58,7 +60,9 @@ class JdbcComponentRepository(
 	                    components.created_at           AS components_created_at,
 	                    components.workspace_id         AS components_workspace_id,
 	                    components.error_threshold      AS components_error_threshold,
-	                    components.latency_threshold    AS components_latency_threshold
+	                    components.latency_threshold    AS components_latency_threshold,
+                        components.host_value           AS components_host_value,
+                        components.gateway_name         AS components_gateway_name
                 FROM components components
                     INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
                     INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
