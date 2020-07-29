@@ -2,7 +2,7 @@ import { CdConfiguration, Component, ConnectorResult, Deployment, SpinnakerPipel
 import { ExpectedArtifact, Stage } from '../interfaces/spinnaker-pipeline.interface'
 import { ICdConfigurationData, ISpinnakerConfigurationData } from '../../v1/api/configurations/interfaces'
 import {
-  getBakeStage,
+  getBakeStage, getDeleteUnusedStage,
   getDeploymentsEvaluationStage,
   getDeploymentStage,
   getHelmTemplateObject,
@@ -48,7 +48,8 @@ export class SpinnakerConnector {
       ...this.getProxyDeploymentStages(deployment, activeComponents),
       ...this.getDeploymentsEvaluationStage(deployment.components),
       ...this.getRollbackDeploymentsStage(deployment),
-      ...this.getProxyDeploymentsEvaluationStage(deployment.components)
+      ...this.getProxyDeploymentsEvaluationStage(deployment.components),
+      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents)
     ]
   }
 
@@ -81,7 +82,7 @@ export class SpinnakerConnector {
     const stages: Stage[] = []
     const evalStageId: number = this.currentStageId - 1
     deployment.components?.forEach(component => {
-      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, evalStageId, this.currentStageId++))
+      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
     })
     return stages
   }
@@ -92,7 +93,25 @@ export class SpinnakerConnector {
       []
   }
 
+  private getDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    const stages: Stage[] = []
+    const evalStageId: number = this.currentStageId - 1
+    deployment?.components?.forEach(component => {
+      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name) // TODO maybe filter by id?
+      const unusedComponent: Component | undefined = this.getSameCircleActiveComponent(activeByName, deployment.circleId)
+      if (unusedComponent) {
+        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+      }
+    })
+    return stages
+  }
+
   private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {
     return activeComponents.filter(component => component.name === name)
+  }
+
+  private getSameCircleActiveComponent(activeComponents: Component[], circleId: string | null): Component | undefined {
+    return activeComponents
+      .find(component => component.deployment && component.deployment.circleId === circleId)
   }
 }

@@ -4,6 +4,7 @@ import { getBakeStage } from './bake-stage'
 import { getDeploymentStage } from './deployment-stage'
 import { getDeploymentsEvaluationStage } from './deployments-evaluation'
 import { getRollbackDeploymentsStage } from './rollback-deployments-stage'
+import { getDeleteUnusedStage } from './delete-unused-stage'
 
 export {
   getHelmTemplateObject,
@@ -11,5 +12,6 @@ export {
   getBakeStage,
   getDeploymentStage,
   getDeploymentsEvaluationStage,
-  getRollbackDeploymentsStage
+  getRollbackDeploymentsStage,
+  getDeleteUnusedStage
 }

@@ -1159,6 +1159,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       type: 'deleteManifest'
     }, // 19
+
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
