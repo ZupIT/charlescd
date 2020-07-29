@@ -254,7 +254,8 @@ class MaestroToRepresentationTest {
         DeploymentStatus.DEPLOYED,
         circle,
         build,
-        "application-id"
+        "application-id",
+        null
     )
 
     private fun createModule(
