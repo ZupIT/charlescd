@@ -1,24 +1,28 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
+import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
-import CheckPassword, {
-  validationResolver
-} from 'core/components/CheckPassword';
+import { validationResolver } from 'core/components/CheckPassword';
 import Styled from './styled';
 
 const ChangePassword = () => {
-  const { register, handleSubmit, watch, errors } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    errors,
+    formState,
+    getValues
+  } = useForm({
     mode: 'onBlur',
     validationResolver
   });
   const password = watch('password') as string;
   const confirmPass = watch('confirmPassword') as string;
 
-  console.log('error', errors);
-
   const onSubmit = () => {
-    console.log('submit');
+    console.log('submit', getValues());
   };
 
   return (
@@ -40,14 +44,28 @@ const ChangePassword = () => {
         label="New password"
         name="password"
         ref={register({ required: true })}
+        hasError={!isEmpty(errors?.password)}
       />
+      {errors?.password && (
+        <Styled.Error color="error">{errors.password.message}</Styled.Error>
+      )}
       <Styled.Password
         label="Confirm new password"
         name="confirmPassword"
         ref={register({ required: true })}
+        hasError={!isEmpty(errors?.confirmPassword)}
       />
-      <CheckPassword password={password} confirmPass={confirmPass} />
-      <Button.Default type="submit" size="EXTRA_SMALL">
+      {errors?.confirmPassword && (
+        <Styled.Error color="error">
+          {errors.confirmPassword.message}
+        </Styled.Error>
+      )}
+      <Styled.CheckPassword password={password} confirmPass={confirmPass} />
+      <Button.Default
+        type="submit"
+        size="EXTRA_SMALL"
+        isDisabled={!formState.isValid}
+      >
         Save
       </Button.Default>
     </Styled.ChangePassword>

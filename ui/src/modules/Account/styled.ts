@@ -21,6 +21,7 @@ import ComponentContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import FormComponent from 'core/components/Form';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
+import CheckPass from 'core/components/CheckPassword';
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -79,10 +80,18 @@ const ModalInfo = styled(Text.h5)`
 `;
 
 const Password = styled(FormComponent.Password)`
-  margin-bottom: 20px;
+  margin-top: 20px;
   input {
     background-color: transparent;
   }
+`;
+
+const Error = styled(Text.h6)`
+  margin-top: 5px;
+`;
+
+const CheckPassword = styled(CheckPass)`
+  margin: 20px 0;
 `;
 
 export default {
@@ -98,5 +107,7 @@ export default {
   Modal: {
     Subtitle: ModalSubtitle,
     Info: ModalInfo
-  }
+  },
+  Error,
+  CheckPassword
 };

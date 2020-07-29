@@ -8,11 +8,17 @@ import Styled from './styled';
 interface Props {
   password: string;
   confirmPass: string;
+  className?: string;
 }
 
-const CheckPassword = ({ password, confirmPass }: Props) => {
+const CheckPassword = ({
+  password,
+  confirmPass,
+  className,
+  ...rest
+}: Props) => {
   const renderCheckPoint = () => (
-    <>
+    <div {...rest} data-testid="check-password" className={className}>
       {map(checkPoints, checkPoint => {
         const isValid = checkPoint.rule(password, confirmPass);
         const icon = isValid ? 'checkmark' : 'close';
@@ -25,7 +31,7 @@ const CheckPassword = ({ password, confirmPass }: Props) => {
           </Styled.Item>
         );
       })}
-    </>
+    </div>
   );
 
   return renderCheckPoint();
