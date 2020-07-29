@@ -19,7 +19,6 @@ package manager
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	pipelinePKG "octopipe/pkg/pipeline"
 
@@ -46,8 +45,6 @@ func (manager Manager) mountWebhookRequest(pipeline pipelinePKG.Pipeline, payloa
 
 func (manager Manager) triggerWebhook(pipeline pipelinePKG.Pipeline, payload Payload ) {
 	client := http.Client{}
-	pipelineJson,_ := json.MarshalIndent(pipeline,"","")
-	fmt.Println(string(pipelineJson))
 	if pipeline.Webhook.Url == "" {
 		log.WithFields(log.Fields{"function": "triggerWebhook", "url": pipeline.Webhook.Url}).Info("Not found url for trigger Webhook")
 		return
