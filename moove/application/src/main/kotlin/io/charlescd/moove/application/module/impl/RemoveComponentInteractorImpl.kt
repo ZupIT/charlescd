@@ -29,7 +29,8 @@ import javax.transaction.Transactional
 @Named
 open class RemoveComponentInteractorImpl(
     private val moduleService: ModuleService,
-    private val deploymentsService: DeploymentService) : RemoveComponentInteractor {
+    private val deploymentsService: DeploymentService
+) : RemoveComponentInteractor {
 
     @Transactional
     override fun execute(moduleId: String, componentId: String, workspaceId: String) {

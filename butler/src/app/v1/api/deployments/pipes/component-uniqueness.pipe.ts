@@ -52,7 +52,6 @@ export class ComponentUniquenessPipe implements PipeTransform {
   }
 
   private async validateUniquenessModule(moduleDeployment: ModuleDeploymentEntity, deploymentRequest: DeploymentEntity): Promise<void[]> {
-    console.log(moduleDeployment)
     return  await Promise.all(
       moduleDeployment.components.map(
         componentDeployment => this.validateUniquenessComponent(

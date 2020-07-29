@@ -62,5 +62,4 @@ interface DeploymentRepository {
     fun count(workspaceId: String): Int
 
     fun count(workspaceId: String, circles: List<String>?): Int
-
 }

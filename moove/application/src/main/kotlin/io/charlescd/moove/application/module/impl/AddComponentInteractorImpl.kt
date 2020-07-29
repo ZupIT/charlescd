@@ -34,6 +34,7 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
     override fun execute(id: String, workspaceId: String, request: ComponentRequest): ComponentResponse {
         val module = moduleService.find(id, workspaceId)
         checkIfComponentAlreadyExist(module, request)
+
         val component = request.toDomain(module.id, workspaceId)
         try {
             moduleService.addComponents(module.copy(components = listOf(component)))

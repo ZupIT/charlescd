@@ -162,7 +162,7 @@ class RemoveComponentInteractorImplTest extends Specification {
         def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
                 [], gitConfiguration, [componentOne, componentTwo], workspaceId)
-        def deployment = new Deployment(deploymentId,author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, 'build-id',workspaceId,LocalDateTime.now())
+        def deployment = new Deployment(deploymentId, author, LocalDateTime.now(), LocalDateTime.now(), DeploymentStatusEnum.DEPLOYED, circle, 'build-id', workspaceId, LocalDateTime.now())
 
         when:
         removeComponentInteractor.execute(moduleId, componentOneId, workspaceId)
