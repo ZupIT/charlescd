@@ -15,11 +15,16 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/metricProvider';
+import {
+  create,
+  configPath,
+  verifyProviderConnection
+} from 'core/providers/metricProvider';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { MetricProvider, Response } from './interfaces';
+import { MetricProvider, Response, TestConnectionResponse } from './interfaces';
+import { buildParams, URLParams } from 'core/utils/query';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useMetricProvider = (): FetchProps => {
@@ -90,5 +95,32 @@ export const useMetricProvider = (): FetchProps => {
     remove,
     loadingSave,
     loadingAdd
+  };
+};
+
+interface TestConnection extends FetchProps {
+  testProviderConnection: Function;
+  response: TestConnectionResponse;
+}
+
+export const useTestConnection = (): TestConnection => {
+  const [testConnection, dispatchTestConnection] = useFetch<
+    TestConnectionResponse
+  >(verifyProviderConnection);
+
+  const { response, loading } = testConnection;
+
+  const testProviderConnection = useCallback(
+    (payload: URLParams) => {
+      const params = buildParams(payload);
+      dispatchTestConnection(params);
+    },
+    [dispatchTestConnection]
+  );
+
+  return {
+    testProviderConnection,
+    response,
+    loading
   };
 };
