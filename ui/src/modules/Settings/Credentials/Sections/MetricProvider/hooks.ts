@@ -18,7 +18,8 @@ import { useCallback, useEffect } from 'react';
 import {
   create,
   configPath,
-  verifyProviderConnection
+  verifyProviderConnection,
+  metricProviderConfigConnection
 } from 'core/providers/metricProvider';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
@@ -98,28 +99,55 @@ export const useMetricProvider = (): FetchProps => {
   };
 };
 
-interface TestConnection extends FetchProps {
-  testProviderConnection: Function;
+interface FromTestConnection extends FetchProps {
+  testProviderConnectionForm: Function;
   response: TestConnectionResponse;
 }
 
-export const useTestConnection = (): TestConnection => {
-  const [testConnection, dispatchTestConnection] = useFetch<
+export const useFromTestConnection = (): FromTestConnection => {
+  const [fromTestConnection, dispatchFormTestConnection] = useFetch<
     TestConnectionResponse
   >(verifyProviderConnection);
 
-  const { response, loading } = testConnection;
+  const { response, loading } = fromTestConnection;
 
-  const testProviderConnection = useCallback(
+  const testProviderConnectionForm = useCallback(
     (payload: URLParams) => {
       const params = buildParams(payload);
-      dispatchTestConnection(params);
+      dispatchFormTestConnection(params);
     },
-    [dispatchTestConnection]
+    [dispatchFormTestConnection]
   );
 
   return {
-    testProviderConnection,
+    testProviderConnectionForm,
+    response,
+    loading
+  };
+};
+
+interface SectionTestConnection extends FetchProps {
+  testProviderConnectionSection: Function;
+  response: TestConnectionResponse;
+}
+
+export const useSectionTestConnection = (): SectionTestConnection => {
+  const [sectionTestConnection, dispatchSectionTestConnection] = useFetch<
+    TestConnectionResponse
+  >(metricProviderConfigConnection);
+
+  const { response, loading } = sectionTestConnection;
+
+  const testProviderConnectionSection = useCallback(
+    (params: URLParams, providerId: string) => {
+      const urlParams = buildParams(params);
+      dispatchSectionTestConnection(urlParams, providerId);
+    },
+    [dispatchSectionTestConnection]
+  );
+
+  return {
+    testProviderConnectionSection,
     response,
     loading
   };

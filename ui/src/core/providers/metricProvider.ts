@@ -28,3 +28,11 @@ export const create = (metricProvider: MetricProvider) =>
 
 export const verifyProviderConnection = (params: URLSearchParams) =>
   baseRequest(`${endpointMetrics}/config/verify-provider-connection?${params}`);
+
+export const metricProviderConfigConnection = (
+  params: URLSearchParams,
+  providerId: string
+) =>
+  baseRequest(
+    `${endpointMetrics}/${providerId}/config/verify-provider-connection?${params}`
+  );

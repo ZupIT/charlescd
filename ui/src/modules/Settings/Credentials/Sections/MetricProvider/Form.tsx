@@ -27,13 +27,17 @@ import { getProfileByKey } from 'core/utils/profile';
 import ConnectionStatus from './ConnectionStatus';
 import { MetricProvider } from './interfaces';
 import { Props } from '../interfaces';
-import { useMetricProvider, useTestConnection } from './hooks';
+import { useMetricProvider, useFromTestConnection } from './hooks';
 import { metricProviders } from './constants';
 import Styled from './styled';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useMetricProvider();
-  const { testProviderConnection, response, loading } = useTestConnection();
+  const {
+    testProviderConnectionForm,
+    response,
+    loading
+  } = useFromTestConnection();
   const [isDisabled, setIsDisabled] = useState(true);
   const [provider, setProvider] = useState<Option>();
   const { control, register, handleSubmit, getValues } = useForm<
@@ -54,7 +58,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const onClick = () => {
     const { url } = getValues();
-    testProviderConnection({ provider: url, providerType: provider.value });
+    testProviderConnectionForm({ provider: url, providerType: provider.value });
   };
 
   const onChange = (option: Option) => {
