@@ -55,6 +55,14 @@ class PrometheusService(
         return this.prometheusApi.executeQuery(URI.create(url), query).toMetric(searchMetric.name)
     }
 
+    override fun healthCheck(url: String): String {
+        return this.prometheusApi.healthCheck(URI.create(url))
+    }
+
+    override fun readinessCheck(url: String): String {
+        return this.prometheusApi.readinessCheck(URI.create(url))
+    }
+
     private fun groupBy(groupBy: List<String>?): String {
         return groupBy?.joinToString(separator = ",")
                 ?: ""

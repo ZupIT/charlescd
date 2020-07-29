@@ -694,4 +694,36 @@ class PrometheusServiceUnitTest extends Specification {
         result.result.get(0).data.get(0).value == 0D
         result.result.get(0).data.get(0).time == 1580157300
     }
+
+    def 'should get provider health with success'() {
+        given:
+        def prometheusResponse = "Prometheus is Healthy.\n"
+
+        when:
+        def response = this.prometheusService.healthCheck(url)
+
+        then:
+        1 * this.prometheusApi.healthCheck(URI.create(url)) >> prometheusResponse
+        0 * _
+
+        response != null
+        response.length() != 0
+        response == prometheusResponse
+    }
+
+    def 'should get provider readiness with success'() {
+        given:
+        def prometheusResponse = "Prometheus is Ready.\n"
+
+        when:
+        def response = this.prometheusService.readinessCheck(url)
+
+        then:
+        1 * this.prometheusApi.readinessCheck(URI.create(url)) >> prometheusResponse
+        0 * _
+
+        response != null
+        response.length() != 0
+        response == prometheusResponse
+    }
 }
