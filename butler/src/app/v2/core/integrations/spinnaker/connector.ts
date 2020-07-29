@@ -37,7 +37,6 @@ export class SpinnakerConnector {
 
   public createV2Deployment(deployment: Deployment, activeComponents: Component[]): ConnectorResult {
     const pipeline: SpinnakerPipeline = this.buildSpinnakerPipeline(deployment, activeComponents)
-    console.log(JSON.stringify(pipeline))
     return { status: 'SUCCEEDED' }
   }
 
