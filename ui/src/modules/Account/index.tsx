@@ -32,11 +32,11 @@ import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateProfile } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
 import Modal from 'core/components/Modal';
-import Loader from './Loaders';
-import Menu from './Menu';
 import { AccountMenu } from './constants';
 import ChangePassword from './ChangePassword';
 import Styled from './styled';
+import Menu from './Menu';
+import Loader from './Loaders';
 
 const Account = () => {
   const name = getProfileByKey('name');
