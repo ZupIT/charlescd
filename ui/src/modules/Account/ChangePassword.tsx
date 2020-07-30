@@ -38,7 +38,7 @@ const ChangePassword = () => {
   });
   const newPassword = watch('newPassword') as string;
   const confirmPass = watch('confirmPassword') as string;
-  const { updatePassword } = useChangePassword();
+  const { updatePassword, status } = useChangePassword();
 
   const onSubmit = () => {
     const id = getProfileByKey('id');
@@ -88,6 +88,7 @@ const ChangePassword = () => {
         id="change-password"
         type="submit"
         size="EXTRA_SMALL"
+        isLoading={status.isPending}
         isDisabled={!formState.isValid}
       >
         Save
