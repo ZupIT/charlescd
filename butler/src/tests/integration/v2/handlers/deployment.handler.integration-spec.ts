@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { JobWithDoneCallback } from 'pg-boss'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
+import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-use-case'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
-import { JobWithDoneCallback } from 'pg-boss'
-import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
-import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-use-case'
 
 describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -100,7 +100,19 @@ describe('DeploymentHandler', () => {
     await deploymentUseCase.updateStatus(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
     await deploymentHandler.run(secondJob)
 
-    expect(notHandledDeployment.components.map(c => c.running)).toEqual([true])
+    const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
+    const firstHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
+    expect(secondHandled.components.map(c => c.running)).toEqual([true])
+    expect(firstHandled.components.map(c => c.running)).toEqual([false])
+
+    await deploymentUseCase.updateStatus(secondHandled.id, DeploymentStatusEnum.SUCCEEDED)
+
+    const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
+    const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
+
+    expect(secondsStopped.components.map(c => c.running)).toEqual([false])
+    expect(firstStopped.components.map(c => c.running)).toEqual([false])
+
   })
 })
 

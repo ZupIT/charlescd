@@ -45,6 +45,7 @@ export class DeploymentUseCase {
   public async updateStatus(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity> {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     deployment.status = status
+    deployment.finishedAt = new Date()
     deployment.components = deployment.components.map(c => {
       c.running = false
       return c

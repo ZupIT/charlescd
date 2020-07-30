@@ -17,12 +17,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobWithDoneCallback } from 'pg-boss';
-import { In, Repository, UpdateResult } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-import { PgBossWorker } from '../jobs/pgboss.worker';
 import { Execution } from '../entity/execution.entity';
+import { PgBossWorker } from '../jobs/pgboss.worker';
 
 
 @Injectable()
@@ -48,14 +48,12 @@ export class DeploymentHandler {
     const componentsOverlap = await this.checkForRunningComponents(deployment)
     if (componentsOverlap.length > 0) {
       this.pgBoss.publish(job.data)
-      job.done()
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     } else {
-      const deploymentComponents = await this.findComponentsByName(deployment)
-      await this.updateComponentsToRunning(deploymentComponents)
-      job.done()
+      await this.updateComponentsToRunning(deployment)
       this.consoleLoggerService.log('Updated components to running', { job: job })
     }
+    job.done()
     return job
   }
 
@@ -68,9 +66,12 @@ export class DeploymentHandler {
     return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  async updateComponentsToRunning(components: ComponentEntity[]): Promise<UpdateResult> { // TODO extract all these database methods to custom repo/class
-    const componentsIds = components.map(c => c.id)
-    const updated = await this.componentsRepository.update(componentsIds, { running: true })
+  async updateComponentsToRunning(deployment: DeploymentEntity): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
+    deployment.components = deployment.components.map(c => {
+      c.running = true
+      return c
+    })
+    const updated = await this.deploymentsRepository.save(deployment, { reload: true })
     return updated
   }
 

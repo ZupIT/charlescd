@@ -63,7 +63,7 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
   public circleId!: string | null
 
-  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert'] })
+  @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
   constructor(
