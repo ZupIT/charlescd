@@ -17,44 +17,44 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import { ConnectionStatusEnum as stausEnum } from './interfaces';
+import { ConnectionStatusEnum as statusEnum } from './interfaces';
 import Styled from './styled';
 
 type Props = {
   status: string;
 };
 
+type MessageProps = {
+  status: string;
+  messagemText: string;
+};
+
+const MessageStatus = ({ status, messagemText }: MessageProps) => (
+  <Styled.StatusMessageWrapper
+    data-testid={`connection-${status}`}
+    status={status}
+  >
+    <Icon name={status} />
+    <Text.h5>{messagemText}</Text.h5>
+  </Styled.StatusMessageWrapper>
+);
+
 const ConnectionStatus = ({ status }: Props) => {
-  if (status === stausEnum.FAILED)
-    return (
-      <Styled.StatusMessageWrapper
-        data-testid="connection-error"
-        status="error"
-      >
-        <Icon name="error" />
-        <Text.h5>Connection to metric provider failed.</Text.h5>
-      </Styled.StatusMessageWrapper>
-    );
-  if (status === stausEnum.SUCCESS)
-    return (
-      <Styled.StatusMessageWrapper
-        data-testid="connection-succeful"
-        status="success"
-      >
-        <Icon name="success" />
-        <Text.h5>Successful connection with the metrics provider.</Text.h5>
-      </Styled.StatusMessageWrapper>
-    );
+  if (status === statusEnum.FAILED)
+    return MessageStatus({
+      status: 'error',
+      messagemText: 'Connection to metric provider failed.'
+    });
+  if (status === statusEnum.SUCCESS)
+    return MessageStatus({
+      status: 'success',
+      messagemText: 'Successful connection with the metrics provider.'
+    });
   else
-    return (
-      <Styled.StatusMessageWrapper
-        data-testid="connection-falied-to-reach"
-        status="error"
-      >
-        <Icon name="error" />
-        <Text.h5>Failed to reach the metrics provider.</Text.h5>
-      </Styled.StatusMessageWrapper>
-    );
+    return MessageStatus({
+      status: 'error',
+      messagemText: 'Failed to reach the metrics provider.'
+    });
 };
 
 export default ConnectionStatus;

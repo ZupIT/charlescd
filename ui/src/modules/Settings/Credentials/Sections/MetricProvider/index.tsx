@@ -57,7 +57,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
     }
   }, [data, testProviderConnectionSection]);
 
-  const renderConnectionMessage = () => ( //coverage
+  const renderConnectionMessage = () => (
     <Styled.StatusWrapper status="error">
       <Icon size="10px" name="error" />
       <Text.h5>Connection to metric provider failed.</Text.h5>
@@ -77,7 +77,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
             icon="metrics"
             description={data.provider}
             isLoading={loadingRemove}
-            onClose={() => remove()} // coverage
+            onClose={() => remove()}
           />
           {response?.status === statusConnection.FAILED &&
             renderConnectionMessage()}
@@ -86,7 +86,7 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
     </Section>
   );
 
-  const renderForm = () => // coverage
+  const renderForm = () =>
     isEqual(form, FORM_METRIC_PROVIDER) && (
       <Layer action={() => setForm(null)}>
         <FormMetricProvider onFinish={() => setForm(null)} />
