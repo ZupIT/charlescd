@@ -22,9 +22,9 @@ import io.charlescd.moove.application.module.request.ComponentRequest
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.springframework.dao.DuplicateKeyException
 import javax.inject.Named
 import javax.transaction.Transactional
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class AddComponentInteractorImpl(private val moduleService: ModuleService) : AddComponentInteractor {
