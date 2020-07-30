@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait, fireEvent } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';

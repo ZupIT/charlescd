@@ -15,8 +15,10 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait, fireEvent, screen, act } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
+import * as baseHookUtils from 'core/providers/base/hooks';
 import ChangePassword from '../ChangePassword';
 
 (global as any).MutationObserver = MutationObserver
@@ -40,4 +42,26 @@ test('render error in invalid field', async () => {
   fireEvent.blur(confirmPassword);
   await wait(() => expect(queryByTestId('error-newPassword')).toBeInTheDocument());
   await wait(() => expect(queryByTestId('error-confirmPassword')).toBeInTheDocument());
+});
+
+test('submit password change form', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  const { queryByTestId } = render(<ChangePassword />);
+  const oldPassword = queryByTestId('input-password-oldPassword');
+  const newPassword = queryByTestId('input-password-newPassword');
+  const confirmPassword = queryByTestId('input-password-confirmPassword');
+  const spy = jest.spyOn(baseHookUtils, 'useFetchStatus');
+  const value = '@Asdfg1234';
+
+  await wait(() => expect(newPassword).toBeInTheDocument());
+  fireEvent.change(oldPassword, { target: { value }});
+  fireEvent.change(newPassword, { target: { value }});
+  fireEvent.change(confirmPassword, { target: { value }});
+
+  fireEvent.blur(confirmPassword);
+  const button = queryByTestId('button-default-change-password');
+  await wait(() => expect(button).not.toBeDisabled());
+  await wait(() => fireEvent.click(button));
+
+  expect(spy).toHaveBeenCalled();
 });
