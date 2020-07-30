@@ -58,7 +58,7 @@ spec:
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
             {{- if and (eq .Values.nginx.enabled true) (eq .Values.nginx.keycloak.enabled true) }}
-              value: "http://nginx/keycloak/auth"
+              value: "http://charles.info.example/keycloak/auth"
             {{- else }}
               value: "{{ .Values.moove.keycloakHost}}"
             {{- end }}

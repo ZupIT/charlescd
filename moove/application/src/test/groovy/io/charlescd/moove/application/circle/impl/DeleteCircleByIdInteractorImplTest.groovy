@@ -132,7 +132,8 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
                 DeploymentStatusEnum.DEPLOYED,
                 circle,
                 buildId,
-                workspaceId
+                workspaceId,
+                null
         )
     }
 
@@ -148,7 +149,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         )
     }
 
-    private Workspace getDummyWorkspace(String workspaceId, User author) {
+    private static Workspace getDummyWorkspace(String workspaceId, User author) {
         new Workspace(
                 workspaceId,
                 "Charles",
@@ -164,7 +165,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         )
     }
 
-    private Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault) {
+    private static Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId, Boolean isDefault) {
         new Circle(
                 circleId,
                 "Women",
