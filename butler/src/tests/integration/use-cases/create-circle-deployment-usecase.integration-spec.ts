@@ -490,6 +490,214 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     })
   })
 
+  it('/POST /deployments in circle should fail if deployment with the component name and module id already exists and has active releases', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const deploymentRepeated = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : null
+    })
+
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
+
+    const moduleDeploymentRepeated = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deploymentRepeated.id,
+      'moduleId': module.id,
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id
+    })
+    componentsRepository.update(component.id,{
+      pipelineOptions: {
+        pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+      }
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeploymentRepeated.id,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: module.id,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: 'c41f029d-186c-4097-ad43-1b344b2e8041',
+              componentName: componentDeployment.componentName,
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'f4c4bcbe-58a9-41cc-ad8b-7177121905de',
+              componentName: 'component-name2',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        },
+        {
+          moduleId: componentDeployment.moduleDeployment,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: component.id,
+              componentName: componentDeployment.componentName,
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: cdConfiguration.id,
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+
+
+    const response =   await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
+    const responseObject = JSON.parse(response.text)
+    console.log(responseObject)
+    expect(responseObject.statusCode).toBe(409)
+    expect(responseObject.message).toBe('A component with the name component-name and module name 85a7e346-6f1c-4189-b9f5-3ac475e9fb6c  is already registered and has active deployments\'')
+  })
+
+  it('/POST /deployments in circle should not fail if deployment with the component name and module id already exists but no active releases', async() => {
+
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const deploymentRepeated = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : null
+    })
+
+    const module = await fixtureUtilsService.createModule({
+      'id': uuid.v4()
+    })
+
+    const moduleDeploymentRepeated = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deploymentRepeated.id,
+      'moduleId': module.id,
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
+    const component = await fixtureUtilsService.createComponent({
+      'id': uuid.v4(),
+      'module': module.id
+    })
+
+    const componentDeployment = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeploymentRepeated.id,
+      'componentId':  component.id,
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+
+    const createDeploymentRequest = {
+      deploymentId: '5ba3691b-d647-4a36-9f6d-c089f114e476',
+      applicationName: 'c26fbf77-5da1-4420-8dfa-4dea235a9b1e',
+      modules: [
+        {
+          moduleId: module.id,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: 'c41f029d-186c-4097-ad43-1b344b2e8041',
+              componentName: componentDeployment.componentName,
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            },
+            {
+              componentId: 'f4c4bcbe-58a9-41cc-ad8b-7177121905de',
+              componentName: 'component-name2',
+              buildImageUrl: 'image-url2',
+              buildImageTag: 'image-tag2'
+            }
+          ]
+        },
+        {
+          moduleId: componentDeployment.moduleDeployment,
+          helmRepository: 'helm-repository.com',
+          components: [
+            {
+              componentId: component.id,
+              componentName: componentDeployment.componentName,
+              buildImageUrl: 'image-url',
+              buildImageTag: 'image-tag'
+            }
+          ]
+        }
+      ],
+      authorId: 'author-id',
+      description: 'Deployment from Charles C.D.',
+      callbackUrl: 'http://localhost:8883/moove',
+      cdConfigurationId: cdConfiguration.id,
+      circle: {
+        headerValue: 'circle-header'
+      }
+    }
+
+
+    await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
+      .expect(201)
+  })
+
   it('/POST /deployments in circle should correctly update component pipeline options', async() => {
     const cdConfiguration = await fixtureUtilsService.createCdConfiguration( {
       'id': uuid.v4(),

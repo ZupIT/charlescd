@@ -3,7 +3,7 @@ import { ComponentDeploymentEntity, DeploymentEntity, ModuleDeploymentEntity } f
 import { DeploymentsRepository } from '../repository/deployments.repository'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ComponentRepository } from '../repository/components.repository'
-import { ComponentEntity } from '../../components/entity'
+
 @Injectable()
 export class ComponentUniquenessPipe implements PipeTransform {
   private errors: Error[]  = []
