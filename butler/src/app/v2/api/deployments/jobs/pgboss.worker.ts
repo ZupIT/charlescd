@@ -22,6 +22,7 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { DeploymentHandler } from '../use-cases/deployment-handler';
 import PgBoss = require('pg-boss');
 import { JobWithDoneCallback } from 'pg-boss';
+import { Execution } from '../entity/execution.entity';
 
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
@@ -36,7 +37,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
     this.pgBoss = new PgBoss(envConfiguration.pgBossConfig)
   }
 
-  publish(params: DeploymentEntity): Promise<string | null> {
+  publish(params: Execution): Promise<string | null> {
     return this.pgBoss.publish('deployment-queue', params)
   }
 
@@ -44,10 +45,10 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
     this.consoleLoggerService.log('Starting pgboss')
     await this.pgBoss.start()
     this.pgBoss.on('error', (error) => {
-      console.log('pg-boss error', error)
+      this.consoleLoggerService.log('pg-boss error', error)
     })
 
-    await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<DeploymentEntity, unknown>) => {
+    await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<Execution, unknown>) => {
       await this.deploymentHandler.run(job)
     })
   }

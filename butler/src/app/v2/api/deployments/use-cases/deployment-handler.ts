@@ -22,6 +22,7 @@ import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { PgBossWorker } from '../jobs/pgboss.worker';
+import { Execution } from '../entity/execution.entity';
 
 
 @Injectable()
@@ -30,44 +31,53 @@ export class DeploymentHandler {
     private readonly consoleLoggerService: ConsoleLoggerService,
     @InjectRepository(ComponentEntity)
     private componentsRepository: Repository<ComponentEntity>,
+    @InjectRepository(DeploymentEntity)
+    private deploymentsRepository: Repository<DeploymentEntity>,
     @Inject(forwardRef(() => PgBossWorker))
     private pgBoss: PgBossWorker
   ) { }
 
-  async run(job: JobWithDoneCallback<DeploymentEntity, unknown>): Promise<JobWithDoneCallback<DeploymentEntity, unknown>> {
-    const cdServiceResponse = true
-    if (cdServiceResponse) {
-      this.consoleLoggerService.log('Finished job', { job: job.id, data: job.data })
-      const componentNames = job.data.components.map(c => c.name)
-      const componentsOverlap = await this.checkForRunningComponents(componentNames, job.data)
-      const deploymentComponents = await this.findComponentsByName(componentNames, job.data)
-      if (componentsOverlap) {
-        this.pgBoss.publish(job.data)
-        job.done()
-      }
+  async run(job: JobWithDoneCallback<Execution, unknown>): Promise<JobWithDoneCallback<Execution, unknown>> {
+    const deployment = await this.deploymentFromExecution(job.data)
+    if (!deployment) {
+      const error = new Error('Deployment not found')
+      job.done(error)
+      this.consoleLoggerService.log('DeploymentHandler error', { job: job })
+      throw error
+    }
+    const componentsOverlap = await this.checkForRunningComponents(deployment)
+    if (componentsOverlap.length > 0) {
+      this.pgBoss.publish(job.data)
+      job.done()
+      this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
+    } else {
+      const deploymentComponents = await this.findComponentsByName(deployment)
       await this.updateComponentsToRunning(deploymentComponents)
       job.done()
-    } else {
-      this.consoleLoggerService.log('Error on job', { job: job.id, data: job.data })
-      job.done(new Error('deu ruim no deploy'))
+      this.consoleLoggerService.log('Updated components to running', { job: job })
     }
     return job
   }
 
-  async findComponentsByName(names: string[], deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+  async deploymentFromExecution(execution: Execution): Promise<DeploymentEntity | undefined> {
+    return await this.deploymentsRepository.findOne({ where: { id: execution.deployment.id }, relations: ['components'] })
+  }
+
+  async findComponentsByName(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+    const names = deployment.components.map(c => c.name)
     return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  async updateComponentsToRunning(components: ComponentEntity[]): Promise<UpdateResult> {
+  async updateComponentsToRunning(components: ComponentEntity[]): Promise<UpdateResult> { // TODO extract all these database methods to custom repo/class
     const componentsIds = components.map(c => c.id)
     const updated = await this.componentsRepository.update(componentsIds, { running: true })
     return updated
   }
 
-  async checkForRunningComponents(names: string[], deployment: DeploymentEntity): Promise<ComponentEntity[]> {
-    const deploymentComponents = await this.findComponentsByName(names, deployment)
+  async checkForRunningComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+    const deploymentComponents = await this.findComponentsByName(deployment)
     const allRunningComponents = await this.componentsRepository.find({ where: { running: true } })
-    const overlap = allRunningComponents.filter(n => deploymentComponents.includes(n))
+    const overlap = allRunningComponents.filter( c => deploymentComponents.some(dc => dc.name === c.name))
     return overlap
   }
 }

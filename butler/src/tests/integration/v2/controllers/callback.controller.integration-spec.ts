@@ -11,6 +11,8 @@ import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dt
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -78,8 +80,9 @@ describe('DeploymentController v2', () => {
     )
     const deploymentEntity = deploymentDto.toEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
-    const deployment = await manager.save(deploymentEntity)
-
+    deploymentEntity.components[0].running = true
+    const savedDeployment = await manager.save(deploymentEntity)
+    const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
     await request(app.getHttpServer())
       .post(`/v2/notifications/deployment/${deployment.id}`)
       .send({ status: 'SUCCEEDED' })
@@ -94,6 +97,17 @@ describe('DeploymentController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
+            components: [
+              {
+                componentId: deployment.components[0].componentId,
+                helmUrl: deployment.components[0].helmUrl,
+                id: deployment.components[0].id,
+                imageTag: deployment.components[0].imageTag,
+                imageUrl: deployment.components[0].imageUrl,
+                name: deployment.components[0].name,
+                running: false
+              }
+            ],
             createdAt: expect.anything(),
             finishedAt: expect.anything()
           }
