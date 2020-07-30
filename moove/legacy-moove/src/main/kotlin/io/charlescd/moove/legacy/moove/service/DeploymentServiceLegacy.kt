@@ -18,7 +18,6 @@
 
 package io.charlescd.moove.legacy.moove.service
 
-import io.charlescd.moove.commons.constants.MooveConstants
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.extension.toResourcePageRepresentation
@@ -26,14 +25,9 @@ import io.charlescd.moove.commons.representation.DeploymentRepresentation
 import io.charlescd.moove.commons.representation.ResourcePageRepresentation
 import io.charlescd.moove.legacy.moove.api.DeployApi
 import io.charlescd.moove.legacy.moove.api.request.UndeployRequest
-import io.charlescd.moove.legacy.moove.request.deployment.CreateDeploymentRequest
-import io.charlescd.moove.legacy.repository.BuildRepository
-import io.charlescd.moove.legacy.repository.CircleRepository
 import io.charlescd.moove.legacy.repository.DeploymentRepository
-import io.charlescd.moove.legacy.repository.UserRepository
-import io.charlescd.moove.legacy.repository.entity.*
-import java.time.LocalDateTime
-import java.util.*
+import io.charlescd.moove.legacy.repository.entity.Deployment
+import io.charlescd.moove.legacy.repository.entity.DeploymentStatus
 import javax.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -43,9 +37,6 @@ import org.springframework.stereotype.Component
 @Component
 class DeploymentServiceLegacy(
     private val deploymentRepository: DeploymentRepository,
-    private val userRepository: UserRepository,
-    private val buildRepository: BuildRepository,
-    private val circleRepository: CircleRepository,
     private val deployApi: DeployApi
 ) {
 
@@ -85,32 +76,5 @@ class DeploymentServiceLegacy(
 
     private fun Deployment.updateDeploymentStatus(): Deployment {
         return deploymentRepository.save(this.copy(status = DeploymentStatus.UNDEPLOYING))
-    }
-
-    private fun Circle.isNotDefault(): Boolean = this.name != MooveConstants.MOOVE_DEFAULT_CIRCLE_NAME
-
-    private fun findBuild(id: String): Build =
-        this.buildRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("build", id) }
-
-    private fun findCircle(id: String): Circle =
-        this.circleRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("circle", id) }
-
-    private fun findUser(id: String): User =
-        this.userRepository.findById(id)
-            .orElseThrow { NotFoundExceptionLegacy("user", id) }
-
-    private fun CreateDeploymentRequest.toEntity(workspaceId: String): Deployment {
-        return Deployment(
-            id = UUID.randomUUID().toString(),
-            author = findUser(this.authorId),
-            createdAt = LocalDateTime.now(),
-            deployedAt = null,
-            circle = findCircle(this.circleId),
-            build = findBuild(this.buildId),
-            status = DeploymentStatus.DEPLOYING,
-            workspaceId = workspaceId
-        )
     }
 }
