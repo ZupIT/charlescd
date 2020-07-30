@@ -19,6 +19,7 @@ package io.charlescd.moove.application.deployment.response
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.DeploymentHistory
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.time.LocalDateTime
 
 class DeploymentHistoryResponse(
@@ -29,7 +30,12 @@ class DeploymentHistoryResponse(
     val tag: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val undeployedAt: LocalDateTime?,
-    val components: List<ComponentHistoryResponse>
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val createdAt: LocalDateTime,
+    val deployDuration: Long,
+    val circleName: String,
+    val components: List<ComponentHistoryResponse>,
+    val status: DeploymentStatusEnum
 ) {
     companion object {
         fun from(deploymentHistory: DeploymentHistory, componentsHistory: List<ComponentHistory>): DeploymentHistoryResponse {
@@ -39,8 +45,20 @@ class DeploymentHistoryResponse(
                 undeployedAt = deploymentHistory.undeployedAt,
                 authorName = deploymentHistory.authorName,
                 tag = deploymentHistory.tag,
-                components = componentsHistory.map { ComponentHistoryResponse.from(it) }
+                deployDuration = deploymentHistory.deploymentDuration?.seconds ?: 0,
+                circleName = deploymentHistory.circleName,
+                components = componentsHistory.map { ComponentHistoryResponse.from(it) },
+                status = deploymentHistory.status,
+                createdAt = deploymentHistory.createdAt
             )
         }
     }
 }
+
+data class DeploymentHistorySummary(
+    val deployed: Int,
+    val notDeployed: Int,
+    val failed: Int,
+    val deploying: Int,
+    val undeploying: Int
+)
