@@ -594,7 +594,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     const response =   await request(app.getHttpServer()).post('/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
     const responseObject = JSON.parse(response.text)
-    console.log(responseObject)
     expect(responseObject.statusCode).toBe(409)
     expect(responseObject.message).toContain(`A component with the name component-name and module name ${module.id}  is already registered and has active deployments`)
   })
