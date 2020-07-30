@@ -86,7 +86,7 @@ export class SpinnakerConnector {
       return []
     }
     const proxyStages: Stage[] = []
-    const evalStageId: number = deployment.components.length * 4 + 1 // TODO this is smelling bad
+    const evalStageId: number = deployment.components.length * 4 + 1
     deployment.components.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
