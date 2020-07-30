@@ -97,8 +97,7 @@ class JdbcComponentRepository(
                         INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
                         INNER JOIN artifact_snapshots artifact_snapshots    ON artifact_snapshots.component_snapshot_id = component_snapshots.id
                         INNER JOIN feature_snapshots feature_snapshots      ON feature_snapshots.id = module_snapshots.feature_snapshot_id
-                        INNER JOIN builds_features builds_features          ON builds_features.feature_id = feature_snapshots.feature_id
-                        INNER JOIN deployments deployments                  ON deployments.build_id = builds_features.build_id
+                        INNER JOIN deployments deployments                  ON deployments.build_id = feature_snapshots.build_id
                     WHERE deployments.workspace_id = ?
             """
         )
