@@ -18,7 +18,12 @@ import { CdConfiguration, Component } from '../interfaces'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
 import { Stage } from '../interfaces/spinnaker-pipeline.interface'
 
-export const getDestinationRulesStage = (component: Component, configuration: CdConfiguration, stageId: number): Stage => ({
+export const getDestinationRulesStage = (
+  component: Component,
+  configuration: CdConfiguration,
+  stageId: number,
+  evalStageId: number
+): Stage => ({
   account: `${(configuration.configurationData as ISpinnakerConfigurationData).account}`,
   cloudProvider: 'kubernetes',
   completeOtherBranchesThenFail: false,
@@ -51,7 +56,7 @@ export const getDestinationRulesStage = (component: Component, configuration: Cd
   name: `Deploy Destination Rules ${component.name}`,
   refId: `${stageId}`,
   requisiteStageRefIds: [
-    '13' // TODO fix this. How did this pass?
+    `${evalStageId}` // TODO fix this. How did this pass?
   ],
   skipExpressionEvaluation: false,
   source: 'text',
