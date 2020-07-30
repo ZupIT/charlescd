@@ -596,7 +596,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     const responseObject = JSON.parse(response.text)
     console.log(responseObject)
     expect(responseObject.statusCode).toBe(409)
-    expect(responseObject.message).toBe('A component with the name component-name and module name 85a7e346-6f1c-4189-b9f5-3ac475e9fb6c  is already registered and has active deployments\'')
+    expect(responseObject.message).toContain(`A component with the name component-name and module name ${module.id}  is already registered and has active deployments`)
   })
 
   it('/POST /deployments in circle should not fail if deployment with the component name and module id already exists but no active releases', async() => {

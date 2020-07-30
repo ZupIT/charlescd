@@ -67,5 +67,4 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
             componentId
         )
     }
-
 }

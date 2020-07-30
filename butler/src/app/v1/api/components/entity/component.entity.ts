@@ -166,8 +166,8 @@ export class ComponentEntity extends BaseEntity {
     })
   }
 
-  public isActive() {
-    return this.pipelineOptions.pipelineVersions.length
+  public isActive(): boolean {
+    return this.pipelineOptions.pipelineVersions.length !== 0
   }
 
 }

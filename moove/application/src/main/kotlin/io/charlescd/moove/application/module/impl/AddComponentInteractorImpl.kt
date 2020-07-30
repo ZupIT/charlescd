@@ -15,7 +15,6 @@
  */
 
 package io.charlescd.moove.application.module.impl
-
 import io.charlescd.moove.application.ModuleService
 import io.charlescd.moove.application.build.response.ComponentResponse
 import io.charlescd.moove.application.module.AddComponentInteractor
@@ -26,7 +25,6 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import org.springframework.dao.DuplicateKeyException
 import javax.inject.Named
 import javax.transaction.Transactional
-
 
 @Named
 open class AddComponentInteractorImpl(private val moduleService: ModuleService) : AddComponentInteractor {
