@@ -19,28 +19,42 @@ import {
   useFetchStatus,
   FetchStatus
 } from 'core/providers/base/hooks';
+import { useDispatch } from 'core/state/hooks';
 import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 import { changePassword } from 'core/providers/users';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useChangePassword = (): {
   updatePassword: Function;
   status: FetchStatus;
 } => {
   const changePass = useFetchData<CheckPassword>(changePassword);
+  const dispatch = useDispatch();
   const status = useFetchStatus();
 
   const updatePassword = useCallback(
     async (id: string, payload: CheckPassword) => {
       try {
         status.pending();
-        const data = await changePass(id, payload);
-        console.log('data', data);
+        await changePass(id, payload);
+        dispatch(
+          toogleNotification({
+            text: 'Password changed successfully.',
+            status: 'success'
+          })
+        );
         status.resolved();
       } catch (e) {
+        dispatch(
+          toogleNotification({
+            text: 'it was not possible to change the password.',
+            status: 'error'
+          })
+        );
         status.rejected();
       }
     },
-    [changePass, status]
+    [changePass, status, dispatch]
   );
 
   return {
