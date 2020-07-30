@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Pagination } from 'core/interfaces/Pagination';
+
 export interface DeployMetricData {
   successfulDeployments: number;
   failedDeployments: number;
@@ -34,4 +36,42 @@ export enum PERIOD_PARAM {
   TWO_WEEKS = 'TWO_WEEKS',
   ONE_MONTH = 'ONE_MONTH',
   THREE_MONTHS = 'THREE_MONTHS'
+}
+
+export interface ReleaseHistoryRequest {
+  deploymentName?: string;
+  period?: string;
+  circles?: string[];
+  deploymentStatus?: string[];
+}
+
+export interface ReleaseHistorySummary {
+  deployed: number;
+  deploying: number;
+  failed: number;
+  undeploying: number;
+  notDeployed: number;
+}
+
+export interface ReleaseHistoryResponse {
+  summary: ReleaseHistorySummary;
+  page: Pagination<ReleaseHistory>;
+}
+
+export interface ReleaseHistory {
+  id: string;
+  deployedAt: string;
+  undeployedAt: string;
+  authorName: string;
+  circleName: string;
+  tag: string;
+  status: string;
+  deployDuration: number;
+  components: ReleaseHistoryComponents[];
+}
+
+export interface ReleaseHistoryComponents {
+  name: string;
+  moduleName: string;
+  version: string;
 }
