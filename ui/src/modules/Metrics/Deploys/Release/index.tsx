@@ -19,6 +19,7 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import ReleaseRow from './ReleaseRow';
 import Summary from './Summary';
+import { pageInitialCount } from './constants';
 import Loader from '../../Loaders/index';
 import { useReleaseHistory } from '../hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -46,7 +47,7 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
 
   useEffect(() => {
     const { period, circles } = filter;
-    page.current = 0;
+    page.current = pageInitialCount;
     setReleases([]);
     getReleaseHistory({ page: 0 }, { circles, period });
   }, [getReleaseHistory, filter]);

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, wait, screen, fireEvent } from 'unit-test/testUtils';
 import Deploy from '..';
 
 test('render Deploy default screen', async () => {
@@ -27,4 +27,16 @@ test('render Deploy default screen', async () => {
   expect(screen.getByTestId('metrics-filter')).toBeInTheDocument();
   expect(screen.getByTestId('apexchart-deploy')).toBeInTheDocument();
   expect(screen.getByTestId('release-history')).toBeInTheDocument();
+  expect(screen.getByTestId('metrics-deploy-apply')).toBeInTheDocument();
+})
+
+test('reset chart button', async () => {
+  render(<Deploy />);
+
+  await wait();
+  
+  const chartMenu = screen.getByTestId('icon-horizontal-dots');
+  fireEvent.click(chartMenu);
+
+  expect(screen.getByText('Reset')).toBeInTheDocument();
 })

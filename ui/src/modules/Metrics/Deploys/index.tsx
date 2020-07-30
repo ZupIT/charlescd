@@ -76,7 +76,12 @@ const Deploys = () => {
             defaultValue={periodFilterItems[0]}
           />
           <CircleFilter control={control} setValue={setValue} />
-          <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
+          <Styled.Button
+            type="submit"
+            size="EXTRA_SMALL"
+            isLoading={loading}
+            data-testid="metrics-deploy-apply"
+          >
             <Text.h5 weight="bold" align="center" color="light">
               Apply
             </Text.h5>
