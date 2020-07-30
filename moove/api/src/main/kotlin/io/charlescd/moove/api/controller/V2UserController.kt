@@ -19,17 +19,26 @@ package io.charlescd.moove.api.controller
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
+import io.charlescd.moove.application.user.ResetUserPassword
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
+import java.util.*
 
 @RestController
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
-    private val findAllUsersInteractor: FindAllUsersInteractor
+    private val findAllUsersInteractor: FindAllUsersInteractor,
+    private val resetUserPassword: ResetUserPassword
 ) {
 
     @ApiOperation(value = "Find User by email")
@@ -48,4 +57,10 @@ class V2UserController(
     ): ResourcePageResponse<UserResponse> {
         return this.findAllUsersInteractor.execute(name, email, pageable)
     }
+
+    @ApiOperation(value = "Reset password")
+    @PutMapping("/{id}/reset-password")
+    @ResponseStatus(HttpStatus.OK)
+    fun resetPassword(@PathVariable id: UUID) =
+        resetUserPassword.execute(id)
 }
