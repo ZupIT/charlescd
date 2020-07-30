@@ -27,7 +27,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
+class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
     def componentRepository = Mock(ComponentRepository)
     def deploymentRepository = Mock(DeploymentRepository)
@@ -37,7 +37,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
 
-    def 'should return not search for components when no deployment found'() {
+    def 'should return and not search for components when no deployment found'() {
         given:
         def circle = "circle-id-1"
 
