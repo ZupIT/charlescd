@@ -12,7 +12,7 @@ export const users = [
     name: 'User 3',
     email: 'user.3@zup.com.br',
     photoUrl: '',
-    checked: false
+    checked: true
   },
   {
     id: '8b81e7a7-33f1-46cb-aedf-73222bf8769f',

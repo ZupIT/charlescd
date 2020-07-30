@@ -18,7 +18,7 @@ import React, { useRef, useState } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import remove from 'lodash/remove';
+import xorBy from 'lodash/xorBy';
 import { User } from 'modules/Users/interfaces/User';
 import { UserChecked } from '../../interfaces/UserChecked';
 import Icon from 'core/components/Icon';
@@ -61,28 +61,23 @@ const MemberChecked = ({ checked }: UserCheckedProps) => (
   </Styled.Item.Checked>
 );
 
-const UserItem = ({ id, name, email, photoUrl, onSelected }: UserItemProps) => {
-  const userItemRef = useRef<HTMLDivElement>();
-
-  const [isSelected, setIsSelected] = useState(false);
-  const [isChecked, setIsChecked] = useState(true);
-
-  useOutsideClick(userItemRef, () => {
-    setIsSelected(false);
-  });
+const UserItem = ({
+  id,
+  name,
+  email,
+  photoUrl,
+  checked,
+  onSelected
+}: UserItemProps) => {
+  const [isChecked, setIsChecked] = useState(checked);
 
   const handleSelected = (id: string) => {
-    setIsSelected(true);
     setIsChecked(!isChecked);
     onSelected(id, !isChecked);
   };
 
   return (
-    <Styled.Item.Wrapper
-      onClick={() => handleSelected(id)}
-      isSelected={isSelected}
-      ref={userItemRef}
-    >
+    <Styled.Item.Wrapper onClick={() => handleSelected(id)}>
       <Styled.Item.Profile>
         <Styled.Item.Photo src={photoUrl} name={name} />
         <div>
@@ -123,12 +118,7 @@ const AddUserModal = ({
   const setSelected = (id: string, checked: boolean) => {
     if (!isEmpty(id)) {
       setIsDisabled(false);
-      map(changedUsers, user => {
-        if (user?.id === id) {
-          remove(changedUsers, user => user.id === id);
-        }
-      });
-      setChangedUsers([...changedUsers, { id, checked }]);
+      setChangedUsers([...xorBy(changedUsers, [{ id, checked }], 'id')]);
     }
   };
 
