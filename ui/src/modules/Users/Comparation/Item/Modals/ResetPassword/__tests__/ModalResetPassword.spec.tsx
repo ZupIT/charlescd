@@ -18,6 +18,20 @@ import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
 import ModalResetPassword from '..';
 
+const originalNavigator = { ...navigator };
+
+beforeAll(() => {
+  Object.assign(navigator, {
+    clipboard: {
+      writeText: () => {},
+    },
+  });
+});
+
+afterAll(() => {
+  Object.assign(navigator, originalNavigator);
+})
+
 const onClose = jest.fn();
 
 const props = {
@@ -33,7 +47,7 @@ test('render ModalResetPassword component', () => {
   expect(element).toBeInTheDocument();
 });
 
-test('render ModalResetPassword component and trigger reset', () => {
+test('render ModalResetPassword component and trigger reset', async () => {
   const { getByTestId } = render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
@@ -43,10 +57,16 @@ test('render ModalResetPassword component and trigger reset', () => {
 
   fireEvent.click(button);
 
-  const inputAction = getByTestId('input-action-new-password')
+  const inputAction = getByTestId('input-action-new-password');
   expect(inputAction).toBeInTheDocument();
   
-  const iconCopy = getByTestId('icon-copy')
-  expect(iconCopy).toBeInTheDocument();
-});
+  const buttonCopy = getByTestId('input-action-new-password-button');
+  expect(buttonCopy).toBeInTheDocument();
+  
+  fireEvent.click(buttonCopy);
 
+  await wait();
+
+  const iconCheckmarkCircle = getByTestId('icon-checkmark-circle');
+  expect(iconCheckmarkCircle).toBeInTheDocument();
+});

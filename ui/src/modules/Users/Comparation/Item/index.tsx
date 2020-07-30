@@ -17,7 +17,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
