@@ -104,19 +104,14 @@ const Label = styled.div`
   margin-top: 20px;
 `;
 
-interface ItemProps {
-  isSelected?: boolean;
-}
-
-const ItemWrapper = styled.div<ItemProps>`
+const ItemWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 50px;
   border-bottom: 1px solid ${COLOR_BLACK_MARLIN};
   cursor: pointer;
-  background: ${({ theme, isSelected }) =>
-    isSelected ? theme.modal.default.screen : theme.modal.default.background};
+  background: ${({ theme }) => theme.modal.default.background};
 `;
 
 const ItemProfile = styled.div`
