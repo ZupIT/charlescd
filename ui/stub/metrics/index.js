@@ -32,8 +32,14 @@ const findAllCirclesHistory = {
 
 const findAllCirclesReleases = {
   method: 'GET',
-  path: `${DEPLOYMENTS_API}/history`,
+  path: `${DEPLOYMENTS_API}/circles/{circleId}/history`,
   handler: async (req, h) => h.response(mock.allCircleReleases)
+};
+
+const findAllReleases = {
+  method: 'POST',
+  path: `${DEPLOYMENTS_API}/history`,
+  handler: (req, h) => h.response(mock.allDeployReleases)
 };
 
 export default {
@@ -41,5 +47,6 @@ export default {
   findDeployMetrics,
   findAllCirclesHistory,
   findAllCirclesReleases,
-  findAllCirclesMetrics
+  findAllCirclesMetrics,
+  findAllReleases
 };
