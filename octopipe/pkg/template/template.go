@@ -16,21 +16,33 @@
 
 package template
 
-import "errors"
+import (
+	"errors"
+	"octopipe/pkg/template/helm"
 
-const (
-	TypeHelmTemplate = "HELM"
+	log "github.com/sirupsen/logrus"
 )
 
-type TemplateUseCases interface {
-	GetManifests(templateContent, valueContent string, overrideValues map[string]string) (map[string]interface{}, error)
+const (
+	HelmType = "HELM"
+)
+
+type UseCases interface {
+	GetManifests(templateContent, valueContent string) (map[string]interface{}, error)
 }
 
-func (templateManager *TemplateManager) NewTemplate(templateType string) (TemplateUseCases, error) {
-	switch templateType {
-	case TypeHelmTemplate:
-		return NewHelmTemplate(), nil
+type Template struct {
+	Type string `json:"type"`
+	helm.HelmTemplate
+}
+
+func (main TemplateMain) NewTemplate(template Template) (UseCases, error) {
+	switch template.Type {
+	case HelmType:
+		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("Selected helm template")
+		return helm.NewHelmTemplate(template.HelmTemplate), nil
 	default:
-		return nil, errors.New("No template provider")
+		log.WithFields(log.Fields{"function": "NewTemplate"}).Error("No template selected")
+		return nil, errors.New("Template not found")
 	}
 }

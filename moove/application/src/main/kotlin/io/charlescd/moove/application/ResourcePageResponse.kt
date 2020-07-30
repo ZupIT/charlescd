@@ -30,7 +30,7 @@ data class ResourcePageResponse<T>(
             size: Int,
             isLast: Boolean,
             totalPages: Int
-        ) = ResourcePageResponse<T>(
+        ) = ResourcePageResponse(
             content,
             page,
             size,
