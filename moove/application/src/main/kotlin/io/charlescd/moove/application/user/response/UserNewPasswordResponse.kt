@@ -19,5 +19,5 @@
 package io.charlescd.moove.application.user.response
 
 data class UserNewPasswordResponse(
-    val newPassoword: String
+    val newPassword: String
 )
