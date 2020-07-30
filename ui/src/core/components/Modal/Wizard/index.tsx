@@ -20,7 +20,6 @@ import map from 'lodash/map';
 import Text from 'core/components/Text';
 import { WizardItems } from './constants';
 import Styled from './styled';
-import isEmpty from 'lodash/isEmpty';
 
 interface Item {
   icon: string;
@@ -31,11 +30,15 @@ interface Item {
   subtitle: string;
 }
 
-const Wizard = () => {
+export interface Props {
+  onClose?: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
+}
+
+const Wizard = ({ onClose }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
@@ -45,10 +48,6 @@ const Wizard = () => {
     setItemSelect(WizardItems[indexOfItemSelect]);
   }, [indexOfItemSelect]);
 
-  useEffect(() => {
-    isEmpty(localStorage.getItem('wizard')) ? setIsOpen(true) : setIsOpen(false);
-  }, []);
-
   const isFinalStep = () => itemSelect.name === 'metrics-provider';
 
   const handleButton = () => {
@@ -56,6 +55,7 @@ const Wizard = () => {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
       setIsOpen(false);
+      onClose && onClose();
       localStorage.setItem('wizard', 'true');
     }
   };
