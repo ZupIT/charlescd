@@ -16,8 +16,8 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSUseDefaultProviderChain;
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicAuthenticator;
+import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
+import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.util.Optional;
@@ -32,51 +32,51 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
-  private Client client;
-  private String baseAddress;
-  @ConfigProperty(name = "aws.arn.name", defaultValue = "")
-  String ArnNameEnv;
+    private Client client;
+    private String baseAddress;
 
-  public DockerRegistryHttpApiV2Client() {
-    this.client = ClientBuilder.newClient();
-  }
-
-  public void configureAuthentication(RegistryType type,
-      DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
-    this.baseAddress = config.address;
-
-    switch (type) {
-      case AWS:
-        var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
-        if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
-          this.client.register(new AWSBasicAuthenticator(awsConfig.region, awsConfig.accessKey, awsConfig.secretKey));
-        } else if (StringUtils.isNotEmpty(ArnNameEnv)) {
-          this.client.register(new AWSUseDefaultProviderChain());
-        }
-        break;
-      case AZURE:
-        var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
-        this.client.register(new CommonBasicAuthenticator(azureConfig.username, azureConfig.password));
-        break;
-      default:
-        throw new IllegalArgumentException("Registry type is not supported!");
+    public DockerRegistryHttpApiV2Client() {
+        this.client = ClientBuilder.newClient();
     }
-  }
 
-  @Override
-  public Optional<Response> getImage(String name, String tagName) {
+    public void configureAuthentication(RegistryType type,
+                                        DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
+        this.baseAddress = config.address;
 
-    String url = createGetImageUrl(this.baseAddress, name, tagName);
+        switch (type) {
+            case AWS:
+                var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
+                AWSCustomProviderChainAuthenticator providerChain =
+                        new AWSCustomProviderChainAuthenticator(awsConfig.region);
+                if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
+                    providerChain.addProviderAsPrimary(
+                            new AWSBasicCredentialsProvider(awsConfig.accessKey, awsConfig.secretKey));
+                }
+                this.client.register(providerChain);
+                break;
+            case AZURE:
+                var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
+                this.client.register(new CommonBasicAuthenticator(azureConfig.username, azureConfig.password));
+                break;
+            default:
+                throw new IllegalArgumentException("Registry type is not supported!");
+        }
+    }
 
-    return Optional.ofNullable(this.client.target(url).request().get());
+    @Override
+    public Optional<Response> getImage(String name, String tagName) {
 
-  }
+        String url = createGetImageUrl(this.baseAddress, name, tagName);
 
-  private String createGetImageUrl(String baseAddress, String name, String tagName) {
+        return Optional.ofNullable(this.client.target(url).request().get());
 
-    UriBuilder builder = UriBuilder.fromUri(baseAddress);
-    builder.path("/v2/{name}/manifests/{tagName}");
+    }
 
-    return builder.build(name, tagName).toString();
-  }
+    private String createGetImageUrl(String baseAddress, String name, String tagName) {
+
+        UriBuilder builder = UriBuilder.fromUri(baseAddress);
+        builder.path("/v2/{name}/manifests/{tagName}");
+
+        return builder.build(name, tagName).toString();
+    }
 }
