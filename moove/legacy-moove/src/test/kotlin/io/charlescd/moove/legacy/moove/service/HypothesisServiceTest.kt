@@ -785,7 +785,8 @@ class HypothesisServiceTest {
             status = status,
             circle = circle,
             build = buildMock,
-            workspaceId = workspaceId
+            workspaceId = workspaceId,
+            undeployedAt = if (status == DeploymentStatus.NOT_DEPLOYED) LocalDateTime.now() else null
         )
 
     private fun getDummyBuild(deployments: List<Deployment>, cardColumn: CardColumn, status: BuildStatus): Build {
@@ -795,12 +796,4 @@ class HypothesisServiceTest {
             status = status, deployments = deployments, workspaceId = workspaceId
         )
     }
-
-    private fun getGitConfiguration(): GitConfiguration = GitConfiguration(
-        "ID", "Git Credential Name", LocalDateTime.now(), user, "workspaceId",
-        GitCredentials(
-            "address", "username", "password", null,
-            GitServiceProvider.GITHUB
-        )
-    )
 }
