@@ -25,7 +25,7 @@ test('render Connection status default component', async () => {
 
   await wait();
 
-  expect(screen.getByTestId('connection-falied-to-reach')).toBeInTheDocument();
+  expect(screen.getByTestId('connection-error')).toBeInTheDocument();
   expect(screen.getByText('Failed to reach the metrics provider.')).toBeInTheDocument();
 });
 
@@ -47,6 +47,6 @@ test('render Connection suceful status component', async () => {
 
   await wait();
 
-  expect(screen.getByTestId('connection-succeful')).toBeInTheDocument();
+  expect(screen.getByTestId('connection-success')).toBeInTheDocument();
   expect(screen.getByText('Successful connection with the metrics provider.')).toBeInTheDocument();
 });
