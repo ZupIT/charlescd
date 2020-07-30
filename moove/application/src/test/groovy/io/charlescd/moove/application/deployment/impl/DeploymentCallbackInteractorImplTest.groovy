@@ -177,4 +177,81 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         notThrown()
     }
 
+    def "when deployment exists and callback is undeployed should update status of current and do not update previous deployment"() {
+        given:
+        def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOYED)
+
+        def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
+                new ArrayList<Workspace>(), false, LocalDateTime.now())
+
+        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        0 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED)
+
+        0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
+
+        1 * this.deploymentRepository.update(_) >> { arguments ->
+            def deployment = arguments[0]
+
+            assert deployment instanceof Deployment
+            assert deployment.id == currentDeployment.id
+            assert deployment.status == DeploymentStatusEnum.NOT_DEPLOYED
+            assert deployment.circle.id == circle.id
+            assert deployment.undeployedAt != null
+
+            return deployment
+        }
+
+        notThrown()
+    }
+
+    def "when deployment exists and callback is undeploy_failed should update status of current and do not update previous deployment"() {
+        given:
+        def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
+        def request = new DeploymentCallbackRequest(DeploymentRequestStatus.UNDEPLOY_FAILED)
+
+        def author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
+                new ArrayList<Workspace>(), false, LocalDateTime.now())
+
+        def circle = new Circle("9aec1a44-77e7-49db-9998-54835cb4aae8", "default", "8997c35d-7861-4198-9c9b-a2491bf08911", author,
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003")
+
+        def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
+                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null)
+
+        when:
+        this.deploymentCallbackInteractor.execute(deploymentId, request)
+
+        then:
+        1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
+
+        0 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED)
+
+        0 * this.deploymentRepository.updateStatus(_ as String, _ as DeploymentStatusEnum)
+
+        1 * this.deploymentRepository.update(_) >> { arguments ->
+            def deployment = arguments[0]
+
+            assert deployment instanceof Deployment
+            assert deployment.id == currentDeployment.id
+            assert deployment.status == DeploymentStatusEnum.DEPLOYED
+            assert deployment.circle.id == circle.id
+
+            return deployment
+        }
+
+        notThrown()
+    }
+
 }

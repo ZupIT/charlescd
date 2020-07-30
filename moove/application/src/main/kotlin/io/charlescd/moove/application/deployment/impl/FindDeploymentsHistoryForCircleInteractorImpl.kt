@@ -21,6 +21,7 @@ package io.charlescd.moove.application.deployment.impl
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircleInteractor
 import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
+import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.DeploymentHistoryFilter
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.PageRequest
@@ -37,11 +38,7 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
     override fun execute(workspaceId: String, circle: String, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse> {
         val pagedDeploymentsHistory = this.deploymentRepository.findDeploymentsHistory(workspaceId, mountHistoryFilter(circle), pageRequest)
 
-        val componentsMap = when (pagedDeploymentsHistory.content.isNotEmpty()) {
-            true -> this.componentRepository.findComponentsAtDeployments(workspaceId, pagedDeploymentsHistory.content.map { it.id })
-                .groupBy { it.deploymentId }
-            false -> emptyMap()
-        }
+        val componentsMap = getComponentsAtDeployments(pagedDeploymentsHistory.content.map { it.id }, workspaceId)
 
         return ResourcePageResponse.from(
             pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.deployedAt },
@@ -50,6 +47,15 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
             pagedDeploymentsHistory.isLast(),
             pagedDeploymentsHistory.totalPages()
         )
+    }
+
+    private fun getComponentsAtDeployments(deploymentsIds: List<String>, workspaceId: String): Map<String, List<ComponentHistory>> {
+        return when (deploymentsIds.isEmpty()) {
+            true -> emptyMap()
+
+            false -> this.componentRepository.findComponentsAtDeployments(workspaceId, deploymentsIds)
+                .groupBy { it.deploymentId }
+        }
     }
 
     private fun mountHistoryFilter(circleId: String) = DeploymentHistoryFilter(
