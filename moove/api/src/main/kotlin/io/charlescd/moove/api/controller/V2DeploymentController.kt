@@ -16,11 +16,15 @@
 
 package io.charlescd.moove.api.controller
 
+import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.deployment.CreateDeploymentInteractor
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
+import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircleInteractor
 import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
+import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
+import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -33,7 +37,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v2/deployments")
 class V2DeploymentController(
     private val deploymentCallbackInteractor: DeploymentCallbackInteractor,
-    private val createDeploymentInteractor: CreateDeploymentInteractor
+    private val createDeploymentInteractor: CreateDeploymentInteractor,
+    private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor
 ) {
     @ApiOperation(value = "Create Deployment")
     @ApiImplicitParam(
@@ -62,5 +67,16 @@ class V2DeploymentController(
     @ResponseStatus(HttpStatus.OK)
     fun deploymentCallback(@PathVariable("id") id: String, @RequestBody @Valid request: DeploymentCallbackRequest) {
         return this.deploymentCallbackInteractor.execute(id, request)
+    }
+
+    @ApiOperation(value = "Get Deployment History for Circle")
+    @GetMapping("/circle/{circleId}/history")
+    @ResponseStatus(HttpStatus.OK)
+    fun deploymentHistoryForCircle(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable("circleId") circle: String,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<DeploymentHistoryResponse> {
+        return this.findDeploymentsHistoryForCircleInteractor.execute(workspaceId, circle, pageRequest)
     }
 }
