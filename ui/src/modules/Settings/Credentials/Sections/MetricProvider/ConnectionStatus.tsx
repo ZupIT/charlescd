@@ -27,21 +27,30 @@ type Props = {
 const ConnectionStatus = ({ status }: Props) => {
   if (status === stausEnum.FAILED)
     return (
-      <Styled.StatusMessageWrapper status="error">
+      <Styled.StatusMessageWrapper
+        data-testid="connection-error"
+        status="error"
+      >
         <Icon name="error" />
         <Text.h5>Connection to metric provider failed.</Text.h5>
       </Styled.StatusMessageWrapper>
     );
   if (status === stausEnum.SUCCESS)
     return (
-      <Styled.StatusMessageWrapper status="success">
+      <Styled.StatusMessageWrapper
+        data-testid="connection-succeful"
+        status="success"
+      >
         <Icon name="success" />
         <Text.h5>Successful connection with the metrics provider.</Text.h5>
       </Styled.StatusMessageWrapper>
     );
   else
     return (
-      <Styled.StatusMessageWrapper status="error">
+      <Styled.StatusMessageWrapper
+        data-testid="connection-falied-to-reach"
+        status="error"
+      >
         <Icon name="error" />
         <Text.h5>Failed to reach the metrics provider.</Text.h5>
       </Styled.StatusMessageWrapper>
