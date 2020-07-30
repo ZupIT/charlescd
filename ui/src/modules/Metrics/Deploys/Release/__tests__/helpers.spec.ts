@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+import { getReleseStatus } from '../helpers';
 
-import java.time.Duration
-import java.time.LocalDate
-
-data class DeploymentStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val date: LocalDate
-)
-
-data class DeploymentAverageTimeStats(
-    val averageTime: Duration,
-    val date: LocalDate
-)
-
-data class DeploymentGeneralStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val averageTime: Duration
-)
+test('Enum status', () => {
+  expect(getReleseStatus('NOT_DEPLOYED')).toEqual('notDeployed');
+  expect(getReleseStatus('DEPLOYED')).toEqual('deployed');
+  expect(getReleseStatus('DEPLOYING')).toEqual('deploying');
+  expect(getReleseStatus('DEPLOY_FAILED')).toEqual('error');
+  expect(getReleseStatus('UNDEPLOYING')).toEqual('undeploying');
+  expect(getReleseStatus('')).toEqual('deployed');
+});
