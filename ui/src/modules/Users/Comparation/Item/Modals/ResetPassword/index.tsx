@@ -19,7 +19,7 @@ import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import InputAction from 'core/components/Form/InputAction';
 import { User } from 'modules/Users/interfaces/User';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
 
 interface Props {
@@ -38,8 +38,8 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
   };
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(PASS);
     setIsCopied(true);
+    copyToClipboard(PASS);
   };
 
   useEffect(() => {
