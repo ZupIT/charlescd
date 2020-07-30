@@ -36,15 +36,19 @@ export class DeploymentUseCase {
 
   public async save(deployment: DeploymentEntity): Promise<DeploymentEntity> {
     const deploymentEntity = await this.deploymentRepository.save(deployment)
-    const jobId = await this.pgBoss.publish(deployment)
-    await this.executionRepository.save({ deployment: deploymentEntity, type: 'DEPLOYMENT' }) // TODO create type enum
-    this.consoleLoggerService.log('Publishing new deployment job', { jobId: jobId, deployment: deploymentEntity.id })
+    const execution = await this.executionRepository.save({ deployment: deploymentEntity, type: 'DEPLOYMENT' }) // TODO create type enum
+    const jobId = await this.pgBoss.publish(execution)
+    this.consoleLoggerService.log('Publishing new execution job', { jobId: jobId, executions: execution.id })
     return deploymentEntity
   }
 
-  public async updateStatus(id: string, status: DeploymentStatusEnum): Promise<DeploymentEntity> {
-    const deployment = await this.deploymentRepository.findOneOrFail(id)
+  public async updateStatus(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity> {
+    const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     deployment.status = status
+    deployment.components = deployment.components.map(c => {
+      c.running = false
+      return c
+    })
     return await this.deploymentRepository.save(deployment)
   }
 }

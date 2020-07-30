@@ -28,4 +28,9 @@ export class Execution {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.executions)
   deployment!: DeploymentEntity
 
+  constructor(deployment: DeploymentEntity, type: 'DEPLOYMENT' | 'UNDEPLOYMENT') {
+    this.deployment = deployment
+    this.type = type
+  }
+
 }
