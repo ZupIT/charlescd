@@ -5,11 +5,12 @@ import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/ent
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity, DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { JobWithDoneCallback } from 'pg-boss'
 
 describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -103,36 +104,19 @@ describe('DeploymentHandler', () => {
     const secondDeployment = await manager.save(secondsDeploymentEntity)
 
     const deploymentHandler =  app.get<DeploymentHandler>(DeploymentHandler)
-    const queue = 'deployment-queue'
 
-    await worker.pgBoss.publish(queue, firstDeployment)
+    const jobWithDoneCallback : JobWithDoneCallback<DeploymentEntity, unknown> = {
+      data: firstDeployment,
+      done: () => ({}),
+      id: 'job-id',
+      name: 'job-name'
+    }
 
-    await worker.pgBoss.subscribe(queue, async(job) => {
-      await deploymentHandler.run(job)
-      await worker.pgBoss.onComplete(job.id, async() => {
-        const jobDeployment = job.data as DeploymentEntityV2
-        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, {id: jobDeployment.id}, { relations: ['components']})
-        expect(handledDeployment.components[0].running).toEqual(false)
-      })
-    })
+    await deploymentHandler.run(jobWithDoneCallback)
 
-    await worker.pgBoss.publish(queue, secondDeployment)
-
-    await worker.pgBoss.subscribe(queue, async(job) => {
-      await deploymentHandler.run(job)
-      await worker.pgBoss.onComplete(job.id, async() => { // TODO: THIS IS NOT WORKING
-        const jobDeployment = job.data as DeploymentEntityV2
-        const handledDeployment = await manager.findOneOrFail(DeploymentEntity, {id: jobDeployment.id}, { relations: ['components']})
-        expect(handledDeployment.components[0].running).toEqual(false)
-      })
-    })
-
-    // const currentJobs = await worker.pgBoss.fetch(queue)
-    // if (!currentJobs) {
-    //   fail('Queue is empty')
-    // }
-    // const jobData = currentJobs.data as DeploymentEntity
-    // expect(jobData.components).toEqual(params.components)
-
+    const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
+    const notHandledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
+    expect(handledDeployment.components[0].running).toEqual(true)
+    expect(notHandledDeployment.components[0].running).toEqual(false)
   })
 })

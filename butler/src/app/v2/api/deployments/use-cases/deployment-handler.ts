@@ -34,17 +34,16 @@ export class DeploymentHandler {
     private pgBoss: PgBossWorker
   ) { }
 
-  async run(job: JobWithDoneCallback<unknown, unknown>): Promise<JobWithDoneCallback<unknown, string>> {
+  async run(job: JobWithDoneCallback<DeploymentEntity, unknown>): Promise<JobWithDoneCallback<DeploymentEntity, unknown>> {
     const cdServiceResponse = true
-    const dataAsDeployment = job.data as DeploymentEntity
     if (cdServiceResponse) {
-      this.consoleLoggerService.log('Finished job', { job: job.id, data: dataAsDeployment })
-      const componentNames = dataAsDeployment.components.map(c => c.name)
-      const componentsOverlap = await this.checkForRunningComponents(componentNames, dataAsDeployment)
-      const deploymentComponents = await this.findComponentsByName(componentNames, dataAsDeployment)
+      this.consoleLoggerService.log('Finished job', { job: job.id, data: job.data })
+      const componentNames = job.data.components.map(c => c.name)
+      const componentsOverlap = await this.checkForRunningComponents(componentNames, job.data)
+      const deploymentComponents = await this.findComponentsByName(componentNames, job.data)
       if (componentsOverlap) {
-        this.pgBoss.publish(dataAsDeployment)
-        // job.done()
+        this.pgBoss.publish(job.data)
+        job.done()
       }
       await this.updateComponentsToRunning(deploymentComponents)
       job.done()
