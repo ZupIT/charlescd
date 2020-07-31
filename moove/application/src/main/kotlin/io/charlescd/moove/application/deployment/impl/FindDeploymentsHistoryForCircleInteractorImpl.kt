@@ -41,7 +41,7 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
         val componentsMap = getComponentsAtDeployments(pagedDeploymentsHistory.content.map { it.id }, workspaceId)
 
         return ResourcePageResponse.from(
-            pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.deployedAt },
+            pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.createdAt },
             pagedDeploymentsHistory.pageNumber,
             pagedDeploymentsHistory.pageSize,
             pagedDeploymentsHistory.isLast(),

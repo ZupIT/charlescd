@@ -80,7 +80,7 @@ class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
         parameteres.circlesIds == [circle]
     }
 
-    def 'should return when deployments found'() {
+    def 'should return when deployments found ordered by creation date'() {
         given:
         def circle = "circle-id-1"
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
