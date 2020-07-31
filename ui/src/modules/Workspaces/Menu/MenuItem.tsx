@@ -16,10 +16,12 @@
 
 import React, { memo } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'core/state/hooks';
 import { saveWorkspace } from 'core/utils/workspace';
-import routes from 'core/constants/routes';
 import { setUserAbilities } from 'core/utils/abilities';
+import { toogleModalWizardNewUser } from 'core/components/Modal/Wizard/state/actions';
 import { WORKSPACE_STATUS } from '../enums';
+import routes from 'core/constants/routes';
 import Styled from './styled';
 
 interface Props {
@@ -29,8 +31,14 @@ interface Props {
 }
 
 const MenuItem = ({ id, name, status }: Props) => {
+  const dispatch = useDispatch();
+
   const history = useHistory();
+
   const handleClick = () => {
+    if (status === WORKSPACE_STATUS.INCOMPLETE) {
+      dispatch(toogleModalWizardNewUser({ newUser: true }));
+    }
     saveWorkspace({ id, name });
     setUserAbilities();
     history.push({

@@ -66,7 +66,7 @@ export const useSaveWorkspace = (): {
         })
       );
     } else if (response) {
-      dispatch(toogleModalWizard({ isOpen: true }));
+      dispatch(toogleModalWizard({ isOpen: true, newUser: false }));
     }
   }, [dispatch, error, response]);
 

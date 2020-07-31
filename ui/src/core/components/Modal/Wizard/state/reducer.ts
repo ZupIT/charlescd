@@ -19,7 +19,8 @@ import { ModalWizardActionTypes, ACTION_TYPES } from './actions';
 import { ModalWizard } from '../interfaces/ModalWizard';
 
 const initialModalWizardItemState: ModalWizard = {
-  isOpen: false
+  isOpen: false,
+  newUser: false
 };
 
 export const modalWizardInitialState: ModalWizardState = {
@@ -31,10 +32,18 @@ export const ModalWizardReducer = (
   action: ModalWizardActionTypes
 ): ModalWizardState => {
   switch (action.type) {
+    case ACTION_TYPES.toogleModalWizardNewUser: {
+      return {
+        wizard: {
+          newUser: true
+        }
+      };
+    }
     case ACTION_TYPES.toogleModalWizard: {
       return {
         wizard: {
-          isOpen: true
+          isOpen: true,
+          newUser: false
         }
       };
     }

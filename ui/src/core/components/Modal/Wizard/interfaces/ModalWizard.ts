@@ -16,4 +16,5 @@
 
 export interface ModalWizard {
   isOpen?: boolean;
+  newUser: boolean;
 }

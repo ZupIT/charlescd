@@ -18,6 +18,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import indexOf from 'lodash/indexOf';
 import map from 'lodash/map';
 import Text from 'core/components/Text';
+import { ModalWizard } from './interfaces/ModalWizard';
 import { WizardItems } from './constants';
 import Styled from './styled';
 
@@ -32,9 +33,10 @@ interface Item {
 
 export interface Props {
   onClose?: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
+  wizard: ModalWizard;
 }
 
-const Wizard = ({ onClose }: Props) => {
+const Wizard = ({ onClose, wizard }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
@@ -54,7 +56,9 @@ const Wizard = ({ onClose }: Props) => {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
       onClose && onClose();
-      localStorage.setItem('wizard', 'true');
+      if (wizard.newUser) {
+        localStorage.setItem('wizard', 'true');
+      }
     }
   };
 

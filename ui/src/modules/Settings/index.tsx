@@ -38,10 +38,16 @@ const Settings = () => {
   return (
     <Page>
       {(wizard.isOpen && (
-        <Modal.Wizard onClose={() => dispatch(dismissModalWizard())} />
+        <Modal.Wizard
+          wizard={wizard}
+          onClose={() => dispatch(dismissModalWizard())}
+        />
       )) ||
-        (!veteranUser && (
-          <Modal.Wizard onClose={() => dispatch(dismissModalWizard())} />
+        (wizard.newUser && !veteranUser && (
+          <Modal.Wizard
+            wizard={wizard}
+            onClose={() => dispatch(dismissModalWizard())}
+          />
         ))}
       <Page.Menu>
         <Menu items={SettingsMenu} />

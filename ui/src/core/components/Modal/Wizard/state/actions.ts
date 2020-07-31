@@ -17,8 +17,13 @@
 import { ModalWizard } from '../interfaces/ModalWizard';
 
 export enum ACTION_TYPES {
+  toogleModalWizardNewUser = 'WIZARD/TOOGLENEWUSER',
   toogleModalWizard = 'WIZARD/TOOGLE',
   dismissModalWizard = 'WIZARD/DISMISS'
+}
+interface ToogleModalWizardNewUserActionType {
+  type: typeof ACTION_TYPES.toogleModalWizardNewUser;
+  payload: ModalWizard;
 }
 
 interface ToogleModalWizardActionType {
@@ -29,6 +34,13 @@ interface ToogleModalWizardActionType {
 interface DismissModalWizardActionType {
   type: typeof ACTION_TYPES.dismissModalWizard;
 }
+
+export const toogleModalWizardNewUser = (
+  payload: ModalWizard
+): ModalWizardActionTypes => ({
+  type: ACTION_TYPES.toogleModalWizardNewUser,
+  payload
+});
 
 export const toogleModalWizard = (
   payload: ModalWizard
@@ -42,5 +54,6 @@ export const dismissModalWizard = (): ModalWizardActionTypes => ({
 });
 
 export type ModalWizardActionTypes =
+  | ToogleModalWizardNewUserActionType
   | ToogleModalWizardActionType
   | DismissModalWizardActionType;
