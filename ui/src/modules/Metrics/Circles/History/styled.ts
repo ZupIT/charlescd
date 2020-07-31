@@ -52,6 +52,7 @@ const CircleRow = styled.div`
 `;
 
 const ReleaseRow = styled.div`
+  position: relative;
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.releaseRow.background};
   margin-bottom: 5px;
@@ -106,14 +107,13 @@ const HistoryLegend = styled.div`
 `;
 
 interface Dot {
-  active: boolean;
+  status: string;
 }
 
 const Dot = styled.div<Dot>`
   height: 15px;
   width: 15px;
-  background-color: ${({ theme, active }) =>
-    active ? theme.metrics.circles.active : theme.metrics.circles.inactive};
+  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
@@ -128,14 +128,12 @@ const HistorySearchInput = styled(SearchInputComponent)`
 
 interface Line {
   status: string;
-  release: boolean;
 }
 
 const StatusLine = styled.div<Line>`
   position: absolute;
-  left: ${({ release }) => (release ? '10' : '0')};
-  height: ${({ release }) =>
-    release ? `calc(100% - 364px)` : `calc(100% - 6px)`};
+  left: 0;
+  height: calc(100% - 6px);
   width: 5px;
   background-color: ${({ theme, status }) => theme.metrics.circles[status]};
   margin: 3px 10px 0 5px;

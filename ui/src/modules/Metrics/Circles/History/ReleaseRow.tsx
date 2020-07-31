@@ -31,7 +31,7 @@ const ReleaseRow = ({ release }: Props) => {
 
   return (
     <Styled.ReleaseRow>
-      <Styled.StatusLine status={getStatus(release?.status)} release={true} />
+      <Styled.StatusLine status={getStatus(release?.status)} />
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`release-table-row-${release.id}`}
