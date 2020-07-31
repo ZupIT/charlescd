@@ -14,36 +14,77 @@
  * limitations under the License.
  */
 
-import React from "react";
-import { render, wait, fireEvent } from "unit-test/testUtils";
-import Modal from "core/components/Modal";
+import React from 'react';
+import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { ModalWizard } from '../interfaces/ModalWizard';
+import Modal from 'core/components/Modal';
 
-test("render Trigger", async () => {
-  const { getByTestId } = render(<Modal.Wizard />);
+const wizard: ModalWizard = { isOpen: true, newUser: true };
 
-  const element = getByTestId("modal-wizard");
-  const button = getByTestId("button-iconRounded-next");
-  await wait(() => expect(element && button).toBeInTheDocument());
+test('render Trigger', async () => {
+  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
+
+  const element = getByTestId('modal-wizard');
+  const button = getByTestId('button-iconRounded-next');
+  await wait(() => expect(element));
+  await wait(() => expect(button).toBeInTheDocument());
 });
 
-test("Next button click", async () => {
-  const { getByTestId } = render(<Modal.Wizard />);
+test('Next button click', async () => {
+  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
 
-  const welcome = getByTestId("modal-wizard-info-welcome");
+  const welcome = getByTestId('modal-wizard-info-welcome');
+  const button = getByTestId('button-iconRounded-next');
+
   await wait(() => expect(welcome).toBeInTheDocument());
-  const button = getByTestId("button-iconRounded-next");
+  await wait(() => expect(button).toBeInTheDocument());
+
   fireEvent.click(button);
-  const userGroup = getByTestId("modal-wizard-info-user-group");
-  await wait(() => expect(userGroup).toBeInTheDocument());
+
+  await wait(() =>
+    expect(getByTestId('modal-wizard-info-user-group')).toBeInTheDocument()
+  );
 });
 
-test("Menu item click", async () => {
-  const { getByTestId } = render(<Modal.Wizard />);
+test("Let's Start button click", async () => {
+  const onClose = jest.fn();
+  const { getByTestId } = render(
+    <Modal.Wizard wizard={wizard} onClose={onClose} />
+  );
 
-  const welcome = getByTestId("modal-wizard-info-welcome");
+  const welcome = getByTestId('modal-wizard-info-welcome');
+  const metricsItem = getByTestId('modal-wizard-menu-item-metrics-provider');
+  const button = getByTestId('button-iconRounded-next');
+
   await wait(() => expect(welcome).toBeInTheDocument());
-  const cdConfigItem = getByTestId("modal-wizard-menu-item-cdConfig");
+  await wait(() => expect(metricsItem).toBeInTheDocument());
+  await wait(() => expect(button).toBeInTheDocument());
+
+  fireEvent.click(metricsItem);
+
+  await wait(() =>
+    expect(
+      getByTestId('modal-wizard-info-metrics-provider')
+    ).toBeInTheDocument()
+  );
+
+  fireEvent.click(button);
+
+  expect(onClose).toHaveBeenCalled();
+});
+
+test('Menu item click', async () => {
+  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
+
+  const welcome = getByTestId('modal-wizard-info-welcome');
+  const cdConfigItem = getByTestId('modal-wizard-menu-item-cdConfig');
+
+  await wait(() => expect(welcome).toBeInTheDocument());
+  await wait(() => expect(cdConfigItem).toBeInTheDocument());
+
   fireEvent.click(cdConfigItem);
-  const cdConfig = getByTestId("modal-wizard-info-cdConfig");
-  await wait(() => expect(cdConfig).toBeInTheDocument());
+
+  await wait(() =>
+    expect(getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument()
+  );
 });
