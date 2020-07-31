@@ -27,11 +27,11 @@ const SummaryRelease = ({ isLoading }: Props) => {
   return (
     <>
       {isLoading ? (
-        <div data-testid="loader-legend">
+        <div data-testid="loader-legend-release">
           <Loader.Legend />
         </div>
       ) : (
-        <Styled.HistoryLegend>
+        <Styled.HistoryLegend data-testid="summary-release">
           <Styled.Dot status="deployed" />
           <Text.h5 color="dark">Deployed</Text.h5>
           <Styled.Dot status="error" />
