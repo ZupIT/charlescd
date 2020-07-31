@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.application.deployment
 
-import java.time.Duration
-import java.time.LocalDate
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
+import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
+import io.charlescd.moove.domain.PageRequest
 
-data class DeploymentStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val date: LocalDate
-)
+interface FindDeploymentsHistoryInteractor {
 
-data class DeploymentAverageTimeStats(
-    val averageTime: Duration,
-    val date: LocalDate
-)
-
-data class DeploymentGeneralStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val averageTime: Duration
-)
+    fun execute(workspaceId: String, filters: DeploymentHistoryFilterRequest, pageRequest: PageRequest): SummarizedDeploymentHistoryResponse
+}
