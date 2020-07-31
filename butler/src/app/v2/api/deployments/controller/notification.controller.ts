@@ -17,13 +17,13 @@
 import { Body, Controller, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { DeploymentNotificationRequest } from '../dto/deployment-notification-request.dto';
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-import { DeploymentUseCase } from '../use-cases/deployment-use-case';
+import { NotificationUseCase } from '../use-cases/notification-use-case';
 
 @Controller('/v2/notifications')
 export class NotificationsController {
 
   constructor(
-    private deploymentUseCase: DeploymentUseCase
+    private notificationUseCase: NotificationUseCase
   ) { }
 
   @Post('/deployment/:id')
@@ -32,6 +32,6 @@ export class NotificationsController {
     @Param('id') id: string,
     @Body() notificationDto: DeploymentNotificationRequest,
   ): Promise<DeploymentEntity> {
-    return this.deploymentUseCase.updateStatus(id, notificationDto.status)
+    return this.notificationUseCase.handleCallback(id, notificationDto.status)
   }
 }

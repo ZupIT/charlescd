@@ -27,6 +27,7 @@ import { Execution } from './entity/execution.entity';
 import { PgBossWorker } from './jobs/pgboss.worker';
 import { DeploymentHandler } from './use-cases/deployment-handler';
 import { DeploymentUseCase } from './use-cases/deployment-use-case';
+import { NotificationUseCase } from './use-cases/notification-use-case';
 
 
 @Module({
@@ -46,6 +47,7 @@ import { DeploymentUseCase } from './use-cases/deployment-use-case';
   providers: [
     PgBossWorker,
     DeploymentUseCase,
+    NotificationUseCase,
     DeploymentHandler,
     ConsoleLoggerService
   ],

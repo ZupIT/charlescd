@@ -16,14 +16,11 @@
 
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 
 export class DeploymentNotificationRequest {
   @IsNotEmpty()
   @IsEnum(DeploymentStatusEnum)
   public status: DeploymentStatusEnum
-
-  public deploymentEntity!: DeploymentEntity
 
   constructor(status: DeploymentStatusEnum) {
     this.status = status
