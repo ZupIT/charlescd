@@ -22,6 +22,8 @@ import { UserState } from 'modules/Users/interfaces/UserState';
 import { UsersActionTypes } from 'modules/Users/state/actions';
 import { NotificationState } from 'core/components/Notification/interfaces/NotificationState';
 import { NotificationActionTypes } from 'core/components/Notification/state/actions';
+import { ModalWizardState } from 'core/components/Modal/Wizard/interfaces/ModalWizardState';
+import { ModalWizardActionTypes } from 'core/components/Modal/Wizard/state/actions';
 import { UserGroupState } from 'modules/Groups/interfaces/UserGroupState';
 import { UserGroupsActionTypes } from 'modules/Groups/state/actions';
 import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
@@ -40,6 +42,10 @@ export interface Reducer {
     state: NotificationState,
     action: NotificationActionTypes
   ) => NotificationState;
+  wizard: (
+    state: ModalWizardState,
+    action: ModalWizardActionTypes
+  ) => ModalWizardState;
   userGroups: (
     state: UserGroupState,
     action: UserGroupsActionTypes

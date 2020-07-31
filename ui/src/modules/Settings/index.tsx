@@ -16,10 +16,12 @@
 
 import React, { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { useGlobalState, useDispatch } from 'core/state/hooks';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import PrivateRoute from 'core/components/PrivateRoute';
 import Modal from 'core/components/Modal';
+import { dismissModalWizard } from 'core/components/Modal/Wizard/state/actions';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import Menu from './Menu';
@@ -30,10 +32,17 @@ const Credentials = lazy(() => import('modules/Settings/Credentials'));
 const Settings = () => {
   const profileName = getProfileByKey('name');
   const veteranUser = localStorage.getItem('wizard');
+  const { wizard } = useGlobalState(({ wizard }) => wizard);
+  const dispatch = useDispatch();
 
   return (
     <Page>
-      {!veteranUser && <Modal.Wizard />}
+      {(wizard.isOpen && (
+        <Modal.Wizard onClose={() => dispatch(dismissModalWizard())} />
+      )) ||
+        (!veteranUser && (
+          <Modal.Wizard onClose={() => dispatch(dismissModalWizard())} />
+        ))}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>

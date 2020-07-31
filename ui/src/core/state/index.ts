@@ -30,6 +30,10 @@ import {
   notificationInitialState
 } from 'core/components/Notification/state/reducer';
 import {
+  ModalWizardReducer,
+  modalWizardInitialState
+} from 'core/components/Modal/Wizard/state/reducer';
+import {
   userGroupReducer,
   userGroupInitialState
 } from 'modules/Groups/state/reducer';
@@ -45,6 +49,7 @@ import { CirclesActionTypes } from 'modules/Circles/state/actions';
 import { WorkspacesActionTypes } from 'modules/Settings/state/actions';
 import { UsersActionTypes } from 'modules/Users/state/actions';
 import { NotificationActionTypes } from 'core/components/Notification/state/actions';
+import { ModalWizardActionTypes } from 'core/components/Modal/Wizard/state/actions';
 import { Reducer } from './interfaces/Reducer';
 import { UserGroupsActionTypes } from 'modules/Groups/state/actions';
 import { ModulesActionTypes } from 'modules/Modules/state/actions';
@@ -55,6 +60,7 @@ export type RootActionTypes =
   | WorkspacesActionTypes
   | UsersActionTypes
   | NotificationActionTypes
+  | ModalWizardActionTypes
   | UserGroupsActionTypes
   | ModulesActionTypes
   | HypothesesActionTypes;
@@ -64,6 +70,7 @@ export const rootState: State = {
   workspaces: workspaceInitialState,
   users: userInitialState,
   notification: notificationInitialState,
+  wizard: modalWizardInitialState,
   userGroups: userGroupInitialState,
   modules: modulesInitialState,
   hypothesis: hypothesisInitialState
@@ -74,6 +81,7 @@ export const reducers: Reducer = {
   workspaces: workspaceReducer,
   users: userReducer,
   notification: notificationReducer,
+  wizard: ModalWizardReducer,
   userGroups: userGroupReducer,
   modules: modulesReducer,
   hypothesis: hypothesesReducer

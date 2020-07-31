@@ -22,12 +22,11 @@ import IconComponent from 'core/components/Icon';
 const Icon = styled(IconComponent)``;
 
 interface WrapperProps {
-  isOpen?: boolean;
   className?: string;
 }
 
 const Wrapper = styled('div')<WrapperProps>`
-  display: ${({ isOpen }: WrapperProps) => (!isOpen ? 'none' : 'flex')};
+  display: flex;
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
   align-items: center;
   position: fixed;

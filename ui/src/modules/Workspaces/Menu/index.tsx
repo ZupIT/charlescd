@@ -48,8 +48,7 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
     response: saveWorkspaceResponse,
     loading: saveWorkspaceLoading
   } = useSaveWorkspace();
-  const [toggleWizardModal, setToggleWizardModal] = useState(false);
-  const [toggleDefaultModal, setToggleDefaultModal] = useState(false);
+  const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
     if (name !== null) {
@@ -62,7 +61,7 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
       <MenuItem key={id} id={id} name={name} status={status} />
     ));
 
-  const openWorkspaceModal = () => setToggleWizardModal(true);
+  const openWorkspaceModal = () => setToggleModal(true);
 
   const onSubmit = ({ name }: Record<string, string>) => {
     const authorId = getProfileByKey('id');
@@ -76,19 +75,9 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
     }
   }, [saveWorkspaceResponse, history]);
 
-  const renderWizardModal = () =>
-    toggleWizardModal && (
-      <Modal.Wizard
-        onClose={() => {
-          setToggleDefaultModal(true);
-          setToggleWizardModal(false);
-        }}
-      />
-    );
-
-  const renderDefaultModal = () =>
-    toggleDefaultModal && (
-      <Modal.Default onClose={() => setToggleDefaultModal(false)}>
+  const renderModal = () =>
+    toggleModal && (
+      <Modal.Default onClose={() => setToggleModal(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Modal.Title color="light">
             Create workspace
@@ -112,8 +101,7 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
 
   return (
     <>
-      {isRoot() && renderWizardModal()}
-      {isRoot() && renderDefaultModal()}
+      {isRoot() && renderModal()}
       <Styled.Actions>
         <Styled.Button onClick={openWorkspaceModal} isDisabled={!isRoot()}>
           <LabeledIcon icon="plus-circle" marginContent="5px">

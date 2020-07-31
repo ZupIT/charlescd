@@ -38,7 +38,6 @@ const Wizard = ({ onClose }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
-  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
@@ -54,7 +53,6 @@ const Wizard = ({ onClose }: Props) => {
     if (!isFinalStep()) {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
-      setIsOpen(false);
       onClose && onClose();
       localStorage.setItem('wizard', 'true');
     }
@@ -119,7 +117,7 @@ const Wizard = ({ onClose }: Props) => {
   );
 
   return (
-    <Styled.Wrapper isOpen={isOpen} data-testid="modal-wizard">
+    <Styled.Wrapper data-testid="modal-wizard">
       <Styled.Background className="modal-background" />
       <Styled.Dialog className="modal-dialog" ref={modalRef}>
         <Styled.Container className="modal-content">
