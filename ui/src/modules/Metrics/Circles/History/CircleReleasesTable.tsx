@@ -97,7 +97,13 @@ const CircleReleasesTable = ({ circleId }: Props) => {
     </>
   );
 
-  return releases?.length === 0 ? renderEmpetyReleases() : renderReleases();
+  return loading ? (
+    <Loader.Releases />
+  ) : releases?.length === 0 ? (
+    renderEmpetyReleases()
+  ) : (
+    renderReleases()
+  );
 };
 
 export default CircleReleasesTable;
