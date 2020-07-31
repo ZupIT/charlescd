@@ -51,8 +51,8 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
     if (data) {
       setIsAction(false);
       testProviderConnectionSection(
-        { workspaceId: getWorkspaceId(), providerType: data.provider },
-        data.id
+        { providerId: data.id, providerType: data.provider },
+        getWorkspaceId()
       );
     }
   }, [data, testProviderConnectionSection]);
