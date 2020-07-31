@@ -99,7 +99,7 @@ const HistoryHeader = styled.div`
 
 const HistoryLegend = styled.div`
   display: flex;
-  padding-left: 20px;
+  padding-left: 25px;
 
   span {
     margin-right: 15px;
