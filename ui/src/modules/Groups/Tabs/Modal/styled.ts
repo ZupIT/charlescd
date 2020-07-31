@@ -41,6 +41,14 @@ const Wrapper = styled('div')<WrapperProps>`
   }
 `;
 
+const Placeholder = styled.div`
+  padding: 60px 135.5px 87.5px 135.5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Background = styled.div`
   background: ${({ theme }) => theme.modal.default.screen};
   width: 100%;
@@ -156,6 +164,7 @@ const Footer = styled.div``;
 
 export default {
   Wrapper,
+  Placeholder,
   Background,
   Dialog,
   Container,
