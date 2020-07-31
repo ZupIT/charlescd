@@ -28,7 +28,7 @@ class SummarizedDeploymentHistoryResponse(
             SummarizedDeploymentHistoryResponse(
                 summary = summaryFrom(deploymentCount),
                 page = ResourcePageResponse.from(
-                    historyPage.content.map { DeploymentHistoryResponse.from(it, components.getValue(it.id)) }.sortedByDescending { it.createdAt },
+                    historyPage.content.map { DeploymentHistoryResponse.from(it, components.getValue(it.id)) },
                     historyPage.pageNumber,
                     historyPage.pageSize,
                     historyPage.isLast(),
