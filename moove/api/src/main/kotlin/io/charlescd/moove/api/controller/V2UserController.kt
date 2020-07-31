@@ -19,7 +19,7 @@ package io.charlescd.moove.api.controller
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
-import io.charlescd.moove.application.user.ResetUserPassword
+import io.charlescd.moove.application.user.ResetUserPasswordInteractor
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
-    private val resetUserPassword: ResetUserPassword
+    private val resetUserPasswordInteractor: ResetUserPasswordInteractor
 ) {
 
     @ApiOperation(value = "Find User by email")
@@ -61,6 +61,7 @@ class V2UserController(
     @ApiOperation(value = "Reset password")
     @PutMapping("/{id}/reset-password")
     @ResponseStatus(HttpStatus.OK)
-    fun resetPassword(@PathVariable id: UUID) =
-        resetUserPassword.execute(id)
+    fun resetPassword(
+        @PathVariable id: UUID
+    ) = resetUserPasswordInteractor.execute(id)
 }
