@@ -19,7 +19,7 @@ import { postRequest, baseRequest } from './base';
 
 const endpoint = '/moove/v2/configurations/metric-configurations';
 
-const endpointWorkspace = '/moove/v2/workspace';
+const endpointWorkspace = '/moove/v2/workspaces';
 
 export const configPath = '/metricConfigurationId';
 
