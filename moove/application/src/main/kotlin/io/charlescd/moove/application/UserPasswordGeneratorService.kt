@@ -1,15 +1,14 @@
-package io.charlescd.moove.application.user.impl
+package io.charlescd.moove.application
 
-import io.charlescd.moove.application.user.UserPasswordGenerator
 import javax.inject.Named
-import org.passay.AllowedCharacterRule.ERROR_CODE
+import org.passay.AllowedCharacterRule
 import org.passay.CharacterRule
 import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
 
 @Named
-class PassayUserPasswordGenerator : UserPasswordGenerator {
-    override fun create(): String {
+class UserPasswordGeneratorService {
+    fun create(): String {
         val rules = listOf(
             CharacterRule(EnglishCharacterData.LowerCase, 2),
             CharacterRule(EnglishCharacterData.UpperCase, 2),
@@ -22,10 +21,10 @@ class PassayUserPasswordGenerator : UserPasswordGenerator {
 
 class SpecialChars : org.passay.CharacterData {
     override fun getErrorCode(): String {
-        return ERROR_CODE
+        return AllowedCharacterRule.ERROR_CODE
     }
 
     override fun getCharacters(): String {
-        return "!@#$%^&*()_+"
+        return "!@#$^*()_"
     }
 }

@@ -1,11 +1,11 @@
 package io.charlescd.moove.application.user
 
-import io.charlescd.moove.application.user.impl.PassayUserPasswordGenerator
+import io.charlescd.moove.application.UserPasswordGeneratorService
 import spock.lang.Specification
 
-class UserPasswordGeneratorTest extends Specification {
+class UserPasswordGeneratorServiceTest extends Specification {
 
-    private PassayUserPasswordGenerator passwordGenerator
+    private UserPasswordGeneratorService passwordGenerator
 
     /**
      * ^                 # start-of-string
@@ -17,10 +17,10 @@ class UserPasswordGeneratorTest extends Specification {
      * .{8,}             # anything, at least eight places though
      * $                 # end-of-string
      */
-    private static final String PASSWORD_CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%^&*()_+])(?=\\S+\$).{8,}\$"
+    private static final String PASSWORD_CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$^*()_])(?=\\S+\$).{8,}\$"
 
     void setup() {
-        passwordGenerator = new PassayUserPasswordGenerator()
+        passwordGenerator = new UserPasswordGeneratorService()
     }
 
     def "shouldGenerateAValidPassword"() {

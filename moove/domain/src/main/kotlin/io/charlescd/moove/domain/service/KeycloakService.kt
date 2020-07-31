@@ -30,4 +30,6 @@ interface KeycloakService {
     fun associatePermissionsToNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
 
     fun disassociatePermissionsFromNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
+
+    fun resetPassword(id: String, newPassword: String)
 }

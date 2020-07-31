@@ -22,6 +22,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.security.WorkspacePermissionsMapping
 import org.keycloak.admin.client.Keycloak
+import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -149,5 +150,15 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
             .users()
             .get(keycloakUser.id)
             .update(keycloakUser)
+    }
+
+    override fun resetPassword(id: String, newPassword: String) {
+        val credentialRepresentation = CredentialRepresentation()
+        credentialRepresentation.type = CredentialRepresentation.PASSWORD
+        credentialRepresentation.value = newPassword
+        keycloak.realm(this.realm)
+            .users()
+            .get(id)
+            .resetPassword(credentialRepresentation)
     }
 }
