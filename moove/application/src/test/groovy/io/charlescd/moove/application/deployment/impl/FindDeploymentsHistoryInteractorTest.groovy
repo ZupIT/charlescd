@@ -23,9 +23,7 @@ import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class FindDeploymentsHistoryInteractorTest extends Specification {
 
