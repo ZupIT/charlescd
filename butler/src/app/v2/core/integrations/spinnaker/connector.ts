@@ -89,7 +89,7 @@ export class SpinnakerConnector {
     const evalStageId: number = deployment.components.length * 4 + 1
     deployment.components.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
-      proxyStages.push(getDestinationRulesStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+      proxyStages.push(getDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
       proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
     })
     return proxyStages

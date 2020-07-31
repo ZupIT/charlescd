@@ -162,6 +162,12 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
                   version: 'A-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'A-v0'
+                },
+                name: 'v0'
               }
             ]
           }

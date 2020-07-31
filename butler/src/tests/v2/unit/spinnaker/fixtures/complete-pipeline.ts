@@ -396,6 +396,12 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
                   version: 'A-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'A-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -576,6 +582,12 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
                   version: 'B-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'B-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -756,6 +768,12 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
                   version: 'C-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'C-v0'
+                },
+                name: 'v0'
               }
             ]
           }

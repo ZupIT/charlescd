@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from '../interfaces'
+import { Component, Deployment } from '../interfaces'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
-import { Stage } from '../interfaces/spinnaker-pipeline.interface'
+import { Stage, Subset } from '../interfaces/spinnaker-pipeline.interface'
 
 export const getDestinationRulesStage = (
   component: Component,
-  configuration: CdConfiguration,
+  deployment: Deployment,
+  activeComponents: Component[],
   stageId: number,
   evalStageId: number
 ): Stage => ({
-  account: `${(configuration.configurationData as ISpinnakerConfigurationData).account}`,
+  account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
   cloudProvider: 'kubernetes',
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
@@ -35,18 +36,11 @@ export const getDestinationRulesStage = (
       kind: 'DestinationRule',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(configuration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
         host: `${component.name}`,
-        subsets: [
-          {
-            labels: {
-              version: `${component.name}-${component.imageTag}`
-            },
-            name: `${component.imageTag}`
-          }
-        ]
+        subsets: deployment?.components ? getSubsets(component, deployment.circleId, activeComponents) : []
       }
     }
   ],
@@ -73,3 +67,30 @@ export const getDestinationRulesStage = (
   },
   type: 'deployManifest'
 })
+
+const getSubsets = (newComponent: Component, circleId: string | null, activeComponents: Component[]): Subset[] => {
+  const subsets: Subset[] = []
+  subsets.push(getSubsetObject(newComponent))
+
+  activeComponents.forEach(component => {
+    const activeCircleId = component.deployment?.circleId
+    if (activeCircleId && activeCircleId !== circleId) {
+      subsets.push(getSubsetObject(component))
+    }
+  })
+
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
+  if (defaultComponent) {
+    subsets.push(getSubsetObject(defaultComponent))
+  }
+  return subsets
+}
+
+const getSubsetObject = (component: Component): Subset => {
+  return {
+    labels: {
+      version: `${component.name}-${component.imageTag}`
+    },
+    name: `${component.imageTag}`
+  }
+}
