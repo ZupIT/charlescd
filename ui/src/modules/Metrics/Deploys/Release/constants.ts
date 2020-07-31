@@ -14,24 +14,4 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
-
-import java.time.Duration
-import java.time.LocalDate
-
-data class DeploymentStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val date: LocalDate
-)
-
-data class DeploymentAverageTimeStats(
-    val averageTime: Duration,
-    val date: LocalDate
-)
-
-data class DeploymentGeneralStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val averageTime: Duration
-)
+export const pageInitialCount = 0;
