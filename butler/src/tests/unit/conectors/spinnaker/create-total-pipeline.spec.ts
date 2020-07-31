@@ -59,7 +59,7 @@ it('compiles the pipeline with only undeployment', () => {
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
     url: 'http://spinnaker.url.com',
-    callbackType: CallbackTypeEnum.DEPLOYMENT
+    callbackType: CallbackTypeEnum.UNDEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()
@@ -82,7 +82,7 @@ it('builds istio pipeline', () => {
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
     url: 'http://spinnaker.url.com',
-    callbackType: CallbackTypeEnum.DEPLOYMENT
+    callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
@@ -106,7 +106,7 @@ it('build istio pipeline by hostValue and gatewayName', () => {
     url: 'http://spinnaker.url.com',
     hostValue: 'hostValue',
     gatewayName: 'gatewayName',
-    callbackType: CallbackTypeEnum.DEPLOYMENT
+    callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
