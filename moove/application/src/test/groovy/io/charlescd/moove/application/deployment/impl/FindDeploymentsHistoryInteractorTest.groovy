@@ -23,9 +23,7 @@ import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class FindDeploymentsHistoryInteractorTest extends Specification {
 
@@ -124,41 +122,6 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
         result.page.totalPages == 1
         result.page.content.size() == 1
         result.page.content[0].deployDuration == 120
-    }
-
-    def 'should return ordered by deploy date descending'() {
-        given:
-        def filter = new DeploymentHistoryFilterRequest(null, PeriodTypeEnum.ONE_WEEK, null, [DeploymentStatusEnum.DEPLOYED])
-
-        def deployments = [new DeploymentHistory("abc-123", LocalDateTime.of(LocalDate.of(1809, 2, 12), LocalTime.now()),
-                DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-1"),
-                           new DeploymentHistory("abc-456", LocalDateTime.of(LocalDate.of(1859, 2, 12), LocalTime.now()),
-                                   DeploymentStatusEnum.DEPLOYED, "Fulano", "release-ayora", null, LocalDateTime.now(), Duration.ofSeconds(120), "circle-2")]
-
-        def components = [new ComponentHistory("abc-123", "component 1", "module-1", "version 18.09"),
-                          new ComponentHistory("abc-456", "component 2", "module-1", "version 18.09"),]
-
-        when:
-        def result = findDeploymentHistoryIteractor.execute(workspaceId, filter, pageRequest)
-
-        then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
-        1 * componentRepository.findComponentsAtDeployments(workspaceId, ["abc-123", "abc-456"]) >> components
-        1 * deploymentRepository.countGroupedByStatus(workspaceId, _ as DeploymentHistoryFilter) >> [new DeploymentCount(2, DeploymentStatusEnum.DEPLOYED)]
-        0 * _
-
-        result.summary.deployed == 2
-        result.summary.undeploying == 0
-        result.summary.notDeployed == 0
-        result.summary.deploying == 0
-        result.summary.failed == 0
-        result.page.page == 0
-        result.page.size == 10
-        result.page.isLast
-        result.page.totalPages == 1
-        result.page.content.size() == 2
-        result.page.content[0].id == "abc-456"
-        result.page.content[1].id == "abc-123"
     }
 
     def 'should return summary with values when deployments found'() {
