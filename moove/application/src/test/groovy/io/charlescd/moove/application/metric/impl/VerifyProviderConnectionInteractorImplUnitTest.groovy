@@ -17,7 +17,7 @@
  *
  */
 
-package io.charlescd.moove.metrics.interactor.impl
+package io.charlescd.moove.application.metric.impl
 
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
