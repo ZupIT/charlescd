@@ -22,6 +22,7 @@ import xorBy from 'lodash/xorBy';
 import { User } from 'modules/Users/interfaces/User';
 import { UserChecked } from '../../interfaces/UserChecked';
 import Icon from 'core/components/Icon';
+import Text from 'core/components/Text';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Button from 'core/components/Button';
 import Styled from './styled';
@@ -122,6 +123,16 @@ const AddUserModal = ({
     }
   };
 
+  const renderPlaceHolder = () => (
+    <Styled.Placeholder>
+      <Icon name="user-not-found" />
+      <Text.h4 color="light">User not found</Text.h4>
+      <Text.h4 color="light">
+        If you want to register, go to the users page
+      </Text.h4>
+    </Styled.Placeholder>
+  );
+
   return (
     <Styled.Wrapper
       data-testid="modal-user"
@@ -146,6 +157,7 @@ const AddUserModal = ({
             {map(users, user => (
               <UserItem key={user.id} {...user} onSelected={setSelected} />
             ))}
+            {isEmpty(users) && renderPlaceHolder()}
           </Styled.Content>
           <Styled.Button.Update>
             <Button.Default

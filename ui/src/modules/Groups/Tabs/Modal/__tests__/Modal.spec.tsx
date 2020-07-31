@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { render, wait, fireEvent } from 'unit-test/testUtils';
-import { users } from './fixtures';
+import { users, emptyUsers } from './fixtures';
 import Modal from '..';
 
 test('render users Modal', async () => {
@@ -114,4 +114,18 @@ test('testing on outside click without isOutsideClick property passed on', async
   fireEvent.click(externalDiv);
 
   expect(button).toHaveAttribute('disabled');
+});
+
+test('render Modal placeholder', async () => {
+  const { getByTestId } = render(
+    <Modal users={emptyUsers} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
+  );
+
+  const element = getByTestId('modal-user');
+  const button = getByTestId('button-default-undefined');
+  const placeholder = getByTestId('icon-user-not-found');
+
+  await wait(() => expect(element).toBeInTheDocument());
+  await wait(() => expect(button).toBeInTheDocument());
+  await wait(() => expect(placeholder).toBeInTheDocument());
 });

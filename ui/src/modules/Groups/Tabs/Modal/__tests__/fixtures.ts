@@ -1,3 +1,5 @@
+import { UserChecked } from '../../../interfaces/UserChecked';
+
 export const users = [
   {
     id: 'a7c3e4b6-4be3-4d62-8140-e2d23214e03f',
@@ -22,3 +24,5 @@ export const users = [
     checked: true
   }
 ];
+
+export const emptyUsers: UserChecked[] = [];
