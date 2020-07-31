@@ -17,16 +17,14 @@
  *
  */
 
-package io.charlescd.moove.metrics.interactor.impl
+package io.charlescd.moove.application.metric.impl
 
+import io.charlescd.moove.application.metric.VerifyWorkspaceProviderConnectionInteractor
+import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
-import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
-import io.charlescd.moove.metrics.connector.MetricService
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
-import io.charlescd.moove.metrics.interactor.VerifyWorkspaceProviderConnectionInteractor
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -35,33 +33,12 @@ class VerifyWorkspaceProviderConnectionInteractorImpl(
     private val metricConfigurationRepository: MetricConfigurationRepository
 ) : VerifyWorkspaceProviderConnectionInteractor {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
-
-    override fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionRepresentation {
+    override fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse {
         val service = serviceFactory.getConnector(providerType)
 
         val metricConfiguration = this.metricConfigurationRepository.find(providerId, workspaceId)
-            .orElseThrow { NotFoundException("metric configuration for workspace", workspaceId) }
+            .orElseThrow { NotFoundException("Metric configuration for Workspace", "MetricId = $providerId : WorkspaceId = $workspaceId") }
 
-        val url = metricConfiguration.url
-
-        return kotlin.runCatching { verifyProvider(url, service) }
-            .getOrElse { verifyException(it) }
-    }
-
-    private fun verifyProvider(url: String, service: MetricService): ProviderConnectionRepresentation {
-        service.healthCheck(url)
-        service.readinessCheck(url)
-
-        return ProviderConnectionRepresentation(
-            status = "SUCCESS"
-        )
-    }
-
-    private fun verifyException(e: Throwable): ProviderConnectionRepresentation {
-        log.error(e.message, e)
-        return ProviderConnectionRepresentation(
-            status = "FAILED"
-        )
+        return ProviderConnectionResponse(status = service.readinessCheck(metricConfiguration.url).status)
     }
 }

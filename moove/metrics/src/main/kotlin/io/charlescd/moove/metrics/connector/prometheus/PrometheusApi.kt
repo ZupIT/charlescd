@@ -21,6 +21,7 @@ import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -45,13 +46,7 @@ interface PrometheusApi {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
-        value = [HEALTH_ENDPOINT]
-    )
-    fun healthCheck(baseUrl: URI): String
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping(
         value = [READINESS_ENDPOINT]
     )
-    fun readinessCheck(baseUrl: URI): String
+    fun readinessCheck(baseUrl: URI): ResponseEntity<String>
 }
