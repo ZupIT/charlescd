@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { normalizeCircleParams } from '../helpers';
+import { normalizeCircleParams, getStatus } from '../helpers';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 
@@ -30,3 +30,14 @@ test('Normalize Circle Params for request with all options', async () => {
 
   expect(normalizeCircleParams(data)).toEqual([]);
 })
+
+test('Enum status', () => {
+  expect(getStatus('NOT_DEPLOYED')).toEqual('notDeployed');
+  expect(getStatus('DEPLOYED')).toEqual('deployed');
+  expect(getStatus('DEPLOYING')).toEqual('deploying');
+  expect(getStatus('DEPLOY_FAILED')).toEqual('error');
+  expect(getStatus('UNDEPLOYING')).toEqual('undeploying');
+  expect(getStatus('ACTIVE')).toEqual('active');
+  expect(getStatus('INACTIVE')).toEqual('inactive');
+  expect(getStatus('')).toEqual('deployed');
+});
