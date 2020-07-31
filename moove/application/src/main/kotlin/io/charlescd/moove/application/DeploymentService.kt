@@ -61,12 +61,4 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
             circleId
         )
     }
-
-    fun findDeploymentsHistory(workspaceId: String, circleId: String, pageRequest: PageRequest): Page<DeploymentHistory> {
-        return this.findDeploymentsHistory(workspaceId, listOf(circleId), pageRequest)
-    }
-
-    fun findDeploymentsHistory(workspaceId: String, circles: List<String>, pageRequest: PageRequest): Page<DeploymentHistory> {
-        return this.deploymentRepository.findDeploymentsHistory(workspaceId, circles, pageRequest)
-    }
 }
