@@ -111,8 +111,8 @@ interface Dot {
 }
 
 const Dot = styled.div<Dot>`
-  height: 15px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
   background-color: ${({ theme, status }) => theme.metrics.circles[status]};
   border-radius: 50%;
   display: inline-block;
@@ -140,6 +140,17 @@ const StatusLine = styled.div<Line>`
   border-radius: 10px;
 `;
 
+const NoReleaseWrapper = styled.div`
+  display: flex;
+  padding-left: 10px;
+  margin-bottom: 5px;
+
+  span {
+    margin-left: 5px;
+    margin-top: 1px;
+  }
+`;
+
 export default {
   Table,
   TableRow,
@@ -155,5 +166,6 @@ export default {
   HistoryLegend,
   HistorySearchInput,
   Dot,
-  StatusLine
+  StatusLine,
+  NoReleaseWrapper
 };
