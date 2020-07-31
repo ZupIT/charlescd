@@ -139,9 +139,9 @@ export const useSectionTestConnection = (): SectionTestConnection => {
   const { response, loading } = sectionTestConnection;
 
   const testProviderConnectionSection = useCallback(
-    (params: URLParams, providerId: string) => {
+    (params: URLParams, workspaceId: string) => {
       const urlParams = buildParams(params);
-      dispatchSectionTestConnection(urlParams, providerId);
+      dispatchSectionTestConnection(urlParams, workspaceId);
     },
     [dispatchSectionTestConnection]
   );
