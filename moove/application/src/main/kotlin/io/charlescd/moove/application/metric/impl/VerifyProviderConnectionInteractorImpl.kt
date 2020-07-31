@@ -17,12 +17,12 @@
  *
  */
 
-package io.charlescd.moove.metrics.interactor.impl
+package io.charlescd.moove.application.metric.impl
 
+import io.charlescd.moove.application.metric.VerifyProviderConnectionInteractor
+import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
-import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
-import io.charlescd.moove.metrics.interactor.VerifyProviderConnectionInteractor
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,8 +30,8 @@ class VerifyProviderConnectionInteractorImpl(
     private val serviceFactory: MetricServiceFactory
 ) : VerifyProviderConnectionInteractor {
 
-    override fun execute(provider: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionRepresentation {
-        return ProviderConnectionRepresentation(
+    override fun execute(provider: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse {
+        return ProviderConnectionResponse(
             this.serviceFactory.getConnector(providerType).readinessCheck(provider).status
         )
     }

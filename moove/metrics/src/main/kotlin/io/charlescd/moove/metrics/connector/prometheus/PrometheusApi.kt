@@ -32,7 +32,6 @@ interface PrometheusApi {
 
     companion object {
         const val QUERY_ENDPOINT = "/api/v1/query"
-        const val HEALTH_ENDPOINT = "/-/healthy"
         const val READINESS_ENDPOINT = "/-/ready"
     }
 

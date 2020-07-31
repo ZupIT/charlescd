@@ -180,7 +180,7 @@ constraints:
         - POST
         - PATCH
 
-  - pattern: /metrics/config/verify-provider-connection
+  - pattern: /v2/workspaces/config/verify-provider-connection
     roles:
       maintenance_write:
         - GET
