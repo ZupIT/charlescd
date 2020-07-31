@@ -55,9 +55,13 @@ interface DeploymentRepository {
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats>
 
-    fun findDeploymentsHistory(workspaceId: String, circles: List<String>?, pageRequest: PageRequest): Page<DeploymentHistory>
+    fun findDeploymentsHistory(
+        workspaceId: String,
+        filters: DeploymentHistoryFilter,
+        pageRequest: PageRequest
+    ): Page<DeploymentHistory>
 
-    fun count(workspaceId: String): Int
+    fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int
 
-    fun count(workspaceId: String, circles: List<String>?): Int
+    fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount>
 }

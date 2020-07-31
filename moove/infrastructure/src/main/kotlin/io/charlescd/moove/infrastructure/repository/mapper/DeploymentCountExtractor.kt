@@ -18,18 +18,17 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
-import io.charlescd.moove.domain.DeploymentGeneralStats
+import io.charlescd.moove.domain.DeploymentCount
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
-import java.time.Duration
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
 @Component
-class DeploymentGeneralStatsExtractor : ResultSetExtractor<Set<DeploymentGeneralStats>> {
+class DeploymentCountExtractor : ResultSetExtractor<Set<DeploymentCount>> {
 
-    override fun extractData(resultSet: ResultSet): Set<DeploymentGeneralStats> {
-        val deploymentMetric = HashSet<DeploymentGeneralStats>()
+    override fun extractData(resultSet: ResultSet): Set<DeploymentCount> {
+        val deploymentMetric = HashSet<DeploymentCount>()
 
         while (resultSet.next()) {
             deploymentMetric.add(mapDeploymentStats(resultSet))
@@ -38,9 +37,8 @@ class DeploymentGeneralStatsExtractor : ResultSetExtractor<Set<DeploymentGeneral
         return deploymentMetric
     }
 
-    private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentGeneralStats(
+    private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentCount(
         total = resultSet.getInt("deployment_quantity"),
-        deploymentStatus = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
-        averageTime = Duration.ofSeconds(resultSet.getLong("deployment_average_time"))
+        status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status"))
     )
 }
