@@ -21,6 +21,7 @@ package io.charlescd.moove.metrics.interactor.impl
 
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
+import io.charlescd.moove.metrics.connector.prometheus.PrometheusConnectionStatusResponse
 import io.charlescd.moove.metrics.connector.prometheus.PrometheusService
 import spock.lang.Specification
 
@@ -31,19 +32,18 @@ class VerifyProviderConnectionInteractorImplUnitTest extends Specification {
     def verifyProviderConnectionInteractorImpl = new VerifyProviderConnectionInteractorImpl(serviceFactory)
 
 
-    def 'should return success when provider health and readiness is ok'() {
+    def 'should return success when provider readiness is ok'() {
         given:
         def provider = "http://localhost:9090"
         def providerType = MetricConfiguration.ProviderEnum.PROMETHEUS
-        def prometheusHealthResponse = "Prometheus is Healthy.\n"
-        def prometheusReadinessResponse = "Prometheus is Ready.\n"
+        def prometheusReadinessResponse = new PrometheusConnectionStatusResponse(
+                "SUCCESS", 200, "Prometheus is Ready")
 
         when:
         def result = verifyProviderConnectionInteractorImpl.execute(provider, providerType)
 
         then:
         1 * serviceFactory.getConnector(providerType) >> providerService
-        1 * providerService.healthCheck(provider) >> prometheusHealthResponse
         1 * providerService.readinessCheck(provider) >> prometheusReadinessResponse
         0 * _
 
@@ -51,33 +51,19 @@ class VerifyProviderConnectionInteractorImplUnitTest extends Specification {
         result.status == "SUCCESS"
     }
 
-    def 'should return failed when provider health is unavailable'() {
-        given:
-        def provider = "http://localhost:9090"
-        def providerType = MetricConfiguration.ProviderEnum.PROMETHEUS
-        1 * providerService.healthCheck(provider) >> { throw new RuntimeException("error") }
-
-        when:
-        def result = verifyProviderConnectionInteractorImpl.execute(provider, providerType)
-
-        then:
-        1 * serviceFactory.getConnector(providerType) >> providerService
-
-        result != null
-        result.status == "FAILED"
-    }
-
     def 'should return failed when provider readiness is unavailable'() {
         given:
         def provider = "http://localhost:9090"
         def providerType = MetricConfiguration.ProviderEnum.PROMETHEUS
-        1 * providerService.readinessCheck(provider) >> { throw new RuntimeException("error") }
+        def prometheusReadinessResponse = new PrometheusConnectionStatusResponse(
+                "FAILED", 500, "Prometheus is not Ready")
 
         when:
         def result = verifyProviderConnectionInteractorImpl.execute(provider, providerType)
 
         then:
         1 * serviceFactory.getConnector(providerType) >> providerService
+        1 * providerService.readinessCheck(provider) >> { prometheusReadinessResponse }
 
         result != null
         result.status == "FAILED"

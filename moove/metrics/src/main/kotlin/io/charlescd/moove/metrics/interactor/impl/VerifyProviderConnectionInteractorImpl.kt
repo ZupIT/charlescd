@@ -21,10 +21,8 @@ package io.charlescd.moove.metrics.interactor.impl
 
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
-import io.charlescd.moove.metrics.connector.MetricService
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
 import io.charlescd.moove.metrics.interactor.VerifyProviderConnectionInteractor
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,28 +30,9 @@ class VerifyProviderConnectionInteractorImpl(
     private val serviceFactory: MetricServiceFactory
 ) : VerifyProviderConnectionInteractor {
 
-    private val log = LoggerFactory.getLogger(this.javaClass)
-
     override fun execute(provider: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionRepresentation {
-        val service = serviceFactory.getConnector(providerType)
-
-        return kotlin.runCatching { verifyProvider(provider, service) }
-            .getOrElse { verifyException(it) }
-    }
-
-    private fun verifyProvider(url: String, service: MetricService): ProviderConnectionRepresentation {
-        service.healthCheck(url)
-        service.readinessCheck(url)
-
         return ProviderConnectionRepresentation(
-            status = "SUCCESS"
-        )
-    }
-
-    private fun verifyException(e: Throwable): ProviderConnectionRepresentation {
-        log.error(e.message, e)
-        return ProviderConnectionRepresentation(
-            status = "FAILED"
+            this.serviceFactory.getConnector(providerType).readinessCheck(provider).status
         )
     }
 }

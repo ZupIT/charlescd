@@ -16,7 +16,10 @@
 
 package io.charlescd.moove.metrics.connector.prometheus
 
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.metrics.domain.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
 class PrometheusServiceUnitTest extends Specification {
@@ -695,25 +698,9 @@ class PrometheusServiceUnitTest extends Specification {
         result.result.get(0).data.get(0).time == 1580157300
     }
 
-    def 'should get provider health with success'() {
-        given:
-        def prometheusResponse = "Prometheus is Healthy.\n"
-
-        when:
-        def response = this.prometheusService.healthCheck(url)
-
-        then:
-        1 * this.prometheusApi.healthCheck(URI.create(url)) >> prometheusResponse
-        0 * _
-
-        response != null
-        response.length() != 0
-        response == prometheusResponse
-    }
-
     def 'should get provider readiness with success'() {
         given:
-        def prometheusResponse = "Prometheus is Ready.\n"
+        def prometheusResponse = ResponseEntity.status(HttpStatus.OK).body("Prometheus is Ready")
 
         when:
         def response = this.prometheusService.readinessCheck(url)
@@ -723,7 +710,25 @@ class PrometheusServiceUnitTest extends Specification {
         0 * _
 
         response != null
-        response.length() != 0
-        response == prometheusResponse
+        response.message != null
+        response.status == "SUCCESS"
+        response.statusCode == 200
+    }
+
+    def 'should get provider readiness without success'() {
+        given:
+        def prometheusResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Prometheus is not Ready")
+
+        when:
+        def response = this.prometheusService.readinessCheck(url)
+
+        then:
+        1 * this.prometheusApi.readinessCheck(URI.create(url)) >> prometheusResponse
+        0 * _
+
+        response != null
+        response.message != null
+        response.status == "FAILED"
+        response.statusCode == 500
     }
 }
