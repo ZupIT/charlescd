@@ -23,6 +23,8 @@ import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
 import { Execution } from '../entity/execution.entity';
 import { PgBossWorker } from '../jobs/pgboss.worker';
+import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
+import { Deployment } from '../../../core/integrations/spinnaker/interfaces'
 
 
 @Injectable()
@@ -34,7 +36,8 @@ export class DeploymentHandler {
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
     @Inject(forwardRef(() => PgBossWorker))
-    private pgBoss: PgBossWorker
+    private pgBoss: PgBossWorker,
+    private spinnakerConnector: SpinnakerConnector
   ) { }
 
   async run(job: JobWithDoneCallback<Execution, unknown>): Promise<JobWithDoneCallback<Execution, unknown>> {
@@ -50,6 +53,7 @@ export class DeploymentHandler {
       this.pgBoss.publish(job.data)
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     } else {
+      // TODO insert spinnaker calls
       await this.updateComponentsToRunning(deployment)
       this.consoleLoggerService.log('Updated components to running', { job: job })
     }

@@ -16,7 +16,7 @@
 
 import 'jest'
 import { Component, Deployment } from '../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { SpinnakerConnector } from '../../../../app/v2/core/integrations/spinnaker/connector'
+import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import {
   completeSpinnakerPipeline,
@@ -281,7 +281,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerConnector().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
     ).toEqual(completeSpinnakerPipeline)
   })
 
@@ -387,7 +387,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerConnector().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
     ).toEqual(noUnusedSpinnakerPipeline)
   })
 
@@ -493,7 +493,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerConnector().buildSpinnakerDeploymentPipeline(deploymentWith1Component, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1Component, activeComponents)
     ).toEqual(oneComponentSpinnakerPipeline)
   })
 
@@ -631,7 +631,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerConnector().buildSpinnakerDeploymentPipeline(deploymentWith1Component, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1Component, activeComponents)
     ).toEqual(oneComponentVSSpinnakerPipeline)
   })
 })
