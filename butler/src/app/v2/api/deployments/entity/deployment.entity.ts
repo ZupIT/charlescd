@@ -59,9 +59,11 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => Execution, execution => execution.deployment)
   public executions!: Execution[]
 
-
   @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
   public circleId!: string | null
+
+  @Column({ name: 'active' })
+  public active!: boolean
 
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
