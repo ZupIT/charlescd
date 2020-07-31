@@ -65,6 +65,25 @@ test('testing on click update button', async () => {
   expect(onSelected).toHaveBeenCalled();
 });
 
+test('testing deleting an user', async () => {
+  const onSelected = jest.fn();
+  const { getByText, getByTestId, debug } = render(
+    <Modal users={users} isOpen onSearch={jest.fn()} onSelected={onSelected} />
+  );
+
+  const user = getByText('User 2');
+  const button = getByTestId('button-default-undefined');
+
+  await wait(() => expect(user).toBeInTheDocument());
+  await wait(() => expect(button).toBeInTheDocument());
+
+  fireEvent.click(user);
+  fireEvent.click(button);
+  
+  expect(onSelected).toHaveBeenCalled();
+  expect(getByTestId('icon-plus-circle')).toBeInTheDocument();
+});
+
 test('testing on outside click with isOutsideClick property passed on', async () => {
   const onClose = jest.fn();
   const { getByTestId } = render(
@@ -118,7 +137,12 @@ test('testing on outside click without isOutsideClick property passed on', async
 
 test('render Modal placeholder', async () => {
   const { getByTestId } = render(
-    <Modal users={emptyUsers} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
+    <Modal
+      users={emptyUsers}
+      isOpen
+      onSearch={jest.fn()}
+      onSelected={jest.fn()}
+    />
   );
 
   const element = getByTestId('modal-user');
