@@ -28,7 +28,6 @@ import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.PageRequest
-import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import javax.validation.Valid

@@ -21,7 +21,6 @@ package io.charlescd.moove.application.metric
 
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
-import io.charlescd.moove.metrics.api.response.ProviderConnectionRepresentation
 
 interface VerifyProviderConnectionInteractor {
 
