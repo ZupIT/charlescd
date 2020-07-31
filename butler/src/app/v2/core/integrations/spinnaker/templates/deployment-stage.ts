@@ -27,7 +27,7 @@ export const getDeploymentStage = (component: Component, configuration: CdConfig
   manifestArtifactAccount: 'embedded-artifact',
   manifestArtifactId: `deployment - ${component.imageTag}`,
   moniker: {
-    app: `${component.name}`
+    app: 'default'
   },
   name: `Deploy ${component.name} ${component.imageTag}`,
   refId: `${stageId}`,

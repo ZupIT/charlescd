@@ -21,7 +21,7 @@ export const getFailureWebhookStage = (deployment: Deployment, stageId: number):
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
-    'x-circle-id': 'Default' // TODO put incomingCircleId here
+    'x-circle-id': `${deployment.incomingCircleId}`
   },
   failPipeline: false,
   method: 'POST',
@@ -40,7 +40,7 @@ export const getFailureWebhookStage = (deployment: Deployment, stageId: number):
   url: `${deployment.callbackUrl}`
 })
 
-const getRequisiteStageRefIds = (components: Component[]): string[] => { // TODO fix this magic?
+const getRequisiteStageRefIds = (components: Component[]): string[] => {
   const deploymentsEvalId: number = (components.length * 4) + 1
   const proxiesEvalId: number = deploymentsEvalId + components.length + 1
   return [

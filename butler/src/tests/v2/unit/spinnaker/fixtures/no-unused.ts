@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from '../interfaces'
+import { SpinnakerPipeline } from '../../../../../app/v2/core/integrations/spinnaker/interfaces'
+import { AppConstants } from '../../../../../app/v1/core/constants'
 
-export const spinnakerPipeline: SpinnakerPipeline = {
-  application: '',
+export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
+  application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
     {
@@ -187,7 +188,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       templateRenderer: 'HELM2',
       type: 'bakeManifest'
-    }, // 1
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -197,7 +198,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       manifestArtifactAccount: 'embedded-artifact',
       manifestArtifactId: 'deployment - v2',
       moniker: {
-        app: 'A'
+        app: 'default'
       },
       name: 'Deploy A v2',
       refId: '2',
@@ -218,7 +219,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 2
+    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -264,7 +265,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       templateRenderer: 'HELM2',
       type: 'bakeManifest'
-    }, // 3
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -274,7 +275,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       manifestArtifactAccount: 'embedded-artifact',
       manifestArtifactId: 'deployment - v2',
       moniker: {
-        app: 'B'
+        app: 'default'
       },
       name: 'Deploy B v2',
       refId: '4',
@@ -295,7 +296,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 4
+    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -341,7 +342,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       templateRenderer: 'HELM2',
       type: 'bakeManifest'
-    }, // 5
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -351,7 +352,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       manifestArtifactAccount: 'embedded-artifact',
       manifestArtifactId: 'deployment - v2',
       moniker: {
-        app: 'C'
+        app: 'default'
       },
       name: 'Deploy C v2',
       refId: '6',
@@ -372,7 +373,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 6
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -395,6 +396,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                   version: 'A-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'A-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -422,7 +429,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 7
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -514,12 +521,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       }
                     }
@@ -552,7 +559,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 8
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -575,6 +582,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                   version: 'B-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'B-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -602,7 +615,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 9
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -694,12 +707,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       }
                     }
@@ -732,7 +745,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 10
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -755,6 +768,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                   version: 'C-v2'
                 },
                 name: 'v2'
+              },
+              {
+                labels: {
+                  version: 'C-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -782,7 +801,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 11
+    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -874,12 +893,12 @@ export const spinnakerPipeline: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'default-circle-id'
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
                         }
                       }
                     }
@@ -912,7 +931,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         }
       },
       type: 'deployManifest'
-    }, // 12
+    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -932,10 +951,10 @@ export const spinnakerPipeline: SpinnakerPipeline = {
           value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy B v2\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy C v2\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
-    }, // 13
+    },
     {
       account: 'default',
-      app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
+      app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -976,10 +995,10 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    }, // 14
+    },
     {
       account: 'default',
-      app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
+      app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -1020,10 +1039,10 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    }, // 15
+    },
     {
       account: 'default',
-      app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
+      app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -1064,7 +1083,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    }, // 16
+    },
     {
       failOnFailedExpressions: true,
       name: 'Evaluate proxy deployments',
@@ -1081,98 +1100,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
           value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
-    }, // 17 ok
-    {
-      account: 'default',
-      app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '18',
-      requisiteStageRefIds: [
-        '17'
-      ],
-      stageEnabled: {
-        expression: '${proxyDeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    }, // 18
-    {
-      account: 'default',
-      app: 'app-59b0b8a9-8259-4aba-a48e-36297fc4a399',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'B'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'B-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment B v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '19',
-      requisiteStageRefIds: [
-        '17'
-      ],
-      stageEnabled: {
-        expression: '${proxyDeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    }, // 19
-
+    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -1185,7 +1113,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       payload: {
         status: 'FAILURE'
       },
-      refId: '20',
+      refId: '18',
       requisiteStageRefIds: [
         '13',
         '17'
@@ -1196,8 +1124,8 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       statusUrlResolution: 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:8883/deploy/notifications/istio-deployment?queuedIstioDeploymentId=1'
-    }, // 20
+      url: 'http://localhost:1234/notifications/deployment?deploymentId=1'
+    },
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -1210,7 +1138,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       payload: {
         status: 'SUCCEEDED'
       },
-      refId: '21',
+      refId: '19',
       requisiteStageRefIds: [
         '13',
         '17'
@@ -1221,7 +1149,7 @@ export const spinnakerPipeline: SpinnakerPipeline = {
       },
       statusUrlResolution: 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:8883/deploy/notifications/istio-deployment?queuedIstioDeploymentId=1'
-    } // 21
+      url: 'http://localhost:1234/notifications/deployment?deploymentId=1'
+    }
   ]
 }

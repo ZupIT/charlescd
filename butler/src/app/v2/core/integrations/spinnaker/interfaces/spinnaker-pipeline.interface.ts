@@ -244,6 +244,7 @@ interface SpinnakerPipeline {
 }
 
 export {
+  Subset,
   Http,
   Stage,
   ExpectedArtifact,
