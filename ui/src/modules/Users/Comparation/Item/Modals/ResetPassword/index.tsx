@@ -19,6 +19,7 @@ import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import InputAction from 'core/components/Form/InputAction';
 import { User } from 'modules/Users/interfaces/User';
+import { useResetPassword } from 'modules/Users/hooks';
 import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
 
@@ -30,17 +31,24 @@ interface Props {
 const ModalResetPassword = ({ user, onClose }: Props) => {
   const [isNewPassword, toggleNewPassword] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const { resetPassword, loading, response } = useResetPassword();
   const TIMEOUT_COPIED = 1500;
   const PASS = 'TODO: new-password';
 
   const handleOnClickReset = () => {
-    toggleNewPassword(true);
+    resetPassword();
   };
 
   const handleCopyToClipboard = () => {
     setIsCopied(true);
     copyToClipboard(PASS);
   };
+
+  useEffect(() => {
+    if (response?.newPassword) {
+      toggleNewPassword(true);
+    }
+  }, [response]);
 
   useEffect(() => {
     let timeout = 0;
@@ -65,7 +73,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
       <Button.Default
         id="reset-password"
         size="EXTRA_SMALL"
-        isLoading={false}
+        isLoading={loading}
         isDisabled={isNewPassword}
         onClick={handleOnClickReset}
       >
@@ -81,7 +89,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
             name="new-password"
             icon={isCopied ? 'checkmark-circle' : 'copy'}
             iconColor={isCopied ? 'success' : 'dark'}
-            defaultValue={PASS}
+            defaultValue={response?.newPassword}
             onClick={handleCopyToClipboard}
           />
         </Fragment>

@@ -18,6 +18,7 @@ import { useEffect, useCallback, useState } from 'react';
 import { useFetch } from 'core/providers/base/hooks';
 import {
   findAllUsers,
+  resetPasswordById,
   updateProfileById,
   findUserByEmail,
   createNewUser,
@@ -27,7 +28,7 @@ import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, Profile, NewUser } from './interfaces/User';
+import { User, Profile, NewUser, NewPassword } from './interfaces/User';
 
 export const useUser = (): [User, boolean, Function] => {
   const [userData, getUser] = useFetch<User>(findUserByEmail);
@@ -124,6 +125,27 @@ export const useUpdateProfile = (): [
   );
 
   return [profileLoading, updateLoading, updateProfile, response, status];
+};
+
+export const useResetPassword = (): {
+  loading: boolean;
+  resetPassword: Function;
+  response: NewPassword;
+  status: string;
+} => {
+  const [status, setStatus] = useState<string>('');
+  const [dataUpdate, , update] = useFetch<NewPassword>(resetPasswordById);
+  const { response, loading } = dataUpdate;
+
+  const resetPassword = useCallback(
+    (id: string) => {
+      setStatus('');
+      update(id).then(() => setStatus('resolved'));
+    },
+    [update]
+  );
+
+  return { loading, resetPassword, response, status };
 };
 
 export const useUsers = (): [Function, Function, boolean] => {
