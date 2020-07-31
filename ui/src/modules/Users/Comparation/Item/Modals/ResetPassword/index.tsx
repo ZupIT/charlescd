@@ -47,7 +47,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
     if (response?.newPassword) {
       toggleNewPassword(true);
     }
-  }, [status.isResolved]);
+  }, [status.isResolved, response]);
 
   useEffect(() => {
     let timeout = 0;
