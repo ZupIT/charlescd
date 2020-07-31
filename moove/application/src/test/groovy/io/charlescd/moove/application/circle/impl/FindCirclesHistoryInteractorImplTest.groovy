@@ -37,30 +37,6 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
     def workspaceId = "workspace"
     def pageRequest = new PageRequest(0, 10)
 
-    def 'should return maintaining the order when found everything'() {
-        given:
-        def nameForSearch = "name"
-        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofSeconds(120)),
-                       buildCircleHistory("2", CircleStatusEnum.ACTIVE, Duration.ofSeconds(130)),
-                       buildCircleHistory("3", CircleStatusEnum.INACTIVE, Duration.ofSeconds(150))]
-
-        when:
-        def result = findCirclesHistoryInteractor.execute(workspaceId, nameForSearch, pageRequest)
-
-        then:
-        1 * circleRepository.findCirclesHistory(workspaceId, nameForSearch, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
-        0 * _
-
-        result.page == 0
-        result.size == 10
-        result.isLast
-        result.totalPages == 1
-        result.content.size() == 3
-        result.content[0].id == "1"
-        result.content[1].id == "2"
-        result.content[2].id == "3"
-    }
-
     def 'should return the lifetime in seconds'() {
         given:
         def nameForSearch = "name"
@@ -89,4 +65,27 @@ class FindCirclesHistoryInteractorImplTest extends Specification {
                 lifeTime)
     }
 
+    def 'should return ordered by status ascending and lifetime descending'() {
+        given:
+        def nameForSearch = "name"
+        def circles = [buildCircleHistory("1", CircleStatusEnum.ACTIVE, Duration.ofMinutes(2)),
+                       buildCircleHistory("2", CircleStatusEnum.ACTIVE, Duration.ofMinutes(5)),
+                       buildCircleHistory("3", CircleStatusEnum.INACTIVE, Duration.ofMinutes(1))]
+
+        when:
+        def result = findCirclesHistoryInteractor.execute(workspaceId, nameForSearch, pageRequest)
+
+        then:
+        1 * circleRepository.findCirclesHistory(workspaceId, nameForSearch, pageRequest) >> new Page(circles, pageRequest.page, pageRequest.size, circles.size())
+        0 * _
+
+        result.page == 0
+        result.size == 10
+        result.isLast
+        result.totalPages == 1
+        result.content.size() == 3
+        result.content[0].id == "2"
+        result.content[1].id == "1"
+        result.content[2].id == "3"
+    }
 }

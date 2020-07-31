@@ -32,11 +32,15 @@ class FindCirclesHistoryInteractorImpl(private val circleRepository: CircleRepos
         val historyItems = circleRepository.findCirclesHistory(workspaceId, name, pageRequest)
 
         return ResourcePageResponse.from(
-            historyItems.content.map { CircleHistoryResponse.from(it) },
+            historyItems.content.map { CircleHistoryResponse.from(it) }.sortedWith(getResponseComparator()),
             historyItems.pageNumber,
             historyItems.pageSize,
             historyItems.isLast(),
             historyItems.totalPages()
         )
     }
+
+    private fun getResponseComparator() =
+        compareBy<CircleHistoryResponse> { it.status }
+            .thenByDescending { it.lifeTime }
 }
