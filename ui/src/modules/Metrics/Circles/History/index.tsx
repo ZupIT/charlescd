@@ -29,8 +29,8 @@ const HistoryComponent = () => {
   const [name, setName] = useState('');
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
-  const historyResponse = response?.page?.content;
-  const hasMoreData = !response?.page?.last;
+  const historyResponse = response?.content;
+  const hasMoreData = !response?.last;
 
   useEffect(() => {
     if (historyResponse) {
@@ -51,6 +51,8 @@ const HistoryComponent = () => {
     page.current++;
     getCirclesHistory({ page: page.current, name });
   };
+
+  console.log(loading, response);
 
   return (
     <Styled.HistoryWrapper>
