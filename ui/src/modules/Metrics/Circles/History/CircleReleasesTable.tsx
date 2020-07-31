@@ -67,7 +67,10 @@ const CircleReleasesTable = ({ circleId }: Props) => {
           <Text.h5 color="dark">Undeployed</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Last editor</Text.h5>
+          <Text.h5 color="dark">Create date</Text.h5>
+        </Styled.TableColumn>
+        <Styled.TableColumn>
+          <Text.h5 color="dark">Author</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
       <InfiniteScroll

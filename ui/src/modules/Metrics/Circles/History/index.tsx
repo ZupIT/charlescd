@@ -52,17 +52,12 @@ const HistoryComponent = () => {
     getCirclesHistory({ page: page.current, name });
   };
 
-  console.log(loading, response);
-
   return (
     <Styled.HistoryWrapper>
       <Summary isLoading={loading} onSearch={setName} />
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Status</Text.h5>
-          </Styled.TableColumn>
-          <Styled.TableColumn width={2}>
             <Text.h5 color="dark">Circles</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn>

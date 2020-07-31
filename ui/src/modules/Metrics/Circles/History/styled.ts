@@ -44,6 +44,7 @@ const TableHead = styled.div`
 `;
 
 const CircleRow = styled.div`
+  position: relative;
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.circleRow.background};
   margin-bottom: 5px;
@@ -65,7 +66,7 @@ const ComponentsRow = styled.div`
 `;
 
 const ReleasesWrapper = styled.div`
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 10px 20px;
 `;
 
 const TableColumn = styled.div<ColumnProps>`
@@ -74,7 +75,7 @@ const TableColumn = styled.div<ColumnProps>`
   flex: ${({ width }) => width || 1};
 
   :first-child {
-    padding-left: 20px;
+    padding-left: 30px;
   }
 `;
 
@@ -125,6 +126,22 @@ const HistorySearchInput = styled(SearchInputComponent)`
   padding-left: 15px;
 `;
 
+interface Line {
+  status: string;
+  release: boolean;
+}
+
+const StatusLine = styled.div<Line>`
+  position: absolute;
+  left: ${({ release }) => (release ? '10' : '0')};
+  height: ${({ release }) =>
+    release ? `calc(100% - 364px)` : `calc(100% - 6px)`};
+  width: 5px;
+  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
+  margin: 3px 10px 0 5px;
+  border-radius: 10px;
+`;
+
 export default {
   Table,
   TableRow,
@@ -139,5 +156,6 @@ export default {
   HistoryHeader,
   HistoryLegend,
   HistorySearchInput,
-  Dot
+  Dot,
+  StatusLine
 };
