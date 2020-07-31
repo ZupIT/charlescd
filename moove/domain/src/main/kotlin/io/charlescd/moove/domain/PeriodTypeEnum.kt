@@ -16,22 +16,10 @@
 
 package io.charlescd.moove.domain
 
-import java.time.Duration
-import java.time.LocalDate
+enum class PeriodTypeEnum(val numberOfDays: Int) {
 
-data class DeploymentStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val date: LocalDate
-)
-
-data class DeploymentAverageTimeStats(
-    val averageTime: Duration,
-    val date: LocalDate
-)
-
-data class DeploymentGeneralStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val averageTime: Duration
-)
+    ONE_WEEK(7),
+    TWO_WEEKS(14),
+    ONE_MONTH(30),
+    THREE_MONTHS(90)
+}
