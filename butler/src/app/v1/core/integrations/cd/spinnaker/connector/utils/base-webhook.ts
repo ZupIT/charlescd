@@ -34,7 +34,7 @@ export interface IBaseWebhook {
   url: string
 }
 
-const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string): IBaseWebhook => ({
+const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string, callbackType: string): IBaseWebhook => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
@@ -45,7 +45,7 @@ const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: str
   name: 'Trigger webhook',
   payload: {
     status: '${#stage( \'' + previousStage + '\' ).status.toString()}',
-    callbackType: '${#stage( \'' + previousStage + '\' ).callbackType.toString()}'
+    callbackType: callbackType
   },
   refId,
   requisiteStageRefIds: requisiteRefId,
