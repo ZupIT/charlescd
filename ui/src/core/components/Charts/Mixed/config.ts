@@ -28,6 +28,9 @@ export default {
       },
       toolbar: {
         show: false
+      },
+      zoom: {
+        enabled: true
       }
     },
     yaxis: {
