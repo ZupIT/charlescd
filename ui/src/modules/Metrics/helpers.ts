@@ -25,7 +25,7 @@ export const normalizeCircleParams = (circles: Option[]) => {
   return map(filteredCircles, 'value');
 };
 
-enum STATUS {
+export enum STATUS {
   NOT_DEPLOYED = 'notDeployed',
   DEPLOYED = 'deployed',
   DEPLOYING = 'deploying',
