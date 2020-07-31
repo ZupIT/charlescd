@@ -16,17 +16,30 @@ export class SpinnakerConnector {
   ) {}
 
   public async createDeployment(deployment: Deployment, activeComponents: Component[]): Promise<ConnectorResult> {
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DELOYMENT', { deployment, activeComponents })
+
     try {
-      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DELOYMENT')
       await this.createSpinnakerApplication(deployment.cdConfiguration)
-      await this.createSpinnakerPipeline(deployment, activeComponents)
-      await this.deploySpinnakerPipeline(deployment)
-      this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')
-      return { status: 'SUCCEEDED' }
     } catch (error) {
-      this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_DELOYMENT')
-      throw error // TODO
+      this.consoleLoggerService.log('ERROR CREATE APPLICATION', { error })
     }
+
+    try {
+      await this.createSpinnakerPipeline(deployment, activeComponents)
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR CREATE PIPELINE', { error })
+    }
+
+    try {
+      await this.deploySpinnakerPipeline(deployment)
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR DEPLOY PIPELINE', { error })
+    }
+
+    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')
+    return { status: 'SUCCEEDED' }
+    // this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_DELOYMENT', { error })
+    // throw error // TODO
   }
 
   private async createSpinnakerApplication(cdConfiguration: CdConfiguration): Promise<void> {
@@ -35,11 +48,13 @@ export class SpinnakerConnector {
 
     try {
       this.consoleLoggerService.log('START:GET_V2_SPINNAKER_APPLICATION', { applicationName })
-      await this.spinnakerApiService.getApplication(applicationName, spinnakerUrl).toPromise()
+      const apiReturn1 = await this.spinnakerApiService.getApplication(applicationName, spinnakerUrl).toPromise()
+      this.consoleLoggerService.log('GET_APPLICATION_RETURN', { apiReturn1 })
     } catch (error) {
       this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_APPLICATION')
       const spinnakerApplication: ICreateSpinnakerApplication = this.getSpinnakerApplicationObject(applicationName)
-      await this.spinnakerApiService.createApplication(spinnakerApplication, spinnakerUrl).toPromise()
+      const apiReturn = await this.spinnakerApiService.createApplication(spinnakerApplication, spinnakerUrl).toPromise()
+      this.consoleLoggerService.log('CREATE_APPLICATION_RETURN', { apiReturn })
       this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_APPLICATION')
     }
   }
@@ -71,7 +86,7 @@ export class SpinnakerConnector {
   private async deploySpinnakerPipeline(deployment: Deployment): Promise<void> {
     this.consoleLoggerService.log('START:DEPLOY_V2_SPINNAKER_PIPELINE')
     const spinnakerUrl: string = (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).url
-    await this.spinnakerApiService.deployPipeline(deployment.cdConfiguration.id, deployment.id, spinnakerUrl)
+    await this.spinnakerApiService.deployPipeline(`app-${deployment.cdConfiguration.id}`, deployment.id, spinnakerUrl).toPromise()
     this.consoleLoggerService.log('FINISH:DEPLOY_V2_SPINNAKER_PIPELINE')
   }
 
@@ -82,11 +97,11 @@ export class SpinnakerConnector {
         application: {
           cloudProviders: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD,
           instancePort: AppConstants.SPINNAKER_CREATE_APPLICATION_PORT,
-          name: applicationName,
+          name: `app-${applicationName}`,
           email: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL
         }
       }],
-      application: applicationName
+      application: `app-${applicationName}`
     }
   }
 }

@@ -24,7 +24,7 @@ import { CdConfigurationsRepository } from '../../../../v1/api/configurations/re
 @Injectable()
 export class CdConfigurationExistencePipe implements PipeTransform {
   constructor(
-        @InjectRepository(CdConfigurationEntity)
+        @InjectRepository(CdConfigurationsRepository)
         private componentRepository: CdConfigurationsRepository) {
   }
 
