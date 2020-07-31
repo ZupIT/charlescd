@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+enum DEPLOY_STATUS {
+  NOT_DEPLOYED = 'notDeployed',
+  DEPLOYED = 'deployed',
+  DEPLOYING = 'deploying',
+  DEPLOY_FAILED = 'error',
+  UNDEPLOYING = 'undeploying'
+}
 
-import java.time.Duration
-import java.time.LocalDate
-
-data class DeploymentStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val date: LocalDate
-)
-
-data class DeploymentAverageTimeStats(
-    val averageTime: Duration,
-    val date: LocalDate
-)
-
-data class DeploymentGeneralStats(
-    val total: Int,
-    val deploymentStatus: DeploymentStatusEnum,
-    val averageTime: Duration
-)
+export const getReleseStatus = (statusEnum: string) => {
+  switch (statusEnum) {
+    case 'NOT_DEPLOYED':
+      return DEPLOY_STATUS.NOT_DEPLOYED;
+    case 'DEPLOYED':
+      return DEPLOY_STATUS.DEPLOYED;
+    case 'DEPLOYING':
+      return DEPLOY_STATUS.DEPLOYING;
+    case 'DEPLOY_FAILED':
+      return DEPLOY_STATUS.DEPLOY_FAILED;
+    case 'UNDEPLOYING':
+      return DEPLOY_STATUS.UNDEPLOYING;
+    default:
+      return DEPLOY_STATUS.DEPLOYED;
+  }
+};
