@@ -18,6 +18,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import ReleaseRow from './ReleaseRow';
+import SummaryRelease from './SummaryRelease';
 import Loader from '../../Loaders/index';
 import { useCirclesReleases } from '../hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -30,7 +31,7 @@ type Props = {
 const CircleReleasesTable = ({ circleId }: Props) => {
   const page = useRef(0);
   const [releases, setReleases] = useState<CircleRelease[]>([]);
-  const { getCircleReleases, response } = useCirclesReleases();
+  const { getCircleReleases, response, loading } = useCirclesReleases();
   const releasesResponse = response?.content;
   const hasMoreData = !response?.last;
 
@@ -56,6 +57,7 @@ const CircleReleasesTable = ({ circleId }: Props) => {
 
   return (
     <>
+      <SummaryRelease isLoading={loading} />
       <Styled.TableHead>
         <Styled.TableColumn>
           <Text.h5 color="dark">Release</Text.h5>
@@ -67,7 +69,10 @@ const CircleReleasesTable = ({ circleId }: Props) => {
           <Text.h5 color="dark">Undeployed</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Last editor</Text.h5>
+          <Text.h5 color="dark">Create date</Text.h5>
+        </Styled.TableColumn>
+        <Styled.TableColumn>
+          <Text.h5 color="dark">Author</Text.h5>
         </Styled.TableColumn>
       </Styled.TableHead>
       <InfiniteScroll

@@ -44,6 +44,7 @@ const TableHead = styled.div`
 `;
 
 const CircleRow = styled.div`
+  position: relative;
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.circleRow.background};
   margin-bottom: 5px;
@@ -51,6 +52,7 @@ const CircleRow = styled.div`
 `;
 
 const ReleaseRow = styled.div`
+  position: relative;
   background-color: ${({ theme }) =>
     theme.metrics.circles.history.releaseRow.background};
   margin-bottom: 5px;
@@ -65,7 +67,7 @@ const ComponentsRow = styled.div`
 `;
 
 const ReleasesWrapper = styled.div`
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 10px 20px;
 `;
 
 const TableColumn = styled.div<ColumnProps>`
@@ -74,7 +76,7 @@ const TableColumn = styled.div<ColumnProps>`
   flex: ${({ width }) => width || 1};
 
   :first-child {
-    padding-left: 20px;
+    padding-left: 30px;
   }
 `;
 
@@ -105,14 +107,13 @@ const HistoryLegend = styled.div`
 `;
 
 interface Dot {
-  active: boolean;
+  status: string;
 }
 
 const Dot = styled.div<Dot>`
   height: 15px;
   width: 15px;
-  background-color: ${({ theme, active }) =>
-    active ? theme.metrics.circles.active : theme.metrics.circles.inactive};
+  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
@@ -123,6 +124,20 @@ const HistorySearchInput = styled(SearchInputComponent)`
   width: 250px;
   border-radius: 5px;
   padding-left: 15px;
+`;
+
+interface Line {
+  status: string;
+}
+
+const StatusLine = styled.div<Line>`
+  position: absolute;
+  left: 0;
+  height: calc(100% - 6px);
+  width: 5px;
+  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
+  margin: 3px 10px 0 5px;
+  border-radius: 10px;
 `;
 
 export default {
@@ -139,5 +154,6 @@ export default {
   HistoryHeader,
   HistoryLegend,
   HistorySearchInput,
-  Dot
+  Dot,
+  StatusLine
 };
