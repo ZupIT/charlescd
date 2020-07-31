@@ -31,9 +31,8 @@ interface Props {
 const ModalResetPassword = ({ user, onClose }: Props) => {
   const [isNewPassword, toggleNewPassword] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const { resetPassword, loading, response } = useResetPassword();
+  const { resetPassword, response, status } = useResetPassword();
   const TIMEOUT_COPIED = 1500;
-  const PASS = 'TODO: new-password';
 
   const handleOnClickReset = () => {
     resetPassword();
@@ -41,14 +40,14 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
 
   const handleCopyToClipboard = () => {
     setIsCopied(true);
-    copyToClipboard(PASS);
+    copyToClipboard(response?.newPassword);
   };
 
   useEffect(() => {
     if (response?.newPassword) {
       toggleNewPassword(true);
     }
-  }, [response]);
+  }, [status.isResolved]);
 
   useEffect(() => {
     let timeout = 0;
@@ -73,7 +72,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
       <Button.Default
         id="reset-password"
         size="EXTRA_SMALL"
-        isLoading={loading}
+        isLoading={status.isPending}
         isDisabled={isNewPassword}
         onClick={handleOnClickReset}
       >

@@ -15,7 +15,12 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import {
   findAllUsers,
   resetPasswordById,
@@ -128,24 +133,26 @@ export const useUpdateProfile = (): [
 };
 
 export const useResetPassword = (): {
-  loading: boolean;
   resetPassword: Function;
   response: NewPassword;
-  status: string;
+  status: FetchStatus;
 } => {
-  const [status, setStatus] = useState<string>('');
-  const [dataUpdate, , update] = useFetch<NewPassword>(resetPasswordById);
-  const { response, loading } = dataUpdate;
+  const status = useFetchStatus();
+  const [response, setResponse] = useState<NewPassword>();
+  const putResetPassword = useFetchData<NewPassword>(resetPasswordById);
 
-  const resetPassword = useCallback(
-    (id: string) => {
-      setStatus('');
-      update(id).then(() => setStatus('resolved'));
-    },
-    [update]
-  );
+  const resetPassword = async (id: string) => {
+    try {
+      status.pending();
+      const putResponse = await putResetPassword(id);
+      setResponse(putResponse);
+      status.resolved();
+    } catch (e) {
+      status.rejected();
+    }
+  };
 
-  return { loading, resetPassword, response, status };
+  return { resetPassword, response, status };
 };
 
 export const useUsers = (): [Function, Function, boolean] => {
