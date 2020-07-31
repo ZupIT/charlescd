@@ -16,6 +16,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
 import Styled from './styled';
 import ReleaseRow from './ReleaseRow';
 import SummaryRelease from './SummaryRelease';
@@ -55,7 +56,14 @@ const CircleReleasesTable = ({ circleId }: Props) => {
     getCircleReleases({ page: page.current }, circleId);
   };
 
-  return (
+  const renderEmpetyReleases = () => (
+    <Styled.NoReleaseWrapper>
+      <Icon name="not-allowed" color="dark" size="16px" />
+      <Text.h5 color="dark">Doesn´t exists any release for this circle</Text.h5>
+    </Styled.NoReleaseWrapper>
+  );
+
+  const renderReleases = () => (
     <>
       <SummaryRelease isLoading={loading} />
       <Styled.TableHead>
@@ -88,6 +96,8 @@ const CircleReleasesTable = ({ circleId }: Props) => {
       </InfiniteScroll>
     </>
   );
+
+  return releases?.length === 0 ? renderEmpetyReleases() : renderReleases();
 };
 
 export default CircleReleasesTable;
