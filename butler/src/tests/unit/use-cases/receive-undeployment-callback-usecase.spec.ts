@@ -15,8 +15,8 @@
  */
 
 import { Test } from '@nestjs/testing'
-import { ReceiveUndeploymentCallbackUsecase } from '../../../app/api/notifications/use-cases'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ReceiveUndeploymentCallbackUsecase } from '../../../app/v1/api/notifications/use-cases'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   ConsoleLoggerServiceStub,
   MooveServiceStub,
@@ -24,12 +24,12 @@ import {
   PipelineQueuesServiceStub,
   StatusManagementServiceStub
 } from '../../stubs/services'
-import { MooveService } from '../../../app/core/integrations/moove'
-import { StatusManagementService } from '../../../app/core/services/deployments'
+import { MooveService } from '../../../app/v1/core/integrations/moove'
+import { StatusManagementService } from '../../../app/v1/core/services/deployments'
 import {
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import {
   ComponentDeploymentsRepositoryStub,
   ComponentUndeploymentsRepositoryStub,
@@ -40,8 +40,8 @@ import {
 import {
   ComponentDeploymentsRepository,
   ComponentUndeploymentsRepository
-} from '../../../app/api/deployments/repository'
-import { FinishUndeploymentDto } from '../../../app/api/notifications/dto'
+} from '../../../app/v1/api/deployments/repository'
+import { FinishUndeploymentDto } from '../../../app/v1/api/notifications/dto'
 import {
   ComponentDeploymentEntity,
   ComponentUndeploymentEntity,
@@ -50,11 +50,11 @@ import {
   ModuleUndeploymentEntity,
   QueuedUndeploymentEntity,
   UndeploymentEntity
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../app/api/deployments/enums'
+import { QueuedPipelineStatusEnum, UndeploymentStatusEnum } from '../../../app/v1/api/deployments/enums'
 
-import { NotificationStatusEnum } from '../../../app/api/notifications/enums'
+import { NotificationStatusEnum } from '../../../app/v1/api/notifications/enums'
 
 describe('ReceiveUndeploymentCallbackUsecase', () => {
 

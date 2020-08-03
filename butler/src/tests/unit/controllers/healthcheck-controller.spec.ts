@@ -15,11 +15,11 @@
  */
 
 import { Test } from '@nestjs/testing'
-import { HealthcheckController } from '../../../app/api/healthcheck/controller'
-import { HealthcheckService } from '../../../app/api/healthcheck/services'
-import { HealthcheckStatusEnum } from '../../../app/api/healthcheck/enums'
+import { HealthcheckController } from '../../../app/v1/api/healthcheck/controller'
+import { HealthcheckService } from '../../../app/v1/api/healthcheck/services'
+import { HealthcheckStatusEnum } from '../../../app/v1/api/healthcheck/enums'
 import { HealthcheckServiceStub } from '../../stubs/services/healthcheck-service.stub'
-import { IReadHealthcheckStatus } from '../../../app/api/healthcheck/interfaces'
+import { IReadHealthcheckStatus } from '../../../app/v1/api/healthcheck/interfaces'
 
 describe('HealthcheckController', () => {
 

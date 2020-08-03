@@ -78,6 +78,7 @@ const LayerMetrics = ({ id }: Props) => {
   const renderNoMetrics = () => (
     <Button.Rounded
       name={'add'}
+      icon={'add'}
       color={'dark'}
       onClick={() => handleAddMetrics()}
     >
@@ -98,7 +99,7 @@ const LayerMetrics = ({ id }: Props) => {
   };
 
   return (
-    <Layer>
+    <Layer data-testid="layer-metrics">
       <Styled.MetricsTitle>
         <ContentIcon icon="activity">
           <Text.h2 color="light">Health</Text.h2>
