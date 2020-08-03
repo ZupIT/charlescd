@@ -15,5 +15,10 @@
  */
 
 export interface ConnectorResult {
-    status: string
+    status: 'SUCCEEDED'
+}
+
+export interface ConnectorResultError {
+    status: 'ERROR'
+    error: string
 }

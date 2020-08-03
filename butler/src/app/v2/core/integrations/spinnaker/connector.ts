@@ -6,6 +6,7 @@ import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { AppConstants } from '../../../../v1/core/constants'
 import { SpinnakerPipelineBuilder } from './pipeline-builder'
+import { ConnectorResultError } from './interfaces/connector-result.interface'
 
 @Injectable()
 export class SpinnakerConnector {
@@ -15,25 +16,28 @@ export class SpinnakerConnector {
     private consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async createDeployment(deployment: Deployment, activeComponents: Component[]): Promise<ConnectorResult> {
+  public async createDeployment(deployment: Deployment, activeComponents: Component[]): Promise<ConnectorResult | ConnectorResultError> {
     this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DELOYMENT', { deployment, activeComponents })
 
     try {
       await this.createSpinnakerApplication(deployment.cdConfiguration)
     } catch (error) {
       this.consoleLoggerService.log('ERROR CREATE APPLICATION', { error })
+      return { status: 'ERROR', error: error }
     }
 
     try {
       await this.createSpinnakerPipeline(deployment, activeComponents)
     } catch (error) {
       this.consoleLoggerService.log('ERROR CREATE PIPELINE', { error })
+      return { status: 'ERROR', error: error }
     }
 
     try {
       await this.deploySpinnakerPipeline(deployment)
     } catch (error) {
       this.consoleLoggerService.log('ERROR DEPLOY PIPELINE', { error })
+      return { status: 'ERROR', error: error }
     }
 
     this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')

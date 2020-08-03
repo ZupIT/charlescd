@@ -38,7 +38,7 @@ export default interface IEnvConfiguration {
 
   darwinIstioDeploymentCallbackUrl: string
 
-  spinnakerUrl: string
+  spinnakerUrl: string // TODO remove this
 
   octopipeUrl: string
 

@@ -8,16 +8,17 @@ import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
-import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { EntityManager } from 'typeorm'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
+  let manager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -32,6 +33,7 @@ describe('DeploymentController v2', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
+    manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
@@ -47,7 +49,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('set deployment callback status and active boolean for success notification', async() => {
-    const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -118,7 +119,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('set deployment callback status for failure callback', async() => {
-    const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -126,7 +126,7 @@ describe('DeploymentController v2', () => {
       'authorId',
       'workspaceId'
     )
-    await manager.save(cdConfiguration)
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
 
     const components = new CreateComponentRequestDto(
       '945595ee-d851-4841-a170-c171c0a7b1a2',

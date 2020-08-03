@@ -2,6 +2,7 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { JobWithDoneCallback } from 'pg-boss'
+import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
@@ -21,6 +22,7 @@ describe('DeploymentHandler', () => {
   let worker: PgBossWorker
   let deploymentHandler: DeploymentHandler
   let deploymentUseCase: DeploymentUseCase
+  let manager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -37,6 +39,7 @@ describe('DeploymentHandler', () => {
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
     deploymentUseCase = app.get<DeploymentUseCase>(DeploymentUseCase)
+    manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
@@ -52,7 +55,6 @@ describe('DeploymentHandler', () => {
   })
 
   it('set only one component deployment status to running, set the second to running when the first is finished', async() => {
-    const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -60,8 +62,7 @@ describe('DeploymentHandler', () => {
       'authorId',
       'workspaceId'
     )
-    await manager.save(cdConfiguration)
-
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
@@ -87,7 +88,6 @@ describe('DeploymentHandler', () => {
     const secondDeployment = secondFixtures.deployment
     const secondJob = secondFixtures.job
 
-
     await deploymentHandler.run(firstJob)
     await deploymentHandler.run(secondJob)
 
@@ -112,7 +112,6 @@ describe('DeploymentHandler', () => {
 
     expect(secondsStopped.components.map(c => c.running)).toEqual([false])
     expect(firstStopped.components.map(c => c.running)).toEqual([false])
-
   })
 })
 
