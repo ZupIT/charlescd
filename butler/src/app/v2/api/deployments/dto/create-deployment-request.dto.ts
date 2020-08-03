@@ -15,7 +15,7 @@
  */
 
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator'
 import { flatten } from 'lodash';
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity';
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
@@ -42,10 +42,10 @@ export class CreateDeploymentRequestDto {
 
   public cdConfiguration!: CdConfigurationEntity
 
-  @IsNotEmpty()
-  @ValidateNested()
+  @ValidateIf((obj, value) => { return value })
+  @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
-  public readonly circle: CreateCircleDeploymentDto
+  public circle: CreateCircleDeploymentDto | null
 
   public status: DeploymentStatusEnum
 
@@ -75,7 +75,7 @@ export class CreateDeploymentRequestDto {
       this.deploymentId,
       this.authorId,
       DeploymentStatusEnum.CREATED,
-      this.circle.headerValue,
+      this.circle ? this.circle.headerValue : null,
       this.cdConfiguration,
       this.callbackUrl,
       flatten(this.modules.map(m => m.toEntity()))
