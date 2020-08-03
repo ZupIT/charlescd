@@ -45,7 +45,8 @@ data class CreateDeploymentRequest(
             circle = circle,
             status = DeploymentStatusEnum.DEPLOYING,
             workspaceId = workspaceId,
-            buildId = buildId
+            buildId = buildId,
+            undeployedAt = null
         )
     }
 }

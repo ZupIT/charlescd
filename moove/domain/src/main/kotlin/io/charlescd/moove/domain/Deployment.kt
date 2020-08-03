@@ -26,7 +26,8 @@ data class Deployment(
     val status: DeploymentStatusEnum,
     val circle: Circle,
     val buildId: String,
-    val workspaceId: String
+    val workspaceId: String,
+    val undeployedAt: LocalDateTime?
 ) {
     fun isActive(): Boolean =
         (this.status == DeploymentStatusEnum.DEPLOYED || this.status == DeploymentStatusEnum.DEPLOYING) && !this.circle.isDefaultCircle()
