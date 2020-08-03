@@ -15,8 +15,12 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, fireEvent, wait, act, waitForElement, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock';
 import ModalResetPassword from '..';
+import { renderHook } from '@testing-library/react-hooks';
+import { useResetPassword } from 'modules/Users/hooks';
+import { useDispatch } from 'core/state/hooks';
 
 const originalNavigator = { ...navigator };
 
@@ -31,6 +35,12 @@ beforeAll(() => {
 afterAll(() => {
   Object.assign(navigator, originalNavigator);
 })
+
+const mockResetPassword = JSON.stringify(
+  { 
+    newPassword: '123abc',
+  }
+);
 
 const onClose = jest.fn();
 
@@ -48,6 +58,8 @@ test('render ModalResetPassword component', () => {
 });
 
 test('render ModalResetPassword component and trigger reset', async () => {
+  (fetch as FetchMock).mockResponseOnce(mockResetPassword);
+
   const { getByTestId } = render(
     <ModalResetPassword user={props.user} onClose={onClose} />
   );
@@ -55,17 +67,15 @@ test('render ModalResetPassword component and trigger reset', async () => {
   const button = getByTestId('button-default-reset-password');
   expect(button).toBeInTheDocument();
 
-  fireEvent.click(button);
+  await act(async () => fireEvent.click(button));
 
-  const inputAction = getByTestId('input-action-new-password');
+  const inputAction = await waitForElement(() => getByTestId('input-action-new-password'));
   expect(inputAction).toBeInTheDocument();
-  
+
   const buttonCopy = getByTestId('input-action-new-password-button');
   expect(buttonCopy).toBeInTheDocument();
-  
-  fireEvent.click(buttonCopy);
 
-  await wait();
+  fireEvent.click(buttonCopy);
 
   const iconCheckmarkCircle = getByTestId('icon-checkmark-circle');
   expect(iconCheckmarkCircle).toBeInTheDocument();
