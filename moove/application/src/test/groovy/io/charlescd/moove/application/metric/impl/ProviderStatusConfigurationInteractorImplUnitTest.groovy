@@ -25,7 +25,7 @@ import io.charlescd.moove.metrics.connector.prometheus.PrometheusConnectionStatu
 import io.charlescd.moove.metrics.connector.prometheus.PrometheusService
 import spock.lang.Specification
 
-class VerifyProviderConnectionInteractorImplUnitTest extends Specification {
+class ProviderStatusConfigurationInteractorImplUnitTest extends Specification {
 
     def serviceFactory = Mock(MetricServiceFactory)
     def providerService = Mock(PrometheusService)

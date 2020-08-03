@@ -22,7 +22,7 @@ package io.charlescd.moove.application.metric
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
 
-interface VerifyProviderConnectionInteractor {
+interface WorkspaceProviderConnectionStatusInteractor {
 
-    fun execute(provider: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse
+    fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse
 }

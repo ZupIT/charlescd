@@ -17,12 +17,12 @@
  *
  */
 
-package io.charlescd.moove.application.metric
+package io.charlescd.moove.application.configuration
 
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
 
-interface VerifyWorkspaceProviderConnectionInteractor {
+interface ProviderStatusConfigurationInteractor {
 
-    fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse
+    fun execute(provider: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse
 }

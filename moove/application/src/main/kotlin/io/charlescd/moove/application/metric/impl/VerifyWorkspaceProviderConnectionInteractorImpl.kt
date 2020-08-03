@@ -19,7 +19,7 @@
 
 package io.charlescd.moove.application.metric.impl
 
-import io.charlescd.moove.application.metric.VerifyWorkspaceProviderConnectionInteractor
+import io.charlescd.moove.application.metric.WorkspaceProviderConnectionStatusInteractor
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service
 class VerifyWorkspaceProviderConnectionInteractorImpl(
     private val serviceFactory: MetricServiceFactory,
     private val metricConfigurationRepository: MetricConfigurationRepository
-) : VerifyWorkspaceProviderConnectionInteractor {
+) : WorkspaceProviderConnectionStatusInteractor {
 
     override fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse {
         val service = serviceFactory.getConnector(providerType)
