@@ -21,6 +21,8 @@ const endpoint = '/moove/v2/configurations/metric-configurations';
 
 const endpointWorkspace = '/moove/v2/workspaces';
 
+const endpointConfigurations = '/moove/v2/configurations';
+
 export const configPath = '/metricConfigurationId';
 
 export const create = (metricProvider: MetricProvider) =>
@@ -28,7 +30,7 @@ export const create = (metricProvider: MetricProvider) =>
 
 export const verifyProviderConnection = (params: URLSearchParams) =>
   baseRequest(
-    `${endpointWorkspace}/config/verify-provider-connection?${params}`
+    `${endpointConfigurations}/metric-configurations/provider-status?${params}`
   );
 
 export const metricProviderConfigConnection = (
@@ -36,5 +38,5 @@ export const metricProviderConfigConnection = (
   workspaceId: string
 ) =>
   baseRequest(
-    `${endpointWorkspace}/${workspaceId}/config/verify-provider-connection?${params}`
+    `${endpointWorkspace}/${workspaceId}/metric-configurations/provider-status?${params}`
   );
