@@ -27,6 +27,7 @@ import {
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 
 interface DatabaseEntity {
   name: string,
@@ -77,6 +78,11 @@ export class FixtureUtilsService {
   ): Promise<CdConfigurationEntity> {
     const cdConfiguration = this.manager.create(CdConfigurationEntity, cdConfigurationRequest)
     return this.manager.save(cdConfiguration)
+  }
+
+  public async createEncryptedConfiguration(cdConfig: CdConfigurationEntity) : Promise<CdConfigurationEntity>{
+    const configRepo = this.manager.getCustomRepository<CdConfigurationsRepository>(CdConfigurationsRepository)
+    return configRepo.saveEncrypted(cdConfig)
   }
 
   public async createDeployment(

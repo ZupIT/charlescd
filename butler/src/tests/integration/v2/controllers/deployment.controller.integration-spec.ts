@@ -4,15 +4,17 @@ import * as request from 'supertest'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
-import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
+import { EntityManager } from 'typeorm'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
+  let manager: EntityManager
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -27,6 +29,7 @@ describe('DeploymentController v2', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
+    manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
@@ -39,10 +42,8 @@ describe('DeploymentController v2', () => {
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
-    // await fixtureUtilsService.loadDatabase()
   })
   it('returns ok for valid params with existing cdConfiguration', async() => {
-    const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -50,7 +51,7 @@ describe('DeploymentController v2', () => {
       'authorId',
       'workspaceId'
     )
-    await manager.save(cdConfiguration)
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
@@ -114,7 +115,7 @@ describe('DeploymentController v2', () => {
         expect(response.body).toEqual(
           {
             error: 'Not Found',
-            message: 'Configuration with the id 067765f8-aa29-49f7-bf2b-3ec676a71583 was not found',
+            message: 'CdConfiguration not found - id: 067765f8-aa29-49f7-bf2b-3ec676a71583',
             statusCode: 404
           })
       })
@@ -145,7 +146,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('create execution for the deployment', async() => {
-    const manager = fixtureUtilsService.connection.manager
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -153,7 +153,7 @@ describe('DeploymentController v2', () => {
       'authorId',
       'workspaceId'
     )
-    await manager.save(cdConfiguration)
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {

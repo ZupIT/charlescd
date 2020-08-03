@@ -59,11 +59,16 @@ export class DeploymentHandler {
       this.consoleLoggerService.log('START:RUN_EXECUTION')
       const activeComponents = await this.componentsRepository.findActiveComponents()
       this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
-      await this.spinnakerConnector.createDeployment(deployment, activeComponents)
-      await this.updateComponentsToRunning(deployment)
-      this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
+      const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents)
+      if (cdResponse.status === 'SUCCEEDED') {
+        await this.updateComponentsToRunning(deployment)
+        this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
+        job.done()
+      } else {
+        this.consoleLoggerService.log('FINISH:RUN_EXECUTION CD Response error', { job: job, error: cdResponse.error })
+        job.done(new Error(cdResponse.error))
+      }
     }
-    job.done()
     return job
   }
 
