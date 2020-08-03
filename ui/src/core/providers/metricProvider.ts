@@ -38,5 +38,5 @@ export const metricProviderConfigConnection = (
   workspaceId: string
 ) =>
   baseRequest(
-    `${endpointWorkspace}/${workspaceId}/metric-configurations/provider-status?${params}`
+    `${endpointWorkspace}/${workspaceId}/metrics/provider-status?${params}`
   );
