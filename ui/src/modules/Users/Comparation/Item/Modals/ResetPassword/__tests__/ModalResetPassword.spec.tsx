@@ -75,7 +75,10 @@ test('render ModalResetPassword component and trigger reset', async () => {
   const buttonCopy = getByTestId('input-action-new-password-button');
   expect(buttonCopy).toBeInTheDocument();
 
-  fireEvent.click(buttonCopy);
+  const iconCopy = getByTestId('icon-copy');
+  expect(iconCopy).toBeInTheDocument();
+
+  await act(async () => fireEvent.click(buttonCopy));
 
   const iconCheckmarkCircle = getByTestId('icon-checkmark-circle');
   expect(iconCheckmarkCircle).toBeInTheDocument();
