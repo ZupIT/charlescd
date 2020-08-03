@@ -31,5 +31,7 @@ interface KeycloakService {
 
     fun disassociatePermissionsFromNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
 
-    fun createUser(email: String, name: String, password: String, isRoot: Boolean)
+    fun checkUserAuthenticity(user: User, authorization: String): Boolean
+
+    fun changeUserPassword(email: String, oldPassword: String, newPassword: String)
 }
