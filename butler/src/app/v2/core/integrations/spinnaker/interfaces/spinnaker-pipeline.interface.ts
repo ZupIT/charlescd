@@ -237,6 +237,7 @@ interface ExpectedArtifact {
 }
 
 interface SpinnakerPipeline {
+    id?: string,
     application: string
     name: string
     expectedArtifacts: ExpectedArtifact[]

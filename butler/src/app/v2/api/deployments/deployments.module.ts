@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
@@ -28,10 +28,12 @@ import { PgBossWorker } from './jobs/pgboss.worker';
 import { DeploymentHandler } from './use-cases/deployment-handler';
 import { DeploymentUseCase } from './use-cases/deployment-use-case';
 import { NotificationUseCase } from './use-cases/notification-use-case';
-
+import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
+import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([
       DeploymentEntity,
       ComponentEntity,
@@ -49,7 +51,9 @@ import { NotificationUseCase } from './use-cases/notification-use-case';
     DeploymentUseCase,
     NotificationUseCase,
     DeploymentHandler,
-    ConsoleLoggerService
+    ConsoleLoggerService,
+    SpinnakerConnector,
+    SpinnakerApiService
   ],
   exports: [
   ]

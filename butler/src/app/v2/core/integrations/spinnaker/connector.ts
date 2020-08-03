@@ -1,148 +1,107 @@
-/*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import { Injectable } from '@nestjs/common'
+import { CdConfiguration, Component, ConnectorResult, Deployment, SpinnakerPipeline } from './interfaces'
+import { ICreateSpinnakerApplication } from '../../../../v1/core/integrations/cd/spinnaker/interfaces'
+import { SpinnakerApiService } from '../../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { AppConstants } from '../../../../v1/core/constants'
+import { SpinnakerPipelineBuilder } from './pipeline-builder'
 
-import { Component, ConnectorResult, Deployment, SpinnakerPipeline } from './interfaces'
-import { ExpectedArtifact, Stage } from './interfaces/spinnaker-pipeline.interface'
-import {
-  getBakeStage,
-  getDeleteUnusedStage,
-  getDeploymentsEvaluationStage,
-  getDeploymentStage,
-  getFailureWebhookStage,
-  getHelmTemplateObject,
-  getHelmValueObject,
-  getRollbackDeploymentsStage,
-  getSuccessWebhookStage
-} from './templates'
-import { getDestinationRulesStage } from './templates/destination-rules-stage'
-import { getVirtualServiceStage } from './templates/virtual-service-stage'
-import { getProxyEvaluationStage } from './templates/proxy-evaluation'
-
+@Injectable()
 export class SpinnakerConnector {
 
-  private currentStageId = 1
+  constructor(
+    private spinnakerApiService: SpinnakerApiService,
+    private consoleLoggerService: ConsoleLoggerService
+  ) {}
 
-  public createV2Deployment(deployment: Deployment, activeComponents: Component[]): ConnectorResult {
-    const pipeline: SpinnakerPipeline = this.buildSpinnakerDeploymentPipeline(deployment, activeComponents)
+  public async createDeployment(deployment: Deployment, activeComponents: Component[]): Promise<ConnectorResult> {
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DELOYMENT', { deployment, activeComponents })
+
+    try {
+      await this.createSpinnakerApplication(deployment.cdConfiguration)
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR CREATE APPLICATION', { error })
+    }
+
+    try {
+      await this.createSpinnakerPipeline(deployment, activeComponents)
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR CREATE PIPELINE', { error })
+    }
+
+    try {
+      await this.deploySpinnakerPipeline(deployment)
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR DEPLOY PIPELINE', { error })
+    }
+
+    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')
     return { status: 'SUCCEEDED' }
+    // this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_DELOYMENT', { error })
+    // throw error // TODO
   }
 
-  public buildSpinnakerDeploymentPipeline(deployment: Deployment, activeComponents: Component[]): SpinnakerPipeline {
+  private async createSpinnakerApplication(cdConfiguration: CdConfiguration): Promise<void> {
+    const applicationName: string = cdConfiguration.id
+    const spinnakerUrl: string = (cdConfiguration.configurationData as ISpinnakerConfigurationData).url
+
+    try {
+      this.consoleLoggerService.log('START:GET_V2_SPINNAKER_APPLICATION', { applicationName })
+      const apiReturn1 = await this.spinnakerApiService.getApplication(applicationName, spinnakerUrl).toPromise()
+      this.consoleLoggerService.log('GET_APPLICATION_RETURN', { apiReturn1 })
+    } catch (error) {
+      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_APPLICATION')
+      const spinnakerApplication: ICreateSpinnakerApplication = this.getSpinnakerApplicationObject(applicationName)
+      const apiReturn = await this.spinnakerApiService.createApplication(spinnakerApplication, spinnakerUrl).toPromise()
+      this.consoleLoggerService.log('CREATE_APPLICATION_RETURN', { apiReturn })
+      this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_APPLICATION')
+    }
+  }
+
+  private async createSpinnakerPipeline(deployment: Deployment, activeComponents: Component[]): Promise<void> {
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_PIPELINE', { deployment })
+    const spinnakerPipeline: SpinnakerPipeline = new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deployment, activeComponents)
+    this.consoleLoggerService.log('GET:SPINNAKER_V2_PIPELINE', { spinnakerPipeline })
+
+    const spinnakerUrl: string = (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).url
+    const { data: { id: pipelineId } } = await this.spinnakerApiService.getPipeline(
+      spinnakerPipeline.application, spinnakerPipeline.name, spinnakerUrl
+    ).toPromise()
+
+    pipelineId ?
+      await this.updateSpinnakerPipeline(pipelineId, spinnakerUrl, spinnakerPipeline) :
+      await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerUrl).toPromise()
+
+    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_PIPELINE')
+  }
+
+  private async updateSpinnakerPipeline(pipelineId: string, spinnakerUrl: string, spinnakerPipeline: SpinnakerPipeline): Promise<void> {
+    this.consoleLoggerService.log('START:UPDATE_V2_SPINNAKER_PIPELINE', { pipelineId })
+    const updateSpinnakerPipeline =  { id: pipelineId, ...spinnakerPipeline }
+    await this.spinnakerApiService.updatePipeline(updateSpinnakerPipeline, spinnakerUrl).toPromise()
+    this.consoleLoggerService.log('FINISH:UPDATE_V2_SPINNAKER_PIPELINE')
+  }
+
+  private async deploySpinnakerPipeline(deployment: Deployment): Promise<void> {
+    this.consoleLoggerService.log('START:DEPLOY_V2_SPINNAKER_PIPELINE')
+    const spinnakerUrl: string = (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).url
+    await this.spinnakerApiService.deployPipeline(`app-${deployment.cdConfiguration.id}`, deployment.id, spinnakerUrl).toPromise()
+    this.consoleLoggerService.log('FINISH:DEPLOY_V2_SPINNAKER_PIPELINE')
+  }
+
+  private getSpinnakerApplicationObject(applicationName: string): ICreateSpinnakerApplication {
     return {
-      application: `app-${deployment.cdConfiguration.id}`,
-      name: `${deployment.id}`,
-      expectedArtifacts: this.getExpectedArtifacts(deployment),
-      stages: this.getStages(deployment, activeComponents)
+      job: [{
+        type: AppConstants.SPINNAKER_CREATE_APPLICATION_JOB_TYPE,
+        application: {
+          cloudProviders: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD,
+          instancePort: AppConstants.SPINNAKER_CREATE_APPLICATION_PORT,
+          name: `app-${applicationName}`,
+          email: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL
+        }
+      }],
+      application: `app-${applicationName}`
     }
-  }
-
-  private getExpectedArtifacts(deployment: Deployment): ExpectedArtifact[] {
-    const expectedArtifacts: ExpectedArtifact[] = []
-    deployment.components?.forEach(component => {
-      expectedArtifacts.push(getHelmTemplateObject(component, deployment.cdConfiguration))
-      expectedArtifacts.push(getHelmValueObject(component, deployment.cdConfiguration))
-    })
-    return expectedArtifacts
-  }
-
-  private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
-    this.currentStageId = 1
-    return [
-      ...this.getDeploymentStages(deployment),
-      ...this.getProxyDeploymentStages(deployment, activeComponents),
-      ...this.getDeploymentsEvaluationStage(deployment.components),
-      ...this.getRollbackDeploymentsStage(deployment),
-      ...this.getProxyDeploymentsEvaluationStage(deployment.components),
-      ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
-      ...this.getFailureWebhookStage(deployment),
-      ...this.getSuccessWebhookStage(deployment)
-    ]
-  }
-
-  private getDeploymentStages(deployment: Deployment): Stage[] {
-    const deploymentStages: Stage[] = []
-    deployment.components?.forEach(component => {
-      deploymentStages.push(getBakeStage(component, this.currentStageId++))
-      deploymentStages.push(getDeploymentStage(component, deployment.cdConfiguration, this.currentStageId++))
-    })
-    return deploymentStages
-  }
-
-  private getProxyDeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
-    if (!deployment?.components) {
-      return []
-    }
-    const proxyStages: Stage[] = []
-    const evalStageId: number = deployment.components.length * 4 + 1
-    deployment.components.forEach(component => {
-      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
-      proxyStages.push(getDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
-      proxyStages.push(getVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
-    })
-    return proxyStages
-  }
-
-  private getDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
-    return components && components.length ?
-      [getDeploymentsEvaluationStage(components, this.currentStageId++)] :
-      []
-  }
-
-  private getRollbackDeploymentsStage(deployment: Deployment): Stage[] {
-    const stages: Stage[] = []
-    const evalStageId: number = this.currentStageId - 1
-    deployment.components?.forEach(component => {
-      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
-    })
-    return stages
-  }
-
-  private getProxyDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
-    return components && components.length ?
-      [getProxyEvaluationStage(components, this.currentStageId++)] :
-      []
-  }
-
-  private getDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
-    const stages: Stage[] = []
-    const evalStageId: number = this.currentStageId - 1
-    deployment?.components?.forEach(component => {
-      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
-      const unusedComponent: Component | undefined = this.getSameCircleActiveComponent(activeByName, deployment.circleId)
-      if (unusedComponent) {
-        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
-      }
-    })
-    return stages
-  }
-
-  private getFailureWebhookStage(deployment: Deployment): Stage[] {
-    return [getFailureWebhookStage(deployment, this.currentStageId++)]
-  }
-
-  private getSuccessWebhookStage(deployment: Deployment): Stage[] {
-    return [getSuccessWebhookStage(deployment, this.currentStageId++)]
-  }
-
-  private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {
-    return activeComponents.filter(component => component.name === name)
-  }
-
-  private getSameCircleActiveComponent(activeComponents: Component[], circleId: string | null): Component | undefined {
-    return activeComponents
-      .find(component => component.deployment && component.deployment.circleId === circleId)
   }
 }

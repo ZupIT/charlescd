@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JobWithDoneCallback } from 'pg-boss';
-import { In, Repository } from 'typeorm';
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-import { Execution } from '../entity/execution.entity';
-import { PgBossWorker } from '../jobs/pgboss.worker';
-
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { JobWithDoneCallback } from 'pg-boss'
+import { In, Repository } from 'typeorm'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { Execution } from '../entity/execution.entity'
+import { PgBossWorker } from '../jobs/pgboss.worker'
+import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
+import { flatMap } from 'lodash'
+import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
 
 @Injectable()
 export class DeploymentHandler {
@@ -33,8 +35,11 @@ export class DeploymentHandler {
     private componentsRepository: Repository<ComponentEntity>,
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
+    @InjectRepository(CdConfigurationsRepository)
+    private cdConfigurationsRepository: CdConfigurationsRepository,
     @Inject(forwardRef(() => PgBossWorker))
-    private pgBoss: PgBossWorker
+    private pgBoss: PgBossWorker,
+    private spinnakerConnector: SpinnakerConnector
   ) { }
 
   async run(job: JobWithDoneCallback<Execution, unknown>): Promise<JobWithDoneCallback<Execution, unknown>> {
@@ -50,15 +55,26 @@ export class DeploymentHandler {
       this.pgBoss.publish(job.data)
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     } else {
+      this.consoleLoggerService.log('START:RUN_EXECUTION')
+      const activeDeployments = await this.deploymentsRepository.find({ where: { active: true }, relations: ['components'] })
+      this.consoleLoggerService.log('GET:ACTIVE_DEPLOYMENTS', { activeDeployments })
+      const activeComponents = flatMap(activeDeployments, deployment => deployment.components)
+      this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
+      await this.spinnakerConnector.createDeployment(deployment, activeComponents)
       await this.updateComponentsToRunning(deployment)
-      this.consoleLoggerService.log('Updated components to running', { job: job })
+      this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
     }
     job.done()
     return job
   }
 
   async deploymentFromExecution(execution: Execution): Promise<DeploymentEntity | undefined> {
-    return await this.deploymentsRepository.findOne({ where: { id: execution.deployment.id }, relations: ['components'] })
+    const deployment = await this.deploymentsRepository.findOne({ where: { id: execution.deployment.id }, relations: ['components', 'cdConfiguration'] })
+
+    if (deployment)
+      deployment.cdConfiguration = await this.cdConfigurationsRepository.findDecrypted(deployment.cdConfiguration.id)
+
+    return deployment
   }
 
   async findComponentsByName(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
