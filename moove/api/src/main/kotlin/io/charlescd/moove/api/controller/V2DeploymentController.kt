@@ -20,10 +20,13 @@ import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.deployment.CreateDeploymentInteractor
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircleInteractor
+import io.charlescd.moove.application.deployment.FindDeploymentsHistoryInteractor
 import io.charlescd.moove.application.deployment.request.CreateDeploymentRequest
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
+import io.charlescd.moove.application.deployment.request.DeploymentHistoryFilterRequest
 import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
 import io.charlescd.moove.application.deployment.response.DeploymentResponse
+import io.charlescd.moove.application.deployment.response.SummarizedDeploymentHistoryResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -38,7 +41,8 @@ import org.springframework.web.bind.annotation.*
 class V2DeploymentController(
     private val deploymentCallbackInteractor: DeploymentCallbackInteractor,
     private val createDeploymentInteractor: CreateDeploymentInteractor,
-    private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor
+    private val findDeploymentsHistoryForCircleInteractor: FindDeploymentsHistoryForCircleInteractor,
+    private val findDeploymentsHistoryInteractor: FindDeploymentsHistoryInteractor
 ) {
     @ApiOperation(value = "Create Deployment")
     @ApiImplicitParam(
@@ -78,5 +82,16 @@ class V2DeploymentController(
         pageRequest: PageRequest
     ): ResourcePageResponse<DeploymentHistoryResponse> {
         return this.findDeploymentsHistoryForCircleInteractor.execute(workspaceId, circle, pageRequest)
+    }
+
+    @ApiOperation(value = "Get Deployment History")
+    @PostMapping("/history")
+    @ResponseStatus(HttpStatus.OK)
+    fun deploymentsHistory(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestBody filters: DeploymentHistoryFilterRequest,
+        pageRequest: PageRequest
+    ): SummarizedDeploymentHistoryResponse {
+        return this.findDeploymentsHistoryInteractor.execute(workspaceId, filters, pageRequest)
     }
 }
