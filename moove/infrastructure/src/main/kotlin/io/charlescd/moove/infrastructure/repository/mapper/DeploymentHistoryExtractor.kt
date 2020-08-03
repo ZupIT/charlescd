@@ -21,6 +21,7 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import io.charlescd.moove.domain.DeploymentHistory
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
+import java.time.Duration
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
@@ -43,6 +44,9 @@ class DeploymentHistoryExtractor : ResultSetExtractor<Set<DeploymentHistory>> {
         authorName = resultSet.getString("user_name"),
         status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
         deployedAt = resultSet.getTimestamp("deployed_at")?.toLocalDateTime(),
-        undeployedAt = resultSet.getTimestamp("undeployed_at")?.toLocalDateTime()
+        undeployedAt = resultSet.getTimestamp("undeployed_at")?.toLocalDateTime(),
+        deploymentDuration = Duration.ofSeconds(resultSet.getLong("deployment_average_time")),
+        circleName = resultSet.getString("circle_name"),
+        createdAt = resultSet.getTimestamp("deployment_created_at").toLocalDateTime()
     )
 }
