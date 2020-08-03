@@ -25,7 +25,7 @@ export class CreateV2Deployments20200715113000 implements MigrationInterface {
         "external_id" uuid NOT NULL,
         "author_id" Character Varying NOT NULL,
         "callback_url" Character Varying NOT NULL,
-        "circle_id" Character Varying NOT NULL,
+        "circle_id" Character Varying,
         "status" Character Varying DEFAULT 'CREATED' NOT NULL,
         "active" Boolean DEFAULT false NOT NULL,
         "cd_configuration_id" Character Varying NOT NULL,
