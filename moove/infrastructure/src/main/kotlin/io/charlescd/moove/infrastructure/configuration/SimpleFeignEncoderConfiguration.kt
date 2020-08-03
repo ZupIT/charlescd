@@ -32,14 +32,13 @@ class SimpleFeignEncoderConfiguration(
 ) {
 
     @Bean
-    fun feignLogger() : Logger.Level {
+    fun feignLogger(): Logger.Level {
         return Logger.Level.FULL
     }
 
     @Bean
     @Scope("prototype")
-    fun feignFormEncoder() : Encoder {
+    fun feignFormEncoder(): Encoder {
         return FormEncoder(SpringEncoder(messageConverters))
     }
-
 }

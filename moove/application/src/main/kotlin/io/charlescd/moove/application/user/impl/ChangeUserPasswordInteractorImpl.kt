@@ -38,5 +38,4 @@ class ChangeUserPasswordInteractorImpl @Inject constructor(
         }
         keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
     }
-
 }
