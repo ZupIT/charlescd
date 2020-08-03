@@ -39,12 +39,7 @@ class DeploymentAverageTimeStatsExtractor : ResultSetExtractor<Set<DeploymentAve
     }
 
     private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentAverageTimeStats(
-        averageTime = Duration.parse(formatIntervalToDurationStringFormat(resultSet.getString("deployment_average_time"))),
+        averageTime = Duration.ofSeconds(resultSet.getLong("deployment_average_time")),
         date = LocalDate.parse(resultSet.getString("deployment_date"))
     )
-
-    private fun formatIntervalToDurationStringFormat(interval: String): String {
-        val splittedInterval = interval.split(":")
-        return "PT${splittedInterval[0]}H${splittedInterval[1]}M${splittedInterval[2]}S"
-    }
 }

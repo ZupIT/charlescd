@@ -18,8 +18,7 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.domain.Deployment
-import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import javax.inject.Named

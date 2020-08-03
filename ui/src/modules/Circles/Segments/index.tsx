@@ -119,6 +119,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
               <Icon name="add" size="16px" color="light" /> Group
             </Styled.Button.Clause>
             <Styled.Button.Submit
+              id="save"
               type="submit"
               isLoading={isSaving}
               isDisabled={isSaving}

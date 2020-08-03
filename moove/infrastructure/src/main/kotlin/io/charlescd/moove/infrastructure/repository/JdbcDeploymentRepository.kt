@@ -20,10 +20,7 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentAverageTimeStatsExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentGeneralStatsExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentStatsExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.*
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -34,7 +31,9 @@ class JdbcDeploymentRepository(
     private val deploymentExtractor: DeploymentExtractor,
     private val deploymentGeneralStatsExtractor: DeploymentGeneralStatsExtractor,
     private val deploymentStatsExtractor: DeploymentStatsExtractor,
-    private val deploymentAverageTimeStatsExtractor: DeploymentAverageTimeStatsExtractor
+    private val deploymentAverageTimeStatsExtractor: DeploymentAverageTimeStatsExtractor,
+    private val deploymentHistoryExtractor: DeploymentHistoryExtractor,
+    private val deploymentCountExtractor: DeploymentCountExtractor
 
 ) : DeploymentRepository {
 
@@ -47,6 +46,7 @@ class JdbcDeploymentRepository(
                        deployments.circle_id                 AS deployment_circle_id,
                        deployments.build_id                  AS deployment_build_id,
                        deployments.workspace_id              AS deployment_workspace_id,
+                       deployments.undeployed_at             AS deployment_undeployed_at,
                        deployment_user.id                    AS deployment_user_id,
                        deployment_user.name                  AS deployment_user_name,
                        deployment_user.email                 AS deployment_user_email,
@@ -164,7 +164,8 @@ class JdbcDeploymentRepository(
                     build_id       = ?,
                     status         = ?,
                     deployed_at    = ?,
-                    workspace_id = ?
+                    workspace_id   = ?,
+                    undeployed_at  = ?
                 WHERE id = ?
             """
         )
@@ -178,6 +179,7 @@ class JdbcDeploymentRepository(
             deployment.status.name,
             deployment.deployedAt,
             deployment.workspaceId,
+            deployment.undeployedAt,
             deployment.id
         )
     }
@@ -240,16 +242,17 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatus(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentGeneralStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COUNT(id)                                               AS deployment_quantity,
-                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
+                SELECT  COUNT(id)                                                                                                              AS deployment_quantity,
+                        COALESCE(EXTRACT(epoch FROM DATE_TRUNC('second', AVG(deployments.deployed_at - deployments.created_at))), '0')         AS deployment_average_time,
                         CASE status 
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
-                        END                                                     AS deployment_status
+                        END                                                                                                                    AS deployment_status
                 FROM deployments
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
@@ -257,14 +260,15 @@ class JdbcDeploymentRepository(
                     AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
         """
 
-        if (circlesId.isNotEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+        if (!circlesId.isNullOrEmpty()) {
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentGeneralStatsExtractor
         )?.toList()
             ?: emptyList()
@@ -272,32 +276,32 @@ class JdbcDeploymentRepository(
 
     override fun countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COUNT(id)                                               AS deployment_quantity,
-                        COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date,
+                SELECT  COUNT(id)                                                                                                               AS deployment_quantity,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                                       AS deployment_date,
                         CASE status 
                             WHEN 'DEPLOY_FAILED' THEN 'DEPLOY_FAILED'
                             ELSE 'DEPLOYED'
-                        END                                                     AS deployment_status
+                        END                                                                                                                     AS deployment_status
                 FROM deployments
                 WHERE status NOT IN ('DEPLOYING', 'UNDEPLOYING')
                     AND workspace_id = ?
-                    AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
-                    AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
+                    ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}       
         """
 
-        if (circlesId.isNotEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+        if (!circlesId.isNullOrEmpty()) {
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status, deployment_date "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentStatsExtractor
         )?.toList()
             ?: emptyList()
@@ -305,32 +309,202 @@ class JdbcDeploymentRepository(
 
     override fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
-                SELECT  COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
-                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date
+                SELECT  COALESCE(EXTRACT(epoch FROM DATE_TRUNC('second', AVG(deployments.deployed_at - deployments.created_at))), '0')          AS deployment_average_time,
+                        TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                                                                                       AS deployment_date
                 FROM deployments
                 WHERE workspace_id = ?
-                    AND DATE_TRUNC('day', created_at) <= CURRENT_DATE
-                    AND DATE_TRUNC('day', created_at) >= (CURRENT_DATE - ? * interval '1 days')
+                    ${createBetweenDeploymentCreatedDateAndDaysPastQuery()}                    
         """
 
-        if (circlesId.isNotEmpty()) {
-            query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+        if (!circlesId.isNullOrEmpty()) {
+            query += " AND ${createInQuery("deployments.circle_id", circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_date "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentAverageTimeStatsExtractor
         )?.toList()
             ?: emptyList()
     }
 
-    private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
-        return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
+    private fun createInQuery(parameter: String, items: List<Any>): String {
+        return " $parameter IN (${items.joinToString(separator = ",") { "?" }}) "
+    }
+
+    override fun findDeploymentsHistory(workspaceId: String, filters: DeploymentHistoryFilter, pageRequest: PageRequest): Page<DeploymentHistory> {
+        val totalItems = this.count(workspaceId, filters)
+        val parameters = mutableListOf<Any>(workspaceId)
+
+        val queryBuilder = deploymentHistoryQuery()
+
+        if (!filters.circlesIds.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
+            parameters.addAll(filters.circlesIds!!)
+        }
+
+        if (!filters.deploymentStatus.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
+        }
+
+        if (!filters.deploymentName.isNullOrBlank()) {
+            queryBuilder.appendln(" AND builds.tag ILIKE ? ")
+            parameters.add(filters.deploymentName!!)
+        }
+
+        if (filters.periodBefore != null) {
+            queryBuilder.appendln(createBetweenDeploymentCreatedDateAndDaysPastQuery())
+            parameters.add(filters.periodBefore!!)
+        }
+
+        queryBuilder.append(createHistoryOrderByClause())
+        queryBuilder.append(createPaginationAppend())
+        parameters.add(pageRequest.size)
+        parameters.add(pageRequest.size * pageRequest.page)
+
+        val result = this.jdbcTemplate.query(
+            queryBuilder.toString(),
+            parameters.toTypedArray(),
+            deploymentHistoryExtractor
+        )?.toList()
+            ?: emptyList()
+
+        return Page(result, pageRequest.page, pageRequest.size, totalItems)
+    }
+
+    fun deploymentHistoryQuery() = StringBuilder(
+        """
+                    SELECT  deployments.id                                                                                      AS deployment_id,
+	                        deployments.deployed_at                                                                             AS deployed_at,
+                            deployments.undeployed_at                                                                           AS undeployed_at,
+                            deployments.created_at                                                                              AS deployment_created_at,
+                            EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
+                            deployments.status                                                                                  AS deployment_status,	                        
+                            users.name                                                                                          AS user_name,
+	                        builds.tag                                                                                          AS deployment_version,
+	                        circles.name                                                                                        AS circle_name
+                    FROM deployments deployments
+                        INNER JOIN users users          ON users.id = deployments.user_id
+                        INNER JOIN builds builds        ON builds.id = deployments.build_id
+                        INNER JOIN circles circles      ON circles.id = deployments.circle_id
+                    WHERE deployments.workspace_id = ? 
+            """
+    )
+
+    private fun createHistoryOrderByClause(): String {
+        return """
+                ORDER BY deployments.created_at
+             
+        """
+    }
+
+    private fun createPaginationAppend(): String {
+        return """  
+                    LIMIT ?
+                    OFFSET ? 
+                """
+    }
+
+    override fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int {
+        val parameters = mutableListOf<Any>(workspaceId)
+        val queryBuilder = StringBuilder(
+            """
+                    SELECT  count (deployments.id)              
+                    FROM deployments deployments
+                        ${buildJoinAppender(filters.deploymentName)}
+                    WHERE deployments.workspace_id = ? 
+            """
+        )
+
+        if (!filters.circlesIds.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
+            parameters.addAll(filters.circlesIds!!)
+        }
+
+        if (!filters.deploymentStatus.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
+        }
+
+        if (!filters.deploymentName.isNullOrBlank()) {
+            queryBuilder.appendln(" AND builds.tag ILIKE ? ")
+            parameters.add(filters.deploymentName!!)
+        }
+
+        if (filters.periodBefore != null) {
+            queryBuilder.appendln(createBetweenDeploymentCreatedDateAndDaysPastQuery())
+            parameters.add(filters.periodBefore!!)
+        }
+
+        return this.jdbcTemplate.queryForObject(
+            queryBuilder.toString(),
+            parameters.toTypedArray()
+        ) { rs, _ ->
+            rs.getInt(1)
+        } ?: 0
+    }
+
+    private fun createBetweenDeploymentCreatedDateAndDaysPastQuery(): String {
+        return """
+                AND DATE_TRUNC('day', deployments.created_at) <= CURRENT_DATE
+                AND DATE_TRUNC('day', deployments.created_at) >= (CURRENT_DATE - ? * interval '1 days') 
+        """
+    }
+
+    private fun buildJoinAppender(name: String?): String {
+        return when (!name.isNullOrBlank()) {
+            true -> " INNER JOIN builds builds    ON builds.id = deployments.build_id "
+            false -> ""
+        }
+    }
+
+    override fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount> {
+        val parameters = mutableListOf<Any>(workspaceId)
+        val queryBuilder = StringBuilder(
+            """
+                    SELECT  COUNT(deployments.id)               AS deployment_quantity,
+                            deployments.status                  AS deployment_status
+                    FROM deployments
+                        ${buildJoinAppender(filters.deploymentName)}
+                    WHERE   deployments.workspace_id = ?
+            """
+        )
+
+        if (!filters.circlesIds.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.circle_id", filters.circlesIds!!)} ")
+            parameters.addAll(filters.circlesIds!!)
+        }
+
+        if (!filters.deploymentStatus.isNullOrEmpty()) {
+            queryBuilder.appendln(" AND ${createInQuery("deployments.status", filters.deploymentStatus!!)} ")
+            parameters.addAll(filters.deploymentStatus!!.map { it.name })
+        }
+
+        if (!filters.deploymentName.isNullOrBlank()) {
+            queryBuilder.appendln(" AND builds.tag ILIKE ? ")
+            parameters.add(filters.deploymentName!!)
+        }
+
+        if (filters.periodBefore != null) {
+            queryBuilder.appendln(createBetweenDeploymentCreatedDateAndDaysPastQuery())
+            parameters.add(filters.periodBefore!!)
+        }
+
+        queryBuilder.appendln(" GROUP BY deployment_status ")
+
+        return this.jdbcTemplate.query(
+            queryBuilder.toString(),
+            parameters.toTypedArray(),
+            deploymentCountExtractor
+        )?.toList()
+            ?: emptyList()
     }
 }

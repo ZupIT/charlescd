@@ -16,10 +16,10 @@
 
 import { INestApplication, UnprocessableEntityException, ValidationError, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import { EntityNotFoundExceptionFilter } from '../../../app/core/filters/entity-not-found-exception.filter'
+import { EntityNotFoundExceptionFilter } from '../../../app/v1/core/filters/entity-not-found-exception.filter'
 import { TestingModuleBuilder } from '@nestjs/testing'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
-import { AppConstants } from '../../../app/core/constants'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
+import { AppConstants } from '../../../app/v1/core/constants'
 
 export class TestSetupUtils {
 

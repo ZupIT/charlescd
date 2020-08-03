@@ -15,9 +15,13 @@
  */
 
 import { useCallback } from 'react';
-import { findDeployMetrics } from 'core/providers/metrics';
+import { findDeployMetrics, findAllReleases } from 'core/providers/metrics';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
-import { DeployMetricData } from './interfaces';
+import {
+  DeployMetricData,
+  ReleaseHistoryResponse,
+  ReleaseHistoryRequest
+} from './interfaces';
 import { buildParams, URLParams } from 'core/utils/query';
 
 interface DeployMetric extends FetchProps {
@@ -41,6 +45,27 @@ export const useDeployMetric = (): DeployMetric => {
 
   return {
     searchDeployMetrics,
+    response,
+    loading
+  };
+};
+
+export const useReleaseHistory = () => {
+  const [releaseData, getReleaseData] = useFetch<ReleaseHistoryResponse>(
+    findAllReleases
+  );
+  const { response, loading } = releaseData;
+
+  const getReleaseHistory = useCallback(
+    (payload: URLParams, releaseHistory: ReleaseHistoryRequest) => {
+      const params = buildParams(payload);
+      getReleaseData(params, releaseHistory);
+    },
+    [getReleaseData]
+  );
+
+  return {
+    getReleaseHistory,
     response,
     loading
   };
