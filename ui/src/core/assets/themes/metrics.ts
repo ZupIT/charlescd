@@ -79,6 +79,11 @@ export const dark = {
     filter: COLOR_BLACK_MARLIN,
     active: COLOR_FREE_SPEECH_BLUE,
     inactive: COLOR_MAYA_BLUE,
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deploying: COLOR_DODGER_BLUE,
+    error: COLOR_RED_ORANGE,
+    undeploying: COLOR_FREE_SPEECH_BLUE,
+    notDeployed: COLOR_PURPLE_HEART,
     history: {
       circleRow: {
         background: COLOR_BLACK_MARLIN

@@ -16,40 +16,24 @@
 
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
-import Summary from '../Summary';
+import SummaryRelease from '../SummaryRelease';
 
-test('render default Summary', async () => {
+test('render default Summary Release', async () => {
   const { getByText, getByTestId } = render(
-    <Summary isLoading={false} onSearch={() => null} />
+    <SummaryRelease isLoading={false}  />
   );
-
-  expect(getByText('Active')).toBeInTheDocument();
-  expect(getByText('Inactive')).toBeInTheDocument();
-  expect(getByTestId('input-text-search')).toBeInTheDocument();
+  
+  expect(getByTestId('summary-release')).toBeInTheDocument();
+  expect(getByText('Deployed')).toBeInTheDocument();
+  expect(getByText('Error')).toBeInTheDocument();
 });
 
-
-test('should check if onSearch is called', async () => {
-  const onSearch = jest.fn();
+test('render Summary Release when is loading', async () => {
   const { getByTestId  } = render(
-    <Summary isLoading={false} onSearch={onSearch} />
-  );
-  const inputSearch = getByTestId('input-text-search');
-  const value = 'foobar';
-
-  fireEvent.change(inputSearch, { target: { value }});
-
-  wait(() => {
-    expect(onSearch).toHaveBeenCalledWith(value);
-  })
-});
-
-test('render Summary when is loading', async () => {
-  const { getByTestId  } = render(
-    <Summary isLoading onSearch={() => null} />
+    <SummaryRelease isLoading />
   );
 
-  const loaderWrapper = getByTestId('loader-legend');
+  const loaderWrapper = getByTestId('loader-legend-release');
   const loading = loaderWrapper.querySelector('svg');
   expect(loading).toBeTruthy();
 });
