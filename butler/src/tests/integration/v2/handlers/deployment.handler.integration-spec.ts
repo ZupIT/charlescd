@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { Server } from 'http'
 import { JobWithDoneCallback } from 'pg-boss'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -15,6 +16,9 @@ import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/
 import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-use-case'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
+import express = require('express')
+
+let mock = express()
 
 describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -23,6 +27,7 @@ describe('DeploymentHandler', () => {
   let deploymentHandler: DeploymentHandler
   let deploymentUseCase: DeploymentUseCase
   let manager: EntityManager
+  let mockServer : Server
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -50,14 +55,36 @@ describe('DeploymentHandler', () => {
   })
 
   beforeEach(async() => {
+    mock = express()
+    mockServer = mock.listen(9000)
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
   })
 
+  afterEach(() => {
+    mockServer.close()
+  })
+
   it('set only one component deployment status to running, set the second to running when the first is finished', async() => {
+    mock.post('/ok/tasks', (req, res) => {
+      res.sendStatus(200)
+    })
+
+    mock.get('/ok/applications/:app/pipelineConfigs/:cdConfig', (req, res) => {
+      res.send({ id: '123123123123' })
+    })
+
+    mock.post('/ok/pipelines/:app/:pipeline', (req, res) => {
+      res.send({ id: '123123123123' })
+    })
+
+    mock.post('/ok/pipelines', (req, res) => {
+      res.send({ ok: '???' })
+    })
+
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
       'config-name',
       'authorId',
       'workspaceId'
@@ -112,6 +139,59 @@ describe('DeploymentHandler', () => {
 
     expect(secondsStopped.components.map(c => c.running)).toEqual([false])
     expect(firstStopped.components.map(c => c.running)).toEqual([false])
+  })
+
+  it('dont set components to running if CD returns an error', async() => {
+    mock.post('/error/tasks', (req, res) => {
+      res.sendStatus(500)
+    })
+
+    mock.get('/error/applications/:app/pipelineConfigs/:cdConfig', (req, res) => {
+      res.send({ id: '123123123123' })
+    })
+
+    mock.post('/error/pipelines/:app/:pipeline', (req, res) => {
+      res.send({ id: '123123123123' })
+    })
+
+    mock.post('/error/pipelines', (req, res) => {
+      res.send({ ok: '???' })
+    })
+
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/error', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+
+    const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const firstDeployment = firstFixtures.deployment
+    const firstJob = firstFixtures.job
+
+    await deploymentHandler.run(firstJob)
+
+    const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
+
+    expect(handledDeployment.components.map(c => c.running)).toEqual([false])
   })
 })
 
