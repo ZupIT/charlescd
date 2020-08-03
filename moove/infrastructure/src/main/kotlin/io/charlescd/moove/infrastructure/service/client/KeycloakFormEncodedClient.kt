@@ -36,5 +36,4 @@ interface KeycloakFormEncodedClient {
         @PathVariable("realm") realm: String,
         @RequestBody params: Map<String, Any>
     )
-
 }
