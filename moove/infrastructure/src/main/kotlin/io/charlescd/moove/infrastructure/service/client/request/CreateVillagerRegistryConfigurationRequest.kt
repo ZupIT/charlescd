@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
-data class VillagerBuildRequest(
-    val tagName: String,
-    val callbackUrl: String,
-    val modules: List<BuildModulePart>
-)
-
-data class BuildModulePart(
-    val id: String,
+data class CreateVillagerRegistryConfigurationRequest(
     val name: String,
-    val registryConfigurationId: String,
-    val components: List<BuildModuleComponentPart>
+    val address: String,
+    val provider: CreateVillagerRegistryConfigurationProvider,
+    val username: String? = null,
+    val password: String? = null,
+    val accessKey: String? = null,
+    val secretKey: String? = null,
+    val region: String? = null,
+    val authorId: String
 )
 
-data class BuildModuleComponentPart(
-    val name: String,
-    val tagName: String
-)
+enum class CreateVillagerRegistryConfigurationProvider {
+    AWS, Azure
+}
