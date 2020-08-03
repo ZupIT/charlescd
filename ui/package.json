@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
-    "mock:api": "yarn stub & cross-env ENVIRONMENT=local node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
+    "mock:api": "cross-env ENVIRONMENT=local node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
     "test": "react-scripts test --watchAll=false --testPathIgnorePatterns='fixtures.ts'",
     "test:coverage": "react-scripts test --watchAll=false --coverage --testPathIgnorePatterns='fixtures.ts'",
     "test:watch": "react-scripts test --testPathIgnorePatterns='fixtures.ts'",
