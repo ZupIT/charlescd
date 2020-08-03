@@ -174,10 +174,10 @@ class DeployClientServiceTest extends Specification {
         def build = getDummyBuild(user, circle, workspaceId)
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
-        def undeployRequestCompare = new UndeployRequest("author-id",deployment.id)
+        def undeployRequestCompare = new UndeployRequest("author-id", deployment.id)
 
         when:
-        deployClientService.undeploy(deployment.id,"author-id")
+        deployClientService.undeploy(deployment.id, "author-id")
 
         then:
         1 * deployClient.undeploy(_) >> { arguments ->
@@ -188,7 +188,7 @@ class DeployClientServiceTest extends Specification {
         }
     }
 
-    private Build getDummyBuild(User user, Circle circle, String workspaceId) {
+    private static Build getDummyBuild(User user, Circle circle, String workspaceId) {
         def featureSnapshotList = getDummyFeatures(workspaceId, user)
 
         def deploymentList = new ArrayList<Deployment>()
@@ -200,7 +200,7 @@ class DeployClientServiceTest extends Specification {
                 workspaceId, deploymentList)
     }
 
-    private ArrayList<FeatureSnapshot> getDummyFeatures(String workspaceId, User author) {
+    private static ArrayList<FeatureSnapshot> getDummyFeatures(String workspaceId, User author) {
         def featureSnapshotList = new ArrayList<FeatureSnapshot>()
 
         def artifactSnapshotX = getDummyArtifactSnapshot('2884a5e0-7278-11ea-bc55-0242ac130003', 'artifact-name-1',
@@ -234,40 +234,41 @@ class DeployClientServiceTest extends Specification {
         featureSnapshotList
     }
 
-    private FeatureSnapshot getDummyFeatureSnapshot(String id, String featureId, String name, String branchName,
+    private static FeatureSnapshot getDummyFeatureSnapshot(String id, String featureId, String name, String branchName,
                                                     User author, ArrayList<ModuleSnapshot> moduleSnapshotList) {
         new FeatureSnapshot(id, featureId,
                 name, branchName, LocalDateTime.now(), author.name, author.id,
                 moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec')
     }
 
-    private Deployment getDummyDeployment(String id, DeploymentStatusEnum deploymentStatus, User author, Circle circle, String workspaceId) {
+    private static Deployment getDummyDeployment(String id, DeploymentStatusEnum deploymentStatus, User author, Circle circle, String workspaceId) {
+        def undeployedAt = deploymentStatus == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
         new Deployment(id, author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId)
+                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, undeployedAt)
     }
 
-    private ModuleSnapshot getDummyModuleSnapshot(String id, String moduleId, String name, String featureSnapshotId,
+    private static ModuleSnapshot getDummyModuleSnapshot(String id, String moduleId, String name, String featureSnapshotId,
                                                   ArrayList<ComponentSnapshot> componentSnapshotList, String workspaceId) {
         new ModuleSnapshot(id, moduleId, name, 'https://git-repository-address.com', LocalDateTime.now(), 'https://helm-repository.com',
                 componentSnapshotList, workspaceId, featureSnapshotId)
     }
 
-    private User getDummyUser() {
+    private static User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
                 new ArrayList<Workspace>(), false, LocalDateTime.now())
     }
 
-    private ComponentSnapshot getDummyComponentSnapshot(String workspaceId, String id, String componentId, String name,
+    private static ComponentSnapshot getDummyComponentSnapshot(String workspaceId, String id, String componentId, String name,
                                                         String moduleSnapshotId, ArtifactSnapshot artifact) {
         new ComponentSnapshot(id, componentId, name, LocalDateTime.now(), artifact,
                 workspaceId, moduleSnapshotId, 'host', 'gateway')
     }
 
-    private ArtifactSnapshot getDummyArtifactSnapshot(String id, String artifact, String version, String componentSnapshotId) {
+    private static ArtifactSnapshot getDummyArtifactSnapshot(String id, String artifact, String version, String componentSnapshotId) {
         new ArtifactSnapshot(id, artifact, version, componentSnapshotId, LocalDateTime.now())
     }
 
-    private Circle getDummyCircle(String name, User author, Boolean isDefault) {
+    private static Circle getDummyCircle(String name, User author, Boolean isDefault) {
         new Circle('w8296aea-6ae1-44ea-bc55-0242ac13000w', name, 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "44446b2a-557b-45c5-91be-1e1db9095556")
     }
