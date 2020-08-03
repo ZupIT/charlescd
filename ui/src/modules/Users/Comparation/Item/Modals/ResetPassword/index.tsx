@@ -35,7 +35,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
   const TIMEOUT_COPIED = 1500;
 
   const handleOnClickReset = () => {
-    resetPassword();
+    resetPassword(user.id);
   };
 
   const handleCopyToClipboard = () => {

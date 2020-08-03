@@ -133,7 +133,7 @@ export const useUpdateProfile = (): [
 };
 
 export const useResetPassword = (): {
-  resetPassword: Function;
+  resetPassword: (id: string) => void;
   response: NewPassword;
   status: FetchStatus;
 } => {
