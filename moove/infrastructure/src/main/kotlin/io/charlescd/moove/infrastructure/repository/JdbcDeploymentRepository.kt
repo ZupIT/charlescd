@@ -20,10 +20,7 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentAverageTimeStatsExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentGeneralStatsExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.DeploymentStatsExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.*
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -34,7 +31,8 @@ class JdbcDeploymentRepository(
     private val deploymentExtractor: DeploymentExtractor,
     private val deploymentGeneralStatsExtractor: DeploymentGeneralStatsExtractor,
     private val deploymentStatsExtractor: DeploymentStatsExtractor,
-    private val deploymentAverageTimeStatsExtractor: DeploymentAverageTimeStatsExtractor
+    private val deploymentAverageTimeStatsExtractor: DeploymentAverageTimeStatsExtractor,
+    private val deploymentHistoryExtractor: DeploymentHistoryExtractor
 
 ) : DeploymentRepository {
 
@@ -47,6 +45,7 @@ class JdbcDeploymentRepository(
                        deployments.circle_id                 AS deployment_circle_id,
                        deployments.build_id                  AS deployment_build_id,
                        deployments.workspace_id              AS deployment_workspace_id,
+                       deployments.undeployed_at             AS deployment_undeployed_at,
                        deployment_user.id                    AS deployment_user_id,
                        deployment_user.name                  AS deployment_user_name,
                        deployment_user.email                 AS deployment_user_email,
@@ -164,7 +163,8 @@ class JdbcDeploymentRepository(
                     build_id       = ?,
                     status         = ?,
                     deployed_at    = ?,
-                    workspace_id = ?
+                    workspace_id   = ?,
+                    undeployed_at  = ?
                 WHERE id = ?
             """
         )
@@ -178,6 +178,7 @@ class JdbcDeploymentRepository(
             deployment.status.name,
             deployment.deployedAt,
             deployment.workspaceId,
+            deployment.undeployedAt,
             deployment.id
         )
     }
@@ -243,6 +244,7 @@ class JdbcDeploymentRepository(
         circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentGeneralStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
                 SELECT  COUNT(id)                                               AS deployment_quantity,
                         COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
@@ -259,12 +261,13 @@ class JdbcDeploymentRepository(
 
         if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentGeneralStatsExtractor
         )?.toList()
             ?: emptyList()
@@ -275,6 +278,7 @@ class JdbcDeploymentRepository(
         circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
                 SELECT  COUNT(id)                                               AS deployment_quantity,
                         COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
@@ -292,12 +296,13 @@ class JdbcDeploymentRepository(
 
         if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_status, deployment_date "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentStatsExtractor
         )?.toList()
             ?: emptyList()
@@ -308,6 +313,7 @@ class JdbcDeploymentRepository(
         circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats> {
+        val parameters = mutableListOf<Any>(workspaceId, numberOfDays)
         var query = """
                 SELECT  COALESCE(AVG(deployed_at - created_at), '00:00:00')     AS deployment_average_time,
                         TO_CHAR(CREATED_AT, 'YYYY-MM-DD')                       AS deployment_date
@@ -319,18 +325,91 @@ class JdbcDeploymentRepository(
 
         if (!circlesId.isNullOrEmpty()) {
             query += " AND ${mountCircleIdQuerySearch(circlesId)} "
+            parameters.addAll(circlesId)
         }
         query += " GROUP BY deployment_date "
 
         return this.jdbcTemplate.query(
             query,
-            arrayOf(workspaceId, numberOfDays),
+            parameters.toTypedArray(),
             deploymentAverageTimeStatsExtractor
         )?.toList()
             ?: emptyList()
     }
 
     private fun mountCircleIdQuerySearch(circlesId: List<String>): String {
-        return " circle_id IN (${circlesId.joinToString(separator = ",") { "'$it'" }}) "
+        return " circle_id IN (${circlesId.joinToString(separator = ",") { "?" }}) "
+    }
+
+    override fun findDeploymentsHistory(workspaceId: String, circles: List<String>?, pageRequest: PageRequest): Page<DeploymentHistory> {
+        val totalItems = this.count(workspaceId, circles)
+        val parameters = mutableListOf<Any>(workspaceId)
+
+        val query = StringBuilder(
+            """
+                    SELECT  deployments.id              AS deployment_id,
+	                        deployments.deployed_at     AS deployed_at,
+                            deployments.undeployed_at   AS undeployed_at,
+	                        users.name                  AS user_name,
+	                        builds.tag                  AS deployment_version,
+	                        deployments.status          AS deployment_status
+                    FROM deployments deployments
+                        INNER JOIN users users      ON users.id = deployments.user_id
+                        INNER JOIN builds builds    ON builds.id = deployments.build_id
+                    WHERE deployments.workspace_id = ? 
+            """
+        )
+
+        if (!circles.isNullOrEmpty()) {
+            query.appendln(" AND ${mountCircleIdQuerySearch(circles)} ")
+            parameters.addAll(circles)
+        }
+
+        query.append(createPaginationAppend())
+        parameters.add(pageRequest.size)
+        parameters.add(pageRequest.size * pageRequest.page)
+
+        val result = this.jdbcTemplate.query(
+            query.toString(),
+            parameters.toTypedArray(),
+            deploymentHistoryExtractor
+        )?.toList()
+            ?: emptyList()
+
+        return Page(result, pageRequest.page, pageRequest.size, totalItems)
+    }
+
+    private fun createPaginationAppend(): String {
+        return """  
+                    LIMIT ?
+                    OFFSET ? 
+                """
+    }
+
+    override fun count(workspaceId: String): Int {
+        return this.count(workspaceId, null)
+    }
+
+    override fun count(workspaceId: String, circles: List<String>?): Int {
+        val parameters = mutableListOf<Any>(workspaceId)
+        val query = StringBuilder(
+            """
+                    SELECT  count (deployments.id)              
+                    FROM deployments deployments
+                    WHERE deployments.workspace_id = ? 
+            """
+        )
+
+        if (!circles.isNullOrEmpty()) {
+            query.appendln(" AND ${mountCircleIdQuerySearch(circles)} ")
+            parameters.addAll(circles)
+        }
+
+        return this.jdbcTemplate.queryForObject(
+            query.toString(),
+            parameters.toTypedArray()
+        ) { rs, _ ->
+            rs.getInt(1)
+        } ?: 0
     }
 }
