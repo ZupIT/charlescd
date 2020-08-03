@@ -7,7 +7,7 @@ GOGET=$(GOCMD) get
 GOTOOL=$(GOCMD) tool
 
 DIST_PATH=dist
-CMD_PATH=cmd/octopipe/*.go
+CMD_PATH=cmd/*.go
 BINARY_NAME=octopipe
 
 start:

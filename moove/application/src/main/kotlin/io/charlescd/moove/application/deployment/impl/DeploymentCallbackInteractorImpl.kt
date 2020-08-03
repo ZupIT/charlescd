@@ -51,7 +51,10 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
                 deployedAt = LocalDateTime.now()
             )
             DeploymentRequestStatus.FAILED -> deployment.copy(status = DeploymentStatusEnum.DEPLOY_FAILED)
-            DeploymentRequestStatus.UNDEPLOYED -> deployment.copy(status = DeploymentStatusEnum.NOT_DEPLOYED)
+            DeploymentRequestStatus.UNDEPLOYED -> deployment.copy(
+                status = DeploymentStatusEnum.NOT_DEPLOYED,
+                undeployedAt = LocalDateTime.now()
+            )
             DeploymentRequestStatus.UNDEPLOY_FAILED -> deployment.copy(status = DeploymentStatusEnum.DEPLOYED)
         }
     }

@@ -30,6 +30,6 @@ jobs:
         password: ${{secrets.DOCKER_REGISTRY_PASSWORD}}
         registry: realwavelab.azurecr.io
         repository: octopipe
-        dockerfile: ./octopipe/cmd/octopipe/Dockerfile
+        dockerfile: ./octopipe/Dockerfile
         tag_with_ref: true
         tag_with_sha: false
