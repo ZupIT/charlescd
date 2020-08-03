@@ -17,8 +17,7 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.metric.VerifyProviderConnectionInteractor
-import io.charlescd.moove.application.metric.VerifyWorkspaceProviderConnectionInteractor
+import io.charlescd.moove.application.metric.WorkspaceProviderConnectionStatusInteractor
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.*
@@ -44,8 +43,7 @@ class V2WorkspaceController(
     private val findWorkspaceInteractor: FindWorkspaceInteractor,
     private val findAllWorkspacesInteractor: FindAllWorkspaceInteractor,
     private val findAllWorkspaceUsersInteractor: FindAllWorkspaceUsersInteractor,
-    private val verifyProviderConnectionInteractor: VerifyProviderConnectionInteractor,
-    private val verifyWorkspaceProviderConnectionInteractor: VerifyWorkspaceProviderConnectionInteractor
+    private val workspaceProviderConnectionStatusInteractor: WorkspaceProviderConnectionStatusInteractor
 ) {
 
     @ApiOperation(value = "Create a new Workspace")
@@ -132,20 +130,12 @@ class V2WorkspaceController(
         return this.findAllWorkspaceUsersInteractor.execute(workspaceId, name, email, pageable)
     }
 
-    @ApiOperation(value = "Verify metrics provider connection")
-    @GetMapping("/config/verify-provider-connection")
-    fun verifyProviderConnection(
-        @RequestParam provider: String,
-        @RequestParam providerType: MetricConfiguration.ProviderEnum
-    ): ProviderConnectionResponse =
-        verifyProviderConnectionInteractor.execute(provider, providerType)
-
     @ApiOperation(value = "Verify metrics provider connection to the given Workspace")
-    @GetMapping("/{workspaceId}/config/verify-provider-connection")
+    @GetMapping("/{workspaceId}/metrics/provider-status")
     fun verifyProviderConnectionByIdAndWorkspaceId(
         @PathVariable workspaceId: String,
         @RequestParam providerId: String,
         @RequestParam providerType: MetricConfiguration.ProviderEnum
     ): ProviderConnectionResponse =
-        verifyWorkspaceProviderConnectionInteractor.execute(workspaceId, providerId, providerType)
+        workspaceProviderConnectionStatusInteractor.execute(workspaceId, providerId, providerType)
 }

@@ -29,7 +29,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class VerifyWorkspaceProviderConnectionInteractorImplUnitTest extends Specification {
+class WorkspaceProviderConnectionStatusInteractorImplUnitTest extends Specification {
 
     def serviceFactory = Mock(MetricServiceFactory)
     def providerService = Mock(PrometheusService)
