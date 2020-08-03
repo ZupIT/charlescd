@@ -26,6 +26,8 @@ import { ComponentDeploymentsRepository, QueuedIstioDeploymentsRepository } from
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { ModuleDeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-deployments.repository'
+import * as uuid from 'uuid'
+import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
 describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
@@ -60,33 +62,91 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await fixtureUtilsService.loadDatabase()
   })
 
   it('/POST a istio deployment callback should not update deployment  status to SUCCEEDED if another istio queued deployment is RUNNING ', async() => {
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration({
+      'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'RUNNING',
+      'helmRepository': 'helm-repository'
+    })
+
+    const componentDeploymentEntity1 = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'SUCCEEDED'
+    })
+
+    const componentDeploymentEntity2 = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'CREATED'
+    })
+
+    await fixtureUtilsService.createQueuedIstioDeployment({
+      'deploymentId': deployment.id,
+      'componentId': 'component-id',
+      'componentDeploymentId': componentDeploymentEntity1.id,
+      'status': 'RUNNING',
+      'type': 'QueuedIstioDeploymentEntity'
+    })
+
+    const queuedIstioDeployment = await fixtureUtilsService.createQueuedIstioDeployment({
+      'deploymentId': deployment.id,
+      'componentId': 'component-id',
+      'componentDeploymentId': componentDeploymentEntity2.id,
+      'status': 'RUNNING',
+      'type': 'QueuedIstioDeploymentEntity'
+    })
+
     const finishDeploymentDto = {
       status : 'SUCCEEDED'
     }
 
-    const queuedIstioDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          componentDeploymentId: 'f4e6ec6a-e870-4299-972e-ae4fe90b9dc6'
-        }
-      })
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
-          id: queuedIstioDeploymentSearch.componentDeploymentId
+          id: queuedIstioDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
       )
@@ -102,15 +162,16 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
     const queuedIstioDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
       find( {
         where : {
-          deploymentId: 'a8b28b83-19d9-43a3-8695-7f33bd7e5e00',
-        }
+          deploymentId: deployment.id,
+        },
+        order: { status: 'DESC' }
       })
 
-    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedIstioDeploymentSearch.deploymentId })
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : deployment.id })
     expect(deploymentEntity.status).toBe(DeploymentStatusEnum.CREATED)
     expect(queuedIstioDeploymentsUpdated[0].status).toBe(QueuedPipelineStatusEnum.RUNNING)
     expect(queuedIstioDeploymentsUpdated[1].status).toBe(QueuedPipelineStatusEnum.FINISHED)
-    expect(queuedIstioDeploymentsUpdated[1].id).toBe(queuedIstioDeploymentSearch.id)
+    expect(queuedIstioDeploymentsUpdated[1].id).toBe(queuedIstioDeployment.id)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
 
@@ -118,35 +179,92 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
   it('/POST a istio deployment callback should update deployment  status to SUCCEEDED if all istio queued deployments finished and all components are succeeded ', async() => {
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
+    const cdConfiguration = await fixtureUtilsService.createCdConfiguration({ 'id': uuid.v4(),
+      'workspaceId': uuid.v4(),
+      'type': CdTypeEnum.OCTOPIPE,
+      'configurationData': '\\xc30d040703028145eac3aeef760075d28e0184ce9ccba1f87c8346be787f60048e1b0a8df966b3fc0d555621c6b85546779a6c3825a975bf799a7757635c3cb34b2b85b00e3f296d3afee23d5c77947b7077c43247b6c26a23963f5f90135555a5706f73d5dfca32505f688129401ec015eba68fe0cd59eecfae09abfb3f8d533d225ab15aba239599f85af8804f23eb8ecb2318d502ae1f727a64afe33f8c',
+      'name': 'config-name',
+      'authorId': 'author'
+    })
+
+    const deployment = await fixtureUtilsService.createDeployment({
+      'id': uuid.v4(),
+      'applicationName': 'application-name',
+      'authorId': 'author-id',
+      'description': 'fake deployment ',
+      'callbackUrl': 'callback-url',
+      'status': 'CREATED',
+      'defaultCircle': false,
+      'cdConfigurationId': cdConfiguration.id,
+      'circle' : {
+        'headerValue' : 'headerValue'
+      }
+    })
+
+    const moduleDeployment = await fixtureUtilsService.createModuleDeployment({
+      'id': uuid.v4(),
+      'deployment': deployment.id,
+      'moduleId': 'module-id2',
+      'status': 'SUCCEEDED',
+      'helmRepository': 'helm-repository'
+    })
+
+    const componentDeploymentEntity1 = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'SUCCEEDED'
+    })
+
+    const componentDeploymentEntity2 = await fixtureUtilsService.createComponentDeployment({
+      'id': uuid.v4(),
+      'moduleDeployment': moduleDeployment.id,
+      'componentId':  'component-id',
+      'buildImageUrl': 'build-image-url',
+      'buildImageTag': 'build-image-tag',
+      'componentName': 'component-name',
+      'status': 'SUCCEEDED'
+    })
+
+    await fixtureUtilsService.createQueuedIstioDeployment({
+      'deploymentId': deployment.id,
+      'componentId': 'component-id',
+      'componentDeploymentId': componentDeploymentEntity1.id,
+      'status': 'FINISHED',
+      'type': 'QueuedIstioDeploymentEntity'
+    })
+
+    const queuedIstioDeployment = await fixtureUtilsService.createQueuedIstioDeployment({
+      'deploymentId': deployment.id,
+      'componentId': 'component-id',
+      'componentDeploymentId': componentDeploymentEntity2.id,
+      'status': 'RUNNING',
+      'type': 'QueuedIstioDeploymentEntity'
+    })
     const finishDeploymentDto = {
       status : 'SUCCEEDED'
     }
 
-    const queuedIstioDeploymentSearch: QueuedIstioDeploymentEntity  = await queuedIstioDeploymentsRepository.
-      findOneOrFail( {
-        where : {
-          deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
-          status: QueuedPipelineStatusEnum.RUNNING,
-          componentDeploymentId: '489e16fe-20f3-4c83-8c3a-59fb36517d1c'
-        }
-      })
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeploymentSearch.id}`)
+    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     const queuedIstioDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
       find( {
         where : {
-          deploymentId: '7c2617dc-e7b1-4ae2-924f-b3a8ccbb4762',
+          deploymentId: deployment.id,
         }
       })
 
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
       findOneOrFail({
         where : {
-          id: queuedIstioDeploymentSearch.componentDeploymentId
+          id: queuedIstioDeployment.componentDeploymentId
         },
         relations: ['moduleDeployment', 'moduleDeployment.deployment'] }
       )
@@ -159,7 +277,9 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
         relations: ['components'] }
       )
 
-    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({ id : queuedIstioDeploymentSearch.deploymentId })
+    const deploymentEntity: DeploymentEntity  = await deploymentsRepository.findOneOrFail({
+      id : queuedIstioDeployment.deploymentId
+    })
     expect(deploymentEntity.status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(moduleDeploymentEntities[0].components[1].status).toBe(DeploymentStatusEnum.SUCCEEDED)
     expect(moduleDeploymentEntities[0].components[0].status).toBe(DeploymentStatusEnum.SUCCEEDED)
