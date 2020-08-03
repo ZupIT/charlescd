@@ -17,7 +17,8 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.user.CreateUserInteractor
+import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
+import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.application.user.request.CreateUserRequest
@@ -28,13 +29,14 @@ import io.swagger.annotations.ApiOperation
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
-    private val createUserInteractor: CreateUserInteractor
+    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor
 ) {
 
     @ApiOperation(value = "Find user by email")
@@ -54,16 +56,14 @@ class V2UserController(
         return this.findAllUsersInteractor.execute(name, email, pageable)
     }
 
-    @ApiOperation(value = "Create user")
-    @ApiImplicitParam(
-        name = "createUserRequest",
-        value = "Create User",
-        required = true,
-        dataType = "CreateUserRequest"
-    )
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest): UserResponse {
-        return this.createUserInteractor.execute(createUserRequest)
+    @ApiOperation(value = "Change users' password")
+    @PutMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun changePassword(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id", required = false) id: String,
+        @RequestBody @Valid request: ChangeUserPasswordRequest
+    ) {
+        this.changeUserPasswordInteractor.execute(id, authorization, request)
     }
 }
