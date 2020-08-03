@@ -30,16 +30,17 @@ import { DeploymentUseCase } from './use-cases/deployment-use-case';
 import { NotificationUseCase } from './use-cases/notification-use-case';
 import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
+import { ComponentsRepositoryV2 } from './repository'
 
 @Module({
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([
       DeploymentEntity,
-      ComponentEntity,
       Execution,
       CdConfigurationEntity,
-      CdConfigurationsRepository
+      CdConfigurationsRepository,
+      ComponentsRepositoryV2
     ])
   ],
   controllers: [

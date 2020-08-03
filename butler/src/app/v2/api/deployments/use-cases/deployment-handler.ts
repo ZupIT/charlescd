@@ -26,13 +26,14 @@ import { PgBossWorker } from '../jobs/pgboss.worker'
 import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
 import { flatMap } from 'lodash'
 import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
+import { ComponentsRepositoryV2 } from '../repository'
 
 @Injectable()
 export class DeploymentHandler {
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @InjectRepository(ComponentEntity)
-    private componentsRepository: Repository<ComponentEntity>,
+    @InjectRepository(ComponentsRepositoryV2)
+    private componentsRepository: ComponentsRepositoryV2,
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
     @InjectRepository(CdConfigurationsRepository)
@@ -56,9 +57,7 @@ export class DeploymentHandler {
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     } else {
       this.consoleLoggerService.log('START:RUN_EXECUTION')
-      const activeDeployments = await this.deploymentsRepository.find({ where: { active: true }, relations: ['components'] })
-      this.consoleLoggerService.log('GET:ACTIVE_DEPLOYMENTS', { activeDeployments })
-      const activeComponents = flatMap(activeDeployments, deployment => deployment.components)
+      const activeComponents = await this.componentsRepository.findActiveComponents()
       this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
       await this.spinnakerConnector.createDeployment(deployment, activeComponents)
       await this.updateComponentsToRunning(deployment)
