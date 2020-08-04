@@ -182,10 +182,6 @@ const deployMetrics = () => ({
 });
 
 const circlesHistory = {
-  summary: {
-    active: 10,
-    inactive: 10
-  },
   page: {
     content: [
       {
@@ -527,11 +523,234 @@ const circlesMetricsDashboard = {
   averageLifeTime: 464047
 };
 
+const allDeployReleases = {
+  summary: {
+    DEPLOYED: 10,
+    DEPLOYING: 5,
+    ERROR: 2,
+    UNDEPLOYING: 0,
+    UNDEPLOYED: 5
+  },
+  page: {
+    content: [
+      {
+        id: 'abc-123',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-234',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-435',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-456',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-567',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-678',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-789',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-890',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-56437',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-2435',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-rtesw',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-5647ujyh',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      }
+    ],
+    page: 0,
+    size: 20,
+    isLast: false,
+    totalPages: 1
+  }
+};
+
 export default {
   circleMetricsData,
   circlesMetrics,
   deployMetrics,
   circlesHistory,
   allCircleReleases,
-  circlesMetricsDashboard
+  circlesMetricsDashboard,
+  allDeployReleases
 };

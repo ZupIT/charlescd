@@ -408,7 +408,7 @@ class JdbcCircleRepository(
             parameters.add("%$name%")
         }
 
-        query.appendln(" ORDER BY circle_life_time DESC ")
+        query.appendln(" ORDER BY circle_status, circle_life_time DESC ")
         query.appendln(createPaginationAppend())
         parameters.add(pageRequest.size)
         parameters.add(pageRequest.size * pageRequest.page)

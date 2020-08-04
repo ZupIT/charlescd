@@ -16,27 +16,28 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import io.charlescd.moove.application.DeploymentService
+
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
+class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
     def componentRepository = Mock(ComponentRepository)
     def deploymentRepository = Mock(DeploymentRepository)
 
-    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryForCircleInteractorImpl(new DeploymentService(deploymentRepository), componentRepository)
+    def findDeploymentHistoryIteractor = new FindDeploymentsHistoryForCircleInteractorImpl(deploymentRepository, componentRepository)
 
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
 
-    def 'should return not search for components when no deployment found'() {
+    def 'should return and not search for components when no deployment found'() {
         given:
         def circle = "circle-id-1"
 
@@ -44,7 +45,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>([], 0, 10, 0)
         0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
         0 * _
 
@@ -55,13 +56,39 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         result.isLast
     }
 
-    def 'should return when deployments found'() {
+    def 'should verify filter passed contains status and circle id'() {
+        given:
+        def circle = "circle-id-1"
+
+        DeploymentHistoryFilter parameteres = null
+
+        when:
+        findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
+
+        then:
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >>
+                { arguments ->
+                    parameteres = (DeploymentHistoryFilter) arguments[1]
+                    return new Page<DeploymentHistory>([], 0, 10, 0)
+                }
+        0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
+        0 * _
+
+        parameteres.deploymentName == null
+        parameteres.periodBefore == null
+        parameteres.deploymentStatus == [DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED]
+        parameteres.circlesIds == [circle]
+    }
+
+    def 'should return when deployments found ordered by creation date'() {
         given:
         def circle = "circle-id-1"
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())
         def secondDate = LocalDateTime.of(LocalDate.of(2020, 07, 20), LocalTime.now())
-        def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null),
-                           new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123", null)]
+        def deployments = [new DeploymentHistory("deployment-id-1", firstDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
+                null, firstDate, Duration.ofSeconds(120), "abc123"),
+                           new DeploymentHistory("deployment-id-2", secondDate, DeploymentStatusEnum.DEPLOYED, "Fulano", "release-123",
+                                   null, secondDate, Duration.ofSeconds(120), "abc123")]
 
         def components = [new ComponentHistory("deployment-id-1", "component-1", "charles", "version 413"),
                           new ComponentHistory("deployment-id-1", "component-2", "charles", "version 413"),
@@ -71,7 +98,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         def result = findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
 
         then:
-        1 * deploymentRepository.findDeploymentsHistory(workspaceId, [circle], pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >> new Page<DeploymentHistory>(deployments, 0, 10, 2)
         1 * componentRepository.findComponentsAtDeployments(workspaceId, ["deployment-id-1", "deployment-id-2"]) >> components
         0 * _
 

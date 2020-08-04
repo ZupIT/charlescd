@@ -15,7 +15,8 @@
  */
 
 import { CircleMetrics } from 'containers/Metrics/Chart/interfaces';
-import { baseRequest } from './base';
+import { ReleaseHistoryRequest } from 'modules/Metrics/Deploys/interfaces';
+import { baseRequest, postRequest } from './base';
 
 const endpoint = '/moove/metrics';
 
@@ -40,3 +41,8 @@ export const findAllCirclesReleases = (
   params: URLSearchParams,
   circleId: string
 ) => baseRequest(`${deploymentEndpoint}/circle/${circleId}/history?${params}`);
+
+export const findAllReleases = (
+  params: URLSearchParams,
+  releaseHistory: ReleaseHistoryRequest
+) => postRequest(`${deploymentEndpoint}/history?${params}`, releaseHistory);
