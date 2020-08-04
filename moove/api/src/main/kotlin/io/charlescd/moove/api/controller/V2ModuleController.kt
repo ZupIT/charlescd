@@ -163,8 +163,9 @@ class V2ModuleController(
     fun findComponentsTags(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @NotBlank @PathVariable("moduleId") moduleId: String,
-        @NotBlank @PathVariable("componentId") componentId: String
+        @NotBlank @PathVariable("componentId") componentId: String,
+        @NotBlank @RequestParam("name") name: String
     ): List<ComponentTagResponse> {
-        return findComponentTagsInteractor.execute(moduleId, componentId, workspaceId)
+        return findComponentTagsInteractor.execute(moduleId, componentId, name, workspaceId)
     }
 }

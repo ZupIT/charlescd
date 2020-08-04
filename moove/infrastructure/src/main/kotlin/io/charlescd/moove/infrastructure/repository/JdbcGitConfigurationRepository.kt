@@ -167,19 +167,38 @@ class JdbcGitConfigurationRepository(
     }
 
     private fun executePageQuery(
-        statement: java.lang.StringBuilder?,
+        statement: String,
         workspaceId: String,
         pageRequest: PageRequest
     ): Set<GitConfiguration>? {
         return this.jdbcTemplate.query(
-            statement.toString(),
+            statement,
             arrayOf(encryptionKey, workspaceId, pageRequest.size, pageRequest.offset()),
             gitConfigurationExtractor
         )
     }
 
-    private fun createStatement(): java.lang.StringBuilder? {
-        return StringBuilder(BASE_QUERY_STATEMENT)
+    private fun createStatement(): String {
+        val innerQueryStatement = createInnerQueryStatement()
+        return """
+            SELECT git_configurations.id                                                          AS git_configuration_id,
+                   git_configurations.name                                                        AS git_configuration_name,
+                   PGP_SYM_DECRYPT(git_configurations.credentials::bytea, ?,'cipher-algo=aes256') AS git_configuration_credentials,
+                   git_configurations.created_at                                                  AS git_configuration_created_at,
+                   git_configurations.workspace_id                                                AS git_configuration_workspace_id,
+                   git_configuration_user.id                                                      AS git_configuration_user_id,
+                   git_configuration_user.name                                                    AS git_configuration_user_name,
+                   git_configuration_user.photo_url                                               AS git_configuration_user_photo_url,
+                   git_configuration_user.email                                                   AS git_configuration_user_email,
+                   git_configuration_user.created_at                                              AS git_configuration_user_created_at
+            FROM ( $innerQueryStatement ) git_configurations
+                   INNER JOIN users git_configuration_user ON git_configurations.user_id = git_configuration_user.id
+            WHERE 1 = 1
+        """
+    }
+
+    private fun createInnerQueryStatement(): StringBuilder {
+        return StringBuilder("SELECT * FROM git_configurations WHERE 1 = 1")
             .appendln("AND git_configurations.workspace_id = ?")
             .appendln("LIMIT ?")
             .appendln("OFFSET ?")

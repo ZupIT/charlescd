@@ -22,6 +22,7 @@ const expectedBaseVirtualService = {
     namespace: 'app-namespace'
   },
   spec: {
+    gateways: [],
     hosts: [
       'app-name'
     ],
@@ -43,6 +44,11 @@ const expectedBaseVirtualService = {
               subset: 'v3'
             },
             headers: {
+              response: {
+                set: {
+                  'x-circle-source': 'header-value',
+                },
+              },
               request: {
                 set: {
                   'x-circle-source': 'header-value',
@@ -69,6 +75,11 @@ const expectedBaseVirtualService = {
               subset: 'v3'
             },
             headers: {
+              response: {
+                set: {
+                  'x-circle-source': 'header-value',
+                },
+              },
               request: {
                 set: {
                   'x-circle-source': 'header-value',

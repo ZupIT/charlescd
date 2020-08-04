@@ -17,7 +17,7 @@
 import { Test } from '@nestjs/testing'
 import {
   CreateDefaultDeploymentRequestUsecase
-} from '../../../app/api/deployments/use-cases'
+} from '../../../app/v1/api/deployments/use-cases'
 import {
   ComponentDeploymentsRepositoryStub,
   ComponentsRepositoryStub,
@@ -30,33 +30,33 @@ import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository,
   QueuedIstioDeploymentsRepository
-} from '../../../app/api/deployments/repository'
+} from '../../../app/v1/api/deployments/repository'
 import {
   ModulesService,
   PipelineDeploymentsService,
   PipelineErrorHandlerService,
   PipelineQueuesService
-} from '../../../app/api/deployments/services'
+} from '../../../app/v1/api/deployments/services'
 import {
   ConsoleLoggerServiceStub, ModulesServiceStub,
   PipelineDeploymentsServiceStub,
   PipelineErrorHandlerServiceStub,
   PipelineQueuesServiceStub
 } from '../../stubs/services'
-import { ConsoleLoggerService } from '../../../app/core/logs/console'
+import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import {
   ComponentDeploymentEntity,
   DeploymentEntity,
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
-} from '../../../app/api/deployments/entity'
+} from '../../../app/v1/api/deployments/entity'
 import {
-  CreateCircleDeploymentDto,
-  CreateCircleDeploymentRequestDto
-} from '../../../app/api/deployments/dto/create-deployment'
+  CreateCircleDeploymentDto, CreateDeploymentRequestDto
+} from '../../../app/v1/api/deployments/dto/create-deployment'
 import { Repository, QueryFailedError } from 'typeorm'
-import { QueuedPipelineStatusEnum } from '../../../app/api/deployments/enums'
-import { QueuedDeploymentsConstraints } from '../../../app/core/integrations/databases/constraints'
+import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
+import { QueuedDeploymentsConstraints } from '../../../app/v1/core/integrations/databases/constraints'
+import { InternalServerErrorException } from '@nestjs/common'
 
 describe('CreateDefaultDeploymentRequestUsecase', () => {
 
@@ -66,7 +66,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
   let moduleDeployments: ModuleDeploymentEntity[]
   let componentDeployments: ComponentDeploymentEntity[]
   let createCircleDeploymentDto: CreateCircleDeploymentDto
-  let createDeploymentDto: CreateCircleDeploymentRequestDto
+  let createDeploymentDto: CreateDeploymentRequestDto
   let queuedDeploymentsRepository: QueuedDeploymentsRepository
   let queuedDeployment: QueuedDeploymentEntity
   let modulesService: ModulesService
@@ -85,7 +85,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
         { provide: PipelineQueuesService, useClass: PipelineQueuesServiceStub },
         { provide: PipelineDeploymentsService, useClass: PipelineDeploymentsServiceStub },
         { provide: PipelineErrorHandlerService, useClass: PipelineErrorHandlerServiceStub },
-        { provide: ModulesService, useClass: ModulesServiceStub},
+        { provide: ModulesService, useClass: ModulesServiceStub },
         { provide: QueuedIstioDeploymentsRepository, useClass: QueuedIstioDeploymentsRepositoryStub }
       ]
     }).compile()
@@ -135,8 +135,7 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
       'header-value'
     )
 
-    createDeploymentDto = new CreateCircleDeploymentRequestDto(
-      'deployment-id',
+    createDeploymentDto = new CreateDeploymentRequestDto(
       'application-name',
       [],
       'author-id',
@@ -180,6 +179,22 @@ describe('CreateDefaultDeploymentRequestUsecase', () => {
 
       expect(await createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id'))
         .toEqual(deployment.toReadDto())
+    })
+
+    it('should throw error when unique running insertion fail ', async() => {
+
+      jest.spyOn(deploymentsRepository, 'save')
+        .mockImplementation(() => Promise.resolve(deployment))
+      jest.spyOn(queuedDeploymentsRepository, 'save')
+        .mockImplementationOnce(
+          () => { throw new QueryFailedError('query', [], { constraint: QueuedDeploymentsConstraints.UNIQUE_RUNNING_MODULE }) }
+        ).mockImplementationOnce(() => Promise.resolve(queuedDeployment))
+        .mockImplementationOnce(() => { throw new Error() })
+
+      jest.spyOn(modulesService, 'createModules')
+        .mockImplementation()
+
+      await expect(createDefaultDeploymentRequestUsecase.execute(createDeploymentDto, 'dummy-deployment-id')).rejects.toThrow(InternalServerErrorException)
     })
   })
 })

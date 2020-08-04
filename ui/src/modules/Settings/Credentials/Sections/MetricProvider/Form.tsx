@@ -19,7 +19,7 @@ import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
 import Card from 'core/components/Card';
 import Button from 'core/components/Button';
-import Form from 'core/components/Form';
+import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -75,7 +75,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   );
 
   const renderSelect = () => (
-    <Form.Select
+    <Select.Single
       control={control}
       name="url"
       label="Select a type server"
@@ -104,7 +104,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         <Popover
           title="Why we ask for Metrics Provider?"
           icon="info"
-          link={`${CHARLES_DOC}/referencia-1/metricas`}
+          link={`${CHARLES_DOC}/reference/metrics`}
           linkLabel="View documentation"
           description="Adding the URL of our tool helps Charles to metrics generation since this can vary from workspace to another. Consult the our documentation for further details."
         />

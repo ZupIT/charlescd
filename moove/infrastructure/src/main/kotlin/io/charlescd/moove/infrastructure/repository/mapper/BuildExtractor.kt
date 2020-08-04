@@ -173,7 +173,9 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         createdAt = resultSet.getTimestamp("component_snapshot_created_at").toLocalDateTime(),
         artifact = resultSet.getString("artifact_snapshot_id")?.let { mapArtifactSnapshot(resultSet) },
         workspaceId = resultSet.getString("component_snapshot_workspace_id"),
-        moduleSnapshotId = resultSet.getString("component_snapshot_module_snapshot_id")
+        moduleSnapshotId = resultSet.getString("component_snapshot_module_snapshot_id"),
+        hostValue = resultSet.getString("component_snapshot_host_value"),
+        gatewayName = resultSet.getString("component_snapshot_gateway_name")
     )
 
     private fun mapArtifactSnapshot(resultSet: ResultSet) = ArtifactSnapshot(
@@ -192,7 +194,8 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
         circle = mapCircle(resultSet),
         buildId = resultSet.getString("deployment_build_id"),
-        workspaceId = resultSet.getString("deployment_workspace_id")
+        workspaceId = resultSet.getString("deployment_workspace_id"),
+        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime()
     )
 
     private fun mapDeploymentUser(resultSet: ResultSet) = User(

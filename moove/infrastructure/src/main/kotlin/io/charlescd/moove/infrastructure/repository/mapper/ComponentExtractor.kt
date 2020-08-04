@@ -40,6 +40,8 @@ class ComponentExtractor : ResultSetExtractor<Set<Component>> {
             createdAt = resultSet.getTimestamp("components_created_at").toLocalDateTime(),
             errorThreshold = resultSet.getInt("components_error_threshold"),
             latencyThreshold = resultSet.getInt("components_latency_threshold"),
-            workspaceId = resultSet.getString("components_workspace_id")
+            workspaceId = resultSet.getString("components_workspace_id"),
+            hostValue = resultSet.getString("components_host_value"),
+            gatewayName = resultSet.getString("components_gateway_name")
     )
 }
