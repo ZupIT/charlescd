@@ -24,6 +24,6 @@ export const radios: Radio[] = [
 ];
 
 export const awsRadios: Radio[] = [
-    { icon: 'aws', name: 'Enable', value: 'ENABLED' },
-    { icon: 'aws', name: 'Disable', value: 'DISABLED' }
-  ];
+  { icon: 'aws', name: 'Enable', value: 'ENABLED' },
+  { icon: 'aws', name: 'Disable', value: 'DISABLED' }
+];
