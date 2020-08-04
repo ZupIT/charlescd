@@ -1,17 +1,20 @@
-function resetSVG() {
-  const content = document.querySelector('#content');
-  const { defaultCircle } = getDefaultCircle();
+function getHeaders() {
+  return new Headers({
+    'Content-Type': 'application/json',
+    'Authorization': document.querySelector('#auth-url').value,
+    'x-workspace-id': document.querySelector('#workspace-id').value
+  });
+}
 
-  if (defaultCircle) {
-    content.removeChild(defaultCircle);
+function getBody() {
+  try {
+    errorMessage('');
+    const body = document.querySelector('#body').value || '{}';
+
+    return JSON.stringify(JSON.parse(body), null);
+  } catch(e) {
+    errorMessage(e);
   }
-
-  const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  newSVG.id = 'circle-default';
-  newSVG.setAttribute('width', '400');
-  newSVG.setAttribute('height', '400');
-
-  content.appendChild(newSVG);
 }
 
 async function getResponse(response) {
@@ -28,7 +31,7 @@ async function listCircles() {
   errorMessage();
 
   try {
-    const response = await fetch(moove.value);
+    const response = await fetch(moove.value, { method: 'GET', headers: getHeaders() });
     const data = await getResponse(response);
 
     if (data && data.content) {
@@ -42,8 +45,23 @@ async function listCircles() {
   }
 }
 
-function tryOut() {
-  const moove = document.querySelector('#moove-url');
-  const identify = `${moove.value}/v2/circles/identify`;
-  console.log(identify);
+async function tryOut() {
+  // const moove = document.querySelector('#moove-url');
+  // const identify = `${moove.value}/v2/circles/identify`;
+  const identify = 'https://run.mocky.io/v3/d7c6fff9-5162-4a85-b1ab-48ebb44c3f80';
+
+  try {
+    const response = await fetch(identify, { 
+      method: 'POST', 
+      headers: getHeaders(),
+      body: getBody()
+    });
+
+    const data = await getResponse(response);
+    const [circle] = data || [{}];
+
+    addUser(circle.id);
+  } catch (e) {
+    errorMessage(e);
+  }
 }

@@ -51,3 +51,19 @@ function hideElement(selector) {
 function showElement(selector) {
   document.querySelector(selector).className = 'show';
 }
+
+function resetSVG() {
+  const content = document.querySelector('#content');
+  const { defaultCircle } = getDefaultCircle();
+
+  if (defaultCircle) {
+    content.removeChild(defaultCircle);
+  }
+
+  const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  newSVG.id = 'circle-default';
+  newSVG.setAttribute('width', '400');
+  newSVG.setAttribute('height', '400');
+
+  content.appendChild(newSVG);
+}
