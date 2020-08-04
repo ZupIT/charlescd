@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import Button from 'core/components/Button';
-import Form from 'core/components/Form';
-import RadioGroup from 'core/components/RadioGroup';
-import Text from 'core/components/Text';
-import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
-import { useRegistry } from './hooks';
-import { radios } from './constants';
-import { Registry } from './interfaces';
-import { Props } from '../interfaces';
-import Styled from './styled';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import Button from "core/components/Button";
+import Form from "core/components/Form";
+import RadioGroup from "core/components/RadioGroup";
+import Text from "core/components/Text";
+import Popover, { CHARLES_DOC } from "core/components/Popover";
+import { getProfileByKey } from "core/utils/profile";
+import { useRegistry } from "./hooks";
+import { radios, awsRadios } from "./constants";
+import { Registry } from "./interfaces";
+import { Props } from "../interfaces";
+import Styled from "./styled";
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
-  const [registryType, setRegistryType] = useState('');
+  const [registryType, setRegistryType] = useState("");
+  const [awsAuthMethod, setAwsAuthMethod] = useState("");
   const { register, unregister, handleSubmit, reset } = useForm<Registry>();
-  const profileId = getProfileByKey('id');
+  const profileId = getProfileByKey("id");
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -54,30 +55,45 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const renderAwsFields = () => {
-    unregister('username');
-    unregister('password');
+    unregister("username");
+    unregister("password");
 
     return (
       <>
-        <Form.Password
-          ref={register}
-          name="accessKey"
-          label="Enter the access key"
+        <Form.Input ref={register({ required: true })} name="region" label="Enter the region" />
+
+        <Text.h5 color="dark">
+          Use access key and secret key auth?
+        </Text.h5>
+        <RadioGroup
+          name="aws-auth"
+          items={awsRadios}
+          onChange={({ currentTarget }) =>
+            setAwsAuthMethod(currentTarget.value)
+          }
         />
-        <Form.Input
-          ref={register}
-          name="secretKey"
-          label="Enter the secret key"
-        />
-        <Form.Input ref={register} name="region" label="Enter the region" />
+        {awsAuthMethod === "ENABLED" ? (
+          <>
+            <Form.Password
+              ref={register({ required: true })}
+              name="accessKey"
+              label="Enter the access key"
+            />
+            <Form.Input
+              ref={register({ required: true })}
+              name="secretKey"
+              label="Enter the secret key"
+            />
+          </>
+        ) : null}
       </>
     );
   };
 
   const renderAzureFields = () => {
-    unregister('accessKey');
-    unregister('secretKey');
-    unregister('region');
+    unregister("accessKey");
+    unregister("secretKey");
+    unregister("region");
 
     return (
       <>
@@ -92,7 +108,7 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const handleFields = () => {
-    if (registryType === 'AWS') {
+    if (registryType === "AWS") {
       return renderAwsFields();
     }
     return renderAzureFields();
