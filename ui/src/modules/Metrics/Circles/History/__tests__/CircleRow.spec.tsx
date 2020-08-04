@@ -40,7 +40,6 @@ test('render default ReleaseRow', () => {
   expect(screen.getByText('circle 1')).toBeInTheDocument();
   expect(screen.getByText('21/07/2020 • 16:07')).toBeInTheDocument();
   expect(screen.getByText('7 days')).toBeInTheDocument();
-  expect(screen.getByTestId('circle-row-dot')).toHaveStyle('background-color: rgb(100, 210, 255)');
 });
 
 test('render active ReleaseRow and show releases table', async () => {
@@ -58,5 +57,4 @@ test('render active ReleaseRow and show releases table', async () => {
   await wait();
 
   expect(screen.getAllByText(/release /)).toHaveLength(2);
-  expect(screen.getByTestId('circle-row-dot')).toHaveStyle('background-color: rgb(57, 69, 216)');
 });

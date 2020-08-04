@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import { getReleaseStatus } from './helpers';
 import { CircleRelease } from '../interfaces';
 import ReleaseComponentsTable from './ReleaseComponentsTable';
 import { dateTimeFormatter } from 'core/utils/date';
@@ -30,6 +31,7 @@ const ReleaseRow = ({ release }: Props) => {
 
   return (
     <Styled.ReleaseRow>
+      <Styled.StatusLine status={getReleaseStatus(release?.status)} />
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`release-table-row-${release.id}`}
@@ -48,6 +50,9 @@ const ReleaseRow = ({ release }: Props) => {
               ? dateTimeFormatter(release.undeployedAt)
               : '-'}
           </Text.h5>
+        </Styled.TableColumn>
+        <Styled.TableColumn>
+          <Text.h5 color="light">{release.createdAt}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">{release.authorName}</Text.h5>
