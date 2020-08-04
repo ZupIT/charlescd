@@ -19,6 +19,7 @@
 package io.charlescd.moove.domain.repository
 
 import io.charlescd.moove.domain.Component
+import io.charlescd.moove.domain.ComponentHistory
 import java.util.*
 
 interface ComponentRepository {
@@ -26,4 +27,6 @@ interface ComponentRepository {
     fun findById(componentId: String): Optional<Component>
 
     fun findAllDeployedAtCircle(circleId: String, workspaceID: String): List<Component>
+
+    fun findComponentsAtDeployments(workspaceId: String, deployments: List<String>?): List<ComponentHistory>
 }

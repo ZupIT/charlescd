@@ -88,7 +88,7 @@ class RetrieveDeploymentsMetricsInteractorImpl(
         val dateMetricMap = deploymentsStats.associateByTo(mutableMapOf()) { it.date }
         val completeDates = metricService.fillMissingDates(dateMetricMap.keys, period)
 
-        completeDates.forEach { dateMetricMap.putIfAbsent(it, DeploymentStats(0, deploymentStatus, Duration.ZERO, it)) }
+        completeDates.forEach { dateMetricMap.putIfAbsent(it, DeploymentStats(0, deploymentStatus, it)) }
 
         return dateMetricMap.values.toList()
     }

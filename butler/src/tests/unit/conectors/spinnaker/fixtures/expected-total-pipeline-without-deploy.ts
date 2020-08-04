@@ -75,7 +75,7 @@ const expectedPipelineWithoutDeployments = {
       name: 'Trigger webhook',
       payload: {
         status: '${#stage( \'\' ).status.toString()}',
-        callbackType: '${#stage( \'\' ).callbackType.toString()}'
+        callbackType: 'UNDEPLOYMENT'
       },
       refId: '1',
       requisiteStageRefIds: [

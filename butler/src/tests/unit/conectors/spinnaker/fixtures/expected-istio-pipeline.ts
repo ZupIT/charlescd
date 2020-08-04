@@ -259,7 +259,7 @@ const istioPipeline = {
       name: 'Trigger webhook',
       payload: {
         status: '${#stage( \'Delete Deployments\' ).status.toString()}',
-        callbackType: '${#stage( \'Delete Deployments\' ).callbackType.toString()}',
+        callbackType: 'ISTIO_DEPLOYMENT',
       },
       refId: '4',
       requisiteStageRefIds: [
@@ -529,7 +529,7 @@ export const istioPipelineHostValueAndGateway = {
       name: 'Trigger webhook',
       payload: {
         status: '${#stage( \'Delete Deployments\' ).status.toString()}',
-        callbackType: '${#stage( \'Delete Deployments\' ).callbackType.toString()}'
+        callbackType: 'ISTIO_DEPLOYMENT'
       },
       refId: '4',
       requisiteStageRefIds: [

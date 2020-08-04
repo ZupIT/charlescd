@@ -150,7 +150,7 @@ const expectedTotalPipeline = {
       name: 'Trigger webhook',
       payload: {
         status: '${#stage( \'Deploy v1\' ).status.toString()}',
-        callbackType: '${#stage( \'Deploy v1\' ).callbackType.toString()}'
+        callbackType: 'DEPLOYMENT'
       },
       refId: '3',
       requisiteStageRefIds: [
