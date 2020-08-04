@@ -591,6 +591,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                      LEFT JOIN feature_snapshots ON builds.id = feature_snapshots.build_id
                      LEFT JOIN module_snapshots ON feature_snapshots.id = module_snapshots.feature_snapshot_id
                      LEFT JOIN component_snapshots ON module_snapshots.id = component_snapshots.module_snapshot_id
+                     INNER JOIN components ON components.id = component_snapshots.component_id
                      LEFT JOIN artifact_snapshots ON component_snapshots.id = artifact_snapshots.component_snapshot_id
                      LEFT JOIN deployments ON builds.id = deployments.build_id
                      LEFT JOIN users deployment_user ON deployments.user_id = deployment_user.id
