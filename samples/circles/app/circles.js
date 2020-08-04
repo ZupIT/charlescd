@@ -8,7 +8,6 @@ const graph = {
   circles: []
 };
 
-
 function formatCircles(circles) {
   const colors = Colors();
   if (circles) {
@@ -42,20 +41,23 @@ function createD3CircleRef(circles) {
   });
 }
 
+let circlesData;
+
 function initDefaultCircle(circles) {
-  const data = Object.assign([], formatCircles(circles));
+  circlesData = Object.assign([], formatCircles(circles));
+
   graph.defaultCircle = newD3Layout({
     isDefault: true,
     id: "#circle-default",
-    distance: 10,
-    data 
+    distance: 5,
+    data: circlesData
   });
  
   graph.defaultCircle.force.start();
 
   graph.defaultCircle
     .chart.selectAll("g")
-      .data(data)
+      .data(circlesData)
       .enter()
       .append("g")
       .attr("data-id", d => d.id)
@@ -68,7 +70,7 @@ function initDefaultCircle(circles) {
     
   graph.defaultCircle.color = '#9796b4';
   
-  createD3CircleRef(data);
+  createD3CircleRef(circlesData);
 }
 
 function addUser(id) {
@@ -76,7 +78,7 @@ function addUser(id) {
   const isDefault = circle === undefined;
   const { chart, force, users, color } = isDefault ? graph.defaultCircle : circle;
   const select = isDefault ? " svg > g" : "g";
-  const node = isDefault ? circles : users;
+  const node = isDefault ? circlesData : users;
 
   node.push({ id: "user-id", type: "user", color });
 
