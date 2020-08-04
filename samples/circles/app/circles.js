@@ -1,24 +1,4 @@
-const defaultCircle = document.querySelector('#circle-default');
-const w = defaultCircle.getAttribute('width');
-const h = defaultCircle.getAttribute('height');
-
-let circles = [
-  {
-    id: 'circle-1',
-    type: 'circle',
-    color: '#ffae00'
-  },
-  {
-    id: 'circle-2',
-    type: 'circle',
-    color: '#01e89a'
-  },
-  {
-    id: 'circle-3',
-    type: 'circle',
-    color: '#ff7b10'
-  }
-];
+const { defaultCircle, w, h } = getDefaultCircle();
 
 const graph = {
   defaultCircle: {
@@ -28,7 +8,21 @@ const graph = {
   circles: []
 };
 
-function createD3CircleRef() {
+
+function formatCircles(circles) {
+  const colors = Colors();
+  if (circles) {
+    return circles.map(circle => ({
+      id: circle.id,
+      type: 'circle',
+      color: colors.generate()
+    }))
+  }
+
+  return []
+}
+
+function createD3CircleRef(circles) {
   circles.forEach(circle => {
     const users = [];
     const { chart, force } = newD3Layout({
@@ -48,20 +42,20 @@ function createD3CircleRef() {
   });
 }
 
-function initDefaultCircle() {
+function initDefaultCircle(circles) {
+  const data = Object.assign([], formatCircles(circles));
   graph.defaultCircle = newD3Layout({
     isDefault: true,
     id: "#circle-default",
     distance: 10,
-    data: circles
+    data 
   });
  
-  graph.defaultCircle
-    .force.start();
+  graph.defaultCircle.force.start();
 
   graph.defaultCircle
     .chart.selectAll("g")
-      .data(circles)
+      .data(data)
       .enter()
       .append("g")
       .attr("data-id", d => d.id)
@@ -74,7 +68,7 @@ function initDefaultCircle() {
     
   graph.defaultCircle.color = '#9796b4';
   
-  createD3CircleRef();
+  createD3CircleRef(data);
 }
 
 function addUser(id) {
@@ -99,5 +93,3 @@ function addUser(id) {
     .style("stroke-width", "1.5px")
     .style("stroke", d => d.color);
 }
-
-initDefaultCircle();

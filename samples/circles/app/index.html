@@ -5,42 +5,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet"> 
+  <link href="style.css" rel="stylesheet" />
   <title>Charles CD</title>
-  <style>
-    body {
-      background-color: #1c1c1e;
-      font-family: 'Lato', sans-serif;
-      color: #ffffff;
-    }
-    h1 {
-      text-align: center;
-    }
-    #content {
-      display: flex;
-      width: 1000px;
-      margin: auto;
-      justify-content: space-around;
-    }
-    #circle-default {
-      border: 2px solid #9796b4;
-      border-radius: 50%;
-    }
-  </style>
 </head>
 
 <body>
   <h1>Charles CD</h1>
+  <p id="error-message"></p>
   <div id="content">
-    <svg id="circle-default" width="300" height="300"></svg>
+    <div id="form-config">
+      <div class="field">
+        <label for="circle-matcher-url">Insert URL Moove</label>
+        <input id="moove-url" type="text" value="https://run.mocky.io/v3/07bc9d9d-93c3-4e73-8627-607b7f49da42" />
+      </div>
+      <button onclick="listCircles()">start</button>
+    </div>
+    <div id="form-request" class="hidden">
+      <textarea id="payload"></textarea>
+      <button onclick="tryOut()">send</button>
+    </div>
+    <svg id="circle-default" class="hidden" width="400" height="400"></svg>
   </div>
-  <button onclick="addUser('circle-1')">YELLOW</button>
-  <button onclick="addUser('circle-2')">GREEN</button>
-  <button onclick="addUser('circle-3')">ORANGE</button>
-  <button onclick="addUser('default')">DEFAULT</button>
 
   <script src="d3.v3.js"></script>
+  <script src="helpers.js"></script>
   <script src="d3.helpers.js"></script>
   <script src="circles.js"></script>
+  <script src="app.js"></script>
+  <script src="textarea.js"></script>
 </body>
 
 </html>
