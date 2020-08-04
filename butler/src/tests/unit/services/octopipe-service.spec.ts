@@ -759,7 +759,6 @@ describe('Octopipe Service', () => {
       const payload = octopipeService.createIstioPipelineConfigurationObject(connectorConfiguration)
 
       const expectedPayload: IOctopipePayload = {
-
         appName: 'some-app-name',
         appNamespace: 'some-app-namespace',
         git: {

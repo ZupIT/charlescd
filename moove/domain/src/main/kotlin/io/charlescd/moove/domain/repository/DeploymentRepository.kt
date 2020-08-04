@@ -54,4 +54,14 @@ interface DeploymentRepository {
         circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats>
+
+    fun findDeploymentsHistory(
+        workspaceId: String,
+        filters: DeploymentHistoryFilter,
+        pageRequest: PageRequest
+    ): Page<DeploymentHistory>
+
+    fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int
+
+    fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount>
 }
