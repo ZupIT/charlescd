@@ -50,6 +50,15 @@ class BuildService(private val buildRepository: BuildRepository) {
         )
     }
 
+    fun findActiveBuilds(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
+        return this.buildRepository.findActiveBuilds(
+            tag,
+            status,
+            workspaceId,
+            pageRequest
+        )
+    }
+
     fun save(build: Build): Build {
         return this.buildRepository.save(build)
     }
