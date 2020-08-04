@@ -25,13 +25,14 @@ import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
 import com.amazonaws.auth.WebIdentityTokenCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.ecr.AmazonECR;
 import com.amazonaws.services.ecr.AmazonECRClientBuilder;
 import com.amazonaws.services.ecr.model.GetAuthorizationTokenRequest;
 import com.amazonaws.services.ecr.model.GetAuthorizationTokenResult;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class AWSCustomProviderChainAuthenticator extends AbstractBasicAuthenticator {
+public class AWSCustomProviderChainAuthenticator extends AbstractBasicAuthenticator {
 
     private String region;
     private List<AWSCredentialsProvider> providerChain = new LinkedList<>();
@@ -54,6 +55,11 @@ public final class AWSCustomProviderChainAuthenticator extends AbstractBasicAuth
         return new AWSCredentialsProviderChain(providerChain).getCredentials();
     }
 
+    public GetAuthorizationTokenResult getAuthorizationToken(AmazonECR amazonECR) {
+
+        return amazonECR.getAuthorizationToken(new GetAuthorizationTokenRequest());
+    }
+
     @Override
     public String loadBasicAuthorization() {
 
@@ -61,9 +67,8 @@ public final class AWSCustomProviderChainAuthenticator extends AbstractBasicAuth
         AmazonECRClientBuilder amazonECRBuilder = AmazonECRClientBuilder.standard()
                 .withRegion(this.region)
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials));
-
-        GetAuthorizationTokenResult authorizationToken = amazonECRBuilder.build()
-                .getAuthorizationToken(new GetAuthorizationTokenRequest());
+        AmazonECR amazonECR = amazonECRBuilder.build();
+        var authorizationToken = getAuthorizationToken(amazonECR);
 
         return String.format("Basic %s", authorizationToken.getAuthorizationData().get(0).getAuthorizationToken());
     }
