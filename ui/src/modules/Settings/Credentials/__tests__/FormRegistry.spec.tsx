@@ -67,7 +67,36 @@ test('render Registry form with AWS values', async () => {
   const radioButton = getByTestId("radio-group-registry-item-AWS");
   fireEvent.click(radioButton)
   await wait();
-  expect(container.innerHTML).toMatch("Enter the access key");
+  expect(container.innerHTML).toMatch("Enter the region");
+});
+
+test('render Registry form with AWS values and secret input', async () => {
+    const { container, getByTestId } = render(
+      <FormRegistry onFinish={mockOnFinish}/>
+    );
+  
+    await wait();
+    const radioButton = getByTestId("radio-group-registry-item-AWS");
+    fireEvent.click(radioButton)
+    await wait();
+    const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED")
+    fireEvent.click(radioAuthButton)
+    expect(container.innerHTML).toMatch("Enter the access key");
+});
+
+
+test('render Registry form without AWS values and secret input', async () => {
+    const { container, getByTestId } = render(
+      <FormRegistry onFinish={mockOnFinish}/>
+    );
+  
+    await wait();
+    const radioButton = getByTestId("radio-group-registry-item-AWS");
+    fireEvent.click(radioButton)
+    await wait();
+    const radioAuthButton = getByTestId("radio-group-aws-auth-item-DISABLED")
+    fireEvent.click(radioAuthButton)
+    expect(container.innerHTML).not.toMatch("Enter the access key");
 });
 
 test('execute onSubmit', async () => {
@@ -78,6 +107,9 @@ test('execute onSubmit', async () => {
   await wait();
   const radioButton = getByTestId("radio-group-registry-item-AWS");
   fireEvent.click(radioButton)
+  await wait();
+  const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED");
+  fireEvent.click(radioAuthButton);
   await wait();
   const inputAwsName = getByTestId("input-text-name");
   const inputAwsAddress = getByTestId("input-text-address");
@@ -106,6 +138,9 @@ test('should not execute onSubmit because validation (missing name)', async () =
   await wait();
   const radioButton = getByTestId("radio-group-registry-item-AWS");
   fireEvent.click(radioButton)
+  await wait();
+  const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED");
+  fireEvent.click(radioAuthButton);
   await wait();
   const inputAwsAddress = getByTestId("input-text-address");
   const inputAwsAccessKey = getByTestId("password-password-accessKey");
