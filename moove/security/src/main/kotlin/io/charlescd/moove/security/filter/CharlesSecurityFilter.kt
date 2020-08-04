@@ -38,6 +38,9 @@ import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import javax.ws.rs.ClientErrorException
+import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.core.Response
 
 @Component
 @Profile("!local")
@@ -82,13 +85,13 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
     }
 
     private fun doAuthorization(workspaceId: String?, authorization: String?, path: String, method: String) {
-        val parsedAccessToken = parseAccessToken(authorization)
-
         if (checkIfIsOpenPath(constraints, path, method)) {
             return
         }
 
-        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) }
+        val parsedAccessToken = parseAccessToken(authorization)
+
+        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) } ?: throw Exception("Missing Authorization header")
 
         if (parsedAccessToken?.isRoot == true) {
             return
