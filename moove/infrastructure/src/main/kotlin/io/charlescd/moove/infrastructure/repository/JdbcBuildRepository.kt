@@ -257,7 +257,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
         val parametersMap = createParametersMap(tag, status, workspaceId)
         val count = executeCountQuery(createCountQuery(parametersMap), parametersMap)
         val result = this.jdbcTemplate.query(
-            createQueryStatement(parametersMap, pageRequest),
+            statement,
             parametersMap.values.toTypedArray(),
             buildExtractor
         )
