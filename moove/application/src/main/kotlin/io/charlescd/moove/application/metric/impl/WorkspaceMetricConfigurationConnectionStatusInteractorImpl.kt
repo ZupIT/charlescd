@@ -19,25 +19,24 @@
 
 package io.charlescd.moove.application.metric.impl
 
-import io.charlescd.moove.application.metric.WorkspaceProviderConnectionStatusInteractor
+import io.charlescd.moove.application.metric.WorkspaceMetricConfigurationConnectionStatusInteractor
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
-import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
 import io.charlescd.moove.metrics.connector.MetricServiceFactory
 import org.springframework.stereotype.Service
 
 @Service
-class VerifyWorkspaceProviderConnectionInteractorImpl(
+class WorkspaceMetricConfigurationConnectionStatusInteractorImpl(
     private val serviceFactory: MetricServiceFactory,
     private val metricConfigurationRepository: MetricConfigurationRepository
-) : WorkspaceProviderConnectionStatusInteractor {
+) : WorkspaceMetricConfigurationConnectionStatusInteractor {
 
-    override fun execute(workspaceId: String, providerId: String, providerType: MetricConfiguration.ProviderEnum): ProviderConnectionResponse {
-        val service = serviceFactory.getConnector(providerType)
+    override fun execute(workspaceId: String, metricConfigurationId: String): ProviderConnectionResponse {
+        val metricConfiguration = this.metricConfigurationRepository.find(metricConfigurationId, workspaceId)
+            .orElseThrow { NotFoundException("Metric configuration for Workspace", "MetricId = $metricConfigurationId : WorkspaceId = $workspaceId") }
 
-        val metricConfiguration = this.metricConfigurationRepository.find(providerId, workspaceId)
-            .orElseThrow { NotFoundException("Metric configuration for Workspace", "MetricId = $providerId : WorkspaceId = $workspaceId") }
+        val service = serviceFactory.getConnector(metricConfiguration.provider)
 
         return ProviderConnectionResponse(status = service.readinessCheck(metricConfiguration.url).status)
     }

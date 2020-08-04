@@ -57,11 +57,11 @@ class PrometheusService(
     }
 
     override fun readinessCheck(url: String): PrometheusConnectionStatusResponse {
-        return kotlin.runCatching { prometheusConnectionStatusValidate(url) }
+        return kotlin.runCatching { validatePrometheusConnectionStatus(url) }
             .getOrElse { PrometheusConnectionStatusResponse("FAILED", 500, it.message) }
     }
 
-    private fun prometheusConnectionStatusValidate(url: String): PrometheusConnectionStatusResponse {
+    private fun validatePrometheusConnectionStatus(url: String): PrometheusConnectionStatusResponse {
         val readinessResponse = prometheusApi.readinessCheck(URI.create(url))
 
         return if (readinessResponse.statusCode == HttpStatus.OK) {

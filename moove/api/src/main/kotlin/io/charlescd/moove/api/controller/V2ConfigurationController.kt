@@ -42,7 +42,7 @@ class V2ConfigurationController(
     private val deleteGitConfigurationByIdInteractor: DeleteGitConfigurationByIdInteractor,
     private val createMetricConfigurationInteractor: CreateMetricConfigurationInteractor,
     private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
-    private val providerStatusConfigurationInteractor: ProviderStatusConfigurationInteractor
+    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor
 ) {
 
     @ApiOperation(value = "Create git Configuration")
