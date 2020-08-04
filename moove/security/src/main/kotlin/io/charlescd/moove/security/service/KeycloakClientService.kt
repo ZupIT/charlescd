@@ -21,6 +21,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
 import io.charlescd.moove.security.CharlesAccessToken
@@ -189,8 +190,7 @@ class KeycloakClientService(
         return keycloak.realm(this.realm)
             .users()
             .search(email)
-            .takeIf { it.isNotEmpty() }
-            ?.first()!!
+            .firstOrNull() ?: throw NotFoundException("user", email)
     }
 
     private fun updateKeycloakUser(keycloakUser: UserRepresentation) {
