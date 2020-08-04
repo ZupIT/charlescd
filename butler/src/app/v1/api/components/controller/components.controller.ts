@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common'
 import { ReadQueuedDeploymentDto } from '../../deployments/dto'
 import { GetComponentQueueUseCase } from '../use-cases/get-component-queue.usecase'
-import {ComponentsExistencePipe} from '../pipe/components.pipe'
+import { ComponentsExistencePipe } from '../pipe/components.pipe'
 import { BaseController } from '../../base.controller'
 
 @Controller('components')

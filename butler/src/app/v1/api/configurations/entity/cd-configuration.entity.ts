@@ -48,7 +48,7 @@ export class CdConfigurationEntity extends BaseEntity {
     @Column({ name: 'workspace_id' })
     public workspaceId: string
 
-    @Column({ name: 'created_at'})
+    @Column({ name: 'created_at' })
     public createdAt!: Date
 
     @OneToMany(() => DeploymentEntity, deployment => deployment.cdConfiguration)

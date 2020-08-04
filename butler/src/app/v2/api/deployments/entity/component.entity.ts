@@ -19,7 +19,7 @@ export class ComponentEntityV2 implements Component {
   @Column({ name: 'name' })
   public name!: string
 
-  @Column({ name: 'running', default: false})
+  @Column({ name: 'running', default: false })
   public running!: boolean
 
   @Column({ name: 'component_id' })
