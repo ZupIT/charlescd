@@ -30,6 +30,10 @@ const Modal = styled(ComponentModal.Default)`
       margin-bottom: 15px;
     }
   }
+
+  strong {
+    color: ${({ theme }) => theme.text.light};
+  }
 `;
 
 export default {
