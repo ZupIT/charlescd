@@ -152,13 +152,14 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
             .update(keycloakUser)
     }
 
-    override fun resetPassword(id: String, newPassword: String) {
+    override fun resetPassword(email: String, newPassword: String) {
+        val keycloakUser = loadKeycloakUser(email)
         val credentialRepresentation = CredentialRepresentation()
         credentialRepresentation.type = CredentialRepresentation.PASSWORD
         credentialRepresentation.value = newPassword
         keycloak.realm(this.realm)
             .users()
-            .get(id)
+            .get(keycloakUser.id)
             .resetPassword(credentialRepresentation)
     }
 }
