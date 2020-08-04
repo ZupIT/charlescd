@@ -17,7 +17,7 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.metric.WorkspaceProviderConnectionStatusInteractor
+import io.charlescd.moove.application.metric.WorkspaceMetricConfigurationConnectionStatusInteractor
 import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.*
@@ -25,7 +25,6 @@ import io.charlescd.moove.application.workspace.request.AssociateUserGroupToWork
 import io.charlescd.moove.application.workspace.request.CreateWorkspaceRequest
 import io.charlescd.moove.application.workspace.request.PatchWorkspaceRequest
 import io.charlescd.moove.application.workspace.response.WorkspaceResponse
-import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
@@ -43,7 +42,7 @@ class V2WorkspaceController(
     private val findWorkspaceInteractor: FindWorkspaceInteractor,
     private val findAllWorkspacesInteractor: FindAllWorkspaceInteractor,
     private val findAllWorkspaceUsersInteractor: FindAllWorkspaceUsersInteractor,
-    private val workspaceProviderConnectionStatusInteractor: WorkspaceProviderConnectionStatusInteractor
+    private val workspaceProviderConnectionStatusInteractor: WorkspaceMetricConfigurationConnectionStatusInteractor
 ) {
 
     @ApiOperation(value = "Create a new Workspace")
@@ -134,8 +133,7 @@ class V2WorkspaceController(
     @GetMapping("/{workspaceId}/metrics/provider-status")
     fun verifyProviderConnectionByIdAndWorkspaceId(
         @PathVariable workspaceId: String,
-        @RequestParam providerId: String,
-        @RequestParam providerType: MetricConfiguration.ProviderEnum
+        @RequestParam metricConfigurationId: String
     ): ProviderConnectionResponse =
-        workspaceProviderConnectionStatusInteractor.execute(workspaceId, providerId, providerType)
+        workspaceProviderConnectionStatusInteractor.execute(workspaceId, metricConfigurationId)
 }
