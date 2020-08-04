@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import { getStatus } from '../../helpers';
 import CircleReleasesTable from './CircleReleasesTable';
 import { CircleHistory } from '../interfaces';
 import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
@@ -30,19 +31,12 @@ const CircleRow = ({ circle }: Props) => {
 
   return (
     <Styled.CircleRow>
+      <Styled.StatusLine status={getStatus(circle?.status)}/>
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`circle-row-${circle.id}`}
       >
         <Styled.TableColumn>
-          <Text.h5 color="light">
-            <Styled.Dot
-              active={circle.status === 'ACTIVE'}
-              data-testid="circle-row-dot"
-            />
-          </Text.h5>
-        </Styled.TableColumn>
-        <Styled.TableColumn width={2}>
           <Text.h5 color="light">{circle.name}</Text.h5>
         </Styled.TableColumn>
         <Styled.TableColumn>

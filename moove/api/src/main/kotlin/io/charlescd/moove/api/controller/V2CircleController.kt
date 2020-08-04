@@ -22,10 +22,7 @@ import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
-import io.charlescd.moove.application.circle.response.CircleComponentResponse
-import io.charlescd.moove.application.circle.response.CircleHistoryResponse
-import io.charlescd.moove.application.circle.response.CircleResponse
-import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
+import io.charlescd.moove.application.circle.response.*
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -180,7 +177,7 @@ class V2CircleController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(value = "name", required = false) name: String?,
         pageRequest: PageRequest
-    ): CircleHistoryResponse {
+    ): ResourcePageResponse<CircleHistoryResponse> {
         return circlesHistoryInteractor.execute(workspaceId, name, pageRequest)
     }
 }
