@@ -23,6 +23,7 @@ import io.charlescd.moove.application.deployment.FindDeploymentsHistoryForCircle
 import io.charlescd.moove.application.deployment.response.DeploymentHistoryResponse
 import io.charlescd.moove.domain.ComponentHistory
 import io.charlescd.moove.domain.DeploymentHistoryFilter
+import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.repository.ComponentRepository
 import io.charlescd.moove.domain.repository.DeploymentRepository
@@ -35,13 +36,12 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
 ) : FindDeploymentsHistoryForCircleInteractor {
 
     override fun execute(workspaceId: String, circle: String, pageRequest: PageRequest): ResourcePageResponse<DeploymentHistoryResponse> {
-        val pagedDeploymentsHistory =
-            this.deploymentRepository.findDeploymentsHistory(workspaceId, DeploymentHistoryFilter(circlesIds = listOf(circle)), pageRequest)
+        val pagedDeploymentsHistory = this.deploymentRepository.findDeploymentsHistory(workspaceId, mountHistoryFilter(circle), pageRequest)
 
         val componentsMap = getComponentsAtDeployments(pagedDeploymentsHistory.content.map { it.id }, workspaceId)
 
         return ResourcePageResponse.from(
-            pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.deployedAt },
+            pagedDeploymentsHistory.content.map { DeploymentHistoryResponse.from(it, componentsMap.getValue(it.id)) }.sortedByDescending { it.createdAt },
             pagedDeploymentsHistory.pageNumber,
             pagedDeploymentsHistory.pageSize,
             pagedDeploymentsHistory.isLast(),
@@ -57,4 +57,9 @@ class FindDeploymentsHistoryForCircleInteractorImpl(
                 .groupBy { it.deploymentId }
         }
     }
+
+    private fun mountHistoryFilter(circleId: String) = DeploymentHistoryFilter(
+        circlesIds = listOf(circleId),
+        deploymentStatus = listOf(DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED)
+    )
 }
