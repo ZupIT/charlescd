@@ -33,10 +33,18 @@ test('render Deploy default screen', async () => {
 test('reset chart button', async () => {
   render(<Deploy />);
 
+  const onReset = jest.fn();
+  delete window.ApexCharts;
+
+  window.ApexCharts = {
+    exec: onReset
+  };
+
   await wait();
-  
+
   const chartMenu = screen.getByTestId('icon-horizontal-dots');
   fireEvent.click(chartMenu);
+  fireEvent.click(screen.getByText('Reset'));
 
-  expect(screen.getByText('Reset')).toBeInTheDocument();
+  expect(onReset).toHaveBeenCalled();
 })
