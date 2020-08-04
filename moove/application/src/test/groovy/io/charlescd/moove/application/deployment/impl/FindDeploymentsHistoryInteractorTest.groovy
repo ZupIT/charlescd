@@ -32,7 +32,7 @@ class FindDeploymentsHistoryInteractorTest extends Specification {
 
     def findDeploymentHistoryIteractor = new FindDeploymentsHistoryInteractorImpl(componentRepository, deploymentRepository)
 
-    def workspaceId = "workspaceId"
+    def workspaceId = "workspace-id"
     def pageRequest = new PageRequest(0, 10)
 
     def 'should not call components search when no deployment found'() {

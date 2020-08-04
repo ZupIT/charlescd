@@ -45,8 +45,10 @@ export const circleReleaseMock = {
   tag: 'release 1',
   deployedAt: '2020-07-12 19:10:26',
   undeployedAt: '2020-07-11 19:10:26',
+  createdAt: '2020-07-04 13:10:26',
   authorName: 'Jhon Doe',
-  components: releaseComponentsMock
+  components: releaseComponentsMock,
+  status: 'DEPLOYED'
 }
 
 export const circlesReleasesMock = {
