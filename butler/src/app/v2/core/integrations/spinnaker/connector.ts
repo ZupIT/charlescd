@@ -42,23 +42,20 @@ export class SpinnakerConnector {
 
     this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')
     return { status: 'SUCCEEDED' }
-    // this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_DELOYMENT', { error })
-    // throw error // TODO
   }
 
   private async createSpinnakerApplication(cdConfiguration: CdConfiguration): Promise<void> {
-    const applicationName: string = cdConfiguration.id
+    const applicationName = `app-${cdConfiguration.id}`
     const spinnakerUrl: string = (cdConfiguration.configurationData as ISpinnakerConfigurationData).url
 
     try {
-      this.consoleLoggerService.log('START:GET_V2_SPINNAKER_APPLICATION', { applicationName })
-      const apiReturn1 = await this.spinnakerApiService.getApplication(applicationName, spinnakerUrl).toPromise()
-      this.consoleLoggerService.log('GET_APPLICATION_RETURN', { apiReturn1 })
+      this.consoleLoggerService.log('START:GET_V2_SPINNAKER_APPLICATION', { applicationName, spinnakerUrl })
+      await this.spinnakerApiService.getApplication(applicationName, spinnakerUrl).toPromise()
     } catch (error) {
       this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_APPLICATION')
       const spinnakerApplication: ICreateSpinnakerApplication = this.getSpinnakerApplicationObject(applicationName)
-      const apiReturn = await this.spinnakerApiService.createApplication(spinnakerApplication, spinnakerUrl).toPromise()
-      this.consoleLoggerService.log('CREATE_APPLICATION_RETURN', { apiReturn })
+      this.consoleLoggerService.log('GET:SPINNAKER_APPLICATION_OBJECT', { spinnakerApplication })
+      await this.spinnakerApiService.createApplication(spinnakerApplication, spinnakerUrl).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_APPLICATION')
     }
   }
@@ -101,11 +98,11 @@ export class SpinnakerConnector {
         application: {
           cloudProviders: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_CLOUD,
           instancePort: AppConstants.SPINNAKER_CREATE_APPLICATION_PORT,
-          name: `app-${applicationName}`,
+          name: applicationName,
           email: AppConstants.SPINNAKER_CREATE_APPLICATION_DEFAULT_EMAIL
         }
       }],
-      application: `app-${applicationName}`
+      application: applicationName
     }
   }
 }

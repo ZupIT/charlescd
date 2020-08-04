@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ConnectorResult, Deployment, SpinnakerPipeline } from './interfaces'
+import { Component, Deployment, SpinnakerPipeline } from './interfaces'
 import { ExpectedArtifact, Stage } from './interfaces/spinnaker-pipeline.interface'
 import {
   getBakeStage,
@@ -116,7 +116,7 @@ export class SpinnakerPipelineBuilder {
     const evalStageId: number = this.currentStageId - 1
     deployment?.components?.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
-      const unusedComponent: Component | undefined = this.getSameCircleActiveComponent(activeByName, deployment.circleId)
+      const unusedComponent: Component | undefined = this.getUnusedComponent(activeByName, component, deployment.circleId)
       if (unusedComponent) {
         stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
       }
@@ -136,8 +136,14 @@ export class SpinnakerPipelineBuilder {
     return activeComponents.filter(component => component.name === name)
   }
 
-  private getSameCircleActiveComponent(activeComponents: Component[], circleId: string | null): Component | undefined {
-    return activeComponents
-      .find(component => component.deployment && component.deployment.circleId === circleId)
+  private getUnusedComponent(activeComponents: Component[], component: Component, circleId: string | null): Component | undefined {
+    const sameCircleComponent = activeComponents.find(activeComponent => activeComponent.deployment?.circleId === circleId)
+    const sameTagComponents = sameCircleComponent ?
+      activeComponents.filter(activeComponent => activeComponent.imageTag === sameCircleComponent.imageTag) :
+      []
+
+    return sameTagComponents.length === 1 ?
+      sameCircleComponent :
+      undefined
   }
 }
