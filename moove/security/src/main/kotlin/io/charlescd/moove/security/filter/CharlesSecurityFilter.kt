@@ -38,6 +38,9 @@ import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import javax.ws.rs.ClientErrorException
+import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.core.Response
 
 @Component
 @Profile("!local")
