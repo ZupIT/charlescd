@@ -47,7 +47,7 @@ class FindAllBuildsInteractorImplTest extends Specification {
         def buildPageResponse = this.findAllBuildsInteractor.execute(tagName, status, workspaceId, pageRequest)
 
         then:
-        1 * this.buildRepository.find(_, _, _, _) >> { arguments ->
+        1 * this.buildRepository.findActiveBuilds(_, _, _, _) >> { arguments ->
             def tagNameArg = arguments[0]
             def statusArg = arguments[1]
             def workspaceIdArg = arguments[2]
@@ -88,7 +88,7 @@ class FindAllBuildsInteractorImplTest extends Specification {
         def buildPageResponse = this.findAllBuildsInteractor.execute(tagName, status, workspaceId, pageRequest)
 
         then:
-        1 * this.buildRepository.find(_, _, _, _) >> { arguments ->
+        1 * this.buildRepository.findActiveBuilds(_, _, _, _) >> { arguments ->
             def tagNameArg = arguments[0]
             def statusArg = arguments[1]
             def workspaceIdArg = arguments[2]

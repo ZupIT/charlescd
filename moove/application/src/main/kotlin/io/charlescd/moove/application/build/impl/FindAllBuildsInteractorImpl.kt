@@ -38,7 +38,7 @@ class FindAllBuildsInteractorImpl @Inject constructor(
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<BuildResponse> {
-        return convert(buildService.find(tagName, status, workspaceId, pageRequest))
+        return convert(buildService.findActiveBuilds(tagName, status, workspaceId, pageRequest))
     }
 
     private fun convert(page: Page<Build>): ResourcePageResponse<BuildResponse> {

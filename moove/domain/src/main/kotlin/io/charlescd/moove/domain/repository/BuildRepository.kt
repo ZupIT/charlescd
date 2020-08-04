@@ -36,4 +36,6 @@ interface BuildRepository {
     fun delete(build: Build)
 
     fun saveArtifacts(artifacts: List<ArtifactSnapshot>)
+
+    fun findActiveBuilds(tag: String?, status: BuildStatusEnum?, workspaceId: String, page: PageRequest): Page<Build>
 }
