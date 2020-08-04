@@ -1,5 +1,5 @@
 function chargeLayout(isDefault, data) {
-  const r = isDefault && data.type === 'circle' ? 50 : 3;
+  const r = isDefault && data.type === 'circle' ? 70 : 3;
   return r * -10;
 }
 
