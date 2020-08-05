@@ -17,6 +17,7 @@
 package io.charlescd.moove.domain
 
 import com.fasterxml.jackson.databind.JsonNode
+import java.time.Duration
 import java.time.LocalDateTime
 
 data class Circle(
@@ -44,4 +45,12 @@ data class Circle(
 data class SimpleCircle(
     val id: String,
     val name: String
+)
+
+data class CircleHistory(
+    val id: String,
+    val status: CircleStatusEnum,
+    val name: String,
+    val lastUpdatedAt: LocalDateTime,
+    val lifeTime: Duration
 )

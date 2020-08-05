@@ -34,7 +34,9 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
         val deployment = updateDeploymentInfo(findDeployment(id), request)
-        updateStatusOfPreviousDeployment(deployment.circle.id)
+        if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
+            updateStatusOfPreviousDeployment(deployment.circle.id)
+        }
         updateDeployment(deployment)
     }
 
@@ -49,7 +51,10 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
                 deployedAt = LocalDateTime.now()
             )
             DeploymentRequestStatus.FAILED -> deployment.copy(status = DeploymentStatusEnum.DEPLOY_FAILED)
-            DeploymentRequestStatus.UNDEPLOYED -> deployment.copy(status = DeploymentStatusEnum.NOT_DEPLOYED)
+            DeploymentRequestStatus.UNDEPLOYED -> deployment.copy(
+                status = DeploymentStatusEnum.NOT_DEPLOYED,
+                undeployedAt = LocalDateTime.now()
+            )
             DeploymentRequestStatus.UNDEPLOY_FAILED -> deployment.copy(status = DeploymentStatusEnum.DEPLOYED)
         }
     }
