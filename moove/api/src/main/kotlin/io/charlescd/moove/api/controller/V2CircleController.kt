@@ -22,9 +22,7 @@ import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
-import io.charlescd.moove.application.circle.response.CircleComponentResponse
-import io.charlescd.moove.application.circle.response.CircleResponse
-import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
+import io.charlescd.moove.application.circle.response.*
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -47,7 +45,8 @@ class V2CircleController(
     private val findCircleComponentsInteractor: FindCircleComponentsInteractor,
     private val createCircleWithCsvFileInteractor: CreateCircleWithCsvFileInteractor,
     private val updateCircleWithCsvFileInteractor: UpdateCircleWithCsvFileInteractor,
-    private val identifyCircleInteractor: IdentifyCircleInteractor
+    private val identifyCircleInteractor: IdentifyCircleInteractor,
+    private val circlesHistoryInteractor: FindCirclesHistoryInteractor
 ) {
 
     @ApiOperation(value = "Find all")
@@ -169,5 +168,16 @@ class V2CircleController(
         @Valid @RequestBody request: Map<String, Any>
     ): List<IdentifyCircleResponse> {
         return identifyCircleInteractor.execute(workspaceId, request)
+    }
+
+    @ApiOperation(value = "Find circle history")
+    @GetMapping(path = ["/history"])
+    @ResponseStatus(HttpStatus.OK)
+    fun getHistory(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam(value = "name", required = false) name: String?,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<CircleHistoryResponse> {
+        return circlesHistoryInteractor.execute(workspaceId, name, pageRequest)
     }
 }
