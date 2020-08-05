@@ -22,6 +22,7 @@ import io.charlescd.moove.metrics.domain.MetricType
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsHealthInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCircleComponentsPeriodMetricInteractor
 import io.charlescd.moove.metrics.interactor.RetrieveCirclePeriodMetricInteractor
+import io.charlescd.moove.metrics.interactor.impl.RetrieveCirclesMetricsInteractorImpl
 import io.charlescd.moove.metrics.interactor.impl.RetrieveDeploymentsMetricsInteractorImpl
 import spock.lang.Specification
 
@@ -33,13 +34,15 @@ class MetricsControllerUnitTest extends Specification {
     def retrieveCirclePeriodMetric = Mock(RetrieveCirclePeriodMetricInteractor)
     def retrieveCircleComponentsHealth = Mock(RetrieveCircleComponentsHealthInteractor)
     def retrieveDeploymentsMetric = Mock(RetrieveDeploymentsMetricsInteractorImpl)
-    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric, retrieveCircleComponentsHealth, retrieveDeploymentsMetric)
+    def retrieveCirclesMetrics = Mock(RetrieveCirclesMetricsInteractorImpl)
+    def metricsController = new MetricsController(retrieveCircleComponentsPeriodMetric, retrieveCirclePeriodMetric,
+            retrieveCircleComponentsHealth, retrieveDeploymentsMetric, retrieveCirclesMetrics)
 
 
     def circleId = "circle-id"
     def workspaceId = "workspace-id"
 
-    def 'should get circle metrics'() {
+    def 'should get circle instant metrics'() {
         given:
         def period = ProjectionType.ONE_HOUR
         def metricType = MetricType.REQUESTS_BY_CIRCLE
@@ -141,12 +144,12 @@ class MetricsControllerUnitTest extends Specification {
                                               new DeploymentAverageTimeInPeriodRepresentation(175, LocalDate.of(2020, 06, 21)),
                                               new DeploymentAverageTimeInPeriodRepresentation(230, LocalDate.of(2020, 06, 20))]
 
-        def successfulDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(32, 155, LocalDate.of(2020, 06, 22)),
-                                                  new DeploymentStatsInPeriodRepresentation(28, 235, LocalDate.of(2020, 06, 21)),
-                                                  new DeploymentStatsInPeriodRepresentation(17, 200, LocalDate.of(2020, 06, 20))]
+        def successfulDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(32, LocalDate.of(2020, 06, 22)),
+                                                  new DeploymentStatsInPeriodRepresentation(28, LocalDate.of(2020, 06, 21)),
+                                                  new DeploymentStatsInPeriodRepresentation(17, LocalDate.of(2020, 06, 20))]
 
-        def failedDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(8, 0, LocalDate.of(2020, 06, 22)),
-                                              new DeploymentStatsInPeriodRepresentation(5, 0, LocalDate.of(2020, 06, 20))]
+        def failedDeploymentsStatsInPeriod = [new DeploymentStatsInPeriodRepresentation(8, LocalDate.of(2020, 06, 22)),
+                                              new DeploymentStatsInPeriodRepresentation(5, LocalDate.of(2020, 06, 20))]
 
         def deploymentMetricsRepresentation = new DeploymentMetricsRepresentation(123, 12, 300,
                 successfulDeploymentsStatsInPeriod, failedDeploymentsStatsInPeriod, deploymentsAverageTimeInPeriod)
@@ -165,6 +168,22 @@ class MetricsControllerUnitTest extends Specification {
         response.successfulDeploymentsInPeriod.size() == 3
         response.failedDeploymentsInPeriod.size() == 2
         response.deploymentsAverageTimeInPeriod.size() == 3
+    }
+
+    def 'should get circle general metrics'() {
+        given:
+        def circleMetricsRepresentation = new CirclesMetricsRepresentation(new CircleStatsRepresentation(10, 8), 50000)
+
+        when:
+        def response = metricsController.getCircleGeneralMetrics(workspaceId)
+
+        then:
+        1 * retrieveCirclesMetrics.execute(workspaceId) >> circleMetricsRepresentation
+        0 * _
+
+        response.averageLifeTime == 50000
+        response.circleStats.active == 10
+        response.circleStats.inactive == 8
     }
 
 }
