@@ -99,6 +99,7 @@ class MaestroToRepresentationTest {
         assertNotNull(representation)
         assertEquals(representation.id, deployment.id)
     }
+
     @Test
     fun `should convert deployment to default representation`() {
         val node = mockkClass(JsonNode::class)
@@ -112,6 +113,21 @@ class MaestroToRepresentationTest {
 
         assertNotNull(representation)
         assertEquals(representation.id, deployment.id)
+    }
+
+    @Test
+    fun `should convert deployment to basic representation`() {
+        val node = mockkClass(JsonNode::class)
+        val cardColumn = mockkClass(CardColumn::class)
+        val user = createUser()
+        val circle = createCircle(node, user)
+        val build = createBuild(user, cardColumn)
+        val deployment = createDeployment(user, circle, build)
+
+        val simpleRepresentation = deployment.toBasicRepresentation()
+
+        assertNotNull(simpleRepresentation)
+        assertEquals(simpleRepresentation.id, deployment.id)
     }
 
     @Test
