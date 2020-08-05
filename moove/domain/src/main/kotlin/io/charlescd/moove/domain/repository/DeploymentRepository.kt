@@ -41,17 +41,27 @@ interface DeploymentRepository {
 
     fun deleteByCircleId(circleId: String)
 
-    fun countBetweenTodayAndDaysPastGroupingByStatus(workspaceId: String, circlesId: List<String>, numberOfDays: Int): List<DeploymentGeneralStats>
+    fun countBetweenTodayAndDaysPastGroupingByStatus(workspaceId: String, circlesId: List<String>?, numberOfDays: Int): List<DeploymentGeneralStats>
 
     fun countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentStats>
 
     fun averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(
         workspaceId: String,
-        circlesId: List<String>,
+        circlesId: List<String>?,
         numberOfDays: Int
     ): List<DeploymentAverageTimeStats>
+
+    fun findDeploymentsHistory(
+        workspaceId: String,
+        filters: DeploymentHistoryFilter,
+        pageRequest: PageRequest
+    ): Page<DeploymentHistory>
+
+    fun count(workspaceId: String, filters: DeploymentHistoryFilter): Int
+
+    fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount>
 }
