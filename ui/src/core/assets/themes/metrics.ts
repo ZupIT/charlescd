@@ -30,7 +30,9 @@ import {
   COLOR_SANTAS_GREY,
   COLOR_PAYNES_GREY,
   COLOR_BASTILLE,
-  COLOR_WHITE
+  COLOR_FREE_SPEECH_BLUE,
+  COLOR_WHITE,
+  COLOR_PURPLE_HEART
 } from 'core/assets/colors';
 
 export const light = {};
@@ -53,6 +55,10 @@ export const dark = {
     latency: COLOR_GOLD,
     requestCircle: COLOR_MALACHITE
   },
+  provider: {
+    success: COLOR_MALACHITE,
+    error: COLOR_RED_ORANGE
+  },
   health: {
     cardBackground: COLOR_BLACK_MARLIN,
     cardModules: COLOR_PAYNES_GREY,
@@ -71,6 +77,42 @@ export const dark = {
       error: COLOR_RED_ORANGE,
       labels: COLOR_WHITE,
       border: COLOR_PAYNES_GREY
+    }
+  },
+  circles: {
+    filter: COLOR_BLACK_MARLIN,
+    active: COLOR_FREE_SPEECH_BLUE,
+    inactive: COLOR_MAYA_BLUE,
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deploying: COLOR_DODGER_BLUE,
+    error: COLOR_RED_ORANGE,
+    undeploying: COLOR_FREE_SPEECH_BLUE,
+    notDeployed: COLOR_PURPLE_HEART,
+    history: {
+      circleRow: {
+        background: COLOR_BLACK_MARLIN
+      },
+      releaseRow: {
+        background: COLOR_PAYNES_GREY
+      },
+      componentRow: {
+        background: COLOR_BLACK_MARLIN
+      }
+    }
+  },
+  deploy: {
+    deployed: COLOR_MOUNTAIN_MEADOW,
+    deploying: COLOR_DODGER_BLUE,
+    error: COLOR_RED_ORANGE,
+    undeploying: COLOR_FREE_SPEECH_BLUE,
+    notDeployed: COLOR_PURPLE_HEART,
+    release: {
+      releaseRow: {
+        background: COLOR_BLACK_MARLIN
+      },
+      componentRow: {
+        background: COLOR_PAYNES_GREY
+      }
     }
   }
 };

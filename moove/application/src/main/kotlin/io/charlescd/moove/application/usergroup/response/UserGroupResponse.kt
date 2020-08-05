@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.usergroup.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.domain.UserGroup
 import java.time.LocalDateTime
@@ -24,6 +25,7 @@ data class UserGroupResponse(
     val id: String,
     val name: String,
     val author: SimpleUserResponse,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime,
     val users: List<SimpleUserResponse>
 ) {
