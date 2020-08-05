@@ -42,15 +42,6 @@ class BuildService(private val buildRepository: BuildRepository) {
     }
 
     fun find(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
-        return this.buildRepository.find(
-            tag,
-            status,
-            workspaceId,
-            pageRequest
-        )
-    }
-
-    fun findActiveBuilds(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
         return this.buildRepository.findActiveBuilds(
             tag,
             status,
