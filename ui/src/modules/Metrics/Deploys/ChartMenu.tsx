@@ -23,7 +23,7 @@ type Props = {
 };
 
 const ChartMenu = ({ onReset }: Props) => (
-  <Styled.ChartMenu>
+  <Styled.ChartMenu data-testid="chart-menu">
     <Dropdown icon="horizontal-dots" size="24px">
       <Dropdown.Item icon="refresh" name="Reset" onClick={onReset} />
     </Dropdown>

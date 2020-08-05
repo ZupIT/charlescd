@@ -21,7 +21,6 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import io.charlescd.moove.domain.DeploymentStats
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import java.sql.ResultSet
-import java.time.Duration
 import java.time.LocalDate
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -42,12 +41,6 @@ class DeploymentStatsExtractor : ResultSetExtractor<Set<DeploymentStats>> {
     private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentStats(
         total = resultSet.getInt("deployment_quantity"),
         deploymentStatus = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
-        averageTime = Duration.parse(formatIntervalToDurationStringFormat(resultSet.getString("deployment_average_time"))),
         date = LocalDate.parse(resultSet.getString("deployment_date"))
     )
-
-    private fun formatIntervalToDurationStringFormat(interval: String): String {
-        val splittedInterval = interval.split(":")
-        return "PT${splittedInterval[0]}H${splittedInterval[1]}M${splittedInterval[2]}S"
-    }
 }

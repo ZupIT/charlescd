@@ -1,0 +1,22 @@
+enabled: true
+name: dragonboarding
+replicaCount: 1
+image:
+  repository: dragonboarding
+  tag: latest
+  pullPolicy: Always
+service:
+  name: dragonboarding
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+resources:
+  limits:
+    cpu: 128m
+    memory: 128Mi
+  requests:
+    cpu: 64m
+    memory: 64Mi
+sidecarIstio:
+  enabled: true
