@@ -14,32 +14,27 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import { useForm } from 'react-hook-form';
 import Loader from '../Loaders/index';
 import { normalizeCircleParams } from '../helpers';
 import { useDeployMetric } from './hooks';
-import averageTimeOptions from './averageTime.options';
 import deployOptions from './deploy.options';
 import { periodFilterItems } from './constants';
 import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
-import {
-  getDeploySeries,
-  getAverageTimeSeries,
-  getPlotOption
-} from './helpers';
+import { getDeploySeries, getPlotOption } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import isUndefined from 'lodash/isUndefined';
+import ReleasesHistoryComponent from './Release';
+import { ReleaseHistoryRequest } from './interfaces';
 
 const Deploys = () => {
   const { searchDeployMetrics, response, loading } = useDeployMetric();
   const { control, handleSubmit, getValues, setValue } = useForm();
-
   const deploySeries = getDeploySeries(response);
-  const averageTimeSeries = getAverageTimeSeries(response);
 
   const plotOptions = getPlotOption(deploySeries);
   const deployChartOption = isUndefined(plotOptions)
@@ -50,10 +45,16 @@ const Deploys = () => {
     searchDeployMetrics({ period: periodFilterItems[0].value });
   }, [searchDeployMetrics]);
 
+  const [filter, setFilter] = useState<ReleaseHistoryRequest>({
+    period: periodFilterItems[0].value,
+    circles: []
+  });
+
   const onSubmit = () => {
     const { circles, period } = getValues();
     const circleIds = normalizeCircleParams(circles);
-    searchDeployMetrics({ period: period, circles: circleIds });
+    setFilter({ period, circles: circleIds });
+    searchDeployMetrics({ period, circles: circleIds });
   };
 
   const resetChart = (chartId: string) => {
@@ -63,7 +64,10 @@ const Deploys = () => {
   return (
     <Styled.Content data-testid="metrics-deploy">
       <Styled.Card width="531px" height="79px">
-        <Styled.FilterForm onSubmit={handleSubmit(onSubmit)}>
+        <Styled.FilterForm
+          onSubmit={handleSubmit(onSubmit)}
+          data-testid="metrics-filter"
+        >
           <Styled.SingleSelect
             label="Select a timestamp"
             name="period"
@@ -72,7 +76,12 @@ const Deploys = () => {
             defaultValue={periodFilterItems[0]}
           />
           <CircleFilter control={control} setValue={setValue} />
-          <Styled.Button type="submit" size="EXTRA_SMALL" isLoading={loading}>
+          <Styled.Button
+            type="submit"
+            size="EXTRA_SMALL"
+            isLoading={loading}
+            data-testid="metrics-deploy-apply"
+          >
             <Text.h5 weight="bold" align="center" color="light">
               Apply
             </Text.h5>
@@ -106,34 +115,16 @@ const Deploys = () => {
           </Text.h1>
         </Styled.Card>
       </Styled.Plates>
-      <Styled.Card width="1220px" height="521px">
-        <Styled.ChartControls>
-          <Text.h2 color="light" weight="bold">
-            Deploy
-          </Text.h2>
-          <ChartMenu onReset={() => resetChart('chartDeploy')} />
-        </Styled.ChartControls>
-        <Styled.ColumnChart
+      <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">
+        <ChartMenu onReset={() => resetChart('chartDeploy')} />
+        <Styled.MixedChart
           options={deployChartOption}
           series={deploySeries}
           width={1180}
-          height={450}
+          height={495}
         />
       </Styled.Card>
-      <Styled.Card width="1220px" height="521px">
-        <Styled.ChartControls>
-          <Text.h2 color="light" weight="bold">
-            Average time
-          </Text.h2>
-          <ChartMenu onReset={() => resetChart('chartAverageTime')} />
-        </Styled.ChartControls>
-        <Styled.AreaChart
-          options={averageTimeOptions}
-          series={averageTimeSeries}
-          width={1180}
-          height={450}
-        />
-      </Styled.Card>
+      <ReleasesHistoryComponent filter={filter} />
     </Styled.Content>
   );
 };

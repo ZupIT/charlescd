@@ -194,7 +194,8 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         status = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
         circle = mapCircle(resultSet),
         buildId = resultSet.getString("deployment_build_id"),
-        workspaceId = resultSet.getString("deployment_workspace_id")
+        workspaceId = resultSet.getString("deployment_workspace_id"),
+        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime()
     )
 
     private fun mapDeploymentUser(resultSet: ResultSet) = User(
