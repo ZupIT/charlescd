@@ -21,34 +21,45 @@ async function getResponse(response) {
   try {
     return await response.json();
   } catch (e) {
-    throw Error(e);
+    return {}
   }
 }
 
 async function listCircles() {
   const moove = document.querySelector('#moove-url');
+  const activePath = `${moove.value}/v2/circles?active=true`;
+  const inactivePath = `${moove.value}/v2/circles?active=false`;
 
   errorMessage();
 
   try {
-    const response = await fetch(moove.value, { method: 'GET', headers: getHeaders() });
-    const data = await getResponse(response);
+    const responses = await Promise.all([
+      fetch(activePath, { method: 'GET', headers: getHeaders() }),
+      fetch(inactivePath, { method: 'GET', headers: getHeaders() }),
+    ]);
 
-    if (data && data.content) {
-      resetSVG();
-      initDefaultCircle(data.content);
-      hideElement('#form-config');
-      showElement('#form-request');
-    }
+    const contents = await Promise.all([
+      getResponse(responses[0]),
+      getResponse(responses[1])
+    ]);
+
+    const circles = contents.reduce((circles, current) => {
+      return circles.concat(current.content || []);
+    }, []);
+
+    resetSVG();
+    initDefaultCircle(circles);
+    hideElement('#form-config');
+    showElement('#form-request');
+    
   } catch (e) {
     errorMessage(e);
   }
 }
 
 async function tryOut() {
-  // const moove = document.querySelector('#moove-url');
-  // const identify = `${moove.value}/v2/circles/identify`;
-  const identify = 'https://run.mocky.io/v3/d7c6fff9-5162-4a85-b1ab-48ebb44c3f80';
+  const moove = document.querySelector('#moove-url');
+  const identify = `${moove.value}/v2/circles/identify`;
 
   try {
     const response = await fetch(identify, { 
