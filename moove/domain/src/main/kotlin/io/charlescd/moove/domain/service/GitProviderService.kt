@@ -24,5 +24,4 @@ import io.charlescd.moove.domain.GitCredentials
 interface GitProviderService {
 
     fun createReleaseCandidates(build: Build, credentials: GitCredentials)
-
 }
