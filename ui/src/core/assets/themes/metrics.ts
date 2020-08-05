@@ -55,6 +55,10 @@ export const dark = {
     latency: COLOR_GOLD,
     requestCircle: COLOR_MALACHITE
   },
+  provider: {
+    success: COLOR_MALACHITE,
+    error: COLOR_RED_ORANGE
+  },
   health: {
     cardBackground: COLOR_BLACK_MARLIN,
     cardModules: COLOR_PAYNES_GREY,

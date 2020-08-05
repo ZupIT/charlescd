@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
+import React from 'react';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { MetricConfiguration } from './fixtures';
+import MetricProvider from '../index';
 
-export interface Provider {
-  label: string;
-  value: string;
-  icon?: string;
-}
+test('render Metrics Provider default component', async () => {
+  const setForm = jest.fn();
+  render(
+    <MetricProvider form={null} setForm={setForm} data={MetricConfiguration}/>
+  );
 
-export interface MetricProvider {
-  provider: string;
-  authorId?: string;
-  url: string;
-}
+  await wait();
 
-export interface TestConnectionResponse {
-  status?: string;
-}
-
-export enum ConnectionStatusEnum {
-  FAILED = 'FAILED',
-  SUCCESS = 'SUCCESS'
-}
-
-export interface Response {
-  id: string;
-  provider: string;
-}
+  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+  expect(screen.getByText('PROMETHEUS')).toBeInTheDocument();
+});
