@@ -21,7 +21,6 @@ import { AllTheProviders } from "unit-test/testUtils";
 import CirclesComparationItem from '..';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Actions, Subjects } from 'core/utils/abilities';
-import { debug } from 'console';
 
 (global as any).MutationObserver = MutationObserver
 
