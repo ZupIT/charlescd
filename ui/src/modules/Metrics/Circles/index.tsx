@@ -14,25 +14,62 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { humanizeDateFromSeconds } from 'core/utils/date';
+import Text from 'core/components/Text';
+import HistoryComponent from './History';
+import Loader from '../Loaders/index';
+import { useCircles } from './hooks';
 import Styled from './styled';
 
 const Circles = () => {
+  const { findAllCirclesData, response, loading } = useCircles();
+  const totalCircles =
+    response?.circleStats?.active + response?.circleStats?.inactive;
+
+  useEffect(() => {
+    findAllCirclesData();
+  }, [findAllCirclesData]);
+
   return (
-    <Styled.Content>
-      <Styled.MiniCard>
-        <span>Circle 1</span>
-      </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 2</span>
-      </Styled.MiniCard>
-      <Styled.MiniCard>
-        <span>Circle 3</span>
-      </Styled.MiniCard>
-      <Styled.Chart>
-        <span>Circle 4</span>
-      </Styled.Chart>
-    </Styled.Content>
+    <>
+      <Styled.Content data-testid="metrics-circles">
+        <Styled.MiniCard>
+          {loading ? (
+            <Loader.CircleCard />
+          ) : (
+            <>
+              <Styled.CirclesData color="light">
+                {`${totalCircles}`}
+              </Styled.CirclesData>
+              <Styled.CirclesDataDetail>
+                <Text.h4 color="light">
+                  Actives: {response?.circleStats?.active}
+                </Text.h4>
+                <Text.h4 color="light">
+                  Inactives: {response?.circleStats?.inactive}
+                </Text.h4>
+              </Styled.CirclesDataDetail>
+            </>
+          )}
+        </Styled.MiniCard>
+        <Styled.MiniCard>
+          <Styled.CirclesData>
+            <Text.h4 color="light">Average life time</Text.h4>
+            <Text.h1 color="light">
+              {loading ? (
+                <Loader.CircleAverageTime />
+              ) : (
+                `${humanizeDateFromSeconds(response?.averageLifeTime)}`
+              )}
+            </Text.h1>
+          </Styled.CirclesData>
+        </Styled.MiniCard>
+      </Styled.Content>
+      <Styled.Content>
+        <HistoryComponent />
+      </Styled.Content>
+    </>
   );
 };
 
