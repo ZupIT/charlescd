@@ -17,10 +17,7 @@
 package io.charlescd.moove.commons
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.charlescd.moove.commons.extension.toManyDeploymentsRepresentation
-import io.charlescd.moove.commons.extension.toManyDeploymentsSimpleRepresentation
-import io.charlescd.moove.commons.extension.toRepresentation
-import io.charlescd.moove.commons.extension.toSimpleRepresentation
+import io.charlescd.moove.commons.extension.*
 import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
@@ -98,6 +95,20 @@ class MaestroToRepresentationTest {
         val deployment = createDeployment(user, circle, build)
 
         val representation = deployment.toRepresentation()
+
+        assertNotNull(representation)
+        assertEquals(representation.id, deployment.id)
+    }
+    @Test
+    fun `should convert deployment to default representation`() {
+        val node = mockkClass(JsonNode::class)
+        val cardColumn = mockkClass(CardColumn::class)
+        val user = createUser()
+        val circle = createCircle(node, user)
+        val build = createBuild(user, cardColumn)
+        val deployment = createDeployment(user, circle, build)
+
+        val representation = deployment.toDefaultRepresentation()
 
         assertNotNull(representation)
         assertEquals(representation.id, deployment.id)
