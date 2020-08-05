@@ -37,7 +37,12 @@ const Switch = ({ label, active, onChange, name }: Props) => {
 
   return (
     <Styled.Switch>
-      <Styled.Input data-testid={id} type="checkbox" checked={isActive} onChange={onSwitch} />
+      <Styled.Input
+        data-testid={id}
+        type="checkbox"
+        checked={isActive}
+        onChange={onSwitch}
+      />
       <Styled.Toggle />
       <Text.h4 color="dark">{label}</Text.h4>
     </Styled.Switch>

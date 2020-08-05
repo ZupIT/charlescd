@@ -23,7 +23,7 @@ import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
 import { useRegistry } from './hooks';
-import { radios, awsRadios } from './constants';
+import { radios } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
@@ -66,13 +66,13 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="region"
           label="Enter the region"
         />
-        <Switch 
-            name="aws-auth-handler"
-            label="Enable access and secret key" 
-            active={awsUseSecret} 
-            onChange={() => setAwsUseSecret(!awsUseSecret)} 
+        <Switch
+          name="aws-auth-handler"
+          label="Enable access and secret key"
+          active={awsUseSecret}
+          onChange={() => setAwsUseSecret(!awsUseSecret)}
         />
-        { awsUseSecret ? (
+        {awsUseSecret ? (
           <>
             <Form.Password
               ref={register({ required: true })}
