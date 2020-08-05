@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo } from 'react';
+import React from 'react';
 import startsWith from 'lodash/startsWith';
 import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
@@ -46,4 +46,4 @@ const MenuItem = ({ id, icon, name, path }: Props) => {
   );
 };
 
-export default memo(MenuItem);
+export default MenuItem;
