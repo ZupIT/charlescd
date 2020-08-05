@@ -24,7 +24,7 @@ const PROJECTION_TYPE = {
   EIGHT_HOUR: 'EIGHT_HOUR'
 };
 
-const CircleMetricsData = {
+const circleMetricsData = {
   period: {
     value: 1,
     label: 'h'
@@ -53,7 +53,7 @@ const CircleMetricsData = {
   ]
 };
 
-const CirclesMetrics = [
+const circlesMetrics = [
   {
     circleId: 'f52eda57-5607-4306-te33-477eg398cc2a',
     projectionType: PROJECTION_TYPE,
@@ -71,7 +71,7 @@ const CirclesMetrics = [
   }
 ];
 
-const DeployMetrics = () => ({
+const deployMetrics = () => ({
   successfulDeployments: 27,
   failedDeployments: 0,
   successfulDeploymentsAverageTime: 87,
@@ -151,38 +151,606 @@ const DeployMetrics = () => ({
   ],
   deploymentsAverageTimeInPeriod: [
     {
-      averageTime: 203,
+      averageTime: random(0, 203),
       period: '08-12-2020'
     },
     {
-      averageTime: 102,
+      averageTime: random(0, 102),
       period: '08-13-2020'
     },
     {
-      averageTime: 330,
+      averageTime: random(0, 330),
       period: '08-14-2020'
     },
     {
-      averageTime: 83,
+      averageTime: random(0, 83),
       period: '08-15-2020'
     },
     {
-      averageTime: 26,
+      averageTime: random(0, 26),
       period: '08-16-2020'
     },
     {
-      averageTime: 150,
+      averageTime: random(0, 150),
       period: '08-17-2020'
     },
     {
-      averageTime: 203,
+      averageTime: random(0, 203),
       period: '08-18-2020'
     }
   ]
 });
 
+const circlesHistory = {
+  page: {
+    content: [
+      {
+        id: 'abc-123',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1234',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1235',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-126',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-1237',
+        status: 'ACTIVE',
+        name: 'Circle A',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      },
+      {
+        id: 'abc-123',
+        status: 'INACTIVE',
+        name: 'Circle B',
+        lastUpdatedAt: '2020-07-12 10:25:38',
+        lifeTime: 345465
+      }
+    ],
+    page: 0,
+    size: 1,
+    isLast: false,
+    totalPages: 1
+  }
+};
+
+const allCircleReleases = {
+  content: [
+    {
+      id: 'dnsafjhf',
+      tag: 'release-darwin-new-repos',
+      deployedAt: null,
+      undeployedAt: null,
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhf',
+      tag: 'release-darwin-new-repos',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhf',
+      tag: 'release-darwin-new-repos',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'jfdhfuhfds',
+      tag: 'release-darwin-new-test',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    },
+    {
+      id: 'dnsafjhffdsfjdsbh',
+      tag: 'release-darwin-new-gmfgoij',
+      deployedAt: '2020-07-12 10:25:38',
+      undeployedAt: '2020-07-12 10:25:38',
+      authorName: 'Leandro Latini',
+      components: [
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.1'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.2'
+        },
+        {
+          moduleName: 'ZupIT/darwin-ui',
+          name: 'component1',
+          version: 'v.1.2.3'
+        }
+      ]
+    }
+  ],
+  page: 0,
+  size: 1,
+  isLast: false,
+  totalPages: 1
+};
+
+const circlesMetricsDashboard = {
+  circleStats: {
+    active: 12,
+    inactive: 8
+  },
+  averageLifeTime: 464047
+};
+
+const allDeployReleases = {
+  summary: {
+    DEPLOYED: 10,
+    DEPLOYING: 5,
+    ERROR: 2,
+    UNDEPLOYING: 0,
+    UNDEPLOYED: 5
+  },
+  page: {
+    content: [
+      {
+        id: 'abc-123',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-234',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-435',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-456',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-567',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-678',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-789',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-890',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-56437',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-2435',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-rtesw',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      },
+      {
+        id: 'abc-5647ujyh',
+        deployedAt: '2020-07-20 10:20:30',
+        undeployedAt: '2020-07-20 10:20:30',
+        circleName: 'asdf',
+        authorName: 'Fulano',
+        tag: 'release-123',
+        status: 'DEPLOYED',
+        deployDuration: 120,
+        components: [
+          {
+            name: 'moove',
+            moduleName: 'charles-cd',
+            version: 'versao-123'
+          }
+        ]
+      }
+    ],
+    page: 0,
+    size: 20,
+    isLast: false,
+    totalPages: 1
+  }
+};
+
 export default {
-  CircleMetricsData,
-  CirclesMetrics,
-  DeployMetrics
+  circleMetricsData,
+  circlesMetrics,
+  deployMetrics,
+  circlesHistory,
+  allCircleReleases,
+  circlesMetricsDashboard,
+  allDeployReleases
 };

@@ -16,7 +16,7 @@
 
 package io.charlescd.moove.domain
 
-import io.charlescd.moove.domain.*
+
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -38,7 +38,7 @@ class DeploymentTest extends Specification {
         getDummyDeployment(DeploymentStatusEnum.UNDEPLOYING, 'Circle Name', false)   | false
     }
 
-    private Deployment getDummyDeployment(DeploymentStatusEnum deploymentStatus, String circleName, Boolean isDefault) {
+    private static Deployment getDummyDeployment(DeploymentStatusEnum deploymentStatus, String circleName, Boolean isDefault) {
 
         def workspaceId = 'b49c3575-c842-4cbb-8d41-bcad7c42091f'
         def author = new User('7bdbca7a-a0dc-4721-a861-198b238c0e32', "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
@@ -46,7 +46,8 @@ class DeploymentTest extends Specification {
         def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', circleName, 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "1a58c78a-6acb-11ea-bc55-0242ac130003")
 
+        def undeployedAt = deploymentStatus == DeploymentStatusEnum.NOT_DEPLOYED ? LocalDateTime.now() : null
         return new Deployment('f8296aea-6ae1-11ea-bc55-0242ac130003', author, LocalDateTime.now().minusDays(1),
-                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId)
+                LocalDateTime.now(), deploymentStatus, circle, '23f1eabd-fb57-419b-a42b-4628941e34ec', workspaceId, undeployedAt)
     }
 }
