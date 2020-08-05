@@ -37,6 +37,7 @@ async function listCircles() {
   errorMessage();
 
   try {
+    toggleLoading('#start-button');
     const responses = await Promise.all([
       fetch(activePath, { method: 'GET', headers: getHeaders() }),
       fetch(inactivePath, { method: 'GET', headers: getHeaders() }),
@@ -59,6 +60,8 @@ async function listCircles() {
     
   } catch (e) {
     errorMessage(e);
+  } finally {
+    toggleLoading('#start-button', 'start');
   }
 }
 
@@ -67,6 +70,7 @@ async function tryOut() {
   const identify = `${moove.value}/v2/circles/identify`;
 
   try {
+    toggleLoading('#send-button');
     const response = await fetch(identify, { 
       method: 'POST', 
       headers: getHeaders(),
@@ -79,5 +83,7 @@ async function tryOut() {
     addUser(circle.id);
   } catch (e) {
     errorMessage(e);
+  } finally {
+    toggleLoading('#send-button', 'send');
   }
 }
