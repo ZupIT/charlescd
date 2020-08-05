@@ -34,20 +34,35 @@ import { Workspace } from 'modules/Users/interfaces/User';
 import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
+import { useWorkspaces } from 'modules/Settings/hooks';
 
 interface Props {
   isExpanded: boolean;
   onClickExpand: (state: ExpandClick) => void;
+  selectedWorkspace?: string;
 }
 
-const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
+const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>();
+  const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
+  const pathname = navigate.location.pathname;
+  const menu =
+    pathname === routes.workspaces ||
+    pathname === routes.users ||
+    pathname === routes.account ||
+    pathname === routes.groups;
 
   useEffect(() => {
-    setWorkspaces(getProfileByKey('workspaces'));
-  }, []);
+    loadWorkspaces();
+  }, [loadWorkspaces]);
+
+  useEffect(() => {
+    isRoot()
+      ? setWorkspaces(loadWorkspacesResponse?.content)
+      : setWorkspaces(getProfileByKey('workspaces'));
+  }, [loadWorkspacesResponse]);
 
   useEffect(() => {
     setWorkspace(find(workspaces, ['id', getWorkspaceId()]));
@@ -71,18 +86,19 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
   const getIcon = (workspaceId: string) =>
     getWorkspaceId() === workspaceId && 'checkmark';
 
-  const renderDropdown = () => (
-    <Styled.Dropdown icon="workspace">
-      {map(workspaces, workspace => (
-        <Styled.DropdownItem
-          key={workspace.name}
-          name={workspace.name}
-          icon={getIcon(workspace.id)}
-          onSelect={onSelect}
-        />
-      ))}
-    </Styled.Dropdown>
-  );
+  const renderDropdown = () =>
+    !menu && (
+      <Styled.Dropdown icon="workspace">
+        {map(workspaces, workspace => (
+          <Styled.DropdownItem
+            key={workspace.name}
+            name={workspace.name}
+            icon={getIcon(workspace.id)}
+            onSelect={onSelect}
+          />
+        ))}
+      </Styled.Dropdown>
+    );
 
   return (
     <Styled.Nav data-testid="sidebar">
@@ -96,7 +112,11 @@ const Sidebar = ({ isExpanded, onClickExpand }: Props) => {
       <Styled.Bottom>
         <Styled.Item>
           {!isEmpty(workspaces) && renderDropdown()}
-          {isExpanded && <Text.h5 color="light">{workspace?.name}</Text.h5>}
+          {isExpanded && (
+            <Text.h5 color="light">
+              {!menu && (workspace?.name || selectedWorkspace)}
+            </Text.h5>
+          )}
         </Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />
