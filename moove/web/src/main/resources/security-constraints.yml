@@ -180,6 +180,20 @@ constraints:
         - POST
         - PATCH
 
+  - pattern: /v2/configurations/metric-configurations/provider-status
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+
+  - pattern: /v2/workspaces/{workspaceId}/metrics/provider-status
+    roles:
+      maintenance_write:
+        - GET
+        - POST
+        - PATCH
+
   - pattern: /v2/workspaces/users
     roles:
       hypothesis_write:

@@ -41,11 +41,6 @@ class DeploymentGeneralStatsExtractor : ResultSetExtractor<Set<DeploymentGeneral
     private fun mapDeploymentStats(resultSet: ResultSet) = DeploymentGeneralStats(
         total = resultSet.getInt("deployment_quantity"),
         deploymentStatus = DeploymentStatusEnum.valueOf(resultSet.getString("deployment_status")),
-        averageTime = Duration.parse(formatIntervalToDurationStringFormat(resultSet.getString("deployment_average_time")))
+        averageTime = Duration.ofSeconds(resultSet.getLong("deployment_average_time"))
     )
-
-    private fun formatIntervalToDurationStringFormat(interval: String): String {
-        val splittedInterval = interval.split(":")
-        return "PT${splittedInterval[0]}H${splittedInterval[1]}M${splittedInterval[2]}S"
-    }
 }
