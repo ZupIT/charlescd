@@ -6,6 +6,7 @@ import io.charlescd.moove.domain.GitServiceProvider
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.GitService
+import java.util.*
 import org.gitlab4j.api.Constants
 import org.gitlab4j.api.GitLabApi
 import org.gitlab4j.api.GitLabApiException
@@ -13,7 +14,6 @@ import org.gitlab4j.api.models.MergeRequest
 import org.gitlab4j.api.models.MergeRequestFilter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) : GitService() {
@@ -81,7 +81,6 @@ class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) 
                 getClient(gitCredentials).repositoryApi.createBranch(repository, branchName, baseBranchName)
                     .name
             ).also { log.info("New branch: $branchName created successfully") }
-
         } catch (exception: Exception) {
             log.error("failed to create branch: $branchName with error: ${exception.message}")
             handleResponseError(
@@ -109,7 +108,6 @@ class GitLabService(private val gitLabClientFactoryLegacy: GitLabClientFactory) 
             Optional.of(client.tagsApi.createRelease(repository, tag.name, RELEASE_DESCRIPTION).tagName).apply {
                 log.info("Release: $releaseName created successfully")
             }
-
         } catch (exception: Exception) {
             log.error("failed to create release: $releaseName with error: ${exception.message}")
             handleResponseError(
