@@ -15,14 +15,13 @@
  */
 
 import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { JobWithDoneCallback } from 'pg-boss';
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc';
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface';
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
+import { Execution } from '../entity/execution.entity';
 import { DeploymentHandler } from '../use-cases/deployment-handler';
 import PgBoss = require('pg-boss');
-import { JobWithDoneCallback } from 'pg-boss';
-import { Execution } from '../entity/execution.entity';
 
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
@@ -39,6 +38,10 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
 
   publish(params: Execution): Promise<string | null> {
     return this.pgBoss.publish('deployment-queue', params)
+  }
+
+  publishWithPriority(params: Execution): Promise<string | null> {
+    return this.pgBoss.publish('deployment-queue', params, { priority: 10 })
   }
 
   async onModuleInit(): Promise<void> {

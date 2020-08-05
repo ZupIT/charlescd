@@ -52,13 +52,14 @@ export class DeploymentHandler {
     }
     const componentsOverlap = await this.checkForRunningComponents(deployment)
     if (componentsOverlap.length > 0) {
-      this.pgBoss.publish(job.data)
+      this.pgBoss.publishWithPriority(job.data)
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     } else {
       this.consoleLoggerService.log('START:RUN_EXECUTION')
       const activeComponents = await this.componentsRepository.findActiveComponents()
       this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
       const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents)
+      // const cdResponse = { status: 'SUCCEEDED', error: '' }
       if (cdResponse.status === 'SUCCEEDED') {
         await this.updateComponentsToRunning(deployment)
         this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
