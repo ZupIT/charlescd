@@ -26,12 +26,14 @@ interface Props {
   id: string;
   name: string;
   status: string;
+  selectedWorkspace: (name: string) => void;
 }
 
-const MenuItem = ({ id, name, status }: Props) => {
+const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const history = useHistory();
   const handleClick = () => {
     saveWorkspace({ id, name });
+    selectedWorkspace(name);
     setUserAbilities();
     history.push({
       pathname:
