@@ -162,6 +162,39 @@ class MaestroToRepresentationTest {
     }
 
     @Test
+    fun `should convert build to representation`() {
+        val cardColumn = mockkClass(CardColumn::class)
+        val user = createUser()
+        val build = createBuild(user, cardColumn)
+        val representation = build.toRepresentation()
+
+        assertNotNull(representation)
+        assertEquals(representation.author.id, build.author.id)
+        assertEquals(representation.features.size, representation.features.size)
+        assertEquals(representation.createdAt, build.createdAt)
+        assertEquals(representation.status, build.status.toString())
+        assertEquals(representation.tag, build.tag)
+        assertEquals(representation.deployments.size, build.deployments.size)
+
+    }
+
+    @Test
+    fun `should convert build to simple representation`() {
+        val cardColumn = mockkClass(CardColumn::class)
+        val user = createUser()
+        val build = createBuild(user, cardColumn)
+        val representation = build.toSimpleRepresentation()
+
+        assertNotNull(representation)
+        assertEquals(representation.features.size, representation.features.size)
+        assertEquals(representation.createdAt, build.createdAt)
+        assertEquals(representation.status, build.status.toString())
+        assertEquals(representation.tag, build.tag)
+        assertEquals(representation.deployments.size, build.deployments.size)
+
+    }
+
+    @Test
     fun `should convert module to  representation`() {
         val user = createUser()
         val mockComponent = mockkClass(Component::class)
