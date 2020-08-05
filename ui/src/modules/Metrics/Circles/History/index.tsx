@@ -29,8 +29,8 @@ const HistoryComponent = () => {
   const [name, setName] = useState('');
   const [circles, setCircles] = useState<CircleHistory[]>([]);
   const { getCirclesHistory, response, loading } = useCirclesHistory();
-  const historyResponse = response?.page?.content;
-  const hasMoreData = !response?.page?.last;
+  const historyResponse = response?.content;
+  const hasMoreData = !response?.last;
 
   useEffect(() => {
     if (historyResponse) {
@@ -54,17 +54,10 @@ const HistoryComponent = () => {
 
   return (
     <Styled.HistoryWrapper>
-      <Summary
-        legend={response?.summary}
-        isLoading={loading}
-        onSearch={setName}
-      />
+      <Summary isLoading={loading} onSearch={setName} />
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Status</Text.h5>
-          </Styled.TableColumn>
-          <Styled.TableColumn width={2}>
             <Text.h5 color="dark">Circles</Text.h5>
           </Styled.TableColumn>
           <Styled.TableColumn>

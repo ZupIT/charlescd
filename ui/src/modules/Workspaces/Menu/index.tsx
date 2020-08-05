@@ -35,9 +35,15 @@ interface Props {
   items: Workspace[];
   onSearch: (name: string) => void;
   isLoading?: boolean;
+  selectedWorkspace: (name: string) => void;
 }
 
-const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
+const WorkspaceMenu = ({
+  items,
+  onSearch,
+  isLoading,
+  selectedWorkspace
+}: Props) => {
   const MAX_LENGTH_NAME = 50;
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -58,7 +64,13 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
 
   const renderWorkspaces = () =>
     map(items, ({ id, name, status }: Workspace) => (
-      <MenuItem key={id} id={id} name={name} status={status} />
+      <MenuItem
+        key={id}
+        id={id}
+        name={name}
+        status={status}
+        selectedWorkspace={(name: string) => selectedWorkspace(name)}
+      />
     ));
 
   const openWorkspaceModal = () => setToggleModal(true);
@@ -103,7 +115,11 @@ const WorkspaceMenu = ({ items, onSearch, isLoading }: Props) => {
     <>
       {isRoot() && renderModal()}
       <Styled.Actions>
-        <Styled.Button onClick={openWorkspaceModal} isDisabled={!isRoot()}>
+        <Styled.Button
+          id="workspaceModal"
+          onClick={openWorkspaceModal}
+          isDisabled={!isRoot()}
+        >
           <LabeledIcon icon="plus-circle" marginContent="5px">
             <Text.h5 color="dark">Create workspace</Text.h5>
           </LabeledIcon>
