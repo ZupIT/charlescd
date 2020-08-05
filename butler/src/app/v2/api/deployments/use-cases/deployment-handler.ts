@@ -52,8 +52,9 @@ export class DeploymentHandler {
     }
     const componentsOverlap = await this.checkForRunningComponents(deployment)
     if (componentsOverlap.length > 0) {
-      this.pgBoss.publishWithPriority(job.data)
+      await this.pgBoss.publishWithPriority(job.data)
       this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
+      job.done()
     } else {
       this.consoleLoggerService.log('START:RUN_EXECUTION')
       const activeComponents = await this.componentsRepository.findActiveComponents()

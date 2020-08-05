@@ -15,6 +15,8 @@ export class NotificationUseCase {
 
   public async handleCallback(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity>{
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
+    const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
+
     deployment.finishedAt = new Date()
     deployment.components = deployment.components.map(c => {
       c.running = false
@@ -24,6 +26,9 @@ export class NotificationUseCase {
     if (status === DeploymentStatusEnum.SUCCEEDED) {
       deployment.status = DeploymentStatusEnum.SUCCEEDED
       deployment.active = true
+      if (currentActiveDeployment) {
+        currentActiveDeployment.active = false
+      }
     }
 
     if (status === DeploymentStatusEnum.FAILED) {
@@ -31,6 +36,9 @@ export class NotificationUseCase {
       deployment.active = false
     }
     try {
+      if (currentActiveDeployment) {
+        await this.deploymentRepository.save(currentActiveDeployment)
+      }
       return await this.deploymentRepository.save(deployment)
     }
     catch (error) {

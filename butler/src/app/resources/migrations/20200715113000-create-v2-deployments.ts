@@ -28,6 +28,7 @@ export class CreateV2Deployments20200715113000 implements MigrationInterface {
         "circle_id" Character Varying,
         "status" Character Varying DEFAULT 'CREATED' NOT NULL,
         "active" Boolean DEFAULT false NOT NULL,
+        priority int DEFAULT 0 NOT NULL,
         "cd_configuration_id" Character Varying NOT NULL,
         "created_at" timestamp without time zone DEFAULT now() NOT NULL,
         "finished_at" timestamp without time zone,
