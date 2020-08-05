@@ -170,7 +170,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
 
     override fun findActiveBuilds(tag: String?, status: BuildStatusEnum?, workspaceId: String, pageRequest: PageRequest): Page<Build> {
         val innerQueryStatement = createInnerQueryStatement(createParametersMap(tag, status, workspaceId), pageRequest)
-        val statement =  """
+        val statement = """
             SELECT builds.id                                AS build_id,
                    builds.created_at                        AS build_created_at,
                    builds.tag                               AS build_tag,
