@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { getReleseStatus } from '../helpers';
+import React from 'react';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
+import { MetricConfiguration } from './fixtures';
+import MetricProvider from '../index';
 
-test('Enum status', () => {
-  expect(getReleseStatus('NOT_DEPLOYED')).toEqual('notDeployed');
-  expect(getReleseStatus('DEPLOYED')).toEqual('deployed');
-  expect(getReleseStatus('DEPLOYING')).toEqual('deploying');
-  expect(getReleseStatus('DEPLOY_FAILED')).toEqual('error');
-  expect(getReleseStatus('UNDEPLOYING')).toEqual('undeploying');
-  expect(getReleseStatus('')).toEqual('deployed');
+test('render Metrics Provider default component', async () => {
+  const setForm = jest.fn();
+  render(
+    <MetricProvider form={null} setForm={setForm} data={MetricConfiguration}/>
+  );
+
+  await wait();
+
+  expect(screen.getByTestId('contentIcon-metrics')).toBeInTheDocument();
+  expect(screen.getByText('PROMETHEUS')).toBeInTheDocument();
 });

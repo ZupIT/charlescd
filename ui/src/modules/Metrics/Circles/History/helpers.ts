@@ -14,27 +14,9 @@
  * limitations under the License.
  */
 
-enum DEPLOY_STATUS {
-  NOT_DEPLOYED = 'notDeployed',
-  DEPLOYED = 'deployed',
-  DEPLOYING = 'deploying',
-  DEPLOY_FAILED = 'error',
-  UNDEPLOYING = 'undeploying'
-}
+import { STATUS } from '../../helpers';
 
-export const getReleseStatus = (statusEnum: string) => {
-  switch (statusEnum) {
-    case 'NOT_DEPLOYED':
-      return DEPLOY_STATUS.NOT_DEPLOYED;
-    case 'DEPLOYED':
-      return DEPLOY_STATUS.DEPLOYED;
-    case 'DEPLOYING':
-      return DEPLOY_STATUS.DEPLOYING;
-    case 'DEPLOY_FAILED':
-      return DEPLOY_STATUS.DEPLOY_FAILED;
-    case 'UNDEPLOYING':
-      return DEPLOY_STATUS.UNDEPLOYING;
-    default:
-      return DEPLOY_STATUS.DEPLOYED;
-  }
+export const getReleaseStatus = (statusEnum: string) => {
+  if (statusEnum === 'DEPLOYED') return STATUS.DEPLOYED;
+  return STATUS.DEPLOY_FAILED;
 };

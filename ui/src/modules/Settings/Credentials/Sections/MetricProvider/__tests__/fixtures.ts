@@ -14,32 +14,7 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
-
-export interface Provider {
-  label: string;
-  value: string;
-  icon?: string;
-}
-
-export interface MetricProvider {
-  provider: string;
-  authorId?: string;
-  url: string;
-}
-
-export interface TestConnectionResponse {
-  status?: string;
-}
-
-export enum ConnectionStatusEnum {
-  FAILED = 'FAILED',
-  SUCCESS = 'SUCCESS'
-}
-
-export interface Response {
-  id: string;
-  provider: string;
+export const MetricConfiguration = {
+  id: '1',
+  provider: 'PROMETHEUS'
 }

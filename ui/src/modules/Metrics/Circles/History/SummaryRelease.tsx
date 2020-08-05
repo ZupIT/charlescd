@@ -21,36 +21,25 @@ import Styled from './styled';
 
 type Props = {
   isLoading: boolean;
-  onSearch: (name: string) => void;
 };
 
-const Summary = ({ isLoading, onSearch }: Props) => {
+const SummaryRelease = ({ isLoading }: Props) => {
   return (
     <>
-      <Styled.HistoryHeader>
-        <Text.h2 color="light" weight="bold">
-          History
-        </Text.h2>
-        <Styled.HistorySearchInput
-          resume
-          onSearch={onSearch}
-          placeholder={'Search circle'}
-        />
-      </Styled.HistoryHeader>
       {isLoading ? (
-        <div data-testid="loader-legend">
+        <div data-testid="loader-legend-release">
           <Loader.Legend />
         </div>
       ) : (
-        <Styled.HistoryLegend>
-          <Styled.Dot status="active" />
-          <Text.h5 color="dark">Active</Text.h5>
-          <Styled.Dot status="inactive" />
-          <Text.h5 color="dark">Inactive</Text.h5>
+        <Styled.HistoryLegend data-testid="summary-release">
+          <Styled.Dot status="deployed" />
+          <Text.h5 color="dark">Deployed</Text.h5>
+          <Styled.Dot status="error" />
+          <Text.h5 color="dark">Error</Text.h5>
         </Styled.HistoryLegend>
       )}
     </>
   );
 };
 
-export default Summary;
+export default SummaryRelease;
