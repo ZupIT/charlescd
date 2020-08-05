@@ -26,11 +26,11 @@
         <label for="circle-matcher-url">Workspace ID</label>
         <input id="workspace-id" type="text" value="" />
       </div>
-      <button onclick="listCircles()">start</button>
+      <button id="start-button" onclick="listCircles()">start</button>
     </div>
     <div id="form-request" class="hidden">
       <textarea id="body"></textarea>
-      <button onclick="tryOut()">send</button>
+      <button id="send-button" onclick="tryOut()">send</button>
     </div>
     <svg id="circle-default" class="hidden" width="400" height="400"></svg>
   </div>

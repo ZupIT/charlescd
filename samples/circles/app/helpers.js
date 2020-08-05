@@ -40,6 +40,10 @@ function getDefaultCircle() {
   }
 }
 
+function toggleLoading(selector, text = 'loading') {
+  document.querySelector(selector).textContent = text;
+}
+
 function errorMessage(message = '') {
   document.querySelector('#error-message').textContent = message;
 }
