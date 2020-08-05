@@ -264,7 +264,6 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
         return Page(result?.toList() ?: emptyList(), pageRequest.page, pageRequest.size, count ?: 0)
     }
 
-
     private fun createLegacyRelationship(build: Build) {
         val statement = "INSERT INTO builds_features(" +
                 "build_id," +
@@ -696,5 +695,4 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
             WHERE 1 = 1
         """
     }
-
 }
