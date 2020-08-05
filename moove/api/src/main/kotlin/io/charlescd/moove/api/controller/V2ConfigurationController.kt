@@ -23,6 +23,8 @@ import io.charlescd.moove.application.configuration.request.CreateMetricConfigur
 import io.charlescd.moove.application.configuration.request.UpdateGitConfigurationRequest
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
+import io.charlescd.moove.application.metric.response.ProviderConnectionResponse
+import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -39,7 +41,8 @@ class V2ConfigurationController(
     private val findGitConfigurationsInteractor: FindGitConfigurationsInteractor,
     private val deleteGitConfigurationByIdInteractor: DeleteGitConfigurationByIdInteractor,
     private val createMetricConfigurationInteractor: CreateMetricConfigurationInteractor,
-    private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor
+    private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
+    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor
 ) {
 
     @ApiOperation(value = "Create git Configuration")
@@ -111,4 +114,12 @@ class V2ConfigurationController(
     ): GitConfigurationResponse {
         return this.updateGitConfigurationInteractor.execute(id, workspaceId, request)
     }
+
+    @ApiOperation(value = "Verify metrics provider connection")
+    @GetMapping("/metric-configurations/provider-status")
+    fun verifyProviderConnection(
+        @RequestParam provider: String,
+        @RequestParam providerType: MetricConfiguration.ProviderEnum
+    ): ProviderConnectionResponse =
+        providerStatusConfigurationInteractor.execute(provider, providerType)
 }

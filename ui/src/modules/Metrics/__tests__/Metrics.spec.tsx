@@ -18,7 +18,7 @@ import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
 import Metrics from '..';
 
-test('render Metrics default componet', async () => {
+test('render Metrics default', async () => {
   const { getByTestId } = render(<Metrics />);
 
   await wait();
@@ -27,7 +27,7 @@ test('render Metrics default componet', async () => {
   expect(getByTestId("page-menu")).toBeInTheDocument();
 })
 
-test('render Metrics deploy dashboard componet', async () => {
+test('render Metrics deploy dashboard', async () => {
   const { getByText, getByTestId } = render(<Metrics />);
 
   await wait();
@@ -35,6 +35,17 @@ test('render Metrics deploy dashboard componet', async () => {
   const deployDashboard = getByText("Deploys");
   fireEvent.click(deployDashboard);
 
-  wait(() => expect(getByTestId("metrics-deploy")).toBeInTheDocument());
+  await wait(() => expect(getByTestId("metrics-deploy")).toBeInTheDocument());
+})
+
+test('render Metrics circles dashboard', async () => {
+  const { getByText, getByTestId } = render(<Metrics />);
+
+  await wait();
+
+  const circleDashboard = getByText("Circles");
+  fireEvent.click(circleDashboard);
+
+  await wait(() => expect(getByTestId("metrics-circles")).toBeInTheDocument());
 })
 
