@@ -79,7 +79,7 @@ test('render Registry form with AWS values and secret input', async () => {
     const radioButton = getByTestId("radio-group-registry-item-AWS");
     fireEvent.click(radioButton)
     await wait();
-    const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED")
+    const radioAuthButton = getByTestId("switch-aws-auth-handler")
     fireEvent.click(radioAuthButton)
     expect(container.innerHTML).toMatch("Enter the access key");
 });
@@ -94,8 +94,6 @@ test('render Registry form without AWS values and secret input', async () => {
     const radioButton = getByTestId("radio-group-registry-item-AWS");
     fireEvent.click(radioButton)
     await wait();
-    const radioAuthButton = getByTestId("radio-group-aws-auth-item-DISABLED")
-    fireEvent.click(radioAuthButton)
     expect(container.innerHTML).not.toMatch("Enter the access key");
 });
 
@@ -108,7 +106,7 @@ test('execute onSubmit', async () => {
   const radioButton = getByTestId("radio-group-registry-item-AWS");
   fireEvent.click(radioButton)
   await wait();
-  const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED");
+  const radioAuthButton = getByTestId("switch-aws-auth-handler");
   fireEvent.click(radioAuthButton);
   await wait();
   const inputAwsName = getByTestId("input-text-name");
@@ -139,7 +137,7 @@ test('should not execute onSubmit because validation (missing name)', async () =
   const radioButton = getByTestId("radio-group-registry-item-AWS");
   fireEvent.click(radioButton)
   await wait();
-  const radioAuthButton = getByTestId("radio-group-aws-auth-item-ENABLED");
+  const radioAuthButton = getByTestId("switch-aws-auth-handler");
   fireEvent.click(radioAuthButton);
   await wait();
   const inputAwsAddress = getByTestId("input-text-address");
