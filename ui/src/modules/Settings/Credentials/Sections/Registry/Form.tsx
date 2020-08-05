@@ -27,11 +27,12 @@ import { radios, awsRadios } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
+import Switch from 'core/components/Switch';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
-  const [awsAuthMethod, setAwsAuthMethod] = useState('');
+  const [awsUseSecret, setAwsUseSecret] = useState(false);
   const { register, unregister, handleSubmit, reset } = useForm<Registry>();
   const profileId = getProfileByKey('id');
 
@@ -65,16 +66,13 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="region"
           label="Enter the region"
         />
-
-        <Text.h5 color="dark">Use access key and secret key auth?</Text.h5>
-        <RadioGroup
-          name="aws-auth"
-          items={awsRadios}
-          onChange={({ currentTarget }) =>
-            setAwsAuthMethod(currentTarget.value)
-          }
+        <Switch 
+            name="aws-auth-handler"
+            label="Enable access and secret key" 
+            active={awsUseSecret} 
+            onChange={() => setAwsUseSecret(!awsUseSecret)} 
         />
-        {awsAuthMethod === 'ENABLED' ? (
+        { awsUseSecret ? (
           <>
             <Form.Password
               ref={register({ required: true })}
