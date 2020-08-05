@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
+import React from 'react';
+import { render, screen, wait } from 'unit-test/testUtils';
+import Form from '../Form';
 
-export interface Provider {
-  label: string;
-  value: string;
-  icon?: string;
-}
+test('render Metrics Provider default component', async () => {
+  const finish = jest.fn();
+  render(
+    <Form onFinish={finish}/>
+  );
 
-export interface MetricProvider {
-  provider: string;
-  authorId?: string;
-  url: string;
-}
+  await wait();
 
-export interface TestConnectionResponse {
-  status?: string;
-}
-
-export enum ConnectionStatusEnum {
-  FAILED = 'FAILED',
-  SUCCESS = 'SUCCESS'
-}
-
-export interface Response {
-  id: string;
-  provider: string;
-}
+  expect(screen.getByTestId('react-select')).toBeInTheDocument();
+});
