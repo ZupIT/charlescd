@@ -24,3 +24,34 @@ export const normalizeCircleParams = (circles: Option[]) => {
 
   return map(filteredCircles, 'value');
 };
+
+export enum STATUS {
+  NOT_DEPLOYED = 'notDeployed',
+  DEPLOYED = 'deployed',
+  DEPLOYING = 'deploying',
+  DEPLOY_FAILED = 'error',
+  UNDEPLOYING = 'undeploying',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}
+
+export const getStatus = (statusEnum: string) => {
+  switch (statusEnum) {
+    case 'NOT_DEPLOYED':
+      return STATUS.NOT_DEPLOYED;
+    case 'DEPLOYED':
+      return STATUS.DEPLOYED;
+    case 'DEPLOYING':
+      return STATUS.DEPLOYING;
+    case 'DEPLOY_FAILED':
+      return STATUS.DEPLOY_FAILED;
+    case 'UNDEPLOYING':
+      return STATUS.UNDEPLOYING;
+    case 'ACTIVE':
+      return STATUS.ACTIVE;
+    case 'INACTIVE':
+      return STATUS.INACTIVE;
+    default:
+      return STATUS.DEPLOYED;
+  }
+};

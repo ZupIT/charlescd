@@ -27,6 +27,8 @@ export interface Stats {
   inactive: number;
 }
 
+export type CirclesHistoryResponse = Pagination<CircleHistory>;
+
 export interface CircleHistory {
   id: string;
   status: 'ACTIVE' | 'INACTIVE';
@@ -34,16 +36,6 @@ export interface CircleHistory {
   lifeTime: number;
   lastUpdatedAt: string;
 }
-
-export type CircleSummary = {
-  active: number;
-  inactive: number;
-};
-
-export type CirclesHistoryResponse = {
-  summary: CircleSummary;
-  page: Pagination<CircleHistory>;
-};
 
 export type CircleReleasesResponse = Pagination<CircleRelease>;
 
@@ -53,7 +45,9 @@ export interface CircleRelease {
   deployedAt: string;
   undeployedAt: string;
   authorName: string;
+  createdAt: string;
   components: ReleaseComponent[];
+  status: string;
 }
 
 export interface ReleaseComponent {
