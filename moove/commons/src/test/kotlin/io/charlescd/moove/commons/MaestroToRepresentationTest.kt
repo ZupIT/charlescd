@@ -175,7 +175,6 @@ class MaestroToRepresentationTest {
         assertEquals(representation.status, build.status.toString())
         assertEquals(representation.tag, build.tag)
         assertEquals(representation.deployments.size, build.deployments.size)
-
     }
 
     @Test
@@ -191,7 +190,6 @@ class MaestroToRepresentationTest {
         assertEquals(representation.status, build.status.toString())
         assertEquals(representation.tag, build.tag)
         assertEquals(representation.deployments.size, build.deployments.size)
-
     }
 
     @Test
