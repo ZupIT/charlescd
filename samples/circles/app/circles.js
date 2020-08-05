@@ -14,6 +14,7 @@ function formatCircles(circles) {
     return circles.map(circle => ({
       id: circle.id,
       type: 'circle',
+      name: circle.name,
       color: colors.generate()
     }))
   }
@@ -55,20 +56,24 @@ function initDefaultCircle(circles) {
  
   graph.defaultCircle.force.start();
 
-  graph.defaultCircle
+  const svg = graph.defaultCircle
     .chart.selectAll("g")
-      .data(circlesData)
-      .enter()
-      .append("g")
-      .attr("data-id", d => d.id)
-      .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .append("circle")
-      .attr("r", d => d.type === "user" ? 3 : 50)
-      .style("fill", d => d.type === "user" ? d.color : "transparent")
-      .style("stroke-width", "1.5px")
-      .style("stroke", d => d.color);
-    
+    .data(circlesData)
+    .enter();
+
+  svg.append("g")
+    .attr("data-id", d => d.id)
+    .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+    .append("circle")
+    .attr("r", d => d.type === "user" ? 3 : 50)
+    .style("fill", d => d.type === "user" ? d.color : "transparent")
+    .style("stroke-width", "1.5px")
+    .style("stroke", d => d.color)
+    .append("title").text(d => d.name);
+
   graph.defaultCircle.color = '#9796b4';
+
+  svg.append("title").text("Default");
   
   createD3CircleRef(circlesData);
 }

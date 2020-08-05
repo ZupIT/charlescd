@@ -25,6 +25,10 @@ async function getResponse(response) {
   }
 }
 
+function removeDefaultCircle(content = []) {
+  return content.filter(item => item.name !== 'Default');
+}
+
 async function listCircles() {
   const moove = document.querySelector('#moove-url');
   const activePath = `${moove.value}/v2/circles?active=true`;
@@ -44,7 +48,8 @@ async function listCircles() {
     ]);
 
     const circles = contents.reduce((circles, current) => {
-      return circles.concat(current.content || []);
+      const result = removeDefaultCircle(current.content);
+      return circles.concat(result);
     }, []);
 
     resetSVG();
