@@ -57,12 +57,9 @@ export class DeploymentHandler {
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
     const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents)
-
-    if (cdResponse.status === 'ERROR') {
-      return await this.handleCdError(job, cdResponse)
-    }
-
-    return this.handleCdSuccess(job, deployment)
+    return cdResponse.status === 'ERROR' ?
+      await this.handleCdError(job, cdResponse) :
+      await this.handleCdSuccess(job, deployment)
   }
 
   async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {
