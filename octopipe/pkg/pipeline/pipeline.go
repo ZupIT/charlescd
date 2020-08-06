@@ -46,6 +46,7 @@ type NonAdjustablePipeline struct {
 	WebHookUrl     string                         `json:"webhookUrl"`
 	CircleID       string                         `json:"circleID"`
 	K8s            cloudprovider.Cloudprovider    `json:"k8s"`
+	CallbackType   string                         `json:"callbackType"`
 }
 
 type StepTemplate struct {
@@ -57,6 +58,7 @@ type StepWebhook struct {
 	Url     string            `json:"url"`
 	Headers map[string]string `json:"headers"`
 	Method  string            `json:"method"`
+	CallbackType   string     `json:"callbackType"`
 }
 
 type Step struct {
@@ -98,6 +100,7 @@ func (deprecatedPipeline NonAdjustablePipeline) ToPipeline() Pipeline {
 				"x-circle-id":  deprecatedPipeline.CircleID,
 			},
 			Method: "POST",
+			CallbackType: deprecatedPipeline.CallbackType,
 		},
 		Config: deprecatedPipeline.K8s,
 	}

@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.metrics.connector
 
+import io.charlescd.moove.metrics.connector.prometheus.PrometheusConnectionStatusResponse
 import io.charlescd.moove.metrics.domain.Metric
 import io.charlescd.moove.metrics.domain.SearchMetric
 
@@ -26,4 +27,6 @@ interface MetricService {
     fun getAverageLatency(searchMetric: SearchMetric, url: String): Metric
 
     fun getAverageHttpErrorsPercentage(searchMetric: SearchMetric, url: String): Metric
+
+    fun readinessCheck(url: String): PrometheusConnectionStatusResponse
 }

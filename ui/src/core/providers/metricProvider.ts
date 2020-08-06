@@ -15,10 +15,28 @@
  */
 
 import { MetricProvider } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
-import { postRequest } from './base';
+import { postRequest, baseRequest } from './base';
 
 const endpoint = '/moove/v2/configurations/metric-configurations';
+
+const endpointWorkspace = '/moove/v2/workspaces';
+
+const endpointConfigurations = '/moove/v2/configurations';
+
 export const configPath = '/metricConfigurationId';
 
 export const create = (metricProvider: MetricProvider) =>
   postRequest(`${endpoint}`, metricProvider);
+
+export const verifyProviderConnection = (params: URLSearchParams) =>
+  baseRequest(
+    `${endpointConfigurations}/metric-configurations/provider-status?${params}`
+  );
+
+export const metricProviderConfigConnection = (
+  params: URLSearchParams,
+  workspaceId: string
+) =>
+  baseRequest(
+    `${endpointWorkspace}/${workspaceId}/metrics/provider-status?${params}`
+  );

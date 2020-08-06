@@ -19,6 +19,7 @@ import TotalPipeline from '../../../../app/v1/core/integrations/cd/spinnaker/con
 import expectedTotalPipeline from './fixtures/expected-total-pipeline'
 import { ISpinnakerPipelineConfiguration } from '../../../../app/v1/core/integrations/cd/spinnaker/interfaces'
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
+import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
 import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
 
 it('compiles the pipeline', () => {
@@ -36,6 +37,7 @@ it('compiles the pipeline', () => {
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
     url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.DEPLOYMENT
   }
 
   const totalPipeline = new TotalPipeline(contract)
@@ -56,7 +58,8 @@ it('compiles the pipeline with only undeployment', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.UNDEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildPipeline()
@@ -78,7 +81,8 @@ it('builds istio pipeline', () => {
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
-    url: 'http://spinnaker.url.com'
+    url: 'http://spinnaker.url.com',
+    callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
@@ -101,7 +105,8 @@ it('build istio pipeline by hostValue and gatewayName', () => {
     circleId: 'circle-id',
     url: 'http://spinnaker.url.com',
     hostValue: 'hostValue',
-    gatewayName: 'gatewayName'
+    gatewayName: 'gatewayName',
+    callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
   }
   const totalPipeline = new TotalPipeline(contract)
   const result = totalPipeline.buildIstioPipeline()
