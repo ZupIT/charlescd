@@ -65,6 +65,7 @@ export class CreateDeploymentUseCase {
     const unchangedComponents: ComponentEntity[] = activeComponents
       .filter(component => !requestedComponentsNames.includes(component.name))
       .map(component => component.clone())
+    this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
 
     const deployment = await this.deploymentsRepository.save(
       createDeploymentDto.toDefaultEntity(incomingCircleId, unchangedComponents)

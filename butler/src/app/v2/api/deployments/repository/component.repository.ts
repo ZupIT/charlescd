@@ -31,7 +31,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
-      .andWhere('deployment.circle = null')
+      .andWhere('deployment.circle_id is null')
       .getMany()
   }
 }
