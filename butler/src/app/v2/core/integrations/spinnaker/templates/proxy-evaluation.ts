@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Component } from '../interfaces'
 import { Stage } from '../interfaces/spinnaker-pipeline.interface'
+import { Component } from '../../../../api/deployments/interfaces'
 
 export const getProxyEvaluationStage = (components: Component[], stageId: number): Stage => (    {
   failOnFailedExpressions: true,

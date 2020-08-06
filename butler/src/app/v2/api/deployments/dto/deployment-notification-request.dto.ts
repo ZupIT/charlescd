@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { IsEnum, IsNotEmpty } from 'class-validator';
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
+import { IsEnum, IsNotEmpty } from 'class-validator'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 
 export class DeploymentNotificationRequest {
   @IsNotEmpty()

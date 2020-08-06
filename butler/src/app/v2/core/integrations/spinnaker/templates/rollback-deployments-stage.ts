@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from '../interfaces'
 import { Stage } from '../interfaces/spinnaker-pipeline.interface'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
+import { CdConfiguration, Component } from '../../../../api/deployments/interfaces'
 
 export const getRollbackDeploymentsStage = (
   component: Component,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Deployment, SpinnakerPipeline } from './interfaces'
+import { SpinnakerPipeline } from './interfaces'
 import { ExpectedArtifact, Stage } from './interfaces/spinnaker-pipeline.interface'
 import {
   getBakeStage,
@@ -30,6 +30,7 @@ import {
 import { getDestinationRulesStage } from './templates/destination-rules-stage'
 import { getVirtualServiceStage } from './templates/virtual-service-stage'
 import { getProxyEvaluationStage } from './templates/proxy-evaluation'
+import { Component, Deployment } from '../../../api/deployments/interfaces'
 
 export class SpinnakerPipelineBuilder {
 

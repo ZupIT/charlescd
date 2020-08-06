@@ -15,8 +15,8 @@
  */
 
 import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { CdConfiguration, Component } from '../interfaces'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
+import { CdConfiguration, Component } from '../../../../api/deployments/interfaces'
 
 export const getDeleteUnusedStage = (
   component: Component,
