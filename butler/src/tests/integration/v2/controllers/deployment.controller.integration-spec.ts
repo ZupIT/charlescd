@@ -132,7 +132,6 @@ describe('DeploymentController v2', () => {
       'callbackUrl must be a string',
       'cdConfigurationId should not be empty',
       'cdConfigurationId must be an UUID',
-      'circle should not be empty',
       'modules should not be empty'
     ]
     await request(app.getHttpServer())

@@ -52,6 +52,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'finished_at' })
   public finishedAt!: Date
 
+  @Column()
+  public priority!: number
+
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
   cdConfiguration!: CdConfigurationEntity
