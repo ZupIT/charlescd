@@ -25,7 +25,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (manager Manager) mountWebhookRequest(pipeline pipelinePKG.Pipeline, payload map[string]string) (*http.Request, error) {
+func (manager Manager) mountWebhookRequest(pipeline pipelinePKG.Pipeline, payload Payload) (*http.Request, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,8 @@ func (manager Manager) mountWebhookRequest(pipeline pipelinePKG.Pipeline, payloa
 	return request, nil
 }
 
-func (manager Manager) triggerWebhook(pipeline pipelinePKG.Pipeline, payload map[string]string) {
+func (manager Manager) triggerWebhook(pipeline pipelinePKG.Pipeline, payload Payload ) {
 	client := http.Client{}
-
 	if pipeline.Webhook.Url == "" {
 		log.WithFields(log.Fields{"function": "triggerWebhook", "url": pipeline.Webhook.Url}).Info("Not found url for trigger Webhook")
 		return

@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import { ModuleDeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-deployments.repository'
 import * as uuid from 'uuid'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('IstioDeploymentCallbackUsecase Integration Test', () => {
 
@@ -134,13 +135,14 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'SUCCEEDED'
+      status : 'SUCCEEDED',
+      callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
     }
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedIstioDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
@@ -245,13 +247,14 @@ describe('IstioDeploymentCallbackUsecase Integration Test', () => {
       'type': 'QueuedIstioDeploymentEntity'
     })
     const finishDeploymentDto = {
-      status : 'SUCCEEDED'
+      status : 'SUCCEEDED',
+      callbackType: CallbackTypeEnum.ISTIO_DEPLOYMENT
     }
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/istio-deployment?queuedIstioDeploymentId=${queuedIstioDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedIstioDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     const queuedIstioDeploymentsUpdated: QueuedIstioDeploymentEntity[]  = await queuedIstioDeploymentsRepository.
