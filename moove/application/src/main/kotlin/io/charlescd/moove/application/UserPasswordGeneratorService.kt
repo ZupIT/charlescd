@@ -1,5 +1,9 @@
 package io.charlescd.moove.application
 
+import org.passay.AllowedCharacterRule
+import org.passay.CharacterRule
+import org.passay.EnglishCharacterData
+import org.passay.PasswordGenerator
 import javax.inject.Named
 
 @Named
@@ -11,14 +15,22 @@ class UserPasswordGeneratorService(
     val passwordLength: Int? = 10
 ) {
     fun create(): String {
-        val passwordGen: PasswordGen = PasswordGen.Builder()
-            .numberDigits(numberDigits!!)
-            .numberLowerCase(numberLowerCase!!)
-            .numberUpperCase(numberUpperCase!!)
-            .numberSpecialChars(numberSpecialChars!!)
-            .passwordLength(passwordLength!!)
-            .build()
+        val rules = listOf(
+            CharacterRule(EnglishCharacterData.LowerCase, numberLowerCase!!),
+            CharacterRule(EnglishCharacterData.UpperCase, numberUpperCase!!),
+            CharacterRule(EnglishCharacterData.Digit, numberDigits!!),
+            CharacterRule(SpecialChars(), numberSpecialChars!!)
+        )
+        return PasswordGenerator().generatePassword(passwordLength!!, rules)
+    }
+}
 
-        return passwordGen.create()
+class SpecialChars : org.passay.CharacterData {
+    override fun getErrorCode(): String {
+        return AllowedCharacterRule.ERROR_CODE
+    }
+
+    override fun getCharacters(): String {
+        return "!@#$^*()_"
     }
 }

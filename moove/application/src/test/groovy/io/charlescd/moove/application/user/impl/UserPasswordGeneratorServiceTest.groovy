@@ -1,4 +1,4 @@
-package io.charlescd.moove.application.user
+package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserPasswordGeneratorService
 import spock.lang.Specification
