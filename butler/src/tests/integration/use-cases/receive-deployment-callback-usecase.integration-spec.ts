@@ -28,6 +28,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/v1/core/integrations/moove'
 import { ModuleDeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-deployments.repository'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import * as uuid from 'uuid'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
@@ -123,14 +124,15 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'FAILED'
+      status : 'FAILED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -209,13 +211,14 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'SUCCEEDED'
+      status : 'SUCCEEDED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -294,14 +297,15 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'FAILED'
+      status: 'FAILED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -382,14 +386,15 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'FAILED'
+      status: 'FAILED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -402,7 +407,7 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       })
 
     const componentDeploymentEntity: ComponentDeploymentEntity = await componentDeploymentsRepository.
-      findOneOrFail({
+      findOneOrFail( {
         where : {
           id: queuedDeployment.componentDeploymentId
         },
@@ -528,13 +533,15 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
       'type': 'QueuedDeploymentEntity'
     })
 
-    jest.spyOn(httpService, 'post').
-      mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status : 'SUCCEEDED'
+      status : 'SUCCEEDED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    jest.spyOn(httpService, 'post').
+      mockImplementation( () => of({} as AxiosResponse) )
+
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -674,10 +681,11 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status : 'SUCCEEDED'
+      status : 'SUCCEEDED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
@@ -824,10 +832,11 @@ describe('DeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
     const finishDeploymentDto = {
-      status : 'FAILED'
+      status : 'FAILED',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
 
-    await request(app.getHttpServer()).post(`/notifications/deployment?queuedDeploymentId=${queuedDeployment.id}`)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedDeployment.id}`)
       .send(finishDeploymentDto).expect(204)
 
     queuedDeployment = await queuedDeploymentsRepository.
