@@ -31,7 +31,7 @@ interface Props {
   selectedWorkspace: (name: string) => void;
 }
 
-const MenuItem = ({ id, name, status }: Props) => {
+const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
