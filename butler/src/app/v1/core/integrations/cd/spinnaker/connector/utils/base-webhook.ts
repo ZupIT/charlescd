@@ -24,7 +24,8 @@ export interface IBaseWebhook {
   method: 'POST'
   name: 'Trigger webhook'
   payload: {
-    status: string
+    status: string,
+    callbackType: string
   }
   refId: string
   requisiteStageRefIds: string[]
@@ -33,7 +34,7 @@ export interface IBaseWebhook {
   url: string
 }
 
-const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string): IBaseWebhook => ({
+const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: string[], previousStage: string, xCircleId: string, callbackType: string): IBaseWebhook => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
@@ -43,7 +44,8 @@ const webhookBaseStage = (uriWebhook: string, refId: string, requisiteRefId: str
   method: 'POST',
   name: 'Trigger webhook',
   payload: {
-    status: '${#stage( \'' + previousStage + '\' ).status.toString()}'
+    status: '${#stage( \'' + previousStage + '\' ).status.toString()}',
+    callbackType: callbackType
   },
   refId,
   requisiteStageRefIds: requisiteRefId,

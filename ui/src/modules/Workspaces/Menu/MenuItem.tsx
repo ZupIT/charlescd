@@ -28,11 +28,11 @@ interface Props {
   id: string;
   name: string;
   status: string;
+  selectedWorkspace: (name: string) => void;
 }
 
 const MenuItem = ({ id, name, status }: Props) => {
   const dispatch = useDispatch();
-
   const history = useHistory();
 
   const handleClick = () => {
@@ -40,6 +40,7 @@ const MenuItem = ({ id, name, status }: Props) => {
       dispatch(toogleModalWizardNewUser({ newUser: true }));
     }
     saveWorkspace({ id, name });
+    selectedWorkspace(name);
     setUserAbilities();
     history.push({
       pathname:
