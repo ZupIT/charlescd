@@ -29,17 +29,17 @@ export const Configuration: IEnvConfiguration = {
 
   postgresDbName: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,
 
-  postgresSSL: Boolean(process.env.DATABASE_SSL) || ConfigurationConstants.DATABASE_SSL,
+  postgresSSL: (process.env.DATABASE_SSL === 'true') || ConfigurationConstants.DATABASE_SSL,
 
   mooveUrl: process.env.MOOVE_URL || ConfigurationConstants.MOOVE_URL,
 
   darwinNotificationUrl: process.env.DARWIN_NOTIFICATION_URL || ConfigurationConstants.DARWIN_NOTIFICATION_URL,
 
-  darwinUndeploymentCallbackUrl: process.env.DARWIN_UNDEPLOYMENT_CALLBACK || ConfigurationConstants.DARWIN_UNDEPLOYMENT_CALLBACK,
+  darwinUndeploymentCallbackUrl: process.env.DARWIN_CALLBACK || ConfigurationConstants.DARWIN_CALLBACK,
 
-  darwinDeploymentCallbackUrl: process.env.DARWIN_DEPLOYMENT_CALLBACK || ConfigurationConstants.DARWIN_DEPLOYMENT_CALLBACK,
+  darwinDeploymentCallbackUrl: process.env.DARWIN_CALLBACK || ConfigurationConstants.DARWIN_CALLBACK,
 
-  darwinIstioDeploymentCallbackUrl: process.env.DARWIN_ISTIO_DEPLOYMENT_CALLBACK || ConfigurationConstants.DARWIN_ISTIO_DEPLOYMENT_CALLBACK,
+  darwinIstioDeploymentCallbackUrl: process.env.DARWIN_CALLBACK || ConfigurationConstants.DARWIN_CALLBACK,
 
   spinnakerUrl: process.env.SPINNAKER_URL || ConfigurationConstants.SPINNAKER_URL,
 

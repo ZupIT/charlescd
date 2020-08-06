@@ -27,7 +27,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
+class FindDeploymentsHistoryForCircleInteractorImplTest extends Specification {
 
     def componentRepository = Mock(ComponentRepository)
     def deploymentRepository = Mock(DeploymentRepository)
@@ -37,7 +37,7 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
     def workspaceId = "workspaceId"
     def pageRequest = new PageRequest(0, 10)
 
-    def 'should return not search for components when no deployment found'() {
+    def 'should return and not search for components when no deployment found'() {
         given:
         def circle = "circle-id-1"
 
@@ -56,7 +56,31 @@ class FindDeploymentsHistoryForCircleInteractorTest extends Specification {
         result.isLast
     }
 
-    def 'should return when deployments found'() {
+    def 'should verify filter passed contains status and circle id'() {
+        given:
+        def circle = "circle-id-1"
+
+        DeploymentHistoryFilter parameteres = null
+
+        when:
+        findDeploymentHistoryIteractor.execute(workspaceId, circle, pageRequest)
+
+        then:
+        1 * deploymentRepository.findDeploymentsHistory(workspaceId, _ as DeploymentHistoryFilter, pageRequest) >>
+                { arguments ->
+                    parameteres = (DeploymentHistoryFilter) arguments[1]
+                    return new Page<DeploymentHistory>([], 0, 10, 0)
+                }
+        0 * componentRepository.findComponentsAtDeployments(workspaceId, _)
+        0 * _
+
+        parameteres.deploymentName == null
+        parameteres.periodBefore == null
+        parameteres.deploymentStatus == [DeploymentStatusEnum.DEPLOYED, DeploymentStatusEnum.NOT_DEPLOYED, DeploymentStatusEnum.DEPLOY_FAILED]
+        parameteres.circlesIds == [circle]
+    }
+
+    def 'should return when deployments found ordered by creation date'() {
         given:
         def circle = "circle-id-1"
         def firstDate = LocalDateTime.of(LocalDate.of(2020, 07, 16), LocalTime.now())

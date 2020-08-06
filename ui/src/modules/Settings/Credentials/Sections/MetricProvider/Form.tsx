@@ -24,17 +24,25 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
+import ConnectionStatus from './ConnectionStatus';
 import { MetricProvider } from './interfaces';
 import { Props } from '../interfaces';
-import { useMetricProvider } from './hooks';
+import { useMetricProvider, useFromTestConnection } from './hooks';
 import { metricProviders } from './constants';
 import Styled from './styled';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useMetricProvider();
+  const {
+    testProviderConnectionForm,
+    response,
+    loading
+  } = useFromTestConnection();
   const [isDisabled, setIsDisabled] = useState(true);
   const [provider, setProvider] = useState<Option>();
-  const { control, register, handleSubmit } = useForm<MetricProvider>();
+  const { control, register, handleSubmit, getValues } = useForm<
+    MetricProvider
+  >();
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -46,6 +54,11 @@ const FormMetricProvider = ({ onFinish }: Props) => {
       authorId: getProfileByKey('id'),
       provider: provider.value
     });
+  };
+
+  const onClick = () => {
+    const { url } = getValues();
+    testProviderConnectionForm({ provider: url, providerType: provider.value });
   };
 
   const onChange = (option: Option) => {
@@ -71,6 +84,15 @@ const FormMetricProvider = ({ onFinish }: Props) => {
         label="Insert the url"
         onChange={({ currentTarget }) => setIsDisabled(!currentTarget.value)}
       />
+      {response && <ConnectionStatus status={response.status} />}
+      <Styled.TestConnectionButton
+        type="button"
+        onClick={() => onClick()}
+        isLoading={loading}
+        isDisabled={isDisabled}
+      >
+        Test connection
+      </Styled.TestConnectionButton>
     </>
   );
 
@@ -87,13 +109,15 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       {provider ? renderFields() : renderSelect()}
-      <Button.Default
-        type="submit"
-        isLoading={loadingSave || loadingAdd}
-        isDisabled={isDisabled}
-      >
-        Save
-      </Button.Default>
+      <div>
+        <Button.Default
+          type="submit"
+          isLoading={loadingSave || loadingAdd}
+          isDisabled={isDisabled}
+        >
+          Save
+        </Button.Default>
+      </div>
     </Styled.Form>
   );
 

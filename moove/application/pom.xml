@@ -23,6 +23,10 @@
             <artifactId>commons</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.charlescd.moove</groupId>
+            <artifactId>metrics</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-patch</artifactId>
         </dependency>
@@ -42,6 +46,11 @@
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
             <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
