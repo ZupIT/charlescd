@@ -99,6 +99,7 @@ describe('DeploymentController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
+            priority: 0,
             active: true,
             components: [
               {
@@ -169,6 +170,7 @@ describe('DeploymentController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
+            priority: 0,
             active: false,
             components: [
               {
