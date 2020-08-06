@@ -17,6 +17,7 @@
 package io.charlescd.moove.legacy.moove.request.user
 
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Pattern
 
 data class CreateUserRequest(
 
@@ -24,6 +25,10 @@ data class CreateUserRequest(
     val name: String,
 
     @field:NotBlank
+    @field:Pattern(
+        regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$",
+        message = "Your password must fill our minimum security requirements."
+    )
     val password: String,
 
     @field:NotBlank
