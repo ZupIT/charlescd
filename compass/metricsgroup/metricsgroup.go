@@ -4,13 +4,16 @@ import (
 	"compass/util"
 	"encoding/json"
 	"errors"
+	"github.com/google/uuid"
 	"io"
 )
 
 type MetricsGroup struct {
 	util.BaseModel
-	Name    string   `json:"name"`
-	Metrics []Metric `json:"metrics"`
+	Name        string    `json:"name"`
+	Metrics     []Metric  `json:"metrics"`
+	WorkspaceID uuid.UUID `json:"workspaceId"`
+	CircleID    uuid.UUID `json:"circleId"`
 }
 
 func (metricsGroup MetricsGroup) Validate() error {
