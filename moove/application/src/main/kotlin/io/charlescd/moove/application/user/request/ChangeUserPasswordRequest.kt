@@ -20,6 +20,6 @@ import javax.validation.constraints.Pattern
 
 data class ChangeUserPasswordRequest(
     val oldPassword: String,
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$")
+    @field:Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$")
     val newPassword: String
 )
