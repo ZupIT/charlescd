@@ -7,6 +7,7 @@ import (
 type UseCases interface {
 	// Parse(dataSource io.ReadCloser) (DataSource, error)
 	FindAllByWorkspace(workspaceID string) ([]DataSource, error)
+	Delete(id string, workspaceID string) error
 	// Save(dataSource DataSource) (DataSource, error)
 	// FindById(id string) (DataSource, error)
 }
