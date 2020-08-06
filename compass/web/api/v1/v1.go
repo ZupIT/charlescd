@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"compass/datasource"
 	"compass/metricsgroup"
 	"fmt"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 type UseCases interface {
 	Start()
 	NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi
+	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 }
 
 type V1 struct {
