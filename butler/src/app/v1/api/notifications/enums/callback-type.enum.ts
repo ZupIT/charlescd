@@ -14,45 +14,10 @@
  * limitations under the License.
  */
 
-import {
-  IDeploymentVersion,
-  IPipelineCircle
-} from '../../../../../api/components/interfaces'
+export enum CallbackTypeEnum {
 
-export interface ISpinnakerPipelineConfiguration {
-
-  account: string,
-
-  pipelineName: string,
-
-  applicationName: string,
-
-  appName: string,
-
-  appNamespace: string,
-
-  webhookUri: string,
-
-  versions: IDeploymentVersion[],
-
-  unusedVersions: IDeploymentVersion[],
-
-  circles: IPipelineCircle[]
-
-  circleId: string
-
-  githubAccount: string
-
-  helmRepository: string
-
-  gatewayName?: string
-
-  hostValue?: string
-
-  hosts?: string[]
-
-  url: string
-
-  callbackType: string
+    DEPLOYMENT = 'DEPLOYMENT',
+    UNDEPLOYMENT = 'UNDEPLOYMENT',
+    ISTIO_DEPLOYMENT = 'ISTIO_DEPLOYMENT',
 
 }
