@@ -62,6 +62,8 @@ spec:
             {{- else }}
               value: "{{ .Values.moove.keycloakHost}}"
             {{- end }}
+            - name: KEYCLOAK_PUBLIC_CLIENT_ID
+              value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
