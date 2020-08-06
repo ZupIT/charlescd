@@ -5,6 +5,10 @@ import (
 	"compass/metricsgroup"
 	v1 "compass/web/api/v1"
 	"fmt"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
 
@@ -30,6 +34,18 @@ func main() {
 		log.Fatalln("failed to connect database")
 	}
 	defer db.Close()
+
+	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://migrations",
+		os.Getenv("DB_NAME"), driver)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := m.Up(); err != nil {
+		log.Fatal(err)
+	}
 
 	metricsgroupMain := metricsgroup.NewMain(db)
 	datasourceMain := datasource.NewMain(db)
