@@ -47,9 +47,9 @@ export class DeploymentHandler {
 
   async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
-    const componentsOverlap = await this.checkForRunningComponents(deployment)
+    const overlappingComponents = await this.getOverlappingComponents(deployment)
 
-    if (componentsOverlap.length > 0) {
+    if (overlappingComponents.length > 0) {
       return await this.handleOverlap(job)
     }
 
@@ -70,7 +70,7 @@ export class DeploymentHandler {
     if (!deployment) {
       const error = new Error('Deployment not found')
       job.done(error)
-      this.consoleLoggerService.log('DeploymentHandler error', { job: job })
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_NOT_FOUND', { job: job })
       throw error
     }
     return deployment
@@ -91,7 +91,7 @@ export class DeploymentHandler {
   }
 
   async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
-    this.consoleLoggerService.log('FINISH:RUN_EXECUTION CD Response error', { job: job, error: cdResponse.error })
+    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job, error: cdResponse.error })
     job.done(new Error(cdResponse.error))
     return job
   }
@@ -119,7 +119,7 @@ export class DeploymentHandler {
     return updated
   }
 
-  async checkForRunningComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+  async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
     const deploymentComponents = await this.findComponentsByName(deployment)
     const allRunningComponents = await this.componentsRepository.find({ where: { running: true } })
     const overlap = allRunningComponents.filter( c => deploymentComponents.some(dc => dc.name === c.name))
