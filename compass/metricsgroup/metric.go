@@ -9,7 +9,7 @@ import (
 
 type Metric struct {
 	util.BaseModel
-	MetricGroupID uuid.UUID
+	MetricGroupID uuid.UUID       `json:"metricGroupId"`
 	DataSourceID  uuid.UUID       `json:"dataSourceId"`
 	Metric        string          `json:"metric"`
 	Filters       []MetricFilter  `json:"filters"`
