@@ -3,6 +3,7 @@ package main
 import (
 	"compass/metricsgroup"
 	v1 "compass/web/api/v1"
+	"fmt"
 	"log"
 	"os"
 
@@ -17,9 +18,15 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	db, err := gorm.Open("postgres", os.Getenv("DB_URL"))
+	db, err := gorm.Open("postgres", fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_SSL"),
+	))
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatalln("failed to connect database")
 	}
 	defer db.Close()
 

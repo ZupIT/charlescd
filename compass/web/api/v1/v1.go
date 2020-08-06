@@ -38,5 +38,5 @@ func health(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func (v1 V1) Start() {
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", v1.Router)
 }

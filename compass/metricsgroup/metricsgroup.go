@@ -3,9 +3,8 @@ package metricsgroup
 import (
 	"compass/util"
 	"encoding/json"
+	"errors"
 	"io"
-
-	"github.com/google/uuid"
 )
 
 type MetricsGroup struct {
@@ -14,28 +13,12 @@ type MetricsGroup struct {
 	Metrics []Metric `json:"metrics"`
 }
 
-type Metric struct {
-	util.BaseModel
-	MetricGroupID uuid.UUID
-	DataSourceID  uuid.UUID       `json:"dataSourceId"`
-	Metric        string          `json:"metric"`
-	Filters       []MetricFilter  `json:"filters"`
-	GroupBy       []MetricGroupBy `json:"groupBy"`
-	Condition     string          `json:"condition"`
-	Threshold     float64         `json:"threshold"`
-}
+func (metricsGroup MetricsGroup) Validate() error {
+	if metricsGroup.Name == "" {
+		return errors.New("Name is required")
+	}
 
-type MetricFilter struct {
-	util.BaseModel
-	MetricID uuid.UUID
-	Field    string `json:"field"`
-	Value    string `json:"value"`
-	Operator string `json:"operator"`
-}
-
-type MetricGroupBy struct {
-	util.BaseModel
-	Field string `json:"field"`
+	return nil
 }
 
 const (
