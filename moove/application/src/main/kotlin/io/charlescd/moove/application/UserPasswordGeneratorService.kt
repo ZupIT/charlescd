@@ -1,10 +1,10 @@
 package io.charlescd.moove.application
 
+import javax.inject.Named
 import org.passay.AllowedCharacterRule
 import org.passay.CharacterRule
 import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
-import javax.inject.Named
 
 @Named
 class UserPasswordGeneratorService(
@@ -25,12 +25,12 @@ class UserPasswordGeneratorService(
     }
 }
 
-class SpecialChars : org.passay.CharacterData {
+class SpecialChars(private val specialChars: String? = "!@#$^*()_") : org.passay.CharacterData {
     override fun getErrorCode(): String {
         return AllowedCharacterRule.ERROR_CODE
     }
 
     override fun getCharacters(): String {
-        return "!@#$^*()_"
+        return specialChars!!
     }
 }
