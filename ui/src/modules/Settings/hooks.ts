@@ -70,7 +70,7 @@ export const useWorkspace = (): [
   return [data, loadWorkspace, getWorkspace, loading, update];
 };
 
-export const useWorkspaces = (): [Function, Function] => {
+export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
   const dispatch = useDispatch();
   const [workspaces, getWorkspaces] = useFetch<WorkspacePagination>(findAll);
   const { response, error } = workspaces;
@@ -90,7 +90,7 @@ export const useWorkspaces = (): [Function, Function] => {
     }
   }, [dispatch, response, error]);
 
-  return [filerWorkspace, getWorkspaces];
+  return [filerWorkspace, getWorkspaces, response];
 };
 
 export default useWorkspace;
