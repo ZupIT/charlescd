@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
-import { ConnectorResult } from './connector-result.interface'
-import { ConnectorResultError } from './connector-result.interface'
+import { CdTypeEnum } from '../../../../v1/api/configurations/enums'
+import { ICdConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { Deployment } from './'
 
-export {
-  SpinnakerPipeline,
-  ConnectorResult,
-  ConnectorResultError
+export interface CdConfiguration {
+    id: string
+
+    type: CdTypeEnum,
+
+    configurationData: ICdConfigurationData,
+
+    name: string
+
+    authorId: string
+
+    workspaceId: string
+
+    createdAt: Date
+
+    deployments: Deployment[] | null
 }

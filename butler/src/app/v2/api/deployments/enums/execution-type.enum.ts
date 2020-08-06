@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
-import { ConnectorResult } from './connector-result.interface'
-import { ConnectorResultError } from './connector-result.interface'
-
-export {
-  SpinnakerPipeline,
-  ConnectorResult,
-  ConnectorResultError
+export enum ExecutionTypeEnum {
+    DEPLOYMENT = 'DEPLOYMENT',
+    UNDEPLOYMENT = 'UNDEPLOYMENT'
 }

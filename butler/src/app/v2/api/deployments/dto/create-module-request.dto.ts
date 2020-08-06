@@ -16,7 +16,7 @@
 
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
+import { ComponentEntityV2, ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { CreateComponentRequestDto } from './create-component-request.dto';
 
 export class CreateModuleDeploymentDto {
@@ -36,11 +36,5 @@ export class CreateModuleDeploymentDto {
     this.moduleId = moduleId
     this.helmRepository = helmRepository
     this.components = components
-  }
-
-  public toEntity() : ComponentEntity[] {
-    return this.components.map(c => {
-      return new ComponentEntity(this.helmRepository, c.buildImageTag, c.buildImageUrl, c.componentName, c.componentId)
-    })
   }
 }

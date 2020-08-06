@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Deployment } from './deployment.interface'
+import { Deployment } from './'
 
 export interface Component {
     id: string

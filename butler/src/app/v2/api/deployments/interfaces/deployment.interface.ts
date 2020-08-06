@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../../v1/api/configurations/enums'
-import { ICdConfigurationData } from '../../../../../v1/api/configurations/interfaces'
-import { Deployment } from './index'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { CdConfiguration, Component } from './'
 
-export interface CdConfiguration {
+export interface Deployment {
     id: string
-
-    type: CdTypeEnum,
-
-    configurationData: ICdConfigurationData,
-
-    name: string
 
     authorId: string
 
-    workspaceId: string
+    callbackUrl: string
+
+    status: DeploymentStatusEnum
 
     createdAt: Date
 
-    deployments: Deployment[] | null
+    finishedAt: Date | null
+
+    cdConfiguration: CdConfiguration
+
+    circleId: string | null
+
+    components?: Component[]
+
+    incomingCircleId?: string
 }

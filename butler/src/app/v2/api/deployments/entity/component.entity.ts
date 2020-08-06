@@ -1,6 +1,6 @@
-import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
-import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity';
-import { Component } from '../../../core/integrations/spinnaker/interfaces'
+import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
+import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
+import { Component } from '../interfaces'
 
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
@@ -29,7 +29,13 @@ export class ComponentEntityV2 implements Component {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   deployment!: DeploymentEntity
 
-  constructor(helmUrl: string, buildImageTag: string, buildImageUrl: string, componentName: string, componentId: string) {
+  constructor(
+    helmUrl: string,
+    buildImageTag: string,
+    buildImageUrl: string,
+    componentName: string,
+    componentId: string
+  ) {
     this.helmUrl = helmUrl
     this.imageTag = buildImageTag
     this.imageUrl = buildImageUrl
@@ -37,38 +43,13 @@ export class ComponentEntityV2 implements Component {
     this.componentId = componentId
   }
 
-  public fromDto(dto: ComponentCreateDTO) : ComponentEntityV2{
-    return new ComponentEntityV2(dto.helmUrl, dto.imageTag, dto.imageUrl, dto.name, dto.componentId)
-  }
-
-  public toDto() : ReadComponentDTO {
-    return {
-      id: this.id,
-      helmUrl: this.helmUrl,
-      imageTag: this.imageTag,
-      imageUrl: this.imageUrl,
-      name: this.name,
-      running: this.running
-    }
+  public clone(): ComponentEntityV2 {
+    return new ComponentEntityV2(
+      this.helmUrl,
+      this.imageTag,
+      this.imageUrl,
+      this.name,
+      this.componentId
+    )
   }
 }
-
-
-export interface ComponentCreateDTO {
-  id: string
-  name: string
-  imageUrl: string
-  imageTag: string
-  helmUrl: string
-  componentId: string
-}
-
-export interface ReadComponentDTO {
-  id: string
-  helmUrl: string
-  imageTag: string
-  imageUrl: string
-  name: string
-  running: boolean
-}
-

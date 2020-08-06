@@ -13,7 +13,7 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
-import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-use-case'
+import { CreateDeploymentUsecase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
@@ -25,7 +25,7 @@ describe('DeploymentHandler', () => {
   let app: INestApplication
   let worker: PgBossWorker
   let deploymentHandler: DeploymentHandler
-  let deploymentUseCase: DeploymentUseCase
+  let deploymentUseCase: CreateDeploymentUsecase
   let manager: EntityManager
   let mockServer : Server
   beforeAll(async() => {
@@ -43,7 +43,7 @@ describe('DeploymentHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
-    deploymentUseCase = app.get<DeploymentUseCase>(DeploymentUseCase)
+    deploymentUseCase = app.get<CreateDeploymentUsecase>(CreateDeploymentUsecase)
     manager = fixtureUtilsService.connection.manager
   })
 

@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-import { DeploymentStatusEnum } from '../../../../../v1/api/deployments/enums'
-import { Component } from './component.interface'
-import { CdConfiguration } from './index'
+import { ExecutionTypeEnum } from './execution-type.enum'
 
-export interface Deployment {
-    id: string
-
-    authorId: string
-
-    callbackUrl: string
-
-    status: DeploymentStatusEnum
-
-    createdAt: Date
-
-    finishedAt: Date | null
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string | null
-
-    components?: Component[]
-
-    incomingCircleId?: string
+export {
+  ExecutionTypeEnum
 }
