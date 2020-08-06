@@ -40,6 +40,11 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	if err := metricsGroup.Validate(); err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, err)
+		return
+	}
+
 	createdCircle, err := metricsGroupApi.metricsGroupMain.Save(metricsGroup)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
