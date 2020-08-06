@@ -2,8 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 type RestError struct {
@@ -11,16 +13,26 @@ type RestError struct {
 }
 
 func NewRestError(w http.ResponseWriter, status int, err error) {
-	w.Header().Add("Content/Type", "application/json")
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
 	restError := RestError{Message: err.Error()}
-	res, _ := json.Marshal(restError)
-	fmt.Fprint(w, string(res))
+	json.NewEncoder(w).Encode(restError)
 }
 
 func NewRestSuccess(w http.ResponseWriter, status int, response interface{}) {
-	w.Header().Add("Content/Type", "application/json")
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
-	res, _ := json.Marshal(response)
-	fmt.Fprint(w, string(res))
+	json.NewEncoder(w).Encode(response)
+}
+
+func HttpValidator(next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params)) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		worskapceID := r.Header.Get("workspaceId")
+
+		if worskapceID == "" {
+			NewRestError(w, http.StatusInternalServerError, errors.New("WorkspaceId is required"))
+			return
+		}
+		next(w, r, ps)
+	}
 }

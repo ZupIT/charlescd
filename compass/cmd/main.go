@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compass/datasource"
 	"compass/metricsgroup"
 	v1 "compass/web/api/v1"
 	"fmt"
@@ -31,8 +32,10 @@ func main() {
 	defer db.Close()
 
 	metricsgroupMain := metricsgroup.NewMain(db)
+	datasourceMain := datasource.NewMain(db)
 
 	v1 := v1.NewV1()
 	v1.NewMetricsGroupApi(metricsgroupMain)
+	v1.NewDataSourceApi(datasourceMain)
 	v1.Start()
 }
