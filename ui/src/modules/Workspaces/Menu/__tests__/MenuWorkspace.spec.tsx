@@ -19,13 +19,18 @@ import { render } from 'unit-test/testUtils';
 import Menu from '../index';
 import workspaces from '../../../../../stub/workspaces/mock';
 
+const props = {
+  items: workspaces.workspaces.content,
+  onSearch: jest.fn()
+};
+
 test('renders Workspace menu', async () => {
-  const props = {
-    items: workspaces.workspaces.content,
-    onSearch: jest.fn()
-  };
   const { getByTestId, getAllByText } = render(
-    <Menu items={props.items} onSearch={props.onSearch} />
+    <Menu
+      items={props.items}
+      onSearch={props.onSearch}
+      selectedWorkspace={jest.fn()}
+    />
   );
   const createButton = getByTestId('labeledIcon-plus-circle');
   const searchInput = getByTestId('input-text-search');
@@ -34,4 +39,16 @@ test('renders Workspace menu', async () => {
   expect(createButton).toBeInTheDocument();
   expect(searchInput).toBeInTheDocument();
   expect(workspacesArray.length).toBe(5);
+});
+
+test('renders Workspace menu on loading', () => {
+  const { getByText } = render(
+    <Menu
+      items={props.items}
+      onSearch={props.onSearch}
+      selectedWorkspace={jest.fn()}
+      isLoading
+    />
+  );
+  expect(getByText('Loading...')).toBeInTheDocument();
 });
