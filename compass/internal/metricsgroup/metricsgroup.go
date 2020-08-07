@@ -1,11 +1,12 @@
 package metricsgroup
 
 import (
-	"compass/util"
+	"compass/internal/util"
 	"encoding/json"
 	"errors"
-	"github.com/google/uuid"
 	"io"
+
+	"github.com/google/uuid"
 )
 
 type MetricsGroup struct {

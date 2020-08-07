@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"compass/datasource"
+	"compass/internal/datasource"
 	"compass/web/api"
 	"net/http"
 
