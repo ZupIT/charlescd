@@ -3,6 +3,7 @@ package datasource
 import (
 	"compass/util"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -37,6 +38,16 @@ func (main Main) findById(id string) (DataSource, error) {
 	return dataSource, nil
 }
 
+func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
+	var count int8
+	result := main.db.Where("workspace_id = ? AND health", workspaceId).Count(&count)
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	return count != 0, nil
+}
+
 func (main Main) Delete(id string, workspaceID string) error {
 	if _, err := main.findById(id); gorm.IsRecordNotFoundError(err) {
 		return errors.New("Not found")
@@ -50,7 +61,21 @@ func (main Main) Delete(id string, workspaceID string) error {
 	return nil
 }
 
-func (main Main) Save(dataSource DataSource) error {
+func (main Main) SetAsHealth(id string, workspaceID string) error {
+	if hasHealth, err := main.verifyHealthAtWorkspace(workspaceID); err != nil || hasHealth {
+		log.Print(err)
+		return errors.New("Cannot set as Health")
+	}
+
+	db := main.db.Model(&DataSource{}).Where("id = ?", id).Update(DataSource{Health: true})
+	if db.Error != nil {
+		return db.Error
+	}
+
+	return nil
+}
+
+/* func (main Main) Save(dataSource DataSource) error {
 	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
 	if gorm.IsRecordNotFoundError(db.Error) {
 		return errors.New("Not Found")
@@ -59,4 +84,4 @@ func (main Main) Save(dataSource DataSource) error {
 		return db.Error
 	}
 	return nil
-}
+} */
