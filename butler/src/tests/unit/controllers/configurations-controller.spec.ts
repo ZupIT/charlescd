@@ -38,7 +38,6 @@ describe('ConfigurationsController', () => {
   let createK8sConfigurationUsecase: CreateCdConfigurationUsecase
   let createCdConfigurationDto: CreateCdConfigurationDto
   let getK8sConfigurationUsecase: GetCdConfigurationsUsecase
-  let cdConfigurationsRepository: CdConfigurationsRepository
 
   beforeEach(async() => {
 
