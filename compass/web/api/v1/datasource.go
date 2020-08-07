@@ -4,8 +4,9 @@ import (
 	"compass/internal/datasource"
 	"compass/web/api"
 	"errors"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -31,8 +32,8 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 	return dataSourceAPI
 }
 
-func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(r.Header.Get("workspaceId"))
+func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceId)
 	if dbErr != nil {
 		api.NewRestError(w, http.StatusInternalServerError, errors.New("Error doing the process"))
 		return
@@ -41,7 +42,7 @@ func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *
 	api.NewRestSuccess(w, http.StatusOK, dataSources)
 }
 
-func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	dataSource, err := dataSourceApi.dataSourceMain.Parse(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
@@ -53,7 +54,7 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	dataSource.WorkspaceID, err = uuid.Parse(r.Header.Get("workspaceId"))
+	dataSource.WorkspaceID, err = uuid.Parse(workspaceId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
@@ -68,8 +69,8 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 	api.NewRestSuccess(w, http.StatusOK, createdDataSource)
 }
 
-func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"), r.Header.Get("workspaceId"))
+func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"), workspaceId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
@@ -77,7 +78,7 @@ func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	metrics, err := dataSourceApi.dataSourceMain.GetMetrics(ps.ByName("id"), "")
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
@@ -86,8 +87,8 @@ func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Req
 	api.NewRestSuccess(w, http.StatusOK, metrics)
 }
 
-func (dataSourceApi DataSourceApi) defineHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := dataSourceApi.dataSourceMain.SetAsHealth(ps.ByName("id"), r.Header.Get("workspaceId"))
+func (dataSourceApi DataSourceApi) defineHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	err := dataSourceApi.dataSourceMain.SetAsHealth(ps.ByName("id"), workspaceId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return

@@ -14,7 +14,7 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "workspaceId",
+								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
 								"type": "text"
 							}
@@ -51,14 +51,14 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "workspaceId",
+								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginId\": {{pluginId}},\n    \"health\": false,\n    \"data\": {\n        \"url\": \"http://demo.robustperception.io:9090\"\n    }\n}",
+							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginId\": \"{{pluginId}}\",\n    \"health\": true,\n    \"data\": {\n        \"url\": \"http://demo.robustperception.io:9090\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -82,7 +82,13 @@
 					"name": "get metrics",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{host}}/v1/datasource/{{datasourceId}}/metrics",
 							"host": [
@@ -121,7 +127,13 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"Prometheus\",\n    \"src\": \"prometheus\"\n}",
@@ -148,7 +160,13 @@
 					"name": "find by id",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{host}}/v1/plugins/{{pluginId}}",
 							"host": [
@@ -158,6 +176,30 @@
 								"v1",
 								"plugins",
 								"{{pluginId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/plugins",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"plugins"
 							]
 						}
 					},
