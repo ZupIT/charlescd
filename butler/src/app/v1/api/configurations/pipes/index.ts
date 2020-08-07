@@ -15,7 +15,9 @@
  */
 
 import { ValidConfigurationDataPipe } from './valid-configuration-data.pipe'
+import { UniqueNamespaceByWorskpacePipe } from './unique-namespace-by-worskpace.pipe'
 
 export {
-  ValidConfigurationDataPipe
+  ValidConfigurationDataPipe,
+  UniqueNamespaceByWorskpacePipe
 }
