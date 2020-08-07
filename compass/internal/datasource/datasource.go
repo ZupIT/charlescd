@@ -69,7 +69,7 @@ func (main Main) findById(id string) (DataSource, error) {
 
 func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	var count int8
-	result := main.db.Where("workspace_id = ? AND health", workspaceId).Count(&count)
+	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true", workspaceId).Count(&count)
 	if result.Error != nil {
 		return false, result.Error
 	}
@@ -125,7 +125,7 @@ func (main Main) SetAsHealth(id string, workspaceID string) error {
 		return errors.New("Cannot set as Health")
 	}
 
-	db := main.db.Model(&DataSource{}).Where("id = ?", id).Update(DataSource{Health: true})
+	db := main.db.Model(DataSource{}).Where("id = ?", id).Updates("health", true)
 	if db.Error != nil {
 		return db.Error
 	}
