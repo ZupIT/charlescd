@@ -27,7 +27,7 @@ import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity
 import { IGenericConfig } from '../../../app/v1/api/configurations/interfaces/octopipe-configuration-data.type'
 import anything = jasmine.anything
 
-describe('CreateCircleDeploymentUsecase Integration Test', () => {
+describe('CreateCdConfiguration Integration Test', () => {
 
   let app: INestApplication
   let fixtureUtilsService: FixtureUtilsService
@@ -49,7 +49,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-
   })
 
   it('/POST /cd should return conflict if namespace already exists', async() => {
