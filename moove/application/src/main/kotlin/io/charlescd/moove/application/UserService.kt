@@ -51,7 +51,7 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     fun checkIfEmailAlreadyExists(user: User) {
-        if(userRepository.findByEmail(user.email).isPresent) {
+        if (userRepository.findByEmail(user.email).isPresent) {
             throw BusinessException.of(MooveErrorCode.CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS)
                 .withParameters(user.email)
         }

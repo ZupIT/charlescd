@@ -28,5 +28,4 @@ class CreateUserInteractorImpl @Inject constructor(
 
         return UserResponse.from(user)
     }
-
 }
