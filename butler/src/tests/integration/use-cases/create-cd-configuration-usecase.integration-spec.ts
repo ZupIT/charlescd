@@ -24,7 +24,7 @@ import { GitProvidersEnum } from '../../../app/v1/core/integrations/configuratio
 import { ClusterProviderEnum } from '../../../app/v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import * as request from 'supertest'
 import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
-import { IDefaultConfig, IGenericConfig } from '../../../app/v1/api/configurations/interfaces/octopipe-configuration-data.type'
+import { IDefaultConfig } from '../../../app/v1/api/configurations/interfaces/octopipe-configuration-data.type'
 import anything = jasmine.anything
 
 describe('CreateCdConfiguration Integration Test', () => {
