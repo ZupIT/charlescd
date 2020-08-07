@@ -22,9 +22,12 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.security.WorkspacePermissionsMapping
 import org.keycloak.admin.client.Keycloak
+import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Service
 class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
@@ -134,6 +137,48 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
         keycloakUser.attributes["workspaces"] = workspaceAndPermissionsJson
 
         updateKeycloakUser(keycloakUser)
+    }
+
+    override fun createUser(email: String, name: String, password: String, isRoot: Boolean) {
+        this.keycloak
+            .realm(this.realm)
+            .users()
+            .create(createUserRepresentation(email, name, password, isRoot))
+            .takeIf { it.status == 201 }
+            ?: throw RuntimeException("Could not create user on keycloak.")
+    }
+
+    private fun createUserRepresentation(
+        email: String,
+        name: String,
+        password: String,
+        isRoot: Boolean
+    ): UserRepresentation {
+        val userRepresentation = UserRepresentation()
+        val names = name.split(" ")
+
+        val credential = createcredentialRepresentation(password)
+
+        userRepresentation.isEmailVerified = true
+        userRepresentation.isEnabled = true
+        userRepresentation.firstName = names.first()
+
+        if (names.size > 1) userRepresentation.lastName = names.last()
+
+        userRepresentation.email = email
+        userRepresentation.username = email
+        userRepresentation.createdTimestamp = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
+        userRepresentation.credentials = listOf(credential)
+        userRepresentation.singleAttribute("isRoot", isRoot.toString())
+
+        return userRepresentation
+    }
+
+    private fun createcredentialRepresentation(password: String): CredentialRepresentation {
+        val credential = CredentialRepresentation()
+        credential.type = "password"
+        credential.value = password
+        return credential
     }
 
     private fun loadKeycloakUser(email: String): UserRepresentation {

@@ -17,16 +17,21 @@
 package io.charlescd.moove.security.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import feign.FeignException
+import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.Role
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.UserGroup
+import io.charlescd.moove.domain.exceptions.NotFoundException
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.admin.client.resource.RealmResource
 import org.keycloak.admin.client.resource.UserResource
 import org.keycloak.admin.client.resource.UsersResource
+import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import spock.lang.Specification
 
+import javax.ws.rs.core.Response
 import java.time.LocalDateTime
 
 class KeycloakClientServiceTest extends Specification {
@@ -40,44 +45,38 @@ class KeycloakClientServiceTest extends Specification {
     private UserResource userResource = Mock(UserResource)
     private UsersResource usersResource = Mock(UsersResource)
 
+    private Response response = Mock(Response)
+
     def setup() {
         keycloakClientService = new KeycloakClientService(keycloakClient)
         keycloakClientService.realm = "Charles"
     }
 
-    def "when a user group is associated, should include roles on keycloak for each user on user group"() {
+    def "should add permissions to a user on keycloak"() {
         given:
-        def authorId = "author-id"
+        def userId = "author-id"
         def workspaceId = "workspace-id"
-        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def memberId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def userGroupId = "user-group-id"
-        def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [member])
-
-        def roles = []
-        def role = new Role("role-id", "role-name", LocalDateTime.now())
-        roles.add(role)
-
+        def user = new User(userId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
         keycloakUser.firstName = "John"
         keycloakUser.lastName = "Doe"
-        keycloakUser.email = member.email
-        keycloakUser.username = member.email
+        keycloakUser.email = user.email
+        keycloakUser.username = user.email
         keycloakUser.attributes = [:]
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
-        def expectedWorkspacesAndRolesMapping = [id: workspaceId, roles: [role.name]]
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def expectedWorkspacesAndPermissionsMapping = [id: workspaceId, permissions: [permission.name]]
 
         when:
-        keycloakClientService.associateRolesToUsers(workspaceId, userGroup, roles)
+        keycloakClientService.addPermissionsToUser(workspaceId, user, [permission])
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
-        1 * usersResource.search(member.email) >> keycloakUsers
+        1 * usersResource.search(user.email) >> keycloakUsers
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.get(keycloakUser.id) >> userResource
@@ -94,43 +93,36 @@ class KeycloakClientServiceTest extends Specification {
             assert updatedKeycloakUser.attributes.size() == 1
             assert updatedKeycloakUser.attributes["workspaces"] != null
             assert updatedKeycloakUser.attributes["workspaces"].size() == 1
-            assert updatedKeycloakUser.attributes["workspaces"].get(0) == objectMapper.writeValueAsString(expectedWorkspacesAndRolesMapping)
+            assert updatedKeycloakUser.attributes["workspaces"].get(0) == objectMapper.writeValueAsString(expectedWorkspacesAndPermissionsMapping)
         }
 
         notThrown()
     }
 
-    def "when a user group is disassociated, should remove roles on keycloak for each user on user group"() {
+    def "should remove permissions from a user on keycloak"() {
         given:
-        def authorId = "author-id"
+        def userId = "author-id"
         def workspaceId = "workspace-id"
-        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def memberId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def userGroupId = "user-group-id"
-        def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [member])
-
+        def user = new User(userId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
         keycloakUser.firstName = "John"
         keycloakUser.lastName = "Doe"
-        keycloakUser.email = member.email
-        keycloakUser.username = member.email
-        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","roles":["role-name"]}']]
+        keycloakUser.email = user.email
+        keycloakUser.username = user.email
+        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","permissions":["permission-name"]}']]
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
-        def roles = []
-        def role = new Role("role-id", "role-name", LocalDateTime.now())
-        roles.add(role)
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
 
         when:
-        keycloakClientService.disassociateRolesFromUsers(workspaceId, userGroup, roles)
+        keycloakClientService.removePermissionsFromUser(workspaceId, user, [permission])
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
-        1 * usersResource.search(member.email) >> keycloakUsers
+        1 * usersResource.search(user.email) >> keycloakUsers
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.get(keycloakUser.id) >> userResource
@@ -152,19 +144,19 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
-    def "when a user is added to a user group that already have associations, should include roles on keycloak for all associations"() {
+    def "when a user is added to a user group that already have associations, should include permissions on keycloak for all associations"() {
         given:
         def userId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
+        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
 
         def workspaceId = "workspace-id"
 
-        def roles = []
-        def role = new Role("role-id", "role-name", LocalDateTime.now())
-        roles.add(role)
+        def permissions = []
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        permissions.add(permission)
 
-        def workspaceRoleMapping = new HashMap<String, List<Role>>()
-        workspaceRoleMapping.put(workspaceId, [role])
+        def workspaceRoleMapping = new HashMap<String, List<Permission>>()
+        workspaceRoleMapping.put(workspaceId, [permission])
 
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
@@ -176,10 +168,10 @@ class KeycloakClientServiceTest extends Specification {
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
-        def expectedWorkspacesAndRolesMapping = [id: workspaceId, roles: [role.name]]
+        def expectedWorkspacesAndRolesMapping = [id: workspaceId, permissions: [permission.name]]
 
         when:
-        keycloakClientService.associateRolesToNewUsers(user, workspaceRoleMapping)
+        keycloakClientService.associatePermissionsToNewUsers(user, workspaceRoleMapping)
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
@@ -207,19 +199,19 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
-    def "when a user is removed from a user group that already have associations, should remove roles on keycloak for all associations"() {
+    def "when a user is removed from a user group that already have associations, should remove permissions on keycloak for all associations"() {
         given:
         def userId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
+        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
 
         def workspaceId = "workspace-id"
 
-        def roles = []
-        def role = new Role("role-id", "role-name", LocalDateTime.now())
-        roles.add(role)
+        def permissions = []
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        permissions.add(permission)
 
-        def workspaceRoleMapping = new HashMap<String, List<Role>>()
-        workspaceRoleMapping.put(workspaceId, [role])
+        def workspaceRoleMapping = new HashMap<String, List<Permission>>()
+        workspaceRoleMapping.put(workspaceId, [permission])
 
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
@@ -227,12 +219,12 @@ class KeycloakClientServiceTest extends Specification {
         keycloakUser.lastName = "Doe"
         keycloakUser.email = user.email
         keycloakUser.username = user.email
-        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","roles":["role-name"]}']]
+        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","permissions":["permission-name"]}']]
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
         when:
-        keycloakClientService.disassociateRolesFromNewUsers(user, workspaceRoleMapping)
+        keycloakClientService.disassociatePermissionsFromNewUsers(user, workspaceRoleMapping)
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
@@ -259,41 +251,37 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
-    def "when a user group is associated, should aggregate roles on keycloak for each user because some users already have associations with same workspace"() {
+    def "should aggregate permissions on keycloak for user because user already had permissions on that workspace on another user group"() {
         given:
-        def authorId = "author-id"
         def workspaceId = "workspace-id"
-        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def memberId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def userGroupId = "user-group-id"
-        def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [member])
+        def userId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
+        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
 
-        def role1 = new Role("role-id1", "role-name1", LocalDateTime.now())
+        def permission1 = new Permission("permission-id1", "permission-name1", LocalDateTime.now())
 
-        def roles = []
-        def role2 = new Role("role-id2", "role-name2", LocalDateTime.now())
-        roles.add(role2)
+        def permissions = []
+        def permission2 = new Permission("permission-id2", "permission-name2", LocalDateTime.now())
+        permissions.add(permission2)
 
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
         keycloakUser.firstName = "John"
         keycloakUser.lastName = "Doe"
-        keycloakUser.email = member.email
-        keycloakUser.username = member.email
-        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","roles":["role-name1"]}']]
+        keycloakUser.email = user.email
+        keycloakUser.username = user.email
+        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","permissions":["permission-name1"]}']]
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
-        def expectedWorkspacesAndRolesMapping = [id: workspaceId, roles: [role1.name, role2.name]]
+        def expectedWorkspacesAndRolesMapping = [id: workspaceId, permissions: [permission1.name, permission2.name]]
 
         when:
-        keycloakClientService.associateRolesToUsers(workspaceId, userGroup, roles)
+        keycloakClientService.addPermissionsToUser(workspaceId, user, permissions)
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
-        1 * usersResource.search(member.email) >> keycloakUsers
+        1 * usersResource.search(user.email) >> keycloakUsers
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.get(keycloakUser.id) >> userResource
@@ -316,41 +304,37 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
-    def "when a user group is disassociated, should disintegrate roles on keycloak for each user because some users still have associations with same workspace by another user group"() {
+    def "should disaggregate permissions on keycloak for user but keep permissions on that workspaces from another user group"() {
         given:
-        def authorId = "author-id"
         def workspaceId = "workspace-id"
-        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def memberId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
-        def userGroupId = "user-group-id"
-        def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [member])
+        def userId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
+        def user = new User(userId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
 
-        def role1 = new Role("role-id1", "role-name1", LocalDateTime.now())
+        def permission1 = new Permission("permission-id1", "permission-name1", LocalDateTime.now())
 
-        def roles = []
-        def role2 = new Role("role-id2", "role-name2", LocalDateTime.now())
-        roles.add(role2)
+        def permissions = []
+        def permission2 = new Permission("permission-id2", "permission-name2", LocalDateTime.now())
+        permissions.add(permission2)
 
         def keycloakUser = new UserRepresentation()
         keycloakUser.id = "fake-user-id"
         keycloakUser.firstName = "John"
         keycloakUser.lastName = "Doe"
-        keycloakUser.email = member.email
-        keycloakUser.username = member.email
-        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","roles":["role-name1", "role-name2"]}']]
+        keycloakUser.email = user.email
+        keycloakUser.username = user.email
+        keycloakUser.attributes = [workspaces: ['{"id":"workspace-id","permissions":["permission-name1", "permission-name2"]}']]
         def keycloakUsers = new ArrayList()
         keycloakUsers.add(keycloakUser)
 
-        def expectedWorkspacesAndRolesMapping = [id: workspaceId, roles: [role1.name]]
+        def expectedWorkspacesAndRolesMapping = [id: workspaceId, permissions: [permission1.name]]
 
         when:
-        keycloakClientService.disassociateRolesFromUsers(workspaceId, userGroup, roles)
+        keycloakClientService.removePermissionsFromUser(workspaceId, user, permissions)
 
         then:
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
-        1 * usersResource.search(member.email) >> keycloakUsers
+        1 * usersResource.search(user.email) >> keycloakUsers
         1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.get(keycloakUser.id) >> userResource
@@ -369,19 +353,23 @@ class KeycloakClientServiceTest extends Specification {
             assert updatedKeycloakUser.attributes["workspaces"].size() == 1
             assert updatedKeycloakUser.attributes["workspaces"].get(0) == objectMapper.writeValueAsString(expectedWorkspacesAndRolesMapping)
         }
+
+        notThrown()
     }
 
     def 'should create a new keycloak user'() {
-        when:
+        given:
         def email = "john.doe@zup.com.br"
         def firstName = "John"
         def lastName = "Doe"
         def fullName = "John Doe"
         def password = "xpto123@"
-        service.createUser(email, fullName, password, false)
+
+        when:
+        keycloakClientService.createUser(email, fullName, password, false)
 
         then:
-        1 * keycloak.realm(_ as String) >> realmResource
+        1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.create(_) >> { arguments ->
             def userRepresentation = arguments[0]
@@ -400,16 +388,18 @@ class KeycloakClientServiceTest extends Specification {
     }
 
     def 'should create a new keycloak user with root privileges on charles'() {
-        when:
+        given:
         def email = "john.doe@zup.com.br"
         def firstName = "John"
         def lastName = "Doe"
         def fullName = "John Doe"
         def password = "xpto123@"
-        service.createUser(email, fullName, password, true)
+
+        when:
+        keycloakClientService.createUser(email, fullName, password, true)
 
         then:
-        1 * keycloak.realm(_ as String) >> realmResource
+        1 * keycloakClient.realm(_ as String) >> realmResource
         1 * realmResource.users() >> usersResource
         1 * usersResource.create(_) >> { arguments ->
             def userRepresentation = arguments[0]
@@ -427,4 +417,34 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
+    def 'when trying to create user on keycloak but something wrong happens should throw exception'() {
+        given:
+        def email = "john.doe@zup.com.br"
+        def firstName = "John"
+        def lastName = "Doe"
+        def fullName = "John Doe"
+        def password = "xpto123@"
+
+        when:
+        keycloakClientService.createUser(email, fullName, password, true)
+
+        then:
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.create(_) >> { arguments ->
+            def userRepresentation = arguments[0]
+
+            assert userRepresentation instanceof UserRepresentation
+
+            assert userRepresentation.email == email
+            assert userRepresentation.firstName == firstName
+            assert userRepresentation.lastName == lastName
+            assert userRepresentation.attributes["isRoot"].get(0) == "true"
+
+            return response.status
+        }
+        1 * response.status >> 400
+
+        thrown(RuntimeException)
+    }
 }
