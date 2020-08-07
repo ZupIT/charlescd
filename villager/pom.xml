@@ -41,7 +41,7 @@
         <apache.lang3.version>3.8.1</apache.lang3.version>
         <aspectj.version>1.9.2</aspectj.version>
         <logback.version>1.1.7</logback.version>
-        <sdk.aws.version>1.11.375</sdk.aws.version>
+        <sdk.aws.version>1.11.830</sdk.aws.version>
         <jacoco.version>0.8.4</jacoco.version>
         <springfox.swagger.version>2.9.2</springfox.swagger.version>
         <springfox.swagger.ui.version>2.9.2</springfox.swagger.ui.version>

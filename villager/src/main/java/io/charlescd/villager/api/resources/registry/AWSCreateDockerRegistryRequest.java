@@ -47,6 +47,7 @@ public class AWSCreateDockerRegistryRequest extends CreateDockerRegistryConfigur
         return secretKey;
     }
 
+    @NotEmpty
     public String getRegion() {
         return region;
     }
