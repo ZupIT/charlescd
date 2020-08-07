@@ -17,29 +17,34 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.user.CreateUserInteractor
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
+import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
+import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
-    private val findAllUsersInteractor: FindAllUsersInteractor
+    private val findAllUsersInteractor: FindAllUsersInteractor,
+    private val createUserInteractor: CreateUserInteractor
 ) {
 
-    @ApiOperation(value = "Find User by email")
+    @ApiOperation(value = "Find user by email")
     @GetMapping("/{email:.+}")
     @ResponseStatus(HttpStatus.OK)
     fun findByEmail(@PathVariable email: String): UserResponse {
         return findUserByEmailInteractor.execute(email)
     }
 
-    @ApiOperation(value = "Find all Users")
+    @ApiOperation(value = "Find all users")
     @GetMapping
     fun findAll(
         @RequestParam("name", required = false) name: String?,
@@ -47,5 +52,18 @@ class V2UserController(
         pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
         return this.findAllUsersInteractor.execute(name, email, pageable)
+    }
+
+    @ApiOperation(value = "Create user")
+    @ApiImplicitParam(
+        name = "createUserRequest",
+        value = "Create User",
+        required = true,
+        dataType = "CreateUserRequest"
+    )
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest): UserResponse {
+        return this.createUserInteractor.execute(createUserRequest)
     }
 }
