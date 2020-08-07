@@ -6,5 +6,4 @@ import io.charlescd.moove.application.user.response.UserResponse
 interface CreateUserInteractor {
 
     fun execute(createUserRequest: CreateUserRequest): UserResponse
-
 }

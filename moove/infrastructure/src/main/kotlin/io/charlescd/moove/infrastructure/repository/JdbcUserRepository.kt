@@ -21,7 +21,6 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserExtractor
 import java.util.*
