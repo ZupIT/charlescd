@@ -29,11 +29,10 @@ export class UniqueNamespaceByWorskpacePipe implements PipeTransform {
   }
 
   public async transform(createCdConfigurationDto: CreateCdConfigurationDto): Promise<CreateCdConfigurationDto> {
-    const cdConfiguration = await this.cdConfigurationsRepository.findOne(
-      { where : {
-        namespace : createCdConfigurationDto.configurationData.namespace }
-      }
+    const cdConfiguration = await this.cdConfigurationsRepository.findNamespaceDecrypted(
+      createCdConfigurationDto.configurationData.namespace
     )
+
     if (cdConfiguration) {
       throw new ConflictException('Namespace already registered')
     }

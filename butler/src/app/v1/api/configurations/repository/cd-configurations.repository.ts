@@ -84,6 +84,23 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
     return plainToClass(CdConfigurationEntity, queryResult)
   }
 
+  public async findNamespaceDecrypted(namespace: string): Promise<CdConfigurationEntity | undefined> {
+
+    const queryResult: { configurationData: string } = await this.createQueryBuilder('cd_configurations')
+      .select('id, type, name')
+      .addSelect('user_id', 'authorId')
+      .addSelect('workspace_id', 'workspaceId')
+      .addSelect('created_at', 'createdAt')
+      .addSelect(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
+      .where(`PGP_SYM_DECRYPT(configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB @> '{ "namespace":"${namespace}" }' `)
+      .getRawOne()
+
+    if (!queryResult) {
+      return
+    }
+    return plainToClass(CdConfigurationEntity, queryResult)
+  }
+
   private setConfigurationData(configurationData: ICdConfigurationData): () => string {
     const stringConfigurationData = JSON.stringify(
       this.trimObject(configurationData)

@@ -26,6 +26,10 @@ export class CdConfigurationsRepositoryStub {
         return Promise.resolve({} as ICdConfigurationData)
     }
 
+    public findNamespaceDecrypted(): Promise<ICdConfigurationData | undefined> {
+        return Promise.resolve({} as ICdConfigurationData)
+    }
+
     public save(): Promise<CdConfigurationEntity> {
         return Promise.resolve({} as CdConfigurationEntity)
     }
