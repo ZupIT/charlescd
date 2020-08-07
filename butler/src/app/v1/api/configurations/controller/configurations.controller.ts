@@ -31,6 +31,7 @@ import {
   GetCdConfigurationsUsecase
 } from '../use-cases'
 import { ValidConfigurationDataPipe } from '../pipes'
+import { UniqueNamespaceByWorskpacePipe } from '../pipes/unique-namespace-by-worskpace.pipe'
 
 @Controller('configurations')
 export class ConfigurationsController {
@@ -41,7 +42,7 @@ export class ConfigurationsController {
         private readonly deleteCdConfigurationUsecase: DeleteCdConfigurationUsecase
   ) { }
 
-    @UsePipes(ValidConfigurationDataPipe)
+    @UsePipes(ValidConfigurationDataPipe, UniqueNamespaceByWorskpacePipe)
     @Post('cd')
   public async createCdConfiguration(
         @Body() createCdConfigurationDto: CreateCdConfigurationDto,

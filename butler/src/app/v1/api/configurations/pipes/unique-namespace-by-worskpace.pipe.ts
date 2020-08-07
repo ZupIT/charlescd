@@ -15,17 +15,11 @@
  */
 
 import {
-  BadRequestException, ConflictException, ExecutionContext, Header,
+  ConflictException,
   Injectable,
   PipeTransform
 } from '@nestjs/common'
 import { CreateCdConfigurationDto } from '../dto'
-import { CdTypeEnum } from '../enums'
-import {
-  validate,
-  ValidationError
-} from 'class-validator'
-import { OctopipeConfigurationData } from '../interfaces'
 import { CdConfigurationsRepository } from '../repository'
 
 @Injectable()
@@ -45,6 +39,5 @@ export class UniqueNamespaceByWorskpacePipe implements PipeTransform {
     }
     return createCdConfigurationDto
   }
-
 
 }
