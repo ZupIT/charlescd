@@ -21,6 +21,7 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserExtractor
 import java.util.*
@@ -85,6 +86,32 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         pageRequest: PageRequest
     ): Page<User> {
         return findWorkspaceUsers(workspaceId, name, email, pageRequest)
+    }
+
+    override fun save(user: User): User {
+        createUser(user)
+        return findById(user.id).get()
+    }
+
+    private fun createUser(user: User) {
+        val statement = "INSERT INTO users(" +
+                "id," +
+                "name," +
+                "photo_url," +
+                "email," +
+                "is_root," +
+                "created_at) " +
+                "VALUES(?,?,?,?,?,?)"
+
+        this.jdbcTemplate.update(
+            statement,
+            user.id,
+            user.name,
+            user.photoUrl,
+            user.email,
+            user.root,
+            user.createdAt
+        )
     }
 
     private fun findWorkspaceUsers(workspaceId: String, name: String?, email: String?, page: PageRequest): Page<User> {

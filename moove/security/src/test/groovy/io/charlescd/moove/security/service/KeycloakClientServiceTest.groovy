@@ -369,8 +369,62 @@ class KeycloakClientServiceTest extends Specification {
             assert updatedKeycloakUser.attributes["workspaces"].size() == 1
             assert updatedKeycloakUser.attributes["workspaces"].get(0) == objectMapper.writeValueAsString(expectedWorkspacesAndRolesMapping)
         }
+    }
 
-//        notThrown()
+    def 'should create a new keycloak user'() {
+        when:
+        def email = "john.doe@zup.com.br"
+        def firstName = "John"
+        def lastName = "Doe"
+        def fullName = "John Doe"
+        def password = "xpto123@"
+        service.createUser(email, fullName, password, false)
+
+        then:
+        1 * keycloak.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.create(_) >> { arguments ->
+            def userRepresentation = arguments[0]
+
+            assert userRepresentation instanceof UserRepresentation
+
+            assert userRepresentation.email == email
+            assert userRepresentation.firstName == firstName
+            assert userRepresentation.lastName == lastName
+            assert userRepresentation.attributes["isRoot"].get(0) == "false"
+
+            return response
+        }
+        1 * response.status >> 201
+        notThrown()
+    }
+
+    def 'should create a new keycloak user with root privileges on charles'() {
+        when:
+        def email = "john.doe@zup.com.br"
+        def firstName = "John"
+        def lastName = "Doe"
+        def fullName = "John Doe"
+        def password = "xpto123@"
+        service.createUser(email, fullName, password, true)
+
+        then:
+        1 * keycloak.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.create(_) >> { arguments ->
+            def userRepresentation = arguments[0]
+
+            assert userRepresentation instanceof UserRepresentation
+
+            assert userRepresentation.email == email
+            assert userRepresentation.firstName == firstName
+            assert userRepresentation.lastName == lastName
+            assert userRepresentation.attributes["isRoot"].get(0) == "true"
+
+            return response
+        }
+        1 * response.status >> 201
+        notThrown()
     }
 
 }
