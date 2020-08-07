@@ -57,14 +57,14 @@ func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (dataSourceApi DataSourceApi) createDataSource(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+/* func (dataSourceApi DataSourceApi) createDataSource(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
-}
+} */
 
 /* func parse(dataSources []DataSource) ([]dataSourceRepresentation, error) {
 	var newDataSources []dataSourceRepresentation
