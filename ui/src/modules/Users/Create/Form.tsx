@@ -34,23 +34,23 @@ interface Props {
 const FormUser = ({ onFinish }: Props) => {
   const history = useHistory();
   const { register, handleSubmit } = useForm<NewUser>();
-  const [save, createdUser, loading] = useCreateUser();
+  const { create, newUser, status } = useCreateUser();
 
   useEffect(() => {
-    if (createdUser) {
+    if (newUser) {
       onFinish('Created');
       updateParam(
         'user',
         routes.usersComparation,
         history,
         'create',
-        createdUser.email
+        newUser.email
       );
     }
-  }, [createdUser, history, onFinish]);
+  }, [newUser, history, onFinish]);
 
   const onSubmit = (user: NewUser) => {
-    save({ ...user, isRoot: false });
+    create({ ...user, isRoot: false });
   };
 
   const renderForm = () => (
@@ -61,7 +61,7 @@ const FormUser = ({ onFinish }: Props) => {
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password ref={register} name="password" label="Create password" />
       </Styled.Fields>
-      <Button.Default size="EXTRA_SMALL" type="submit" isLoading={loading}>
+      <Button.Default size="EXTRA_SMALL" type="submit" isLoading={status.isPending}>
         Create User
       </Button.Default>
     </Styled.Form>
