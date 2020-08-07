@@ -1,6 +1,9 @@
 package datasource
 
-import "compass/util"
+import (
+	"compass/pkg/datasource"
+	"compass/util"
+)
 
 type DataSource struct {
 	util.BaseModel
@@ -18,4 +21,8 @@ func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 		return []DataSource{}, db.Error
 	}
 	return dataSources, nil
+}
+
+func (main Main) GetMetrics() (datasource.MetricList, error) {
+
 }
