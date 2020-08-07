@@ -110,7 +110,7 @@ describe('Pipeline Deployments Service', () => {
   })
 
   it('should throw exception when cdConfiguration is not found', async() => {
-    jest.spyOn(cdConfigurationRepository,'findDecrypted')
+    jest.spyOn(cdConfigurationRepository, 'findDecrypted')
       .mockImplementation(() => Promise.resolve(undefined as unknown as CdConfigurationEntity))
     const moduleEntity = new ModuleEntity(
       'module-id',

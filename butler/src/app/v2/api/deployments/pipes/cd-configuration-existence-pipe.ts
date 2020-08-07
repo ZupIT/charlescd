@@ -16,10 +16,8 @@
 
 import { Injectable, NotFoundException, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
+import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 
 @Injectable()
 export class CdConfigurationExistencePipe implements PipeTransform {

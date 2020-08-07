@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-import { HttpModule, Module } from '@nestjs/common'
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity';
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository';
+import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service';
 import { ConsoleLoggerService } from '../../../v1/core/logs/console';
+import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector';
 import { DeploymentsController } from './controller/deployment.controller';
 import { NotificationsController } from './controller/notification.controller';
-import { ComponentEntityV2 as ComponentEntity } from './entity/component.entity';
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity';
 import { Execution } from './entity/execution.entity';
 import { PgBossWorker } from './jobs/pgboss.worker';
+import { ComponentsRepositoryV2 } from './repository';
 import { DeploymentHandler } from './use-cases/deployment-handler';
 import { DeploymentUseCase } from './use-cases/deployment-use-case';
 import { NotificationUseCase } from './use-cases/notification-use-case';
-import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
-import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
-import { ComponentsRepositoryV2 } from './repository'
 
 @Module({
   imports: [
