@@ -73,7 +73,7 @@ export class CreateDeploymentRequestDto {
     this.modules = modules
   }
 
-  public toEntity(incomingCircleId: string): DeploymentEntity {
+  public toCircleEntity(incomingCircleId: string): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
@@ -82,6 +82,19 @@ export class CreateDeploymentRequestDto {
       this.cdConfiguration,
       this.callbackUrl,
       this.getDeploymentComponents(),
+      incomingCircleId
+    )
+  }
+
+  public toDefaultEntity(incomingCircleId: string, activeComponents: ComponentEntity[]): DeploymentEntity {
+    return new DeploymentEntity(
+      this.deploymentId,
+      this.authorId,
+      DeploymentStatusEnum.CREATED,
+      null,
+      this.cdConfiguration,
+      this.callbackUrl,
+      [ ...activeComponents, ...this.getDeploymentComponents()],
       incomingCircleId
     )
   }
