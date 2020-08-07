@@ -18,6 +18,8 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
@@ -37,15 +39,6 @@ class UserServiceLegacy(
     private val userRepository: UserRepository,
     private val keycloakService: KeycloakService
 ) {
-
-    @Transactional
-    fun create(createUserRequest: CreateUserRequest): UserRepresentation {
-        return createUserRequest
-            .toModel()
-            .let(this::saveAndFlushUser)
-            .also { user -> addUserToKeycloak(user, createUserRequest.password) }
-            .toRepresentation()
-    }
 
     fun addGroupsToUser(userId: String, addGroupsRequest: AddGroupsRequest) {
         this.userRepository.findById(userId)
@@ -100,15 +93,6 @@ class UserServiceLegacy(
         isRoot = this.isRoot ?: false,
         createdAt = LocalDateTime.now()
     )
-
-    private fun addUserToKeycloak(user: User, password: String) {
-        this.keycloakService.createUser(
-            user.email,
-            user.name,
-            password,
-            user.isRoot
-        )
-    }
 
     fun resetPassword(email: String, request: ResetPasswordRequest) {
 

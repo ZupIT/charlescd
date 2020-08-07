@@ -44,18 +44,6 @@ class UserController(
     @ResponseStatus(HttpStatus.OK)
     fun findUserGroups(@PathVariable id: String): GroupsRepresentation = keycloakService.findUserGroups(id)
 
-    @ApiOperation(value = "Create User")
-    @ApiImplicitParam(
-        name = "createUserRequest",
-        value = "Create User",
-        required = true,
-        dataType = "CreateUserRequest"
-    )
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest): UserRepresentation =
-        userService.create(createUserRequest)
-
     @ApiOperation(value = "Update User")
     @ApiImplicitParam(
         name = "updateUserRequest",
