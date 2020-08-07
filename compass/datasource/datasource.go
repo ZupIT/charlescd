@@ -1,8 +1,11 @@
 package datasource
 
 import (
-	"compass/pkg/datasource"
 	"compass/util"
+	"errors"
+	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 type DataSource struct {
@@ -12,6 +15,8 @@ type DataSource struct {
 	Health      bool        `json:"health"`
 	Data        interface{} `json:"data"`
 	WorkspaceID string      `json:"workspaceId"`
+	Deleted     bool
+	DeletedAt   time.Time
 }
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
@@ -23,6 +28,22 @@ func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 	return dataSources, nil
 }
 
-func (main Main) GetMetrics() (datasource.MetricList, error) {
+func findById(id string, db *gorm.DB) (DataSource, error) {
+	dataSource := DataSource{}
+	result := db.Where("id = ?", id).Find(&dataSource)
+	if result.Error != nil {
+		return DataSource{}, db.Error
+	}
+	return dataSource, nil
+}
 
+func (main Main) Delete(id string, workspaceID string) error {
+	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
+	if gorm.IsRecordNotFoundError(db.Error) {
+		return errors.New("Not Found")
+	}
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
 }
