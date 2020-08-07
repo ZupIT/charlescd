@@ -28,22 +28,24 @@ func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 	return dataSources, nil
 }
 
-func findById(id string, db *gorm.DB) (DataSource, error) {
+func (main Main) findById(id string) (DataSource, error) {
 	dataSource := DataSource{}
-	result := db.Where("id = ?", id).Find(&dataSource)
+	result := main.db.Where("id = ?", id).First(&dataSource)
 	if result.Error != nil {
-		return DataSource{}, db.Error
+		return DataSource{}, result.Error
 	}
 	return dataSource, nil
 }
 
 func (main Main) Delete(id string, workspaceID string) error {
-	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
-	if gorm.IsRecordNotFoundError(db.Error) {
-		return errors.New("Not Found")
+	if _, err := main.findById(id); gorm.IsRecordNotFoundError(err) {
+		return errors.New("Not found")
 	}
+
+	db := main.db.Model(&DataSource{}).Where("id = ?", id).Update(DataSource{Deleted: true, DeletedAt: time.Now()})
 	if db.Error != nil {
 		return db.Error
 	}
+
 	return nil
 }
