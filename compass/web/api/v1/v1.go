@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"compass/datasource"
-	"compass/metricsgroup"
+	"compass/internal/datasource"
+	"compass/internal/metricsgroup"
 	"fmt"
 	"net/http"
 

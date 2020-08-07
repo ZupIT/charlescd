@@ -1,8 +1,8 @@
 package main
 
 import (
-	"compass/datasource"
-	"compass/metricsgroup"
+	"compass/internal/datasource"
+	"compass/internal/metricsgroup"
 	v1 "compass/web/api/v1"
 	"fmt"
 	"log"
