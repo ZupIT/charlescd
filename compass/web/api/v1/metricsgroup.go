@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"compass/metricsgroup"
+	"compass/internal/metricsgroup"
 	"compass/web/api"
 	"net/http"
 

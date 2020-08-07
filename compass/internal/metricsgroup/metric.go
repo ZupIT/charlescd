@@ -1,7 +1,7 @@
 package metricsgroup
 
 import (
-	"compass/util"
+	"compass/internal/util"
 	"errors"
 
 	"github.com/google/uuid"
