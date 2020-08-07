@@ -21,7 +21,7 @@ func main() {
 
 	config := datasource.Configuration{
 		Data: map[string]string{
-			"url": "http://demo.robustperception.io:9090/api/v1/label/__name__/values",
+			"url": "http://demo.robustperception.io:9090",
 		},
 	}
 

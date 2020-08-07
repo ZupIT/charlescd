@@ -13,11 +13,12 @@ type PrometheusConfig struct {
 }
 
 func GetLists(configurationData []byte) (datasource.MetricList, error) {
+	path := "/api/v1/label/__name__/values"
 
 	var prometheusConfig PrometheusConfig
 	_ = json.Unmarshal(configurationData, &prometheusConfig)
 
-	res, err := http.Get(prometheusConfig.Url)
+	res, err := http.Get(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
 	if err != nil {
 		return datasource.MetricList{}, errors.New("FAILED GET: " + string(configurationData))
 	}
