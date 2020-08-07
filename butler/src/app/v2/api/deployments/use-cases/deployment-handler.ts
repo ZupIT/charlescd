@@ -48,6 +48,11 @@ export class DeploymentHandler {
   async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
     const overlappingComponents = await this.getOverlappingComponents(deployment)
+    const runningDefaultDeployments = await this.getDefaultCircleDeployments()
+
+    if (runningDefaultDeployments.length > 0) {
+      return await this.handleRunningDefaultDeployments(job)
+    }
 
     if (overlappingComponents.length > 0) {
       return await this.handleOverlap(job)
@@ -71,6 +76,20 @@ export class DeploymentHandler {
       throw error
     }
     return deployment
+  }
+
+  async handleDefaultCircle(job: ExecutionJob): Promise<ExecutionJob> {
+    await this.pgBoss.publishWithPriority(job.data)
+    this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
+    job.done()
+    return job
+  }
+
+  async handleRunningDefaultDeployments(job: ExecutionJob): Promise<ExecutionJob> {
+    // Compose new deployment here??
+    // Requeue deployment
+    job.done()
+    return job
   }
 
   async handleOverlap(job: ExecutionJob): Promise<ExecutionJob> {
@@ -114,6 +133,15 @@ export class DeploymentHandler {
     })
     const updated = await this.deploymentsRepository.save(deployment, { reload: true })
     return updated
+  }
+
+  async getDefaultCircleDeployments() : Promise<DeploymentEntity[]> {
+    return this.deploymentsRepository
+      .createQueryBuilder('d')
+      .leftJoinAndSelect('d.components', 'comp')
+      .where('comp.running')
+      .select('d.id')
+      .getMany()
   }
 
   async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
