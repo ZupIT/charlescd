@@ -87,3 +87,8 @@ async function tryOut() {
     toggleLoading('#send-button', 'send');
   }
 }
+
+function rerender() {
+  document.querySelector('#body').value = '';
+  listCircles();
+}
