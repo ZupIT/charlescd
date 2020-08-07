@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"path/filepath"
 	"plugin"
 	"time"
 
@@ -18,7 +19,7 @@ type DataSource struct {
 	Name        string          `json:"name"`
 	PluginID    uuid.UUID       `json:"pluginId"`
 	Health      bool            `json:"health"`
-	Data        json.RawMessage `json:"data" sql:"type:jsonb"`
+	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	Deleted     bool
 	DeletedAt   time.Time
@@ -47,10 +48,11 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 	dataSources := []DataSource{}
-	db := main.db.Where("workspace_id = ? AND deleted = false", workspaceID).Find(&dataSources)
+	db := main.db.Where("workspace_id = ? AND deleted = ?", workspaceID, false).Find(&dataSources)
 	if db.Error != nil {
 		return []DataSource{}, db.Error
 	}
+
 	return dataSources, nil
 }
 
@@ -91,6 +93,8 @@ func (main Main) Delete(id string, workspaceID string) error {
 }
 
 func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
+	pluginsPath := "plugins"
+
 	dataSourceResult, err := main.findById(dataSourceID)
 	if err != nil {
 		return MetricList{}, err
@@ -101,7 +105,7 @@ func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
 		return MetricList{}, err
 	}
 
-	plugin, err := plugin.Open(pluginResult.Src)
+	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
 	if err != nil {
 		return MetricList{}, err
 	}
@@ -119,6 +123,7 @@ func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
 
 	return list, nil
 }
+
 func (main Main) SetAsHealth(id string, workspaceID string) error {
 	if hasHealth, err := main.verifyHealthAtWorkspace(workspaceID); err != nil || hasHealth {
 		log.Print(err)
