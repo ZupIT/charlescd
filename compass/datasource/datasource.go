@@ -21,7 +21,7 @@ type DataSource struct {
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 	dataSources := []DataSource{}
-	db := main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
+	db := main.db.Where("workspace_id = ? AND deleted = false", workspaceID).Find(&dataSources)
 	if db.Error != nil {
 		return []DataSource{}, db.Error
 	}
@@ -38,6 +38,17 @@ func findById(id string, db *gorm.DB) (DataSource, error) {
 }
 
 func (main Main) Delete(id string, workspaceID string) error {
+	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
+	if gorm.IsRecordNotFoundError(db.Error) {
+		return errors.New("Not Found")
+	}
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
+}
+
+func (main Main) Save(dataSource DataSource) error {
 	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
 	if gorm.IsRecordNotFoundError(db.Error) {
 		return errors.New("Not Found")

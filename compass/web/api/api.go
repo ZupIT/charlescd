@@ -5,8 +5,13 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 )
+
+type BaseEntityRepresentation struct {
+	ID uuid.UUID `json:"id"`
+}
 
 type RestError struct {
 	Message string `json:"message"`
