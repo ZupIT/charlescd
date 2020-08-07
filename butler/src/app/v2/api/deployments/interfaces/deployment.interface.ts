@@ -36,5 +36,5 @@ export interface Deployment {
 
     components?: Component[]
 
-    incomingCircleId?: string
+    incomingCircleId: string | null
 }

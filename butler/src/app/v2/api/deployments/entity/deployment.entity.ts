@@ -71,8 +71,8 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
-  @Column({ name: 'incoming_circle_id' })
-  public incomingCircleId: string
+  @Column({ name: 'incoming_circle_id', type: 'varchar' })
+  public incomingCircleId: string | null
 
   constructor(
     deploymentId: string,
@@ -82,7 +82,7 @@ export class DeploymentEntityV2 implements Deployment {
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
     components: ComponentEntity[],
-    incomingCircleId: string
+    incomingCircleId: string | null
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId

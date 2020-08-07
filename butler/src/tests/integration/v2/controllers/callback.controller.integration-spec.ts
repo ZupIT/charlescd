@@ -80,7 +80,7 @@ describe('DeploymentController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto]
     )
-    const deploymentEntity = deploymentDto.toEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity('20692347-2132-4cf2-b66c-2a7b3d7d7045')
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -100,6 +100,7 @@ describe('DeploymentController v2', () => {
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
             priority: 0,
+            incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
             active: true,
             components: [
               {
@@ -151,7 +152,7 @@ describe('DeploymentController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto]
     )
-    const deploymentEntity = deploymentDto.toEntity()
+    const deploymentEntity = deploymentDto.toCircleEntity('20692347-2132-4cf2-b66c-2a7b3d7d7045')
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
@@ -170,6 +171,7 @@ describe('DeploymentController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
+            incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
             priority: 0,
             active: false,
             components: [

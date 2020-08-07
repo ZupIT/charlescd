@@ -18,6 +18,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Connection, EntityManager } from 'typeorm'
 import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import { CdConfigurationEntity } from '../../../app/v1/api/configurations/entity'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 import {
   ComponentDeploymentEntity, ComponentUndeploymentEntity,
   DeploymentEntity,
@@ -26,8 +27,8 @@ import {
 } from '../../../app/v1/api/deployments/entity'
 import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
+import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
-import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 
 interface DatabaseEntity {
   name: string,
@@ -94,7 +95,7 @@ export class FixtureUtilsService {
 
   public async createV2CircleDeployment(
     deploymentRequest: CreateDeploymentRequestDto,
-    incomingCircleId: string | null
+    incomingCircleId: string
   ): Promise<DeploymentEntityV2> {
     const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity(incomingCircleId))
     return this.manager.save(deployment)
@@ -105,7 +106,7 @@ export class FixtureUtilsService {
     incomingCircleId: string | null,
     unchangedComponents: ComponentEntityV2[]
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity(incomingCircleId, unchangedComponents))
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(incomingCircleId, unchangedComponents))
     return this.manager.save(deployment)
   }
 

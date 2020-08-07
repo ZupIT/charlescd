@@ -38,7 +38,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   public async findCircleRunningComponents(circleId: string): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where(`deployment.circle_id = ${circleId}`)
+      .where(`deployment.circle_id = '${circleId}'`)
       .andWhere('v2components.running = true')
       .getMany()
   }
