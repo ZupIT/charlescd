@@ -5,12 +5,13 @@ import (
 	"compass/metricsgroup"
 	v1 "compass/web/api/v1"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
-	"log"
-	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -40,10 +41,12 @@ func main() {
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://migrations",
 		os.Getenv("DB_NAME"), driver)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := m.Up(); err != nil {
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatal(err)
 	}
 
