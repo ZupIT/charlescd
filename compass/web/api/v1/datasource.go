@@ -24,6 +24,7 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 	apiPath := "/datasource"
 	dataSourceAPI := DataSourceApi{dataSourceMain}
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.findAllByWorkspace))
+	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.create))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(dataSourceAPI.deleteDataSource))
 	v1.Router.PATCH(v1.getCompletePath(apiPath+":id/define-health"), api.HttpValidator(dataSourceAPI.deleteDataSource))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), api.HttpValidator(dataSourceAPI.getMetrics))
@@ -47,6 +48,27 @@ func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *
 	}
 	*/
 	api.NewRestSuccess(w, http.StatusOK, dataSources)
+}
+
+func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	dataSource, err := dataSourceApi.dataSourceMain.Parse(r.Body)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err := dataSource.Validate(); err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	createdDataSource, err := dataSourceApi.dataSourceMain.Save(dataSource)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	api.NewRestSuccess(w, http.StatusOK, createdDataSource)
 }
 
 func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

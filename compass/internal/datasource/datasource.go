@@ -4,6 +4,7 @@ import (
 	"compass/internal/util"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 	"plugin"
 	"time"
@@ -14,17 +15,34 @@ import (
 
 type DataSource struct {
 	util.BaseModel
-	Name        string      `json:"name"`
-	PluginID    uuid.UUID   `json:"pluginId"`
-	Health      bool        `json:"health"`
-	Data        interface{} `json:"data"`
-	WorkspaceID string      `json:"workspaceId"`
+	Name        string          `json:"name"`
+	PluginID    uuid.UUID       `json:"pluginId"`
+	Health      bool            `json:"health"`
+	Data        json.RawMessage `json:"data" sql:"type:jsonb"`
+	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	Deleted     bool
 	DeletedAt   time.Time
 }
 
+func (dataSource DataSource) Validate() error {
+	if dataSource.Name == "" {
+		return errors.New("Invalid Name")
+	}
+
+	return nil
+}
+
 type MetricList struct {
 	Data []string
+}
+
+func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
+	var newDataSource *DataSource
+	err := json.NewDecoder(dataSource).Decode(&newDataSource)
+	if err != nil {
+		return DataSource{}, err
+	}
+	return *newDataSource, nil
 }
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
@@ -115,13 +133,10 @@ func (main Main) SetAsHealth(id string, workspaceID string) error {
 	return nil
 }
 
-/* func (main Main) Save(dataSource DataSource) error {
-	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
-	if gorm.IsRecordNotFoundError(db.Error) {
-		return errors.New("Not Found")
-	}
+func (main Main) Save(dataSource DataSource) (DataSource, error) {
+	db := main.db.Create(&dataSource)
 	if db.Error != nil {
-		return db.Error
+		return DataSource{}, db.Error
 	}
-	return nil
-} */
+	return dataSource, nil
+}
