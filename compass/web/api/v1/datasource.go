@@ -17,6 +17,7 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 	dataSourceAPI := DataSourceApi{dataSourceMain}
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.findAllByWorkspace))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(dataSourceAPI.deleteDataSource))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), api.HttpValidator(dataSourceAPI.getMetrics))
 	return dataSourceAPI
 }
 
@@ -37,4 +38,13 @@ func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *ht
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	metrics, err := dataSourceApi.dataSourceMain.GetMetrics(ps.ByName("id"), "")
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, err)
+		return
+	}
+	api.NewRestSuccess(w, http.StatusOK, metrics)
 }

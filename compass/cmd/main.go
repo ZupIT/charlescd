@@ -3,6 +3,7 @@ package main
 import (
 	"compass/internal/datasource"
 	"compass/internal/metricsgroup"
+	"compass/internal/plugin"
 	v1 "compass/web/api/v1"
 	"fmt"
 	"log"
@@ -50,10 +51,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	pluginMain := plugin.NewMain(db)
 	metricsgroupMain := metricsgroup.NewMain(db)
-	datasourceMain := datasource.NewMain(db)
+	datasourceMain := datasource.NewMain(db, pluginMain)
 
 	v1 := v1.NewV1()
+	v1.NewPluginApi(pluginMain)
 	v1.NewMetricsGroupApi(metricsgroupMain)
 	v1.NewDataSourceApi(datasourceMain)
 	v1.Start()

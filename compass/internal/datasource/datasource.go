@@ -2,21 +2,28 @@ package datasource
 
 import (
 	"compass/internal/util"
+	"encoding/json"
 	"errors"
+	"plugin"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
 
 type DataSource struct {
 	util.BaseModel
 	Name        string      `json:"name"`
-	PluginID    string      `json:"pluginId"`
+	PluginID    uuid.UUID   `json:"pluginId"`
 	Health      bool        `json:"health"`
 	Data        interface{} `json:"data"`
 	WorkspaceID string      `json:"workspaceId"`
 	Deleted     bool
 	DeletedAt   time.Time
+}
+
+type MetricList struct {
+	Data []string
 }
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
@@ -52,4 +59,34 @@ func (main Main) Delete(id string, workspaceID string) error {
 	}
 
 	return nil
+}
+
+func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
+	dataSourceResult, err := main.findById(dataSourceID)
+	if err != nil {
+		return MetricList{}, err
+	}
+
+	pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
+	if err != nil {
+		return MetricList{}, err
+	}
+
+	plugin, err := plugin.Open(pluginResult.Src)
+	if err != nil {
+		return MetricList{}, err
+	}
+
+	getList, err := plugin.Lookup("GetLists")
+	if err != nil {
+		return MetricList{}, err
+	}
+
+	configurationData, _ := json.Marshal(dataSourceResult.Data)
+	list, err := getList.(func(configurationData []byte) (MetricList, error))(configurationData)
+	if err != nil {
+		return MetricList{}, err
+	}
+
+	return list, nil
 }

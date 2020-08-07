@@ -3,6 +3,7 @@ package v1
 import (
 	"compass/internal/datasource"
 	"compass/internal/metricsgroup"
+	"compass/internal/plugin"
 	"fmt"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 
 type UseCases interface {
 	Start()
+	NewPluginApi(pluginMain plugin.UseCases) PluginApi
 	NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 }
