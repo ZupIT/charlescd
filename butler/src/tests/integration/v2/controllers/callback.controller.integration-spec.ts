@@ -109,6 +109,7 @@ describe('DeploymentController v2', () => {
                 id: deployment.components[0].id,
                 imageTag: deployment.components[0].imageTag,
                 imageUrl: deployment.components[0].imageUrl,
+                merged: false,
                 name: deployment.components[0].name,
                 running: false
               }
@@ -181,6 +182,7 @@ describe('DeploymentController v2', () => {
                 id: deployment.components[0].id,
                 imageTag: deployment.components[0].imageTag,
                 imageUrl: deployment.components[0].imageUrl,
+                merged: false,
                 name: deployment.components[0].name,
                 running: false
               }

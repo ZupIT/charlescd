@@ -23,7 +23,10 @@ export class ComponentEntityV2 implements Component {
   public running!: boolean
 
   @Column({ name: 'component_id' })
-  public componentId! : string
+  public componentId!: string
+
+  @Column({ name: 'merged' })
+  public merged! : boolean
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
@@ -34,13 +37,15 @@ export class ComponentEntityV2 implements Component {
     buildImageTag: string,
     buildImageUrl: string,
     componentName: string,
-    componentId: string
+    componentId: string,
+    merged = false
   ) {
     this.helmUrl = helmUrl
     this.imageTag = buildImageTag
     this.imageUrl = buildImageUrl
     this.name = componentName
     this.componentId = componentId
+    this.merged = merged
   }
 
   public clone(): ComponentEntityV2 {
@@ -49,7 +54,8 @@ export class ComponentEntityV2 implements Component {
       this.imageTag,
       this.imageUrl,
       this.name,
-      this.componentId
+      this.componentId,
+      true
     )
   }
 }

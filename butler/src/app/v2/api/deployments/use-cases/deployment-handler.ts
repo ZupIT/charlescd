@@ -53,6 +53,10 @@ export class DeploymentHandler {
       return await this.handleOverlap(job)
     }
 
+    if (!deployment.circleId) {
+      deployment.components = deployment.components.filter(c => !c.merged)
+    }
+
     this.consoleLoggerService.log('START:RUN_EXECUTION')
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
