@@ -481,7 +481,7 @@ class JdbcDeploymentRepository(
                             deployment_circle_user.photo_url      AS deployment_circle_user_photo_url,
                             deployment_circle_user.created_at     AS deployment_circle_user_created_at           
                     FROM components components
-					    INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
+                        INNER JOIN component_snapshots component_snapshots  ON components.id = component_snapshots.component_id
                         INNER JOIN module_snapshots module_snapshots        ON module_snapshots.id = component_snapshots.module_snapshot_id
                         INNER JOIN feature_snapshots feature_snapshots      ON feature_snapshots.id = module_snapshots.feature_snapshot_id
                         INNER JOIN builds_features builds_features          ON builds_features.feature_id = feature_snapshots.feature_id
