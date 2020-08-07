@@ -2,6 +2,8 @@ package datasource
 
 import (
 	"compass/util"
+	"errors"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -13,6 +15,8 @@ type DataSource struct {
 	Health      bool        `json:"health"`
 	Data        interface{} `json:"data"`
 	WorkspaceID string      `json:"workspaceId"`
+	Deleted     bool
+	DeletedAt   time.Time
 }
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
@@ -34,7 +38,10 @@ func findById(id string, db *gorm.DB) (DataSource, error) {
 }
 
 func (main Main) Delete(id string, workspaceID string) error {
-	db := main.db.Where("id = ? AND worspace_id = ?", id, workspaceID).Delete(DataSource{})
+	db := main.db.Model(DataSource{}).Where("id = ?", id).Update("deleted", true)
+	if gorm.IsRecordNotFoundError(db.Error) {
+		return errors.New("Not Found")
+	}
 	if db.Error != nil {
 		return db.Error
 	}
