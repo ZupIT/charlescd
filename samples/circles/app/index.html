@@ -20,7 +20,7 @@
       </div>
       <div class="field">
         <label for="circle-matcher-url">Authorization</label>
-        <input id="auth-url" type="text" value="" />
+        <input id="auth-url" type="text" value="" placeholder="Bearer access-token" />
       </div>
       <div class="field">
         <label for="circle-matcher-url">Workspace ID</label>
@@ -31,6 +31,7 @@
     <div id="form-request" class="hidden">
       <textarea id="body"></textarea>
       <button id="send-button" onclick="tryOut()">send</button>
+      <button id="reset-button" onclick="rerender()">rerender</button>
     </div>
     <svg id="circle-default" class="hidden" width="400" height="400"></svg>
   </div>
