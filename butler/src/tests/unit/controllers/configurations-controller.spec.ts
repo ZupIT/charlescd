@@ -29,6 +29,8 @@ import {
   ReadCdConfigurationDto
 } from '../../../app/v1/api/configurations/dto'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
+import { CdConfigurationsRepositoryStub } from '../../stubs/repository'
 
 describe('ConfigurationsController', () => {
 
@@ -36,6 +38,7 @@ describe('ConfigurationsController', () => {
   let createK8sConfigurationUsecase: CreateCdConfigurationUsecase
   let createCdConfigurationDto: CreateCdConfigurationDto
   let getK8sConfigurationUsecase: GetCdConfigurationsUsecase
+  let cdConfigurationsRepository: CdConfigurationsRepository
 
   beforeEach(async() => {
 
@@ -55,6 +58,10 @@ describe('ConfigurationsController', () => {
         {
           provide: DeleteCdConfigurationUsecase,
           useClass: DeleteCdConfigurationUsecaseStub
+        },
+        {
+          provide: CdConfigurationsRepository,
+          useClass: CdConfigurationsRepositoryStub
         }
       ]
     }).compile()

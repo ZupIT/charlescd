@@ -22,7 +22,6 @@ import {
   GetCdConfigurationsUsecase
 } from './use-cases'
 import { CdConfigurationsRepository } from './repository'
-
 import { LogsModule } from '../../core/logs/logs.module'
 
 @Module({
