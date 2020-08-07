@@ -16,7 +16,6 @@
 
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { flatten } from 'lodash'
 import { Repository } from 'typeorm'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
@@ -24,7 +23,6 @@ import { Execution } from '../entity/execution.entity'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ComponentsRepositoryV2 } from '../repository'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ExecutionTypeEnum } from '../enums'
 
 @Injectable()
@@ -42,35 +40,17 @@ export class CreateDeploymentUseCase {
 
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { createDeploymentDto, incomingCircleId })
-    const deployment = createDeploymentDto.circle ?
-      await this.createCircleDeployment(createDeploymentDto, incomingCircleId) :
-      await this.createDefaultDeployment(createDeploymentDto, incomingCircleId)
+    const deployment = await this.createDeployment(createDeploymentDto, incomingCircleId)
     const execution = await this.createDeploymentExecution(deployment)
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment, execution, jobId })
     return deployment
   }
 
-  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
-    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const deployment = await this.deploymentsRepository.save(createDeploymentDto.toCircleEntity(incomingCircleId))
-    this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
-    return deployment
-  }
-
-  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
-    this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
-    const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
-    const unchangedComponents: ComponentEntity[] = activeComponents
-      .filter(component => !requestedComponentsNames.includes(component.name))
-      .map(component => component.clone())
-    this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
-
-    const deployment = await this.deploymentsRepository.save(
-      createDeploymentDto.toDefaultEntity(incomingCircleId, unchangedComponents)
-    )
-    this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
+  private async createDeployment(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
+    this.consoleLoggerService.log('START:CREATE_DEPLOYMENT')
+    const deployment = await this.deploymentsRepository.save(createDeploymentDto.toEntity(incomingCircleId))
+    this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT')
     return deployment
   }
 
@@ -86,9 +66,5 @@ export class CreateDeploymentUseCase {
     const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.DEPLOYMENT })
     this.consoleLoggerService.log('FINISH:CREATE_EXECUTION', { execution })
     return execution
-  }
-
-  private getDeploymentRequestComponentNames(createDeploymentDto: CreateDeploymentRequestDto): string[] {
-    return flatten(createDeploymentDto.modules.map(module => module.components)).map(component => component.componentName)
   }
 }
