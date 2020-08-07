@@ -15,11 +15,17 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/metricProvider';
+import {
+  create,
+  configPath,
+  verifyProviderConnection,
+  metricProviderConfigConnection
+} from 'core/providers/metricProvider';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { MetricProvider, Response } from './interfaces';
+import { MetricProvider, Response, TestConnectionResponse } from './interfaces';
+import { buildParams, URLParams } from 'core/utils/query';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 
 export const useMetricProvider = (): FetchProps => {
@@ -90,5 +96,59 @@ export const useMetricProvider = (): FetchProps => {
     remove,
     loadingSave,
     loadingAdd
+  };
+};
+
+interface FromTestConnection extends FetchProps {
+  testProviderConnectionForm: Function;
+  response: TestConnectionResponse;
+}
+
+export const useFromTestConnection = (): FromTestConnection => {
+  const [fromTestConnection, dispatchFormTestConnection] = useFetch<
+    TestConnectionResponse
+  >(verifyProviderConnection);
+
+  const { response, loading } = fromTestConnection;
+
+  const testProviderConnectionForm = useCallback(
+    (payload: URLParams) => {
+      const params = buildParams(payload);
+      dispatchFormTestConnection(params);
+    },
+    [dispatchFormTestConnection]
+  );
+
+  return {
+    testProviderConnectionForm,
+    response,
+    loading
+  };
+};
+
+interface SectionTestConnection extends FetchProps {
+  testProviderConnectionSection: Function;
+  response: TestConnectionResponse;
+}
+
+export const useSectionTestConnection = (): SectionTestConnection => {
+  const [sectionTestConnection, dispatchSectionTestConnection] = useFetch<
+    TestConnectionResponse
+  >(metricProviderConfigConnection);
+
+  const { response, loading } = sectionTestConnection;
+
+  const testProviderConnectionSection = useCallback(
+    (params: URLParams, workspaceId: string) => {
+      const urlParams = buildParams(params);
+      dispatchSectionTestConnection(urlParams, workspaceId);
+    },
+    [dispatchSectionTestConnection]
+  );
+
+  return {
+    testProviderConnectionSection,
+    response,
+    loading
   };
 };

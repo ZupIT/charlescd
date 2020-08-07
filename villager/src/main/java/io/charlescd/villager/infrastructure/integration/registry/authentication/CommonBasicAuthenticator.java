@@ -18,7 +18,7 @@ package io.charlescd.villager.infrastructure.integration.registry.authentication
 
 import java.util.Base64;
 
-public class CommonBasicAuthenticator extends AbstractBasicAuthenticator {
+public final class CommonBasicAuthenticator extends AbstractBasicAuthenticator {
 
     private final String username;
     private final String password;

@@ -47,6 +47,7 @@ const AvatarName = ({
   } else {
     return (
       <Styled.Image
+        data-testid={name}
         className={className}
         size={size}
         alt={alt || ''}
