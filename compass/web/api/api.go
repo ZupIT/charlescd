@@ -30,14 +30,16 @@ func NewRestSuccess(w http.ResponseWriter, status int, response interface{}) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func HttpValidator(next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params)) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func HttpValidator(
+	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
+) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		worskapceID := r.Header.Get("workspaceId")
+		worskapceID := r.Header.Get("x-workspace-id")
 
 		if worskapceID == "" {
 			NewRestError(w, http.StatusInternalServerError, errors.New("WorkspaceId is required"))
 			return
 		}
-		next(w, r, ps)
+		next(w, r, ps, worskapceID)
 	}
 }

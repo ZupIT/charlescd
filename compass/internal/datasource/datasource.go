@@ -69,16 +69,6 @@ func (main Main) findById(id string) (DataSource, error) {
 	return dataSource, nil
 }
 
-func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
-	var count int8
-	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true", workspaceId).Count(&count)
-	if result.Error != nil {
-		return false, result.Error
-	}
-
-	return count != 0, nil
-}
-
 func (main Main) Delete(id string, workspaceID string) error {
 	if _, err := main.findById(id); err != nil {
 		return err
@@ -122,6 +112,16 @@ func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
 	}
 
 	return list, nil
+}
+
+func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
+	var count int8
+	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true", workspaceId).Count(&count)
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	return count != 0, nil
 }
 
 func (main Main) SetAsHealth(id string, workspaceID string) error {

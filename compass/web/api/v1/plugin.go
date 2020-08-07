@@ -15,15 +15,15 @@ type PluginApi struct {
 func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 	apiPath := "/plugins"
 	pluginApi := PluginApi{pluginMain}
-	v1.Router.GET(v1.getCompletePath(apiPath), pluginApi.list)
-	v1.Router.POST(v1.getCompletePath(apiPath), pluginApi.create)
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), pluginApi.show)
-	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), pluginApi.update)
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), pluginApi.delete)
+	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(pluginApi.list))
+	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(pluginApi.create))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(pluginApi.show))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(pluginApi.update))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(pluginApi.delete))
 	return pluginApi
 }
 
-func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	circles, err := pluginApi.pluginMain.FindAll()
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
@@ -33,7 +33,7 @@ func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httpro
 	api.NewRestSuccess(w, http.StatusOK, circles)
 }
 
-func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	plugin, err := pluginApi.pluginMain.Parse(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
@@ -54,7 +54,7 @@ func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ http
 	api.NewRestSuccess(w, http.StatusOK, createdCircle)
 }
 
-func (pluginApi PluginApi) show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (pluginApi PluginApi) show(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 	plugin, err := pluginApi.pluginMain.FindById(id)
 	if err != nil {
@@ -65,7 +65,7 @@ func (pluginApi PluginApi) show(w http.ResponseWriter, r *http.Request, ps httpr
 	api.NewRestSuccess(w, http.StatusOK, plugin)
 }
 
-func (pluginApi PluginApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (pluginApi PluginApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 	plugin, err := pluginApi.pluginMain.Parse(r.Body)
 	if err != nil {
@@ -82,7 +82,7 @@ func (pluginApi PluginApi) update(w http.ResponseWriter, r *http.Request, ps htt
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 
-func (pluginApi PluginApi) delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (pluginApi PluginApi) delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 	err := pluginApi.pluginMain.Remove(string(id))
 	if err != nil {
