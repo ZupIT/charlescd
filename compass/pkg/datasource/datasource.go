@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"compass/datasource"
+	"compass/internal/datasource"
 )
 
 type UseCases interface {

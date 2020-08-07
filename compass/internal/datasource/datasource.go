@@ -1,7 +1,7 @@
 package datasource
 
 import (
-	"compass/util"
+	"compass/internal/util"
 	"errors"
 	"log"
 	"time"
@@ -32,6 +32,10 @@ func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 func (main Main) findById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
+	if result.Error != nil && gorm.IsRecordNotFoundError(result.Error) {
+		return DataSource{}, errors.New("Not found")
+	}
+
 	if result.Error != nil {
 		return DataSource{}, result.Error
 	}
@@ -49,8 +53,8 @@ func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
 }
 
 func (main Main) Delete(id string, workspaceID string) error {
-	if _, err := main.findById(id); gorm.IsRecordNotFoundError(err) {
-		return errors.New("Not found")
+	if _, err := main.findById(id); err != nil {
+		return err
 	}
 
 	db := main.db.Model(&DataSource{}).Where("id = ?", id).Update(DataSource{Deleted: true, DeletedAt: time.Now()})
