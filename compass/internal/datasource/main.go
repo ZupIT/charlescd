@@ -12,7 +12,7 @@ type UseCases interface {
 	Delete(id string, workspaceID string) error
 	GetMetrics(dataSourceID, name string) (MetricList, error)
 	// Save(dataSource DataSource) (DataSource, error)
-	// FindById(id string) (DataSource, error)
+	SetAsHealth(id string, workspaceID string) error
 }
 
 type Main struct {
