@@ -36,7 +36,9 @@ func (metricsGroup MetricsGroup) Validate() []error {
 	}
 
 	for _, m := range metricsGroup.Metrics {
-		ers = append(ers, m.Validate())
+		if m.Validate() != nil {
+			ers = append(ers, m.Validate())
+		}
 	}
 
 	return ers
