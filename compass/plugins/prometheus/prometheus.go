@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 type PrometheusConfig struct {
@@ -38,7 +39,9 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	return result.Data, nil
 }
 
-func Query(datasourceConfiguration, queryMetricsgroup []byte) {
+func Query(datasourceConfiguration, queryMetricsgroup []byte) (interface{}, error) {
+	path := "/api/v1/query"
+
 	var prometheusConfig PrometheusConfig
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
@@ -46,5 +49,14 @@ func Query(datasourceConfiguration, queryMetricsgroup []byte) {
 	_ = json.Unmarshal(queryMetricsgroup, &currentMetricsgroups)
 
 	query := createQueryByMetric(currentMetricsgroups.Metrics)
-	fmt.Println(query)
+	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
+	queryParams := url.Values{}
+	queryParams.Add("query", query)
+	Url.RawQuery = queryParams.Encode()
+	res, err := http.Get(Url.String())
+	if err != nil {
+		return datasource.MetricList{}, errors.New("FAILED QUERY: " + query)
+	}
+
+	return res, nil
 }
