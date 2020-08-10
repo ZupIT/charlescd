@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compass/internal/metricsgroup"
 	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
@@ -37,6 +38,13 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	return result.Data, nil
 }
 
-func Query() {
+func Query(datasourceConfiguration, queryMetricsgroup []byte) {
+	var prometheusConfig PrometheusConfig
+	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
+	var currentMetricsgroups metricsgroup.MetricsGroup
+	_ = json.Unmarshal(queryMetricsgroup, &currentMetricsgroups)
+
+	query := createQueryByMetric(currentMetricsgroups.Metrics)
+	fmt.Println(query)
 }
