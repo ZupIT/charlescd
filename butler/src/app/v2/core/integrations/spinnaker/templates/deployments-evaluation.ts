@@ -36,7 +36,7 @@ export const getDeploymentsEvaluationStage = (components: Component[], stageId: 
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
   let baseRefId = 0
-  return components.map(component => {
+  return components.map(() => {
     baseRefId += 2
     return `${baseRefId}`
   })

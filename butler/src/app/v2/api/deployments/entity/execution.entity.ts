@@ -22,11 +22,11 @@ export class Execution {
   public id!: string
 
   @Column()
-  type!: 'DEPLOYMENT' | 'UNDEPLOYMENT' // move this to a type
+  public type!: 'DEPLOYMENT' | 'UNDEPLOYMENT' // move this to a type
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.executions)
-  deployment!: DeploymentEntity
+  public deployment!: DeploymentEntity
 
   constructor(deployment: DeploymentEntity, type: 'DEPLOYMENT' | 'UNDEPLOYMENT') {
     this.deployment = deployment

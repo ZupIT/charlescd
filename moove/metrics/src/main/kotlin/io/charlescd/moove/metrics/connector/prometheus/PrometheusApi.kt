@@ -21,6 +21,8 @@ import javax.validation.Valid
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -30,6 +32,7 @@ interface PrometheusApi {
 
     companion object {
         const val QUERY_ENDPOINT = "/api/v1/query"
+        const val READINESS_ENDPOINT = "/-/ready"
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -39,4 +42,10 @@ interface PrometheusApi {
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun executeQuery(baseUrl: URI, @Valid @RequestParam("query") query: String): PrometheusMetricResponse
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = [READINESS_ENDPOINT]
+    )
+    fun readinessCheck(baseUrl: URI): ResponseEntity<String>
 }

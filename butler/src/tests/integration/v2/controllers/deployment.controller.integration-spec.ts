@@ -183,4 +183,55 @@ describe('DeploymentController v2', () => {
     const execution = await manager.findOneOrFail(Execution, { relations: ['deployment'] })
     expect(execution.deployment.id).toEqual(response.body.id)
   })
+
+  it('returns error for duplicated componentsName', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            },
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+    const errorMessages = [
+      '0.Duplicated components with the property \'componentName\'',
+    ]
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+  })
 })

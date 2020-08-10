@@ -26,8 +26,17 @@ export interface Provider {
 
 export interface MetricProvider {
   provider: string;
-  authorId: string;
+  authorId?: string;
   url: string;
+}
+
+export interface TestConnectionResponse {
+  status?: string;
+}
+
+export enum ConnectionStatusEnum {
+  FAILED = 'FAILED',
+  SUCCESS = 'SUCCESS'
 }
 
 export interface Response {

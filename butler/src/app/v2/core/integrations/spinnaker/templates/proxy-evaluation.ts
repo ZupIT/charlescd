@@ -33,7 +33,7 @@ export const getProxyEvaluationStage = (components: Component[], stageId: number
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
   let baseRefId = components.length * 2
-  return components.map(component => {
+  return components.map(() => {
     baseRefId += 2
     return `${baseRefId}`
   })

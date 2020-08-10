@@ -30,7 +30,7 @@ export class ComponentEntityV2 implements Component {
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
-  deployment!: DeploymentEntity
+  public deployment!: DeploymentEntity
 
   constructor(
     helmUrl: string,

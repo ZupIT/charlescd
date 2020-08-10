@@ -15,10 +15,12 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render, wait } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
+import { FetchMock } from 'jest-fetch-mock/types';
+import * as utilsAuth from 'core/utils/auth';
 
 const originalWindow = { ...window };
 
@@ -44,8 +46,40 @@ test('renders sidebar component', async () => {
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
-  expect(getByTestId(workspacesId)).toBeInTheDocument();
+  await wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
   expect(getByTestId(accountId)).toBeInTheDocument();
   expect(links.children.length).toBe(3);
 });
 
+test('renders sidebar componen( with selected workspace', async () => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.credentials
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({
+      content: [
+        {
+          id: 1,
+          name: 'workspace',
+          status: 'COMPLETE'
+        }
+      ]
+    })
+  );
+
+  jest.spyOn(utilsAuth, 'isRoot').mockReturnValue(true);
+
+  const { queryByTestId } = render(
+    <Sidebar
+      isExpanded={true}
+      onClickExpand={jest.fn()}
+      selectedWorkspace="test"
+    />
+  );
+
+  await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
+});

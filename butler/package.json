@@ -12,6 +12,7 @@
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
     "start:prod": "node dist/main.js",
     "lint": "eslint --max-warnings 0 . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint --fix --max-warnings 0 . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --testRegex \"\\.spec\\.ts$\" ",
     "test:integration": "jest --testRegex \"integration-spec\\.ts$\" --runInBand --forceExit",
     "test:cov": "jest \"\\.spec.ts$\" --coverage",

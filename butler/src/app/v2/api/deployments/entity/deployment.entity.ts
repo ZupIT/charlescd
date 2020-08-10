@@ -57,7 +57,7 @@ export class DeploymentEntityV2 implements Deployment {
 
   @JoinColumn({ name: 'cd_configuration_id' })
   @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
-  cdConfiguration!: CdConfigurationEntity
+  public cdConfiguration!: CdConfigurationEntity
 
   @OneToMany(() => Execution, execution => execution.deployment)
   public executions!: Execution[]
