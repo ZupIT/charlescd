@@ -203,12 +203,6 @@ describe('Pipeline Deployments Service', () => {
     moduleDeployment.deployment = deploymentEntity
     componentDeployment.moduleDeployment = moduleDeployment
 
-    const queuedDeploymentEntity = new QueuedDeploymentEntity(
-      'dummy-component-id',
-      'dummy-component-deployment-id3',
-      QueuedPipelineStatusEnum.QUEUED,
-    )
-
     const queuedIstioDeploymentEntity = new QueuedIstioDeploymentEntity(
       'dummy-component-id',
       'dummy-component-deployment-id3',
