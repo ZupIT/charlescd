@@ -19,7 +19,9 @@ import { SpinnakerService } from '../../../app/v1/core/integrations/cd/spinnaker
 import { OctopipeService } from '../../../app/v1/core/integrations/cd/octopipe'
 
 const serviceStub = {
-    createDeployment: () => Promise.resolve(undefined)
+    createDeployment: () => Promise.resolve(undefined),
+    createIstioDeployment: () => Promise.resolve(undefined),
+    createUndeployment: () => Promise.resolve(undefined)
 }
 export class CdStrategyFactoryStub {
 
