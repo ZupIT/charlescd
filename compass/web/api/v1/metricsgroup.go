@@ -42,7 +42,7 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if err := metricsGroup.Validate(); err != nil {
+	if err := metricsGroup.Validate(); len(err) > 0 {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}
