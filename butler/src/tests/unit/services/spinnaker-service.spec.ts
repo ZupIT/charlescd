@@ -168,4 +168,32 @@ describe('Spinnaker Service', () => {
 
     await expect(spinnakerService.createDeployment(connectorConfiguration)).rejects.toThrow()
   })
+
+  it('should handle on spinnaker undeployment failure', async() => {
+    jest.spyOn(spinnakerApiService, 'getApplication')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'getPipeline')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'createPipeline')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'deployPipeline')
+      .mockImplementation(() => { throw new Error('bad request') })
+
+    await expect(spinnakerService.createUndeployment(connectorConfiguration)).rejects.toThrow()
+  })
+
+  it('should handle on spinnaker undeployment failure', async() => {
+    jest.spyOn(spinnakerApiService, 'getApplication')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'getPipeline')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'createPipeline')
+      .mockImplementation(() => of({} as AxiosResponse))
+    jest.spyOn(spinnakerApiService, 'deployPipeline')
+      .mockImplementation(() => { throw new Error('bad request') })
+
+    await expect(spinnakerService.createIstioDeployment(connectorConfiguration)).rejects.toThrow()
+  })
+
+
 })
