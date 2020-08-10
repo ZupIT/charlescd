@@ -33,7 +33,7 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceId)
 	if dbErr != nil {
-		api.NewRestError(w, http.StatusInternalServerError, errors.New("Error doing the process"))
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("Error doing the process")})
 		return
 	}
 
@@ -43,13 +43,13 @@ func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *
 func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	dataSource, err := dataSourceApi.dataSourceMain.Parse(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
 	dataSource.WorkspaceID, err = uuid.Parse(workspaceId)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -60,7 +60,7 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 
 	createdDataSource, err := dataSourceApi.dataSourceMain.Save(dataSource)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -70,7 +70,7 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"), workspaceId)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
@@ -79,7 +79,7 @@ func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *ht
 func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	metrics, err := dataSourceApi.dataSourceMain.GetMetrics(ps.ByName("id"), "")
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 	api.NewRestSuccess(w, http.StatusOK, metrics)

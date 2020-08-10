@@ -4,9 +4,8 @@ import (
 	"compass/internal/util"
 	"encoding/json"
 	"errors"
-	"io"
-
 	"github.com/google/uuid"
+	"io"
 )
 
 type MetricsGroup struct {
@@ -28,12 +27,16 @@ func (metricsGroup MetricsGroup) Validate() []error {
 		ers = append(ers, errors.New("Metrics is required"))
 	}
 
+	if metricsGroup.WorkspaceID == uuid.Nil {
+		ers = append(ers, errors.New("WorkspaceID is required"))
+	}
+
 	if metricsGroup.CircleID == uuid.Nil {
-		ers = append(ers, errors.New("Metrics is required"))
+		ers = append(ers, errors.New("CircleID is required"))
 	}
 
 	for _, m := range metricsGroup.Metrics {
-		return m.Validate()
+		ers = append(ers, m.Validate())
 	}
 
 	return ers
