@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-import { Deployment } from './deployment.interface'
+import { ExecutionTypeEnum } from './execution-type.enum'
 
-export interface Component {
-    id: string
-
-    helmUrl: string
-
-    imageTag: string
-
-    imageUrl: string
-
-    name: string
-
-    running: boolean
-
-    deployment?: Deployment
+export {
+  ExecutionTypeEnum
 }

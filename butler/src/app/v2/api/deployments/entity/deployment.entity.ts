@@ -24,9 +24,9 @@ import {
 } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { Deployment } from '../../../core/integrations/spinnaker/interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
+import { Deployment } from '../interfaces'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
@@ -71,6 +71,9 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
+  @Column({ name: 'incoming_circle_id', type: 'varchar' })
+  public incomingCircleId: string | null
+
   constructor(
     deploymentId: string,
     authorId: string,
@@ -78,7 +81,8 @@ export class DeploymentEntityV2 implements Deployment {
     circleId: string | null,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
-    components: ComponentEntity[]
+    components: ComponentEntity[],
+    incomingCircleId: string | null
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -87,6 +91,7 @@ export class DeploymentEntityV2 implements Deployment {
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
+    this.incomingCircleId = incomingCircleId
   }
 
   public hasSucceeded(): boolean {

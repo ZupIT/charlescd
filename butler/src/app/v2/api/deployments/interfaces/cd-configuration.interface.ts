@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-import { IsEnum, IsNotEmpty } from 'class-validator'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { CdTypeEnum } from '../../../../v1/api/configurations/enums'
+import { ICdConfigurationData } from '../../../../v1/api/configurations/interfaces'
+import { Deployment } from './'
 
-export class DeploymentNotificationRequest {
-  @IsNotEmpty()
-  @IsEnum(DeploymentStatusEnum)
-  public status: DeploymentStatusEnum
+export interface CdConfiguration {
+    id: string
 
-  constructor(status: DeploymentStatusEnum) {
-    this.status = status
-  }
+    type: CdTypeEnum,
+
+    configurationData: ICdConfigurationData,
+
+    name: string
+
+    authorId: string
+
+    workspaceId: string
+
+    createdAt: Date
+
+    deployments: Deployment[] | null
 }

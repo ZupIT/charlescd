@@ -15,6 +15,7 @@
  */
 
 import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateComponentRequestDto {
   @IsUUID()
@@ -40,5 +41,15 @@ export class CreateComponentRequestDto {
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
     this.componentName = componentName
+  }
+
+  public toEntity(helmRepositoryUrl: string): ComponentEntity {
+    return new ComponentEntity(
+      helmRepositoryUrl,
+      this.buildImageTag,
+      this.buildImageUrl,
+      this.componentName,
+      this.componentId
+    )
   }
 }
