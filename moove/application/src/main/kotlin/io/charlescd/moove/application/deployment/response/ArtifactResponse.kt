@@ -16,12 +16,14 @@
 
 package io.charlescd.moove.application.deployment.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class ArtifactResponse(
     val id: String,
     val artifact: String?,
     val version: String?,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime?,
     val componentName: String?,
     val moduleName: String?

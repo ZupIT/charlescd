@@ -31,7 +31,7 @@ const CircleRow = ({ circle }: Props) => {
 
   return (
     <Styled.CircleRow>
-      <Styled.StatusLine status={getStatus(circle?.status)}/>
+      <Styled.StatusLine status={getStatus(circle?.status)} />
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`circle-row-${circle.id}`}
