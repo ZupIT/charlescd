@@ -53,7 +53,7 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := dataSource.Validate(); err != nil {
+	if err := dataSource.Validate(); len(err) > 0 {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}

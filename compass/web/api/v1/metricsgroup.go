@@ -18,12 +18,12 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	metricsGroupApi := MetricsGroupApi{metricsGroupMain}
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.list))
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.create))
-	v1.Router.GET(v1.getCompletePath(apiPath+":id"), api.HttpValidator(metricsGroupApi.show))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+":id"), api.HttpValidator(metricsGroupApi.update))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+":id"), api.HttpValidator(metricsGroupApi.delete))
-	v1.Router.POST(v1.getCompletePath(apiPath)+":id/metrics", api.HttpValidator(metricsGroupApi.createMetric))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+":id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.updateMetric))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+":id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.deleteMetric))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.show))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
+	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricsGroupApi.createMetric))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.updateMetric))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.deleteMetric))
 	return metricsGroupApi
 }
 
@@ -79,7 +79,7 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.Update(string(id), metricsGroup)
+	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.Update(id, metricsGroup)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

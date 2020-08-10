@@ -17,7 +17,7 @@ func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 func createQueryByMetric(metrics []metricsgroup.Metric) string {
 	query := ""
 	for _, metric := range metrics {
-		query += fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
+		query += fmt.Sprintf("%s%s", metric.Name, transformFiltersToQuery(metric.Filters))
 	}
 
 	return query
