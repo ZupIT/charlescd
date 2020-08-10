@@ -3,6 +3,7 @@ package v1
 import (
 	"compass/internal/metricsgroup"
 	"compass/web/api"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -45,6 +46,7 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	metricsGroup.WorkspaceID, err = uuid.Parse(workspaceId)
 	createdCircle, err := metricsGroupApi.metricsGroupMain.Save(metricsGroup)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
