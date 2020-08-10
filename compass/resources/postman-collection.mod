@@ -20,13 +20,38 @@
 							}
 						],
 						"url": {
-							"raw": "{{host}}/v1/datasource",
+							"raw": "{{host}}/v1/datasources",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"v1",
-								"datasource"
+								"datasources"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/datasources/{{datasourceId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"datasources",
+								"{{datasourceId}}"
 							]
 						}
 					},
@@ -66,13 +91,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/v1/datasource",
+							"raw": "{{host}}/v1/datasources",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"v1",
-								"datasource"
+								"datasources"
 							]
 						}
 					},
@@ -90,13 +115,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{host}}/v1/datasource/{{datasourceId}}/metrics",
+							"raw": "{{host}}/v1/datasources/{{datasourceId}}/metrics",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"v1",
-								"datasource",
+								"datasources",
 								"{{datasourceId}}",
 								"metrics"
 							]
