@@ -51,6 +51,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	db.LogMode(true)
+
 	pluginMain := plugin.NewMain(db)
 	metricsgroupMain := metricsgroup.NewMain(db)
 	datasourceMain := datasource.NewMain(db, pluginMain)
