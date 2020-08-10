@@ -286,6 +286,26 @@ class MaestroToRepresentationTest {
         assertNull(newRepresentation.deployment)
     }
 
+    @Test
+    fun `should convert circle to default representation`() {
+        val node = mockkClass(JsonNode::class)
+        val cardColumn = mockkClass(CardColumn::class)
+        val user = createUser()
+        val circle = createCircle(node, user)
+        val build = createBuild(user, cardColumn)
+        val deployment = createDeployment(user, circle, build)
+
+        val representation = circle.toDefaultRepresentation(deployment)
+
+        assertNotNull(representation)
+        assertEquals(representation.id, circle.id)
+
+        val newRepresentation = circle.toRepresentation()
+        assertNotNull(newRepresentation)
+        assertEquals(newRepresentation.id, circle.id)
+        assertNull(newRepresentation.deployment)
+    }
+
     private fun createBuild(
         user: User,
         cardColumn: CardColumn

@@ -51,4 +51,4 @@ flags:
 
 ignore:
   - ".github/**/*"
-  - "moove/infrastructure/src/main/kotlin/io/charlescd/moove/infrastructure/repository/**/*"
+  - "moove/infrastructure/src/main/kotlin/io/charlescd/moove/infrastructure/repository/**/*.kt"
