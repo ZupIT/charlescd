@@ -17,19 +17,39 @@ type MetricsGroup struct {
 	CircleID    uuid.UUID `json:"circleId"`
 }
 
-func (metricsGroup MetricsGroup) Validate() error {
+func (metricsGroup MetricsGroup) Validate() []error {
+	ers := make([]error, 0)
+
 	if metricsGroup.Name == "" {
-		return errors.New("Name is required")
+		ers = append(ers, errors.New("Name is required"))
 	}
 
-	return nil
+	if metricsGroup.Metrics == nil || len(metricsGroup.Metrics) == 0 {
+		ers = append(ers, errors.New("Metrics is required"))
+	}
+
+	if metricsGroup.CircleID == uuid.Nil {
+		ers = append(ers, errors.New("Metrics is required"))
+	}
+
+	for _, m := range metricsGroup.Metrics {
+		return m.Validate()
+	}
+
+	return ers
 }
 
+type Condition int
+
 const (
-	EQUAL        = "EQUAL"
-	GREATER_THEN = "GREATER_THEN"
-	LOWER_THEN   = "LOWER_THEN"
+	EQUAL Condition = iota
+	GREATER_THEN
+	LOWER_THEN
 )
+
+func (c Condition) String() string {
+	return [...]string{"EQUAL", "GREATER_THEN", "LOWER_THEN"}[c]
+}
 
 func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 	var newMetricsGroup *MetricsGroup
