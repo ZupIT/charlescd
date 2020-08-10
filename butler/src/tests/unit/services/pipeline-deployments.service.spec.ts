@@ -274,7 +274,7 @@ describe('Pipeline Deployments Service', () => {
 
   })
 
-  it('should trigger undeployment without error', async() => {
+  it('should throw exception when cdConfiguration is not found', async() => {
 
     const moduleEntity = new ModuleEntity(
       'module-id',
@@ -341,6 +341,149 @@ describe('Pipeline Deployments Service', () => {
       .mockImplementation(() => Promise.resolve(componentUndeployment))
     await expect(
       pipelineDeploymentsService.triggerUndeployment(componentDeployment, undeployment, componentEntity, queuedUndeploymentEntity, circle)
+    ).rejects.toThrow(new Error('Deployment does not have cd configuration id'))
+
+  })
+
+  it('should throw exception when cdConfiguration on istio-deployment is not found', async() => {
+
+    const moduleEntity = new ModuleEntity(
+      'module-id',
+      []
+    )
+    const componentEntity = new ComponentEntity('component-id', undefined, undefined)
+    componentEntity.module = moduleEntity
+
+    const componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
+
+    const moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
+
+    const circle = new CircleDeploymentEntity('header-value')
+
+    const deploymentEntity = new DeploymentEntity(
+      'deployment-id',
+      'application-name',
+      [moduleDeployment],
+      'author-id',
+      'description',
+      'callback-url',
+      circle,
+      false,
+      'incoming-circle-id',
+      'cd-configuration-id'
+    )
+    const undeployment = new UndeploymentEntity(
+      'author-id',
+      deploymentEntity,
+      'circle-id'
+    )
+    const componentUndeployment = new ComponentUndeploymentEntity(
+      componentDeployment
+    )
+
+    const moduleUndeployment  =
+      new ModuleUndeploymentEntity(
+        moduleDeployment,
+        [componentUndeployment]
+      )
+    componentUndeployment.moduleUndeployment = moduleUndeployment
+    moduleUndeployment.undeployment = undeployment
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
+
+
+    const queuedIstioDeploymentEntity = new QueuedIstioDeploymentEntity(
+      'dummy-component-id',
+      'dummy-component-deployment-id3',
+      'dummy-component-deployment-id',
+      QueuedPipelineStatusEnum.QUEUED
+    )
+    deploymentEntity.cdConfigurationId = ''
+
+    jest.spyOn(componentUndeploymentsRepository,'getOneWithAllRelations')
+      .mockImplementation(() => Promise.resolve(componentUndeployment))
+    await expect(
+      pipelineDeploymentsService.triggerIstioDefaultDeployment(componentDeployment, componentEntity, deploymentEntity, queuedIstioDeploymentEntity)
+    ).rejects.toThrow(new Error('Deployment does not have cd configuration id'))
+
+  })
+
+  it('should throw exception when cdConfiguration on deployment is not found', async() => {
+
+    const moduleEntity = new ModuleEntity(
+      'module-id',
+      []
+    )
+    const componentEntity = new ComponentEntity('component-id', undefined, undefined)
+    componentEntity.module = moduleEntity
+
+    const componentDeployment = new ComponentDeploymentEntity(
+      'dummy-id',
+      'dummy-name',
+      'dummy-img-url',
+      'dummy-img-tag'
+    )
+
+    const moduleDeployment = new ModuleDeploymentEntity(
+      'dummy-id',
+      'helm-repository',
+      [componentDeployment]
+    )
+
+    const circle = new CircleDeploymentEntity('header-value')
+
+    const deploymentEntity = new DeploymentEntity(
+      'deployment-id',
+      'application-name',
+      [moduleDeployment],
+      'author-id',
+      'description',
+      'callback-url',
+      circle,
+      false,
+      'incoming-circle-id',
+      'cd-configuration-id'
+    )
+    const undeployment = new UndeploymentEntity(
+      'author-id',
+      deploymentEntity,
+      'circle-id'
+    )
+    const componentUndeployment = new ComponentUndeploymentEntity(
+      componentDeployment
+    )
+
+    const moduleUndeployment  =
+      new ModuleUndeploymentEntity(
+        moduleDeployment,
+        [componentUndeployment]
+      )
+    componentUndeployment.moduleUndeployment = moduleUndeployment
+    moduleUndeployment.undeployment = undeployment
+    moduleDeployment.deployment = deploymentEntity
+    componentDeployment.moduleDeployment = moduleDeployment
+
+
+    const queuedDeploymentEntity = new QueuedDeploymentEntity(
+      'dummy-component-id',
+      'dummy-component-deployment-id3',
+      QueuedPipelineStatusEnum.QUEUED,
+    )
+    deploymentEntity.cdConfigurationId = ''
+
+    jest.spyOn(componentUndeploymentsRepository,'getOneWithAllRelations')
+      .mockImplementation(() => Promise.resolve(componentUndeployment))
+    await expect(
+      pipelineDeploymentsService.triggerDefaultDeployment(componentDeployment, componentEntity, deploymentEntity, queuedDeploymentEntity)
     ).rejects.toThrow(new Error('Deployment does not have cd configuration id'))
 
   })
