@@ -42,18 +42,18 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
     this.pgBoss = new PgBoss(envConfiguration.pgBossConfig)
   }
 
-  publish(params: Execution): Promise<string | null> {
+  public publish(params: Execution): Promise<string | null> {
     return this.pgBoss.publish('deployment-queue', params)
   }
 
-  async publishWithPriority(params: Execution): Promise<string | null> {
+  public async publishWithPriority(params: Execution): Promise<string | null> {
     await this.deploymentRepository.increment({ id: params.deployment.id }, 'priority', 1) // execution priority column
     const incrementedDeployment = await this.deploymentRepository.findOneOrFail({ id: params.deployment.id })
     const incPriority = incrementedDeployment.priority // pg-boss priority column
     return this.pgBoss.publish('deployment-queue', params, { priority: incPriority })
   }
 
-  async onModuleInit(): Promise<void> {
+  public async onModuleInit(): Promise<void> {
     this.consoleLoggerService.log('Starting pgboss')
     await this.pgBoss.start()
     this.pgBoss.on('error', (error) => {
@@ -65,7 +65,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
     })
   }
 
-  async onModuleDestroy(): Promise<void> {
+  public async onModuleDestroy(): Promise<void> {
     this.consoleLoggerService.log('Shutting down onModuleDestroy')
     return await this.pgBoss.stop()
   }

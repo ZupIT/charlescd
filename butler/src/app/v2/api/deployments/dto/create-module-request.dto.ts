@@ -15,9 +15,10 @@
  */
 
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, ValidateNested, Validate } from 'class-validator';
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
 import { CreateComponentRequestDto } from './create-component-request.dto';
+import { ComponentUniqueProp } from '../validations/component-unique-by-name';
 
 export class CreateModuleDeploymentDto {
   @IsUUID()
@@ -30,6 +31,7 @@ export class CreateModuleDeploymentDto {
 
   @ValidateNested({ each: true })
   @Type(() => CreateComponentRequestDto)
+  @Validate(ComponentUniqueProp, ['componentName'])
   public readonly components: CreateComponentRequestDto[]
 
   constructor(moduleId: string, helmRepository: string, components: CreateComponentRequestDto[]) {
