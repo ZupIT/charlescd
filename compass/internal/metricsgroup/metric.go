@@ -2,7 +2,9 @@ package metricsgroup
 
 import (
 	"compass/internal/util"
+	"encoding/json"
 	"errors"
+	"io"
 
 	"github.com/google/uuid"
 )
@@ -44,5 +46,38 @@ func (metric Metric) Validate() error {
 		return errors.New("Metric Threshold is required")
 	}
 
+	return nil
+}
+
+func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
+	var newMetric *Metric
+	err := json.NewDecoder(metric).Decode(&newMetric)
+	if err != nil {
+		return Metric{}, err
+	}
+	return *newMetric, nil
+}
+
+func (main Main) SaveMetric(metric Metric) (Metric, error) {
+	db := main.db.Create(&metric)
+	if db.Error != nil {
+		return Metric{}, db.Error
+	}
+	return metric, nil
+}
+
+func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
+	db := main.db.Where("id = ?", id).Update(&metric)
+	if db.Error != nil {
+		return Metric{}, db.Error
+	}
+	return metric, nil
+}
+
+func (main Main) RemoveMetric(id string) error {
+	db := main.db.Where("id = ?", id).Delete(Metric{})
+	if db.Error != nil {
+		return db.Error
+	}
 	return nil
 }
