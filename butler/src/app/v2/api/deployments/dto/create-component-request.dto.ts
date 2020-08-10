@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator'
+import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateComponentRequestDto {
@@ -24,6 +24,8 @@ export class CreateComponentRequestDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/)
+  @Length(1, 253)
   public buildImageUrl: string
 
   @IsString()
