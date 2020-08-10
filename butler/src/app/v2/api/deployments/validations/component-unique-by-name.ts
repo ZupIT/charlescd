@@ -21,12 +21,12 @@ import { countBy } from 'lodash'
 
 @ValidatorConstraint({ name: 'componentUniqueByProp', async: false })
 export class ComponentUniqueProp implements ValidatorConstraintInterface {
-  validate(components: CreateComponentRequestDto[], args: ValidationArguments): boolean {
+  public validate(components: CreateComponentRequestDto[], args: ValidationArguments): boolean {
     const countByProp = countBy(components, args.constraints[0])
     return Object.values(countByProp).every(n => n === 1)
   }
 
-  defaultMessage(args: ValidationArguments) : string {
+  public defaultMessage(args: ValidationArguments) : string {
     return `Duplicated components with the property '${args.constraints[0]}'`
   }
 }
