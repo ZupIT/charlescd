@@ -1102,12 +1102,8 @@ spec:
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
-            - name: DARWIN_UNDEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/undeployment"
-            - name: DARWIN_DEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/deployment"
-            - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/istio-deployment"
+            - name: DARWIN_CALLBACK
+              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
             - name: OCTOPIPE_URL
               value: "http://charlescd-octopipe:8080/"
             - name: ENCRYPTION_KEY

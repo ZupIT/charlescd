@@ -16,21 +16,32 @@
 
 import React from 'react';
 import { render } from 'unit-test/testUtils';
-import SelectSingle from '../Single/Select';
-import Select from '../Select';
+import AvatarName from '../';
 
-test('render select component', () => {
-  const options = [{ value: 'apple', label: 'apple' }];
+const props = {
+  size: '10px',
+  profile: {
+    name: 'Charles',
+    email: 'charles@zup.com.br',
+    photoUrl: 'https://photo.png'
+  }
+};
 
-  const { getByTestId } = render(<SelectSingle options={options} />);
-
-  expect(getByTestId('react-select')).toBeInTheDocument();
+test('render AvatarName', () => {
+  const { getByTestId } = render(
+    <AvatarName
+      src={props.profile.photoUrl}
+      name={props.profile.name}
+      size={props.size}
+    />
+  );
+  expect(getByTestId(props.profile.name)).toBeInTheDocument();
 });
 
-test('render select component', () => {
-  const options = [{ value: 'apple', label: 'apple' }];
-
-  const { getByTestId } = render(<Select options={options} />);
-
-  expect(getByTestId('react-select')).toBeInTheDocument();
+test('render AvatarName without src and default props', () => {
+  const { getByText } = render(
+    <AvatarName src={''} name={props.profile.name} />
+  );
+  const nameInitial = getByText('C');
+  expect(nameInitial).toBeInTheDocument();
 });

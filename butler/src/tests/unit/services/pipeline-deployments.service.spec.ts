@@ -19,12 +19,12 @@ import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import { CdConfigurationsRepository } from '../../../app/v1/api/configurations/repository'
 import {
   CircleDeploymentEntity,
-  ComponentDeploymentEntity, ComponentUndeploymentEntity,
-  DeploymentEntity,
   ModuleDeploymentEntity, ModuleUndeploymentEntity,
+  ComponentDeploymentEntity,
+  DeploymentEntity,
   QueuedDeploymentEntity,
   QueuedIstioDeploymentEntity,
-  QueuedUndeploymentEntity, UndeploymentEntity
+  QueuedUndeploymentEntity, UndeploymentEntity, ComponentUndeploymentEntity
 } from '../../../app/v1/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 import { ComponentUndeploymentsRepository } from '../../../app/v1/api/deployments/repository'
@@ -43,6 +43,7 @@ describe('Pipeline Deployments Service', () => {
   let pipelineDeploymentsService: PipelineDeploymentsService
   let cdConfigurationRepository: CdConfigurationsRepository
   let componentUndeploymentsRepository: ComponentUndeploymentsRepository
+
   beforeEach(async() => {
     const module = await Test.createTestingModule({
       providers: [
@@ -60,6 +61,7 @@ describe('Pipeline Deployments Service', () => {
     pipelineDeploymentsService = module.get<PipelineDeploymentsService>(PipelineDeploymentsService)
     cdConfigurationRepository = module.get<CdConfigurationsRepository>(CdConfigurationsRepository)
     componentUndeploymentsRepository = module.get<ComponentUndeploymentsRepository>(ComponentUndeploymentsRepository)
+
   })
 
   it('triggers deployment without error', async() => {

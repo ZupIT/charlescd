@@ -26,6 +26,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type Payload struct {
+	Status string `json:"status"`
+	CallbackType string `json:"callbackType"`
+}
+
 type UseCases interface {
 	Start(pipeline pipelinePKG.Pipeline)
 }
@@ -61,17 +66,13 @@ func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 }
 
 func (manager Manager) pipelineOnSuccess(pipeline pipelinePKG.Pipeline) {
-	payload := map[string]string{
-		"status": "SUCCEEDED",
-	}
+	payload := Payload{Status: "SUCCEEDED", CallbackType: pipeline.Webhook.CallbackType }
 
 	manager.triggerWebhook(pipeline, payload)
 }
 
 func (manager Manager) pipelineOnError(pipeline pipelinePKG.Pipeline) {
-	payload := map[string]string{
-		"status": "FAILED",
-	}
+	payload :=  Payload{Status: "FAILED", CallbackType: pipeline.Webhook.CallbackType }
 
 	manager.triggerWebhook(pipeline, payload)
 }
