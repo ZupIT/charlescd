@@ -34,12 +34,12 @@ func HttpValidator(
 	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
 ) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		worskapceID := r.Header.Get("x-workspace-id")
+		workspaceID := r.Header.Get("x-workspace-id")
 
-		if worskapceID == "" {
+		if workspaceID == "" {
 			NewRestError(w, http.StatusInternalServerError, errors.New("WorkspaceId is required"))
 			return
 		}
-		next(w, r, ps, worskapceID)
+		next(w, r, ps, workspaceID)
 	}
 }
