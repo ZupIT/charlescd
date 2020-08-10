@@ -13,7 +13,7 @@ type Metric struct {
 	util.BaseModel
 	MetricGroupID uuid.UUID       `json:"metricGroupId"`
 	DataSourceID  uuid.UUID       `json:"dataSourceId"`
-	Metric        string          `json:"metric"`
+	Name          string          `json:"name"`
 	Filters       []MetricFilter  `json:"filters"`
 	GroupBy       []MetricGroupBy `json:"groupBy"`
 	Condition     string          `json:"condition"`
@@ -34,8 +34,8 @@ type MetricGroupBy struct {
 }
 
 func (metric Metric) Validate() error {
-	if metric.Metric == "" {
-		return errors.New("Metric is required")
+	if metric.Name == "" {
+		return errors.New("Metric name is required")
 	}
 
 	if metric.Condition == "" {
@@ -67,7 +67,7 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 }
 
 func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
-	db := main.db.Where("id = ?", id).Update(&metric)
+	db := main.db.Table("metrics").Where("id = ?", id).Update(&metric)
 	if db.Error != nil {
 		return Metric{}, db.Error
 	}

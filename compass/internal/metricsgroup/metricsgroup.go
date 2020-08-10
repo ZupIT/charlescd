@@ -92,7 +92,7 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 }
 
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
-	db := main.db.Where("id = ?", id).Update(&metricsGroup)
+	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, db.Error
 	}
