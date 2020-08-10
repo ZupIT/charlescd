@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IsUUID, IsNotEmpty, IsString } from 'class-validator'
+import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
 
 export class CreateComponentRequestDto {
   @IsUUID()
@@ -23,6 +23,8 @@ export class CreateComponentRequestDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/)
+  @Length(1, 253)
   public buildImageUrl: string
 
   @IsString()

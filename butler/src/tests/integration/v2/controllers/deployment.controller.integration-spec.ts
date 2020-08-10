@@ -121,7 +121,7 @@ describe('DeploymentController v2', () => {
       })
   })
 
-  it('returns error message for malformed payload', async() => {
+  it('returns error message for empty payload', async() => {
     const createDeploymentRequest = {}
     const errorMessages = [
       'deploymentId should not be empty',
@@ -184,7 +184,7 @@ describe('DeploymentController v2', () => {
     expect(execution.deployment.id).toEqual(response.body.id)
   })
 
-  it('returns error for duplicated componentsName', async() => {
+  it('returns error for malformed payload', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
@@ -214,6 +214,24 @@ describe('DeploymentController v2', () => {
               buildImageUrl: 'imageurl.com',
               buildImageTag: 'tag1',
               componentName: 'component-name'
+            },
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com2 ',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            },
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl-ends-with-dash.com3-',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
+            },
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
             }
           ]
         }
@@ -223,7 +241,10 @@ describe('DeploymentController v2', () => {
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
     const errorMessages = [
-      '0.Duplicated components with the property \'componentName\'',
+      '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '4.buildImageUrl must be shorter than or equal to 253 characters',
+      '0.Duplicated components with the property \'componentName\''
     ]
     await request(app.getHttpServer())
       .post('/v2/deployments')
