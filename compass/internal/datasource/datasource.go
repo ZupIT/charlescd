@@ -87,12 +87,12 @@ func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
 
 	dataSourceResult, err := main.findById(dataSourceID)
 	if err != nil {
-		return MetricList{}, err
+		return MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}
 
 	pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
 	if err != nil {
-		return MetricList{}, err
+		return MetricList{}, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
 	}
 
 	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
