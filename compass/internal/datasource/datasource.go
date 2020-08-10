@@ -25,24 +25,22 @@ type DataSource struct {
 	DeletedAt   *time.Time      `json:"-"`
 }
 
-func (dataSource DataSource) Validate() error {
+func (dataSource DataSource) Validate() []error {
+	ers := make([]error, 0)
+
 	if dataSource.Name == "" {
-		return errors.New("Invalid Name")
+		ers = append(ers, errors.New("Name is required"))
 	}
 
 	if dataSource.PluginID == uuid.Nil {
-		return errors.New("Invalid PluginID")
+		ers = append(ers, errors.New("PluginId is required"))
 	}
 
 	if dataSource.Data == nil || len(dataSource.Data) == 0 {
-		return errors.New("Invalid Data")
+		ers = append(ers, errors.New("Data is required"))
 	}
 
-	if dataSource.WorkspaceID == uuid.Nil {
-		return errors.New("Invalid WorkspaceID")
-	}
-
-	return nil
+	return ers
 }
 
 func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {

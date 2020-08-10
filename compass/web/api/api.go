@@ -17,11 +17,15 @@ type RestError struct {
 	Message string `json:"message"`
 }
 
-func NewRestError(w http.ResponseWriter, status int, err error) {
+func NewRestError(w http.ResponseWriter, status int, errs []error) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
-	restError := RestError{Message: err.Error()}
-	json.NewEncoder(w).Encode(restError)
+
+	var restErrors []RestError
+	for _, err := range errs {
+		restErrors = append(restErrors, RestError{Message: err.Error()})
+	}
+	json.NewEncoder(w).Encode(restErrors)
 }
 
 func NewRestSuccess(w http.ResponseWriter, status int, response interface{}) {
@@ -37,7 +41,7 @@ func HttpValidator(
 		workspaceID := r.Header.Get("x-workspace-id")
 
 		if workspaceID == "" {
-			NewRestError(w, http.StatusInternalServerError, errors.New("WorkspaceId is required"))
+			NewRestError(w, http.StatusInternalServerError, []error{errors.New("WorkspaceId is required")})
 			return
 		}
 		next(w, r, ps, workspaceID)

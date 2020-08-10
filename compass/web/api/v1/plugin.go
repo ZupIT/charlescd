@@ -26,7 +26,7 @@ func (v1 V1) NewPluginApi(pluginMain plugin.UseCases) PluginApi {
 func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	circles, err := pluginApi.pluginMain.FindAll()
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -36,18 +36,18 @@ func (pluginApi PluginApi) list(w http.ResponseWriter, r *http.Request, _ httpro
 func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	plugin, err := pluginApi.pluginMain.Parse(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
 	if err := plugin.Validate(); err != nil {
-		api.NewRestError(w, http.StatusBadRequest, err)
+		api.NewRestError(w, http.StatusBadRequest, []error{err})
 		return
 	}
 
 	createdCircle, err := pluginApi.pluginMain.Save(plugin)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -58,7 +58,7 @@ func (pluginApi PluginApi) show(w http.ResponseWriter, r *http.Request, ps httpr
 	id := ps.ByName("id")
 	plugin, err := pluginApi.pluginMain.FindById(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -69,13 +69,13 @@ func (pluginApi PluginApi) update(w http.ResponseWriter, r *http.Request, ps htt
 	id := ps.ByName("id")
 	plugin, err := pluginApi.pluginMain.Parse(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
 	updatedWorkspace, err := pluginApi.pluginMain.Update(string(id), plugin)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -86,7 +86,7 @@ func (pluginApi PluginApi) delete(w http.ResponseWriter, r *http.Request, ps htt
 	id := ps.ByName("id")
 	err := pluginApi.pluginMain.Remove(string(id))
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 

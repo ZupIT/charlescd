@@ -27,7 +27,7 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	circles, err := metricsGroupApi.metricsGroupMain.FindAll()
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -36,8 +36,9 @@ func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Reque
 
 func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
+
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -49,7 +50,7 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 	metricsGroup.WorkspaceID, err = uuid.Parse(workspaceId)
 	createdCircle, err := metricsGroupApi.metricsGroupMain.Save(metricsGroup)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -60,7 +61,7 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Reque
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -71,13 +72,13 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
 	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.Update(string(id), metricsGroup)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
@@ -88,7 +89,7 @@ func (metricsGroupApi MetricsGroupApi) delete(w http.ResponseWriter, r *http.Req
 	id := ps.ByName("id")
 	err := metricsGroupApi.metricsGroupMain.Remove(string(id))
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 

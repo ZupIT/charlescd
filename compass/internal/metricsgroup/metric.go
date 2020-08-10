@@ -36,8 +36,20 @@ func (metric Metric) Validate() error {
 		return errors.New("Metric is required")
 	}
 
+	if metric.Condition == "" {
+		return errors.New("Metric Condition is required")
+	}
+
+	if metric.Threshold == 0 {
+		return errors.New("Metric Threshold is required")
+	}
+
 	if len(metric.Filters) <= 0 {
 		return errors.New("Filters not empty")
+	}
+
+	if len(metric.GroupBy) <= 0 {
+		return errors.New("GroupBy not empty")
 	}
 
 	return nil
