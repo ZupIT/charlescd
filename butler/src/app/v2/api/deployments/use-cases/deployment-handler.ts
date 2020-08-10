@@ -45,7 +45,7 @@ export class DeploymentHandler {
     private spinnakerConnector: SpinnakerConnector
   ) { }
 
-  async run(job: ExecutionJob): Promise<ExecutionJob> {
+  public async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
     const overlappingComponents = await this.getOverlappingComponents(deployment)
 
@@ -62,7 +62,7 @@ export class DeploymentHandler {
       await this.handleCdSuccess(job, deployment)
   }
 
-  async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {
+  public async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {
     const deployment = await this.deploymentFromExecution(job.data)
     if (!deployment) {
       const error = new Error('Deployment not found')
@@ -73,27 +73,27 @@ export class DeploymentHandler {
     return deployment
   }
 
-  async handleOverlap(job: ExecutionJob): Promise<ExecutionJob> {
+  public async handleOverlap(job: ExecutionJob): Promise<ExecutionJob> {
     await this.pgBoss.publishWithPriority(job.data)
     this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
     job.done()
     return job
   }
 
-  async handleCdSuccess(job: ExecutionJob, deployment: DeploymentEntity) : Promise<ExecutionJob> {
+  public async handleCdSuccess(job: ExecutionJob, deployment: DeploymentEntity) : Promise<ExecutionJob> {
     await this.updateComponentsToRunning(deployment)
     this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
     job.done()
     return job
   }
 
-  async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
+  public async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
     this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job, error: cdResponse.error })
     job.done(new Error(cdResponse.error))
     return job
   }
 
-  async deploymentFromExecution(execution: Execution): Promise<DeploymentEntity | undefined> {
+  public async deploymentFromExecution(execution: Execution): Promise<DeploymentEntity | undefined> {
     const deployment = await this.deploymentsRepository.findOne({ where: { id: execution.deployment.id }, relations: ['components', 'cdConfiguration'] })
 
     if (deployment)
@@ -102,12 +102,12 @@ export class DeploymentHandler {
     return deployment
   }
 
-  async findComponentsByName(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+  public async findComponentsByName(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
     const names = deployment.components.map(c => c.name)
     return await this.componentsRepository.find({ where: { name: In(names), deployment: deployment } })
   }
 
-  async updateComponentsToRunning(deployment: DeploymentEntity): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
+  public async updateComponentsToRunning(deployment: DeploymentEntity): Promise<DeploymentEntity> { // TODO extract all these database methods to custom repo/class
     deployment.components = deployment.components.map(c => {
       c.running = true
       return c
@@ -116,7 +116,7 @@ export class DeploymentHandler {
     return updated
   }
 
-  async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
+  public async getOverlappingComponents(deployment: DeploymentEntity): Promise<ComponentEntity[]> {
     const deploymentComponents = await this.findComponentsByName(deployment)
     const allRunningComponents = await this.componentsRepository.find({ where: { running: true } })
     const overlap = allRunningComponents.filter( c => deploymentComponents.some(dc => dc.name === c.name))

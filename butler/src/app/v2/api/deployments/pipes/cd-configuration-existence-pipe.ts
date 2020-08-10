@@ -26,7 +26,7 @@ export class CdConfigurationExistencePipe implements PipeTransform {
         private componentRepository: CdConfigurationsRepository) {
   }
 
-  async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
+  public async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const cdConfiguration = await this.componentRepository.findDecrypted(createDeploymentDto.cdConfigurationId)
     if (cdConfiguration) {
       createDeploymentDto.cdConfiguration = cdConfiguration
