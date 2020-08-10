@@ -12,6 +12,11 @@ type PrometheusConfig struct {
 	Url string `json:"url"`
 }
 
+type PrometheusMetricsResponse struct {
+	Status string   `json:"status"`
+	Data   []string `json:"data"`
+}
+
 func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	path := "/api/v1/label/__name__/values"
 
@@ -23,15 +28,13 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 		return datasource.MetricList{}, errors.New("FAILED GET: " + string(configurationData))
 	}
 
-	var result interface{}
+	var result PrometheusMetricsResponse
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
 		return datasource.MetricList{}, errors.New("FAILED DECODER: " + err.Error())
 	}
 
-	fmt.Println(result)
-
-	return datasource.MetricList{}, nil
+	return result.Data, nil
 }
 
 func Query() {

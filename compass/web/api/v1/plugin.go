@@ -41,7 +41,7 @@ func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ http
 	}
 
 	if err := plugin.Validate(); err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+		api.NewRestError(w, http.StatusBadRequest, err)
 		return
 	}
 
