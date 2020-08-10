@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"compass/internal/plugin"
+	"compass/pkg/datasource"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -12,7 +13,7 @@ type UseCases interface {
 	FindAllByWorkspace(workspaceID string) ([]DataSource, error)
 	Save(dataSource DataSource) (DataSource, error)
 	Delete(id string, workspaceID string) error
-	GetMetrics(dataSourceID, name string) (MetricList, error)
+	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
 }
 
 type Main struct {
