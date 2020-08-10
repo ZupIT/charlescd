@@ -21,8 +21,7 @@ type DataSource struct {
 	Health      bool            `json:"health"`
 	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
-	Deleted     bool
-	DeletedAt   *time.Time
+	DeletedAt   *time.Time      `json:"-"`
 }
 
 func (dataSource DataSource) Validate() error {
@@ -47,8 +46,8 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 }
 
 func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
-	dataSources := []DataSource{}
-	db := main.db.Where("workspace_id = ? AND deleted = ?", workspaceID, false).Find(&dataSources)
+	var dataSources []DataSource
+	db := main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
 	if db.Error != nil {
 		return []DataSource{}, db.Error
 	}
