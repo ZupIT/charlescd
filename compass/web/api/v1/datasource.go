@@ -27,7 +27,6 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.findAllByWorkspace))
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(dataSourceAPI.create))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(dataSourceAPI.deleteDataSource))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id/define-health"), api.HttpValidator(dataSourceAPI.defineHealth))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/metrics"), api.HttpValidator(dataSourceAPI.getMetrics))
 	return dataSourceAPI
 }
@@ -85,12 +84,4 @@ func (dataSourceApi DataSourceApi) getMetrics(w http.ResponseWriter, r *http.Req
 		return
 	}
 	api.NewRestSuccess(w, http.StatusOK, metrics)
-}
-
-func (dataSourceApi DataSourceApi) defineHealth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	err := dataSourceApi.dataSourceMain.SetAsHealth(ps.ByName("id"), workspaceId)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, err)
-		return
-	}
 }
