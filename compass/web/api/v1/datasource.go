@@ -4,9 +4,8 @@ import (
 	"compass/internal/datasource"
 	"compass/web/api"
 	"errors"
-	"net/http"
-
 	"github.com/google/uuid"
+	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -48,13 +47,13 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := dataSource.Validate(); err != nil {
+	dataSource.WorkspaceID, err = uuid.Parse(workspaceId)
+	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	dataSource.WorkspaceID, err = uuid.Parse(workspaceId)
-	if err != nil {
+	if err := dataSource.Validate(); err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}

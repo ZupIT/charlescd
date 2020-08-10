@@ -29,6 +29,23 @@ func (dataSource DataSource) Validate() error {
 		return errors.New("Invalid Name")
 	}
 
+	if dataSource.PluginID == uuid.Nil {
+		return errors.New("Invalid PluginID")
+	}
+
+	var rawData, _ = dataSource.Data.MarshalJSON()
+	if len(rawData) == 0 {
+		return errors.New("Invalid Data")
+	}
+
+	if dataSource.Data == nil || len(dataSource.Data) == 0 {
+		return errors.New("Invalid Data")
+	}
+
+	if dataSource.WorkspaceID == uuid.Nil {
+		return errors.New("Invalid WorkspaceID")
+	}
+
 	return nil
 }
 
