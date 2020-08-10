@@ -124,21 +124,14 @@ func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	return count != 0, nil
 }
 
-func (main Main) SetAsHealth(id string, workspaceID string) error {
-	if hasHealth, err := main.verifyHealthAtWorkspace(workspaceID); err != nil || hasHealth {
-		log.Print(err)
-		return errors.New("Cannot set as Health")
-	}
-
-	db := main.db.Model(DataSource{}).Where("id = ?", id).Updates("health", true)
-	if db.Error != nil {
-		return db.Error
-	}
-
-	return nil
-}
-
 func (main Main) Save(dataSource DataSource) (DataSource, error) {
+	if dataSource.Health == true {
+		if hasHealth, err := main.verifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
+			log.Print(err)
+			return DataSource{}, errors.New("Cannot set as Health")
+		}
+	}
+
 	db := main.db.Create(&dataSource)
 	if db.Error != nil {
 		return DataSource{}, db.Error
