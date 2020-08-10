@@ -22,7 +22,7 @@ type DataSource struct {
 	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
 	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	Deleted     bool
-	DeletedAt   time.Time
+	DeletedAt   *time.Time
 }
 
 func (dataSource DataSource) Validate() error {
@@ -74,7 +74,7 @@ func (main Main) Delete(id string, workspaceID string) error {
 		return err
 	}
 
-	db := main.db.Model(&DataSource{}).Where("id = ?", id).Update(DataSource{Deleted: true, DeletedAt: time.Now()})
+	db := main.db.Model(&DataSource{}).Where("id = ?", id).Delete(&DataSource{})
 	if db.Error != nil {
 		return db.Error
 	}
