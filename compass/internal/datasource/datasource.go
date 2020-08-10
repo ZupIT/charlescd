@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"compass/internal/util"
+	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
 	"io"
@@ -49,10 +50,6 @@ func (dataSource DataSource) Validate() error {
 	return nil
 }
 
-type MetricList struct {
-	Data []string
-}
-
 func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 	var newDataSource *DataSource
 	err := json.NewDecoder(dataSource).Decode(&newDataSource)
@@ -98,33 +95,33 @@ func (main Main) Delete(id string, workspaceID string) error {
 	return nil
 }
 
-func (main Main) GetMetrics(dataSourceID, name string) (MetricList, error) {
+func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, error) {
 	pluginsPath := "plugins"
 
 	dataSourceResult, err := main.findById(dataSourceID)
 	if err != nil {
-		return MetricList{}, errors.New("Not found data source: " + dataSourceID)
+		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}
 
 	pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
 	if err != nil {
-		return MetricList{}, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
+		return datasource.MetricList{}, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
 	}
 
 	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
 	if err != nil {
-		return MetricList{}, err
+		return datasource.MetricList{}, err
 	}
 
 	getList, err := plugin.Lookup("GetLists")
 	if err != nil {
-		return MetricList{}, err
+		return datasource.MetricList{}, err
 	}
 
 	configurationData, _ := json.Marshal(dataSourceResult.Data)
-	list, err := getList.(func(configurationData []byte) (MetricList, error))(configurationData)
+	list, err := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
 	if err != nil {
-		return MetricList{}, err
+		return datasource.MetricList{}, err
 	}
 
 	return list, nil
