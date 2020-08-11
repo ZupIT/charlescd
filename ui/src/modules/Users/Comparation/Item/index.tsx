@@ -119,7 +119,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         marginContent="5px"
         onClick={() => toggleModalPassword(true)}
       >
-        <Text.h5 color="dark">Change password</Text.h5>
+        <Text.h5 color="dark">Reset password</Text.h5>
       </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
