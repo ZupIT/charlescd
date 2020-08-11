@@ -35,6 +35,7 @@ import {
   DeploymentsRepositoryStub,
   QueuedDeploymentsRepositoryStub
 } from '../../stubs/repository'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import {
   ComponentDeploymentsRepository,
   QueuedDeploymentsRepository
@@ -46,6 +47,7 @@ import {
   ModuleDeploymentEntity,
   QueuedDeploymentEntity,
   CircleDeploymentEntity
+
 } from '../../../app/v1/api/deployments/entity'
 import { QueuedPipelineStatusEnum } from '../../../app/v1/api/deployments/enums'
 
@@ -85,8 +87,8 @@ describe('ReceiveDeploymentCallbackUsecase', () => {
     pipelineQueuesService = module.get<PipelineQueuesService>(PipelineQueuesService)
     pipelineErrorHandlerService = module.get<PipelineErrorHandlerService>(PipelineErrorHandlerService)
     componentDeploymentsRepository = module.get<ComponentDeploymentsRepository>(ComponentDeploymentsRepository)
-    successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED')
-    failedFinishDeploymentDto = new FinishDeploymentDto('FAILED')
+    successfulFinishDeploymentDto = new FinishDeploymentDto('SUCCEEDED', CallbackTypeEnum.DEPLOYMENT)
+    failedFinishDeploymentDto = new FinishDeploymentDto('FAILED', CallbackTypeEnum.DEPLOYMENT)
     queuedDeployment = new QueuedDeploymentEntity(
       'dummy-component-id',
       'dummy-component-deployment-id',

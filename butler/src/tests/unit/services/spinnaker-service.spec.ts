@@ -41,6 +41,7 @@ import { SpinnakerApiService } from '../../../app/v1/core/integrations/cd/spinna
 import { of } from 'rxjs'
 import { IConnectorConfiguration } from '../../../app/v1/core/integrations/cd/interfaces'
 import { ICdConfigurationData } from '../../../app/v1/api/configurations/interfaces'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 
 describe('Spinnaker Service', () => {
   let spinnakerService: SpinnakerService
@@ -150,7 +151,8 @@ describe('Spinnaker Service', () => {
       componentName: 'component-name',
       helmRepository: '',
       callbackCircleId: 'circle-id',
-      pipelineCallbackUrl: 'dummy-callback-url'
+      pipelineCallbackUrl: 'dummy-callback-url',
+      callbackType: CallbackTypeEnum.DEPLOYMENT
     }
   })
 
