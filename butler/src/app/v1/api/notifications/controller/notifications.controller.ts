@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Query
-} from '@nestjs/common'
-import {
-  FinishDeploymentDto,
-  FinishUndeploymentDto
-} from '../dto'
+import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common'
+import { FinishDeploymentDto } from '../dto'
 import {
   ReceiveDeploymentCallbackUsecase,
   ReceiveIstioDeploymentCallbackUsecase,
   ReceiveUndeploymentCallbackUsecase
 } from '../use-cases'
+import { CallbackTypeEnum } from '../enums/callback-type.enum'
 
 @Controller('notifications')
 export class NotificationsController {
@@ -40,33 +32,21 @@ export class NotificationsController {
     private readonly receiveUndeploymentCallbackUsecase: ReceiveUndeploymentCallbackUsecase
   ) {}
 
-  @Post('/deployment')
+  @Post()
   @HttpCode(204)
   public async receiveDeploymentCallback(
-    @Query('queuedDeploymentId') queuedDeploymentId: number,
+    @Query('queueId') queueId: number,
     @Body() finishDeploymentDto: FinishDeploymentDto
   ): Promise<void> {
-
-    return await this.receiveDeploymentCallbackUsecase.execute(queuedDeploymentId, finishDeploymentDto)
+    if (finishDeploymentDto.callbackType === CallbackTypeEnum.DEPLOYMENT) {
+      return await this.receiveDeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
+    }
+    if (finishDeploymentDto.callbackType === CallbackTypeEnum.ISTIO_DEPLOYMENT) {
+      return await this.receiveIstioDeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
+    }
+    if (finishDeploymentDto.callbackType === CallbackTypeEnum.UNDEPLOYMENT) {
+      return await this.receiveUndeploymentCallbackUsecase.execute(queueId, finishDeploymentDto)
+    }
   }
 
-  @Post('/istio-deployment')
-  @HttpCode(204)
-  public async receiveIstioDeploymentCallback(
-    @Query('queuedIstioDeploymentId') queuedIstioDeploymentId: number,
-    @Body() finishDeploymentDto: FinishDeploymentDto
-  ): Promise<void> {
-
-    return await this.receiveIstioDeploymentCallbackUsecase.execute(queuedIstioDeploymentId, finishDeploymentDto)
-  }
-
-  @Post('/undeployment')
-  @HttpCode(204)
-  public async receiveUndeploymentCallback(
-    @Query('queuedUndeploymentId') queuedUndeploymentId: number,
-    @Body() finishUndeploymentDto: FinishUndeploymentDto
-  ): Promise<void> {
-
-    return await this.receiveUndeploymentCallbackUsecase.execute(queuedUndeploymentId, finishUndeploymentDto)
-  }
 }

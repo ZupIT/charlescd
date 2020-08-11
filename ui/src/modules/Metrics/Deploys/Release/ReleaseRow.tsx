@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
-import { getReleseStatus } from './helpers';
+import { getStatus } from '../../helpers';
 import { ReleaseHistory } from '../interfaces';
 import ReleaseComponentsTable from './ReleaseComponentsTable';
 import { dateTimeFormatter, humanizeDateFromSeconds } from 'core/utils/date';
@@ -31,7 +31,7 @@ const ReleaseRow = ({ release }: Props) => {
 
   return (
     <Styled.ReleaseRow>
-      <Styled.StatusLine status={getReleseStatus(release?.status)} />
+      <Styled.StatusLine status={getStatus(release?.status)} />
       <Styled.TableRow
         onClick={() => setActiveRow(!activeRow)}
         data-testid={`release-table-row-${release.id}`}
