@@ -31,7 +31,7 @@ func (v1 V1) NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi 
 }
 
 func (dataSourceApi DataSourceApi) findAllByWorkspace(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceId)
+	dataSources, dbErr := dataSourceApi.dataSourceMain.FindAllByWorkspace(workspaceId, r.URL.Query().Get("health"))
 	if dbErr != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("Error doing the process")})
 		return

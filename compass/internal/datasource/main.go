@@ -10,7 +10,7 @@ import (
 
 type UseCases interface {
 	Parse(dataSource io.ReadCloser) (DataSource, error)
-	FindAllByWorkspace(workspaceID string) ([]DataSource, error)
+	FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error)
 	FindById(id string) (DataSource, error)
 	Save(dataSource DataSource) (DataSource, error)
 	Delete(id string, workspaceID string) error
