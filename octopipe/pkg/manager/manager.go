@@ -173,7 +173,11 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 }
 
 func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
-	repository := manager.repositoryMain.NewRepository(step.Repository)
+	repository, err := manager.repositoryMain.NewRepository(step.Repository)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "executeStep"}).Error(err.Error())
+		return "", "", err
+	}
 	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
