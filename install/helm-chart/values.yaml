@@ -31,7 +31,7 @@ moove:
   enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
-  keycloakHost: "http://charles.info.example/keycloak/auth"
+  keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -162,6 +162,9 @@ keycloak:
     persistence:
       deployPostgres: false
       existingSecret: false
+    cli:
+      custom: |
+        /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 postgresql:
   enabled: true
