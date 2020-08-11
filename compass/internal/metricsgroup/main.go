@@ -1,6 +1,8 @@
 package metricsgroup
 
 import (
+	"compass/internal/datasource"
+	"compass/internal/plugin"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -17,12 +19,15 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
+	Query(id string) (map[string]interface{}, error)
 }
 
 type Main struct {
-	db *gorm.DB
+	db             *gorm.DB
+	datasourceMain datasource.UseCases
+	pluginMain     plugin.UseCases
 }
 
-func NewMain(db *gorm.DB) UseCases {
-	return Main{db}
+func NewMain(db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases) UseCases {
+	return Main{db, datasourceMain, pluginMain}
 }

@@ -62,7 +62,7 @@ func (main Main) FindAllByWorkspace(workspaceID string) ([]DataSource, error) {
 	return dataSources, nil
 }
 
-func (main Main) findById(id string) (DataSource, error) {
+func (main Main) FindById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
 	if result.Error != nil && gorm.IsRecordNotFoundError(result.Error) {
@@ -76,7 +76,7 @@ func (main Main) findById(id string) (DataSource, error) {
 }
 
 func (main Main) Delete(id string, workspaceID string) error {
-	if _, err := main.findById(id); err != nil {
+	if _, err := main.FindById(id); err != nil {
 		return err
 	}
 
@@ -91,7 +91,7 @@ func (main Main) Delete(id string, workspaceID string) error {
 func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, error) {
 	pluginsPath := "plugins"
 
-	dataSourceResult, err := main.findById(dataSourceID)
+	dataSourceResult, err := main.FindById(dataSourceID)
 	if err != nil {
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}

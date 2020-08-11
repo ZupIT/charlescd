@@ -39,24 +39,30 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	return result.Data, nil
 }
 
-func Query(datasourceConfiguration, queryMetricsgroup []byte) (interface{}, error) {
+func Query(datasourceConfiguration, metric []byte) (interface{}, error) {
 	path := "/api/v1/query"
 
 	var prometheusConfig PrometheusConfig
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
-	var currentMetricsgroups metricsgroup.MetricsGroup
-	_ = json.Unmarshal(queryMetricsgroup, &currentMetricsgroups)
+	var currentMetric metricsgroup.Metric
+	_ = json.Unmarshal(metric, &currentMetric)
 
-	query := createQueryByMetric(currentMetricsgroups.Metrics)
+	query := createQueryByMetric(currentMetric)
 	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
 	queryParams := url.Values{}
 	queryParams.Add("query", query)
 	Url.RawQuery = queryParams.Encode()
 	res, err := http.Get(Url.String())
 	if err != nil {
-		return datasource.MetricList{}, errors.New("FAILED QUERY: " + query)
+		return nil, errors.New("FAILED QUERY: " + query)
 	}
 
-	return res, nil
+	var result interface{}
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return nil, errors.New("FAILED DECODER: " + err.Error())
+	}
+
+	return result, nil
 }

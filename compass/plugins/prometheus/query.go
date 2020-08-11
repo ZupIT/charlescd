@@ -14,11 +14,6 @@ func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 	return filterQuery
 }
 
-func createQueryByMetric(metrics []metricsgroup.Metric) string {
-	query := ""
-	for _, metric := range metrics {
-		query += fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
-	}
-
-	return query
+func createQueryByMetric(metric metricsgroup.Metric) string {
+	return fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
 }
