@@ -26,6 +26,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeploymentEntityV2 } from '../entity/deployment.entity';
 
+const EXPIRE_IN_MINUTES = 25 // TODO move to config
+
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   public pgBoss: PgBoss
@@ -43,14 +45,14 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   public publish(params: Execution): Promise<string | null> {
-    return this.pgBoss.publish('deployment-queue', params)
+    return this.pgBoss.publish('deployment-queue', params, { expireInMinutes: EXPIRE_IN_MINUTES })
   }
 
   public async publishWithPriority(params: Execution): Promise<string | null> {
     await this.deploymentRepository.increment({ id: params.deployment.id }, 'priority', 1) // execution priority column
     const incrementedDeployment = await this.deploymentRepository.findOneOrFail({ id: params.deployment.id })
     const incPriority = incrementedDeployment.priority // pg-boss priority column
-    return this.pgBoss.publish('deployment-queue', params, { priority: incPriority })
+    return this.pgBoss.publish('deployment-queue', params, { priority: incPriority, expireInMinutes: EXPIRE_IN_MINUTES })
   }
 
   public async onModuleInit(): Promise<void> {

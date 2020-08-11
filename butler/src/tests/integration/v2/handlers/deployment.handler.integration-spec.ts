@@ -17,6 +17,7 @@ import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
+import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 
 let mock = express()
 
@@ -192,6 +193,52 @@ describe('DeploymentHandler', () => {
     const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
 
     expect(handledDeployment.components.map(c => c.running)).toEqual([false])
+  })
+
+  it.only('mark the deployment as timed out after 25 minutes', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+
+
+    console.log(DateUtils.now())
+    jest.spyOn(global.Date, 'now')
+      .mockImplementationOnce(() =>
+        new Date('2019-05-14T11:25:00.135Z').valueOf()
+      )
+
+    console.log(DateUtils.now())
+    // jest.useFakeTimers()
+    // const callback = jest.fn();
+
+    // timerGame(callback);
+    // jest.runAllTimers();
+    // console.log(new Date())
+
+    const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    // setTimeout(() => ({}), 60000 * 25) // timeout 25 minutes
+    await deploymentHandler.run(fixtures.job)
   })
 })
 

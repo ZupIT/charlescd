@@ -232,6 +232,12 @@ describe('DeploymentController v2', () => {
               buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
               buildImageTag: 'tag1',
               componentName: 'component-name'
+            },
+            {
+              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'quiz-app-backend',
+              buildImageTag: 'tag1',
+              componentName: 'component-name'
             }
           ]
         }
