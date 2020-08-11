@@ -9,6 +9,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
@@ -20,11 +21,13 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
     private UserRepository userRepository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
+    private KeycloakCustomService keycloakCustomService = Mock(KeycloakCustomService)
 
     void setup() {
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
                 new UserService(userRepository),
-                keycloakService
+                keycloakService,
+                keycloakCustomService
         )
     }
 
@@ -57,6 +60,7 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
         then:
         1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * keycloakCustomService.hitUserInfo(authorization)
         1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> false
 
         def ex = thrown(BusinessException)
@@ -75,6 +79,7 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
         then:
         1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * keycloakCustomService.hitUserInfo(authorization)
         1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> true
         1 * this.keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
 
