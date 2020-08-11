@@ -137,6 +137,7 @@ export const useResetPassword = (): {
   response: NewPassword;
   status: FetchStatus;
 } => {
+  const dispatch = useDispatch();
   const status = useFetchStatus();
   const [response, setResponse] = useState<NewPassword>();
   const putResetPassword = useFetchData<NewPassword>(resetPasswordById);
@@ -148,6 +149,13 @@ export const useResetPassword = (): {
       setResponse(putResponse);
       status.resolved();
     } catch (e) {
+      dispatch(
+        toogleNotification({
+          text: 'The password could not be reset.',
+          status: 'error'
+        })
+      );
+
       status.rejected();
     }
   };
