@@ -17,7 +17,7 @@
 package repository
 
 type MainUseCases interface {
-	NewRepository(repository Repository) (UseCases, error)
+	NewRepository(repository Repository) UseCases
 }
 
 type RepositoryMain struct{}

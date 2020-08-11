@@ -17,11 +17,8 @@
 package repository
 
 import (
-	"errors"
 	"octopipe/pkg/repository/github"
 	"octopipe/pkg/repository/gitlab"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -34,20 +31,16 @@ type UseCases interface {
 }
 
 type Repository struct {
-	Type string `json:"type"`
-	github.GithubRepository
+	Type  string `json:"type"`
+	Url   string `json:"url"`
+	Token string `json:"token"`
 }
 
-func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error) {
-	switch repository.Type {
-	case GithubType:
-		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected github repository")
-		return github.NewGithubRepository(repository.GithubRepository), nil
-	case GitlabType:
-		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected gitlab repository")
-		return gitlab.NewGitlabRepository(repository.GitlabRepository), nil
-	default:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("No valid repository")
-		return nil, errors.New("Repository not found")
+func (main RepositoryMain) NewRepository(repository Repository) UseCases {
+	var repositories = map[string]UseCases{
+		"github": github.NewGithubRepository(repository.Url, repository.Token),
+		"gitlab": gitlab.NewGitlabRepository(repository.Url, repository.Token),
 	}
+
+	return repositories[repository.Type]
 }
