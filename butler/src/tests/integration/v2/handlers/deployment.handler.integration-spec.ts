@@ -13,12 +13,11 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
-import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
+import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
+import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
-import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
-import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
 
 let mock = express()
 
@@ -27,7 +26,6 @@ describe('DeploymentHandler', () => {
   let app: INestApplication
   let worker: PgBossWorker
   let deploymentHandler: DeploymentHandler
-  let deploymentUseCase: CreateDeploymentUseCase
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: NotificationUseCase
@@ -46,7 +44,6 @@ describe('DeploymentHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
-    deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
     notificationUseCase = app.get<NotificationUseCase>(NotificationUseCase)
     manager = fixtureUtilsService.connection.manager
   })
