@@ -1,7 +1,7 @@
 package io.charlescd.moove.infrastructure.service
 
 import io.charlescd.moove.domain.GitCredentials
-import org.gitlab4j.api.GitLabApi
+import org. gitlab4j.api.GitLabApi
 import org.springframework.stereotype.Component
 
 @Component
