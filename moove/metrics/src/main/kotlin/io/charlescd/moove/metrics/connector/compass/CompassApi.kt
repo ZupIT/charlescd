@@ -34,7 +34,6 @@ interface CompassApi {
         const val DATASOURCES_ENDPOINT = "/api/v1/datasources"
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
         value = [DATASOURCES_ENDPOINT],
@@ -43,7 +42,7 @@ interface CompassApi {
     )
     fun createMetricGroup(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        baseUrl: URI, compassCreateDatasourceRequest: CompassCreateDatasourceRequest
+        compassCreateDatasourceRequest: CompassCreateDatasourceRequest
     ): CompassDatasourceResponse
 
 }

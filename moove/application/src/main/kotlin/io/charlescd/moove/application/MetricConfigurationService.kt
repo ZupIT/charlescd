@@ -21,11 +21,15 @@ package io.charlescd.moove.application
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
+import io.charlescd.moove.metrics.connector.compass.CompassApi
+import io.charlescd.moove.metrics.connector.compass.CompassCreateDatasourceRequest
+import io.charlescd.moove.metrics.connector.compass.CompassDatasourceResponse
 import javax.inject.Named
 
 @Named
 class MetricConfigurationService(
-    private val metricConfigurationRepository: MetricConfigurationRepository
+    private val metricConfigurationRepository: MetricConfigurationRepository,
+    private val compassApi: CompassApi
 ) {
 
     fun save(metricConfiguration: MetricConfiguration): MetricConfiguration {
@@ -42,5 +46,9 @@ class MetricConfigurationService(
         if (!metricConfigurationRepository.exists(id, workspaceId)) {
             throw NotFoundException("metricConfiguration", id)
         }
+    }
+
+    fun saveDatasourceOnCompass(workspaceId: String, datasourceRequest: CompassCreateDatasourceRequest): CompassDatasourceResponse {
+        return compassApi.createMetricGroup(workspaceId, datasourceRequest)
     }
 }
