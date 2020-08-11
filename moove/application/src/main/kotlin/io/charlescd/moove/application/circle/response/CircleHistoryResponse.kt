@@ -17,37 +17,11 @@
 package io.charlescd.moove.application.circle.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonInclude
-import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.domain.CircleCount
 import io.charlescd.moove.domain.CircleHistory
 import io.charlescd.moove.domain.CircleStatusEnum
-import io.charlescd.moove.domain.Page
 import java.time.LocalDateTime
 
 class CircleHistoryResponse(
-    val page: ResourcePageResponse<CircleHistoryContentResponse>,
-    val summary: HistorySummaryResponse
-) {
-    companion object {
-        fun from(summary: List<CircleCount>, page: Page<CircleHistory>) = CircleHistoryResponse(
-            summary = HistorySummaryResponse(
-                summary.firstOrNull { it.circleStatus == CircleStatusEnum.ACTIVE }?.total ?: 0,
-                summary.firstOrNull { it.circleStatus == CircleStatusEnum.INACTIVE }?.total ?: 0
-            ),
-            page = ResourcePageResponse.from(
-                page.content.map { CircleHistoryContentResponse.from(it) }.sortedByDescending { it.lifeTime },
-                page.pageNumber,
-                page.pageSize,
-                page.isLast(),
-                page.totalPages()
-            )
-        )
-    }
-}
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-class CircleHistoryContentResponse(
     val id: String,
     val name: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -56,7 +30,7 @@ class CircleHistoryContentResponse(
     val status: CircleStatusEnum
 ) {
     companion object {
-        fun from(circleHistory: CircleHistory) = CircleHistoryContentResponse(
+        fun from(circleHistory: CircleHistory) = CircleHistoryResponse(
             id = circleHistory.id,
             name = circleHistory.name,
             lastUpdatedAt = circleHistory.lastUpdatedAt,
@@ -65,8 +39,3 @@ class CircleHistoryContentResponse(
         )
     }
 }
-
-data class HistorySummaryResponse(
-    val active: Int,
-    val inactive: Int
-)
