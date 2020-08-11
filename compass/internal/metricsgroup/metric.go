@@ -13,7 +13,7 @@ type Metric struct {
 	util.BaseModel
 	MetricGroupID uuid.UUID       `json:"metricGroupId"`
 	DataSourceID  uuid.UUID       `json:"dataSourceId"`
-	Name          string          `json:"name"`
+	Metric        string          `json:"metric"`
 	Filters       []MetricFilter  `json:"filters"`
 	GroupBy       []MetricGroupBy `json:"groupBy"`
 	Condition     string          `json:"condition"`
@@ -34,7 +34,7 @@ type MetricGroupBy struct {
 }
 
 func (metric Metric) Validate() error {
-	if metric.Name == "" {
+	if metric.Metric == "" {
 		return errors.New("Metric name is required")
 	}
 
