@@ -49,7 +49,7 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 			return "", "", err
 		}
 
-		request.Header.Add("PRIVATE-TOKEN", fmt.Sprintf("token %s", gitlabRepository.Token))
+		request.Header.Add("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
 		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("Request file from repository. Url: " + filePath)
 		response, err := client.Do(request)
 		if err != nil {

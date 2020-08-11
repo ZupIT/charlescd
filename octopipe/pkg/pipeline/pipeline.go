@@ -49,7 +49,7 @@ type NonAdjustablePipeline struct {
 }
 
 type StepTemplate struct {
-	Repository repository.Repository `json:"reposository"`
+	Repository repository.Repository `json:"repository"`
 	template.Template
 }
 

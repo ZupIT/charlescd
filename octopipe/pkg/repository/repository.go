@@ -38,9 +38,8 @@ type Repository struct {
 
 func (main RepositoryMain) NewRepository(repository Repository) UseCases {
 	var repositories = map[string]UseCases{
-		"github": github.NewGithubRepository(repository.Url, repository.Token),
-		"gitlab": gitlab.NewGitlabRepository(repository.Url, repository.Token),
+		"GITHUB": github.NewGithubRepository(repository.Url, repository.Token),
+		"GITLAB": gitlab.NewGitlabRepository(repository.Url, repository.Token),
 	}
-
 	return repositories[repository.Type]
 }
