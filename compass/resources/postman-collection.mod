@@ -83,7 +83,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginId\": \"{{pluginId}}\",\n    \"health\": true,\n    \"data\": {\n        \"url\": \"http://demo.robustperception.io:9090\"\n    }\n}",
+							"raw": "{\n    \"name\": \"Prometheus do maycao\",\n    \"pluginId\": \"{{pluginId}}\",\n    \"health\": true,\n    \"data\": {\n        \"url\": \"http://35.238.107.172:9090\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -410,7 +410,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"name\": \"metric 21\",\n            \"filters\": [\n                {\n                    \"field\": \"destination\",\n                    \"value\": \"moove\",\n                    \"operator\": \"EQUAL\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\",\n    \"workspaceId\": \"{{workspaceId}}\"\n}",
+							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"metric\": \"istio_charles_request_total\",\n            \"query\": \"\",\n            \"filters\": [\n                {\n                    \"field\": \"circle_id\",\n                    \"value\": \"5c7979b7-51fd-4c16-8f2e-2c5d93651ed1\",\n                    \"operator\": \"=\"\n                },\n                {\n                    \"field\": \"circle_source\",\n                    \"value\": \"f5d23a57-5607-4306-9993-477e1598cc2a\",\n                    \"operator\": \"=\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

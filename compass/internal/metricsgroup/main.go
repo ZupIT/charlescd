@@ -19,7 +19,7 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
-	Query(id string) (map[string]interface{}, error)
+	Query(id string) ([]MetricResult, error)
 }
 
 type Main struct {
