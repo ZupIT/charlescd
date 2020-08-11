@@ -42,7 +42,7 @@ func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) 
 	filesData := []string{}
 
 	for _, fileName := range gitlabRepository.getDefaultFileNamesByName(name) {
-		filePath := fmt.Sprintf("%s/%s%%2F%s", gitlabRepository.Url, name, fileName)
+		filePath := fmt.Sprintf("%s/%s%%2F%s?ref=master", gitlabRepository.Url, name, fileName)
 
 		request, err := http.NewRequest("GET", filePath, nil)
 		if err != nil {
