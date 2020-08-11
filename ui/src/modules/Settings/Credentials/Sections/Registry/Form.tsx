@@ -27,10 +27,12 @@ import { radios } from './constants';
 import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
+import Switch from 'core/components/Switch';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
+  const [awsUseSecret, setAwsUseSecret] = useState(false);
   const { register, unregister, handleSubmit, reset } = useForm<Registry>();
   const profileId = getProfileByKey('id');
 
@@ -59,17 +61,31 @@ const FormRegistry = ({ onFinish }: Props) => {
 
     return (
       <>
-        <Form.Password
-          ref={register}
-          name="accessKey"
-          label="Enter the access key"
-        />
         <Form.Input
-          ref={register}
-          name="secretKey"
-          label="Enter the secret key"
+          ref={register({ required: true })}
+          name="region"
+          label="Enter the region"
         />
-        <Form.Input ref={register} name="region" label="Enter the region" />
+        <Switch
+          name="aws-auth-handler"
+          label="Enable access and secret key"
+          active={awsUseSecret}
+          onChange={() => setAwsUseSecret(!awsUseSecret)}
+        />
+        {awsUseSecret ? (
+          <>
+            <Form.Password
+              ref={register({ required: true })}
+              name="accessKey"
+              label="Enter the access key"
+            />
+            <Form.Input
+              ref={register({ required: true })}
+              name="secretKey"
+              label="Enter the secret key"
+            />
+          </>
+        ) : null}
       </>
     );
   };

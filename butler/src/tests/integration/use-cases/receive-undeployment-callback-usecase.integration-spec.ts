@@ -32,6 +32,7 @@ import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { MooveService } from '../../../app/v1/core/integrations/moove'
 import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import * as uuid from 'uuid'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
@@ -54,7 +55,6 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
         FixtureUtilsService
       ]
     })
-
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
 
@@ -159,7 +159,8 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
     })
 
     const finishDeploymentDto = {
-      status : 'FAILED'
+      status : 'FAILED',
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
 
     const spy = jest.spyOn(mooveService, 'notifyDeploymentStatus')
@@ -167,8 +168,8 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
     jest.spyOn(httpService, 'post').
       mockImplementation( () => of({} as AxiosResponse) )
 
-    await request(app.getHttpServer()).post(`/notifications/undeployment?queuedUndeploymentId=${queuedUndeployment.id}`)
-      .send(finishDeploymentDto)
+    await request(app.getHttpServer()).post(`/notifications?queueId=${queuedUndeployment.id}`)
+      .send(finishDeploymentDto).expect(204)
 
     queuedUndeployment = await queuedUndeploymentsRepository.
       findOneOrFail( {
