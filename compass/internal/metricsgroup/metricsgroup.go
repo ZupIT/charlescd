@@ -19,6 +19,11 @@ type MetricsGroup struct {
 	CircleID    uuid.UUID `json:"circleId"`
 }
 
+type MetricResult struct {
+	Metric string      `json:"metric"`
+	Result interface{} `json:"result"`
+}
+
 func (metricsGroup MetricsGroup) Validate() []error {
 	ers := make([]error, 0)
 
@@ -83,7 +88,7 @@ func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
 
 func (main Main) FindById(id string) (MetricsGroup, error) {
 	metricsGroup := MetricsGroup{}
-	db := main.db.Preload("Metrics").Where("id = ?", id).First(&metricsGroup)
+	db := main.db.Preload("Metrics").Preload("Metrics.Filters").Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, db.Error
 	}
@@ -106,8 +111,8 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) Query(id string) (map[string]interface{}, error) {
-	metricsResults := map[string]interface{}{}
+func (main Main) Query(id string) ([]MetricResult, error) {
+	metricsResults := []MetricResult{}
 	pluginsPath := "plugins"
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
@@ -142,7 +147,10 @@ func (main Main) Query(id string) (map[string]interface{}, error) {
 			return nil, err
 		}
 
-		metricsResults[metric.Metric] = query
+		metricsResults = append(metricsResults, MetricResult{
+			Metric: metric.Metric,
+			Result: query,
+		})
 	}
 
 	return metricsResults, nil

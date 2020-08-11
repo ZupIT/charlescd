@@ -7,8 +7,11 @@ import (
 
 func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 	filterQuery := "{"
-	for _, filter := range filters {
-		filterQuery += fmt.Sprintf("%s%s%s", filter.Field, filter.Operator, filter.Value)
+	for index, filter := range filters {
+		filterQuery += fmt.Sprintf(`%s%s"%s"`, filter.Field, filter.Operator, filter.Value)
+		if (index + 1) < len(filters) {
+			filterQuery += ","
+		}
 	}
 	filterQuery += "}"
 	return filterQuery
