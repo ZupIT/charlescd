@@ -182,10 +182,6 @@ const deployMetrics = () => ({
 });
 
 const circlesHistory = {
-  summary: {
-    active: 10,
-    inactive: 10
-  },
   page: {
     content: [
       {

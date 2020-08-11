@@ -17,20 +17,14 @@
 import React from 'react';
 import { render, fireEvent, wait } from 'unit-test/testUtils';
 import Summary from '../Summary';
-import { CircleSummary } from '../../interfaces';
-
-const legendAsMock: CircleSummary = {
-  active: 10,
-  inactive: 5
-};
 
 test('render default Summary', async () => {
   const { getByText, getByTestId } = render(
-    <Summary legend={legendAsMock} isLoading={false} onSearch={() => null} />
+    <Summary isLoading={false} onSearch={() => null} />
   );
 
-  expect(getByText('Active: 10')).toBeInTheDocument();
-  expect(getByText('Inactive: 5')).toBeInTheDocument();
+  expect(getByText('Active')).toBeInTheDocument();
+  expect(getByText('Inactive')).toBeInTheDocument();
   expect(getByTestId('input-text-search')).toBeInTheDocument();
 });
 
@@ -38,7 +32,7 @@ test('render default Summary', async () => {
 test('should check if onSearch is called', async () => {
   const onSearch = jest.fn();
   const { getByTestId  } = render(
-    <Summary legend={legendAsMock} isLoading={false} onSearch={onSearch} />
+    <Summary isLoading={false} onSearch={onSearch} />
   );
   const inputSearch = getByTestId('input-text-search');
   const value = 'foobar';
@@ -52,7 +46,7 @@ test('should check if onSearch is called', async () => {
 
 test('render Summary when is loading', async () => {
   const { getByTestId  } = render(
-    <Summary legend={legendAsMock} isLoading onSearch={() => null} />
+    <Summary isLoading onSearch={() => null} />
   );
 
   const loaderWrapper = getByTestId('loader-legend');
