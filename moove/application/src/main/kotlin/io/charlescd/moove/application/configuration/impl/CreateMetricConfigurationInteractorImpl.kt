@@ -24,6 +24,8 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateMetricConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateMetricConfigurationRequest
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
+import io.charlescd.moove.metrics.connector.compass.CompassCreateDatasourceRequest
+import io.charlescd.moove.metrics.connector.compass.DatasourceDataRequest
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -38,7 +40,16 @@ class CreateMetricConfigurationInteractorImpl @Inject constructor(
         workspaceService.checkIfWorkspaceExists(workspaceId)
         val author = userService.find(request.authorId)
 
+        val compassDatasource = CompassCreateDatasourceRequest(
+            name = request.name,
+            pluginId = "0e0fe5c9-cc20-42d8-a099-9eeb993c5880",
+            health = true,
+            data = DatasourceDataRequest(
+                url = request.url
+            )
+        )
 
+        metricConfigurationService.saveDatasourceOnCompass(workspaceId, compassDatasource)
 
         return MetricConfigurationResponse.from(
             metricConfigurationService.save(
