@@ -20,7 +20,6 @@ import (
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/repository"
-	"octopipe/pkg/repository/github"
 	"octopipe/pkg/template"
 	"octopipe/pkg/template/helm"
 )
@@ -50,21 +49,21 @@ type NonAdjustablePipeline struct {
 }
 
 type StepTemplate struct {
-	Repository repository.Repository `json:"reposository"`
+	Repository repository.Repository `json:"repository"`
 	template.Template
 }
 
 type StepWebhook struct {
-	Url     string            `json:"url"`
-	Headers map[string]string `json:"headers"`
-	Method  string            `json:"method"`
-	CallbackType   string     `json:"callbackType"`
+	Url          string            `json:"url"`
+	Headers      map[string]string `json:"headers"`
+	Method       string            `json:"method"`
+	CallbackType string            `json:"callbackType"`
 }
 
 type Step struct {
 	Action     string                 `json:"action"`
 	Update     bool                   `json:"update"`
-	Repository repository.Repository  `json:"reposository"`
+	Repository repository.Repository  `json:"repository"`
 	Template   template.Template      `json:"template"`
 	Manifest   map[string]interface{} `json:"manifest"`
 }
@@ -99,7 +98,7 @@ func (deprecatedPipeline NonAdjustablePipeline) ToPipeline() Pipeline {
 				"Content-Type": "application/json",
 				"x-circle-id":  deprecatedPipeline.CircleID,
 			},
-			Method: "POST",
+			Method:       "POST",
 			CallbackType: deprecatedPipeline.CallbackType,
 		},
 		Config: deprecatedPipeline.K8s,
@@ -120,11 +119,9 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 			Action: action,
 			Update: false,
 			Repository: repository.Repository{
-				Type: deprecatedPipeline.Git.Provider,
-				GithubRepository: github.GithubRepository{
-					Token: deprecatedPipeline.Git.Token,
-					Url:   deprecatedPipeline.HelmURL,
-				},
+				Type:  deprecatedPipeline.Git.Provider,
+				Url:   deprecatedPipeline.HelmURL,
+				Token: deprecatedPipeline.Git.Token,
 			},
 			Template: template.Template{
 				Type: template.HelmType,
