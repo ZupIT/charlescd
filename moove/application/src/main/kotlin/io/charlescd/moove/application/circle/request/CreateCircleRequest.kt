@@ -72,7 +72,17 @@ data class NodePart(
 
     data class RulePart(
         @field:[NotNull NotBlank] val key: String?,
-        @field:[NotNull NotBlank] val condition: String?,
+        @field:[NotNull] val condition: ConditionEnum?,
         @field:[NotNull NotEmpty] val value: List<String>?
     )
+
+    enum class ConditionEnum {
+        EQUAL,
+        GREATER_THAN,
+        GREATER_THAN_OR_EQUAL,
+        LOWER_THAN,
+        LESS_THAN_OR_EQUAL,
+        STARTS_WITH,
+        NOT_EQUAL
+    }
 }
