@@ -30,10 +30,10 @@ CREATE TABLE IF NOT exists METRICS (
 	METRIC VARCHAR(100) NOT NULL,
 	THRESHOLD REAL not null,
 	CONDITION VARCHAR(30) not null,
-	metric_group_id varchar(36),
+	metrics_group_id varchar(36),
 	DATA_SOURCE_id VARCHAR(36),
 	CREATED_AT TIMESTAMP DEFAULT clock_timestamp() NOT NULL,
-	CONSTRAINT fk_metric_group_metric FOREIGN KEY(metric_group_id) REFERENCES METRICS_GROUPS(id),
+	CONSTRAINT fk_metric_group_metric FOREIGN KEY(metrics_group_id) REFERENCES METRICS_GROUPS(id),
 	CONSTRAINT fk_metric_data_sources FOREIGN KEY(data_source_id) REFERENCES DATA_SOURCES(id)
 );
 
