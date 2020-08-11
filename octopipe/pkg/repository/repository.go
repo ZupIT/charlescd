@@ -19,12 +19,14 @@ package repository
 import (
 	"errors"
 	"octopipe/pkg/repository/github"
+	"octopipe/pkg/repository/gitlab"
 
 	log "github.com/sirupsen/logrus"
 )
 
 const (
 	GithubType = "GITHUB"
+	GitlabType = "GITLAB"
 )
 
 type UseCases interface {
@@ -41,6 +43,9 @@ func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error
 	case GithubType:
 		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected github repository")
 		return github.NewGithubRepository(repository.GithubRepository), nil
+	case GitlabType:
+		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected gitlab repository")
+		return gitlab.NewGitlabRepository(repository.GitlabRepository), nil
 	default:
 		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("No valid repository")
 		return nil, errors.New("Repository not found")
