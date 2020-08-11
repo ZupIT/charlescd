@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package github
+package gitlab
 
 import (
 	"encoding/base64"
@@ -27,29 +27,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type GithubRepository struct {
+type GitlabRepository struct {
 	Url   string `json:"url"`
 	Token string `json:"token"`
 }
 
-func NewGithubRepository(url, token string) GithubRepository {
-	return GithubRepository{url, token}
+func NewGitlabRepository(url, token string) GitlabRepository {
+	return GitlabRepository{url, token}
 }
 
-func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
+func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	var responseMap map[string]interface{}
 	client := &http.Client{}
 	filesData := []string{}
 
-	for _, fileName := range githubRepository.getDefaultFileNamesByName(name) {
-		filePath := fmt.Sprintf("%s/%s/%s", githubRepository.Url, name, fileName)
+	for _, fileName := range gitlabRepository.getDefaultFileNamesByName(name) {
+		filePath := fmt.Sprintf("%s/%s%%2F%s?ref=master", gitlabRepository.Url, name, fileName)
 
 		request, err := http.NewRequest("GET", filePath, nil)
 		if err != nil {
 			return "", "", err
 		}
 
-		request.Header.Add("Authorization", fmt.Sprintf("token %s", githubRepository.Token))
+		request.Header.Add("PRIVATE-TOKEN", fmt.Sprintf("%s", gitlabRepository.Token))
 		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("Request file from repository. Url: " + filePath)
 		response, err := client.Do(request)
 		if err != nil {
@@ -78,7 +78,7 @@ func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) 
 	return filesData[0], filesData[1], nil
 }
 
-func (githubRepository GithubRepository) getDefaultFileNamesByName(name string) []string {
+func (gitlabRepository GitlabRepository) getDefaultFileNamesByName(name string) []string {
 	return []string{
 		fmt.Sprintf("%s-darwin.tgz", name),
 		fmt.Sprintf("%s.yaml", name),
