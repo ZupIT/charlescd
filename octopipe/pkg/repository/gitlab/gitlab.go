@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package github
+package gitlab
 
 import (
 	"encoding/base64"
