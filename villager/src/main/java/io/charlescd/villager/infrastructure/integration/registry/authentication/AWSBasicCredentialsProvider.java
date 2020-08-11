@@ -16,23 +16,27 @@
 
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
-import java.util.Base64;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 
-public final class CommonBasicAuthenticator extends AbstractBasicAuthenticator {
+public class AWSBasicCredentialsProvider implements AWSCredentialsProvider {
 
-    private final String username;
-    private final String password;
+    private String accessKey;
+    private String secretKey;
 
-    public CommonBasicAuthenticator(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public AWSBasicCredentialsProvider(final String accessKey, final String secretKey) {
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
     }
 
-    public String loadBasicAuthorization() {
-        byte[] bytes = String.format("%s:%s", this.username, this.password).getBytes();
-        String token = Base64.getEncoder().encodeToString(bytes);
-
-        return String.format("Basic %s", token);
+    @Override
+    public AWSCredentials getCredentials() {
+        return new BasicAWSCredentials(accessKey, secretKey);
     }
 
+    @Override
+    public void refresh() {
+
+    }
 }
