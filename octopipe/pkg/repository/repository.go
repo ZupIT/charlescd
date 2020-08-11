@@ -17,6 +17,7 @@
 package repository
 
 import (
+	"errors"
 	"octopipe/pkg/repository/github"
 	"octopipe/pkg/repository/gitlab"
 )
@@ -36,10 +37,14 @@ type Repository struct {
 	Token string `json:"token"`
 }
 
-func (main RepositoryMain) NewRepository(repository Repository) UseCases {
+func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error) {
 	var repositories = map[string]UseCases{
 		"GITHUB": github.NewGithubRepository(repository.Url, repository.Token),
 		"GITLAB": gitlab.NewGitlabRepository(repository.Url, repository.Token),
 	}
-	return repositories[repository.Type]
+	var err error
+	if repositories[repository.Type] == nil {
+		err = errors.New("Cannot create repository main (unsupported git type)")
+	}
+	return repositories[repository.Type], err
 }
