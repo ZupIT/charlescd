@@ -4,8 +4,11 @@ import (
 	"compass/internal/util"
 	"encoding/json"
 	"errors"
-	"github.com/google/uuid"
 	"io"
+	"path/filepath"
+	"plugin"
+
+	"github.com/google/uuid"
 )
 
 type MetricsGroup struct {
@@ -25,10 +28,6 @@ func (metricsGroup MetricsGroup) Validate() []error {
 
 	if metricsGroup.Metrics == nil || len(metricsGroup.Metrics) == 0 {
 		ers = append(ers, errors.New("Metrics is required"))
-	}
-
-	if metricsGroup.WorkspaceID == uuid.Nil {
-		ers = append(ers, errors.New("WorkspaceID is required"))
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
@@ -84,7 +83,7 @@ func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
 
 func (main Main) FindById(id string) (MetricsGroup, error) {
 	metricsGroup := MetricsGroup{}
-	db := main.db.Where("id = ?", id).First(&metricsGroup)
+	db := main.db.Preload("Metrics").Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, db.Error
 	}
@@ -105,4 +104,46 @@ func (main Main) Remove(id string) error {
 		return db.Error
 	}
 	return nil
+}
+
+func (main Main) Query(id string) (map[string]interface{}, error) {
+	metricsResults := map[string]interface{}{}
+	pluginsPath := "plugins"
+	metricsGroup, err := main.FindById(id)
+	if err != nil {
+		return nil, errors.New("Not found metrics group: " + id)
+	}
+
+	for _, metric := range metricsGroup.Metrics {
+		dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+		if err != nil {
+			return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
+		}
+
+		pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
+		if err != nil {
+			return nil, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
+		}
+
+		plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
+		if err != nil {
+			return nil, err
+		}
+
+		getQuery, err := plugin.Lookup("Query")
+		if err != nil {
+			return nil, err
+		}
+
+		dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
+		metricData, _ := json.Marshal(metric)
+		query, err := getQuery.(func(datasourceConfiguration, metric []byte) (interface{}, error))(dataSourceConfigurationData, metricData)
+		if err != nil {
+			return nil, err
+		}
+
+		metricsResults[metric.Metric] = query
+	}
+
+	return metricsResults, nil
 }
