@@ -21,6 +21,7 @@ import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
@@ -28,11 +29,13 @@ import javax.inject.Named
 @Named
 class ChangeUserPasswordInteractorImpl @Inject constructor(
     private val userService: UserService,
-    private val keycloakService: KeycloakService
+    private val keycloakService: KeycloakService,
+    private val keycloakCustomService: KeycloakCustomService
 ) : ChangeUserPasswordInteractor {
 
     override fun execute(id: String, authorization: String, request: ChangeUserPasswordRequest) {
         val user = userService.find(id)
+        this.keycloakCustomService.hitUserInfo(authorization)
         if (!keycloakService.checkUserAuthenticity(user, authorization)) {
             throw BusinessException.of(MooveErrorCode.INVALID_USER_AUTHENTICITY)
         }

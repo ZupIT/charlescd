@@ -221,6 +221,10 @@ publicConstraints:
     methods:
       - GET
 
+  - pattern: /v2/users/{id}/password
+    - methods:
+      - PUT
+
   - pattern: /v2/deployments/{id:.+}/callback
     methods:
       - POST
