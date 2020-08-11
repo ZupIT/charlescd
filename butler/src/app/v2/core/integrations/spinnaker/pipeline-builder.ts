@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Deployment, SpinnakerPipeline } from './interfaces'
+import { SpinnakerPipeline } from './interfaces'
 import { ExpectedArtifact, Stage } from './interfaces/spinnaker-pipeline.interface'
 import {
   getBakeStage,
@@ -30,6 +30,7 @@ import {
 import { getDestinationRulesStage } from './templates/destination-rules-stage'
 import { getVirtualServiceStage } from './templates/virtual-service-stage'
 import { getProxyEvaluationStage } from './templates/proxy-evaluation'
+import { Component, Deployment } from '../../../api/deployments/interfaces'
 
 export class SpinnakerPipelineBuilder {
 
@@ -115,8 +116,7 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = this.currentStageId - 1
     deployment?.components?.forEach(component => {
-      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
-      const unusedComponent: Component | undefined = this.getUnusedComponent(activeByName, component, deployment.circleId)
+      const unusedComponent: Component | undefined = this.getUnusedComponent(activeComponents, component, deployment.circleId)
       if (unusedComponent) {
         stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
       }
@@ -137,13 +137,16 @@ export class SpinnakerPipelineBuilder {
   }
 
   private getUnusedComponent(activeComponents: Component[], component: Component, circleId: string | null): Component | undefined {
-    const sameCircleComponent = activeComponents.find(activeComponent => activeComponent.deployment?.circleId === circleId)
+    const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
+    const sameCircleComponent = activeByName.find(activeComponent => activeComponent.deployment?.circleId === circleId)
     const sameTagComponents = sameCircleComponent ?
-      activeComponents.filter(activeComponent => activeComponent.imageTag === sameCircleComponent.imageTag) :
+      activeByName.filter(activeComponent => activeComponent.imageTag === sameCircleComponent.imageTag) :
       []
 
-    return sameTagComponents.length === 1 ?
-      sameCircleComponent :
-      undefined
+    if (!sameCircleComponent || sameCircleComponent.imageTag === component.imageTag || sameTagComponents.length !== 1) {
+      return undefined
+    }
+
+    return sameCircleComponent
   }
 }

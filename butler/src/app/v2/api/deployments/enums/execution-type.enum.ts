@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-import { IsEnum, IsNotEmpty } from 'class-validator'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-
-export class DeploymentNotificationRequest {
-  @IsNotEmpty()
-  @IsEnum(DeploymentStatusEnum)
-  public status: DeploymentStatusEnum
-
-  constructor(status: DeploymentStatusEnum) {
-    this.status = status
-  }
+export enum ExecutionTypeEnum {
+    DEPLOYMENT = 'DEPLOYMENT',
+    UNDEPLOYMENT = 'UNDEPLOYMENT'
 }

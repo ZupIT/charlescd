@@ -39,10 +39,4 @@ export class CreateModuleDeploymentDto {
     this.helmRepository = helmRepository
     this.components = components
   }
-
-  public toEntity() : ComponentEntity[] {
-    return this.components.map(c => {
-      return new ComponentEntity(this.helmRepository, c.buildImageTag, c.buildImageUrl, c.componentName, c.componentId)
-    })
-  }
 }

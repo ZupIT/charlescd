@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import { Component } from './component.interface'
-import { Deployment } from './deployment.interface'
 import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
 import { ConnectorResult } from './connector-result.interface'
-import { CdConfiguration } from './cd-configuration.interface'
+import { ConnectorResultError } from './connector-result.interface'
 
 export {
-  Component,
-  Deployment,
   SpinnakerPipeline,
   ConnectorResult,
-  CdConfiguration
+  ConnectorResultError
 }

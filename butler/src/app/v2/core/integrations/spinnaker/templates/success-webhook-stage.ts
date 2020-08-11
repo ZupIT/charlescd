@@ -15,7 +15,7 @@
  */
 
 import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { Component, Deployment } from '../interfaces'
+import { Component, Deployment } from '../../../../api/deployments/interfaces'
 
 export const getSuccessWebhookStage = (deployment: Deployment, stageId: number): Stage => ({
   completeOtherBranchesThenFail: false,

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, Deployment } from '../interfaces'
 import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
 import { Http, Stage } from '../interfaces/spinnaker-pipeline.interface'
 import { AppConstants } from '../../../../../v1/core/constants'
+import { Component, Deployment } from '../../../../api/deployments/interfaces'
 
 export const getVirtualServiceStage = (
   component: Component,

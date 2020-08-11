@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, IsUUID, ValidateIf, ValidateNested } from 'class-validator'
-import { flatten } from 'lodash';
-import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity';
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums';
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-import { CreateCircleDeploymentDto } from './create-circle-request.dto';
-import { CreateModuleDeploymentDto } from './create-module-request.dto';
+import { flatten } from 'lodash'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { CreateCircleDeploymentDto } from './create-circle-request.dto'
+import { CreateModuleDeploymentDto } from './create-module-request.dto'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateDeploymentRequestDto {
   @IsUUID()
@@ -54,8 +55,10 @@ export class CreateDeploymentRequestDto {
   @Type(() => CreateModuleDeploymentDto)
   public readonly modules: CreateModuleDeploymentDto[]
 
-  constructor(deploymentId: string,
-    authorId: string, callbackUrl: string,
+  constructor(
+    deploymentId: string,
+    authorId: string,
+    callbackUrl: string,
     cdConfigurationId: string,
     circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
@@ -70,7 +73,7 @@ export class CreateDeploymentRequestDto {
     this.modules = modules
   }
 
-  public toEntity(): DeploymentEntity {
+  public toCircleEntity(incomingCircleId: string | null): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
@@ -78,7 +81,27 @@ export class CreateDeploymentRequestDto {
       this.circle ? this.circle.headerValue : null,
       this.cdConfiguration,
       this.callbackUrl,
-      flatten(this.modules.map(m => m.toEntity()))
+      this.getDeploymentComponents(),
+      incomingCircleId
+    )
+  }
+
+  public toDefaultEntity(incomingCircleId: string | null, activeComponents: ComponentEntity[]): DeploymentEntity {
+    return new DeploymentEntity(
+      this.deploymentId,
+      this.authorId,
+      DeploymentStatusEnum.CREATED,
+      null,
+      this.cdConfiguration,
+      this.callbackUrl,
+      [ ...activeComponents, ...this.getDeploymentComponents()],
+      incomingCircleId
+    )
+  }
+
+  private getDeploymentComponents(): ComponentEntity[] {
+    return flatten(
+      this.modules.map(module => module.components.map(component => component.toEntity(module.helmRepository)))
     )
   }
 }

@@ -13,11 +13,12 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
-import { DeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-use-case'
+import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
+import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
 
 let mock = express()
 
@@ -26,9 +27,10 @@ describe('DeploymentHandler', () => {
   let app: INestApplication
   let worker: PgBossWorker
   let deploymentHandler: DeploymentHandler
-  let deploymentUseCase: DeploymentUseCase
+  let deploymentUseCase: CreateDeploymentUseCase
   let manager: EntityManager
-  let mockServer : Server
+  let mockServer: Server
+  let notificationUseCase: NotificationUseCase
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -44,7 +46,8 @@ describe('DeploymentHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
-    deploymentUseCase = app.get<DeploymentUseCase>(DeploymentUseCase)
+    deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
+    notificationUseCase = app.get<NotificationUseCase>(NotificationUseCase)
     manager = fixtureUtilsService.connection.manager
   })
 
@@ -105,7 +108,8 @@ describe('DeploymentHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
     }
 
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -125,7 +129,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
-    await deploymentUseCase.updateStatus(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.handleCallback(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
     await deploymentHandler.run(secondJob)
 
     const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
@@ -133,7 +137,7 @@ describe('DeploymentHandler', () => {
     expect(secondHandled.components.map(c => c.running)).toEqual([true])
     expect(firstHandled.components.map(c => c.running)).toEqual([false])
 
-    await deploymentUseCase.updateStatus(secondHandled.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.handleCallback(secondDeployment.id, DeploymentStatusEnum.SUCCEEDED)
 
     const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
     const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
@@ -181,7 +185,8 @@ describe('DeploymentHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
     }
 
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
@@ -242,7 +247,7 @@ describe('DeploymentHandler', () => {
   })
 })
 
-const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) => {
+const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity, execution:Execution, job: JobWithDoneCallback<Execution, unknown>  }> => {
   const components = params.components.map((c: any) => {
     return new ComponentEntity(
       c.helmRepository,
@@ -252,17 +257,18 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentId)
   })
 
-  const deployment = await manager.save(new DeploymentEntity(
+  const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
     params.deploymentId,
     params.authorId,
     DeploymentStatusEnum.CREATED,
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components
+    components,
+    params.incomingCircleId
   ))
 
-  const execution = await manager.save(new Execution(
+  const execution : Execution = await manager.save(new Execution(
     deployment,
     'DEPLOYMENT'
   ))
