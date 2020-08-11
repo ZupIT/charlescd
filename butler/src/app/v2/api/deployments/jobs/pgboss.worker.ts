@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { JobWithDoneCallback } from 'pg-boss';
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc';
-import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface';
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { Execution } from '../entity/execution.entity';
-import { DeploymentHandler } from '../use-cases/deployment-handler';
+import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
+import { JobWithDoneCallback } from 'pg-boss'
+import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { Execution } from '../entity/execution.entity'
+import { DeploymentHandler } from '../use-cases/deployment-handler'
 import PgBoss = require('pg-boss');
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DeploymentEntityV2 } from '../entity/deployment.entity';
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 const EXPIRE_IN_MINUTES = 25 // TODO move to config
 

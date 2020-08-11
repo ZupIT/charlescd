@@ -200,7 +200,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([false])
   })
 
-  it.only('mark the deployment as timed out after 25 minutes', async() => {
+  it('mark the deployment as timed out after 25 minutes', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
@@ -226,24 +226,21 @@ describe('DeploymentHandler', () => {
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
 
-
-    console.log(DateUtils.now())
-    jest.spyOn(global.Date, 'now')
-      .mockImplementationOnce(() =>
-        new Date('2019-05-14T11:25:00.135Z').valueOf()
-      )
-
-    console.log(DateUtils.now())
-    // jest.useFakeTimers()
-    // const callback = jest.fn();
-
-    // timerGame(callback);
-    // jest.runAllTimers();
-    // console.log(new Date())
-
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    // setTimeout(() => ({}), 60000 * 25) // timeout 25 minutes
-    await deploymentHandler.run(fixtures.job)
+    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
+      new Date('2019-05-14T11:00:00.135Z').valueOf()
+    )
+    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { createdAt: DateUtils.now() })
+
+    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
+      new Date('2019-05-14T11:26:00.135Z').valueOf()
+    )
+    await expect(
+      deploymentHandler.run(fixtures.job)
+    ).rejects.toThrow(new Error('Deployment timed out'))
+
+    const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id })
+    expect(timedOutDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
   })
 })
 
