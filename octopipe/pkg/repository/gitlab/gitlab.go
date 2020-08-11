@@ -32,8 +32,8 @@ type GitlabRepository struct {
 	Token string `json:"token"`
 }
 
-func NewGitlabRepository(repository GithubRepository) GithubRepository {
-	return repository
+func NewGitlabRepository(url, token string) GitlabRepository {
+	return GitlabRepository{url, token}
 }
 
 func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
