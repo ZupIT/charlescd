@@ -239,7 +239,7 @@ keycloak:
     ## Optional static port assignment for service type NodePort.
     # nodePort: 30000
 
-    httpPort: 8080
+    httpPort: 80
     httpNodePort: ""
 
     httpsPort: 8443

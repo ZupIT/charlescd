@@ -22,7 +22,7 @@ import expectedArtifactValue from './fixtures/expected-artifacts-value'
 it('builds the correct template object', () => {
 
   expect(
-    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/' , 'github-account', 'app-name', 'template')
+    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/', 'github-account', 'app-name', 'template')
   ).toEqual(expectedArtifactTemplate)
 
 })
@@ -30,7 +30,7 @@ it('builds the correct template object', () => {
 it('builds the correct values object', () => {
 
   expect(
-    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/' , 'github-account', 'app-name', 'value')
+    buildExpectedArtifacts('https://api.github.com/repos/org/repo/contents/', 'github-account', 'app-name', 'value')
   ).toEqual(expectedArtifactValue)
 
 })

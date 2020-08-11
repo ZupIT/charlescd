@@ -17,12 +17,17 @@
 import React, { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import { getWorkspaceId } from 'core/utils/workspace';
 import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useMetricProvider } from './hooks';
+import { useMetricProvider, useSectionTestConnection } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
+import { ConnectionStatusEnum as statusConnection } from './interfaces';
 import FormMetricProvider from './Form';
+import Styled from './styled';
 
 interface Props {
   form: string;
@@ -33,14 +38,31 @@ interface Props {
 const MetricProvider = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const { remove, loadingRemove, responseRemove } = useMetricProvider();
+  const {
+    testProviderConnectionSection,
+    response
+  } = useSectionTestConnection();
 
   useEffect(() => {
     setIsAction(true);
   }, [responseRemove]);
 
   useEffect(() => {
-    if (data) setIsAction(false);
-  }, [data]);
+    if (data) {
+      setIsAction(false);
+      testProviderConnectionSection(
+        { metricConfigurationId: data.id },
+        getWorkspaceId()
+      );
+    }
+  }, [data, testProviderConnectionSection]);
+
+  const renderConnectionMessage = () => (
+    <Styled.StatusWrapper status="error">
+      <Icon size="10px" name="error" />
+      <Text.h5>Connection to metric provider failed.</Text.h5>
+    </Styled.StatusWrapper>
+  );
 
   const renderSection = () => (
     <Section
@@ -50,12 +72,16 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
       {data && !responseRemove && (
-        <Card.Config
-          icon="metrics"
-          description={data.provider}
-          isLoading={loadingRemove}
-          onClose={() => remove()}
-        />
+        <>
+          <Card.Config
+            icon="metrics"
+            description={data.provider}
+            isLoading={loadingRemove}
+            onClose={() => remove()}
+          />
+          {response?.status === statusConnection.FAILED &&
+            renderConnectionMessage()}
+        </>
       )}
     </Section>
   );
