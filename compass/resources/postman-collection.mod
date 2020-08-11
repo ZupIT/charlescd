@@ -63,7 +63,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "98dd7fc8-0f45-426a-b63e-4936e2938bf7",
+								"id": "55bd0426-92f9-4af3-a077-3b853fc64403",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"datasourceId\", response[\"id\"]);"
@@ -271,7 +271,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"name\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
+									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"metric\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -338,7 +338,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"metric 2134das\"\n}",
+									"raw": "{\n    \"metric\": \"metric 2134das\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -410,7 +410,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"name\": \"metric 21\",\n            \"filters\": [\n                {\n                    \"field\": \"destination\",\n                    \"value\": \"moove\",\n                    \"operator\": \"EQUAL\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\",\n    \"workspaceId\": \"{{workspaceId}}\"\n}",
+							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"metric\": \"metric 21\",\n            \"filters\": [\n                {\n                    \"field\": \"destination\",\n                    \"value\": \"moove\",\n                    \"operator\": \"EQUAL\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\",\n    \"workspaceId\": \"{{workspaceId}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
