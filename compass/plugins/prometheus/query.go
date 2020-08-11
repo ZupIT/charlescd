@@ -7,18 +7,16 @@ import (
 
 func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 	filterQuery := "{"
-	for _, filter := range filters {
-		filterQuery += fmt.Sprintf("%s%s%s", filter.Field, filter.Operator, filter.Value)
+	for index, filter := range filters {
+		filterQuery += fmt.Sprintf(`%s%s"%s"`, filter.Field, filter.Operator, filter.Value)
+		if (index + 1) < len(filters) {
+			filterQuery += ","
+		}
 	}
 	filterQuery += "}"
 	return filterQuery
 }
 
-func createQueryByMetric(metrics []metricsgroup.Metric) string {
-	query := ""
-	for _, metric := range metrics {
-		query += fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
-	}
-
-	return query
+func createQueryByMetric(metric metricsgroup.Metric) string {
+	return fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
 }

@@ -3,8 +3,9 @@ package v1
 import (
 	"compass/internal/metricsgroup"
 	"compass/web/api"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -19,6 +20,7 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.list))
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.create))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.show))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), api.HttpValidator(metricsGroupApi.query))
 	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
 	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricsGroupApi.createMetric))
@@ -71,6 +73,17 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Reque
 	api.NewRestSuccess(w, http.StatusOK, metricsGroup)
 }
 
+func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	id := ps.ByName("id")
+	queryResult, err := metricsGroupApi.metricsGroupMain.Query(id)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	api.NewRestSuccess(w, http.StatusOK, queryResult)
+}
+
 func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
@@ -113,7 +126,7 @@ func (metricsGroupApi MetricsGroupApi) createMetric(w http.ResponseWriter, r *ht
 		return
 	}
 
-	metric.MetricGroupID, err = uuid.Parse(id)
+	metric.MetricsGroupID, err = uuid.Parse(id)
 	createdMetric, err := metricsGroupApi.metricsGroupMain.SaveMetric(metric)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})

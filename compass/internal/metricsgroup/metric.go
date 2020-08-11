@@ -11,13 +11,13 @@ import (
 
 type Metric struct {
 	util.BaseModel
-	MetricGroupID uuid.UUID       `json:"metricGroupId"`
-	DataSourceID  uuid.UUID       `json:"dataSourceId"`
-	Metric        string          `json:"metric"`
-	Filters       []MetricFilter  `json:"filters"`
-	GroupBy       []MetricGroupBy `json:"groupBy"`
-	Condition     string          `json:"condition"`
-	Threshold     float64         `json:"threshold"`
+	MetricsGroupID uuid.UUID       `json:"metricGroupId"`
+	DataSourceID   uuid.UUID       `json:"dataSourceId"`
+	Metric         string          `json:"metric"`
+	Filters        []MetricFilter  `json:"filters"`
+	GroupBy        []MetricGroupBy `json:"groupBy"`
+	Condition      string          `json:"condition"`
+	Threshold      float64         `json:"threshold"`
 }
 
 type MetricFilter struct {
