@@ -24,6 +24,7 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
         "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
         "type" Character Varying NOT NULL,
         "deployment_id" uuid NOT NULL,
+        "incoming_circle_id" Character Varying,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "unique_executions_id" UNIQUE( "id" ),
         CONSTRAINT "fk_v2executions_v2deployments" FOREIGN KEY ( "deployment_id" ) REFERENCES "public"."v2deployments" ( "id" )

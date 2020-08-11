@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { InjectRepository } from '@nestjs/typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Repository } from 'typeorm'
@@ -6,14 +22,15 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
-export class NotificationUseCase {
+export class ReceiveNotificationUseCase {
+
   constructor(
     @InjectRepository(DeploymentEntity)
     private deploymentRepository: Repository<DeploymentEntity>,
     private readonly consoleLoggerService: ConsoleLoggerService
-  ) { }
+  ) {}
 
-  public async handleCallback(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity>{
+  public async execute(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity>{
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
 

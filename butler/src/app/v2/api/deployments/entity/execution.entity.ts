@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
+
 @Entity('v2executions')
 export class Execution {
   @PrimaryGeneratedColumn('uuid')
   public id!: string
 
   @Column()
-  public type!: 'DEPLOYMENT' | 'UNDEPLOYMENT' // move this to a type
+  public type!: 'DEPLOYMENT' | 'UNDEPLOYMENT' // TODO move this to a type
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.executions)
   public deployment!: DeploymentEntity
 
-  constructor(deployment: DeploymentEntity, type: 'DEPLOYMENT' | 'UNDEPLOYMENT') {
+  @Column({ name: 'incoming_circle_id', type: 'varchar' })
+  public incomingCircleId: string | null
+
+  constructor(
+    deployment: DeploymentEntity,
+    type: 'DEPLOYMENT' | 'UNDEPLOYMENT',
+    incomingCircleId: string | null
+  ) {
     this.deployment = deployment
     this.type = type
+    this.incomingCircleId = incomingCircleId
   }
 
 }

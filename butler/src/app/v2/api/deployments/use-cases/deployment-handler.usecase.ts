@@ -21,7 +21,7 @@ import { In, Repository } from 'typeorm'
 import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
-import { ConnectorResultError } from '../../../core/integrations/spinnaker/interfaces/connector-result.interface'
+import { ConnectorResultError } from '../../../core/integrations/spinnaker/interfaces/'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
@@ -31,7 +31,8 @@ import { ComponentsRepositoryV2 } from '../repository'
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
 @Injectable()
-export class DeploymentHandler {
+export class DeploymentHandlerUsecase {
+
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     @InjectRepository(ComponentsRepositoryV2)
@@ -52,18 +53,45 @@ export class DeploymentHandler {
     if (overlappingComponents.length > 0) {
       return await this.handleOverlap(job)
     }
+    
+    switch (job.data.type) {
+      case 'DEPLOYMENT': // TODO use constant
+        return await this.runDeployment(deployment, job)
+      case 'UNDEPLOYMENT': // TODO use constant
+        return await this.runUndeployment(deployment, job)
+      default:
+        return this.handleInvalidExecutionType(job)
+    }
+  }
 
+  private async runDeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
+    this.consoleLoggerService.log('START:RUN_DEPLOYMENT_EXECUTION', { deployment, job })
     if (!deployment.circleId) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
 
-    this.consoleLoggerService.log('START:RUN_EXECUTION')
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
     const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents)
     return cdResponse.status === 'ERROR' ?
       await this.handleCdError(job, cdResponse) :
       await this.handleCdSuccess(job, deployment)
+  }
+
+  private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
+    this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment, job })
+    const activeComponents = await this.componentsRepository.findActiveComponents()
+    this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
+    const cdResponse = await this.spinnakerConnector.createUndeployment(deployment, activeComponents)
+    return cdResponse.status === 'ERROR' ?
+      await this.handleCdError(job, cdResponse) :
+      await this.handleCdSuccess(job, deployment)
+  }
+
+  private handleInvalidExecutionType(job: ExecutionJob): ExecutionJob {
+    this.consoleLoggerService.log('ERROR:INVALID_EXECUTION_TYPE', { type: job.data.type })
+    job.done(new Error('Invalid execution type'))
+    return job
   }
 
   public async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {

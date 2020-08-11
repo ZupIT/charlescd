@@ -45,6 +45,15 @@ export class SpinnakerPipelineBuilder {
     }
   }
 
+  public buildSpinnakerUndeploymentPipeline(deployment: Deployment, activeComponents: Component[]): SpinnakerPipeline {
+    return {
+      application: `app-${deployment.cdConfiguration.id}`,
+      name: `${deployment.id}`,
+      expectedArtifacts: this.getExpectedArtifacts(deployment),
+      stages: this.getStages(deployment, activeComponents)
+    }
+  }
+
   private getExpectedArtifacts(deployment: Deployment): ExpectedArtifact[] {
     const expectedArtifacts: ExpectedArtifact[] = []
     deployment.components?.forEach(component => {

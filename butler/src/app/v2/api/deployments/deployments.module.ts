@@ -19,17 +19,17 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity'
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository'
 import { ConsoleLoggerService } from '../../../v1/core/logs/console'
-import { DeploymentsController } from './controller/deployment.controller'
-import { NotificationsController } from './controller/notification.controller'
+import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
 import { PgBossWorker } from './jobs/pgboss.worker'
-import { DeploymentHandler } from './use-cases/deployment-handler'
-import { NotificationUseCase } from './use-cases/notification-use-case'
+import { DeploymentHandlerUsecase } from './use-cases/deployment-handler.usecase'
+import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
 import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
+import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
 
 @Module({
   imports: [
@@ -43,14 +43,14 @@ import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
     ])
   ],
   controllers: [
-    DeploymentsController,
-    NotificationsController
+    DeploymentsController
   ],
   providers: [
     PgBossWorker,
     CreateDeploymentUseCase,
-    NotificationUseCase,
-    DeploymentHandler,
+    CreateUndeploymentUseCase,
+    ReceiveNotificationUseCase,
+    DeploymentHandlerUsecase,
     ConsoleLoggerService,
     SpinnakerConnector,
     SpinnakerApiService

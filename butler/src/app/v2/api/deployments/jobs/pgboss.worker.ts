@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { JobWithDoneCallback } from 'pg-boss';
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc';
-import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface';
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console';
-import { Execution } from '../entity/execution.entity';
-import { DeploymentHandler } from '../use-cases/deployment-handler';
+import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
+import { JobWithDoneCallback } from 'pg-boss'
+import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { Execution } from '../entity/execution.entity'
+import { DeploymentHandlerUsecase } from '../use-cases/deployment-handler.usecase'
 import PgBoss = require('pg-boss');
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DeploymentEntityV2 } from '../entity/deployment.entity';
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
+
   public pgBoss: PgBoss
+
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(forwardRef(() => DeploymentHandler))
-    private readonly deploymentHandler: DeploymentHandler,
+    @Inject(forwardRef(() => DeploymentHandlerUsecase))
+    private readonly deploymentHandler: DeploymentHandlerUsecase,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntityV2)

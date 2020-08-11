@@ -22,17 +22,17 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 @Injectable()
 export class CdConfigurationExistencePipe implements PipeTransform {
   constructor(
-        @InjectRepository(CdConfigurationsRepository)
-        private componentRepository: CdConfigurationsRepository) {
+    @InjectRepository(CdConfigurationsRepository)
+    private componentRepository: CdConfigurationsRepository) {
   }
 
   public async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const cdConfiguration = await this.componentRepository.findDecrypted(createDeploymentDto.cdConfigurationId)
+
     if (cdConfiguration) {
       createDeploymentDto.cdConfiguration = cdConfiguration
       return createDeploymentDto
     }
-
     throw new NotFoundException(`Configuration with the id ${createDeploymentDto.cdConfigurationId} was not found`)
   }
 }

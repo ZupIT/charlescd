@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { CdConfiguration, Component } from './'
+import { Allow, IsNotEmpty } from 'class-validator'
 
-export interface Deployment {
-    id: string
+export class CreateUndeploymentRequestDto {
 
-    authorId: string
+  @Allow()
+  public readonly authorId: string
 
-    callbackUrl: string
+  @IsNotEmpty()
+  public readonly deploymentId: string
 
-    status: DeploymentStatusEnum
-
-    createdAt: Date
-
-    finishedAt: Date | null
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string | null
-
-    components?: Component[]
+  constructor(
+    authorId: string,
+    deploymentId: string,
+  ) {
+    this.authorId = authorId
+    this.deploymentId = deploymentId
+  }
 }
