@@ -55,8 +55,14 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 
 func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error) {
 	var dataSources []DataSource
-	healthValue, _ := strconv.ParseBool(health)
-	db := main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
+	var db *gorm.DB
+	if health == "" {
+		db = main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
+	} else {
+		healthValue, _ := strconv.ParseBool(health)
+		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
+	}
+
 	if db.Error != nil {
 		return []DataSource{}, db.Error
 	}

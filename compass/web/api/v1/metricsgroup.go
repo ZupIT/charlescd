@@ -75,7 +75,15 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Reque
 
 func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
-	queryResult, err := metricsGroupApi.metricsGroupMain.Query(id)
+
+	period := r.URL.Query().Get("period")
+	err := metricsGroupApi.metricsGroupMain.PeriodValidate(period)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	queryResult, err := metricsGroupApi.metricsGroupMain.Query(id, period)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
