@@ -14,44 +14,35 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
-import java.time.LocalDateTime
-
-data class DeployResponse(
-    val id: String,
-    val modulesDeployments: List<DeployModuleResponse>,
-    val callbackUrl: String,
+data class DeployRequest(
+    val deploymentId: String,
     val applicationName: String,
-    val circle: DeployCircleResponse?,
-    val defaultCircle: Boolean,
+    val modules: List<DeployModuleRequest>,
     val authorId: String,
-    val status: String,
-    val createdAt: LocalDateTime
+    val description: String,
+    val circle: DeployCircleRequest? = null,
+    val callbackUrl: String,
+    val cdConfigurationId: String
 )
 
-data class DeployModuleResponse(
-    val id: String,
+data class DeployModuleRequest(
     val moduleId: String,
-    val componentsDeployments: List<DeployComponentResponse>,
-    val status: String,
-    val createdAt: LocalDateTime
+    val helmRepository: String,
+    val components: List<DeployComponentRequest>
 )
 
-data class DeployComponentResponse(
-    val id: String,
+data class DeployComponentRequest(
     val componentId: String,
     val componentName: String,
     val buildImageUrl: String,
     val buildImageTag: String,
-    val contextPath: String?,
-    val healthCheck: String?,
-    val port: Int?,
-    val status: String,
-    val createdAt: LocalDateTime
+    val hostValue: String?,
+    val gatewayName: String?
 )
 
-data class DeployCircleResponse(
+data class DeployCircleRequest(
     val headerValue: String,
     val removeCircle: Boolean? = null
 )

@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.response
 
-data class VillagerBuildRequest(
-    val tagName: String,
-    val callbackUrl: String,
-    val modules: List<BuildModulePart>
-)
-
-data class BuildModulePart(
-    val id: String,
-    val name: String,
-    val registryConfigurationId: String,
-    val components: List<BuildModuleComponentPart>
-)
-
-data class BuildModuleComponentPart(
-    val name: String,
-    val tagName: String
+data class UndeployResponse(
+    val id: String
 )

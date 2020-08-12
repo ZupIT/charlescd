@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.application.user
 
-data class CreateVillagerRegistryConfigurationRequest(
-    val name: String,
-    val address: String,
-    val provider: CreateVillagerRegistryConfigurationProvider,
-    val username: String? = null,
-    val password: String? = null,
-    val accessKey: String? = null,
-    val secretKey: String? = null,
-    val region: String? = null,
-    val authorId: String
-)
+import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 
-enum class CreateVillagerRegistryConfigurationProvider {
-    AWS, Azure
+interface ChangeUserPasswordInteractor {
+
+    fun execute(id: String, authorization: String, request: ChangeUserPasswordRequest)
 }
