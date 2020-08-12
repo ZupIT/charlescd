@@ -20,6 +20,7 @@ type UseCases interface {
 	Remove(id string) error
 	RemoveMetric(id string) error
 	Query(id string) ([]MetricResult, error)
+	FindActiveMetricGroups() ([]MetricsGroup, error)
 }
 
 type Main struct {

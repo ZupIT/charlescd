@@ -18,6 +18,7 @@ type Metric struct {
 	GroupBy        []MetricGroupBy `json:"groupBy"`
 	Condition      string          `json:"condition"`
 	Threshold      float64         `json:"threshold"`
+	Status         string          `json:"status"`
 }
 
 type MetricFilter struct {

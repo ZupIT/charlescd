@@ -22,7 +22,7 @@ type DataSource struct {
 	PluginID    uuid.UUID       `json:"pluginId"`
 	Health      bool            `json:"health"`
 	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
-	WorkspaceID uuid.UUID       `json:"workspaceId"`
+	WorkspaceID uuid.UUID       `json:"-"`
 	DeletedAt   *time.Time      `json:"-"`
 }
 

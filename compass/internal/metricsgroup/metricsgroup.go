@@ -11,11 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	Active    = "ACTIVE"
+	Completed = "COMPLETED"
+)
+
 type MetricsGroup struct {
 	util.BaseModel
 	Name        string    `json:"name"`
 	Metrics     []Metric  `json:"metrics"`
-	WorkspaceID uuid.UUID `json:"workspaceId"`
+	Status      string    `json:"status"`
+	WorkspaceID uuid.UUID `json:"-"`
 	CircleID    uuid.UUID `json:"circleId"`
 }
 
@@ -70,7 +76,7 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 }
 
 func (main Main) FindAll() ([]MetricsGroup, error) {
-	metricsGroups := []MetricsGroup{}
+	var metricsGroups []MetricsGroup
 	db := main.db.Find(&metricsGroups)
 	if db.Error != nil {
 		return []MetricsGroup{}, db.Error
@@ -79,6 +85,10 @@ func (main Main) FindAll() ([]MetricsGroup, error) {
 }
 
 func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
+	metricsGroup.Status = Active
+	for i := 0; i < len(metricsGroup.Metrics); i++ {
+		metricsGroup.Metrics[i].Status = Active
+	}
 	db := main.db.Create(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, db.Error
@@ -93,6 +103,15 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
+}
+
+func (main Main) FindActiveMetricGroups() ([]MetricsGroup, error) {
+	var metricsGroups []MetricsGroup
+	db := main.db.Preload("Metrics").Where("status = ?", Active).First(&metricsGroups)
+	if db.Error != nil {
+		return []MetricsGroup{}, db.Error
+	}
+	return metricsGroups, nil
 }
 
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
