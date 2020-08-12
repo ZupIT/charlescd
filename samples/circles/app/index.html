@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet"> 
+  <link href="style.css" rel="stylesheet" />
+  <link rel="icon" href="/favicon.ico" />
+  <title>Charles CD</title>
+</head>
+
+<body>
+  <h1>Charles CD</h1>
+  <p id="error-message"></p>
+  <div id="content">
+    <div id="form-config">
+      <div class="field">
+        <label for="circle-matcher-url">Insert URL Moove</label>
+        <input id="moove-url" type="text" value="" />
+      </div>
+      <div class="field">
+        <label for="circle-matcher-url">Authorization</label>
+        <input id="auth-url" type="text" value="" placeholder="Bearer access-token" />
+      </div>
+      <div class="field">
+        <label for="circle-matcher-url">Workspace ID</label>
+        <input id="workspace-id" type="text" value="" />
+      </div>
+      <button id="start-button" onclick="listCircles()">start</button>
+    </div>
+    <div id="form-request" class="hidden">
+      <textarea id="body"></textarea>
+      <button id="send-button" onclick="tryOut()">send</button>
+      <button id="reset-button" onclick="rerender()">rerender</button>
+    </div>
+    <svg id="circle-default" class="hidden" width="400" height="400"></svg>
+  </div>
+
+  <script src="d3.v3.js"></script>
+  <script src="helpers.js"></script>
+  <script src="d3.helpers.js"></script>
+  <script src="circles.js"></script>
+  <script src="app.js"></script>
+  <script src="textarea.js"></script>
+</body>
+
+</html>
