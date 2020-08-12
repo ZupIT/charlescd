@@ -39,7 +39,7 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	return result.Data, nil
 }
 
-func Query(datasourceConfiguration, metric []byte) (interface{}, error) {
+func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) {
 	path := "/api/v1/query"
 
 	var prometheusConfig PrometheusConfig
@@ -49,8 +49,6 @@ func Query(datasourceConfiguration, metric []byte) (interface{}, error) {
 	_ = json.Unmarshal(metric, &currentMetric)
 
 	query := createQueryByMetric(currentMetric)
-
-	fmt.Println(query)
 
 	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
 	queryParams := url.Values{}
