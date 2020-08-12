@@ -74,6 +74,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'incoming_circle_id', type: 'varchar' })
   public incomingCircleId: string | null
 
+  @Column({ name: 'notification_status', type: 'varchar' })
+  public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
+
   constructor(
     deploymentId: string,
     authorId: string,

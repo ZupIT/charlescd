@@ -15,16 +15,17 @@
  */
 
 import { forwardRef, Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
+import { Repository } from 'typeorm'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
+import { DeploymentCleanupHandler } from '../use-cases/deployment-cleanup-handler'
 import { DeploymentHandler } from '../use-cases/deployment-handler'
 import PgBoss = require('pg-boss');
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 const EXPIRE_IN_MINUTES = 25 // TODO move to config
 
@@ -33,6 +34,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   public pgBoss: PgBoss
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
+    private deploymentCleanupHandler: DeploymentCleanupHandler,
     @Inject(forwardRef(() => DeploymentHandler))
     private readonly deploymentHandler: DeploymentHandler,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
@@ -64,6 +66,11 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
 
     await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<Execution, unknown>) => {
       await this.deploymentHandler.run(job)
+    })
+
+    await this.pgBoss.schedule('deployment-cleanup', '* * * * *', undefined, undefined)
+    await this.pgBoss.subscribe('deployment-cleanup', async(job: JobWithDoneCallback<unknown, unknown>) => {
+      await this.deploymentCleanupHandler.run(job)
     })
   }
 

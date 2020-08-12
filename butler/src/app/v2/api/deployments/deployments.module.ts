@@ -18,18 +18,20 @@ import { HttpModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { CdConfigurationEntity } from '../../../v1/api/configurations/entity'
 import { CdConfigurationsRepository } from '../../../v1/api/configurations/repository'
+import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
+import { MooveService } from '../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../v1/core/logs/console'
+import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { DeploymentsController } from './controller/deployment.controller'
 import { NotificationsController } from './controller/notification.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
 import { PgBossWorker } from './jobs/pgboss.worker'
-import { DeploymentHandler } from './use-cases/deployment-handler'
-import { NotificationUseCase } from './use-cases/notification-use-case'
-import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
-import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
+import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
+import { DeploymentHandler } from './use-cases/deployment-handler'
+import { NotificationUseCase } from './use-cases/notification-use-case'
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
     CreateDeploymentUseCase,
     NotificationUseCase,
     DeploymentHandler,
+    MooveService,
+    DeploymentCleanupHandler,
     ConsoleLoggerService,
     SpinnakerConnector,
     SpinnakerApiService

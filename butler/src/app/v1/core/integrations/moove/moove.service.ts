@@ -21,6 +21,7 @@ import { AppConstants } from '../../constants'
 import { IoCTokensConstants } from '../../constants/ioc'
 import { ConsoleLoggerService } from '../../logs/console'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { AxiosResponse } from 'axios'
 
 @Injectable()
 export class MooveService {
@@ -53,6 +54,31 @@ export class MooveService {
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
       throw error
+    }
+  }
+
+  public async notifyDeploymentStatusV2(
+    deploymentId: string,
+    status: string,
+    callbackUrl: string,
+    circleId: string | null
+  ): Promise<AxiosResponse<any>> {
+
+    try {
+      this.consoleLoggerService.log('START:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
+      const response = await this.httpService.post(
+        callbackUrl,
+        { deploymentStatus: status },
+        { ...(circleId && { headers: { 'x-circle-id': circleId } }) }
+      ).pipe(
+        map(response => response),
+        retryWhen(error => this.getNotificationRetryCondition(error))
+      ).toPromise()
+      this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
+      return response
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
+      return error
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
