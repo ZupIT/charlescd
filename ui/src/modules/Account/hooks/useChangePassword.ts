@@ -33,10 +33,10 @@ export const useChangePassword = (): {
   const status = useFetchStatus();
 
   const updatePassword = useCallback(
-    async (id: string, payload: CheckPassword) => {
+    async (payload: CheckPassword) => {
       try {
         status.pending();
-        await changePass(id, payload);
+        await changePass(payload);
         dispatch(
           toogleNotification({
             text: 'Password changed successfully.',
