@@ -2,7 +2,6 @@ package main
 
 import (
 	"compass/internal/datasource"
-	"compass/internal/dispatcher"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	v1 "compass/web/api/v1"
@@ -59,7 +58,13 @@ func main() {
 	pluginMain := plugin.NewMain(db)
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain)
-	dispatcher.StartDispatcher(metricsgroupMain, strconv.Atoi(os.Getenv("DB_NAME")))
+
+	_, err = strconv.Atoi(os.Getenv("TIMEOUT"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// dispatcher.StartDispatcher(metricsgroupMain, sleepTime)
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)

@@ -62,8 +62,25 @@ const (
 	LOWER_THEN
 )
 
+var Periods = map[string]string{
+	"5d":  "5d",
+	"1m":  "1m",
+	"6m":  "6m",
+	"1y":  "1y",
+	"MAX": "MAX",
+}
+
 func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THEN", "LOWER_THEN"}[c]
+}
+
+func (main Main) PeriodValidate(currentPeriod string) error {
+	_, ok := Periods[currentPeriod]
+	if !ok && currentPeriod != "" {
+		return errors.New("Period invalid")
+	}
+
+	return nil
 }
 
 func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
@@ -130,26 +147,37 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) Query(id string) ([]MetricResult, error) {
-	metricsResults := []MetricResult{}
+func (main Main) getPluginById(pluginID uuid.UUID) (*plugin.Plugin, error) {
 	pluginsPath := "plugins"
+
+	pluginResult, err := main.pluginMain.FindById(pluginID.String())
+	if err != nil {
+		return nil, errors.New("Not found plugin: " + pluginID.String())
+	}
+
+	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
+	if err != nil {
+		return nil, err
+	}
+
+	return plugin, nil
+}
+
+func (main Main) Query(id, period string) ([]MetricResult, error) {
+	metricsResults := []MetricResult{}
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		return nil, errors.New("Not found metrics group: " + id)
 	}
 
 	for _, metric := range metricsGroup.Metrics {
+
 		dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 		if err != nil {
 			return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
 		}
 
-		pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
-		if err != nil {
-			return nil, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
-		}
-
-		plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
+		plugin, err := main.getPluginById(dataSourceResult.PluginID)
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +189,7 @@ func (main Main) Query(id string) ([]MetricResult, error) {
 
 		dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 		metricData, _ := json.Marshal(metric)
-		query, err := getQuery.(func(datasourceConfiguration, metric []byte) (interface{}, error))(dataSourceConfigurationData, metricData)
+		query, err := getQuery.(func(datasourceConfiguration, metric, period []byte) (interface{}, error))(dataSourceConfigurationData, metricData, []byte(period))
 		if err != nil {
 			return nil, err
 		}
