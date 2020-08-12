@@ -27,7 +27,7 @@ import (
 )
 
 type Payload struct {
-	Status string `json:"status"`
+	Status       string `json:"status"`
 	CallbackType string `json:"callbackType"`
 }
 
@@ -66,13 +66,13 @@ func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 }
 
 func (manager Manager) pipelineOnSuccess(pipeline pipelinePKG.Pipeline) {
-	payload := Payload{Status: "SUCCEEDED", CallbackType: pipeline.Webhook.CallbackType }
+	payload := Payload{Status: "SUCCEEDED", CallbackType: pipeline.Webhook.CallbackType}
 
 	manager.triggerWebhook(pipeline, payload)
 }
 
 func (manager Manager) pipelineOnError(pipeline pipelinePKG.Pipeline) {
-	payload :=  Payload{Status: "FAILED", CallbackType: pipeline.Webhook.CallbackType }
+	payload := Payload{Status: "FAILED", CallbackType: pipeline.Webhook.CallbackType}
 
 	manager.triggerWebhook(pipeline, payload)
 }
@@ -175,10 +175,9 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
 	repository, err := manager.repositoryMain.NewRepository(step.Repository)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot create repository main. Error: " + err.Error())
+		log.WithFields(log.Fields{"function": "executeStep"}).Error(err.Error())
 		return "", "", err
 	}
-
 	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
