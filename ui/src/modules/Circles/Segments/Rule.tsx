@@ -80,7 +80,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Value"
-        ref={register()}
+        ref={register}
         disabled={viewMode}
         name={`${prefixName}.content.value[0]`}
         defaultValue={rule?.content?.value}
