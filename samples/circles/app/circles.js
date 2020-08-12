@@ -42,8 +42,10 @@ function createD3CircleRef(circles) {
   });
 }
 
+let circlesData;
+
 function initDefaultCircle(circles) {
-  const circlesData = Object.assign([], formatCircles(circles));
+  circlesData = Object.assign([], formatCircles(circles));
   
   graph.circles = [];
   graph.defaultCircle = newD3Layout({
@@ -79,7 +81,6 @@ function initDefaultCircle(circles) {
 
 function addUser(id) {
   const circle = graph.circles.find(c => c.circleId === id);
-  const circlesData = graph.defaultCircle.chart.selectAll("g").data();
   const isDefault = circle === undefined;
   const { chart, force, users, color } = isDefault ? graph.defaultCircle : circle;
   const select = isDefault ? " svg > g" : "g";
