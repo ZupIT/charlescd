@@ -19,7 +19,6 @@ import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
-import { getProfileByKey } from 'core/utils/profile';
 import { validationResolver } from 'core/components/CheckPassword';
 import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
@@ -41,9 +40,8 @@ const ChangePassword = () => {
   const { updatePassword, status } = useChangePassword();
 
   const onSubmit = () => {
-    const id = getProfileByKey('id');
     const { oldPassword, newPassword } = getValues();
-    updatePassword(id, { oldPassword, newPassword });
+    updatePassword({ oldPassword, newPassword });
   };
 
   return (
