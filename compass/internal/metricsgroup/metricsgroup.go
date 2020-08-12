@@ -7,6 +7,7 @@ import (
 	"io"
 	"path/filepath"
 	"plugin"
+	"regexp"
 
 	"github.com/google/uuid"
 )
@@ -63,10 +64,12 @@ const (
 )
 
 var Periods = map[string]string{
-	"5d":  "5d",
-	"1m":  "1m",
-	"6m":  "6m",
-	"1y":  "1y",
+	"s":   "s",
+	"m":   "m",
+	"h":   "h",
+	"d":   "d",
+	"w":   "w",
+	"y":   "y",
 	"MAX": "MAX",
 }
 
@@ -75,9 +78,19 @@ func (c Condition) String() string {
 }
 
 func (main Main) PeriodValidate(currentPeriod string) error {
-	_, ok := Periods[currentPeriod]
+	reg, err := regexp.Compile("[0-9]")
+	if err != nil {
+		return err
+	}
+
+	if !reg.Match([]byte(currentPeriod)) {
+		return errors.New("Invalid period: not found number")
+	}
+
+	unit := reg.ReplaceAllString(currentPeriod, "")
+	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
-		return errors.New("Period invalid")
+		return errors.New("Invalid period: not found unit")
 	}
 
 	return nil
