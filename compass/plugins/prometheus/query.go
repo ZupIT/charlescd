@@ -17,6 +17,6 @@ func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 	return filterQuery
 }
 
-func createQueryByMetric(metric metricsgroup.Metric) string {
-	return fmt.Sprintf("%s%s", metric.Metric, transformFiltersToQuery(metric.Filters))
+func createQueryByMetric(metric metricsgroup.Metric, period string) string {
+	return fmt.Sprintf("%s%s[%s]", metric.Metric, transformFiltersToQuery(metric.Filters), period)
 }
