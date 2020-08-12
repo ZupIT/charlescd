@@ -16,12 +16,14 @@
 
 package io.charlescd.moove.application.role.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.domain.Permission
 import java.time.LocalDateTime
 
 data class PermissionResponse(
     val id: String,
     val name: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
 ) {
 

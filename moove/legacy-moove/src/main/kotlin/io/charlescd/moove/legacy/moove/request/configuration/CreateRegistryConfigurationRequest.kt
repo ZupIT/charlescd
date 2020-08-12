@@ -45,8 +45,8 @@ data class CreateAWSRegistryConfigurationRequest(
     override val name: String,
     override val address: String,
     override val authorId: String,
-    val accessKey: String,
-    val secretKey: String,
+    val accessKey: String?,
+    val secretKey: String?,
     val region: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.AWS, authorId)
 

@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application.role.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.charlescd.moove.domain.Role
 import java.time.LocalDateTime
 
@@ -26,6 +27,7 @@ data class RoleResponse(
     val name: String,
     val description: String,
     val permissions: List<PermissionResponse>,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: LocalDateTime
 ) {
 

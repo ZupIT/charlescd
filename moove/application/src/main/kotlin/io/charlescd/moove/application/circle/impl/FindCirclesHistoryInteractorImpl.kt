@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application.circle.impl
 
+import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.circle.FindCirclesHistoryInteractor
 import io.charlescd.moove.application.circle.response.CircleHistoryResponse
 import io.charlescd.moove.domain.PageRequest
@@ -26,10 +27,20 @@ import javax.inject.Named
 
 @Named
 class FindCirclesHistoryInteractorImpl(private val circleRepository: CircleRepository) : FindCirclesHistoryInteractor {
-    override fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): CircleHistoryResponse {
-        val historyItems = circleRepository.findCirclesHistory(workspaceId, name, pageRequest)
-        val summaryItems = circleRepository.countGroupedByStatus(workspaceId, name)
 
-        return CircleHistoryResponse.from(summaryItems, historyItems)
+    override fun execute(workspaceId: String, name: String?, pageRequest: PageRequest): ResourcePageResponse<CircleHistoryResponse> {
+        val historyItems = circleRepository.findCirclesHistory(workspaceId, name, pageRequest)
+
+        return ResourcePageResponse.from(
+            historyItems.content.map { CircleHistoryResponse.from(it) }.sortedWith(getResponseComparator()),
+            historyItems.pageNumber,
+            historyItems.pageSize,
+            historyItems.isLast(),
+            historyItems.totalPages()
+        )
     }
+
+    private fun getResponseComparator() =
+        compareBy<CircleHistoryResponse> { it.status }
+            .thenByDescending { it.lifeTime }
 }
