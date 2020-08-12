@@ -48,7 +48,16 @@ class MetricConfigurationService(
         }
     }
 
+    fun findHealthyDatasourceOnCompass(workspaceId: String, health: Boolean): CompassDatasourceResponse? {
+        return compassApi.findHealthyDatasource(workspaceId, health)
+            .firstOrNull()
+    }
+
+    fun removeHealthyDatasourceOnCompass(datasourceId: String) {
+
+    }
+
     fun saveDatasourceOnCompass(workspaceId: String, datasourceRequest: CompassCreateDatasourceRequest): CompassDatasourceResponse {
-        return compassApi.createMetricGroup(workspaceId, datasourceRequest)
+        return compassApi.saveHealthyDatasource(workspaceId, datasourceRequest)
     }
 }
