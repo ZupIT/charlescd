@@ -98,7 +98,8 @@ export default class TotalPipeline {
         version.versionUrl,
         String(this.refId),
         [],
-        undefined
+        undefined,
+        this.contract.circleId
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
