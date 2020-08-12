@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.domain.service.VillagerService
+import io.charlescd.moove.metrics.connector.compass.CompassApi
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -41,6 +42,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
+    private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
         interactor = new PatchWorkspaceInteractorImpl(
@@ -48,7 +50,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 new CdConfigurationService(deployService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 new RegistryConfigurationService(villagerService),
-                new MetricConfigurationService(metricConfigurationRepository),
+                new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 circleMatcherService,
                 new CircleService(circleRepository)
         )

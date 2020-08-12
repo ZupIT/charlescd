@@ -30,6 +30,6 @@ data class CompassDatasourceResponse(
     val data: DatasourceDataResponse
 )
 
-data class DatasourceDataResponse (
+data class DatasourceDataResponse(
     val url: String
 )

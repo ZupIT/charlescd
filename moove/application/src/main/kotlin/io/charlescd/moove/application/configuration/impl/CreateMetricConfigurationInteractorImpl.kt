@@ -28,31 +28,21 @@ import io.charlescd.moove.metrics.connector.compass.CompassCreateDatasourceReque
 import io.charlescd.moove.metrics.connector.compass.DatasourceDataRequest
 import javax.inject.Inject
 import javax.inject.Named
+import javax.transaction.Transactional
 
 @Named
-class CreateMetricConfigurationInteractorImpl @Inject constructor(
+open class CreateMetricConfigurationInteractorImpl @Inject constructor(
     private val workspaceService: WorkspaceService,
     private val userService: UserService,
     private val metricConfigurationService: MetricConfigurationService
 ) : CreateMetricConfigurationInteractor {
 
+    @Transactional
     override fun execute(request: CreateMetricConfigurationRequest, workspaceId: String): MetricConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)
         val author = userService.find(request.authorId)
 
-        val compassDatasource = CompassCreateDatasourceRequest(
-            name = request.name,
-            pluginId = "0e0fe5c9-cc20-42d8-a099-9eeb993c5880",
-            health = true,
-            data = DatasourceDataRequest(
-                url = request.url
-            )
-        )
-
-        val existingDatasource = metricConfigurationService.findHealthyDatasourceOnCompass(workspaceId, true)
-            ?.let { metricConfigurationService }
-
-        metricConfigurationService.saveDatasourceOnCompass(workspaceId, compassDatasource)
+        saveDatasourceOnCompass(request, workspaceId)
 
         return MetricConfigurationResponse.from(
             metricConfigurationService.save(
@@ -62,5 +52,24 @@ class CreateMetricConfigurationInteractorImpl @Inject constructor(
                 )
             )
         )
+    }
+
+    private fun saveDatasourceOnCompass(
+        request: CreateMetricConfigurationRequest,
+        workspaceId: String
+    ) {
+        val compassDatasource = CompassCreateDatasourceRequest(
+            name = request.name,
+            pluginId = "0e0fe5c9-cc20-42d8-a099-9eeb993c5880",
+            health = true,
+            data = DatasourceDataRequest(
+                url = request.url
+            )
+        )
+
+        metricConfigurationService.findHealthyDatasourceOnCompass(workspaceId, true)
+            ?.run { metricConfigurationService.removeHealthyDatasourceOnCompass(workspaceId, this.id) }
+
+        metricConfigurationService.saveDatasourceOnCompass(workspaceId, compassDatasource)
     }
 }
