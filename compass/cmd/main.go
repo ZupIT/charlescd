@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -57,6 +58,13 @@ func main() {
 	pluginMain := plugin.NewMain(db)
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain)
+
+	_, err = strconv.Atoi(os.Getenv("TIMEOUT"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// dispatcher.StartDispatcher(metricsgroupMain, sleepTime)
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)

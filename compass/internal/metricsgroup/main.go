@@ -9,6 +9,7 @@ import (
 )
 
 type UseCases interface {
+	PeriodValidate(currentPeriod string) error
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, error)
 	ParseMetric(metric io.ReadCloser) (Metric, error)
 	FindAll() ([]MetricsGroup, error)
@@ -19,7 +20,8 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
-	Query(id string) ([]MetricResult, error)
+	Query(id, period string) ([]MetricResult, error)
+	FindActiveMetricGroups() ([]MetricsGroup, error)
 }
 
 type Main struct {
