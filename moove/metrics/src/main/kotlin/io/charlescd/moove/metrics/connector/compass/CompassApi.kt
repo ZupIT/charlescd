@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
-import java.net.URI
 
 @FeignClient(name = "compassApi", url = "\${compass.url}")
 interface CompassApi {
@@ -71,5 +70,4 @@ interface CompassApi {
         @RequestHeader("x-workspace-id") workspaceId: String,
         @PathVariable datasourceId: String
     ): CompassDatasourceResponse
-
 }
