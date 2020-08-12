@@ -149,7 +149,7 @@ jobs:
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_PASSWORD}}
         repository: zupcharles/charlescd-octopipe
-        dockerfile: ./octopipe/cmd/octopipe/Dockerfile
+        dockerfile: ./octopipe/Dockerfile
         tags: latest,${{ steps.get_version.outputs.VERSION }}
         tag_with_ref: false
         tag_with_sha: false

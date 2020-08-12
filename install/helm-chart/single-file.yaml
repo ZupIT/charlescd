@@ -185,6 +185,8 @@ data:
     /subsystem=datasources/data-source=KeycloakDS/:write-attribute(name=use-fast-fail,value=${env.DB_USE_CAST_FAIL:false})
     
     
+    /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
+    
 
     run-batch
     stop-embedded-server
@@ -244,7 +246,7 @@ data:
                 proxy_set_header Upgrade $http_upgrade;
                 proxy_set_header Connection ‘upgrade’;
                 proxy_set_header Host $host;
-                proxy_pass      http://charlescd-keycloak-http:8080;
+                proxy_pass      http://charlescd-keycloak-http;
             }
         }
     }
@@ -534,7 +536,7 @@ spec:
   clusterIP: None
   ports:
     - name: http
-      port: 8080
+      port: 80
       targetPort: http
       protocol: TCP
     - name: https
@@ -560,7 +562,7 @@ spec:
   type: ClusterIP
   ports:
     - name: http
-      port: 8080
+      port: 80
       targetPort: http
       protocol: TCP
     - name: https
@@ -1064,7 +1066,7 @@ spec:
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.0
+          image: zupcharles/charlescd-butler:0.3.2
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1102,12 +1104,8 @@ spec:
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
               value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
-            - name: DARWIN_UNDEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/undeployment"
-            - name: DARWIN_DEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/deployment"
-            - name: DARWIN_ISTIO_DEPLOYMENT_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications/istio-deployment"
+            - name: DARWIN_CALLBACK
+              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
             - name: OCTOPIPE_URL
               value: "http://charlescd-octopipe:8080/"
             - name: ENCRYPTION_KEY
@@ -1148,7 +1146,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.0
+          image: zupcharles/charlescd-circle-matcher:0.3.2
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1216,7 +1214,7 @@ spec:
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.0
+          image: zupcharles/charlescd-moove:0.3.2
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1250,7 +1248,7 @@ spec:
             - name: KEYCLOCK_REALM
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
-              value: "http://charles.info.example/keycloak/auth"
+              value: "http://charlescd-keycloak-http/keycloak/auth"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
@@ -1295,7 +1293,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.0
+          image: zupcharles/charlescd-ui:0.3.2
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1359,7 +1357,7 @@ spec:
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.0
+          image: zupcharles/charlescd-villager:0.3.2
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1431,7 +1429,7 @@ spec:
         app.kubernetes.io/instance: "charlescd"
       annotations:
         checksum/config-sh: 396cdca14ce7b1093a4579c894562df85b7f9e0a411ad82a6a469cac0416e773
-        checksum/config-startup: 16851f032860696af8be63cb851a2e74f74654063e3709997e535d6a1aa72e38
+        checksum/config-startup: 4fc0f7631e6089bf3353e0c7c70f076fadb8aaf626249b1b109308d38601bced
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       restartPolicy: Always
