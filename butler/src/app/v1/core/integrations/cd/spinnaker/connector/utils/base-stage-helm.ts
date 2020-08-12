@@ -49,7 +49,7 @@ export interface IBaseHelmStage {
   overrides: {
     'image.tag': string
     name: string
-    circle: string
+    circleId: string
   }
   templateRenderer: 'HELM2'
   type: 'bakeManifest'
@@ -74,7 +74,7 @@ const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
     overrides: {
       'image.tag': versionUrl,
       'name': version,
-      'circle': circleId
+      'circleId': circleId
     },
     templateRenderer: 'HELM2',
     type: 'bakeManifest',

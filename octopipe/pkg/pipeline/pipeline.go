@@ -130,7 +130,7 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Name":      version.Version,
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
-						"circle": deprecatedPipeline.CircleID,
+						"circleId": deprecatedPipeline.CircleID,
 					},
 				},
 			},
