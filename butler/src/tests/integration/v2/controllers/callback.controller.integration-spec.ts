@@ -44,6 +44,7 @@ describe('DeploymentController v2', () => {
   })
 
   beforeEach(async() => {
+    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
   })
@@ -101,6 +102,7 @@ describe('DeploymentController v2', () => {
             id: deployment.id,
             priority: 0,
             incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
+            notificationStatus: 'NOT_SENT',
             active: true,
             components: [
               {
@@ -173,6 +175,7 @@ describe('DeploymentController v2', () => {
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
             incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
+            notificationStatus: 'NOT_SENT',
             priority: 0,
             active: false,
             components: [

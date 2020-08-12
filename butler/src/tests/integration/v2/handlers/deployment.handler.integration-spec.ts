@@ -9,15 +9,15 @@ import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/ent
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity, DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
-import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
+import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
+import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
-import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
 
 let mock = express()
 
@@ -26,7 +26,6 @@ describe('DeploymentHandler', () => {
   let app: INestApplication
   let worker: PgBossWorker
   let deploymentHandler: DeploymentHandler
-  let deploymentUseCase: CreateDeploymentUseCase
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: NotificationUseCase
@@ -45,7 +44,6 @@ describe('DeploymentHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
-    deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
     notificationUseCase = app.get<NotificationUseCase>(NotificationUseCase)
     manager = fixtureUtilsService.connection.manager
   })
@@ -61,6 +59,7 @@ describe('DeploymentHandler', () => {
     mock = express()
     mockServer = mock.listen(9000)
     await fixtureUtilsService.clearDatabase()
+    await worker.pgBoss.start()
     await worker.pgBoss.clearStorage()
   })
 
@@ -197,6 +196,49 @@ describe('DeploymentHandler', () => {
     const handledDeployment = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstDeployment.id } })
 
     expect(handledDeployment.components.map(c => c.running)).toEqual([false])
+  })
+
+  it('mark the deployment as timed out after 25 minutes', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+
+    const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
+      new Date('2019-05-14T11:00:00.135Z').valueOf()
+    )
+    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { createdAt: DateUtils.now() })
+
+    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
+      new Date('2019-05-14T11:26:00.135Z').valueOf()
+    )
+    await expect(
+      deploymentHandler.run(fixtures.job)
+    ).rejects.toThrow(new Error('Deployment timed out'))
+
+    const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id })
+    expect(timedOutDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
   })
 })
 

@@ -52,6 +52,8 @@ export const EnvConfigurationStub: IEnvConfiguration = {
 
     spinnakerGithubAccount: 'spinnaker-github-account',
 
+    deploymentExpireTime: 25,
+
     pgBossConfig: {
         database: 'postgresdbname',
         host: 'postgreshost.com',
