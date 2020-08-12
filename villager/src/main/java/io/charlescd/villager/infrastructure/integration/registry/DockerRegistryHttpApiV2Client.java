@@ -16,7 +16,8 @@
 
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicAuthenticator;
+import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSBasicCredentialsProvider;
+import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.util.Optional;
@@ -40,17 +41,17 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
         this.baseAddress = config.address;
+
         switch (type) {
             case AWS:
                 var awsConfig = (DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData) config;
+                AWSCustomProviderChainAuthenticator providerChain =
+                        new AWSCustomProviderChainAuthenticator(awsConfig.region);
                 if (StringUtils.isNotEmpty(awsConfig.accessKey) && StringUtils.isNotEmpty(awsConfig.secretKey)) {
-                    this.client
-                            .register(
-                                    new AWSBasicAuthenticator(
-                                      awsConfig.region, 
-                                      awsConfig.accessKey, 
-                                      awsConfig.secretKey));
+                    providerChain.addProviderAsPrimary(
+                            new AWSBasicCredentialsProvider(awsConfig.accessKey, awsConfig.secretKey));
                 }
+                this.client.register(providerChain);
                 break;
             case AZURE:
                 var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;

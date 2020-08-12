@@ -206,7 +206,8 @@ export default class TotalPipeline {
       String(this.refId),
       this.getRequiredRefIds(this.refId - 1),
       this.previousStage,
-      this.contract.circleId
+      this.contract.circleId,
+      this.contract.callbackType
     )
     this.basePipeline.stages.push(webhookStage)
     return this.basePipeline.stages

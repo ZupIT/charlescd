@@ -46,11 +46,27 @@ const UserAvatarNoPhoto = styled(AvatarName)`
   margin: 5px;
 `;
 
+const UsersCounter = styled.div`
+  cursor: pointer;
+  margin: 5px;
+  width: 100%;
+  height: 100%;
+  background: ${({ theme }) => theme.avatar.counter};
+  color: ${({ theme }) => theme.avatar.number};
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default {
   UserList,
   UserAvatar,
   ButtonAdd,
   UserAvatarNoPhoto,
+  UsersCounter,
   Layer: {
     Title: LayerTitle,
     Users: LayerUsers

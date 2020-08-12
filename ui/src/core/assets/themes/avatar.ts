@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import { COLOR_GHOST_WHITE, COLOR_SANTAS_GREY } from 'core/assets/colors';
+import {
+  COLOR_GHOST_WHITE,
+  COLOR_SANTAS_GREY,
+  COLOR_PURPLE_HEART,
+  COLOR_LIGHT_DEFAULT
+} from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
   background: COLOR_GHOST_WHITE,
-  color: COLOR_SANTAS_GREY
+  color: COLOR_SANTAS_GREY,
+  number: COLOR_LIGHT_DEFAULT,
+  counter: COLOR_PURPLE_HEART
 };

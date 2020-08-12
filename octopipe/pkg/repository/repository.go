@@ -19,12 +19,12 @@ package repository
 import (
 	"errors"
 	"octopipe/pkg/repository/github"
-
-	log "github.com/sirupsen/logrus"
+	"octopipe/pkg/repository/gitlab"
 )
 
 const (
 	GithubType = "GITHUB"
+	GitlabType = "GITLAB"
 )
 
 type UseCases interface {
@@ -32,17 +32,19 @@ type UseCases interface {
 }
 
 type Repository struct {
-	Type string `json:"type"`
-	github.GithubRepository
+	Type  string `json:"type"`
+	Url   string `json:"url"`
+	Token string `json:"token"`
 }
 
 func (main RepositoryMain) NewRepository(repository Repository) (UseCases, error) {
-	switch repository.Type {
-	case GithubType:
-		log.WithFields(log.Fields{"function": "NewRepository"}).Info("Selected github repository")
-		return github.NewGithubRepository(repository.GithubRepository), nil
-	default:
-		log.WithFields(log.Fields{"function": "NewTemplate"}).Info("No valid repository")
-		return nil, errors.New("Repository not found")
+	var repositories = map[string]UseCases{
+		"GITHUB": github.NewGithubRepository(repository.Url, repository.Token),
+		"GITLAB": gitlab.NewGitlabRepository(repository.Url, repository.Token),
 	}
+	var err error
+	if repositories[repository.Type] == nil {
+		err = errors.New("Cannot create repository main (unsupported git type)")
+	}
+	return repositories[repository.Type], err
 }
