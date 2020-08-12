@@ -86,5 +86,5 @@ export const deleteUserById = (id: string) =>
 export const createNewUser = (user: NewUser) =>
   postRequest(`${v1Endpoint}`, user);
 
-export const changePassword = (id: string, data: CheckPassword) =>
-  putRequest(`${endpoint}/${id}/password`, data);
+export const changePassword = (data: CheckPassword) =>
+  putRequest(`${endpoint}/password`, data);
