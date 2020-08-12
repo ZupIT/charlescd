@@ -32,6 +32,7 @@ import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
 import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
 import { DeploymentHandler } from './use-cases/deployment-handler'
 import { NotificationUseCase } from './use-cases/notification-use-case'
+import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { NotificationUseCase } from './use-cases/notification-use-case'
       Execution,
       CdConfigurationEntity,
       CdConfigurationsRepository,
-      ComponentsRepositoryV2
+      ComponentsRepositoryV2,
+      DeploymentRepositoryV2
     ])
   ],
   controllers: [

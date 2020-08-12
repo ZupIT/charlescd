@@ -23,6 +23,7 @@ import IEnvConfiguration from '../../../../v1/core/integrations/configuration/in
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
+import { QueueNames } from '../enums/queue-names.enum'
 import { DeploymentCleanupHandler } from '../use-cases/deployment-cleanup-handler'
 import { DeploymentHandler } from '../use-cases/deployment-handler'
 import PgBoss = require('pg-boss');
@@ -45,14 +46,14 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   public publish(params: Execution): Promise<string | null> {
-    return this.pgBoss.publish('deployment-queue', params, { expireInMinutes: this.envConfiguration.deploymentExpireTime })
+    return this.pgBoss.publish(QueueNames.DEPLOYMENT, params, { expireInMinutes: this.envConfiguration.deploymentExpireTime })
   }
 
   public async publishWithPriority(params: Execution): Promise<string | null> {
     await this.deploymentRepository.increment({ id: params.deployment.id }, 'priority', 1) // execution priority column
     const incrementedDeployment = await this.deploymentRepository.findOneOrFail({ id: params.deployment.id })
     const incPriority = incrementedDeployment.priority // pg-boss priority column
-    return this.pgBoss.publish('deployment-queue', params, { priority: incPriority, expireInMinutes: this.envConfiguration.deploymentExpireTime })
+    return this.pgBoss.publish(QueueNames.DEPLOYMENT, params, { priority: incPriority, expireInMinutes: this.envConfiguration.deploymentExpireTime })
   }
 
   public async onModuleInit(): Promise<void> {
@@ -63,12 +64,12 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
         this.consoleLoggerService.log('pg-boss error', error)
       })
 
-      await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<Execution, unknown>) => {
+      await this.pgBoss.subscribe(QueueNames.DEPLOYMENT, async(job: JobWithDoneCallback<Execution, unknown>) => {
         await this.deploymentHandler.run(job)
       })
 
-      await this.pgBoss.schedule('deployment-cleanup', '* * * * *', {}, {})
-      await this.pgBoss.subscribe('deployment-cleanup', async(job: JobWithDoneCallback<unknown, unknown>) => {
+      await this.pgBoss.schedule(QueueNames.CLEANUP, '* * * * *', {}, {})
+      await this.pgBoss.subscribe(QueueNames.CLEANUP, async(job: JobWithDoneCallback<unknown, unknown>) => {
         await this.deploymentCleanupHandler.run(job)
       })
     }
