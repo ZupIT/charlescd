@@ -68,8 +68,8 @@ const Input = React.forwardRef(
 
     useEffect(() => {
       const isEmptyValue = isEmpty(rest.defaultValue?.toString());
-      setIsFocused(!isEmptyValue);
-    }, [rest.defaultValue]);
+      setIsFocused(!isEmptyValue || disabled);
+    }, [rest.defaultValue, disabled]);
 
     useImperativeHandle(ref, () => inputRef.current);
 
@@ -81,6 +81,11 @@ const Input = React.forwardRef(
     const handleFocused = (event: FocusEvent<HTMLInputElement>) => {
       setIsFocused(!isEmpty(event.currentTarget.value));
     };
+
+    const handleClick = () => {
+      inputRef.current.focus();
+      setIsFocused(true);
+    }
 
     return (
       <Styled.Wrapper
@@ -107,10 +112,7 @@ const Input = React.forwardRef(
           <Styled.Label
             isFocused={isFocused}
             hasError={hasError}
-            onClick={() => {
-              inputRef.current.focus();
-              setIsFocused(true);
-            }}
+            onClick={() => handleClick()}
           >
             {label}
           </Styled.Label>
