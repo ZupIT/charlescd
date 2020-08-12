@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.response
 
-data class UndeployRequest(
-    val authorId: String,
-    val deploymentId: String
+import io.charlescd.moove.domain.SimpleCircle
+
+data class IdentifyResponse(
+    val circles: List<SimpleCircle>
 )

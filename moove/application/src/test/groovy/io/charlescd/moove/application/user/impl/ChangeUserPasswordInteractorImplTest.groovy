@@ -1,0 +1,93 @@
+package io.charlescd.moove.application.user.impl
+
+import io.charlescd.moove.application.UserService
+import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
+import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
+import io.charlescd.moove.application.usergroup.request.AddMemberToUserGroupRequest
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.UserRepository
+import io.charlescd.moove.domain.service.KeycloakCustomService
+import io.charlescd.moove.domain.service.KeycloakService
+import spock.lang.Specification
+
+import java.time.LocalDateTime
+
+class ChangeUserPasswordInteractorImplTest extends Specification {
+
+    private ChangeUserPasswordInteractor changeUserPasswordInteractor
+
+    private UserRepository userRepository = Mock(UserRepository)
+    private KeycloakService keycloakService = Mock(KeycloakService)
+    private KeycloakCustomService keycloakCustomService = Mock(KeycloakCustomService)
+
+    void setup() {
+        this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
+                new UserService(userRepository),
+                keycloakService,
+                keycloakCustomService
+        )
+    }
+
+    def "when user does not exist should throw an exception"() {
+        given:
+        def userId = "user-id"
+        def authorization = "authorization"
+        def request = new ChangeUserPasswordRequest("old-password", "new-password")
+
+        when:
+        this.changeUserPasswordInteractor.execute(userId, authorization, request)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.empty()
+
+        def ex = thrown(NotFoundException)
+        ex.resourceName == "user"
+        ex.id == userId
+    }
+
+    def "when user authenticity does not match should throw an exception"() {
+        given:
+        def userId = "user-id"
+        def user = getDummyUser(userId)
+        def authorization = "authorization"
+        def request = new ChangeUserPasswordRequest("old-password", "new-password")
+
+        when:
+        this.changeUserPasswordInteractor.execute(userId, authorization, request)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * keycloakCustomService.hitUserInfo(authorization)
+        1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> false
+
+        def ex = thrown(BusinessException)
+        ex.errorCode == MooveErrorCode.INVALID_USER_AUTHENTICITY
+    }
+
+    def "should change user password"() {
+        given:
+        def userId = "user-id"
+        def user = getDummyUser(userId)
+        def authorization = "authorization"
+        def request = new ChangeUserPasswordRequest("old-password", "new-password")
+
+        when:
+        this.changeUserPasswordInteractor.execute(userId, authorization, request)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * keycloakCustomService.hitUserInfo(authorization)
+        1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> true
+        1 * this.keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
+
+        notThrown()
+    }
+
+    private User getDummyUser(String userId) {
+        new User(userId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+    }
+
+}

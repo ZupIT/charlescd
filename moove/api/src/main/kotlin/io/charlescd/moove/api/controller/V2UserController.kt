@@ -17,11 +17,14 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
+import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.ApiOperation
+import javax.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -29,7 +32,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
-    private val findAllUsersInteractor: FindAllUsersInteractor
+    private val findAllUsersInteractor: FindAllUsersInteractor,
+    private val changeUserPasswordInteractor: ChangeUserPasswordInteractor
 ) {
 
     @ApiOperation(value = "Find User by email")
@@ -47,5 +51,16 @@ class V2UserController(
         pageable: PageRequest
     ): ResourcePageResponse<UserResponse> {
         return this.findAllUsersInteractor.execute(name, email, pageable)
+    }
+
+    @ApiOperation(value = "Change users' password")
+    @PutMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun changePassword(
+        @RequestHeader(value = "Authorization") authorization: String,
+        @PathVariable("id", required = false) id: String,
+        @RequestBody @Valid request: ChangeUserPasswordRequest
+    ) {
+        this.changeUserPasswordInteractor.execute(id, authorization, request)
     }
 }
