@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
-import { CdConfiguration, Component } from '../../../../api/deployments/interfaces'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
+import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
+import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 
-export const getRollbackDeploymentsStage = (
+export const getDeleteUnusedStage = (
   component: Component,
   configuration: CdConfiguration,
   stageId: number,
   evalStageId: number
 ): Stage => ({
-  account: (configuration.configurationData as ISpinnakerConfigurationData).account,
+  account: `${(configuration.configurationData as ISpinnakerConfigurationData).account}`,
   app: `app-${configuration.id}`,
   cloudProvider: 'kubernetes',
   completeOtherBranchesThenFail: false,
@@ -53,7 +53,8 @@ export const getRollbackDeploymentsStage = (
   },
   location: `${(configuration.configurationData as ISpinnakerConfigurationData).namespace}`,
   mode: 'label',
-  name: `Delete Deployment ${component.name} ${component.imageTag}`,
+  name: `Delete Unused Deployment ${component.name} ${component.imageTag}`,
+  nameStage: 'Delete Deployments',
   options: {
     cascading: true
   },
@@ -62,7 +63,7 @@ export const getRollbackDeploymentsStage = (
     `${evalStageId}`
   ],
   stageEnabled: {
-    expression: '${!deploymentResult}',
+    expression: '${proxyDeploymentsResult}',
     type: 'expression'
   },
   type: 'deleteManifest'

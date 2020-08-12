@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { Component, Deployment } from '../../../../api/deployments/interfaces'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
+import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 
 export const getFailureWebhookStage = (deployment: Deployment, stageId: number): Stage => ({
   completeOtherBranchesThenFail: false,

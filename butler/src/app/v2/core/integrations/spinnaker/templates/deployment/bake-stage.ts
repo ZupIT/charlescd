@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { Component } from '../../../../api/deployments/interfaces'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
+import { Component } from '../../../../../api/deployments/interfaces'
 
 export const getBakeStage = (component: Component, stageId: number): Stage => ({
   completeOtherBranchesThenFail: false,

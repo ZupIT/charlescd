@@ -24,7 +24,6 @@ import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { CreateUndeploymentRequestDto } from '../dto/create-undeployment-request.dto'
 import { ExecutionTypeEnum } from '../enums'
-import { create } from 'domain'
 
 @Injectable()
 export class CreateUndeploymentUseCase {

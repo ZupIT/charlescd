@@ -26,11 +26,12 @@ import {
   getHelmValueObject,
   getRollbackDeploymentsStage,
   getSuccessWebhookStage
-} from './templates'
-import { getDestinationRulesStage } from './templates/destination-rules-stage'
-import { getVirtualServiceStage } from './templates/virtual-service-stage'
-import { getProxyEvaluationStage } from './templates/proxy-evaluation'
+} from './templates/deployment'
+import { getDestinationRulesStage } from './templates/deployment/destination-rules-stage'
+import { getVirtualServiceStage } from './templates/deployment/virtual-service-stage'
+import { getProxyEvaluationStage } from './templates/deployment/proxy-evaluation'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
+import { getUndeploymentDestinationRulesStage, getUndeploymentVirtualServiceStage } from './templates/undeployment'
 
 export class SpinnakerPipelineBuilder {
 
@@ -41,7 +42,7 @@ export class SpinnakerPipelineBuilder {
       application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
       expectedArtifacts: this.getExpectedArtifacts(deployment),
-      stages: this.getStages(deployment, activeComponents)
+      stages: this.getSpinnakerDeploymentStages(deployment, activeComponents)
     }
   }
 
@@ -49,8 +50,8 @@ export class SpinnakerPipelineBuilder {
     return {
       application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
-      expectedArtifacts: this.getExpectedArtifacts(deployment),
-      stages: this.getStages(deployment, activeComponents)
+      expectedArtifacts: [],
+      stages: this.getSpinnakerUndeploymentStages(deployment, activeComponents)
     }
   }
 
@@ -63,7 +64,7 @@ export class SpinnakerPipelineBuilder {
     return expectedArtifacts
   }
 
-  private getStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
+  private getSpinnakerDeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
     this.currentStageId = 1
     return [
       ...this.getDeploymentStages(deployment),
@@ -74,6 +75,14 @@ export class SpinnakerPipelineBuilder {
       ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment),
       ...this.getSuccessWebhookStage(deployment)
+    ]
+  }
+
+  private getSpinnakerUndeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    this.currentStageId = 1
+    return [
+      ...this.getProxyUndeploymentStages(deployment, activeComponents),
+      ...this.getProxyUndeploymentsEvaluationStage(deployment, activeComponents)
     ]
   }
 
@@ -100,6 +109,19 @@ export class SpinnakerPipelineBuilder {
     return proxyStages
   }
 
+  private getProxyUndeploymentStages(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
+    const proxyStages: Stage[] = []
+    deployment.components.forEach(component => {
+      const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
+      proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++))
+      proxyStages.push(getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
+    })
+    return proxyStages
+  }
+
   private getDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
     return components && components.length ?
       [getDeploymentsEvaluationStage(components, this.currentStageId++)] :
@@ -116,6 +138,12 @@ export class SpinnakerPipelineBuilder {
   }
 
   private getProxyDeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
+    return components && components.length ?
+      [getProxyEvaluationStage(components, this.currentStageId++)] :
+      []
+  }
+
+  private getProxyUndeploymentsEvaluationStage(components: Component[] | undefined): Stage[] {
     return components && components.length ?
       [getProxyEvaluationStage(components, this.currentStageId++)] :
       []

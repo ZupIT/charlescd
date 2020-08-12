@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-import { ExpectedArtifact } from '../interfaces/spinnaker-pipeline.interface'
-import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
-import { CdConfiguration, Component } from '../../../../api/deployments/interfaces'
+import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
+import { ExpectedArtifact } from '../../interfaces/spinnaker-pipeline.interface'
+import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 
-export const getHelmValueObject = (component: Component, configuration: CdConfiguration): ExpectedArtifact => ({
+export const getHelmTemplateObject = (component: Component, configuration: CdConfiguration): ExpectedArtifact => ({
   defaultArtifact: {
     artifactAccount: (configuration.configurationData as ISpinnakerConfigurationData).gitAccount,
-    id: `value-${component.name}-default-artifact`,
-    name: `value-${component.name}`,
-    reference: `${component.helmUrl}/${component.name}/${component.name}.yaml`,
+    id: `template-${component.name}-default-artifact`,
+    name: `template-${component.name}`,
+    reference: `${component.helmUrl}/${component.name}/${component.name}-darwin.tgz`,
     type: 'github/file',
     version: 'master'
   },
-  displayName: 'value',
-  id: `value - ${component.name}`,
+  displayName: 'template',
+  id: `template - ${component.name}`,
   matchArtifact: {
     artifactAccount: 'github-artifact',
-    id: 'useless-value',
-    name: `value-${component.name}`,
+    id: 'useless-template',
+    name: `template-${component.name}`,
     type: 'github/file'
   },
   useDefaultArtifact: true,

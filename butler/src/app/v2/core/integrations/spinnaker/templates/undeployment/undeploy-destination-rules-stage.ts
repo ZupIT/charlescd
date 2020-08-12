@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
-import { Stage, Subset } from '../interfaces/spinnaker-pipeline.interface'
-import { Component, Deployment } from '../../../../api/deployments/interfaces'
+import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
+import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
+import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 
-export const getDestinationRulesStage = (
+export const getUndeploymentDestinationRulesStage = (
   component: Component,
   deployment: Deployment,
   activeComponents: Component[],
-  stageId: number,
-  evalStageId: number
+  stageId: number
 ): Stage => ({
   account: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).account}`,
   cloudProvider: 'kubernetes',
@@ -40,18 +39,16 @@ export const getDestinationRulesStage = (
       },
       spec: {
         host: `${component.name}`,
-        subsets: deployment?.components ? getSubsets(component, deployment.circleId, activeComponents) : []
+        subsets: getActiveComponentsSubsets(deployment.circleId, activeComponents)
       }
     }
   ],
   moniker: {
     app: 'default'
   },
-  name: `Deploy Destination Rules ${component.name}`,
+  name: `Undeploy Destination Rules ${component.name}`,
   refId: `${stageId}`,
-  requisiteStageRefIds: [
-    `${evalStageId}`
-  ],
+  requisiteStageRefIds: [],
   skipExpressionEvaluation: false,
   source: 'text',
   stageEnabled: {
@@ -68,9 +65,8 @@ export const getDestinationRulesStage = (
   type: 'deployManifest'
 })
 
-const getSubsets = (newComponent: Component, circleId: string | null, activeComponents: Component[]): Subset[] => {
+const getActiveComponentsSubsets = (circleId: string | null, activeComponents: Component[]): Subset[] => {
   const subsets: Subset[] = []
-  subsets.push(getSubsetObject(newComponent))
 
   activeComponents.forEach(component => {
     const activeCircleId = component.deployment?.circleId

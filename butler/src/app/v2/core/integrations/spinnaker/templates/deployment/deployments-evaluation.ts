@@ -14,36 +14,39 @@
  * limitations under the License.
  */
 
-import { Stage } from '../interfaces/spinnaker-pipeline.interface'
-import { Component } from '../../../../api/deployments/interfaces'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
+import { Component } from '../../../../../api/deployments/interfaces'
 
-export const getProxyEvaluationStage = (components: Component[], stageId: number): Stage => (    {
+export const getDeploymentsEvaluationStage = (components: Component[], stageId: number): Stage => ({
+  completeOtherBranchesThenFail: false,
+  continuePipeline: true,
   failOnFailedExpressions: true,
-  name: 'Evaluate proxy deployments',
+  failPipeline: false,
+  name: 'Evaluate deployments',
   refId: `${stageId}`,
   requisiteStageRefIds: getRequisiteStageRefIds(components),
   type: 'evaluateVariables',
   variables: [
     {
-      key: 'proxyDeploymentsResult',
-      value: getProxyDeploymentsResultExpression(components)
+      key: 'deploymentResult',
+      value: getDeploymentResultExpression(components)
     }
   ]
 })
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
-  let baseRefId = components.length * 2
+  let baseRefId = 0
   return components.map(() => {
     baseRefId += 2
     return `${baseRefId}`
   })
 }
 
-const getProxyDeploymentsResultExpression = (components: Component[]): string => {
+const getDeploymentResultExpression = (components: Component[]): string => {
   let expression = ''
   components.forEach((component, index)=> {
     expression = index === 0 ? '${' : expression
-    expression += '#stage(\'' + `Deploy Virtual Service ${component.name}` + '\').status.toString() == \'SUCCEEDED\''
+    expression += '#stage(\'' + `Deploy ${component.name} ${component.imageTag}` + '\').status.toString() == \'SUCCEEDED\''
     expression = index === components.length - 1 ? `${expression}}` : `${expression} && `
   })
   return expression
