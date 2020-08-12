@@ -222,7 +222,7 @@ publicConstraints:
       - GET
 
   - pattern: /v2/users/{id}/password
-    - methods:
+    methods:
       - PUT
 
   - pattern: /v2/deployments/{id:.+}/callback
