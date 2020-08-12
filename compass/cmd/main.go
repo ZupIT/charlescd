@@ -2,12 +2,14 @@ package main
 
 import (
 	"compass/internal/datasource"
+	"compass/internal/dispatcher"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	v1 "compass/web/api/v1"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -57,6 +59,7 @@ func main() {
 	pluginMain := plugin.NewMain(db)
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain)
+	dispatcher.StartDispatcher(metricsgroupMain, strconv.Atoi(os.Getenv("DB_NAME")))
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)
