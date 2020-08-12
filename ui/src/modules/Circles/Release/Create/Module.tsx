@@ -38,7 +38,14 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const [isEmptyTag, setIsEmptyTag] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
-  const { errors, register, control, getValues, setValue } = useFormContext();
+  const {
+    errors,
+    register,
+    control,
+    getValues,
+    setValue,
+    clearError
+  } = useFormContext();
 
   useEffect(() => {
     getAllModules();
@@ -53,6 +60,8 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const resetVersion = () => {
     setValue(`${prefixName}.tag`, '');
     setValue(`${prefixName}.version`, '');
+    clearError([`${prefixName}.tag`, `${prefixName}.version`]);
+    setIsEmptyTag(false);
   };
 
   const updateComponents = (option: Option) => {
