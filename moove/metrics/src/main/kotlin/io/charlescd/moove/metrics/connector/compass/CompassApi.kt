@@ -22,8 +22,12 @@ package io.charlescd.moove.metrics.connector.compass
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import java.net.URI
 
@@ -32,6 +36,7 @@ interface CompassApi {
 
     companion object {
         const val DATASOURCES_ENDPOINT = "/api/v1/datasources"
+        const val DELETE_DATASOURCES_ENDPOINT = "/api/v1/datasources/{datasourceId}"
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,9 +45,31 @@ interface CompassApi {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun createMetricGroup(
+    fun saveHealthyDatasource(
         @RequestHeader("x-workspace-id") workspaceId: String,
         compassCreateDatasourceRequest: CompassCreateDatasourceRequest
+    ): CompassDatasourceResponse
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(
+        value = [DATASOURCES_ENDPOINT],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun findHealthyDatasource(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam("health") health: Boolean
+    ): List<CompassDatasourceResponse>
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(
+        value = [DELETE_DATASOURCES_ENDPOINT],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun deleteDatasource(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable datasourceId: String
     ): CompassDatasourceResponse
 
 }

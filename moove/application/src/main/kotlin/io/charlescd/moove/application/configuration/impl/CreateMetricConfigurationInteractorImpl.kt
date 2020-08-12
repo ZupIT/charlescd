@@ -49,6 +49,9 @@ class CreateMetricConfigurationInteractorImpl @Inject constructor(
             )
         )
 
+        val existingDatasource = metricConfigurationService.findHealthyDatasourceOnCompass(workspaceId, true)
+            ?.let { metricConfigurationService }
+
         metricConfigurationService.saveDatasourceOnCompass(workspaceId, compassDatasource)
 
         return MetricConfigurationResponse.from(
