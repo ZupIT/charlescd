@@ -59,6 +59,7 @@ describe('DeploymentHandler', () => {
     mock = express()
     mockServer = mock.listen(9000)
     await fixtureUtilsService.clearDatabase()
+    await worker.pgBoss.start()
     await worker.pgBoss.clearStorage()
   })
 

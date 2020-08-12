@@ -10,6 +10,7 @@ services:
     - POSTGRES_USER=darwin
     - POSTGRES_PASSWORD=darwin
     - MAX_CONNECTIONS=300
+    - TZ=America/Sao_Paulo
 
   stubby4j:
     image: sandokandias/stubby4j-docker

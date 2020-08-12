@@ -40,6 +40,7 @@ describe('DeploymentController v2', () => {
   })
 
   beforeEach(async() => {
+    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
   })

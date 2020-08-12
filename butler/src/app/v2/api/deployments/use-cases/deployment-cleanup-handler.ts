@@ -4,6 +4,9 @@ import { Repository, UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { MooveService } from '../../../../v1/core/integrations/moove'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { Inject } from '@nestjs/common'
+import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 
 interface UpdateResultReturning {
   id: string,
@@ -17,12 +20,14 @@ export class DeploymentCleanupHandler {
   constructor(
     @InjectRepository(DeploymentEntity)
     private deploymentsRepository: Repository<DeploymentEntity>,
-    private mooveService: MooveService
+    private mooveService: MooveService,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private envConfiguration: IEnvConfiguration,
   ) { }
 
   public async run(job: JobWithDoneCallback<unknown, unknown>): Promise<UpdateResult>{
     const updatedDeployments =  await this.deploymentsRepository.createQueryBuilder('v2deployments')
-      .where('v2deployments.created_at < now() - interval \'15 minutes\'')
+      .where(`v2deployments.created_at < now() - interval '${this.envConfiguration.deploymentExpireTime} minutes'`)
       .update(DeploymentEntity)
       .set({ status: DeploymentStatusEnum.TIMED_OUT }).returning(['id', 'deploymentId', 'status', 'callbackUrl', 'circleId']).execute()
     if (updatedDeployments.affected) {

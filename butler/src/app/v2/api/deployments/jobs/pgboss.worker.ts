@@ -27,8 +27,6 @@ import { DeploymentCleanupHandler } from '../use-cases/deployment-cleanup-handle
 import { DeploymentHandler } from '../use-cases/deployment-handler'
 import PgBoss = require('pg-boss');
 
-const EXPIRE_IN_MINUTES = 25 // TODO move to config
-
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   public pgBoss: PgBoss
@@ -38,7 +36,7 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
     @Inject(forwardRef(() => DeploymentHandler))
     private readonly deploymentHandler: DeploymentHandler,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
-    envConfiguration: IEnvConfiguration,
+    private envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntityV2)
     private deploymentRepository: Repository<DeploymentEntityV2>,
 
@@ -47,35 +45,39 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
   }
 
   public publish(params: Execution): Promise<string | null> {
-    return this.pgBoss.publish('deployment-queue', params, { expireInMinutes: EXPIRE_IN_MINUTES })
+    return this.pgBoss.publish('deployment-queue', params, { expireInMinutes: this.envConfiguration.deploymentExpireTime })
   }
 
   public async publishWithPriority(params: Execution): Promise<string | null> {
     await this.deploymentRepository.increment({ id: params.deployment.id }, 'priority', 1) // execution priority column
     const incrementedDeployment = await this.deploymentRepository.findOneOrFail({ id: params.deployment.id })
     const incPriority = incrementedDeployment.priority // pg-boss priority column
-    return this.pgBoss.publish('deployment-queue', params, { priority: incPriority, expireInMinutes: EXPIRE_IN_MINUTES })
+    return this.pgBoss.publish('deployment-queue', params, { priority: incPriority, expireInMinutes: this.envConfiguration.deploymentExpireTime })
   }
 
   public async onModuleInit(): Promise<void> {
-    this.consoleLoggerService.log('Starting pgboss')
-    await this.pgBoss.start()
-    this.pgBoss.on('error', (error) => {
-      this.consoleLoggerService.log('pg-boss error', error)
-    })
+    if (process.env.NODE_ENV !== 'test') {
+      this.consoleLoggerService.log('Starting pgboss')
+      await this.pgBoss.start()
+      this.pgBoss.on('error', (error) => {
+        this.consoleLoggerService.log('pg-boss error', error)
+      })
 
-    await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<Execution, unknown>) => {
-      await this.deploymentHandler.run(job)
-    })
+      await this.pgBoss.subscribe('deployment-queue', async(job: JobWithDoneCallback<Execution, unknown>) => {
+        await this.deploymentHandler.run(job)
+      })
 
-    await this.pgBoss.schedule('deployment-cleanup', '* * * * *', undefined, undefined)
-    await this.pgBoss.subscribe('deployment-cleanup', async(job: JobWithDoneCallback<unknown, unknown>) => {
-      await this.deploymentCleanupHandler.run(job)
-    })
+      await this.pgBoss.schedule('deployment-cleanup', '* * * * *', {}, {})
+      await this.pgBoss.subscribe('deployment-cleanup', async(job: JobWithDoneCallback<unknown, unknown>) => {
+        await this.deploymentCleanupHandler.run(job)
+      })
+    }
   }
 
   public async onModuleDestroy(): Promise<void> {
-    this.consoleLoggerService.log('Shutting down onModuleDestroy')
-    return await this.pgBoss.stop()
+    if (process.env.NODE_ENV !== 'test') {
+      this.consoleLoggerService.log('Shutting down onModuleDestroy')
+      return await this.pgBoss.stop()
+    }
   }
 }

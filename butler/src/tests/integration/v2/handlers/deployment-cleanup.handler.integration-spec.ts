@@ -14,6 +14,7 @@ import { DeploymentCleanupHandler } from '../../../../app/v2/api/deployments/use
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
 import { TestSetupUtils } from '../../utils/test-setup-utils'
 import express = require('express')
+import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
 
 let mock = express()
 
@@ -46,7 +47,8 @@ describe('DeploymentCleanupHandler', () => {
     await fixtureUtilsService.clearDatabase()
   })
 
-  afterEach(() => {
+  afterEach(async() => {
+    await fixtureUtilsService.clearDatabase()
     mockServer.close()
   })
 
@@ -79,9 +81,8 @@ describe('DeploymentCleanupHandler', () => {
 
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
-    createdAt.setMinutes(createdAt.getMinutes() - 15)
+    createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
-
     const { deployment: recentDeployment } = await createDeployment(params, cdConfiguration, manager)
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
@@ -126,7 +127,7 @@ describe('DeploymentCleanupHandler', () => {
 
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
-    createdAt.setMinutes(createdAt.getMinutes() - 15)
+    createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
