@@ -48,8 +48,7 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 	var currentMetric metricsgroup.Metric
 	_ = json.Unmarshal(metric, &currentMetric)
 
-	query := createQueryByMetric(currentMetric)
-
+	query := createQueryByMetric(currentMetric, string(period))
 	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
 	queryParams := url.Values{}
 	queryParams.Add("query", query)
