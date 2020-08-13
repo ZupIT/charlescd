@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import ContentIcon from 'core/components/ContentIcon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { UserGroup } from '../../interfaces/UserGroups';
+import { counter } from 'core/utils/counter';
 import map from 'lodash/map';
 import Styled from './styled';
 
@@ -31,14 +32,42 @@ interface Props {
 
 const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
   const { register, handleSubmit } = useForm();
+  const [userCounter, setUserCounter] = useState(0);
+
+  useEffect(() => {
+    return setUserCounter(counter(userGroup?.users, 8));
+  }, [userGroup]);
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
     onEdit(name);
   };
 
+  const renderUsers = (userGroup: UserGroup) => {
+    return (
+      <Styled.UserList>
+        {map(userGroup?.users, (user, index) => {
+          if (index <= 7) {
+            return (
+              <Styled.UserAvatarNoPhoto
+                key={user?.id}
+                src={user?.photoUrl}
+                name={user?.name}
+              />
+            );
+          }
+        })}
+        {userCounter > 0 && (
+          <Styled.UsersCounter onClick={onAddUser} data-testid="count-users">
+            +{userCounter}
+          </Styled.UsersCounter>
+        )}
+      </Styled.UserList>
+    );
+  };
+
   return (
     <>
-      <Styled.Layer.Title>
+      <Styled.Layer.Title data-testid={userGroup?.name}>
         <ContentIcon icon="user-groups">
           <InputTitle
             resume
@@ -60,15 +89,7 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           >
             Add / Remove user
           </Styled.ButtonAdd>
-          <Styled.UserList>
-            {map(userGroup?.users, user => (
-              <Styled.UserAvatarNoPhoto
-                key={user?.name}
-                src={user?.photoUrl}
-                name={user?.name}
-              />
-            ))}
-          </Styled.UserList>
+          {renderUsers(userGroup)}
         </ContentIcon>
       </Styled.Layer.Users>
     </>
