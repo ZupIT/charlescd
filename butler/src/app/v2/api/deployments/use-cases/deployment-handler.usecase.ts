@@ -33,7 +33,7 @@ import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
 @Injectable()
-export class DeploymentHandler {
+export class DeploymentHandlerUseCase {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,

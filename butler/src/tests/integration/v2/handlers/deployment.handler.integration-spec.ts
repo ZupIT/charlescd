@@ -12,7 +12,7 @@ import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/dep
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { DeploymentHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-handler'
+import { DeploymentHandlerUsecase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
 import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { FixtureUtilsService } from '../../utils/fixture-utils.service'
@@ -26,7 +26,7 @@ describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
-  let deploymentHandler: DeploymentHandler
+  let deploymentHandler: DeploymentHandlerUsecase
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUsecase
@@ -44,7 +44,7 @@ describe('DeploymentHandler', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
-    deploymentHandler = app.get<DeploymentHandler>(DeploymentHandler)
+    deploymentHandler = app.get<DeploymentHandlerUsecase>(DeploymentHandlerUsecase)
     deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
     notificationUseCase = app.get<ReceiveNotificationUsecase>(ReceiveNotificationUsecase)
     manager = fixtureUtilsService.connection.manager

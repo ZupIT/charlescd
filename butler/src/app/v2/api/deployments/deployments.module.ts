@@ -26,7 +26,7 @@ import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.enti
 import { Execution } from './entity/execution.entity'
 import { PgBossWorker } from './jobs/pgboss.worker'
 import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
-import { DeploymentHandler } from './use-cases/deployment-handler'
+import { DeploymentHandlerUseCase } from './use-cases/deployment-handler.usecase'
 import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
 import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { ComponentsRepositoryV2 } from './repository'
@@ -54,7 +54,7 @@ import { DeploymentRepositoryV2 } from './repository/deployment.repository'
     CreateDeploymentUseCase,
     CreateUndeploymentUseCase,
     ReceiveNotificationUseCase,
-    DeploymentHandler,
+    DeploymentHandlerUseCase,
     MooveService,
     DeploymentCleanupHandler,
     ConsoleLoggerService,
