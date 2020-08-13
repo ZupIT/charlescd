@@ -20,7 +20,7 @@ import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { Execution } from '../entity/execution.entity'
-import { DeploymentHandlerUsecase } from '../use-cases/deployment-handler.usecase'
+import { DeploymentHandler } from '../use-cases/deployment-handler'
 import PgBoss = require('pg-boss');
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -33,8 +33,8 @@ export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    @Inject(forwardRef(() => DeploymentHandlerUsecase))
-    private readonly deploymentHandler: DeploymentHandlerUsecase,
+    @Inject(forwardRef(() => DeploymentHandler))
+    private readonly deploymentHandler: DeploymentHandler,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntityV2)

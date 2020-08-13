@@ -23,7 +23,7 @@ import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
 import { PgBossWorker } from './jobs/pgboss.worker'
-import { DeploymentHandlerUsecase } from './use-cases/deployment-handler.usecase'
+import { DeploymentHandler } from './use-cases/deployment-handler'
 import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
 import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
@@ -50,7 +50,7 @@ import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.useca
     CreateDeploymentUseCase,
     CreateUndeploymentUseCase,
     ReceiveNotificationUseCase,
-    DeploymentHandlerUsecase,
+    DeploymentHandler,
     ConsoleLoggerService,
     SpinnakerConnector,
     SpinnakerApiService

@@ -31,7 +31,7 @@ import { ComponentsRepositoryV2 } from '../repository'
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
 @Injectable()
-export class DeploymentHandlerUsecase {
+export class DeploymentHandler {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
