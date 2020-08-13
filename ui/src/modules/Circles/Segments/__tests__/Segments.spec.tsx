@@ -37,4 +37,5 @@ test('render Segments default component without viewMode', async () => {
 
   await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
   await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
 });
