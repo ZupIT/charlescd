@@ -81,7 +81,7 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 		return err
 	}
 
-	if !reg.Match([]byte(currentPeriod)) {
+	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
 		return errors.New("Invalid period: not found number")
 	}
 
