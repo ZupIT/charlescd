@@ -13,16 +13,18 @@ type Plugin struct {
 	Src  string `json:"src"`
 }
 
-func (plugin Plugin) Validate() error {
+func (plugin Plugin) Validate() []error {
+	ers := make([]error, 0)
+
 	if plugin.Name == "" {
-		return errors.New("Name is required")
+		ers = append(ers, errors.New("Name is required"))
 	}
 
 	if plugin.Src == "" {
-		return errors.New("Source path is required")
+		ers = append(ers, errors.New("Source path is required"))
 	}
 
-	return nil
+	return ers
 }
 
 func (main Main) Parse(plugin io.ReadCloser) (Plugin, error) {

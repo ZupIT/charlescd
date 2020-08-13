@@ -40,8 +40,8 @@ func (pluginApi PluginApi) create(w http.ResponseWriter, r *http.Request, _ http
 		return
 	}
 
-	if err := plugin.Validate(); err != nil {
-		api.NewRestError(w, http.StatusBadRequest, []error{err})
+	if err := plugin.Validate(); len(err) > 0 {
+		api.NewRestError(w, http.StatusBadRequest, err)
 		return
 	}
 
