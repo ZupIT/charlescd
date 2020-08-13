@@ -33,12 +33,10 @@ class ChangeUserPasswordInteractorImpl @Inject constructor(
     private val keycloakCustomService: KeycloakCustomService
 ) : ChangeUserPasswordInteractor {
 
-    override fun execute(id: String, authorization: String, request: ChangeUserPasswordRequest) {
-        val user = userService.find(id)
+    override fun execute(authorization: String, request: ChangeUserPasswordRequest) {
         this.keycloakCustomService.hitUserInfo(authorization)
-        if (!keycloakService.checkUserAuthenticity(user, authorization)) {
-            throw BusinessException.of(MooveErrorCode.INVALID_USER_AUTHENTICITY)
-        }
+        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
+        val user = userService.findByEmail(parsedEmail)
         keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
     }
 }
