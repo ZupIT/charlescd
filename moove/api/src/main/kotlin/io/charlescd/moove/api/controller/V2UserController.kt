@@ -55,13 +55,12 @@ class V2UserController(
     }
 
     @ApiOperation(value = "Change users' password")
-    @PutMapping("/{id}/password")
+    @PutMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changePassword(
         @RequestHeader(value = "Authorization") authorization: String,
-        @PathVariable("id", required = false) id: String,
         @RequestBody @Valid request: ChangeUserPasswordRequest
     ) {
-        this.changeUserPasswordInteractor.execute(id, authorization, request)
+        this.changeUserPasswordInteractor.execute(authorization, request)
     }
 }

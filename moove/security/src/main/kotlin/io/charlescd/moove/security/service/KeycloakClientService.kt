@@ -146,9 +146,9 @@ class KeycloakClientService(
         updateKeycloakUser(keycloakUser)
     }
 
-    override fun checkUserAuthenticity(user: User, authorization: String): Boolean {
-        val parsedAccessToken = parseAccessToken(authorization)
-        return parsedAccessToken?.email == user.email
+    override fun getEmailByAccessToken(authorization: String): String {
+        val token = authorization.substringAfter("Bearer").trim()
+        return TokenVerifier.create(token, CharlesAccessToken::class.java).token.email
     }
 
     override fun changeUserPassword(email: String, oldPassword: String, newPassword: String) {
@@ -177,13 +177,6 @@ class KeycloakClientService(
             .users()
             .get(keycloakUser.id)
             .resetPassword(credentialRepresentation)
-    }
-
-    private fun parseAccessToken(authorization: String?): CharlesAccessToken? {
-        return authorization?.let {
-            val token = authorization.substringAfter("Bearer").trim()
-            return TokenVerifier.create(token, CharlesAccessToken::class.java).token
-        }
     }
 
     private fun loadKeycloakUser(email: String): UserRepresentation {
