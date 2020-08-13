@@ -50,7 +50,8 @@ const expectedBaseStageHelm = {
   outputName: 'app-name-version',
   overrides: {
     'image.tag': 'version.url',
-    'name': 'version'
+    'name': 'version',
+    'circleId': 'circleId'
   },
   refId: 'ref-if',
   requisiteStageRefIds: [
