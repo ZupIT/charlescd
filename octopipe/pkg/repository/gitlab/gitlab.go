@@ -40,9 +40,9 @@ func NewGitlabRepository(url, token string) GitlabRepository {
 
 func (gitlabRepository GitlabRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	var responseMap map[string]interface{}
-	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_HTTP_VERIFY"))
+	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
 	if errParse != nil {
-		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_HTTP_VERIFY invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
+		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
 	}
 	customTransport := http.DefaultTransport.(*http.Transport).Clone()
 	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: skipTLS}
