@@ -46,11 +46,11 @@ test('render error in invalid field', async () => {
 
 test('submit password change form', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
-  const { queryByTestId } = render(<ChangePassword />);
+  const onSubmit = jest.fn();
+  const { queryByTestId } = render(<ChangePassword onSubmit={onSubmit} />);
   const oldPassword = queryByTestId('input-password-oldPassword');
   const newPassword = queryByTestId('input-password-newPassword');
   const confirmPassword = queryByTestId('input-password-confirmPassword');
-  const spy = jest.spyOn(baseHookUtils, 'useFetchStatus');
   const value = '@Asdfg1234';
 
   await wait(() => expect(newPassword).toBeInTheDocument());
@@ -62,6 +62,5 @@ test('submit password change form', async () => {
   const button = queryByTestId('button-default-change-password');
   await wait(() => expect(button).not.toBeDisabled());
   await wait(() => fireEvent.click(button));
-
-  expect(spy).toHaveBeenCalled();
+  await wait (() => expect(onSubmit).toBeCalled());
 });
