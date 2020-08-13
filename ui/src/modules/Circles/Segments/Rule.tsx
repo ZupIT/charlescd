@@ -20,7 +20,7 @@ import options from './conditional.options';
 import { getCondition } from './helpers';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   prefixName: string;
   viewMode: boolean;
   rule: Partial<
