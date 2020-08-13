@@ -26,21 +26,24 @@ test('render Segments default component', async () => {
     <Segments />
   );
 
-  await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
-  await wait(() => expect(queryByTestId('button-default-save')).not.toBeInTheDocument());
+  expect(queryByTestId('segments-rules')).not.toBeInTheDocument();
+  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
+  expect(queryByTestId('input-hidden-type')).toBeInTheDocument();
+  expect(queryByTestId('button-default-save')).not.toBeInTheDocument();
 });
 
-test('render Segments default component without viewMode', async () => {
+test('render Segments default component with viewMode off', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
   );
 
-  await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
-  await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
+  expect(getByTestId('segments-rules')).toBeInTheDocument();
+  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
+  expect(getByTestId('button-default-save')).toBeInTheDocument();
 });
 
 test('render Segments default component and Rules', async () => {
-  const { getByTestId, debug } = render(
+  const { getByTestId } = render(
     <Segments viewMode={false} />
   );
 
@@ -49,10 +52,10 @@ test('render Segments default component and Rules', async () => {
   const WrapperCondition = getByTestId('select-clauses[0].content.condition')
   const InputValue = getByTestId('input-text-clauses[0].content.value[0]')
 
-  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
-  await wait(() => expect(InputType).toHaveAttribute('type', 'hidden'));
-  await wait(() => expect(InputKey).toBeInTheDocument());
-  await wait(() => expect(InputKey).toHaveAttribute('type', 'text'));
-  await wait(() => expect(WrapperCondition).toBeInTheDocument());
-  await wait(() => expect(InputValue).toBeInTheDocument());
+  expect(getByTestId('segments-rules')).toBeInTheDocument();
+  expect(InputType).toHaveAttribute('type', 'hidden');
+  expect(InputKey).toBeInTheDocument();
+  expect(InputKey).toHaveAttribute('type', 'text');
+  expect(WrapperCondition).toBeInTheDocument();
+  expect(InputValue).toBeInTheDocument();
 });
