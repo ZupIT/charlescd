@@ -101,7 +101,7 @@ const expectedTotalPipeline = {
       overrides: {
         'image.tag': '/v1',
         'name': 'v1',
-        'circleId': 'circleId'
+        'circleId': 'circle-id'
       },
       refId: '1',
       requisiteStageRefIds: [],

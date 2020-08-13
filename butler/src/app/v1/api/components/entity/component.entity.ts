@@ -92,14 +92,14 @@ export class ComponentEntity extends BaseEntity {
     this.removeCurrentDefaultCircle()
     this.addDefaultCircle(componentDeployment)
     this.setUnusedVersions()
-    this.addVersion(componentDeployment)
+    this.addVersion(componentDeployment, AppConstants.DEFAULT_CIRCLE_ID)
   }
 
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
     this.removeCurrentCircleRule(circle)
     this.addCircleRule(circle, componentDeployment)
     this.setUnusedVersions()
-    this.addVersion(componentDeployment)
+    this.addVersion(componentDeployment, circle.headerValue)
   }
 
   public unsetPipelineCircle(circle: CircleDeploymentEntity): void {
@@ -126,7 +126,7 @@ export class ComponentEntity extends BaseEntity {
   private addDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
     this.pipelineOptions.pipelineCircles.push({
       destination: {
-        version: componentDeployment.buildImageTag
+        version: this.concatVersionCircle(componentDeployment.buildImageTag, AppConstants.DEFAULT_CIRCLE_ID)
       }
     })
   }
@@ -138,7 +138,7 @@ export class ComponentEntity extends BaseEntity {
         headerValue: circle.headerValue
       },
       destination: {
-        version: componentDeployment.buildImageTag
+        version: this.concatVersionCircle(componentDeployment.buildImageTag, circle.headerValue)
       }
     })
   }
@@ -156,13 +156,17 @@ export class ComponentEntity extends BaseEntity {
     this.pipelineOptions.pipelineUnusedVersions = unusedVersions
   }
 
-  private addVersion(componentDeployment: ComponentDeploymentEntity): void {
+  private addVersion(componentDeployment: ComponentDeploymentEntity, circleId: string): void {
     this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(
       pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
     )
     this.pipelineOptions.pipelineVersions.push({
       versionUrl: componentDeployment.buildImageUrl,
-      version: componentDeployment.buildImageTag
+      version: this.concatVersionCircle(componentDeployment.buildImageTag, circleId)
     })
+  }
+
+  private concatVersionCircle(version: string, circleId: string): string {
+      return version.concat("-").concat(circleId.substring(0, 8))
   }
 }
