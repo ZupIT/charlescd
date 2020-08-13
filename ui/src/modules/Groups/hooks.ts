@@ -202,7 +202,7 @@ export const useManagerMemberInUserGroup = (): [Function, string] => {
   const managerMemberUserGroup = useCallback(
     (checked: boolean, groupId: string, memberId: string) => {
       setStatus('');
-      if (!checked) {
+      if (checked) {
         onAddMemberUserGroup(groupId, { memberId }).then(() => {
           setStatus('resolved');
         });
