@@ -25,7 +25,8 @@ type PrometheusResultResponse struct {
 }
 
 type PrometheusResultsResponse struct {
-	Result []map[string]interface{} `json:"result"`
+	Result     []map[string]interface{} `json:"result"`
+	ResultType string                   `json:"resultType"`
 }
 
 type PrometheusDataResponse struct {
@@ -81,11 +82,21 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 		return nil, errors.New("FAILED DECODER: " + err.Error())
 	}
 
-	if len(result.Data.Result) == 1 {
-		return result.Data.Result[0]["value"], nil
-	} else if len(result.Data.Result) <= 0 {
-		return []interface{}{}, nil
+	resultValues := map[string]interface{}{
+		"matrix": result.Data.Result[0]["values"],
+		"vector": result.Data.Result[0]["value"],
 	}
 
-	return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric")
+	switch len(result.Data.Result) {
+	case 1:
+		if resultValue, ok := resultValues[result.Data.ResultType]; ok {
+			return resultValue, nil
+		}
+
+		return nil, errors.New("Result type not valid")
+	case 0:
+		return []interface{}{}, nil
+	default:
+		return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + currentMetric.Metric)
+	}
 }
