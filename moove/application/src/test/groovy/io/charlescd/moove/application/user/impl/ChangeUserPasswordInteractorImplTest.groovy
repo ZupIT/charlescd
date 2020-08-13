@@ -33,61 +33,44 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
     def "when user does not exist should throw an exception"() {
         given:
-        def userId = "user-id"
+        def userEmail = "user-email"
         def authorization = "authorization"
         def request = new ChangeUserPasswordRequest("old-password", "new-password")
 
         when:
-        this.changeUserPasswordInteractor.execute(userId, authorization, request)
+        this.changeUserPasswordInteractor.execute(authorization, request)
 
         then:
-        1 * this.userRepository.findById(userId) >> Optional.empty()
+        1 * keycloakCustomService.hitUserInfo(authorization)
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> userEmail
+        1 * this.userRepository.findByEmail(userEmail) >> Optional.empty()
 
         def ex = thrown(NotFoundException)
         ex.resourceName == "user"
-        ex.id == userId
-    }
-
-    def "when user authenticity does not match should throw an exception"() {
-        given:
-        def userId = "user-id"
-        def user = getDummyUser(userId)
-        def authorization = "authorization"
-        def request = new ChangeUserPasswordRequest("old-password", "new-password")
-
-        when:
-        this.changeUserPasswordInteractor.execute(userId, authorization, request)
-
-        then:
-        1 * this.userRepository.findById(userId) >> Optional.of(user)
-        1 * keycloakCustomService.hitUserInfo(authorization)
-        1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> false
-
-        def ex = thrown(BusinessException)
-        ex.errorCode == MooveErrorCode.INVALID_USER_AUTHENTICITY
+        ex.id == userEmail
     }
 
     def "should change user password"() {
         given:
-        def userId = "user-id"
-        def user = getDummyUser(userId)
+        def userEmail = "user-email"
+        def user = getDummyUser(userEmail)
         def authorization = "authorization"
         def request = new ChangeUserPasswordRequest("old-password", "new-password")
 
         when:
-        this.changeUserPasswordInteractor.execute(userId, authorization, request)
+        this.changeUserPasswordInteractor.execute(authorization, request)
 
         then:
-        1 * this.userRepository.findById(userId) >> Optional.of(user)
         1 * keycloakCustomService.hitUserInfo(authorization)
-        1 * this.keycloakService.checkUserAuthenticity(user, authorization) >> true
+        1 * this.keycloakService.getEmailByAccessToken(authorization) >> userEmail
+        1 * this.userRepository.findByEmail(userEmail) >> Optional.of(user)
         1 * this.keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
 
         notThrown()
     }
 
-    private User getDummyUser(String userId) {
-        new User(userId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+    private User getDummyUser(String email) {
+        new User("user-id", "charles", email, "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
 
 }
