@@ -20,5 +20,5 @@ import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 
 interface ChangeUserPasswordInteractor {
 
-    fun execute(id: String, authorization: String, request: ChangeUserPasswordRequest)
+    fun execute(authorization: String, request: ChangeUserPasswordRequest)
 }
