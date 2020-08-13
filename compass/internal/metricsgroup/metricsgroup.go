@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"path/filepath"
-	"plugin"
 	"regexp"
 
 	"github.com/google/uuid"
@@ -160,22 +158,6 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) getPluginById(pluginID uuid.UUID) (*plugin.Plugin, error) {
-	pluginsPath := "plugins"
-
-	pluginResult, err := main.pluginMain.FindById(pluginID.String())
-	if err != nil {
-		return nil, errors.New("Not found plugin: " + pluginID.String())
-	}
-
-	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
-	if err != nil {
-		return nil, err
-	}
-
-	return plugin, nil
-}
-
 func (main Main) Query(id, period string) ([]MetricResult, error) {
 	metricsResults := []MetricResult{}
 	metricsGroup, err := main.FindById(id)
@@ -190,7 +172,7 @@ func (main Main) Query(id, period string) ([]MetricResult, error) {
 			return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
 		}
 
-		plugin, err := main.getPluginById(dataSourceResult.PluginID)
+		plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
 		if err != nil {
 			return nil, err
 		}

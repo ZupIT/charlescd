@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"os"
+	"path/filepath"
+	"plugin"
 )
 
 type Plugin struct {
@@ -60,6 +63,17 @@ func (main Main) FindById(id string) (Plugin, error) {
 		return Plugin{}, db.Error
 	}
 	return plugin, nil
+}
+
+func (main Main) GetPluginByID(id string) (*plugin.Plugin, error) {
+	pluginsPath := os.Getenv("PLUGINS_DIR")
+
+	pluginResult, err := main.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
 }
 
 func (main Main) Update(id string, plugin Plugin) (Plugin, error) {
