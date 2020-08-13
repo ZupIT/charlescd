@@ -397,36 +397,6 @@ class KeycloakClientServiceTest extends Specification {
         notThrown()
     }
 
-    def "should successfully check user authenticity"() {
-        given:
-        def user = new User("user-id", "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc1Jvb3QiOmZhbHNlLCJqdGkiOiIwMzc4YmVjZS1lYzU4LTQ" +
-                "2MTAtODc2Ny0zYWJhZDE5NjY4OGQiLCJleHAiOjE1ODEzNTg5MTUsIm5iZiI6MCwiaWF0IjoxNTgxMzU1MzE1LCJzY29wZSI6InB" +
-                "yb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImdpdmVuX25hbWUiOiJNZW1iZXIiLCJmYW1pbHlfbmFtZSI6Ik1" +
-                "lbWJlciIsImVtYWlsIjoibWVtYmVyQHp1cC5jb20uYnIifQ.s54MzrSsfw3fGDAY7WaC1CKLCwWjZNL6djS7lnkyzIw"
-
-        when:
-        def result = keycloakClientService.checkUserAuthenticity(user, authorization)
-
-        then:
-        assert result
-    }
-
-    def "should fail to check user authenticity"() {
-        given:
-        def user = new User("user-id", "charles", "wrong_member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc1Jvb3QiOmZhbHNlLCJqdGkiOiIwMzc4YmVjZS1lYzU4LTQ" +
-                "2MTAtODc2Ny0zYWJhZDE5NjY4OGQiLCJleHAiOjE1ODEzNTg5MTUsIm5iZiI6MCwiaWF0IjoxNTgxMzU1MzE1LCJzY29wZSI6InB" +
-                "yb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImdpdmVuX25hbWUiOiJNZW1iZXIiLCJmYW1pbHlfbmFtZSI6Ik1" +
-                "lbWJlciIsImVtYWlsIjoibWVtYmVyQHp1cC5jb20uYnIifQ.s54MzrSsfw3fGDAY7WaC1CKLCwWjZNL6djS7lnkyzIw"
-
-        when:
-        def result = keycloakClientService.checkUserAuthenticity(user, authorization)
-
-        then:
-        assert !result
-    }
-
     def "should throw exception when user password does not match"(){
         given:
         def email = "email"
