@@ -11,8 +11,8 @@ import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { DeploymentCleanupHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-cleanup-handler'
-import { FixtureUtilsService } from '../../utils/fixture-utils.service'
-import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
 import express = require('express')
 import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
 
@@ -52,7 +52,7 @@ describe('DeploymentCleanupHandler', () => {
     mockServer.close()
   })
 
-  it('updates old unreasolved deployments', async() => {
+  it('updates old unresolved deployments', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
@@ -158,8 +158,7 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components,
-    params.incomingCircleId
+    components
   ))
 
   const job : JobWithDoneCallback<unknown, unknown> = {

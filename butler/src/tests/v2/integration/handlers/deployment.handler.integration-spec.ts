@@ -12,13 +12,13 @@ import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/dep
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { DeploymentHandlerUsecase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
-import { NotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/notification-use-case'
+import { DeploymentHandlerUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
-import { FixtureUtilsService } from '../../utils/fixture-utils.service'
-import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
 import express = require('express')
-import { ReceiveNotificationUsecase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
+import { ReceiveNotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
+import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
 
 let mock = express()
 
@@ -26,10 +26,11 @@ describe('DeploymentHandler', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
-  let deploymentHandler: DeploymentHandlerUsecase
+  let deploymentHandler: DeploymentHandlerUseCase
   let manager: EntityManager
   let mockServer: Server
-  let notificationUseCase: ReceiveNotificationUsecase
+  let notificationUseCase: ReceiveNotificationUseCase
+  let deploymentUseCase: CreateDeploymentUseCase
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -44,9 +45,9 @@ describe('DeploymentHandler', () => {
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
-    deploymentHandler = app.get<DeploymentHandlerUsecase>(DeploymentHandlerUsecase)
+    deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
     deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
-    notificationUseCase = app.get<ReceiveNotificationUsecase>(ReceiveNotificationUsecase)
+    notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
     manager = fixtureUtilsService.connection.manager
   })
 
@@ -129,7 +130,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.handleCallback(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.execute(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
     await deploymentHandler.run(secondJob)
 
     const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
@@ -137,7 +138,7 @@ describe('DeploymentHandler', () => {
     expect(secondHandled.components.map(c => c.running)).toEqual([true])
     expect(firstHandled.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.handleCallback(secondDeployment.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.execute(secondDeployment.id, DeploymentStatusEnum.SUCCEEDED)
 
     const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
     const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
@@ -261,13 +262,13 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     params.circle,
     cdConfiguration,
     params.callbackUrl,
-    components,
-    params.incomingCircleId
+    components
   ))
 
   const execution : Execution = await manager.save(new Execution(
     deployment,
-    'DEPLOYMENT'
+    'DEPLOYMENT',
+    params.incomingCircleId
   ))
 
   const job : JobWithDoneCallback<Execution, unknown> = {

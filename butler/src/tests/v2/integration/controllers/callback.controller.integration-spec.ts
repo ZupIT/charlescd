@@ -10,11 +10,11 @@ import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/d
 import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../utils/fixture-utils.service'
-import { TestSetupUtils } from '../../utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
 
-describe('DeploymentController v2', () => {
+describe('CallbackController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let worker: PgBossWorker
@@ -81,13 +81,13 @@ describe('DeploymentController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto]
     )
-    const deploymentEntity = deploymentDto.toCircleEntity('20692347-2132-4cf2-b66c-2a7b3d7d7045')
+    const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
     await request(app.getHttpServer())
-      .post(`/v2/notifications/deployment/${deployment.id}`)
+      .post(`/v2/deployments/${deployment.id}/notify`)
       .send({ status: 'SUCCEEDED' })
       .set('x-circle-id', '12345')
       .expect(201)
@@ -101,7 +101,6 @@ describe('DeploymentController v2', () => {
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
             priority: 0,
-            incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
             notificationStatus: 'NOT_SENT',
             active: true,
             components: [
@@ -155,13 +154,13 @@ describe('DeploymentController v2', () => {
       DeploymentStatusEnum.CREATED,
       [modulesDto]
     )
-    const deploymentEntity = deploymentDto.toCircleEntity('20692347-2132-4cf2-b66c-2a7b3d7d7045')
+    const deploymentEntity = deploymentDto.toCircleEntity()
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
     await request(app.getHttpServer())
-      .post(`/v2/notifications/deployment/${deployment.id}`)
+      .post(`/v2/deployments/${deployment.id}/notify`)
       .send({ status: 'FAILED' })
       .set('x-circle-id', '12345')
       .expect(201)
@@ -174,7 +173,6 @@ describe('DeploymentController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
-            incomingCircleId: '20692347-2132-4cf2-b66c-2a7b3d7d7045',
             notificationStatus: 'NOT_SENT',
             priority: 0,
             active: false,

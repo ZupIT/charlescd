@@ -94,19 +94,17 @@ export class FixtureUtilsService {
   }
 
   public async createV2CircleDeployment(
-    deploymentRequest: CreateDeploymentRequestDto,
-    incomingCircleId: string
+    deploymentRequest: CreateDeploymentRequestDto
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity(incomingCircleId))
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity())
     return this.manager.save(deployment)
   }
 
   public async createV2DefaultDeployment(
     deploymentRequest: CreateDeploymentRequestDto,
-    incomingCircleId: string | null,
     unchangedComponents: ComponentEntityV2[]
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(incomingCircleId, unchangedComponents))
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(unchangedComponents))
     return this.manager.save(deployment)
   }
 
