@@ -17,7 +17,7 @@
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 
-export const getSuccessWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
+export const getUndeploymentsSuccessWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
@@ -32,7 +32,7 @@ export const getSuccessWebhookStage = (deployment: Deployment, stageId: number, 
   refId: `${stageId}`,
   requisiteStageRefIds: deployment?.components ? getRequisiteStageRefIds(deployment.components) : [],
   stageEnabled: {
-    expression: '${ deploymentResult && proxyDeploymentsResult }',
+    expression: '${ proxyUndeploymentsResult }',
     type: 'expression'
   },
   statusUrlResolution: 'getMethod',
@@ -41,10 +41,8 @@ export const getSuccessWebhookStage = (deployment: Deployment, stageId: number, 
 })
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
-  const deploymentsEvalId: number = (components.length * 4) + 1
-  const proxiesEvalId: number = deploymentsEvalId + components.length + 1
+  const proxiesEvalId: number = components.length * 2 + 1
   return [
-    `${deploymentsEvalId}`,
     `${proxiesEvalId}`
   ]
 }

@@ -81,7 +81,7 @@ export class DeploymentHandlerUseCase {
 
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
-    const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents)
+    const cdResponse = await this.spinnakerConnector.createDeployment(deployment, activeComponents, job.data.incomingCircleId)
     return cdResponse.status === 'ERROR' ?
       await this.handleCdError(job, cdResponse) :
       await this.handleCdSuccess(job, deployment)
@@ -91,7 +91,7 @@ export class DeploymentHandlerUseCase {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment, job })
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
-    const cdResponse = await this.spinnakerConnector.createUndeployment(deployment, activeComponents)
+    const cdResponse = await this.spinnakerConnector.createUndeployment(deployment, activeComponents, job.data.incomingCircleId)
     return cdResponse.status === 'ERROR' ?
       await this.handleCdError(job, cdResponse) :
       await this.handleCdSuccess(job, deployment)

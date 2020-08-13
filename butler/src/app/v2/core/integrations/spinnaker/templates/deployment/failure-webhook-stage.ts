@@ -17,11 +17,11 @@
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 
-export const getFailureWebhookStage = (deployment: Deployment, stageId: number): Stage => ({
+export const getFailureWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
-    'x-circle-id': `${deployment.incomingCircleId}`
+    'x-circle-id': `${incomingCircleId}`
   },
   failPipeline: false,
   method: 'POST',
