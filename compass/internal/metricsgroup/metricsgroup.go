@@ -107,7 +107,7 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 
 func (main Main) FindAll() ([]MetricsGroup, error) {
 	var metricsGroups []MetricsGroup
-	db := main.db.Find(&metricsGroups)
+	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
 		return []MetricsGroup{}, db.Error
 	}
@@ -128,7 +128,7 @@ func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
 
 func (main Main) FindById(id string) (MetricsGroup, error) {
 	metricsGroup := MetricsGroup{}
-	db := main.db.Preload("Metrics").Preload("Metrics.Filters").Where("id = ?", id).First(&metricsGroup)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, db.Error
 	}
