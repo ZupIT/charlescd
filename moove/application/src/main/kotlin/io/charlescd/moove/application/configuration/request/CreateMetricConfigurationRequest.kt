@@ -34,7 +34,6 @@ data class CreateMetricConfigurationRequest(
     @field:NotBlank
     @field:NotNull
     val url: String,
-    val health: Boolean,
     val name: String
 ) {
     fun toMetricConfiguration(workspaceId: String, author: User) = MetricConfiguration(

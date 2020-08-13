@@ -53,8 +53,8 @@ class MetricConfigurationService(
             .firstOrNull()
     }
 
-    fun removeHealthyDatasourceOnCompass(datasourceId: String) {
-
+    fun removeHealthyDatasourceOnCompass(workspaceId: String, datasourceId: String): CompassDatasourceResponse {
+        return compassApi.deleteDatasource(workspaceId, datasourceId)
     }
 
     fun saveDatasourceOnCompass(workspaceId: String, datasourceRequest: CompassCreateDatasourceRequest): CompassDatasourceResponse {
