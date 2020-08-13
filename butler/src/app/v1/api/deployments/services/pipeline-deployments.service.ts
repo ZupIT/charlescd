@@ -302,7 +302,7 @@ export class PipelineDeploymentsService {
   ): IConnectorConfiguration {
 
     return {
-      pipelineCirclesOptions: this.concatCircleIdInVersion(component.pipelineOptions, callbackCircleId),
+      pipelineCirclesOptions: component.pipelineOptions,
       cdConfiguration: cdConfiguration.configurationData,
       componentId: componentDeployment.componentId,
       applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
@@ -316,19 +316,4 @@ export class PipelineDeploymentsService {
     }
   }
 
-  private concatCircleIdInVersion(pipelineOptions: IPipelineOptions, callbackCircleId: string) {
-    return {
-      ...pipelineOptions,
-      pipelineVersions: pipelineOptions.pipelineVersions.map(
-        pipelineVersion => this.concatVersionCircle(pipelineVersion, callbackCircleId)
-      )
-    }
-  }
-
-
-  private concatVersionCircle(pipelineVersion: IDeploymentVersion, callbackCircleId: string): IDeploymentVersion {
-    return {
-      ...pipelineVersion, version: pipelineVersion.version + callbackCircleId.substring(9)
-    }
-  }
 }
