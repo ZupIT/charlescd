@@ -15,18 +15,76 @@
  */
 
 import styled from 'styled-components';
-import Modal from 'core/components/Modal';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 import AvatarName from 'core/components/AvatarName';
 import { Input } from 'core/components/Form';
 
-const Wrapper = styled(Modal.Default)`
-  padding: 0;
+interface WrapperProps {
+  isOpen?: boolean;
+  className?: string;
+}
 
-  .modal-content {
+const Wrapper = styled('div')<WrapperProps>`
+  display: ${({ isOpen }: WrapperProps) => (!isOpen ? 'none' : 'flex')};
+  z-index: ${({ theme }) => theme.zIndex.OVER_3};
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  .modal-user-content {
     padding: 0;
     width: 543px;
+    height: 639px;
   }
+`;
+
+const Placeholder = styled.div`
+  padding: 60px 135.5px 87.5px 135.5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Background = styled.div`
+  background: ${({ theme }) => theme.modal.default.screen};
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: ${({ theme }) => theme.zIndex.OVER_3};
+  opacity: 0.8;
+`;
+
+const Dialog = styled.div`
+  position: relative;
+  width: auto;
+  max-width: 500px;
+  margin: 1.75rem auto;
+  min-height: calc(100% - (1.75rem * 2));
+`;
+
+const Container = styled.div`
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: ${({ theme }) => theme.modal.default.background};
+  z-index: ${({ theme }) => theme.zIndex.OVER_4};
+  color: ${({ theme }) => theme.modal.default.text};
+  padding: 35px 41px 28px 40px;
+  top: 15%;
+  transform: translate(-50%, 0);
+  text-align: left;
+  opacity: 1.2;
 `;
 
 const Header = styled.div`
@@ -35,6 +93,7 @@ const Header = styled.div`
 
 const Content = styled.div`
   overflow-y: auto;
+  max-height: 100vh;
   border-top: 1px solid ${COLOR_BLACK_MARLIN};
 `;
 
@@ -60,6 +119,7 @@ const ItemWrapper = styled.div`
   padding: 20px 50px;
   border-bottom: 1px solid ${COLOR_BLACK_MARLIN};
   cursor: pointer;
+  background: ${({ theme }) => theme.modal.default.background};
 `;
 
 const ItemProfile = styled.div`
@@ -83,12 +143,31 @@ const ItemEmail = styled.div`
   font-weight: 300;
 `;
 
+const CloseButton = styled.div`
+  position: absolute;
+  top: 15px;
+  right: 10px;
+`;
+
+const UpdateButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 50px;
+  border-bottom: 1px solid ${COLOR_BLACK_MARLIN};
+  cursor: pointer;
+`;
+
 const ItemChecked = styled.div``;
 
 const Footer = styled.div``;
 
 export default {
   Wrapper,
+  Placeholder,
+  Background,
+  Dialog,
+  Container,
   Header,
   Content,
   Search,
@@ -100,6 +179,10 @@ export default {
     Name: ItemName,
     Email: ItemEmail,
     Checked: ItemChecked
+  },
+  Button: {
+    Close: CloseButton,
+    Update: UpdateButtonWrapper
   },
   Footer
 };
