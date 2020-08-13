@@ -37,5 +37,22 @@ test('render Segments default component without viewMode', async () => {
 
   await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
   await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
+});
+
+test('render Segments default component and Rules', async () => {
+  const { getByTestId, debug } = render(
+    <Segments viewMode={false} />
+  );
+
+  const InputType = getByTestId('input-hidden-clauses[0].type')
+  const InputKey = getByTestId('input-text-clauses[0].content.key')
+  const WrapperCondition = getByTestId('select-clauses[0].content.condition')
+  const InputValue = getByTestId('input-text-clauses[0].content.value[0]')
+
   await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+  await wait(() => expect(InputType).toHaveAttribute('type', 'hidden'));
+  await wait(() => expect(InputKey).toBeInTheDocument());
+  await wait(() => expect(InputKey).toHaveAttribute('type', 'text'));
+  await wait(() => expect(WrapperCondition).toBeInTheDocument());
+  await wait(() => expect(InputValue).toBeInTheDocument());
 });
