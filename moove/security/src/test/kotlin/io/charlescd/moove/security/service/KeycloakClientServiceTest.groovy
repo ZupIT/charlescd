@@ -263,16 +263,16 @@ class KeycloakClientServiceTest extends Specification {
         given:
         def authorId = "author-id"
         def workspaceId = "workspace-id"
-        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
+        def author = new User(authorId, "charles", "authors@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def memberId = "ccd9f717-6b38-4f1e-ad64-f735cda7a0da"
-        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], LocalDateTime.now())
+        def member = new User(memberId, "charles", "member@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def userGroupId = "user-group-id"
         def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [member])
 
-        def role1 = new Role("role-id1", "role-name1", LocalDateTime.now())
+        def role1 = new Role("role-id1", "role-name1", "description", [], LocalDateTime.now())
 
         def roles = []
-        def role2 = new Role("role-id2", "role-name2", LocalDateTime.now())
+        def role2 = new Role("role-id2", "role-name2", "description", [], LocalDateTime.now())
         roles.add(role2)
 
         def keycloakUser = new UserRepresentation()
