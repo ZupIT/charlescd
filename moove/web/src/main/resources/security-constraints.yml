@@ -221,7 +221,7 @@ publicConstraints:
     methods:
       - GET
 
-  - pattern: /v2/users/{id}/password
+  - pattern: /v2/users/password
     methods:
       - PUT
 
