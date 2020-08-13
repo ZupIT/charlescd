@@ -39,9 +39,24 @@ test('render Rule default component', async () => {
   const { result } = renderHook(() => useForm());
   const methods = result.current;
 
-  const { getByTestId } = render(
+  const { getByTestId, debug } = render(
     <FormContext { ...methods }>
       <Rule { ...props } />
     </FormContext>
   );
+
+  debug();
+
+  expect(getByTestId('segments-rules')).toBeInTheDocument();
+
+  const InputType = getByTestId('input-hidden-input-rule.type')
+  const InputKey = getByTestId('input-text-input-rule.content.key')
+  const WrapperCondition = getByTestId('select-input-rule.content.condition')
+  const InputValue = getByTestId('input-text-input-rule.content.value[0]')
+
+  expect(InputType).toHaveAttribute('type', 'hidden');
+  expect(InputKey).toBeInTheDocument();
+  expect(InputKey).toHaveAttribute('type', 'text');
+  expect(WrapperCondition).toBeInTheDocument();
+  expect(InputValue).toBeInTheDocument();
 });
