@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 import isEmpty from 'lodash/isEmpty';
 import { useForm } from 'react-hook-form';
-import { getProfileByKey } from 'core/utils/profile';
 import { validationResolver } from 'core/components/CheckPassword';
 import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
 
-const ChangePassword = () => {
+interface Props {
+  onSubmit?: () => void;
+}
+
+const ChangePassword = ({ onSubmit }: Props) => {
   const {
     register,
     handleSubmit,
@@ -40,14 +43,19 @@ const ChangePassword = () => {
   const confirmPass = watch('confirmPassword') as string;
   const { updatePassword, status } = useChangePassword();
 
-  const onSubmit = () => {
-    const id = getProfileByKey('id');
+  useEffect(() => {
+    if (status.isResolved) {
+      onSubmit();
+    }
+  }, [status.isResolved, onSubmit]);
+
+  const onSubmitForm = () => {
     const { oldPassword, newPassword } = getValues();
-    updatePassword(id, { oldPassword, newPassword });
+    updatePassword({ oldPassword, newPassword });
   };
 
   return (
-    <Styled.ChangePassword onSubmit={handleSubmit(onSubmit)}>
+    <Styled.ChangePassword onSubmit={handleSubmit(onSubmitForm)}>
       <Text.h2 color="light">Change password</Text.h2>
       <Styled.Modal.Info color="dark">
         Fill in the fields below to change your password:
