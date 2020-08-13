@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d3bd8a57-ca6e-49ee-8e3d-c756a6e2f2e8",
+		"_postman_id": "339facba-c05a-46ed-9fdf-90dbf4cbe6f2",
 		"name": "Compass",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -63,7 +63,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5c55c54f-1a65-424f-a539-ae12d2c28580",
+								"id": "f5fe39b6-04d9-48ca-811c-d35cfb392ce5",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"datasourceId\", response[\"id\"]);"
@@ -141,7 +141,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e466ef76-4b52-4ef5-85a4-72f420f7374b",
+								"id": "96b841b6-457f-4778-b536-5cf46fe71c43",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"pluginId\", response[\"id\"]);"
@@ -245,7 +245,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7aaa7e2f-fede-465f-a162-43b199ad25f8",
+										"id": "f39e558c-4707-4918-9b51-bf8f4c283137",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -271,7 +271,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"name\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
+									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"metric\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -312,7 +312,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f50e4aa2-e0ec-4969-ac01-34bc1cab1164",
+										"id": "1364f502-aeb8-44b4-a1b6-8638d1bde638",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -373,6 +373,33 @@
 								"description": "Save metrics group"
 							},
 							"response": []
+						},
+						{
+							"name": "delete metric",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}/metrics/{{metricsId}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"metrics-groups",
+										"{{metricsGroupsId}}",
+										"metrics",
+										"{{metricsId}}"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -384,7 +411,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b9586bf7-d54a-46f2-8d46-02745fd4ccd4",
+								"id": "2dec2709-f7bf-4156-ace8-cfdcdc650517",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"pm.environment.set(\"metricsGroupsId\", response[\"id\"]);"
@@ -449,7 +476,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "cdd18003-0c17-4d8b-a0d6-0a6ec34fab86",
+								"id": "feb2e963-bc2e-4e25-bb17-a96a802d1d85",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"metricsGroupsId\", response[\"id\"]);"
