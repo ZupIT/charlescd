@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-export enum DeploymentStatusEnum {
-    CREATED = 'CREATED',
-    SUCCEEDED = 'SUCCEEDED',
-    FAILED = 'FAILED',
-    TIMED_OUT = 'TIMED_OUT'
+export enum QueueNames {
+    DEPLOYMENT = 'deployment-queue',
+    CLEANUP = 'deployment-cleanup'
 }

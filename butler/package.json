@@ -20,12 +20,12 @@
     "test:all:cov": "jest --runInBand --coverage"
   },
   "dependencies": {
-    "@nestjs/common": "^7.0.11",
+    "@nestjs/common": "^7.4.2",
     "@nestjs/config": "^0.4.2",
-    "@nestjs/core": "^7.0.11",
-    "@nestjs/platform-express": "^7.0.11",
-    "@nestjs/swagger": "^4.5.5",
-    "@nestjs/typeorm": "^7.0.0",
+    "@nestjs/core": "^7.4.2",
+    "@nestjs/platform-express": "^7.4.2",
+    "@nestjs/swagger": "^4.5.12",
+    "@nestjs/typeorm": "^7.1.0",
     "@octokit/rest": "^16.43.1",
     "@types/stack-trace": "0.0.29",
     "class-transformer": "^0.2.3",
@@ -44,7 +44,7 @@
     "rxjs": "^6.5.5",
     "stack-trace": "0.0.10",
     "swagger-ui-express": "^4.1.4",
-    "typeorm": "^0.2.24",
+    "typeorm": "^0.2.25",
     "uuid": "7.0.3",
     "winston": "^3.2.1"
   },

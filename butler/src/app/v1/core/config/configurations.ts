@@ -53,6 +53,8 @@ export const Configuration: IEnvConfiguration = {
 
   octopipeUrl: process.env.OCTOPIPE_URL || ConfigurationConstants.OCTOPIPE_URL,
 
+  deploymentExpireTime: Number(process.env.DEPLOYMENT_EXPIRE_TIME) || ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME,
+
   pgBossConfig: {
     host: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
     database: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME,

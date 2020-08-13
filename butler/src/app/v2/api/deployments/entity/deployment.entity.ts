@@ -64,6 +64,9 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
+  @Column({ name: 'notification_status', type: 'varchar' })
+  public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
+
   constructor(
     deploymentId: string,
     authorId: string,

@@ -50,6 +50,8 @@ export default interface IEnvConfiguration {
 
   helmRepoBranch: string
 
+  deploymentExpireTime: number
+
   pgBossConfig: {
     host: string,
     database: string,

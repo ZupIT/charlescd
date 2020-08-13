@@ -27,6 +27,8 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { Execution } from '../entity/execution.entity'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
+import { DateUtils } from '../../../core/utils/date.utils'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -48,6 +50,13 @@ export class DeploymentHandler {
 
   public async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
+
+    if (this.checkForTimeout(deployment)) {
+      const error = new Error('Deployment timed out')
+      await this.deploymentsRepository.update({ id: deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
+      job.done(error)
+      throw error
+    }
     const overlappingComponents = await this.getOverlappingComponents(deployment)
 
     if (overlappingComponents.length > 0) {
@@ -92,6 +101,14 @@ export class DeploymentHandler {
     this.consoleLoggerService.log('ERROR:INVALID_EXECUTION_TYPE', { type: job.data.type })
     job.done(new Error('Invalid execution type'))
     return job
+  }
+
+  public checkForTimeout(deployment: DeploymentEntity): boolean {
+    const currentTime = DateUtils.now()
+    const deploymentCreatedAt = deployment.createdAt
+    const difference = currentTime.getTime() - deploymentCreatedAt.getTime() // This will give difference in milliseconds
+    const resultInMinutes = Math.round(difference / 60000)
+    return resultInMinutes > 25 // TODO extract 25 to config
   }
 
   public async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {
