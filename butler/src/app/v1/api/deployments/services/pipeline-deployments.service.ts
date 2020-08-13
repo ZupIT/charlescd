@@ -38,6 +38,7 @@ import {
 import { ComponentUndeploymentsRepository } from '../repository'
 import { PipelineErrorHandlerService } from './pipeline-error-handler.service'
 import { CallbackTypeEnum } from '../../notifications/enums/callback-type.enum'
+import { IDeploymentVersion, IPipelineOptions } from '../../components/interfaces'
 
 @Injectable()
 export class PipelineDeploymentsService {
@@ -301,7 +302,7 @@ export class PipelineDeploymentsService {
   ): IConnectorConfiguration {
 
     return {
-      pipelineCirclesOptions: component.pipelineOptions,
+      pipelineCirclesOptions: this.concatCircleIdInVersion(component.pipelineOptions, callbackCircleId),
       cdConfiguration: cdConfiguration.configurationData,
       componentId: componentDeployment.componentId,
       applicationName: componentDeployment.moduleDeployment.deployment.applicationName,
@@ -312,6 +313,22 @@ export class PipelineDeploymentsService {
       callbackType,
       hostValue,
       gatewayName
+    }
+  }
+
+  private concatCircleIdInVersion(pipelineOptions: IPipelineOptions, callbackCircleId: string) {
+    return {
+      ...pipelineOptions,
+      pipelineVersions: pipelineOptions.pipelineVersions.map(
+        pipelineVersion => this.concatVersionCircle(pipelineVersion, callbackCircleId)
+      )
+    }
+  }
+
+
+  private concatVersionCircle(pipelineVersion: IDeploymentVersion, callbackCircleId: string): IDeploymentVersion {
+    return {
+      ...pipelineVersion, version: pipelineVersion.version + callbackCircleId.substring(9)
     }
   }
 }
