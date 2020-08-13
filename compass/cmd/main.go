@@ -4,6 +4,7 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
+	utils "compass/internal/util"
 	v1 "compass/web/api/v1"
 	"fmt"
 	"log"
@@ -53,7 +54,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.LogMode(true)
+	if utils.IsDeleveloperRunning() {
+		db.LogMode(true)
+	}
 
 	pluginMain := plugin.NewMain(db)
 	datasourceMain := datasource.NewMain(db, pluginMain)
