@@ -75,7 +75,7 @@ const Account = () => {
   const renderModal = () =>
     toggleModal && (
       <Modal.Default onClose={() => setToggleModal(false)}>
-        <ChangePassword />
+        <ChangePassword onSubmit={() => setToggleModal(false)} />
       </Modal.Default>
     );
 
