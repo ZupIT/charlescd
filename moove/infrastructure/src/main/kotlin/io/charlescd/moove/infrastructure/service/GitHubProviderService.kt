@@ -39,8 +39,7 @@ class GitHubProviderService(
     override fun createReleaseCandidates(build: Build, credentials: GitCredentials) {
         val intermediaryBranches = mutableMapOf<String, String>()
         val releaseBranches = mutableMapOf<String, String>()
-
-        val modules = extractModules(build)
+        val modules = build.modulesDistincted()
 
         createIntermediaryBranches(modules, build, credentials, intermediaryBranches)
 
@@ -128,12 +127,6 @@ class GitHubProviderService(
                 intermediaryReleaseBranches
             )
         }
-    }
-
-    private fun extractModules(build: Build): List<ModuleSnapshot> {
-        return build.features.flatMap { feature ->
-            feature.modules
-        }.distinct()
     }
 
     private fun createIntermediaryReleaseCandidateBranch(
