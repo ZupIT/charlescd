@@ -57,10 +57,10 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 	var dataSources []DataSource
 	var db *gorm.DB
 	if health == "" {
-		db = main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
+		db = main.db.Where("workspace_id = ? AND deleted_at IS NULL", workspaceID).Find(&dataSources)
 	} else {
 		healthValue, _ := strconv.ParseBool(health)
-		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
+		db = main.db.Where("workspace_id = ? AND health = ? AND deleted_at IS NULL", workspaceID, healthValue).Find(&dataSources)
 	}
 
 	if db.Error != nil {
@@ -130,7 +130,7 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 
 func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	var count int8
-	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true", workspaceId).Count(&count)
+	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true AND deleted_at IS NULL", workspaceId).Count(&count)
 	if result.Error != nil {
 		return false, result.Error
 	}
