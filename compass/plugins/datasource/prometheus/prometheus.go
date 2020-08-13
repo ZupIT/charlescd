@@ -19,6 +19,19 @@ type PrometheusMetricsResponse struct {
 	Data   []string `json:"data"`
 }
 
+type PrometheusResultResponse struct {
+	Metric interface{} `json:"metric"`
+	Values interface{} `json:"values"`
+}
+
+type PrometheusResultsResponse struct {
+	Result []map[string]interface{} `json:"result"`
+}
+
+type PrometheusDataResponse struct {
+	Data PrometheusResultsResponse `json:"data"`
+}
+
 func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	path := "/api/v1/label/__name__/values"
 
@@ -50,6 +63,10 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 
 	query := createQueryByMetric(currentMetric, string(period))
 	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
+	if err != nil {
+		return nil, err
+	}
+
 	queryParams := url.Values{}
 	queryParams.Add("query", query)
 	Url.RawQuery = queryParams.Encode()
@@ -58,11 +75,17 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 		return nil, errors.New("FAILED QUERY: " + query)
 	}
 
-	var result interface{}
+	var result PrometheusDataResponse
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
 		return nil, errors.New("FAILED DECODER: " + err.Error())
 	}
 
-	return result, nil
+	if len(result.Data.Result) == 1 {
+		return result.Data.Result[0]["value"], nil
+	} else if len(result.Data.Result) <= 0 {
+		return []interface{}{}, nil
+	}
+
+	return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric")
 }
