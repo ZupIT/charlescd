@@ -17,7 +17,7 @@
 import React from 'react';
 import MutationObserver from 'mutation-observer';
 import { FormContext, useForm } from 'react-hook-form';
-import { render, wait } from 'unit-test/testUtils';
+import { render, fireEvent } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -45,8 +45,6 @@ test('render Rule default component', async () => {
     </FormContext>
   );
 
-  debug();
-
   expect(getByTestId('segments-rules')).toBeInTheDocument();
 
   const InputType = getByTestId('input-hidden-input-rule.type')
@@ -59,4 +57,22 @@ test('render Rule default component', async () => {
   expect(InputKey).toHaveAttribute('type', 'text');
   expect(WrapperCondition).toBeInTheDocument();
   expect(InputValue).toBeInTheDocument();
+});
+
+test('render Rule default component with group', async () => {
+  const { result } = renderHook(() => useForm());
+  const onRemoveRule = jest.fn();
+  const methods = result.current;
+
+  const { getByTestId, debug } = render(
+    <FormContext { ...methods }>
+      <Rule { ...props } hasGroup onRemoveRule={onRemoveRule} />
+    </FormContext>
+  );
+
+  const InputTrash = getByTestId('icon-trash');
+  expect(InputTrash).toBeInTheDocument();
+
+  fireEvent.click(InputTrash);
+  expect(onRemoveRule).toBeCalled();
 });
