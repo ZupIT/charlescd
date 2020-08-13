@@ -24,7 +24,7 @@ import { useChangePassword } from './hooks/useChangePassword';
 import Styled from './styled';
 
 interface Props {
-  onSubmit: () => void;
+  onSubmit?: () => void;
 }
 
 const ChangePassword = ({ onSubmit }: Props) => {
