@@ -21,7 +21,6 @@ import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } fr
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { DeploymentNotificationRequest } from '../dto/deployment-notification-request.dto'
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
-import { CreateUndeploymentRequestDto } from '../dto/create-undeployment-request.dto'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 
 @Controller('v2/deployments')
@@ -47,19 +46,18 @@ export class DeploymentsController {
   @Post('/:id/undeploy')
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createUndeployment(
-    @Param('id') id: string,
-    @Body() createUndeploymentRequestDto: CreateUndeploymentRequestDto,
-    @Headers('x-circle-id') incomingCircleId: string | null,
-  ): Promise<DeploymentEntity> {
-    return this.createUndeploymentUseCase.execute(createUndeploymentRequestDto, incomingCircleId)
+    @Param('id') deploymentId: string,
+    @Headers('x-circle-id') incomingCircleId: string | null
+  ): Promise<void> { // TODO what do we need to return here?
+    return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
   }
 
   @Post('/:id/notify')
   @UsePipes(new ValidationPipe({ transform: true }))
   public async receiveNotification(
-    @Param('id') id: string,
+    @Param('id') deploymentId: string,
     @Body() notificationDto: DeploymentNotificationRequest,
   ): Promise<DeploymentEntity> {
-    return this.receiveNotificationUseCase.execute(id, notificationDto.status)
+    return this.receiveNotificationUseCase.execute(deploymentId, notificationDto.status)
   }
 }

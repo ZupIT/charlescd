@@ -22,7 +22,6 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { Execution } from '../entity/execution.entity'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
-import { CreateUndeploymentRequestDto } from '../dto/create-undeployment-request.dto'
 import { ExecutionTypeEnum } from '../enums'
 
 @Injectable()
@@ -38,9 +37,13 @@ export class CreateUndeploymentUseCase {
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async execute(createUndeploymentRequestDto: CreateUndeploymentRequestDto, incomingCircleId: string | null): Promise<any> {
-    this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { createUndeploymentRequestDto, incomingCircleId })
-    const execution = await this.createExecution(createUndeploymentRequestDto.deploymentId, incomingCircleId)
+  public async execute(
+    deploymentId: string,
+    incomingCircleId: string | null
+  ): Promise<void> {
+
+    this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { deploymentId, incomingCircleId })
+    const execution = await this.createExecution(deploymentId, incomingCircleId)
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution, jobId })
   }

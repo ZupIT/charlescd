@@ -178,7 +178,7 @@ export class SpinnakerPipelineBuilder {
       return []
     }
     const stages: Stage[] = []
-    const evalStageId: number = deployment.components.length * 2
+    const evalStageId: number = deployment.components.length * 2 + 1
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = this.getUndeploymentUnusedComponent(activeComponents, component)
       if (unusedComponent) {
