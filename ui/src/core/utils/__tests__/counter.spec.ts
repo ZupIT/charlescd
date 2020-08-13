@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_GHOST_WHITE,
-  COLOR_SANTAS_GREY,
-  COLOR_PURPLE_HEART,
-  COLOR_LIGHT_DEFAULT
-} from 'core/assets/colors';
+import { counter } from '../counter';
 
-export const light = {};
-
-export const dark = {
-  background: COLOR_GHOST_WHITE,
-  color: COLOR_SANTAS_GREY,
-  number: COLOR_LIGHT_DEFAULT,
-  counter: COLOR_PURPLE_HEART
-};
+test('testing counter', () => {
+  expect(counter([1, 2, 3, 4, 5], 3)).toBe(2);
+});
