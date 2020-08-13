@@ -23,15 +23,16 @@ type Metric struct {
 
 type MetricFilter struct {
 	util.BaseModel
-	MetricID uuid.UUID
-	Field    string `json:"field"`
-	Value    string `json:"value"`
-	Operator string `json:"operator"`
+	MetricID uuid.UUID `json:"-"`
+	Field    string    `json:"field"`
+	Value    string    `json:"value"`
+	Operator string    `json:"operator"`
 }
 
 type MetricGroupBy struct {
 	util.BaseModel
-	Field string `json:"field"`
+	MetricID uuid.UUID `json:"-"`
+	Field    string    `json:"field"`
 }
 
 func (metric Metric) Validate() error {
