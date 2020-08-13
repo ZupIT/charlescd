@@ -51,7 +51,6 @@ const deploymentWith3Components: Deployment = {
   createdAt: new Date(),
   finishedAt: null,
   status: DeploymentStatusEnum.CREATED,
-  incomingCircleId: 'Default',
   components: [
     {
       id: 'component-id-1',
@@ -103,7 +102,6 @@ const deploymentWith1ComponentCircle1: Deployment = {
   createdAt: new Date(),
   finishedAt: null,
   status: DeploymentStatusEnum.CREATED,
-  incomingCircleId: 'Default',
   components: [
     {
       id: 'component-id-1',
@@ -139,7 +137,6 @@ const deploymentWith1ComponentCircle2: Deployment = {
   createdAt: new Date(),
   finishedAt: null,
   status: DeploymentStatusEnum.CREATED,
-  incomingCircleId: 'Default',
   components: [
     {
       id: 'component-id-1',
@@ -171,7 +168,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -204,7 +200,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -237,7 +232,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -270,7 +264,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -303,7 +296,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -324,7 +316,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, 'Default')
     ).toEqual(completeSpinnakerPipeline)
   })
 
@@ -346,7 +338,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -379,7 +370,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -412,7 +402,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -433,7 +422,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, 'Default')
     ).toEqual(noUnusedSpinnakerPipeline)
   })
 
@@ -455,7 +444,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -488,7 +476,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -521,7 +508,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -542,7 +528,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, 'Default')
     ).toEqual(oneComponentSpinnakerPipeline)
   })
 
@@ -564,7 +550,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -597,7 +582,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -630,7 +614,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -663,7 +646,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -684,7 +666,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, 'Default')
     ).toEqual(oneComponentVSSpinnakerPipeline)
   })
 
@@ -706,7 +688,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -739,7 +720,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -772,7 +752,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -805,7 +784,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -826,7 +804,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, 'Default')
     ).toEqual(oneComponentNoUnused)
   })
 
@@ -848,7 +826,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -881,7 +858,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -914,7 +890,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -947,7 +922,6 @@ describe('V2 Spinnaker Connector', () => {
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
-          incomingCircleId: 'Default',
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -968,7 +942,7 @@ describe('V2 Spinnaker Connector', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents)
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, 'Default')
     ).toEqual(oneComponentWithUnused)
   })
 })
