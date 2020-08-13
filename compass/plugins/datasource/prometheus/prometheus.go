@@ -19,6 +19,20 @@ type PrometheusMetricsResponse struct {
 	Data   []string `json:"data"`
 }
 
+type PrometheusResultResponse struct {
+	Metric interface{} `json:"metric"`
+	Values interface{} `json:"values"`
+}
+
+type PrometheusResultsResponse struct {
+	Result     []map[string]interface{} `json:"result"`
+	ResultType string                   `json:"resultType"`
+}
+
+type PrometheusDataResponse struct {
+	Data PrometheusResultsResponse `json:"data"`
+}
+
 func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	path := "/api/v1/label/__name__/values"
 
@@ -50,6 +64,10 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 
 	query := createQueryByMetric(currentMetric, string(period))
 	Url, err := url.Parse(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
+	if err != nil {
+		return nil, err
+	}
+
 	queryParams := url.Values{}
 	queryParams.Add("query", query)
 	Url.RawQuery = queryParams.Encode()
@@ -58,11 +76,27 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 		return nil, errors.New("FAILED QUERY: " + query)
 	}
 
-	var result interface{}
+	var result PrometheusDataResponse
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
 		return nil, errors.New("FAILED DECODER: " + err.Error())
 	}
 
-	return result, nil
+	resultValues := map[string]interface{}{
+		"matrix": result.Data.Result[0]["values"],
+		"vector": result.Data.Result[0]["value"],
+	}
+
+	switch len(result.Data.Result) {
+	case 1:
+		if resultValue, ok := resultValues[result.Data.ResultType]; ok {
+			return resultValue, nil
+		}
+
+		return nil, errors.New("Result type not valid")
+	case 0:
+		return []interface{}{}, nil
+	default:
+		return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + currentMetric.Metric)
+	}
 }
