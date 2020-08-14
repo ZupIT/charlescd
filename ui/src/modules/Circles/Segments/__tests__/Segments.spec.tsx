@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Segments from '..';
 
 (global as any).MutationObserver = MutationObserver

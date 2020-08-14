@@ -110,6 +110,7 @@ const Input = React.forwardRef(
         />
         {label && (
           <Styled.Label
+            data-testid={`label-${type}-${name}`}
             isFocused={isFocused}
             hasError={hasError}
             onClick={() => handleClick()}
