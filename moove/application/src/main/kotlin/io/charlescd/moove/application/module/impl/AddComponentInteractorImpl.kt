@@ -25,7 +25,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import javax.inject.Named
 import javax.transaction.Transactional
-import javax.validation.ConstraintViolationException
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 open class AddComponentInteractorImpl(private val moduleService: ModuleService) : AddComponentInteractor {
@@ -37,7 +37,7 @@ open class AddComponentInteractorImpl(private val moduleService: ModuleService) 
         val component = request.toDomain(module.id, workspaceId)
         try {
             moduleService.addComponents(module.copy(components = listOf(component)))
-        } catch (exception: ConstraintViolationException) {
+        } catch (exception: DuplicateKeyException) {
             throw BusinessException.of(MooveErrorCode.COMPONENT_NAME_ALREADY_REGISTERED_IN_WORKSPACE)
         }
 

@@ -23,6 +23,7 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.ModuleRepository
+import org.springframework.dao.DuplicateKeyException
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -139,5 +140,36 @@ class AddComponentInteractorImplTest extends Specification {
         def exception = thrown(NotFoundException)
         assert exception.resourceName == "module"
         assert exception.id == moduleId
+    }
+
+    def "should throw an exception when component name already registered in workspace"() {
+        given:
+        def moduleId = "ef5ea1ef-11a9-4f74-b95f-9944cc7390a1"
+        def workspaceId = "038fed80-5565-4813-baa5-ae7ed6684159"
+        def request = new ComponentRequest("Application", 10, 10, 'host', 'gateway')
+
+        def author = getDummyUser()
+
+        def gitCredentials = new GitCredentials("address", "username", "password",
+                null, GitServiceProvider.GITHUB)
+
+        def gitConfiguration = new GitConfiguration("8f140b14-886d-4063-a245-eed09a1ff762", "config", gitCredentials, LocalDateTime.now(), author, workspaceId)
+
+        def module = new Module(moduleId, "CharlesCD", "gitRepositoryAddress",
+                LocalDateTime.now(), "helm-repository", author,
+                [], gitConfiguration, [], workspaceId)
+
+        when:
+        addComponentInteractor.execute(moduleId, workspaceId, request)
+
+        then:
+        1 * moduleRepository.find(moduleId, workspaceId) >> Optional.of(module)
+
+        1 * moduleRepository.addComponents(_) >> {
+            throw new DuplicateKeyException("Unique constraint violation")
+        }
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "component.name.already.registered.in.workspace"
     }
 }
