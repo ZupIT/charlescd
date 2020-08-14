@@ -216,8 +216,8 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   private fillVersionProperties(versions: IOctopipeVersion[], appName: string, circles: IPipelineCircle[]): IOctopipeVersion[] {
-   const versionsConcatenated = this.concatAppNameAndVersion(versions, appName)
-    return this.getCircleVersions(versionsConcatenated, circles)
+    const versionsUpdated = this.getCircleVersions(versions, circles)
+    return this.concatAppNameAndVersion(versionsUpdated, appName)
   }
 
   private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
