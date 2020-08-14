@@ -2,15 +2,17 @@ package plugin
 
 import (
 	"compass/internal/util"
+	"compass/pkg/logger/fake"
 	"database/sql"
+	"regexp"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"regexp"
-	"testing"
-	"time"
 )
 
 type Suite struct {
@@ -36,7 +38,8 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	s.repository = NewMain(s.DB)
+	fakeLogger := fake.NewLoggerFake()
+	s.repository = NewMain(s.DB, fakeLogger)
 }
 
 func TestInit(t *testing.T) {

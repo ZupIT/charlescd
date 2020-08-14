@@ -4,15 +4,17 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	"compass/pkg/logger/fake"
 	"database/sql"
+	"regexp"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"regexp"
-	"testing"
-	"time"
 )
 
 type Suite struct {
@@ -38,10 +40,12 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	var pluginMain = plugin.NewMain(s.DB)
-	var datasourceMain = datasource.NewMain(s.DB, pluginMain)
+	fakeLogger := fake.NewLoggerFake()
 
-	s.repository = NewMain(s.DB, datasourceMain, pluginMain)
+	var pluginMain = plugin.NewMain(s.DB, fakeLogger)
+	var datasourceMain = datasource.NewMain(s.DB, pluginMain, fakeLogger)
+
+	s.repository = NewMain(s.DB, datasourceMain, pluginMain, fakeLogger)
 }
 
 func TestInit(t *testing.T) {
