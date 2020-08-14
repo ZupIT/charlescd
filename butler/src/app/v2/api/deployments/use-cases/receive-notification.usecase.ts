@@ -65,6 +65,7 @@ export class ReceiveNotificationUseCase {
       deployment.status = DeploymentStatusEnum.FAILED
       deployment.active = false
     }
+
     try {
       if (currentActiveDeployment) {
         await this.deploymentRepository.save(currentActiveDeployment)
@@ -73,16 +74,32 @@ export class ReceiveNotificationUseCase {
     }
     catch (error) {
       if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
-        this.consoleLoggerService.log('Can only have one deployment active per circle')
+        this.consoleLoggerService.log('ERROR:Can only have one deployment active per circle')
         throw new InternalServerErrorException('Can only have one deployment active per circle')
       } else {
-        this.consoleLoggerService.log('Error when saving the deployment')
+        this.consoleLoggerService.log('ERROR:Failed to save deployment ')
         throw new InternalServerErrorException
       }
     }
   }
 
   private async handleUndeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
-    return {} as DeploymentEntity
+    const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
+    deployment.components = deployment.components.map(c => {
+      c.running = false
+      return c
+    })
+
+    if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
+      deployment.active = false
+    }
+
+    try {
+      return await this.deploymentRepository.save(deployment)
+    }
+    catch (error) {
+      this.consoleLoggerService.log('ERROR:Failed to save deployment')
+      throw new InternalServerErrorException()
+    }
   }
 }

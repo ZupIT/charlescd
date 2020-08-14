@@ -16,6 +16,8 @@
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
+import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 
 export const getSuccessWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -27,7 +29,8 @@ export const getSuccessWebhookStage = (deployment: Deployment, stageId: number, 
   method: 'POST',
   name: 'Trigger Success Webhook',
   payload: {
-    status: 'SUCCEEDED'
+    status: DeploymentStatusEnum.SUCCEEDED,
+    type: ExecutionTypeEnum.DEPLOYMENT
   },
   refId: `${stageId}`,
   requisiteStageRefIds: deployment?.components ? getRequisiteStageRefIds(deployment.components) : [],

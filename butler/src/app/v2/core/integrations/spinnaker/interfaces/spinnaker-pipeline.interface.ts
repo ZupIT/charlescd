@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { DeploymentNotificationRequestDto } from '../../../../api/deployments/dto/deployment-notification-request.dto'
+
 interface StageDefaultArtifact {
     customKind: boolean
     id: string
@@ -148,10 +150,6 @@ interface CustomHeaders {
     'x-circle-id': string
 }
 
-interface StagePayload {
-    status: string
-}
-
 interface StageVariable {
     key: string
     value: string
@@ -197,7 +195,7 @@ interface Stage {
     manifests?: Manifest[]
     customHeaders?: CustomHeaders
     method?: string
-    payload?: StagePayload
+    payload?: DeploymentNotificationRequestDto
     statusUrlResolution?: string
     url?: string
     failOnFailedExpressions?: boolean
