@@ -19,7 +19,7 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
-import { DeploymentNotificationRequest } from '../dto/deployment-notification-request.dto'
+import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 
@@ -56,8 +56,8 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async receiveNotification(
     @Param('id') deploymentId: string,
-    @Body() notificationDto: DeploymentNotificationRequest,
+    @Body() deploymentNotification: DeploymentNotificationRequestDto,
   ): Promise<DeploymentEntity> {
-    return this.receiveNotificationUseCase.execute(deploymentId, notificationDto.status)
+    return this.receiveNotificationUseCase.execute(deploymentId, deploymentNotification)
   }
 }

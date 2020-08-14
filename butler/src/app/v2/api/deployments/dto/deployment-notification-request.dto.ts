@@ -16,13 +16,22 @@
 
 import { IsEnum, IsNotEmpty } from 'class-validator'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../enums'
 
-export class DeploymentNotificationRequest {
+export class DeploymentNotificationRequestDto {
+
   @IsNotEmpty()
   @IsEnum(DeploymentStatusEnum)
   public status: DeploymentStatusEnum
 
-  constructor(status: DeploymentStatusEnum) {
+  @IsNotEmpty()
+  public type: ExecutionTypeEnum
+
+  constructor(
+    status: DeploymentStatusEnum,
+    type: ExecutionTypeEnum
+  ) {
     this.status = status
+    this.type = type
   }
 }

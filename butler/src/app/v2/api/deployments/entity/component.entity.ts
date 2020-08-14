@@ -4,6 +4,7 @@ import { Component } from '../interfaces'
 
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
+
   @PrimaryColumn('uuid')
   public id!: string
 

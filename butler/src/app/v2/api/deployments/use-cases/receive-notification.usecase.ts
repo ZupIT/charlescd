@@ -21,6 +21,8 @@ import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { InternalServerErrorException } from '@nestjs/common'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+import { ExecutionTypeEnum } from '../enums'
 
 export class ReceiveNotificationUseCase {
 
@@ -30,7 +32,18 @@ export class ReceiveNotificationUseCase {
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async execute(deploymentId: string, status: DeploymentStatusEnum): Promise<DeploymentEntity>{
+  public async execute(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity>{
+    switch (deploymentNotificationDto.type) {
+      case ExecutionTypeEnum.DEPLOYMENT:
+        return await this.handleDeploymentNotification(deploymentId, deploymentNotificationDto)
+      case ExecutionTypeEnum.UNDEPLOYMENT:
+        return await this.handleUndeploymentNotification(deploymentId, deploymentNotificationDto)
+      default:
+        throw new Error('Invalid Execution Type')
+    }
+  }
+
+  private async handleDeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
 
@@ -40,7 +53,7 @@ export class ReceiveNotificationUseCase {
       return c
     })
 
-    if (status === DeploymentStatusEnum.SUCCEEDED) {
+    if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
       deployment.status = DeploymentStatusEnum.SUCCEEDED
       deployment.active = true
       if (currentActiveDeployment) {
@@ -48,7 +61,7 @@ export class ReceiveNotificationUseCase {
       }
     }
 
-    if (status === DeploymentStatusEnum.FAILED) {
+    if (deploymentNotificationDto.status === DeploymentStatusEnum.FAILED) {
       deployment.status = DeploymentStatusEnum.FAILED
       deployment.active = false
     }
@@ -67,5 +80,9 @@ export class ReceiveNotificationUseCase {
         throw new InternalServerErrorException
       }
     }
+  }
+
+  private async handleUndeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
+    return {} as DeploymentEntity
   }
 }

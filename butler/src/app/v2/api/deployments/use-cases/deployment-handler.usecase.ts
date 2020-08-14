@@ -29,6 +29,7 @@ import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../enums'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -64,9 +65,9 @@ export class DeploymentHandlerUseCase {
     }
     
     switch (job.data.type) {
-      case 'DEPLOYMENT': // TODO use constant
+      case ExecutionTypeEnum.DEPLOYMENT:
         return await this.runDeployment(deployment, job)
-      case 'UNDEPLOYMENT': // TODO use constant
+      case ExecutionTypeEnum.UNDEPLOYMENT:
         return await this.runUndeployment(deployment, job)
       default:
         return this.handleInvalidExecutionType(job)

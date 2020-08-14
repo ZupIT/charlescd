@@ -25,6 +25,7 @@ import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateDeploymentRequestDto {
+
   @IsUUID()
   @IsNotEmpty()
   public deploymentId: string

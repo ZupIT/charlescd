@@ -18,6 +18,7 @@ import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateComponentRequestDto {
+
   @IsUUID()
   @IsNotEmpty()
   public componentId: string
