@@ -13,6 +13,7 @@ type UseCases interface {
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, error)
 	ParseMetric(metric io.ReadCloser) (Metric, error)
 	FindAll() ([]MetricsGroup, error)
+	ResumeByCircle(circleId string) ([]MetricGroupResume, error)
 	Save(metricsGroup MetricsGroup) (MetricsGroup, error)
 	SaveMetric(metric Metric) (Metric, error)
 	FindById(id string) (MetricsGroup, error)
@@ -20,7 +21,8 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
-	Query(id, period string) ([]MetricResult, error)
+	Query(id, period string) ([]MetricValues, error)
+	Result(id string) ([]MetricResult, error)
 	FindActiveMetricGroups() ([]MetricsGroup, error)
 }
 
