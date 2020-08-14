@@ -31,6 +31,7 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   public async updateTimedOutStatus(timeInMinutes: number) : Promise<UpdateResult>{
     return await this.createQueryBuilder('v2deployments')
       .where(`v2deployments.created_at < now() - interval '${timeInMinutes} minutes'`)
+      .andWhere('v2deployments.notification_status = \'NOT_SENT\'')
       .update(DeploymentEntityV2)
       .set({ status: DeploymentStatusEnum.TIMED_OUT }).returning(['id', 'deploymentId', 'status', 'callbackUrl', 'circleId']).execute()
   }

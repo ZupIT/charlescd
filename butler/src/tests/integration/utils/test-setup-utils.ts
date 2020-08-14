@@ -29,7 +29,7 @@ export class TestSetupUtils {
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))
-      app.enableShutdownHooks();
+      app.enableShutdownHooks()
       await app.init()
       return app
     } catch (error) {
