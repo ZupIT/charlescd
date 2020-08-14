@@ -3,6 +3,7 @@ package datasource
 import (
 	"compass/internal/plugin"
 	"compass/internal/util"
+	"compass/pkg/logger/fake"
 	"database/sql"
 	"encoding/json"
 	"regexp"
@@ -39,9 +40,10 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	var pluginMain = plugin.NewMain(s.DB)
+	fakeLogger := fake.NewLoggerFake()
+	var pluginMain = plugin.NewMain(s.DB, fakeLogger)
 
-	s.repository = NewMain(s.DB, pluginMain)
+	s.repository = NewMain(s.DB, pluginMain, fakeLogger)
 }
 
 func TestInit(t *testing.T) {
