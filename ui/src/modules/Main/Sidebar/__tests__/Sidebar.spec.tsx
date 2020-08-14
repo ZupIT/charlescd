@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, screen } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -82,4 +82,18 @@ test('renders sidebar componen( with selected workspace', async () => {
   );
 
   await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
+});
+
+// OK-testa se existe o icone help
+// X -testa se ao clicar no icone, abre outra aba com link da doc. verificar se icone foi clickado
+//  -> teste unitario do goTo()
+// testa se ao passar o mouse em cima do icone, aparece a tooltip escrito 'Documentation'
+
+test('help icon is in the sidebar', async () => {
+  const { queryByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} />
+  );
+
+  const helpIcon = queryByTestId('icon-help');
+  await wait(() => expect(helpIcon).toBeInTheDocument());
 });
