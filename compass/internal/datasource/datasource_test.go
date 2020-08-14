@@ -91,6 +91,31 @@ func (s *Suite) TestFindById() {
 	require.Equal(s.T(), expected, res)
 }
 
+func (s *Suite) TestFindByIdWithError() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = false
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	rows := sqlmock.
+		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
+		WithArgs("123456789").
+		WillReturnRows(rows)
+
+	_, err := s.repository.FindById(id.String())
+
+	require.Error(s.T(), err)
+}
+
 func (s *Suite) TestFindAllByWorkspace() {
 	var id = uuid.New()
 	var timeNow = time.Now()
@@ -195,39 +220,39 @@ func (s *Suite) TestDelete() {
 	require.Nil(s.T(), res)
 }
 
-//func (s *Suite) TestSave() {
-//	var id = "080d8c6b-1620-4e71-8498-64b5ef544405"
-//	//var idFoda, _ = uuid.Parse("080d8c6b-1620-4e71-8498-64b5ef544405")
-//	var timeNow = time.Now()
-//	var (
-//		//baseModel   = util.BaseModel{ID: idFoda, CreatedAt: timeNow}
-//		name        = "test-name"
-//		pluginID    = uuid.New()
-//		health      = false
-//		data        = json.RawMessage(`{"url": "localhost:8080"}`)
-//		workspaceID = uuid.New()
-//	)
-//
-//	//expected := DataSource{
-//	//	BaseModel:   baseModel,
-//	//	Name:        name,
-//	//	PluginID:    pluginID,
-//	//	Health:      health,
-//	//	Data:        data,
-//	//	WorkspaceID: workspaceID,
-//	//	DeletedAt:   nil,
-//	//}
-//
-//	s.mock.ExpectBegin()
-//	s.mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO "data_sources"`)).
-//		WithArgs(timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
-//		WillReturnResult(sqlmock.NewResult(1, 1))
-//	s.mock.ExpectCommit()
-//
-//	s.DB.Exec(`INSERT INTO "data_sources" ("id","created_at","name","plugin_id","health","data","workspace_id","deleted_at") VALUES($1, $2, $3, $4 ,$5, $6, $7, $8)`,
-//		id, timeNow, name, pluginID, health, data, workspaceID, nil)
-//	var err = s.DB.Close()
-//	//_, err := s.repository.Save(expected)
-//
-//	require.NoError(s.T(), err)
-//}
+func (s *Suite) TestSave() {
+	var id = "080d8c6b-1620-4e71-8498-64b5ef544405"
+	//var idFoda, _ = uuid.Parse("080d8c6b-1620-4e71-8498-64b5ef544405")
+	var timeNow = time.Now()
+	var (
+		//baseModel   = util.BaseModel{ID: idFoda, CreatedAt: timeNow}
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = false
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	//expected := DataSource{
+	//	BaseModel:   baseModel,
+	//	Name:        name,
+	//	PluginID:    pluginID,
+	//	Health:      health,
+	//	Data:        data,
+	//	WorkspaceID: workspaceID,
+	//	DeletedAt:   nil,
+	//}
+
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO "data_sources"`)).
+		WithArgs(timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	s.DB.Exec(`INSERT INTO "data_sources" ("id","created_at","name","plugin_id","health","data","workspace_id","deleted_at") VALUES($1, $2, $3, $4 ,$5, $6, $7, $8)`,
+		id, timeNow, name, pluginID, health, data, workspaceID, nil)
+	var err = s.DB.Close()
+	//_, err := s.repository.Save(expected)
+
+	require.NoError(s.T(), err)
+}
