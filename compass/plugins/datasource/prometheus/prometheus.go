@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type PrometheusConfig struct {
@@ -99,4 +100,27 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 	default:
 		return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + currentMetric.Metric)
 	}
+}
+
+func Result(datasourceConfiguration, metric []byte) (int, error) {
+	query, err := Query(datasourceConfiguration, metric, []byte(""))
+	if err != nil {
+		return 0, err
+	}
+
+	resultValue := query.([]interface{})
+
+	if len(resultValue) == 0 {
+		return 0, nil
+	}
+
+	fmt.Println(resultValue)
+
+	count, err := strconv.Atoi(resultValue[1].(string))
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+
 }
