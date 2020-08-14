@@ -85,6 +85,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
         )}
         {!viewMode && (
           <Styled.Button.Clause
+            id="add-clause"
             size="EXTRA_SMALL"
             onClick={() => addRule(index, group)}
           >
