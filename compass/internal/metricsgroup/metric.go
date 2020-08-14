@@ -9,6 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	MetricActive   = "ACTIVE"
+	MetricFinished = "FINISHED"
+)
+
 type Metric struct {
 	util.BaseModel
 	MetricsGroupID uuid.UUID       `json:"metricGroupId"`

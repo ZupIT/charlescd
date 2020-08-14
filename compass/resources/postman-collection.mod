@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "339facba-c05a-46ed-9fdf-90dbf4cbe6f2",
+		"_postman_id": "f6c9b76c-2e54-4162-a2e7-1e3abcbd2116",
 		"name": "Compass",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -63,7 +63,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f5fe39b6-04d9-48ca-811c-d35cfb392ce5",
+								"id": "653ece8e-13e5-49a0-9b8f-edb7f8fbb102",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"datasourceId\", response[\"id\"]);"
@@ -141,7 +141,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "96b841b6-457f-4778-b536-5cf46fe71c43",
+								"id": "1f0cdc21-df67-440c-bfe8-5a8d39cced16",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"pluginId\", response[\"id\"]);"
@@ -245,7 +245,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f39e558c-4707-4918-9b51-bf8f4c283137",
+										"id": "e10462e2-429f-4910-ba9c-151c87a503c5",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -271,7 +271,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"metric\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
+									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"name\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -312,7 +312,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1364f502-aeb8-44b4-a1b6-8638d1bde638",
+										"id": "1b5912fc-aa3b-4d5e-bc0a-4a67be5d866d",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -373,33 +373,6 @@
 								"description": "Save metrics group"
 							},
 							"response": []
-						},
-						{
-							"name": "delete metric",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "x-workspace-id",
-										"type": "text",
-										"value": "{{workspaceId}}"
-									}
-								],
-								"url": {
-									"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}/metrics/{{metricsId}}",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"v1",
-										"metrics-groups",
-										"{{metricsGroupsId}}",
-										"metrics",
-										"{{metricsId}}"
-									]
-								}
-							},
-							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -411,7 +384,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2dec2709-f7bf-4156-ace8-cfdcdc650517",
+								"id": "f05b078e-051d-4749-9679-528244666ff1",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"pm.environment.set(\"metricsGroupsId\", response[\"id\"]);"
@@ -437,7 +410,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"metric\": \"istio_charles_request_total\",\n            \"query\": \"\",\n            \"filters\": [\n                {\n                    \"field\": \"circle_id\",\n                    \"value\": \"5c7979b7-51fd-4c16-8f2e-2c5d93651ed1\",\n                    \"operator\": \"=\"\n                },\n                {\n                    \"field\": \"circle_source\",\n                    \"value\": \"f5d23a57-5607-4306-9993-477e1598cc2a\",\n                    \"operator\": \"=\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\"\n}",
+							"raw": "{\n    \"name\": \"Metricas de teste2\",\n    \"metrics\": [\n        {\n            \"dataSourceId\": \"{{datasourceId}}\",\n            \"metric\": \"group_metric_example_2\",\n            \"query\": \"\",\n            \"filters\": [\n                {\n                    \"field\": \"label1\",\n                    \"value\": \"test 999\",\n                    \"operator\": \"=\"\n                }\n            ],\n            \"groupBy\": [\n                {\n                    \"field\": \"app\"\n                }\n            ],\n            \"condition\": \"EQUAL\",\n            \"threshold\": 30.0\n        }\n    ],\n    \"circleId\": \"{{circleId}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -476,7 +449,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "feb2e963-bc2e-4e25-bb17-a96a802d1d85",
+								"id": "0d509ad4-0c44-4aa6-bfb4-3e40b82794e2",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"metricsGroupsId\", response[\"id\"]);"
@@ -561,6 +534,31 @@
 					"response": []
 				},
 				{
+					"name": "resume",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/resume/metrics-groups",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"resume",
+								"metrics-groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "query",
 					"request": {
 						"method": "GET",
@@ -581,6 +579,39 @@
 								"metrics-groups",
 								"{{metricsGroupsId}}",
 								"query"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "1d",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}/result",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"metrics-groups",
+								"{{metricsGroupsId}}",
+								"result"
 							]
 						}
 					},

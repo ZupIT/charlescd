@@ -3,6 +3,7 @@ package v1
 import (
 	"compass/internal/metricsgroup"
 	"compass/web/api"
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -21,11 +22,13 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupApi.create))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.show))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/query"), api.HttpValidator(metricsGroupApi.query))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id/result"), api.HttpValidator(metricsGroupApi.result))
 	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
 	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricsGroupApi.createMetric))
 	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.updateMetric))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.deleteMetric))
+	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), api.HttpValidator(metricsGroupApi.resume))
 	return metricsGroupApi
 }
 
@@ -37,6 +40,17 @@ func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Reque
 	}
 
 	api.NewRestSuccess(w, http.StatusOK, circles)
+}
+
+func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+	circleId := r.URL.Query().Get("circleId")
+	metricGroups, err := metricsGroupApi.metricsGroupMain.ResumeByCircle(circleId)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	api.NewRestSuccess(w, http.StatusOK, metricGroups)
 }
 
 func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
@@ -77,6 +91,13 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	id := ps.ByName("id")
 
 	period := r.URL.Query().Get("period")
+	if period == "" {
+		api.NewRestError(w, http.StatusInternalServerError, []error{
+			errors.New("Query param period is empty"),
+		})
+		return
+	}
+
 	err := metricsGroupApi.metricsGroupMain.PeriodValidate(period)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
@@ -84,6 +105,18 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	}
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.Query(id, period)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	api.NewRestSuccess(w, http.StatusOK, queryResult)
+}
+
+func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+	id := ps.ByName("id")
+
+	queryResult, err := metricsGroupApi.metricsGroupMain.Result(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
