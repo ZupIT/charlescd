@@ -61,7 +61,6 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
   const hasGroup = fields.length > ONE;
 
   const renderGroup = (group: Partial<ArrayField<Record<string, any>, "id">>, index: number) => {
-    console.log('group', group);
     return (
       <Styled.Group key={group.id}>
         {group.type === 'CLAUSE' ? (
