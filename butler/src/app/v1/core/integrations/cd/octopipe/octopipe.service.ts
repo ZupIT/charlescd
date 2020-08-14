@@ -117,10 +117,14 @@ export class OctopipeService implements ICdServiceStrategy {
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: [{}],
-      versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
+      versions: this.fillVersionProperties(
+        configuration.pipelineCirclesOptions.pipelineVersions,
+        configuration.componentName,
+        configuration.pipelineCirclesOptions.pipelineCircles
+      ),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
-      callbackType:  configuration.callbackType
+      callbackType:  configuration.callbackType,
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
     return payload
@@ -211,6 +215,11 @@ export class OctopipeService implements ICdServiceStrategy {
     })
   }
 
+  private fillVersionProperties(versions: IOctopipeVersion[], appName: string, circles: IPipelineCircle[]): IOctopipeVersion[] {
+   const versionsConcatenated = this.concatAppNameAndVersion(versions, appName)
+    return this.getCircleVersions(versionsConcatenated, circles)
+  }
+
   private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
     if (deploymentConfiguration.provider === ClusterProviderEnum.DEFAULT) {
       return payload
@@ -256,5 +265,18 @@ export class OctopipeService implements ICdServiceStrategy {
     return versions.length === 0
       ? createEmptyVirtualService(appName, appNamespace)
       : createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
+  }
+
+  private getVersionCircle(octopipeVersion: IOctopipeVersion, circles: IPipelineCircle[]) {
+      const circleSearch = circles.find(
+        circle => circle.destination.version === octopipeVersion.version
+      )
+      return { ...octopipeVersion, circleVersion: circleSearch?.header ? circleSearch.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
+  }
+
+  private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]) {
+    return octopipeVersions.map(
+      octopipeVersion => this.getVersionCircle(octopipeVersion, circles)
+    )
   }
 }
