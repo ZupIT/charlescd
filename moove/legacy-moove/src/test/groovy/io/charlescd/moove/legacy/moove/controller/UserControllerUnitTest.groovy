@@ -18,7 +18,6 @@ package io.charlescd.moove.legacy.moove.controller
 
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.CreateUserRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.KeycloakService
