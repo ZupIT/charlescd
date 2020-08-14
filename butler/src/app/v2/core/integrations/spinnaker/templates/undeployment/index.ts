@@ -4,6 +4,7 @@ import { getUndeploymentProxyEvaluationStage } from './undeploy-proxy-evaluation
 import { getUndeploymentFailureWebhookStage } from './undeploy-failure-webhook-stage'
 import { getUndeploymentsSuccessWebhookStage } from './undeploy-success-webhook-stage'
 import { getUndeploymentsDeleteUnusedStage } from './undeploy-delete-unused-stage'
+import { getUndeploymentEmptyVirtualServiceStage } from './undeploy-empty-virtual-services-stage'
 
 export {
   getUndeploymentDestinationRulesStage,
@@ -11,5 +12,6 @@ export {
   getUndeploymentProxyEvaluationStage,
   getUndeploymentFailureWebhookStage,
   getUndeploymentsSuccessWebhookStage,
-  getUndeploymentsDeleteUnusedStage
+  getUndeploymentsDeleteUnusedStage,
+  getUndeploymentEmptyVirtualServiceStage
 }

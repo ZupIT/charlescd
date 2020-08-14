@@ -89,7 +89,8 @@ interface XCircleId {
 
 interface Headers {
     cookie?: Cookie
-    'x-circle-id'?: XCircleId
+    'x-circle-id'?: XCircleId,
+    'unreachable-cookie-name'?: XCircleId
 }
 
 interface Match {
@@ -98,7 +99,7 @@ interface Match {
 
 interface Destination {
     host: string
-    subset: string
+    subset?: string
 }
 
 interface RequestSet {
@@ -124,7 +125,7 @@ interface RouteHeaders {
 
 interface Route {
     destination: Destination
-    headers: RouteHeaders
+    headers?: RouteHeaders
 }
 
 interface Http {

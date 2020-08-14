@@ -32,7 +32,7 @@ import { getVirtualServiceStage } from './templates/deployment/virtual-service-s
 import { getProxyEvaluationStage } from './templates/deployment/proxy-evaluation'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import {
-  getUndeploymentDestinationRulesStage, getUndeploymentFailureWebhookStage,
+  getUndeploymentDestinationRulesStage, getUndeploymentEmptyVirtualServiceStage, getUndeploymentFailureWebhookStage,
   getUndeploymentProxyEvaluationStage, getUndeploymentsDeleteUnusedStage, getUndeploymentsSuccessWebhookStage,
   getUndeploymentVirtualServiceStage
 } from './templates/undeployment'
@@ -129,7 +129,10 @@ export class SpinnakerPipelineBuilder {
     deployment.components.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getUndeploymentDestinationRulesStage(component, deployment, activeByName, this.currentStageId++))
-      proxyStages.push(getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++))
+      proxyStages.push(activeByName.length > 1 ?
+        getUndeploymentVirtualServiceStage(component, deployment, activeByName, this.currentStageId++) :
+        getUndeploymentEmptyVirtualServiceStage(component, deployment, this.currentStageId++)
+      )
     })
     return proxyStages
   }
