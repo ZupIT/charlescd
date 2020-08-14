@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render } from 'unit-test/testUtils';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
 import Segments from '..';
 
 (global as any).MutationObserver = MutationObserver
@@ -58,4 +58,21 @@ test('render Segments default component and Rules', async () => {
   expect(InputKey).toHaveAttribute('type', 'text');
   expect(WrapperCondition).toBeInTheDocument();
   expect(InputValue).toBeInTheDocument();
+});
+
+test('render Segments default component and adding new rule', async () => {
+  const { getByTestId } = render(
+    <Segments viewMode={false} />
+  );
+
+  const ButtonAddClause = getByTestId('button-default-add-clause');
+  expect(ButtonAddClause).toBeInTheDocument();
+
+  const KeyInput0 = getByTestId('input-text-clauses[0].content.key');
+  expect(KeyInput0).toBeInTheDocument();
+
+  fireEvent.click(ButtonAddClause);
+
+  const KeyInput1 = getByTestId('input-text-clauses[0].clauses[1].content.key');
+  expect(KeyInput1).toBeInTheDocument();
 });
