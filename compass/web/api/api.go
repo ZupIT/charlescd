@@ -38,6 +38,7 @@ func HttpValidator(
 	next func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string),
 ) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
 		workspaceID := r.Header.Get("x-workspace-id")
 
 		if workspaceID == "" {

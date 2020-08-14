@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"compass/pkg/logger"
 	"io"
 	"plugin"
 
@@ -18,9 +19,10 @@ type UseCases interface {
 }
 
 type Main struct {
-	db *gorm.DB
+	db     *gorm.DB
+	logger logger.UseCases
 }
 
-func NewMain(db *gorm.DB) UseCases {
-	return Main{db}
+func NewMain(db *gorm.DB, logger logger.UseCases) UseCases {
+	return Main{db, logger}
 }
