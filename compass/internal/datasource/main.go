@@ -13,7 +13,7 @@ type UseCases interface {
 	FindAllByWorkspace(workspaceID string, health string) ([]DataSource, error)
 	FindById(id string) (DataSource, error)
 	Save(dataSource DataSource) (DataSource, error)
-	Delete(id string, workspaceID string) error
+	Delete(id string) error
 	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
 }
 

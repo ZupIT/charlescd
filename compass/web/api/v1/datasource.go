@@ -68,7 +68,7 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 }
 
 func (dataSourceApi DataSourceApi) deleteDataSource(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"), workspaceId)
+	err := dataSourceApi.dataSourceMain.Delete(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
