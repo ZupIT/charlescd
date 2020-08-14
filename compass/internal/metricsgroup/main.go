@@ -3,6 +3,8 @@ package metricsgroup
 import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
+	datasourcePKG "compass/pkg/datasource"
+	"compass/pkg/logger"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -21,8 +23,8 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
-	Query(id, period string) ([]MetricValues, error)
-	Result(id string) ([]MetricResult, error)
+	Query(id, period string) ([]datasourcePKG.MetricValues, error)
+	Result(id string) ([]datasourcePKG.MetricResult, error)
 	FindActiveMetricGroups() ([]MetricsGroup, error)
 }
 
@@ -30,8 +32,11 @@ type Main struct {
 	db             *gorm.DB
 	datasourceMain datasource.UseCases
 	pluginMain     plugin.UseCases
+	logger         logger.UseCases
 }
 
-func NewMain(db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases) UseCases {
-	return Main{db, datasourceMain, pluginMain}
+func NewMain(
+	db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, logger logger.UseCases,
+) UseCases {
+	return Main{db, datasourceMain, pluginMain, logger}
 }

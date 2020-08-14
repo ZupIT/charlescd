@@ -1,8 +1,24 @@
 package datasource
 
+const (
+	FunctionList   = "List"
+	FunctionQuery  = "Query"
+	FunctionResult = "Result"
+)
+
 type UseCases interface {
 	GetMetrics()
 	Validate()
 }
 
 type MetricList []string
+
+type MetricResult struct {
+	Metric string `json:"metric"`
+	Result int    `json:"result"`
+}
+
+type MetricValues struct {
+	Metric string      `json:"metric"`
+	Values interface{} `json:"result"`
+}

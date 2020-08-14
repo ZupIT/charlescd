@@ -5,14 +5,15 @@ import (
 	"compass/internal/util"
 	"database/sql"
 	"encoding/json"
+	"regexp"
+	"testing"
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"regexp"
-	"testing"
-	"time"
 )
 
 type Suite struct {
