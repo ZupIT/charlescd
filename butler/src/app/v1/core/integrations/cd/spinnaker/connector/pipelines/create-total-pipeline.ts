@@ -27,6 +27,8 @@ import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
+import { AppConstants } from '../../../../../constants'
+import { IPipelineCircle } from '../../../../../../api/components/interfaces'
 
 export default class TotalPipeline {
   refId: number
@@ -99,7 +101,7 @@ export default class TotalPipeline {
         String(this.refId),
         [],
         undefined,
-        this.contract.circleId
+        this.getVersionCircle(version.version, this.contract.circles)
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -224,4 +226,12 @@ export default class TotalPipeline {
       deploymentsIds: this.deploymentsIds
     }
   }
+
+  private getVersionCircle(version: string, circles: IPipelineCircle[]) {
+    const circleSearch = circles.find(
+      circle => circle.destination.version === version
+    )
+    return circleSearch?.header ? circleSearch.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
+  }
+  
 }
