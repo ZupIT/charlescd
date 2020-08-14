@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
-import { DeploymentNotificationRequest } from '../dto/deployment-notification-request.dto';
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity';
-import { NotificationUseCase } from '../use-cases/notification-use-case';
+import { Body, Controller, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import { DeploymentNotificationRequest } from '../dto/deployment-notification-request.dto'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { NotificationUseCase } from '../use-cases/notification-use-case'
 
 @Controller('/v2/notifications')
 export class NotificationsController {
