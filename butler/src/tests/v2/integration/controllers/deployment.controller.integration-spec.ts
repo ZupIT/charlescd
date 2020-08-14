@@ -6,8 +6,8 @@ import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/ent
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
 
 describe('DeploymentController v2', () => {

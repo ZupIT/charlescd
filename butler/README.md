@@ -36,6 +36,6 @@ Please check our [Contributing Guide].
 [Node environment]: https://nodejs.org/en/
 [Docker]: https://docs.docker.com/get-docker/
 [Swagger API Documentation]: http://localhost:3000/api/swagger
-[Postman Collection]: src/app/resources/postman/Darwin_Deploy.postman_collection.json
+[Postman Collection]: src/resources/postman/Darwin_Deploy.postman_collection.json
 [Contributing Guide]: https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md
 

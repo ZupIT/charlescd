@@ -16,6 +16,8 @@
 
 import { SpinnakerPipeline } from '../../../../../app/v2/core/integrations/spinnaker/interfaces'
 import { AppConstants } from '../../../../../app/v1/core/constants'
+import { DeploymentStatusEnum } from '../../../../../app/v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../../../../../app/v2/api/deployments/enums'
 
 export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
@@ -1111,7 +1113,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       method: 'POST',
       name: 'Trigger Failure Webhook',
       payload: {
-        status: 'FAILURE'
+        status: DeploymentStatusEnum.FAILED,
+        type: ExecutionTypeEnum.DEPLOYMENT
       },
       refId: '18',
       requisiteStageRefIds: [
@@ -1136,7 +1139,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       method: 'POST',
       name: 'Trigger Success Webhook',
       payload: {
-        status: 'SUCCEEDED'
+        status: DeploymentStatusEnum.SUCCEEDED,
+        type: ExecutionTypeEnum.DEPLOYMENT
       },
       refId: '19',
       requisiteStageRefIds: [

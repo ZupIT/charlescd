@@ -10,8 +10,8 @@ import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/d
 import { CreateModuleDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-module-request.dto'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
-import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
 
 describe('CallbackController v2', () => {
@@ -88,7 +88,7 @@ describe('CallbackController v2', () => {
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
     await request(app.getHttpServer())
       .post(`/v2/deployments/${deployment.id}/notify`)
-      .send({ status: 'SUCCEEDED' })
+      .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)
       .expect(response => {
@@ -161,7 +161,7 @@ describe('CallbackController v2', () => {
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
     await request(app.getHttpServer())
       .post(`/v2/deployments/${deployment.id}/notify`)
-      .send({ status: 'FAILED' })
+      .send({ status: 'FAILED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)
       .expect(response => {

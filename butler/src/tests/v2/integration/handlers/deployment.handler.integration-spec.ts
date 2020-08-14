@@ -14,11 +14,12 @@ import { Execution } from '../../../../app/v2/api/deployments/entity/execution.e
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { DeploymentHandlerUseCase } from '../../../../app/v2/api/deployments/use-cases/deployment-handler.usecase'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
-import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
-import express = require('express')
+import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { ReceiveNotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
 import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
+import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
+import express = require('express')
 
 let mock = express()
 
@@ -130,7 +131,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(firstDeployment.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.execute(firstDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
     await deploymentHandler.run(secondJob)
 
     const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
@@ -138,7 +139,7 @@ describe('DeploymentHandler', () => {
     expect(secondHandled.components.map(c => c.running)).toEqual([true])
     expect(firstHandled.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(secondDeployment.id, DeploymentStatusEnum.SUCCEEDED)
+    await notificationUseCase.execute(secondDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
 
     const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
     const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
@@ -267,7 +268,7 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
 
   const execution : Execution = await manager.save(new Execution(
     deployment,
-    'DEPLOYMENT',
+    ExecutionTypeEnum.DEPLOYMENT,
     params.incomingCircleId
   ))
 

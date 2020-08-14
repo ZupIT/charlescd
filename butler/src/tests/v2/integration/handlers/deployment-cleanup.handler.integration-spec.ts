@@ -11,8 +11,8 @@ import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { DeploymentCleanupHandler } from '../../../../app/v2/api/deployments/use-cases/deployment-cleanup-handler'
-import { FixtureUtilsService } from '../../../integration/utils/fixture-utils.service'
-import { TestSetupUtils } from '../../../integration/utils/test-setup-utils'
+import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
+import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import express = require('express')
 import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
 
