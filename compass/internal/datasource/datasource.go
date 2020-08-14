@@ -57,10 +57,10 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 	var dataSources []DataSource
 	var db *gorm.DB
 	if health == "" {
-		db = main.db.Where("workspace_id = ? AND deleted_at IS NULL", workspaceID).Find(&dataSources)
+		db = main.db.Where("workspace_id = ?", workspaceID).Find(&dataSources)
 	} else {
 		healthValue, _ := strconv.ParseBool(health)
-		db = main.db.Where("workspace_id = ? AND health = ? AND deleted_at IS NULL", workspaceID, healthValue).Find(&dataSources)
+		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
 	}
 
 	if db.Error != nil {
@@ -83,7 +83,7 @@ func (main Main) FindById(id string) (DataSource, error) {
 	return dataSource, nil
 }
 
-func (main Main) Delete(id string, workspaceID string) error {
+func (main Main) Delete(id string) error {
 	if _, err := main.FindById(id); err != nil {
 		return err
 	}
