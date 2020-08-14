@@ -39,19 +39,16 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
 
     override fun addPermissionsToUser(workspaceId: String, user: User, permissions: List<Permission>) {
         val keycloakUser = loadKeycloakUser(user.email)
-
         val keycloakWorkspaceAttribute = keycloakUser.attributes["workspaces"]
-
         val actualPermissionsMapping = keycloakWorkspaceAttribute?.map { objectMapper.readValue(it, WorkspacePermissionsMapping::class.java) }?.toMutableList()
-
         val workspaceAndPermissionsMapping = actualPermissionsMapping?.firstOrNull { it.id == workspaceId }
-
         val permissionsToBeAddedMapping = WorkspacePermissionsMapping(
             id = workspaceId,
             permissions = permissions.map { it.name })
 
         if (workspaceAndPermissionsMapping != null) {
             actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
+
             actualPermissionsMapping.add(
                 workspaceAndPermissionsMapping.copy(
                     permissions = workspaceAndPermissionsMapping.permissions.union(permissionsToBeAddedMapping.permissions).toList()
@@ -155,26 +152,23 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
         isRoot: Boolean
     ): UserRepresentation {
         val userRepresentation = UserRepresentation()
-        val names = name.split(" ")
 
-        val credential = createcredentialRepresentation(password)
+        val names = name.split(" ")
+        if (names.size > 1) userRepresentation.lastName = names.last()
 
         userRepresentation.isEmailVerified = true
         userRepresentation.isEnabled = true
         userRepresentation.firstName = names.first()
-
-        if (names.size > 1) userRepresentation.lastName = names.last()
-
         userRepresentation.email = email
         userRepresentation.username = email
         userRepresentation.createdTimestamp = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
-        userRepresentation.credentials = listOf(credential)
+        userRepresentation.credentials = listOf(createCredentialRepresentation(password))
         userRepresentation.singleAttribute("isRoot", isRoot.toString())
 
         return userRepresentation
     }
 
-    private fun createcredentialRepresentation(password: String): CredentialRepresentation {
+    private fun createCredentialRepresentation(password: String): CredentialRepresentation {
         val credential = CredentialRepresentation()
         credential.type = "password"
         credential.value = password
