@@ -27,7 +27,7 @@ export class SimultaneousDeploymentValidationPipe implements PipeTransform {
     private componentsRepository: ComponentsRepositoryV2) {
   }
 
-  async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
+  public async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const circleId = createDeploymentDto.circle?.headerValue
     const runningComponents = circleId ?
       await this.componentsRepository.findCircleRunningComponents(circleId) :

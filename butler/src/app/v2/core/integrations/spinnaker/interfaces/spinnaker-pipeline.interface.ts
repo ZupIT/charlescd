@@ -55,7 +55,7 @@ interface Moniker {
 
 interface Options {
     enableTraffic: boolean
-    services: any[]
+    services: unknown[]
 }
 
 interface TrafficManagement {

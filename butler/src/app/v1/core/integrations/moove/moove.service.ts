@@ -62,7 +62,7 @@ export class MooveService {
     status: string,
     callbackUrl: string,
     circleId: string | null
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<AxiosResponse<unknown>> { // TODO maybe create a response interface
 
     try {
       this.consoleLoggerService.log('START:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsUUID, ValidateNested, Validate } from 'class-validator';
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity';
-import { CreateComponentRequestDto } from './create-component-request.dto';
-import { ComponentUniqueProp } from '../validations/component-unique-by-name';
+import { Type } from 'class-transformer'
+import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
+import { ComponentUniqueProp } from '../validations/component-unique-by-name'
+import { CreateComponentRequestDto } from './create-component-request.dto'
 
 export class CreateModuleDeploymentDto {
   @IsUUID()
