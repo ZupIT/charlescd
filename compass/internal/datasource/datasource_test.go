@@ -47,6 +47,13 @@ func TestInit(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
+func (s *Suite) TestValidate() {
+	datasource := DataSource{}
+	var errList = datasource.Validate()
+
+	require.NotEmpty(s.T(), errList)
+}
+
 func (s *Suite) TestFindById() {
 	var id = uuid.New()
 	var timeNow = time.Now()

@@ -48,6 +48,13 @@ func TestInit(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
+func (s *Suite) TestValidate() {
+	metricGroup := MetricsGroup{Metrics: []Metric{}}
+	var errList = metricGroup.Validate()
+
+	require.NotEmpty(s.T(), errList)
+}
+
 func (s *Suite) TestFindAll() {
 	id := uuid.New()
 	timeNow := time.Now()
