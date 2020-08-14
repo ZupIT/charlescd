@@ -1,11 +1,11 @@
 package plugin
 
 import (
+	"compass/internal/configuration"
 	"compass/internal/util"
 	"encoding/json"
 	"errors"
 	"io"
-	"os"
 	"path/filepath"
 	"plugin"
 )
@@ -66,7 +66,7 @@ func (main Main) FindById(id string) (Plugin, error) {
 }
 
 func (main Main) GetPluginByID(id string) (*plugin.Plugin, error) {
-	pluginsPath := os.Getenv("PLUGINS_DIR")
+	pluginsPath := configuration.GetConfiguration("PLUGINS_DIR")
 
 	pluginResult, err := main.FindById(id)
 	if err != nil {

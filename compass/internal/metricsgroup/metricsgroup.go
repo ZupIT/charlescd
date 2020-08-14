@@ -2,6 +2,7 @@ package metricsgroup
 
 import (
 	"compass/internal/util"
+	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
 	"io"
@@ -29,16 +30,6 @@ type MetricGroupResume struct {
 	Name                   string `json:"name"`
 	AllMetricsCount        int    `json:"allMetricsCount"`
 	AllMetricsSuccessCount int    `json:"allMetricsSuccessCount"`
-}
-
-type MetricResult struct {
-	Metric string `json:"metric"`
-	Result int    `json:"result"`
-}
-
-type MetricValues struct {
-	Metric string      `json:"metric"`
-	Values interface{} `json:"result"`
 }
 
 func (metricsGroup MetricsGroup) Validate() []error {
@@ -218,8 +209,8 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) Query(id, period string) ([]MetricValues, error) {
-	metricsValues := []MetricValues{}
+func (main Main) Query(id, period string) ([]datasource.MetricValues, error) {
+	metricsValues := []datasource.MetricValues{}
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		return nil, errors.New("Not found metrics group: " + id)
@@ -249,7 +240,7 @@ func (main Main) Query(id, period string) ([]MetricValues, error) {
 			return nil, err
 		}
 
-		metricsValues = append(metricsValues, MetricValues{
+		metricsValues = append(metricsValues, datasource.MetricValues{
 			Metric: metric.Metric,
 			Values: query,
 		})
@@ -258,8 +249,8 @@ func (main Main) Query(id, period string) ([]MetricValues, error) {
 	return metricsValues, nil
 }
 
-func (main Main) Result(id string) ([]MetricResult, error) {
-	metricsResults := []MetricResult{}
+func (main Main) Result(id string) ([]datasource.MetricResult, error) {
+	metricsResults := []datasource.MetricResult{}
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		return nil, errors.New("Not found metrics group: " + id)
@@ -289,7 +280,7 @@ func (main Main) Result(id string) ([]MetricResult, error) {
 			return nil, err
 		}
 
-		metricsResults = append(metricsResults, MetricResult{
+		metricsResults = append(metricsResults, datasource.MetricResult{
 			Metric: metric.Metric,
 			Result: result,
 		})
