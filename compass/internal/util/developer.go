@@ -1,7 +1,9 @@
 package util
 
-import "os"
+import (
+	"compass/internal/configuration"
+)
 
 func IsDeleveloperRunning() bool {
-	return os.Getenv("ENV") == "DEV"
+	return configuration.GetConfiguration("ENV") == "DEV"
 }

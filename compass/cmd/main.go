@@ -1,20 +1,22 @@
 package main
 
 import (
+	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	utils "compass/internal/util"
+	"compass/pkg/logger"
 	v1 "compass/web/api/v1"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -28,23 +30,32 @@ func main() {
 	}
 
 	db, err := gorm.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_SSL"),
+		configuration.GetConfiguration("DB_HOST"),
+		configuration.GetConfiguration("DB_PORT"),
+		configuration.GetConfiguration("DB_USER"),
+		configuration.GetConfiguration("DB_NAME"),
+		configuration.GetConfiguration("DB_PASSWORD"),
+		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
 		log.Fatalln("failed to connect database")
 	}
 	defer db.Close()
 
+	loggerZap, _ := zap.NewProduction()
+	defer loggerZap.Sync()
+
+	sugar := loggerZap.Sugar()
+	loggerProvider := logger.NewLogger(sugar)
+
 	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://migrations",
-		os.Getenv("DB_NAME"), driver)
+		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
 		log.Fatal(err)
@@ -58,11 +69,11 @@ func main() {
 		db.LogMode(true)
 	}
 
-	pluginMain := plugin.NewMain(db)
-	datasourceMain := datasource.NewMain(db, pluginMain)
-	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain)
+	pluginMain := plugin.NewMain(db, loggerProvider)
+	datasourceMain := datasource.NewMain(db, pluginMain, loggerProvider)
+	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain, loggerProvider)
 
-	_, err = strconv.Atoi(os.Getenv("TIMEOUT"))
+	_, err = strconv.Atoi(configuration.GetConfiguration("TIMEOUT"))
 	if err != nil {
 		log.Fatal(err)
 	}
