@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentEntity } from '../../../../app/v1/api/components/entity'
-import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../../app/v1/api/deployments/entity'
-import { AppConstants } from '../../../../app/v1/core/constants'
+import { ComponentEntity } from '../../../app/v1/api/components/entity'
+import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { AppConstants } from '../../../app/v1/core/constants'
 
 describe('ComponentEntity test', () => {
     it('should create the right version name with the first 8 chars of circle id', () => {
@@ -51,11 +51,9 @@ describe('ComponentEntity test', () => {
       'build-image-url',
       'build-image-tag'
     )
-    const circle = new CircleDeploymentEntity(
-      '0e19100a-448d-4aa4-8fa0-7cf84e91ae10'
-    )
+
     componentEntity.setPipelineDefaultCircle(componentDeploymentEntity)
-    const defaultCirleId = 'f5d23a57-5607-4306-9993-477e1598cc2a'
+
     expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-f5d23a57')
     expect(componentEntity.pipelineOptions.pipelineCircles[0].destination).toBe('build-image-tag-f5d23a57')
 

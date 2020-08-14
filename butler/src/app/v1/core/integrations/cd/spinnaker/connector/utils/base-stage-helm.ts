@@ -49,6 +49,7 @@ export interface IBaseHelmStage {
   overrides: {
     'image.tag': string
     name: string
+    version: string
     circleId: string
   }
   templateRenderer: 'HELM2'
@@ -60,7 +61,7 @@ export interface IBaseHelmStage {
 const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
   githubAccount: string,
   version: string, versionUrl: string, refId: string,
-  reqRefId: string[], previousStage: string | undefined | string[],circleId: string): IBaseHelmStage => {
+  reqRefId: string[], previousStage: string | undefined | string[], circleId: string): IBaseHelmStage => {
   const baseHelm: IBaseHelmStage = {
     stageEnabled: {},
     completeOtherBranchesThenFail: false,
@@ -74,7 +75,8 @@ const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
     overrides: {
       'image.tag': versionUrl,
       'name': version,
-      'circleId': circleId
+      'circleId': circleId,
+      'version' : version.substring(0, version.lastIndexOf('-'))
     },
     templateRenderer: 'HELM2',
     type: 'bakeManifest',
