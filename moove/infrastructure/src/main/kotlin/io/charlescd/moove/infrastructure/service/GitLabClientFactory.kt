@@ -7,11 +7,15 @@ import org.springframework.stereotype.Component
 @Component
 class GitLabClientFactory {
 
+    val shouldIgnoreCertificateErrors: Boolean = System.getenv("GITLAB_IGNORE_CERTIFICATE_ERRORS")?.toBoolean() ?: false
+
     fun buildGitClient(gitCredentials: GitCredentials): GitLabApi {
         return if (!gitCredentials.accessToken.isNullOrBlank()) {
             GitLabApi(GitLabApi.ApiVersion.V4, gitCredentials.address, gitCredentials.accessToken)
+                .apply { ignoreCertificateErrors = shouldIgnoreCertificateErrors }
         } else {
             GitLabApi.oauth2Login(gitCredentials.address, gitCredentials.username, gitCredentials.password)
+                .apply { ignoreCertificateErrors = shouldIgnoreCertificateErrors }
         }
     }
 }
