@@ -18,14 +18,14 @@ import { ComponentEntity } from '../../../../app/v1/api/components/entity'
 
 export class ComponentsRepositoryStub {
 
-    public async findOne(): Promise<ComponentEntity> {
-        return Promise.resolve({} as ComponentEntity)
-    }
-    public async findOneOrFail(): Promise<ComponentEntity> {
-        return Promise.resolve({} as ComponentEntity)
-    }
+  public async findOne(): Promise<ComponentEntity> {
+    return Promise.resolve({} as ComponentEntity)
+  }
+  public async findOneOrFail(): Promise<ComponentEntity> {
+    return Promise.resolve({} as ComponentEntity)
+  }
 
-    public async save(): Promise<ComponentEntity> {
-        return {} as ComponentEntity
-    }
+  public async save(): Promise<ComponentEntity> {
+    return {} as ComponentEntity
+  }
 }

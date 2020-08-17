@@ -18,23 +18,23 @@ import { ModuleDeploymentEntity } from '../../../../app/v1/api/deployments/entit
 
 export class ModuleDeploymentsRepositoryStub {
 
-    public async findOne(): Promise<ModuleDeploymentEntity> {
-        return Promise.resolve({} as ModuleDeploymentEntity)
-    }
+  public async findOne(): Promise<ModuleDeploymentEntity> {
+    return Promise.resolve({} as ModuleDeploymentEntity)
+  }
 
-    public async updateStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async updateStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async findOneOrFail(): Promise<ModuleDeploymentEntity> {
-        return Promise.resolve({} as ModuleDeploymentEntity)
-    }
+  public async findOneOrFail(): Promise<ModuleDeploymentEntity> {
+    return Promise.resolve({} as ModuleDeploymentEntity)
+  }
 
-    public async find(): Promise<ModuleDeploymentEntity> {
-        return Promise.resolve({} as ModuleDeploymentEntity)
-    }
+  public async find(): Promise<ModuleDeploymentEntity> {
+    return Promise.resolve({} as ModuleDeploymentEntity)
+  }
 
-    public async update(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async update(): Promise<void> {
+    return Promise.resolve()
+  }
 }

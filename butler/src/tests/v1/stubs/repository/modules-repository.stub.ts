@@ -18,11 +18,11 @@ import { ModuleEntity } from '../../../../app/v1/api/modules/entity'
 
 export class ModulesRepositoryStub {
 
-    public async findOne(): Promise<ModuleEntity> {
-        return Promise.resolve({} as ModuleEntity)
-    }
+  public async findOne(): Promise<ModuleEntity> {
+    return Promise.resolve({} as ModuleEntity)
+  }
 
-    public async save(): Promise<ModuleEntity> {
-        return Promise.resolve({} as ModuleEntity)
-    }
+  public async save(): Promise<ModuleEntity> {
+    return Promise.resolve({} as ModuleEntity)
+  }
 }

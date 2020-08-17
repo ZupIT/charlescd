@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateModuleDeploymentsTable20190807010500 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.createTable(new Table({
       name: 'module_deployments',
       columns: [
@@ -43,7 +43,7 @@ export class CreateModuleDeploymentsTable20190807010500 implements MigrationInte
     }), true)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('module_deployments')
   }
 }

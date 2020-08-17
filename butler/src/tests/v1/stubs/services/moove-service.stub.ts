@@ -19,7 +19,7 @@ import { AxiosResponse } from 'axios'
 
 export class MooveServiceStub {
 
-    public  notifyDeploymentStatus(): Observable<AxiosResponse> {
-        return of({} as AxiosResponse)
-    }
+  public  notifyDeploymentStatus(): Observable<AxiosResponse> {
+    return of({} as AxiosResponse)
+  }
 }

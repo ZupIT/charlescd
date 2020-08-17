@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddQueuedDeploymentsType20191024195900 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('queued_deployments', new TableColumn({
       name: 'type',
       type: 'varchar',
@@ -26,7 +26,7 @@ export class AddQueuedDeploymentsType20191024195900 implements MigrationInterfac
     }))
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropColumn('queued_deployments', 'type')
   }
 }

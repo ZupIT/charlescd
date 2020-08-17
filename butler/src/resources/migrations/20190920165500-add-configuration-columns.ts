@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddConfigurationColumns20190920165500 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('deployments', new TableColumn({
       name: 'value_flow_id',
       type: 'varchar'
@@ -50,7 +50,7 @@ export class AddConfigurationColumns20190920165500 implements MigrationInterface
     }))
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropColumn('deployments', 'value_flow_id')
 
     await queryRunner.dropColumn('module_deployments', 'k8s_configuration_id')

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class RenameCircleColumn20191024104700 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void>{
     await queryRunner.renameColumn(
       'deployments',
-     'circles',
-     'circle'
+      'circles',
+      'circle'
     )
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.renameColumn(
       'deployments',
       'circle',

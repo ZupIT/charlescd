@@ -18,7 +18,7 @@ import { IDeploymentConfiguration } from '../../../../app/v1/core/integrations/c
 
 export class DeploymentConfigurationServiceStub {
 
-    public async getConfiguration(): Promise<IDeploymentConfiguration> {
-        return Promise.resolve({} as IDeploymentConfiguration)
-    }
+  public async getConfiguration(): Promise<IDeploymentConfiguration> {
+    return Promise.resolve({} as IDeploymentConfiguration)
+  }
 }

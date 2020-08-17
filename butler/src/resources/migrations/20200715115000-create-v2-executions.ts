@@ -18,8 +18,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CreateV2Executions20200715115000 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner) {
-      await queryRunner.query(`
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.query(`
       CREATE TABLE "public"."v2executions" (
         "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
         "type" Character Varying NOT NULL,
@@ -31,9 +31,9 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
       );
       CREATE INDEX "index_deployments_id1" ON "public"."v2executions" USING btree( "deployment_id" );
       `)
-    }
+  }
 
-    public async down(queryRunner: QueryRunner) {
-      await queryRunner.dropTable('v2executions')
-    }
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropTable('v2executions')
+  }
 }

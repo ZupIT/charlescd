@@ -17,7 +17,7 @@
     "test:integration": "jest --testRegex \"integration-spec\\.ts$\" --runInBand --forceExit",
     "test:cov": "jest \"\\.spec.ts$\" --coverage",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "test:all:cov": "jest --runInBand --coverage"
+    "test:all:cov": "jest --runInBand --coverage --forceExit"
   },
   "dependencies": {
     "@nestjs/common": "^7.4.2",

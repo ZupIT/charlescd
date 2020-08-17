@@ -16,44 +16,44 @@
 
 export class StatusManagementServiceStub {
 
-    public async setComponentAndModuleDeploymentStatusFailed(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentAndModuleDeploymentStatusFailed(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setComponentAndModuleUndeploymentStatusFailed(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentAndModuleUndeploymentStatusFailed(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async updateDeploymentStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async updateDeploymentStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async updateUndeploymentStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async updateUndeploymentStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async hasAllFinishedModules(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async hasAllFinishedModules(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setComponentUndeploymentStatusAsFinished(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentUndeploymentStatusAsFinished(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setComponentUndeploymentStatusAsFailed(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentUndeploymentStatusAsFailed(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setComponentDeploymentStatusAsFinished(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentDeploymentStatusAsFinished(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async deepUpdateUndeploymentStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async deepUpdateUndeploymentStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setComponentDeploymentStatusAsFailed(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setComponentDeploymentStatusAsFailed(): Promise<void> {
+    return Promise.resolve()
+  }
 
 }

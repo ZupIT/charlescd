@@ -19,31 +19,31 @@ import { QueuedDeploymentEntity, QueuedUndeploymentEntity } from '../../../../ap
 
 export class PipelineQueuesServiceStub {
 
-    public async getQueuedPipelineStatus(): Promise<QueuedPipelineStatusEnum> {
-        return Promise.resolve({} as QueuedPipelineStatusEnum)
-    }
+  public async getQueuedPipelineStatus(): Promise<QueuedPipelineStatusEnum> {
+    return Promise.resolve({} as QueuedPipelineStatusEnum)
+  }
 
-    public async enqueueUndeploymentExecution(): Promise<QueuedUndeploymentEntity> {
-        return Promise.resolve({} as QueuedUndeploymentEntity)
-    }
+  public async enqueueUndeploymentExecution(): Promise<QueuedUndeploymentEntity> {
+    return Promise.resolve({} as QueuedUndeploymentEntity)
+  }
 
-    public async setQueuedUndeploymentStatusFinished(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setQueuedUndeploymentStatusFinished(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async setQueuedDeploymentStatusFinished(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async setQueuedDeploymentStatusFinished(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async triggerNextComponentPipeline(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async triggerNextComponentPipeline(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async queueDeploymentTasks(): Promise<void> {
-        return Promise.resolve()
-    }
-    public async getComponentDeploymentQueue(): Promise<QueuedDeploymentEntity[]> {
-        return Promise.resolve([] as QueuedDeploymentEntity[])
-    }
+  public async queueDeploymentTasks(): Promise<void> {
+    return Promise.resolve()
+  }
+  public async getComponentDeploymentQueue(): Promise<QueuedDeploymentEntity[]> {
+    return Promise.resolve([] as QueuedDeploymentEntity[])
+  }
 
 }

@@ -18,15 +18,15 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddCircleIdColumnToUndeployments20200227180000 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner) {
-        await queryRunner.addColumn('undeployments', new TableColumn({
-            name: 'circle_id',
-            type: 'varchar',
-            isNullable: true
-        }))
-    }
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('undeployments', new TableColumn({
+      name: 'circle_id',
+      type: 'varchar',
+      isNullable: true
+    }))
+  }
 
-    public async down(queryRunner: QueryRunner) {
-        await queryRunner.dropColumn('undeployments', 'circle_id')
-    }
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('undeployments', 'circle_id')
+  }
 }

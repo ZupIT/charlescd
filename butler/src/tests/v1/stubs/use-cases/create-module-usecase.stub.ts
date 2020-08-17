@@ -18,7 +18,7 @@ import { ReadModuleDto } from '../../../../app/v1/api/modules/dto'
 
 export class CreateModuleUsecaseStub {
 
-    public execute(): Promise<ReadModuleDto> {
-        return Promise.resolve({} as ReadModuleDto)
-    }
+  public execute(): Promise<ReadModuleDto> {
+    return Promise.resolve({} as ReadModuleDto)
+  }
 }

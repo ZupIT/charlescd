@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import {ModuleEntity} from '../../../../app/v1/api/modules/entity'
+import { ModuleEntity } from '../../../../app/v1/api/modules/entity'
 
 export class ModulesServiceStub {
 
-    public createModules(moduleEntities: ModuleEntity[]) {
-        return Promise.resolve([])
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public createModules(moduleEntities: ModuleEntity[]): Promise<[]> {
+    return Promise.resolve([])
+  }
 
 }

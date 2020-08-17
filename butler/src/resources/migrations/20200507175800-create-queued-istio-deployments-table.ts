@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateQueuedIstioDeploymentsTable20200507175800 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.createTable(new Table({
       name: 'queued_istio_deployments',
       columns: [
@@ -57,7 +57,7 @@ export class CreateQueuedIstioDeploymentsTable20200507175800 implements Migratio
     }), true)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('queued_istio_deployments')
   }
 }

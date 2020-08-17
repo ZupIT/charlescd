@@ -18,21 +18,21 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddVirtualserviceFieldsToComponents20200716121700 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner) {
-        await queryRunner.addColumn('components', new TableColumn({
-          name: 'host_value',
-          type: 'varchar',
-          isNullable: true,
-        }))
-        await queryRunner.addColumn('components', new TableColumn({
-          name: 'gateway_name',
-          type: 'varchar',
-          isNullable: true
-        }))
-    }
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('components', new TableColumn({
+      name: 'host_value',
+      type: 'varchar',
+      isNullable: true,
+    }))
+    await queryRunner.addColumn('components', new TableColumn({
+      name: 'gateway_name',
+      type: 'varchar',
+      isNullable: true
+    }))
+  }
 
-    public async down(queryRunner: QueryRunner) {
-      await queryRunner.dropColumn('components', 'host_value')
-      await queryRunner.dropColumn('components', 'gateway_name')
-    }
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('components', 'host_value')
+    await queryRunner.dropColumn('components', 'gateway_name')
+  }
 }

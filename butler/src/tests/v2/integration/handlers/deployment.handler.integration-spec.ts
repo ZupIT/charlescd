@@ -17,7 +17,6 @@ import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { ReceiveNotificationUseCase } from '../../../../app/v2/api/deployments/use-cases/receive-notification.usecase'
-import { CreateDeploymentUseCase } from '../../../../app/v2/api/deployments/use-cases/create-deployment.usecase'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import express = require('express')
 
@@ -31,7 +30,6 @@ describe('DeploymentHandler', () => {
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUseCase
-  let deploymentUseCase: CreateDeploymentUseCase
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -47,7 +45,6 @@ describe('DeploymentHandler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     worker = app.get<PgBossWorker>(PgBossWorker)
     deploymentHandler = app.get<DeploymentHandlerUseCase>(DeploymentHandlerUseCase)
-    deploymentUseCase = app.get<CreateDeploymentUseCase>(CreateDeploymentUseCase)
     notificationUseCase = app.get<ReceiveNotificationUseCase>(ReceiveNotificationUseCase)
     manager = fixtureUtilsService.connection.manager
   })

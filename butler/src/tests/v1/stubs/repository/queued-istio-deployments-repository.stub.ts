@@ -18,38 +18,39 @@ import { QueuedIstioDeploymentEntity } from '../../../../app/v1/api/deployments/
 
 export class QueuedIstioDeploymentsRepositoryStub {
 
-    public async findOne(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public async findOne(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public async findOneOrFail(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public async findOneOrFail(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public async find(): Promise<QueuedIstioDeploymentEntity> {
-      return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public async find(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public async save(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public async save(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public getAllByComponentIdQueuedAscending(): Promise<QueuedIstioDeploymentEntity[]> {
-        return Promise.resolve([] as QueuedIstioDeploymentEntity[])
-    }
-    public getAllByComponentIdAscending(id: string): Promise<QueuedIstioDeploymentEntity[]> {
-        return Promise.resolve([] as QueuedIstioDeploymentEntity[])
-    }
+  public getAllByComponentIdQueuedAscending(): Promise<QueuedIstioDeploymentEntity[]> {
+    return Promise.resolve([] as QueuedIstioDeploymentEntity[])
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public getAllByComponentIdAscending(id: string): Promise<QueuedIstioDeploymentEntity[]> {
+    return Promise.resolve([] as QueuedIstioDeploymentEntity[])
+  }
 
-    public update(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public update(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public getOneByComponentIdRunning(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public getOneByComponentIdRunning(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 
-    public getNextQueuedDeployment(): Promise<QueuedIstioDeploymentEntity> {
-        return Promise.resolve({} as QueuedIstioDeploymentEntity)
-    }
+  public getNextQueuedDeployment(): Promise<QueuedIstioDeploymentEntity> {
+    return Promise.resolve({} as QueuedIstioDeploymentEntity)
+  }
 }

@@ -18,48 +18,48 @@ import IEnvConfiguration from '../../../../app/v1/core/integrations/configuratio
 
 export const EnvConfigurationStub: IEnvConfiguration = {
 
-    postgresHost: 'postgreshost.com',
+  postgresHost: 'postgreshost.com',
 
-    postgresPort: 8000,
+  postgresPort: 8000,
 
-    postgresUser: 'postgresuser',
+  postgresUser: 'postgresuser',
 
-    postgresPass: 'postgrespass',
+  postgresPass: 'postgrespass',
 
-    postgresDbName: 'postgresdbname',
+  postgresDbName: 'postgresdbname',
 
-    postgresSSL: false,
+  postgresSSL: false,
 
-    mooveUrl: 'mooveurl.com',
+  mooveUrl: 'mooveurl.com',
 
-    darwinDeploymentCallbackUrl: 'darwin-deployment-callback.url.com',
+  darwinDeploymentCallbackUrl: 'darwin-deployment-callback.url.com',
 
-    darwinUndeploymentCallbackUrl: 'darwin-undeployment-callback.url.com',
+  darwinUndeploymentCallbackUrl: 'darwin-undeployment-callback.url.com',
 
-    darwinIstioDeploymentCallbackUrl: 'darwin-istio-deployment-callback.url.com',
+  darwinIstioDeploymentCallbackUrl: 'darwin-istio-deployment-callback.url.com',
 
-    spinnakerUrl: 'spinnakerurl.com',
+  spinnakerUrl: 'spinnakerurl.com',
 
-    octopipeUrl: 'octopipe.com',
+  octopipeUrl: 'octopipe.com',
 
-    darwinNotificationUrl: 'darwin-notification.url.com',
+  darwinNotificationUrl: 'darwin-notification.url.com',
 
-    helmPrefixUrl: 'helm-prefix',
+  helmPrefixUrl: 'helm-prefix',
 
-    helmRepoBranch: 'helm-branch',
+  helmRepoBranch: 'helm-branch',
 
-    helmTemplateUrl: 'helm-template',
+  helmTemplateUrl: 'helm-template',
 
-    spinnakerGithubAccount: 'spinnaker-github-account',
+  spinnakerGithubAccount: 'spinnaker-github-account',
 
-    deploymentExpireTime: 25,
+  deploymentExpireTime: 25,
 
-    pgBossConfig: {
-        database: 'postgresdbname',
-        host: 'postgreshost.com',
-        max: 5,
-        password: 'postgrespass',
-        retentionDays: 7,
-        user: 'postgresuser'
-    }
+  pgBossConfig: {
+    database: 'postgresdbname',
+    host: 'postgreshost.com',
+    max: 5,
+    password: 'postgrespass',
+    retentionDays: 7,
+    user: 'postgresuser'
+  }
 }

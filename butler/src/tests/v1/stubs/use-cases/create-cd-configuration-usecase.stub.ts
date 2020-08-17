@@ -18,7 +18,7 @@ import { ReadCdConfigurationDto } from '../../../../app/v1/api/configurations/dt
 
 export class CreateCdConfigurationUsecaseStub {
 
-    public execute(): Promise<ReadCdConfigurationDto> {
-        return Promise.resolve({} as ReadCdConfigurationDto)
-    }
+  public execute(): Promise<ReadCdConfigurationDto> {
+    return Promise.resolve({} as ReadCdConfigurationDto)
+  }
 }

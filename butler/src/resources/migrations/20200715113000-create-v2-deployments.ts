@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { MigrationInterface, QueryRunner, Table } from 'typeorm'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CreateV2Deployments20200715113000 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner) {
-      await queryRunner.query(`
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.query(`
         CREATE TABLE "public"."v2deployments" (
         "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
         "external_id" uuid NOT NULL,
@@ -40,9 +40,9 @@ export class CreateV2Deployments20200715113000 implements MigrationInterface {
         CREATE INDEX "index_v2_deployments_id" ON "public"."v2deployments" USING btree( "id" );
         CREATE UNIQUE INDEX only_one_active_for_circle ON v2deployments (active, circle_id, cd_configuration_id) WHERE (active)
         `)
-    }
+  }
 
-    public async down(queryRunner: QueryRunner) {
-      await queryRunner.dropTable('v2deployments')
-    }
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropTable('v2deployments')
+  }
 }

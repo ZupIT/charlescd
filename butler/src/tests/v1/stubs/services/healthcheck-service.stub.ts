@@ -18,7 +18,7 @@ import { IReadHealthcheckStatus } from '../../../../app/v1/api/healthcheck/inter
 
 export class HealthcheckServiceStub {
 
-    public getHealthcheckStatus(): Promise<IReadHealthcheckStatus> {
-        return Promise.resolve({} as IReadHealthcheckStatus)
-    }
+  public getHealthcheckStatus(): Promise<IReadHealthcheckStatus> {
+    return Promise.resolve({} as IReadHealthcheckStatus)
+  }
 }
