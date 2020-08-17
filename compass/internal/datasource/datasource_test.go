@@ -3,6 +3,7 @@ package datasource
 import (
 	"compass/internal/plugin"
 	"compass/internal/util"
+	"compass/pkg/logger/fake"
 	"database/sql"
 	"encoding/json"
 	"regexp"
@@ -39,9 +40,10 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	var pluginMain = plugin.NewMain(s.DB)
+	fakeLogger := fake.NewLoggerFake()
+	var pluginMain = plugin.NewMain(s.DB, fakeLogger)
 
-	s.repository = NewMain(s.DB, pluginMain)
+	s.repository = NewMain(s.DB, pluginMain, fakeLogger)
 }
 
 func TestInit(t *testing.T) {
@@ -90,6 +92,31 @@ func (s *Suite) TestFindById() {
 
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), expected, res)
+}
+
+func (s *Suite) TestFindByIdWithError() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = false
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	rows := sqlmock.
+		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
+		WithArgs("123456789").
+		WillReturnRows(rows)
+
+	_, err := s.repository.FindById(id.String())
+
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestFindAllByWorkspace() {
