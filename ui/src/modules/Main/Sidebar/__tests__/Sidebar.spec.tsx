@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, wait, screen, fireEvent, getByText, cleanup } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -23,6 +23,7 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import * as utilsAuth from 'core/utils/auth';
 
 const originalWindow = { ...window };
+const openDocumentation = jest.fn();
 
 beforeEach(() => {
   delete window.location;
@@ -31,10 +32,13 @@ beforeEach(() => {
     ...window.location,
     pathname: routes.workspaces
   };
+
+  window.open = openDocumentation;
 });
 
 afterEach(() => {
   window = originalWindow;
+  cleanup();
 });
 
 test('renders sidebar component', async () => {
@@ -84,16 +88,35 @@ test('renders sidebar componen( with selected workspace', async () => {
   await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
 });
 
-// OK-testa se existe o icone help
-// X -testa se ao clicar no icone, abre outra aba com link da doc. verificar se icone foi clickado
-//  -> teste unitario do goTo()
-// testa se ao passar o mouse em cima do icone, aparece a tooltip escrito 'Documentation'
+test('renders help icon in the sidebar', async () => {
+  const { getByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} />
+  );
 
-test('help icon is in the sidebar', async () => {
-  const { queryByTestId } = render(
+  const helpIcon = getByTestId('icon-help');
+  await wait(() => expect(helpIcon).toBeInTheDocument());
+});
+
+test('renders tooltip with text equal to "Documentation"', async () => {
+  const { queryByTestId, getByText } = render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
 
   const helpIcon = queryByTestId('icon-help');
   await wait(() => expect(helpIcon).toBeInTheDocument());
+
+  const tooltipText = getByText('Documentation');
+  await wait(() => expect(tooltipText).toBeInTheDocument());
+});
+
+test('opens documentation link once', async () => {
+  const { queryByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={() => {}} />
+  );
+
+  const helpIcon = queryByTestId('icon-help');
+  await wait(() => expect(helpIcon).toBeInTheDocument());
+
+  fireEvent.click(helpIcon);
+  expect(openDocumentation).toHaveBeenCalledTimes(1);
 });
