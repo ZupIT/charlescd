@@ -65,7 +65,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if utils.IsDeleveloperRunning() {
+	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
 	}
 
