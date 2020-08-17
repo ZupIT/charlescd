@@ -1,9 +1,9 @@
 package util
 
 import (
-	"compass/internal/iguration"
+	"compass/internal/configuration"
 )
 
 func IsDeveloperRunning() bool {
-	return iguration.Getiguration("ENV") == "DEV"
+	return configuration.GetConfiguration("ENV") == "DEV"
 }
