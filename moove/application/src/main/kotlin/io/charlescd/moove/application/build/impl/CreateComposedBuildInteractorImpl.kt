@@ -166,7 +166,7 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
         return componentSnapshot.copy(
             artifact = createArtifactSnapshot(
                 componentSnapshot,
-               componentRequest,
+                componentRequest,
                 releaseName
             )
         )

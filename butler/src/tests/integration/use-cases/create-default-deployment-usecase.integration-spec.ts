@@ -33,6 +33,7 @@ import { ModuleEntity } from '../../../app/v1/api/modules/entity'
 import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import * as uuid from 'uuid'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
+import { AppConstants } from '../../../app/v1/core/constants'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -585,16 +586,16 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     expect(component1.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ destination: { version: 'image-tag' } }],
-        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
+        pipelineCircles: [{ destination: { version: 'image-tag-f5d23a57' } }],
+        pipelineVersions: [{ version: 'image-tag-f5d23a57', versionUrl: 'image-url' }],
         pipelineUnusedVersions: []
       }
     )
 
     expect(component2.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ destination: { version: 'image-tag2' } }],
-        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
+        pipelineCircles: [{ destination: { version: 'image-tag2-f5d23a57' } }],
+        pipelineVersions: [{ version: 'image-tag2-f5d23a57', versionUrl: 'image-url2' }],
         pipelineUnusedVersions: []
       }
     )
@@ -698,7 +699,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url',
-          version: 'component-name-image-tag'
+          version: 'component-name-image-tag-f5d23a57',
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -728,7 +730,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url2',
-          version: 'component-name2-image-tag2'
+          version: 'component-name2-image-tag2-f5d23a57',
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
