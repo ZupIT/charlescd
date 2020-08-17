@@ -89,18 +89,19 @@ export class ComponentEntity extends BaseEntity {
   }
 
   public setPipelineDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
+    componentDeployment.concatImageAndCircleId(AppConstants.DEFAULT_CIRCLE_ID)
     this.removeCurrentDefaultCircle()
     this.addDefaultCircle(componentDeployment)
     this.setUnusedVersions()
-    this.addVersion(componentDeployment, AppConstants.DEFAULT_CIRCLE_ID)
+    this.addVersion(componentDeployment)
   }
 
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
-    componentDeployment.concatImageAndCircleId(circle)
+    componentDeployment.concatImageAndCircleId(circle.headerValue)
     this.removeCurrentCircleRule(circle)
     this.addCircleRule(circle, componentDeployment)
     this.setUnusedVersions()
-    this.addVersion(componentDeployment, circle.headerValue)
+    this.addVersion(componentDeployment)
   }
 
   public unsetPipelineCircle(circle: CircleDeploymentEntity): void {
@@ -157,7 +158,7 @@ export class ComponentEntity extends BaseEntity {
     this.pipelineOptions.pipelineUnusedVersions = unusedVersions
   }
 
-  private addVersion(componentDeployment: ComponentDeploymentEntity, circleId: string): void {
+  private addVersion(componentDeployment: ComponentDeploymentEntity): void {
     this.pipelineOptions.pipelineVersions = this.pipelineOptions.pipelineVersions.filter(
       pipelineVersion => pipelineVersion.version !== componentDeployment.buildImageTag
     )
