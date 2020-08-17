@@ -21,12 +21,12 @@ const expectedBaseHelmPreviousStages = {
     {
       defaultArtifact: {
         customKind: true,
-        id: 'useless - deployment - version'
+        id: 'useless - deployment - version-d0d9f3d3'
       },
-      displayName: 'deployment - version',
-      id: 'deployment - version',
+      displayName: 'deployment - version-d0d9f3d3',
+      id: 'deployment - version-d0d9f3d3',
       matchArtifact: {
-        id: 'useless - deployment - version - match',
+        id: 'useless - deployment - version-d0d9f3d3 - match',
         name: 'app-name',
         type: 'embedded/base64'
       },
@@ -45,13 +45,14 @@ const expectedBaseHelmPreviousStages = {
       id: 'value - app-name'
     }
   ],
-  name: 'Bake version',
+  name: 'Bake version-d0d9f3d3',
   namespace: 'app-namespace',
-  outputName: 'app-name-version',
+  outputName: 'app-name-version-d0d9f3d3',
   overrides: {
     'image.tag': 'version.url',
-    'name': 'version',
-    'circleId': 'circleId'
+    'name': 'version-d0d9f3d3',
+    'circleId': 'circleId',
+    'version' : 'version'
   },
   refId: 'ref-if',
   requisiteStageRefIds: [

@@ -30,7 +30,7 @@ it('compiles the pipeline', () => {
     appName: 'app-name',
     appNamespace: 'app-namespace',
     webhookUri: 'webhook.uri',
-    versions: [{ version: 'v1', versionUrl: '/v1' }],
+    versions: [{ version: 'v1-f5d23a57', versionUrl: '/v1' }],
     unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',

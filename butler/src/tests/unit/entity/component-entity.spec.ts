@@ -19,26 +19,26 @@ import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../app/
 import { AppConstants } from '../../../app/v1/core/constants'
 
 describe('ComponentEntity test', () => {
-    it('should create the right version name with the first 8 chars of circle id', () => {
-      const componentEntity = new ComponentEntity(
-        'component-id',
-        'host-value',
-        'gateway-name'
-      )
-      const componentDeploymentEntity = new ComponentDeploymentEntity(
-        'component-id',
-        'component-name',
-        'build-image-url',
-        'build-image-tag'
-      )
-      const circle = new CircleDeploymentEntity(
-        '0e19100a-448d-4aa4-8fa0-7cf84e91ae10'
-      )
-      componentEntity.setPipelineCircle(circle, componentDeploymentEntity)
-      expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-0e19100a')
-      expect(componentEntity.pipelineOptions.pipelineCircles[0].destination).toBe('build-image-tag-f5d23a57')
+  it('should create the right version name with the first 8 chars of circle id', () => {
+    const componentEntity = new ComponentEntity(
+      'component-id',
+      'host-value',
+      'gateway-name'
+    )
+    const componentDeploymentEntity = new ComponentDeploymentEntity(
+      'component-id',
+      'component-name',
+      'build-image-url',
+      'build-image-tag'
+    )
+    const circle = new CircleDeploymentEntity(
+      '0e19100a-448d-4aa4-8fa0-7cf84e91ae10'
+    )
+    componentEntity.setPipelineCircle(circle, componentDeploymentEntity)
+    expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-0e19100a')
+    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag-0e19100a')
 
-    })
+  })
   it('should create the right version name with the first 8 chars of default circle id', () => {
     const componentEntity = new ComponentEntity(
       'component-id',
@@ -55,7 +55,7 @@ describe('ComponentEntity test', () => {
     componentEntity.setPipelineDefaultCircle(componentDeploymentEntity)
 
     expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-f5d23a57')
-    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination).toBe('build-image-tag-f5d23a57')
+    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag-f5d23a57')
 
   })
 })

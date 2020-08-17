@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { AppConstants } from '../../../../../app/v1/core/constants'
+
 const expectedTotalPipeline = {
   appConfig: {},
   application: 'application-name',
@@ -71,12 +73,12 @@ const expectedTotalPipeline = {
         {
           defaultArtifact: {
             customKind: true,
-            id: 'useless - deployment - v1'
+            id: 'useless - deployment - v1-f5d23a57'
           },
-          displayName: 'deployment - v1',
-          id: 'deployment - v1',
+          displayName: 'deployment - v1-f5d23a57',
+          id: 'deployment - v1-f5d23a57',
           matchArtifact: {
-            id: 'useless - deployment - v1 - match',
+            id: 'useless - deployment - v1-f5d23a57 - match',
             name: 'app-name',
             type: 'embedded/base64'
           },
@@ -95,13 +97,14 @@ const expectedTotalPipeline = {
           id: 'value - app-name'
         }
       ],
-      name: 'Bake v1',
+      name: 'Bake v1-f5d23a57',
       namespace: 'app-namespace',
-      outputName: 'app-name-v1',
+      outputName: 'app-name-v1-f5d23a57',
       overrides: {
         'image.tag': '/v1',
-        'name': 'v1',
-        'circleId': 'circle-id'
+        'name': 'v1-f5d23a57',
+        'circleId': AppConstants.DEFAULT_CIRCLE_ID,
+        'version' : 'v1'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -116,11 +119,11 @@ const expectedTotalPipeline = {
       continuePipeline: true,
       failPipeline: false,
       manifestArtifactAccount: 'embedded-artifact',
-      manifestArtifactId: 'deployment - v1',
+      manifestArtifactId: 'deployment - v1-f5d23a57',
       moniker: {
         app: 'app-name'
       },
-      name: 'Deploy v1',
+      name: 'Deploy v1-f5d23a57',
       refId: '2',
       requisiteStageRefIds: [
         '1'
@@ -128,7 +131,7 @@ const expectedTotalPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
-        expression: '${ #stage(\'Bake v1\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Bake v1-f5d23a57\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -150,7 +153,7 @@ const expectedTotalPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Deploy v1\' ).status.toString()}',
+        status: '${#stage( \'Deploy v1-f5d23a57\' ).status.toString()}',
         callbackType: 'DEPLOYMENT'
       },
       refId: '3',
