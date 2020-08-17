@@ -133,3 +133,30 @@ func (s *Suite) TestFindByIdError() {
 
 	require.Error(s.T(), err)
 }
+
+func (s *Suite) TestSavePlugin() {
+	id := uuid.New()
+	timeNow := time.Now()
+	name := "PROMETHEUS"
+	src := "localhost:8080"
+
+	pluginStruct := Plugin{
+		BaseModel: util.BaseModel{ID: id, CreatedAt: timeNow},
+		Name:      name,
+		Src:       src,
+	}
+
+	query := regexp.QuoteMeta(`INSERT INTO "plugins"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(query).
+		WithArgs(sqlmock.AnyArg(), pluginStruct.CreatedAt, pluginStruct.Name, pluginStruct.Src).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+	s.mock.ExpectCommit()
+
+	res, err := s.repository.Save(pluginStruct)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), pluginStruct, res)
+}
