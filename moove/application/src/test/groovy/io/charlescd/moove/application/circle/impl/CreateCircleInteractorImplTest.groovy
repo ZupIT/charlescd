@@ -56,7 +56,7 @@ class CreateCircleInteractorImplTest extends Specification {
         def circleId = "5a0d5b3f-8c28-49ab-a6d0-7b5d1296f610"
         def authorId = "d7abd3c1-15a3-45b6-84fb-f0e548aca230"
         def workspaceId = "a51e2a7b-f1ea-4ff8-a6aa-77b4ea92dae2"
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -93,7 +93,7 @@ class CreateCircleInteractorImplTest extends Specification {
         given:
         def authorId = "d7abd3c1-15a3-45b6-84fb-f0e548aca230"
         def workspaceId = "a51e2a7b-f1ea-4ff8-a6aa-77b4ea92dae2"
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -115,7 +115,7 @@ class CreateCircleInteractorImplTest extends Specification {
         given:
         def authorId = "d7abd3c1-15a3-45b6-84fb-f0e548aca230"
         def workspaceId = "a51e2a7b-f1ea-4ff8-a6aa-77b4ea92dae2"
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
