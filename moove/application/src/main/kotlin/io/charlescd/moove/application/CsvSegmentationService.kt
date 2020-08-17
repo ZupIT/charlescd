@@ -73,7 +73,7 @@ class CsvSegmentationService(private val objectMapper: ObjectMapper) {
         return NodePart(
             type = NodePart.NodeTypeRequest.RULE,
             logicalOperator = NodePart.LogicalOperatorRequest.OR,
-            content = NodePart.RulePart(keyName, "EQUAL", listOf(value))
+            content = NodePart.RulePart(keyName, NodePart.ConditionEnum.EQUAL, listOf(value))
         ).toJsonNode()
     }
 

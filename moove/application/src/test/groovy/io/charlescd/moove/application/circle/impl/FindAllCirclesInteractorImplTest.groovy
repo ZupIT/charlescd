@@ -51,7 +51,7 @@ class FindAllCirclesInteractorImplTest extends Specification {
         def workspaceId = "d3828cdb-b87c-4360-a3b6-4563aff459a8"
         def pageRequest = new PageRequest(0, 10)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -114,7 +114,7 @@ class FindAllCirclesInteractorImplTest extends Specification {
         def workspaceId = "d3828cdb-b87c-4360-a3b6-4563aff459a8"
         def pageRequest = new PageRequest(0, 10)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
