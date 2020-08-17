@@ -40,7 +40,6 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
     @Transactional
     override fun execute(request: CreateComposedBuildRequest, workspaceId: String): BuildResponse {
         val build = createBuild(request, workspaceId)
-        println(build)
         return BuildResponse.from(buildService.save(build))
     }
 

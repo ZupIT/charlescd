@@ -90,7 +90,7 @@ export class ComponentDeploymentEntity extends BaseEntity {
     )
   }
 
-  concatImageAndCircleId(circle: CircleDeploymentEntity) {
-    this.buildImageTag = this.buildImageTag.concat('-' ).concat(circle.headerValue.substring(0, 8))
+  concatImageAndCircleId(circleId: string) {
+    this.buildImageTag = this.buildImageTag.concat('-' ).concat(circleId.substring(0, 8))
   }
 }

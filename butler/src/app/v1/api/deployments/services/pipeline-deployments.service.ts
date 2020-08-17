@@ -315,5 +315,4 @@ export class PipelineDeploymentsService {
       gatewayName
     }
   }
-
 }
