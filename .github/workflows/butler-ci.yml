@@ -30,6 +30,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
+    - name: Setup timezone
+      uses: zcong1993/setup-timezone@master
+      with:
+        timezone: America/Sao_Paulo
+
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
