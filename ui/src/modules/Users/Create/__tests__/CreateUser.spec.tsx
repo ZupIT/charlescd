@@ -64,5 +64,11 @@ test("render CreateUser Form component", async () => {
   expect(ButtonCreateUser).toBeInTheDocument();
 
   const InputName = getByTestId("input-text-name");
+  const InputEmail = getByTestId("input-text-email");
+  const InputPhotourl = getByTestId("input-text-photoUrl");
+  const InputPassword = getByTestId("password-password-password");
   expect(InputName).toBeEmpty();
+  expect(InputEmail).toBeEmpty();
+  expect(InputPhotourl).toBeEmpty();
+  expect(InputPassword).toBeEmpty();
 });
