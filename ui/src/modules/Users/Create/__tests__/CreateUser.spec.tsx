@@ -37,14 +37,15 @@ test('close CreateUser component', async () => {
     const { queryByTestId, getByTestId } = render(
       <CreateUser {...props} onFinish={props.onFinish}/>
     );
-  
-    expect(getByTestId('create-user')).toBeInTheDocument();
+
+    const createUser = getByTestId('create-user');
+    expect(createUser).toBeInTheDocument();
 
     const tabPanelCloseButton = queryByTestId('icon-cancel');
     expect(tabPanelCloseButton).toBeInTheDocument();
 
     fireEvent.click(tabPanelCloseButton);
-    expect(getByTestId('create-user')).not.toBeInTheDocument();
+    expect(createUser).not.toBeInTheDocument();
 });
 
 test("render CreateUser Form component", async () => {
@@ -62,4 +63,7 @@ test("render CreateUser Form component", async () => {
 
   const ButtonCreateUser = getByTestId("button-create-user");
   expect(ButtonCreateUser).toBeInTheDocument();
+
+  const InputName = getByTestId("input-text-name");
+  expect(InputName).toBeEmpty();
 });

@@ -15,7 +15,12 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { useFetch, useFetchData, useFetchStatus, FetchStatus } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import {
   findAllUsers,
   updateProfileById,
@@ -65,6 +70,7 @@ export const useCreateUser = (): {
         return res;
       }
     } catch (e) {
+      console.log('e', e);
       dispatch(
         toogleNotification({
           text: e.message,
