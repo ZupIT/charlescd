@@ -29,6 +29,6 @@ it('builds the helm stage without previous stage', () => {
 it('builds the helm stage with previous stage', () => {
   expect(
     baseStageHelm({ appNamespace: 'app-namespace', appName: 'app-name' },
-      'github-config', 'version-d0d9f3d3', 'version.url', 'ref-if', ['req-ref-id'], 'Previous stage','circleId')
+      'github-config', 'version-d0d9f3d3', 'version.url', 'ref-if', ['req-ref-id'], 'Previous stage', 'circleId')
   ).toEqual(expectedBaseHelmPreviousStages)
 })

@@ -268,10 +268,10 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   private getVersionCircle(octopipeVersion: IOctopipeVersion, circles: IPipelineCircle[]) {
-      const circleSearch = circles.find(
-        circle => circle.destination.version === octopipeVersion.version
-      )
-      return { ...octopipeVersion, versionCircle: circleSearch?.header ? circleSearch.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
+    const circleSearch = circles.find(
+      circle => circle.destination.version === octopipeVersion.version
+    )
+    return { ...octopipeVersion, versionCircle: circleSearch?.header ? circleSearch.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
   }
 
   private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]) {
