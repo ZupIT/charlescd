@@ -1,7 +1,7 @@
 butler:
   enabled: true
   name: "charlescd-butler"
-  octopipeHost: "http://charlescd-octopipe:8080/"
+  octopipeHost: "http://charlescd-octopipe:8080"
   database:
     name: charlescd_butler
     host: charlescd-postgresql
@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.3.0
+    name: zupcharles/charlescd-butler:0.3.2
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -31,7 +31,7 @@ moove:
   enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
-  keycloakHost: "http://charles.info.example/keycloak/auth"
+  keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -40,7 +40,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.3.0
+    name: zupcharles/charlescd-moove:0.3.2
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -71,7 +71,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.3.0
+    name: zupcharles/charlescd-villager:0.3.2
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -94,7 +94,7 @@ ui:
   keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.0
+    name: zupcharles/charlescd-ui:0.3.2
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -121,7 +121,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.3.0
+    name: zupcharles/charlescd-circle-matcher:0.3.2
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -162,6 +162,9 @@ keycloak:
     persistence:
       deployPostgres: false
       existingSecret: false
+    cli:
+      custom: |
+        /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 postgresql:
   enabled: true

@@ -28,7 +28,7 @@
     "@nestjs/typeorm": "^7.1.0",
     "@octokit/rest": "^16.43.1",
     "@types/stack-trace": "0.0.29",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.11.1",
     "cls-hooked": "^4.2.2",
     "cls-rtracer": "^1.4.1",
