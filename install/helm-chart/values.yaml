@@ -1,7 +1,7 @@
 butler:
   enabled: true
   name: "charlescd-butler"
-  octopipeHost: "http://charlescd-octopipe:8080/"
+  octopipeHost: "http://charlescd-octopipe:8080"
   database:
     name: charlescd_butler
     host: charlescd-postgresql
