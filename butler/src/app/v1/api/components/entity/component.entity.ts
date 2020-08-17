@@ -96,6 +96,7 @@ export class ComponentEntity extends BaseEntity {
   }
 
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
+    componentDeployment.concatImageAndCircleId(circle)
     this.removeCurrentCircleRule(circle)
     this.addCircleRule(circle, componentDeployment)
     this.setUnusedVersions()
@@ -126,7 +127,7 @@ export class ComponentEntity extends BaseEntity {
   private addDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
     this.pipelineOptions.pipelineCircles.push({
       destination: {
-        version: this.concatVersionCircle(componentDeployment.buildImageTag, AppConstants.DEFAULT_CIRCLE_ID)
+        version: componentDeployment.buildImageTag
       }
     })
   }
@@ -138,7 +139,7 @@ export class ComponentEntity extends BaseEntity {
         headerValue: circle.headerValue
       },
       destination: {
-        version: this.concatVersionCircle(componentDeployment.buildImageTag, circle.headerValue)
+        version: componentDeployment.buildImageTag
       }
     })
   }
@@ -162,11 +163,8 @@ export class ComponentEntity extends BaseEntity {
     )
     this.pipelineOptions.pipelineVersions.push({
       versionUrl: componentDeployment.buildImageUrl,
-      version: this.concatVersionCircle(componentDeployment.buildImageTag, circleId)
+      version: componentDeployment.buildImageTag
     })
   }
 
-  private concatVersionCircle(version: string, circleId: string): string {
-      return version.concat("-").concat(circleId.substring(0, 8))
-  }
 }
