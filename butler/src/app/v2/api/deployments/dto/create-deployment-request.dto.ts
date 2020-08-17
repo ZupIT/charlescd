@@ -25,6 +25,7 @@ import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateDeploymentRequestDto {
+
   @IsUUID()
   @IsNotEmpty()
   public deploymentId: string
@@ -73,7 +74,7 @@ export class CreateDeploymentRequestDto {
     this.modules = modules
   }
 
-  public toCircleEntity(incomingCircleId: string | null): DeploymentEntity {
+  public toCircleEntity(): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
@@ -81,12 +82,11 @@ export class CreateDeploymentRequestDto {
       this.circle ? this.circle.headerValue : null,
       this.cdConfiguration,
       this.callbackUrl,
-      this.getDeploymentComponents(),
-      incomingCircleId
+      this.getDeploymentComponents()
     )
   }
 
-  public toDefaultEntity(incomingCircleId: string | null, activeComponents: ComponentEntity[]): DeploymentEntity {
+  public toDefaultEntity(activeComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
@@ -94,8 +94,7 @@ export class CreateDeploymentRequestDto {
       null,
       this.cdConfiguration,
       this.callbackUrl,
-      [ ...activeComponents, ...this.getDeploymentComponents()],
-      incomingCircleId
+      [ ...activeComponents, ...this.getDeploymentComponents()]
     )
   }
 

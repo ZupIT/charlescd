@@ -29,36 +29,37 @@ import { ExecutionTypeEnum } from '../enums'
 
 @Injectable()
 export class CreateDeploymentUseCase {
+
   constructor(
-      @InjectRepository(DeploymentEntity)
-      private deploymentsRepository: Repository<DeploymentEntity>,
-      @InjectRepository(Execution)
-      private executionRepository: Repository<Execution>,
-      @InjectRepository(ComponentsRepositoryV2)
-      private componentsRepository: ComponentsRepositoryV2,
-      private pgBoss: PgBossWorker,
-      private readonly consoleLoggerService: ConsoleLoggerService
+    @InjectRepository(DeploymentEntity)
+    private deploymentsRepository: Repository<DeploymentEntity>,
+    @InjectRepository(Execution)
+    private executionRepository: Repository<Execution>,
+    @InjectRepository(ComponentsRepositoryV2)
+    private componentsRepository: ComponentsRepositoryV2,
+    private pgBoss: PgBossWorker,
+    private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
+  public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { createDeploymentDto, incomingCircleId })
     const deployment = createDeploymentDto.circle ?
-      await this.createCircleDeployment(createDeploymentDto, incomingCircleId) :
-      await this.createDefaultDeployment(createDeploymentDto, incomingCircleId)
-    const execution = await this.createDeploymentExecution(deployment)
+      await this.createCircleDeployment(createDeploymentDto) :
+      await this.createDefaultDeployment(createDeploymentDto)
+    const execution = await this.createExecution(deployment, incomingCircleId)
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment, execution, jobId })
     return deployment
   }
 
-  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
+  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const deployment = await this.deploymentsRepository.save(createDeploymentDto.toCircleEntity(incomingCircleId))
+    const deployment = await this.deploymentsRepository.save(createDeploymentDto.toCircleEntity())
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
   }
 
-  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string): Promise<DeploymentEntity> {
+  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
     const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
     const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
@@ -68,23 +69,23 @@ export class CreateDeploymentUseCase {
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
 
     const deployment = await this.deploymentsRepository.save(
-      createDeploymentDto.toDefaultEntity(incomingCircleId, unchangedComponents)
+      createDeploymentDto.toDefaultEntity(unchangedComponents)
     )
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
   }
 
   private async publishExecutionJob(execution: Execution): Promise<string | null> {
-    this.consoleLoggerService.log('START:PUBLISHING_EXECUTION', { execution: execution.id })
+    this.consoleLoggerService.log('START:PUBLISHING_DEPLOYMENT_EXECUTION', { execution: execution.id })
     const jobId = await this.pgBoss.publish(execution)
-    this.consoleLoggerService.log('FINISH:PUBLISHING_EXECUTION', { jobId: jobId, executions: execution.id })
+    this.consoleLoggerService.log('FINISH:PUBLISHING_DEPLOYMENT_EXECUTION', { jobId: jobId, executions: execution.id })
     return jobId
   }
 
-  private async createDeploymentExecution(deployment: DeploymentEntity): Promise<Execution> {
-    this.consoleLoggerService.log('START:CREATE_EXECUTION', { deployment: deployment.id })
-    const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.DEPLOYMENT })
-    this.consoleLoggerService.log('FINISH:CREATE_EXECUTION', { execution })
+  private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
+    this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_EXECUTION', { deployment: deployment.id })
+    const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.DEPLOYMENT, incomingCircleId })
+    this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_EXECUTION', { execution })
     return execution
   }
 

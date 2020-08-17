@@ -25,17 +25,19 @@ import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { QueueNames } from '../enums/queue-names.enum'
 import { DeploymentCleanupHandler } from '../use-cases/deployment-cleanup-handler'
-import { DeploymentHandler } from '../use-cases/deployment-handler'
+import { DeploymentHandlerUseCase } from '../use-cases/deployment-handler.usecase'
 import PgBoss = require('pg-boss');
 
 @Injectable()
 export class PgBossWorker implements OnModuleInit, OnModuleDestroy {
+
   public pgBoss: PgBoss
+
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
     private deploymentCleanupHandler: DeploymentCleanupHandler,
-    @Inject(forwardRef(() => DeploymentHandler))
-    private readonly deploymentHandler: DeploymentHandler,
+    @Inject(forwardRef(() => DeploymentHandlerUseCase))
+    private readonly deploymentHandler: DeploymentHandlerUseCase,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private envConfiguration: IEnvConfiguration,
     @InjectRepository(DeploymentEntityV2)

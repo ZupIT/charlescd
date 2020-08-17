@@ -17,32 +17,42 @@ export class SpinnakerConnector {
     private consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async createDeployment(deployment: Deployment, activeComponents: Component[]): Promise<ConnectorResult | ConnectorResultError> {
-    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DELOYMENT', { deployment, activeComponents })
+  public async createDeployment(
+    deployment: Deployment,
+    activeComponents: Component[],
+    incomingCircleId: string | null
+  ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
+      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT', { deployment, activeComponents })
       await this.createSpinnakerApplication(deployment.cdConfiguration)
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR CREATE APPLICATION', { error })
-      return { status: 'ERROR', error: error }
-    }
-
-    try {
-      await this.createSpinnakerPipeline(deployment, activeComponents)
-    } catch (error) {
-      this.consoleLoggerService.log('ERROR CREATE PIPELINE', { error })
-      return { status: 'ERROR', error: error }
-    }
-
-    try {
+      await this.createSpinnakerDeploymentPipeline(deployment, activeComponents, incomingCircleId)
       await this.deploySpinnakerPipeline(deployment)
+      this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DEPLOYMENT')
+      return { status: 'SUCCEEDED' }
     } catch (error) {
-      this.consoleLoggerService.log('ERROR DEPLOY PIPELINE', { error })
+      this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_DEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
+  }
 
-    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_DELOYMENT')
-    return { status: 'SUCCEEDED' }
+  public async createUndeployment(
+    deployment: Deployment,
+    activeComponents: Component[],
+    incomingCircleId: string | null
+  ): Promise<ConnectorResult | ConnectorResultError> {
+
+    try {
+      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_UNDEPLOYMENT', { deployment, activeComponents })
+      await this.createSpinnakerApplication(deployment.cdConfiguration)
+      await this.createSpinnakerUndeploymentPipeline(deployment, activeComponents, incomingCircleId)
+      await this.deploySpinnakerPipeline(deployment)
+      this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_UNDEPLOYMENT')
+      return { status: 'SUCCEEDED' }
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR:CREATE_V2_SPINNAKER_UNDEPLOYMENT', { error })
+      return { status: 'ERROR', error: error }
+    }
   }
 
   private async createSpinnakerApplication(cdConfiguration: CdConfiguration): Promise<void> {
@@ -61,11 +71,35 @@ export class SpinnakerConnector {
     }
   }
 
-  private async createSpinnakerPipeline(deployment: Deployment, activeComponents: Component[]): Promise<void> {
-    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_PIPELINE', { deployment })
-    const spinnakerPipeline: SpinnakerPipeline = new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deployment, activeComponents)
-    this.consoleLoggerService.log('GET:SPINNAKER_V2_PIPELINE', { spinnakerPipeline })
+  private async createSpinnakerDeploymentPipeline(
+    deployment: Deployment,
+    activeComponents: Component[],
+    incomingCircleId: string | null
+  ): Promise<void> {
 
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT_PIPELINE', { deployment })
+    const spinnakerPipeline: SpinnakerPipeline =
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deployment, activeComponents, incomingCircleId)
+    this.consoleLoggerService.log('GET:SPINNAKER_V2_DEPLOYMENT_PIPELINE', { spinnakerPipeline })
+    await this.verifyAndCreatePipeline(deployment, spinnakerPipeline)
+    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_PIPELINE')
+  }
+
+  private async createSpinnakerUndeploymentPipeline(
+    deployment: Deployment,
+    activeComponents: Component[],
+    incomingCircleId: string | null
+  ): Promise<void> {
+
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_UNDEPLOYMENT_PIPELINE', { deployment })
+    const spinnakerPipeline: SpinnakerPipeline =
+      new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deployment, activeComponents, incomingCircleId)
+    this.consoleLoggerService.log('GET:SPINNAKER_V2_UNDEPLOYMENT_PIPELINE', { spinnakerPipeline })
+    await this.verifyAndCreatePipeline(deployment, spinnakerPipeline)
+    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_UNDEPLOYMENT_PIPELINE')
+  }
+
+  private async verifyAndCreatePipeline(deployment: Deployment, spinnakerPipeline: SpinnakerPipeline): Promise<void> {
     const spinnakerUrl: string = (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).url
     const { data: { id: pipelineId } } = await this.spinnakerApiService.getPipeline(
       spinnakerPipeline.application, spinnakerPipeline.name, spinnakerUrl
@@ -74,8 +108,6 @@ export class SpinnakerConnector {
     pipelineId ?
       await this.updateSpinnakerPipeline(pipelineId, spinnakerUrl, spinnakerPipeline) :
       await this.spinnakerApiService.createPipeline(spinnakerPipeline, spinnakerUrl).toPromise()
-
-    this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_PIPELINE')
   }
 
   private async updateSpinnakerPipeline(pipelineId: string, spinnakerUrl: string, spinnakerPipeline: SpinnakerPipeline): Promise<void> {

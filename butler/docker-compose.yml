@@ -21,7 +21,7 @@ services:
     environment:
       STUBBY_PORT: 8883
     volumes:
-      - ./src/app/resources/stubby/integrations.yml:/usr/local/stubby.yml
+      - ./src/resources/stubby/integrations.yml:/usr/local/stubby.yml
 
   app:
     image: node:12.17.0-alpine3.9

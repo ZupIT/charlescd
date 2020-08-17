@@ -35,6 +35,4 @@ export interface Deployment {
     circleId: string | null
 
     components?: Component[]
-
-    incomingCircleId: string | null
 }

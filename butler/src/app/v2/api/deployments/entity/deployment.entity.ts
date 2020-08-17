@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne, OneToMany,
-  PrimaryGeneratedColumn
-} from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
@@ -71,9 +64,6 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
-  @Column({ name: 'incoming_circle_id', type: 'varchar' })
-  public incomingCircleId: string | null
-
   @Column({ name: 'notification_status', type: 'varchar' })
   public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
 
@@ -84,8 +74,7 @@ export class DeploymentEntityV2 implements Deployment {
     circleId: string | null,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
-    components: ComponentEntity[],
-    incomingCircleId: string | null
+    components: ComponentEntity[]
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -94,14 +83,5 @@ export class DeploymentEntityV2 implements Deployment {
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
-    this.incomingCircleId = incomingCircleId
-  }
-
-  public hasSucceeded(): boolean {
-    return this.status === DeploymentStatusEnum.SUCCEEDED
-  }
-
-  public hasFailed(): boolean {
-    return this.status === DeploymentStatusEnum.FAILED
   }
 }

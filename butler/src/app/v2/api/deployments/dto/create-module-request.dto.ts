@@ -16,10 +16,11 @@
 
 import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
-import { ComponentUniqueProp } from '../validations/component-unique-by-name'
 import { CreateComponentRequestDto } from './create-component-request.dto'
+import { ComponentUniqueProp } from '../validations/component-unique-by-name'
 
 export class CreateModuleDeploymentDto {
+
   @IsUUID()
   @IsNotEmpty()
   public moduleId: string

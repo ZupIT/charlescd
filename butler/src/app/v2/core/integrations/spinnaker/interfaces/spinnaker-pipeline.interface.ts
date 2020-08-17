@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { DeploymentNotificationRequestDto } from '../../../../api/deployments/dto/deployment-notification-request.dto'
+
 interface StageDefaultArtifact {
     customKind: boolean
     id: string
@@ -87,7 +89,8 @@ interface XCircleId {
 
 interface Headers {
     cookie?: Cookie
-    'x-circle-id'?: XCircleId
+    'x-circle-id'?: XCircleId,
+    'unreachable-cookie-name'?: XCircleId
 }
 
 interface Match {
@@ -96,7 +99,7 @@ interface Match {
 
 interface Destination {
     host: string
-    subset: string
+    subset?: string
 }
 
 interface RequestSet {
@@ -122,7 +125,7 @@ interface RouteHeaders {
 
 interface Route {
     destination: Destination
-    headers: RouteHeaders
+    headers?: RouteHeaders
 }
 
 interface Http {
@@ -146,10 +149,6 @@ interface Manifest {
 
 interface CustomHeaders {
     'x-circle-id': string
-}
-
-interface StagePayload {
-    status: string
 }
 
 interface StageVariable {
@@ -197,7 +196,7 @@ interface Stage {
     manifests?: Manifest[]
     customHeaders?: CustomHeaders
     method?: string
-    payload?: StagePayload
+    payload?: DeploymentNotificationRequestDto
     statusUrlResolution?: string
     url?: string
     failOnFailedExpressions?: boolean

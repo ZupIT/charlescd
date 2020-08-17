@@ -21,17 +21,17 @@ import { CdConfigurationsRepository } from '../../../v1/api/configurations/repos
 import { SpinnakerApiService } from '../../../v1/core/integrations/cd/spinnaker/spinnaker-api.service'
 import { MooveService } from '../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../v1/core/logs/console'
-import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
-import { DeploymentsController } from './controller/deployment.controller'
-import { NotificationsController } from './controller/notification.controller'
+import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
 import { PgBossWorker } from './jobs/pgboss.worker'
+import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
+import { DeploymentHandlerUseCase } from './use-cases/deployment-handler.usecase'
+import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
+import { SpinnakerConnector } from '../../core/integrations/spinnaker/connector'
 import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
-import { DeploymentCleanupHandler } from './use-cases/deployment-cleanup-handler'
-import { DeploymentHandler } from './use-cases/deployment-handler'
-import { NotificationUseCase } from './use-cases/notification-use-case'
+import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
 import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 
 @Module({
@@ -47,14 +47,14 @@ import { DeploymentRepositoryV2 } from './repository/deployment.repository'
     ])
   ],
   controllers: [
-    DeploymentsController,
-    NotificationsController
+    DeploymentsController
   ],
   providers: [
     PgBossWorker,
     CreateDeploymentUseCase,
-    NotificationUseCase,
-    DeploymentHandler,
+    CreateUndeploymentUseCase,
+    ReceiveNotificationUseCase,
+    DeploymentHandlerUseCase,
     MooveService,
     DeploymentCleanupHandler,
     ConsoleLoggerService,
