@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddCdConfigurationToDeployments20200429235000 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('deployments', new TableColumn({
       name: 'cd_configuration_id',
       type: 'varchar',
@@ -31,7 +31,7 @@ export class AddCdConfigurationToDeployments20200429235000 implements MigrationI
     )
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query('ALTER TABLE deployments DROP CONSTRAINT deployment_cd_configuration_fk;', [])
     await queryRunner.dropColumn('deployments', 'cd_configuration_id')
   }

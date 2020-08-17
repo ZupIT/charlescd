@@ -22,7 +22,7 @@ import {
 
 export class CreateK8sConfigurationsTable20200226214600 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
 
     await queryRunner.createTable(new Table({
       name: 'k8s_configurations',
@@ -57,7 +57,7 @@ export class CreateK8sConfigurationsTable20200226214600 implements MigrationInte
     }), true)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('k8s_configurations')
   }
 }

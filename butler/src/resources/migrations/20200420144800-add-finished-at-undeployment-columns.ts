@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddFinishedAtUndeploymentColumns20200420144800 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('undeployments', new TableColumn({
       name: 'finished_at',
       type: 'timestamp',
@@ -39,7 +39,7 @@ export class AddFinishedAtUndeploymentColumns20200420144800 implements Migration
 
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropColumn('undeployments', 'finished_at')
 
     await queryRunner.dropColumn('module_undeployments', 'finished_at')

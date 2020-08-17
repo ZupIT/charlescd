@@ -22,7 +22,7 @@ import {
 
 export class SetCircleAsNullable20200210160200 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.changeColumn(
       'deployments',
       'circle',
@@ -34,7 +34,7 @@ export class SetCircleAsNullable20200210160200 implements MigrationInterface {
     )
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.changeColumn(
       'deployments',
       'circle',

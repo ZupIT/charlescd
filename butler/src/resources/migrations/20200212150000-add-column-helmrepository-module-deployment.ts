@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddColumnHelmrepositoryModuleDeployment20200212150000 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('module_deployments', new TableColumn({
       name: 'helm_repository',
       type: 'varchar',
@@ -26,7 +26,7 @@ export class AddColumnHelmrepositoryModuleDeployment20200212150000 implements Mi
     }))
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropColumn(
       'module_deployments',
       'helm_repository'

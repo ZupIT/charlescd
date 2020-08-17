@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class AddTypeColumnToCdConfig20200317165300 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.addColumn('cd_configurations', new TableColumn({
       name: 'type',
       type: 'varchar',
@@ -26,7 +26,7 @@ export class AddTypeColumnToCdConfig20200317165300 implements MigrationInterface
     }))
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropColumn(
       'cd_configurations',
       'type'

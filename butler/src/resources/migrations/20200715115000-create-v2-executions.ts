@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CreateV2Executions20200715115000 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "public"."v2executions" (
         "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
@@ -33,7 +33,7 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
       `)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('v2executions')
   }
 }

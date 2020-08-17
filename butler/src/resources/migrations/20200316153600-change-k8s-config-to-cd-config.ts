@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class ChangeK8sConfigToCdConfig20200316153600 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query('ALTER TABLE k8s_configurations RENAME TO cd_configurations;', [])
     await queryRunner.query('ALTER TABLE modules RENAME COLUMN k8s_configuration_id TO cd_configuration_id;')
     await queryRunner.query('ALTER TABLE modules DROP CONSTRAINT module_k8s_configuration_fk;', [])
@@ -28,7 +28,7 @@ export class ChangeK8sConfigToCdConfig20200316153600 implements MigrationInterfa
     )
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query('ALTER TABLE cd_configurations RENAME TO k8s_configurations;', [])
     await queryRunner.query('ALTER TABLE modules RENAME COLUMN cd_configuration_id TO k8s_configuration_id;')
     await queryRunner.query(

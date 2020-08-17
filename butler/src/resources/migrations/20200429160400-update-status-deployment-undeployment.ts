@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class UpdateStatusDeploymentUndeployment20200429160400 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query('UPDATE DEPLOYMENTS SET STATUS =\'SUCCEEDED\' where status=\'FINISHED\'')
     await queryRunner.query('UPDATE MODULE_DEPLOYMENTS SET STATUS =\'SUCCEEDED\' where status=\'FINISHED\'')
     await queryRunner.query('UPDATE COMPONENT_DEPLOYMENTS SET STATUS =\'SUCCEEDED\' where status=\'FINISHED\'')
@@ -27,7 +27,7 @@ export class UpdateStatusDeploymentUndeployment20200429160400 implements Migrati
     await queryRunner.query('UPDATE UNDEPLOYMENTS SET STATUS =\'SUCCEEDED\' where status=\'FINISHED\'')
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query('UPDATE DEPLOYMENTS SET STATUS =\'FINISHED\' where status=\'SUCCEEDED\'')
     await queryRunner.query('UPDATE MODULE_DEPLOYMENTS SET STATUS =\'FINISHED\' where status=\'SUCCEEDED\'')
     await queryRunner.query('UPDATE COMPONENT_DEPLOYMENTS SET STATUS =\'FINISHED\' where status=\'SUCCEEDED\'')
