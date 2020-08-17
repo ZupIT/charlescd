@@ -12,15 +12,16 @@ RUN go mod download
 COPY . .
 
 RUN chmod a+rx build-plugins.sh
-RUN ./build-plugins.sh
+RUN sh build-plugins.sh
 RUN go build -o ./out/compass cmd/*.go
 
 # -----------------------------------------------
 
 FROM alpine:3.12.0
 
-COPY --from=builder /app/compass/plugins/*.so .
+COPY --from=builder /app/compass/plugins/*.so ./plugins/
 COPY --from=builder /app/compass/out/compass .
+COPY --from=builder /app/compass/migrations /migrations
 
 EXPOSE 8080
 
