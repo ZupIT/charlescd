@@ -6,7 +6,9 @@ import (
 	"compass/pkg/logger/fake"
 	"database/sql"
 	"encoding/json"
+	"io/ioutil"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -48,6 +50,25 @@ func (s *Suite) SetupSuite() {
 
 func TestInit(t *testing.T) {
 	suite.Run(t, new(Suite))
+}
+
+func (s *Suite) TestParse() {
+	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7", "health": true, "data": { "url": "http://35.238.107.172:9090" } }`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	res, err := s.repository.Parse(stringReadCloser)
+
+	require.NoError(s.T(), err)
+	require.NotNil(s.T(), res)
+}
+
+func (s *Suite) TestParseError() {
+	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bd" }`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	_, err := s.repository.Parse(stringReadCloser)
+
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestValidate() {

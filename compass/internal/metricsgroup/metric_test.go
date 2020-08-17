@@ -10,7 +10,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -47,6 +49,43 @@ func (s *SuiteMetric) SetupSuite() {
 
 func TestInitMetric(t *testing.T) {
 	suite.Run(t, new(SuiteMetric))
+}
+
+func (s *Suite) TestParse() {
+	stringReader := strings.NewReader(`{
+    "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
+    "metricGroupId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
+    "metric": "metric 213",
+    "filters": [
+        {
+            "field": "destination",
+            "value": "moove",
+            "operator": "EQUAL"
+        }
+    ],
+    "groupBy": [
+        {
+            "field": "app"
+        }
+    ],
+    "condition": "EQUAL",
+    "threshold": 30.0
+}`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	res, err := s.repository.ParseMetric(stringReadCloser)
+
+	require.NoError(s.T(), err)
+	require.NotNil(s.T(), res)
+}
+
+func (s *Suite) TestParseError() {
+	stringReader := strings.NewReader(`{ "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7saldajsndas" }`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	_, err := s.repository.ParseMetric(stringReadCloser)
+
+	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetric) TestRemoveMetric() {
