@@ -27,6 +27,7 @@ import { ReadComponentDeploymentDto } from '../dto'
 import { ModuleDeploymentEntity } from './module-deployment.entity'
 import { DeploymentStatusEnum } from '../enums'
 import { v4 as uuidv4 } from 'uuid'
+import { CircleDeploymentEntity } from './index'
 
 @Entity('component_deployments')
 export class ComponentDeploymentEntity extends BaseEntity {
@@ -87,5 +88,9 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.status,
       this.createdAt
     )
+  }
+
+  concatImageAndCircleId(circle: CircleDeploymentEntity) {
+    return  this.buildImageTag.concat('-' ).concat(circle.headerValue.substring(0, 8))
   }
 }
