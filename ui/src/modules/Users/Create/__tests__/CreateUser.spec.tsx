@@ -30,7 +30,7 @@ test('render CreateUser default component', async () => {
     <CreateUser {...props} onFinish={props.onFinish}/>
   );
 
-  await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
+  expect(getByTestId('create-user')).toBeInTheDocument();
 });
 
 test('close CreateUser component', async () => {
@@ -38,11 +38,28 @@ test('close CreateUser component', async () => {
       <CreateUser {...props} onFinish={props.onFinish}/>
     );
   
-    await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
+    expect(getByTestId('create-user')).toBeInTheDocument();
 
     const tabPanelCloseButton = queryByTestId('icon-cancel');
     expect(tabPanelCloseButton).toBeInTheDocument();
 
     fireEvent.click(tabPanelCloseButton);
-    wait(() => expect(getByTestId('create-user')).not.toBeInTheDocument())
+    expect(getByTestId('create-user')).not.toBeInTheDocument();
+});
+
+test("render CreateUser Form component", async () => {
+  const { getByTestId } = render(
+    <CreateUser {...props} onFinish={props.onFinish} />
+  );
+
+  expect(getByTestId("create-user")).toBeInTheDocument();
+
+  const ContentCreateUser = getByTestId("content-create-user");
+  expect(ContentCreateUser).toBeInTheDocument();
+
+  const FormCreateUser = getByTestId("form-create-user");
+  expect(FormCreateUser).toBeInTheDocument();
+
+  const ButtonCreateUser = getByTestId("button-create-user");
+  expect(ButtonCreateUser).toBeInTheDocument();
 });
