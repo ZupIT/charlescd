@@ -241,7 +241,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
     ).toEqual(completeSpinnakerUndeploymentPipeline)
   })
 
-  it('should create the correct pipeline object with 2 components being undeployed when no other version is available', async() => {
+  it('should create the correct pipeline object with 2 components being undeployed when no other version is active', async() => {
 
     const activeComponents: Component[] = [
       {
