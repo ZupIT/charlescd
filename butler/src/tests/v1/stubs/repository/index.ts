@@ -28,16 +28,16 @@ import { CdConfigurationsRepositoryStub } from './cd-configurations-repository.s
 import { QueuedIstioDeploymentsRepositoryStub } from './queued-istio-deployments-repository.stub'
 
 export {
-    DeploymentsRepositoryStub,
-    QueuedDeploymentsRepositoryStub,
-    UndeploymentsRepositoryStub,
-    ModulesRepositoryStub,
-    ComponentDeploymentsRepositoryStub,
-    ComponentsRepositoryStub,
-    QueuedUndeploymentsRepositoryStub,
-    ComponentUndeploymentsRepositoryStub,
-    ModuleDeploymentsRepositoryStub,
-    ModuleUndeploymentsRepositoryStub,
-    CdConfigurationsRepositoryStub,
-    QueuedIstioDeploymentsRepositoryStub
+  DeploymentsRepositoryStub,
+  QueuedDeploymentsRepositoryStub,
+  UndeploymentsRepositoryStub,
+  ModulesRepositoryStub,
+  ComponentDeploymentsRepositoryStub,
+  ComponentsRepositoryStub,
+  QueuedUndeploymentsRepositoryStub,
+  ComponentUndeploymentsRepositoryStub,
+  ModuleDeploymentsRepositoryStub,
+  ModuleUndeploymentsRepositoryStub,
+  CdConfigurationsRepositoryStub,
+  QueuedIstioDeploymentsRepositoryStub
 }

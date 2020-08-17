@@ -31,7 +31,6 @@ describe('DeploymentHandler', () => {
   let manager: EntityManager
   let mockServer: Server
   let notificationUseCase: ReceiveNotificationUseCase
-  let deploymentUseCase: CreateDeploymentUseCase
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [

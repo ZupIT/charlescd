@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateModulesTable20190808220900 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void>{
     await queryRunner.createTable(new Table({
       name: 'modules',
       columns: [
@@ -36,7 +36,7 @@ export class CreateModulesTable20190808220900 implements MigrationInterface {
     }), true)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('modules')
   }
 }

@@ -18,23 +18,23 @@ import { ComponentUndeploymentEntity } from '../../../../app/v1/api/deployments/
 
 export class ComponentUndeploymentsRepositoryStub {
 
-    public async getOneWithRelations(): Promise<ComponentUndeploymentEntity> {
-        return Promise.resolve({} as ComponentUndeploymentEntity)
-    }
+  public async getOneWithRelations(): Promise<ComponentUndeploymentEntity> {
+    return Promise.resolve({} as ComponentUndeploymentEntity)
+  }
 
-    public async getOneWithAllRelations(): Promise<ComponentUndeploymentEntity> {
-        return Promise.resolve({} as ComponentUndeploymentEntity)
-    }
+  public async getOneWithAllRelations(): Promise<ComponentUndeploymentEntity> {
+    return Promise.resolve({} as ComponentUndeploymentEntity)
+  }
 
-    public async getOneOrFail(): Promise<ComponentUndeploymentEntity> {
-        return Promise.resolve({} as ComponentUndeploymentEntity)
-    }
+  public async getOneOrFail(): Promise<ComponentUndeploymentEntity> {
+    return Promise.resolve({} as ComponentUndeploymentEntity)
+  }
 
-    public async update(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async update(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async updateStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async updateStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 }

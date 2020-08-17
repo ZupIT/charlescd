@@ -18,7 +18,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateComponentDeploymentsTable20190808190900 implements MigrationInterface {
 
-  public async up(queryRunner: QueryRunner) {
+  public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.createTable(new Table({
       name: 'component_deployments',
       columns: [
@@ -51,7 +51,7 @@ export class CreateComponentDeploymentsTable20190808190900 implements MigrationI
     }), true)
   }
 
-  public async down(queryRunner: QueryRunner) {
+  public async down(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.dropTable('component_deployments')
   }
 }

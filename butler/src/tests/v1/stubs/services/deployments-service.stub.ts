@@ -18,7 +18,7 @@ import { ReadDeploymentDto } from '../../../../app/v1/api/deployments/dto'
 
 export class DeploymentsServiceStub {
 
-    public async getDeployments(): Promise<ReadDeploymentDto[]> {
-        return Promise.resolve([])
-    }
+  public async getDeployments(): Promise<ReadDeploymentDto[]> {
+    return Promise.resolve([])
+  }
 }

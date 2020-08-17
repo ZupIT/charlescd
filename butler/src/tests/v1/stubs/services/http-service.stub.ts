@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { of } from 'rxjs'
+import { of, Observable } from 'rxjs'
 
 export class HttpServiceStub {
-  public post() {
+  public post(): Observable<unknown>{
     return of({})
   }
-  public get() {
+  public get(): Observable<unknown> {
     return of({})
   }
 }

@@ -23,11 +23,11 @@ import { CreateModuleUsecaseStub } from './create-module-usecase.stub'
 import { DeleteCdConfigurationUsecaseStub } from './delete-cd-configuration-usecase.stub'
 
 export {
-    CreateUndeploymentRequestUsecaseStub,
-    CreateCircleDeploymentRequestUsecaseStub,
-    CreateDefaultDeploymentRequestUsecaseStub,
-    CreateCdConfigurationUsecaseStub,
-    GetCdConfigurationUsecaseStub,
-    CreateModuleUsecaseStub,
-    DeleteCdConfigurationUsecaseStub
+  CreateUndeploymentRequestUsecaseStub,
+  CreateCircleDeploymentRequestUsecaseStub,
+  CreateDefaultDeploymentRequestUsecaseStub,
+  CreateCdConfigurationUsecaseStub,
+  GetCdConfigurationUsecaseStub,
+  CreateModuleUsecaseStub,
+  DeleteCdConfigurationUsecaseStub
 }

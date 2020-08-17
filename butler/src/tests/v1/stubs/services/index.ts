@@ -30,18 +30,18 @@ import { OctopipeApiServiceStub } from './octopipe-api-service.stub'
 import { SpinnakerApiServiceStub } from './spinnaker-api-service.stub'
 
 export {
-    DeploymentsServiceStub,
-    HttpServiceStub,
-    StatusManagementServiceStub,
-    ConsoleLoggerServiceStub,
-    PipelineQueuesServiceStub,
-    PipelinesServiceStub,
-    SpinnakerServiceStub,
-    DeploymentConfigurationServiceStub,
-    MooveServiceStub,
-    PipelineDeploymentsServiceStub,
-    PipelineErrorHandlerServiceStub,
-    ModulesServiceStub,
-    OctopipeApiServiceStub,
-    SpinnakerApiServiceStub
+  DeploymentsServiceStub,
+  HttpServiceStub,
+  StatusManagementServiceStub,
+  ConsoleLoggerServiceStub,
+  PipelineQueuesServiceStub,
+  PipelinesServiceStub,
+  SpinnakerServiceStub,
+  DeploymentConfigurationServiceStub,
+  MooveServiceStub,
+  PipelineDeploymentsServiceStub,
+  PipelineErrorHandlerServiceStub,
+  ModulesServiceStub,
+  OctopipeApiServiceStub,
+  SpinnakerApiServiceStub
 }

@@ -19,13 +19,14 @@ import { SpinnakerService } from '../../../../app/v1/core/integrations/cd/spinna
 import { OctopipeService } from '../../../../app/v1/core/integrations/cd/octopipe'
 
 const serviceStub = {
-    createDeployment: () => Promise.resolve(undefined),
-    createIstioDeployment: () => Promise.resolve(undefined),
-    createUndeployment: () => Promise.resolve(undefined)
+  createDeployment: () => Promise.resolve(undefined),
+  createIstioDeployment: () => Promise.resolve(undefined),
+  createUndeployment: () => Promise.resolve(undefined)
 }
 export class CdStrategyFactoryStub {
 
-    public create(type: CdTypeEnum): SpinnakerService | OctopipeService {
-        return serviceStub as any
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public create(type: CdTypeEnum): SpinnakerService | OctopipeService {
+    return serviceStub as unknown as SpinnakerService | OctopipeService
+  }
 }

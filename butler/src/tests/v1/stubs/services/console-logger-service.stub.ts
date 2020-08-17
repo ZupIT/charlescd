@@ -16,11 +16,11 @@
 
 export class ConsoleLoggerServiceStub {
 
-    public log(): void {
-        return
-    }
+  public log(): void {
+    return
+  }
 
-    public error(): void {
-        return
-    }
+  public error(): void {
+    return
+  }
 }

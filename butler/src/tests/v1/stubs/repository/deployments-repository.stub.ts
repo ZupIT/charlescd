@@ -18,27 +18,27 @@ import { DeploymentEntity } from '../../../../app/v1/api/deployments/entity'
 
 export class DeploymentsRepositoryStub {
 
-    public async findOne(): Promise<DeploymentEntity> {
-        return Promise.resolve({} as DeploymentEntity)
-    }
+  public async findOne(): Promise<DeploymentEntity> {
+    return Promise.resolve({} as DeploymentEntity)
+  }
 
-    public async findOneOrFail(): Promise<DeploymentEntity> {
-        return Promise.resolve({} as DeploymentEntity)
-    }
+  public async findOneOrFail(): Promise<DeploymentEntity> {
+    return Promise.resolve({} as DeploymentEntity)
+  }
 
-    public async update(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async update(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async updateStatus(): Promise<void> {
-        return Promise.resolve()
-    }
+  public async updateStatus(): Promise<void> {
+    return Promise.resolve()
+  }
 
-    public async save(): Promise<DeploymentEntity> {
-        return Promise.resolve({} as DeploymentEntity)
-    }
+  public async save(): Promise<DeploymentEntity> {
+    return Promise.resolve({} as DeploymentEntity)
+  }
 
-    public async find(): Promise<DeploymentEntity> {
-        return Promise.resolve({} as DeploymentEntity)
-    }
+  public async find(): Promise<DeploymentEntity> {
+    return Promise.resolve({} as DeploymentEntity)
+  }
 }

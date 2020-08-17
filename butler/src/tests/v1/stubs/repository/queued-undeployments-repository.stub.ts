@@ -18,19 +18,19 @@ import { QueuedUndeploymentEntity } from '../../../../app/v1/api/deployments/ent
 
 export class QueuedUndeploymentsRepositoryStub {
 
-    public async findOne(): Promise<QueuedUndeploymentEntity> {
-        return Promise.resolve({} as QueuedUndeploymentEntity)
-    }
+  public async findOne(): Promise<QueuedUndeploymentEntity> {
+    return Promise.resolve({} as QueuedUndeploymentEntity)
+  }
 
-    public async findOneOrFail(): Promise<QueuedUndeploymentEntity> {
-        return Promise.resolve({} as QueuedUndeploymentEntity)
-    }
+  public async findOneOrFail(): Promise<QueuedUndeploymentEntity> {
+    return Promise.resolve({} as QueuedUndeploymentEntity)
+  }
 
-    public async save(): Promise<QueuedUndeploymentEntity> {
-        return Promise.resolve({} as QueuedUndeploymentEntity)
-    }
+  public async save(): Promise<QueuedUndeploymentEntity> {
+    return Promise.resolve({} as QueuedUndeploymentEntity)
+  }
 
-    public async update(): Promise<QueuedUndeploymentEntity> {
-        return Promise.resolve({} as QueuedUndeploymentEntity)
-    }
+  public async update(): Promise<QueuedUndeploymentEntity> {
+    return Promise.resolve({} as QueuedUndeploymentEntity)
+  }
 }
