@@ -2,12 +2,14 @@ package io.charlescd.moove.infrastructure.service
 
 import io.charlescd.moove.domain.GitCredentials
 import org.gitlab4j.api.GitLabApi
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class GitLabClientFactory {
-
-    val shouldIgnoreCertificateErrors: Boolean = System.getenv("GITLAB_IGNORE_CERTIFICATE_ERRORS")?.toBoolean() ?: false
+class GitLabClientFactory(
+    @Value("#{environment.GITLAB_IGNORE_CERTIFICATE_ERRORS ?: false}")
+    val shouldIgnoreCertificateErrors: Boolean
+) {
 
     fun buildGitClient(gitCredentials: GitCredentials): GitLabApi {
         return if (!gitCredentials.accessToken.isNullOrBlank()) {
