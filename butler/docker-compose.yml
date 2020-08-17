@@ -32,6 +32,7 @@ services:
     working_dir: /app
     command: sh -c 'while sleep 3600; do :; done'
     environment:
+        TZ: America/Sao_Paulo
         DATABASE_HOST: postgres
         MOOVE_URL: http://stubby4j:8883/moove
         DARWIN_NOTIFICATION_URL: http://stubby4j:8883/deploy/notifications
