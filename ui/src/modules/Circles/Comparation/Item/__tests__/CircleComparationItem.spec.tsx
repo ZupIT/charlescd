@@ -15,7 +15,7 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, getByTestId, fireEvent } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import CirclesComparationItem from '..';
@@ -92,9 +92,20 @@ test('render CircleComparationItem Default Circle', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'Default', deployment: {} }));
   const handleChange = jest.fn();
 
-  const { queryByTestId } = render(
+  const { queryByTestId, getByTestId } = render(
     <CirclesComparationItem id={props.id} onChange={handleChange} />
   );
 
+  await wait();
+
+  const DropdownIcon = getByTestId('icon-vertical-dots');
+  await wait(() => expect(DropdownIcon).toBeInTheDocument());
+
+  fireEvent.click(DropdownIcon);
+
+  const DropdownActions = getByTestId('dropdown-actions');
+  await wait(() => expect(DropdownActions).toBeInTheDocument());
+
+  await wait(() => expect(queryByTestId('dropdown-item-undeploy-Undeploy')).not.toBeInTheDocument());
   await wait(() => expect(queryByTestId('layer-metrics')).not.toBeInTheDocument());
 });
