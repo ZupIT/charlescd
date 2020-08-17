@@ -54,21 +54,29 @@ const FormUser = ({ onFinish }: Props) => {
   };
 
   const renderForm = () => (
-    <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+    <Styled.Form
+      data-testid="form-create-user"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Styled.Fields>
         <Form.Input ref={register} name="name" label="User name" />
         <Form.Input ref={register} name="email" label="E-mail" />
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
         <Form.Password ref={register} name="password" label="Create password" />
       </Styled.Fields>
-      <Button.Default size="EXTRA_SMALL" type="submit" isLoading={status.isPending}>
+      <Button.Default
+        data-testid="button-create-user"
+        size="EXTRA_SMALL"
+        type="submit"
+        isLoading={status.isPending}
+      >
         Create User
       </Button.Default>
     </Styled.Form>
   );
 
   return (
-    <Styled.Content>
+    <Styled.Content data-testid="content-create-user">
       <Styled.Title>
         <Text.h2 weight="bold" color="light">
           Create User
