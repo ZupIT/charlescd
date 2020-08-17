@@ -1,6 +1,6 @@
-FROM golang:1.13-alpine as builder
+FROM golang:1.14-alpine as builder
 
-RUN apk add --no-cache git
+RUN apk update && apk add gcc libc-dev git
 
 WORKDIR /app/compass
 
@@ -11,12 +11,15 @@ RUN go mod download
 
 COPY . .
 
+RUN chmod a+rx build-plugins.sh
+RUN ./build-plugins.sh
 RUN go build -o ./out/compass cmd/*.go
 
 # -----------------------------------------------
 
 FROM alpine:3.12.0
 
+COPY --from=builder /app/compass/plugins/*.so .
 COPY --from=builder /app/compass/out/compass .
 
 EXPOSE 8080
