@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:11.8-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=charlescd_compass
+      - POSTGRES_USER=charlescd_compass
+      - POSTGRES_PASSWORD=compass
+      - MAX_CONNECTIONS=300
+    networks:
+      - development
+
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    image: compass
+    ports:
+      - 8080:8080
+    environment:
+      - DB_NAME=charlescd_compass
+      - DB_USER=charlescd_compass
+      - DB_PASSWORD=compass
+      - DB_HOST=postgres
+      - ENV=PROD
+    networks:
+      - development
+    depends_on:
+      - "postgres"
+
+networks:
+  development:
+    driver: bridge
