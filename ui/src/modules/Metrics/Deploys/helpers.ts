@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { DeployMetricData, MetricDataInPeriod } from './interfaces';
+import {
+  DeployMetricData,
+  MetricDataInPeriod,
+  ChartSerieConfig
+} from './interfaces';
+import { humanizeDateFromSeconds } from 'core/utils/date';
 import map from 'lodash/map';
+import filter from 'lodash/filter';
+import sumBy from 'lodash/sumBy';
+import meanBy from 'lodash/meanBy';
 import dayjs from 'dayjs';
 
 const buildSeriesData = (metricData: MetricDataInPeriod[]) =>
@@ -49,12 +57,18 @@ export const chartDateFormatter = (date: string) => {
   return dayjs(date, 'YYYY-MM-DD').format('DDMMM');
 };
 
-export const getPlotOption = (deploySeries: Array<any>) => {
-  const plotOptionsMin = { bar: { columnWidth: '25%' } };
-  const plotOptionsMax = { bar: { columnWidth: '50%' } };
+export const chartLegendBuilder = (seriesName: string, chartOptions: any) => {
+  const serie: ChartSerieConfig[] = filter(chartOptions?.w.config.series, {
+    name: seriesName
+  });
 
-  const deploy = deploySeries[0].data[2];
-  const error = deploySeries[1].data[2];
+  if (seriesName === 'Avarege time') {
+    const meanSerie = meanBy(serie[0].data, 'y');
 
-  return !(deploy || error) ? plotOptionsMin : plotOptionsMax;
-};
+    return `${seriesName}: ${humanizeDateFromSeconds(meanSerie)}`;
+  }
+
+  const sumSerie = sumBy(serie[0].data, 'y');
+
+  return `${seriesName}: ${sumSerie}`;
+}

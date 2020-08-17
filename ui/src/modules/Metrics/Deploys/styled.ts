@@ -33,23 +33,6 @@ interface Card {
   width?: string;
 }
 
-const Plates = styled.div`
-  display: flex;
-  flex-direction: row;
-  > * {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    > :not(:first-child) {
-      margin-top: 12px;
-    }
-  }
-  > :not(:first-child) {
-    margin-left: 20px;
-  }
-`;
-
 const Card = styled.div<Card>`
   background: ${({ theme }) => theme.metrics.dashboard.card};
   height: ${({ height }) => height || '94px'};
@@ -107,7 +90,6 @@ const ChartMenu = styled.div`
 export default {
   Content,
   Card,
-  Plates,
   MixedChart,
   SingleSelect,
   MultiSelect,

@@ -31,6 +31,17 @@ export interface MetricDataInPeriod {
   period: string;
 }
 
+export interface ChartSerieConfig {
+  data: ChartSerie[];
+  name: string;
+  type: string;
+}
+
+interface ChartSerie {
+  x: string;
+  y: number;
+}
+
 export enum PERIOD_PARAM {
   ONE_WEEK = 'ONE_WEEK',
   TWO_WEEKS = 'TWO_WEEKS',

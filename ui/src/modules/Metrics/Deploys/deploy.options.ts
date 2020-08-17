@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { chartDateFormatter as formatter } from './helpers';
+import { chartDateFormatter as formatter, chartLegendBuilder } from './helpers';
 import { humanizeDateFromSeconds } from 'core/utils/date';
 import { getTheme } from 'core/utils/themes';
 
@@ -83,15 +83,18 @@ export default {
     offsetY: -10,
     position: 'top',
     horizontalAlign: 'left',
+    formatter: function(seriesName: string, opts: any) {
+      return chartLegendBuilder(seriesName, opts);
+    },
     markers: {
       radius: 50
     },
     itemMargin: {
       horizontal: 10
+    },
+    onItemClick: {
+      toggleDataSeries: true
     }
-  },
-  onItemClick: {
-    toggleDataSeries: true
   },
   tooltip: {
     y: [
