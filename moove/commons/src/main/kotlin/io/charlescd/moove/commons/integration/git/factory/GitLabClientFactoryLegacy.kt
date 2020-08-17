@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GitLabClientFactoryLegacy(
-    @Value("#{environment.GITLAB_IGNORE_CERTIFICATE_ERRORS ?: false}")
+    @Value("\${gitlab.ignore.certificate.errors}")
     val shouldIgnoreCertificateErrors: Boolean
 ) {
 
