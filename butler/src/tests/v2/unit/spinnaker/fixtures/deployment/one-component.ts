@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from '../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../app/v1/core/constants'
-import { DeploymentStatusEnum } from '../../../../../app/v1/api/deployments/enums'
-import { ExecutionTypeEnum } from '../../../../../app/v2/api/deployments/enums'
+import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
+import { AppConstants } from '../../../../../../app/v1/core/constants'
+import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentNoUnused: SpinnakerPipeline = {
+export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -222,7 +222,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                   {
                     headers: {
                       cookie: {
-                        regex: '.*x-circle-id=circle-id2.*'
+                        regex: '.*x-circle-id=circle-id.*'
                       }
                     }
                   }
@@ -236,12 +236,12 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id2'
+                          'x-circle-source': 'circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id2'
+                          'x-circle-source': 'circle-id'
                         }
                       }
                     }
@@ -253,7 +253,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id2'
+                        exact: 'circle-id'
                       }
                     }
                   }
@@ -267,12 +267,12 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id2'
+                          'x-circle-source': 'circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id2'
+                          'x-circle-source': 'circle-id'
                         }
                       }
                     }

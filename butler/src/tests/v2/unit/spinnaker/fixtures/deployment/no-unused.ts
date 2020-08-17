@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from '../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../app/v1/core/constants'
-import { ExecutionTypeEnum } from '../../../../../app/v2/api/deployments/enums'
-import { DeploymentStatusEnum } from '../../../../../app/v1/api/deployments/enums'
+import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
+import { AppConstants } from '../../../../../../app/v1/core/constants'
+import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const completeSpinnakerPipeline: SpinnakerPipeline = {
+export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -1104,96 +1104,6 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '18',
-      requisiteStageRefIds: [
-        '17'
-      ],
-      stageEnabled: {
-        expression: '${proxyDeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'B'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'B-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment B v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '19',
-      requisiteStageRefIds: [
-        '17'
-      ],
-      stageEnabled: {
-        expression: '${proxyDeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -1206,7 +1116,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '20',
+      refId: '18',
       requisiteStageRefIds: [
         '13',
         '17'
@@ -1232,7 +1142,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '21',
+      refId: '19',
       requisiteStageRefIds: [
         '13',
         '17'

@@ -24,7 +24,7 @@ import {
   oneComponentNoUnused,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
-} from './fixtures'
+} from './fixtures/deployment'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 
@@ -149,7 +149,7 @@ const deploymentWith1ComponentCircle2: Deployment = {
   ]
 }
 
-describe('V2 Spinnaker Connector', () => {
+describe('V2 Spinnaker Deployment Pipeline Builder', () => {
   it('should create the correct complete pipeline object with 3 new components', async() => {
 
     const activeComponents: Component[] = [

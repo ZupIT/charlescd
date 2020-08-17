@@ -51,10 +51,6 @@ export const getUndeploymentDestinationRulesStage = (
   requisiteStageRefIds: [],
   skipExpressionEvaluation: false,
   source: 'text',
-  stageEnabled: {
-    expression: '${deploymentResult}',
-    type: 'expression'
-  },
   trafficManagement: {
     enabled: false,
     options: {
