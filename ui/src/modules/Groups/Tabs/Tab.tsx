@@ -29,9 +29,10 @@ import {
 } from '../hooks';
 import { delParamUserGroup } from '../helpers';
 import Styled from './styled';
-import ModalUsers from './Modal';
+import Modal, { ChangedUser } from './Modal';
 import Form from './Form';
 import { diffCheckedUsers } from './helpers';
+import { map } from 'lodash';
 
 interface Props {
   param: string;
@@ -77,8 +78,11 @@ const Tab = ({ param }: Props) => {
     );
   }, [userList, userGroup, search, setFilteredUsers]);
 
-  const handleModalUserSelect = (memberId: string, checked: boolean) =>
-    managerMemberUserGroup(checked, id, memberId);
+  const handleModalUserSelect = (changedUsers: ChangedUser[]) => {
+    map(changedUsers, user => {
+      managerMemberUserGroup(user.checked, id, user.id);
+    });
+  };
 
   const renderActions = () => (
     <Styled.Actions>
@@ -108,7 +112,7 @@ const Tab = ({ param }: Props) => {
           />
         </Styled.Tab>
       </TabPanel>
-      <ModalUsers
+      <Modal
         users={filteredUsers}
         isOpen={isOpenModalUsers}
         onClose={() => toggleModalUsers(false)}
