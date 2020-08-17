@@ -30,22 +30,21 @@ test('render CreateUser default component', async () => {
     <CreateUser {...props} onFinish={props.onFinish}/>
   );
 
-  expect(getByTestId('create-user')).toBeInTheDocument();
+  await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
 });
 
 test('close CreateUser component', async () => {
-    const { queryByTestId, getByTestId } = render(
-      <CreateUser {...props} onFinish={props.onFinish}/>
-    );
+  const { queryByTestId, getByTestId } = render(
+    <CreateUser {...props} onFinish={props.onFinish}/>
+  );
 
-    const createUser = getByTestId('create-user');
-    expect(createUser).toBeInTheDocument();
+  await wait(() => expect(getByTestId('create-user')).toBeInTheDocument());
 
-    const tabPanelCloseButton = queryByTestId('icon-cancel');
-    expect(tabPanelCloseButton).toBeInTheDocument();
+  const tabPanelCloseButton = queryByTestId('icon-cancel');
+  expect(tabPanelCloseButton).toBeInTheDocument();
 
-    fireEvent.click(tabPanelCloseButton);
-    expect(createUser).not.toBeInTheDocument();
+  fireEvent.click(tabPanelCloseButton);
+  wait(() => expect(getByTestId('create-user')).not.toBeInTheDocument())
 });
 
 test("render CreateUser Form component", async () => {
