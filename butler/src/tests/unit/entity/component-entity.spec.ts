@@ -16,7 +16,6 @@
 
 import { ComponentEntity } from '../../../app/v1/api/components/entity'
 import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../app/v1/api/deployments/entity'
-import { AppConstants } from '../../../app/v1/core/constants'
 
 describe('ComponentEntity test', () => {
   it('should create the right version name with the first 8 chars of circle id', () => {
