@@ -91,9 +91,7 @@ export default class TotalPipeline {
   }
 
   private buildDeployments(): IDeploymentReturn | undefined {
-    if (this.contract.versions.length === 0) {
-      return
-    }
+    if (this.contract.versions.length === 0) { return }
 
     this.contract.circles.forEach(circle => {
       const version = this.getVersionCircle(this.contract.versions, circle)
