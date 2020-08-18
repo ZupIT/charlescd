@@ -59,7 +59,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         def workspaceId = "c71ac012-9a7f-4f63-9c21-d9e1ec6ebbf5"
         def authorId = "95bdd01a-6adc-4303-9193-836f1f76896e"
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -88,7 +88,7 @@ class DeleteCircleByIdInteractorImplTest extends Specification {
         def authorId = "95bdd01a-6adc-4303-9193-836f1f76896e"
         def deploymentId = "e8151dbf-94dd-4abb-a13a-0d47cbba7602"
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
