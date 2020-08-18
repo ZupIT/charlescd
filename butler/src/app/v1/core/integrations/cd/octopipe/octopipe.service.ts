@@ -267,14 +267,14 @@ export class OctopipeService implements ICdServiceStrategy {
       : createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
   }
 
-  private getVersionCircle(octopipeVersions: IOctopipeVersion[], circle: IPipelineCircle) {
+  private getVersionCircle(octopipeVersions: IOctopipeVersion[], circle: IPipelineCircle): IOctopipeVersion {
     const versionSearch = octopipeVersions.find(
       octopipeVersion => octopipeVersion.version === circle.destination.version
     )
     return { ...versionSearch, versionCircle: circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
   }
 
-  private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]) {
+  private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]): IOctopipeVersion[] {
     return circles.map(
       circle => this.getVersionCircle(octopipeVersions, circle)
     )
