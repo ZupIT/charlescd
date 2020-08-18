@@ -88,35 +88,35 @@ test('renders sidebar componen( with selected workspace', async () => {
   await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
 });
 
-test('renders help icon in the sidebar', async () => {
-  const { getByTestId } = render(
-    <Sidebar isExpanded={true} onClickExpand={null} />
-  );
+// test('renders help icon in the sidebar', async () => {
+//   const { getByTestId } = render(
+//     <Sidebar isExpanded={true} onClickExpand={null} />
+//   );
 
-  const helpIcon = getByTestId('icon-help');
-  await wait(() => expect(helpIcon).toBeInTheDocument());
-});
+//   const helpIcon = getByTestId('icon-help');
+//   await wait(() => expect(helpIcon).toBeInTheDocument());
+// });
 
-test('renders tooltip with text equal to "Documentation"', async () => {
-  const { queryByTestId, getByText } = render(
-    <Sidebar isExpanded={true} onClickExpand={null} />
-  );
+// test('renders tooltip with text equal to "Documentation"', async () => {
+//   const { queryByTestId, getByText } = render(
+//     <Sidebar isExpanded={true} onClickExpand={null} />
+//   );
 
-  const helpIcon = queryByTestId('icon-help');
-  await wait(() => expect(helpIcon).toBeInTheDocument());
+//   const helpIcon = queryByTestId('icon-help');
+//   await wait(() => expect(helpIcon).toBeInTheDocument());
 
-  const tooltipText = getByText('Documentation');
-  await wait(() => expect(tooltipText).toBeInTheDocument());
-});
+//   const tooltipText = getByText('Documentation');
+//   await wait(() => expect(tooltipText).toBeInTheDocument());
+// });
 
-test('opens documentation link once', async () => {
-  const { queryByTestId } = render(
-    <Sidebar isExpanded={true} onClickExpand={() => {}} />
-  );
+// test('opens documentation link once', async () => {
+//   const { queryByTestId } = render(
+//     <Sidebar isExpanded={true} onClickExpand={() => {}} />
+//   );
 
-  const helpIcon = queryByTestId('icon-help');
-  await wait(() => expect(helpIcon).toBeInTheDocument());
+//   const helpIcon = queryByTestId('icon-help');
+//   await wait(() => expect(helpIcon).toBeInTheDocument());
 
-  fireEvent.click(helpIcon);
-  expect(openDocumentation).toHaveBeenCalledTimes(1);
-});
+//   fireEvent.click(helpIcon);
+//   expect(openDocumentation).toHaveBeenCalledTimes(1);
+// });
