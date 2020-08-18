@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { chartDateFormatter } from '../helpers';
+import { chartDateFormatter, chartLegendBuilder } from '../helpers';
+import { chartOpts } from './fixtures';
 
 test('must formatte date for chart', () => {
   expect(chartDateFormatter('2020-08-13')).toEqual('13Aug');
+});
+
+test('must build legend for chart', () => {
+  expect(chartLegendBuilder('Deploy', chartOpts)).toEqual('Deploy: 15');
+  expect(chartLegendBuilder('Avarege time', chartOpts)).toEqual('Avarege time: 1:30m');
 });
