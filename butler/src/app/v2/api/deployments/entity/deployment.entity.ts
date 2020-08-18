@@ -84,20 +84,27 @@ export class DeploymentEntityV2 implements Deployment {
   }
 
   public toReadDto(): ReadDeploymentDto {
-    if (this.circleId) {
-      return {
-        id: this.id,
-        applicationName: this.cdConfiguration.id,
-        authorId: this.authorId,
-        callbackUrl: this.callbackUrl,
-        circle: { headerValue: this.circleId },
-        createdAt: this.createdAt,
-        description: '',
-        modulesDeployments: [this.componentsToModules()],
-        defaultCircle: false,
-        status: this.status
-      }
+    return this.circleId ?
+      this.getCircleDto(this.circleId) :
+      this.getDefaultDto()
+  }
+
+  private getCircleDto(circleId: string): ReadDeploymentDto {
+    return {
+      id: this.id,
+      applicationName: this.cdConfiguration.id,
+      authorId: this.authorId,
+      callbackUrl: this.callbackUrl,
+      circle: { headerValue: circleId },
+      createdAt: this.createdAt,
+      description: '',
+      modulesDeployments: [this.componentsToModules()],
+      defaultCircle: false,
+      status: this.status
     }
+  }
+
+  private getDefaultDto(): ReadDeploymentDto {
     return {
       id: this.id,
       applicationName: this.cdConfiguration.id,
