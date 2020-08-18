@@ -1039,7 +1039,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"b46fd548-0082-4021-ba80-a50703c44a3b\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"e82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                },\n                {\n                    \"componentId\": \"b82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name2\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"cdConfigurationId\": \"12c3fe24-59a3-4448-9c6d-fd506aee5e3e\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\"    \n}"
+							"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"b46fd548-0082-4021-ba80-a50703c44a3b\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"e82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                },\n                {\n                    \"componentId\": \"b82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name2\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\"    \n}"
 						},
 						"url": {
 							"raw": "http://localhost:3000/v2/deployments",
@@ -1063,7 +1063,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"status\": \"SUCCEEDED\"\n}",
+							"raw": "{\n    \"type\": \"DEPLOYMENT\",\n    \"status\": \"SUCCEEDED\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1071,7 +1071,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/v2/notifications/deployment/{{deploymentId}}",
+							"raw": "http://localhost:3000/v2/deployments/{{deploymentId}}/notify",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1079,9 +1079,9 @@
 							"port": "3000",
 							"path": [
 								"v2",
-								"notifications",
-								"deployment",
-								"{{deploymentId}}"
+								"deployments",
+								"{{deploymentId}}",
+								"notify"
 							]
 						}
 					},

@@ -78,12 +78,13 @@ describe('DeploymentCleanupHandler', () => {
       callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
       incomingCircleId: 'ab0a7726-a274-4fc3-9ec1-44e3563d58af'
     }
+    const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
 
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
-    const { deployment: recentDeployment } = await createDeployment(params, cdConfiguration, manager)
+    const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(200)

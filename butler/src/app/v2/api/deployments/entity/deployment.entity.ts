@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
@@ -25,11 +25,8 @@ import { ReadDeploymentDto, ReadModuleDeploymentDto } from '../../../../v1/api/d
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id!: string
-
-  @Column({ name: 'external_id' })
-  public deploymentId!: string
 
   @Column({ name: 'author_id' })
   public authorId!: string
@@ -77,7 +74,7 @@ export class DeploymentEntityV2 implements Deployment {
     callbackUrl: string,
     components: ComponentEntity[]
   ) {
-    this.deploymentId = deploymentId
+    this.id = deploymentId
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
