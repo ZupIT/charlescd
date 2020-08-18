@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import routes from 'core/constants/routes';
 import { setUserAbilities } from 'core/utils/abilities';
+import { useWorkspace } from 'modules/Settings/hooks';
 import { WORKSPACE_STATUS } from '../enums';
 import Styled from './styled';
 
@@ -31,10 +32,13 @@ interface Props {
 
 const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const history = useHistory();
+  const [, loadWorkspace] = useWorkspace();
+
   const handleClick = () => {
     saveWorkspace({ id, name });
     selectedWorkspace(name);
     setUserAbilities();
+    loadWorkspace(id);
     history.push({
       pathname:
         status === WORKSPACE_STATUS.COMPLETE

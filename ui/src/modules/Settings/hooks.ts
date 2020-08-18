@@ -15,7 +15,12 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import { findAll, findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from './state/actions';
@@ -23,32 +28,53 @@ import { WorkspacePagination } from './Workspaces/interfaces/WorkspacePagination
 import { Workspace } from './Workspaces/interfaces/Workspace';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { checkStatus } from 'core/utils/auth';
+import {
+  loadedWorkspaceAction,
+  statusWorkspaceAction
+} from 'modules/Workspaces/state/actions';
 
 export const useWorkspace = (): [
   Workspace,
   Function,
   Function,
-  boolean,
+  FetchStatus,
   Function
 ] => {
-  const [workspace, getWorkspace] = useFetch<Workspace>(findById);
+  const getWorkspaceById = useFetchData<Workspace>(findById);
+  const [workspace, setWorkspace] = useState(null);
+  const status = useFetchStatus();
   const [, , updateWorkspace] = useFetch(updateName);
-  const { loading, response } = workspace;
-  const [data, setData] = useState(null);
   const dispatch = useDispatch();
 
   const loadWorkspace = useCallback(
-    (id: string) => {
-      getWorkspace({ id });
+    async (id: string) => {
+      try {
+        status.pending();
+        dispatch(statusWorkspaceAction('pending'));
+        const response = await getWorkspaceById({ id });
+        dispatch(loadedWorkspaceAction(response));
+        dispatch(statusWorkspaceAction('resolved'));
+        setWorkspace(response);
+        status.resolved();
+      } catch (error) {
+        status.rejected();
+        dispatch(statusWorkspaceAction('rejected'));
+        dispatch(
+          toogleNotification({
+            text: `[${error.status}] Could not list`,
+            status: 'error'
+          })
+        );
+      }
     },
-    [getWorkspace]
+    [getWorkspaceById, dispatch, status]
   );
 
   const update = useCallback(
     async (name: string) => {
       try {
         await updateWorkspace(name);
-        setData({ ...data, name });
+        setWorkspace({ ...workspace, name });
       } catch (error) {
         dispatch(
           toogleNotification({
@@ -58,16 +84,10 @@ export const useWorkspace = (): [
         );
       }
     },
-    [updateWorkspace, data, dispatch]
+    [updateWorkspace, workspace, dispatch]
   );
 
-  useEffect(() => {
-    if (response) {
-      setData(response);
-    }
-  }, [response]);
-
-  return [data, loadWorkspace, getWorkspace, loading, update];
+  return [workspace, loadWorkspace, getWorkspaceById, status, update];
 };
 
 export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {

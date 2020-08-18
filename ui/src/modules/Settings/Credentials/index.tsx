@@ -24,7 +24,7 @@ import ContentIcon from 'core/components/ContentIcon';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
@@ -33,7 +33,7 @@ import Dropdown from 'core/components/Dropdown';
 const Credentials = () => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>(null);
-  const [workspace, loadWorkspace, , loading, update] = useWorkspace();
+  const [workspace, loadWorkspace, , status, update] = useWorkspace();
   const { register, handleSubmit } = useForm();
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
@@ -117,7 +117,7 @@ const Credentials = () => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {loading || isEmpty(workspace) ? <Loader.Tab /> : renderPanel()}
+      {status.isPending || isEmpty(workspace) ? <Loader.Tab /> : renderPanel()}
     </Styled.Wrapper>
   );
 };
