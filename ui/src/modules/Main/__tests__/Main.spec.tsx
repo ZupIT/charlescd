@@ -85,20 +85,13 @@ test('render and collapse sidebar', () => {
   expect(getByTestId(menuId).textContent).toBe('');
 });
 
-test.only('render menu in expanded mode with the workspaces screen active', () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-  const icon = getByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-  expect(iconStyle.color).toBe(dark.menuIconActive);
-});
-
 test('render menu in expanded mode with the workspaces screen active', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const { getByTestId } = render(<Main />);
-
+  wait();
   const icon = getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
+  console.log('*eita*', iconStyle)
   expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 

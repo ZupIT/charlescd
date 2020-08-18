@@ -88,14 +88,14 @@ test('renders sidebar componen( with selected workspace', async () => {
   await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
 });
 
-// test('renders help icon in the sidebar', async () => {
-//   const { getByTestId } = render(
-//     <Sidebar isExpanded={true} onClickExpand={null} />
-//   );
+test('renders help icon in the sidebar', async () => {
+  const { getByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} />
+  );
 
-//   const helpIcon = getByTestId('icon-help');
-//   await wait(() => expect(helpIcon).toBeInTheDocument());
-// });
+  const helpIcon = getByTestId('icon-help');
+  await wait(() => expect(helpIcon).toBeInTheDocument());
+});
 
 // test('renders tooltip with text equal to "Documentation"', async () => {
 //   const { queryByTestId, getByText } = render(
