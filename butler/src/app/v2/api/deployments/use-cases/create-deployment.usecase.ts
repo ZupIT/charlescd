@@ -26,6 +26,7 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 import { ComponentsRepositoryV2 } from '../repository'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
 
 @Injectable()
 export class CreateDeploymentUseCase {
@@ -41,7 +42,7 @@ export class CreateDeploymentUseCase {
     private readonly consoleLoggerService: ConsoleLoggerService
   ) {}
 
-  public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<DeploymentEntity> {
+  public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { createDeploymentDto, incomingCircleId })
     const deployment = createDeploymentDto.circle ?
       await this.createCircleDeployment(createDeploymentDto) :
@@ -49,7 +50,8 @@ export class CreateDeploymentUseCase {
     const execution = await this.createExecution(deployment, incomingCircleId)
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment, execution, jobId })
-    return deployment
+    const reloadedDeployment = await this.deploymentsRepository.findOneOrFail(deployment.id, { relations: ['components', 'executions', 'cdConfiguration'] })
+    return reloadedDeployment.toReadDto() // BUG typeorm https://github.com/typeorm/typeorm/issues/4090
   }
 
   private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {

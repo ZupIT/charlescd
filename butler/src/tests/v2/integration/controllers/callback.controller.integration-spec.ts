@@ -94,7 +94,6 @@ describe('CallbackController v2', () => {
       .expect(response => {
         expect(response.body).toEqual(
           {
-            deploymentId: deployment.deploymentId,
             authorId: deployment.authorId,
             status: 'SUCCEEDED',
             circleId: deployment.circleId,
@@ -167,7 +166,6 @@ describe('CallbackController v2', () => {
       .expect(response => {
         expect(response.body).toEqual(
           {
-            deploymentId: deployment.deploymentId,
             authorId: deployment.authorId,
             status: 'FAILED',
             circleId: deployment.circleId,

@@ -111,11 +111,13 @@ describe('DeploymentHandler', () => {
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
     }
 
+    const secondDeploymentId = 'a666cbe1-7da3-46a6-bad3-5a3553960f55'
+
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
     const firstDeployment = firstFixtures.deployment
     const firstJob = firstFixtures.job
 
-    const secondFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const secondFixtures = await createDeploymentAndExecution({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
     const secondDeployment = secondFixtures.deployment
     const secondJob = secondFixtures.job
 

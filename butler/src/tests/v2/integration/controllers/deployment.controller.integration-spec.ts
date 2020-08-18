@@ -9,6 +9,7 @@ import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.wor
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
+import { ReadDeploymentDto } from '../../../../app/v1/api/deployments/dto'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -76,11 +77,46 @@ describe('DeploymentController v2', () => {
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
+
+    const expectedResponse : ReadDeploymentDto = {
+      applicationName: cdConfiguration.id,
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      circle: { 'headerValue': '333365f8-bb29-49f7-bf2b-3ec956a71583' },
+      createdAt: expect.any(String),
+      defaultCircle: false,
+      description: '',
+      id: expect.any(String),
+      modulesDeployments: [
+        {
+          id: 'dummy-id',
+          moduleId: 'dummy-module-id',
+          createdAt: expect.any(String),
+          status: 'CREATED',
+          helmRepository: 'https://some-helm.repo',
+          componentsDeployments: [
+            {
+              id: expect.any(String),
+              buildImageTag: 'tag1',
+              buildImageUrl: 'imageurl.com',
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+              componentName: 'component-name',
+              createdAt: expect.any(String),
+              status: 'CREATED'
+            }
+          ]
+        }
+      ],
+      status: 'CREATED'
+    }
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
       .expect(201)
+      .expect(response => {
+        expect(response.body).toEqual(expectedResponse)
+      })
   })
 
   it('returns not found error for valid params without existing cdConfiguration', async() => {

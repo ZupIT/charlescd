@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
 import { Deployment } from '../interfaces'
+import { ReadDeploymentDto, ReadModuleDeploymentDto } from '../../../../v1/api/deployments/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id' })
   public id!: string
-
-  @Column({ name: 'external_id' })
-  public deploymentId!: string
 
   @Column({ name: 'author_id' })
   public authorId!: string
@@ -76,12 +74,70 @@ export class DeploymentEntityV2 implements Deployment {
     callbackUrl: string,
     components: ComponentEntity[]
   ) {
-    this.deploymentId = deploymentId
+    this.id = deploymentId
     this.authorId = authorId
     this.status = status
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
+  }
+
+  public toReadDto(): ReadDeploymentDto {
+    return this.circleId ?
+      this.getCircleDto(this.circleId) :
+      this.getDefaultDto()
+  }
+
+  private getCircleDto(circleId: string): ReadDeploymentDto {
+    return {
+      id: this.id,
+      applicationName: this.cdConfiguration.id,
+      authorId: this.authorId,
+      callbackUrl: this.callbackUrl,
+      circle: { headerValue: circleId },
+      createdAt: this.createdAt,
+      description: '',
+      modulesDeployments: [this.componentsToModules()],
+      defaultCircle: false,
+      status: this.status
+    }
+  }
+
+  private getDefaultDto(): ReadDeploymentDto {
+    return {
+      id: this.id,
+      applicationName: this.cdConfiguration.id,
+      authorId: this.authorId,
+      callbackUrl: this.callbackUrl,
+      circle: undefined,
+      createdAt: this.createdAt,
+      description: '',
+      modulesDeployments: [this.componentsToModules()],
+      defaultCircle: false,
+      status: this.status
+    }
+  }
+
+  public componentsToModules(): ReadModuleDeploymentDto {
+    // TODO returning dummy values on id and moduleId because we dont have the Module entity on v2
+    return {
+      id: 'dummy-id',
+      moduleId: 'dummy-module-id',
+      helmRepository: this.components[0].helmUrl,
+      createdAt: this.createdAt,
+      status: this.status,
+      componentsDeployments: this.components.map(c => {
+        return {
+          id: c.id,
+          status: this.status,
+          createdAt: this.createdAt,
+          buildImageTag: c.imageTag,
+          buildImageUrl: c.imageUrl,
+          componentId: c.componentId,
+          componentName: c.name
+        }
+      })
+    }
   }
 }

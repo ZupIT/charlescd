@@ -28,7 +28,7 @@ export class DeploymentCleanupHandler {
     const updatedDeployments =  await this.deploymentsRepository.updateTimedOutStatus(this.envConfiguration.deploymentExpireTime)
     if (updatedDeployments.affected) {
       for await (const row of updatedDeployments.raw) {
-        const result = await this.notifyMoove(row.external_id, row.status, row.callback_url, row.circle_id)
+        const result = await this.notifyMoove(row.id, row.status, row.callback_url, row.circle_id)
         await this.deploymentsRepository.updateDeployment(row.id, result.status)
       }
     }
