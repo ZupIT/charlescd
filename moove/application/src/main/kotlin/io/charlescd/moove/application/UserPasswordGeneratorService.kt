@@ -27,7 +27,7 @@ import org.passay.PasswordGenerator
 @Named
 class UserPasswordGeneratorService(
     val numberLowerCase: Int = 2,
-    val numberUpperCase: Int= 2,
+    val numberUpperCase: Int = 2,
     val numberDigits: Int = 2,
     val numberSpecialChars: Int = 2,
     val passwordLength: Int = 10
