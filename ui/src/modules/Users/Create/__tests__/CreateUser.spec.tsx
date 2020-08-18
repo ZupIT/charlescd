@@ -78,19 +78,20 @@ test("render CreateUser Form component with empty fields", async () => {
 
   const ButtonCreateUser = getByTestId("button-create-user");
   expect(ButtonCreateUser).toBeInTheDocument();
+  await wait (() => expect(ButtonCreateUser).toBeDisabled());
 
   const InputName = getByTestId("input-text-name");
   const InputEmail = getByTestId("input-text-email");
   const InputPhotourl = getByTestId("input-text-photoUrl");
   const InputPassword = getByTestId("password-password-password");
-
+  
   expect(InputName).toBeEmpty();
   expect(InputEmail).toBeEmpty();
   expect(InputPhotourl).toBeEmpty();
   expect(InputPassword).toBeEmpty();
 });
 
-test("render CreateUser Form and submit", async () => {
+test("render CreateUser Form and submit when required fields filled", async () => {
   const { getByTestId } = render(
     <CreateUser {...props} onFinish={props.onFinish} />
   );
@@ -104,10 +105,11 @@ test("render CreateUser Form and submit", async () => {
     fireEvent.change(InputName, { target: { value: 'name' }});
     fireEvent.change(InputEmail, { target: { value: 'charles@zup.com.br' }});
     fireEvent.change(InputPassword, { target: { value: '123457' }});
+
+    expect(ButtonCreateUser).not.toBeDisabled();
+
     fireEvent.click(ButtonCreateUser);
   })
-
-  expect(ButtonCreateUser).toBeInTheDocument();
 
   await wait(() => expect(mockCreate).toBeCalledTimes(1));
 });
