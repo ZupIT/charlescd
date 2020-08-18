@@ -16,6 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
+import { FetchMock } from 'jest-fetch-mock/types';
 import { render, wait, fireEvent, act } from 'unit-test/testUtils';
 import CreateUser from '..';
 
@@ -25,7 +26,7 @@ const props = {
   onFinish: jest.fn()
 };
 
-const mockCreate = jest.fn()
+const mockCreate = jest.fn();
 
 afterEach(() => {
   mockCreate.mockClear()
@@ -36,6 +37,7 @@ jest.mock('../../hooks', () => {
     __esModule: true,
     useCreateUser: () => ({
       create: mockCreate,
+      newUser: {},
       status: {}
     })
   };
@@ -111,5 +113,8 @@ test("render CreateUser Form and submit when required fields filled", async () =
     fireEvent.click(ButtonCreateUser);
   })
 
-  await wait(() => expect(mockCreate).toBeCalledTimes(1));
+  await wait(() => {
+    expect(props.onFinish).toBeCalled();
+    expect(mockCreate).toBeCalledTimes(1);
+  });
 });
