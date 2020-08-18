@@ -16,12 +16,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
+import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
 import { isRoot } from 'core/utils/auth';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
-import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 export interface Props extends RouteProps {
   allowedRoles: string[];
@@ -35,12 +36,17 @@ const PrivateRoute = ({
   ...rest
 }: Props) => {
   const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace] = useWorkspace();
+  const [, loadWorkspace] = useWorkspace();
   const [isAuthorizedByWorkspace, setIsAuthorizedByWorkspace] = useState(true);
+  const { item: workspace, status } = useGlobalState(
+    ({ workspaces }) => workspaces
+  );
 
   useEffect(() => {
-    loadWorkspace(workspaceId);
-  }, [workspaceId, loadWorkspace]);
+    if (status === 'idle') {
+      loadWorkspace(workspaceId);
+    }
+  }, [workspaceId, loadWorkspace, status]);
 
   useEffect(() => {
     if (workspace) {
@@ -48,7 +54,7 @@ const PrivateRoute = ({
         workspace?.status === WORKSPACE_STATUS.COMPLETE
       );
     }
-  }, [workspace]);
+  }, [workspace, status]);
 
   const isAuthorizedByUser =
     (isRoot() || isAllowed(allowedRoles)) && allowedRoute;

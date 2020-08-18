@@ -28,7 +28,8 @@ const initialListState: WorkspacePagination = {
 
 export const workspaceInitialState: WorkspaceState = {
   list: initialListState,
-  item: null
+  item: null,
+  status: 'idle'
 };
 
 export const workspaceReducer = (
@@ -46,6 +47,12 @@ export const workspaceReducer = (
       return {
         ...state,
         item: action.payload
+      };
+    }
+    case ACTION_TYPES.statusWorkspace: {
+      return {
+        ...state,
+        status: action.payload
       };
     }
     default: {

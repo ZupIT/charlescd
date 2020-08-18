@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import React, { ReactElement, cloneElement, useEffect } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { createCanBoundTo } from '@casl/react';
 import uniqueId from 'lodash/uniqueId';
 import omit from 'lodash/omit';
 import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
+import { useGlobalState } from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 interface Props {
@@ -44,13 +43,8 @@ const Element = ({
   isDisabled = false,
   allowedRoutes = true
 }: Props) => {
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = uniqueId();
-  const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace] = useWorkspace();
-
-  useEffect(() => {
-    loadWorkspace(workspaceId);
-  }, [workspaceId, loadWorkspace]);
 
   const renderTooltip = () => (
     <ReactTooltip id={id} place="right" effect="solid">
