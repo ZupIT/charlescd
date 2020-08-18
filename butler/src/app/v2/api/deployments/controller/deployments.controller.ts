@@ -22,10 +22,11 @@ import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
+import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
- 
+
   constructor(
     private createDeploymentUseCase: CreateDeploymentUseCase,
     private createUndeploymentUseCase: CreateUndeploymentUseCase,
@@ -39,7 +40,7 @@ export class DeploymentsController {
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') incomingCircleId: string | null,
-  ): Promise<DeploymentEntity> {
+  ): Promise<ReadDeploymentDto> {
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, incomingCircleId)
   }
 

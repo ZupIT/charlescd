@@ -20,6 +20,7 @@ import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
 import { Deployment } from '../interfaces'
+import { ReadDeploymentDto, ReadModuleDeploymentDto } from '../../../../v1/api/deployments/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
@@ -83,5 +84,55 @@ export class DeploymentEntityV2 implements Deployment {
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
+  }
+
+  public toReadDto(): ReadDeploymentDto {
+    if (this.circleId) {
+      return {
+        id: this.id,
+        applicationName: this.cdConfiguration.id,
+        authorId: this.authorId,
+        callbackUrl: this.callbackUrl,
+        circle: { headerValue: this.circleId },
+        createdAt: this.createdAt,
+        description: '',
+        modulesDeployments: [this.componentsToModules()],
+        defaultCircle: false,
+        status: this.status
+      }
+    }
+    return {
+      id: this.id,
+      applicationName: this.cdConfiguration.id,
+      authorId: this.authorId,
+      callbackUrl: this.callbackUrl,
+      circle: undefined,
+      createdAt: this.createdAt,
+      description: '',
+      modulesDeployments: [this.componentsToModules()],
+      defaultCircle: false,
+      status: this.status
+    }
+  }
+
+  public componentsToModules(): ReadModuleDeploymentDto {
+    return {
+      id: 'dummy-id',
+      moduleId: 'dummy-module-id',
+      helmRepository: this.components[0].helmUrl,
+      createdAt: this.createdAt,
+      status: this.status,
+      componentsDeployments: this.components.map(c => {
+        return {
+          id: c.id,
+          status: this.status,
+          createdAt: this.createdAt,
+          buildImageTag: c.imageTag,
+          buildImageUrl: c.imageUrl,
+          componentId: c.componentId,
+          componentName: c.name
+        }
+      })
+    }
   }
 }
