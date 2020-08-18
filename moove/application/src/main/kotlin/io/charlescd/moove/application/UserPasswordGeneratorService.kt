@@ -26,20 +26,20 @@ import org.passay.PasswordGenerator
 
 @Named
 class UserPasswordGeneratorService(
-    val numberLowerCase: Int? = 2,
-    val numberUpperCase: Int? = 2,
-    val numberDigits: Int? = 2,
-    val numberSpecialChars: Int? = 2,
-    val passwordLength: Int? = 10
+    val numberLowerCase: Int = 2,
+    val numberUpperCase: Int= 2,
+    val numberDigits: Int = 2,
+    val numberSpecialChars: Int = 2,
+    val passwordLength: Int = 10
 ) {
     fun create(): String {
         val rules = listOf(
-            CharacterRule(EnglishCharacterData.LowerCase, numberLowerCase!!),
-            CharacterRule(EnglishCharacterData.UpperCase, numberUpperCase!!),
-            CharacterRule(EnglishCharacterData.Digit, numberDigits!!),
-            CharacterRule(SpecialChars(), numberSpecialChars!!)
+            CharacterRule(EnglishCharacterData.LowerCase, numberLowerCase),
+            CharacterRule(EnglishCharacterData.UpperCase, numberUpperCase),
+            CharacterRule(EnglishCharacterData.Digit, numberDigits),
+            CharacterRule(SpecialChars(), numberSpecialChars)
         )
-        return PasswordGenerator().generatePassword(passwordLength!!, rules)
+        return PasswordGenerator().generatePassword(passwordLength, rules)
     }
 }
 
