@@ -74,7 +74,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         def authorId = "b312dd87-28e5-490d-967b-293a7e65f77d"
         def request = new UpdateCircleWithCsvRequest(circleId, name, keyName, inputStream)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -158,7 +158,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
         def authorId = "b312dd87-28e5-490d-967b-293a7e65f77d"
         def request = new UpdateCircleWithCsvRequest(circleId, name, null, null)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 

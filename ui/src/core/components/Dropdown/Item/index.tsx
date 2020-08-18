@@ -43,7 +43,8 @@ const DropdownItem = ({
 
   return (
     <Styled.Item
-      key={`dropdown-item-${icon}${name}`}
+      key={`dropdown-item-${icon}-${name}`}
+      data-testid={`dropdown-item-${icon}-${name}`}
       className={className}
       onClick={(event: MouseEvent) => handleClick(event)}
       {...rest}
