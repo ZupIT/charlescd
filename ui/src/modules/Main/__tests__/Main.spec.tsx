@@ -85,7 +85,7 @@ test('render and collapse sidebar', () => {
   expect(getByTestId(menuId).textContent).toBe('');
 });
 
-test('render menu in expanded mode with the workspaces screen active', () => {
+test.only('render menu in expanded mode with the workspaces screen active', () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const { getByTestId } = render(<Main />);
   const icon = getByTestId('icon-workspaces');
