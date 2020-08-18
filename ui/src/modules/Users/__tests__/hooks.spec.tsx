@@ -19,18 +19,26 @@ import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useCreateUser } from '../hooks';
 import { NewUser } from '../interfaces/User';
+import { AllTheProviders as wrapper } from 'unit-test/testUtils';
+import { useGlobalState } from 'core/state/hooks';
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
 
 jest.mock('core/state/hooks', () => ({
-  useDispatch: jest.fn()
+  ...jest.requireActual('core/state/hooks'),
+  useDispatch: () => jest.fn()
 }));
 
-test('create a new user', async () => {
-  const payload = {
-    name: 'name',
-    email: 'charles@zup.com.br',
-    password: '123457'
-  };
+const payload = {
+  name: 'name',
+  email: 'charles@zup.com.br',
+  password: '123457'
+};
 
+
+test('create a new user', async () => {
   const newUser = {
     ...payload,
     id: '123',
@@ -48,4 +56,22 @@ test('create a new user', async () => {
   });
 
   await wait(() => expect(response).toMatchObject(newUser));
+});
+
+test('error create a new user', async () => {
+  const error = {
+    name: 'name',
+    message: 'The email charles@zup.com.br has already been register.'
+  };
+
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify(error)));
+
+  const { result: userResult } = renderHook(() => useCreateUser());
+
+  let response: Promise<NewUser>;
+  await act(async () => {
+    response = await userResult.current.create(payload);
+  });
+
+  await wait(() => expect(response).toBeUndefined());
 });
