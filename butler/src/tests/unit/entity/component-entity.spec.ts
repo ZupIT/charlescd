@@ -34,8 +34,8 @@ describe('ComponentEntity test', () => {
       '0e19100a-448d-4aa4-8fa0-7cf84e91ae10'
     )
     componentEntity.setPipelineCircle(circle, componentDeploymentEntity)
-    expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-0e19100a')
-    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag-0e19100a')
+    expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag')
+    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag')
 
   })
   it('should create the right version name with the first 8 chars of default circle id', () => {
@@ -53,8 +53,8 @@ describe('ComponentEntity test', () => {
 
     componentEntity.setPipelineDefaultCircle(componentDeploymentEntity)
 
-    expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag-f5d23a57')
-    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag-f5d23a57')
+    expect(componentEntity.pipelineOptions.pipelineVersions[0].version).toBe('build-image-tag')
+    expect(componentEntity.pipelineOptions.pipelineCircles[0].destination.version).toBe('build-image-tag')
 
   })
 })

@@ -17,12 +17,12 @@
 package pipeline
 
 import (
+	"fmt"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/repository"
 	"octopipe/pkg/template"
 	"octopipe/pkg/template/helm"
-	"strings"
 )
 
 type NonAdjustablePipelineVersion struct {
@@ -133,7 +133,7 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
 						"circleId": version.VersionCircle,
-						"version": version.Version[0:strings.LastIndex(version.Version,"-")],
+						"suffix": fmt.Sprintf("%s%s","-",version.VersionCircle[0:8]),
 					},
 				},
 			},

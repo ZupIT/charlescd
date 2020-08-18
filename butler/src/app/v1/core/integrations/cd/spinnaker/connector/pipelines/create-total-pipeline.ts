@@ -28,7 +28,7 @@ import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 import { AppConstants } from '../../../../../constants'
-import { IPipelineCircle } from '../../../../../../api/components/interfaces'
+import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
 
 export default class TotalPipeline {
   refId: number
@@ -92,7 +92,8 @@ export default class TotalPipeline {
   private buildDeployments(): IDeploymentReturn | undefined {
     if (this.contract.versions.length === 0) { return }
 
-    this.contract.versions.forEach(version => {
+    this.contract.circles.forEach(circle => {
+      const version = this.getVersionCircle(this.contract.versions, circle)
       const helmStage = baseStageHelm(
         this.contract,
         this.contract.githubAccount,
@@ -101,7 +102,7 @@ export default class TotalPipeline {
         String(this.refId),
         [],
         undefined,
-        this.getVersionCircle(version.version, this.contract.circles)
+        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -227,11 +228,10 @@ export default class TotalPipeline {
     }
   }
 
-  private getVersionCircle(version: string, circles: IPipelineCircle[]) {
-    const circleSearch = circles.find(
-      circle => circle.destination.version === version
-    )
-    return circleSearch?.header ? circleSearch.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
+  private getVersionCircle(versions: IDeploymentVersion[], circle: IPipelineCircle): IDeploymentVersion {
+    return versions.find(
+      version => circle.destination.version === version.version
+    )!
   }
   
 }
