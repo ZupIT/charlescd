@@ -38,7 +38,7 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
     def workspaceId = "workspace-id"
     def period = PeriodType.ONE_MONTH
 
-    def 'when failed deployment not found should return default value'() {
+    def 'when failed deployment not found should return period it with total equals zero'() {
         given:
         def todayDate = LocalDate.now()
         def successfulDeployStats = new DeploymentGeneralStats(3, DeploymentStatusEnum.DEPLOYED, Duration.ofSeconds(300))
@@ -58,16 +58,18 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [successfulDeployStats]
         1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> deploymentsStatsInPeriod
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> deploymentsAverageTimeInPeriod
-        2 * metricService.fillMissingDates(_ as Set<String>, period) >> []
+        3 * metricService.fillMissingDates(_ as Set<String>, period) >> []
         0 * _
 
         result.failedDeployments == 0
         result.successfulDeployments == 3
         result.successfulDeploymentsAverageTime == 300
-        result.failedDeploymentsInPeriod.size() == 0
+        result.failedDeploymentsInPeriod.size() == 3
+        result.failedDeploymentsInPeriod.first().total == 0
+        result.failedDeploymentsInPeriod.last().total == 0
     }
 
-    def 'when success deployment not found should return default value'() {
+    def 'when success deployment not found should return period it with total equals zero'() {
         given:
         def todayDate = LocalDate.now()
         def failedDeployStats = new DeploymentGeneralStats(2, DeploymentStatusEnum.DEPLOY_FAILED, Duration.ofSeconds(0))
@@ -82,13 +84,15 @@ class RetrieveDeploymentMetricsInteractorImplUnitTest extends Specification {
         1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatus(workspaceId, ["circle-id"], period.numberOfDays) >> [failedDeployStats]
         1 * deploymentRepository.countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> deploymentsStatsInPeriod
         1 * deploymentRepository.averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, ["circle-id"], period.numberOfDays) >> []
-        1 * metricService.fillMissingDates(_ as Set<String>, period) >> []
+        3 * metricService.fillMissingDates(_ as Set<String>, period) >> []
         0 * _
 
         result.failedDeployments == 2
         result.successfulDeployments == 0
         result.successfulDeploymentsAverageTime == 0
-        result.successfulDeploymentsInPeriod.size() == 0
+        result.successfulDeploymentsInPeriod.size() == 2
+        result.successfulDeploymentsInPeriod.first().total == 0
+        result.successfulDeploymentsInPeriod.last().total == 0
     }
 
     @Unroll
