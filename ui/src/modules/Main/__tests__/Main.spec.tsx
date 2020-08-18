@@ -16,7 +16,7 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, wait, act } from 'unit-test/testUtils';
+import { render, wait, act, waitForDomChange } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import routes from 'core/constants/routes';
@@ -71,6 +71,16 @@ test('render menu component', () => {
   expect(footer.tagName).toBe('FOOTER');
 });
 
+test('render menu in expanded mode with the workspaces screen active', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
+  const { getByTestId } = render(<Main />);
+
+  const icon = getByTestId('icon-workspaces');
+  const iconStyle = window.getComputedStyle(icon);
+
+  expect(iconStyle.color).toBe(dark.menuIconActive);
+});
+
 test('render and collapse sidebar', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const menuId = genMenuId(window.location.pathname);
@@ -83,18 +93,6 @@ test('render and collapse sidebar', async () => {
   await act(async() => expandButton.click());
 
   expect(getByTestId(menuId).textContent).toBe('');
-});
-
-test('render menu in expanded mode with the workspaces screen active', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-
-  const icon = getByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-
-  await wait();
-
-  expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 
 test('lazy loading', async () => {
@@ -115,4 +113,14 @@ test('lazy loading', async () => {
   const lazyLoading = getByText('loading...');
 
   expect(lazyLoading).toBeInTheDocument();
+});
+
+test('selecting workspace', async () => {
+  const setState = jest.fn();
+  const useStateMock: any = (state: string) => [state, setState];
+  jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+
+  const wrapper = render(<Main />);
+
+  await wait(() => expect(setState).toHaveBeenCalledTimes(3));
 });
