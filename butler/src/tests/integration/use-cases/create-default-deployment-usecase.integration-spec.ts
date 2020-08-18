@@ -250,8 +250,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(moduleEntityUpdated.components.length).toBe(2)
     expect(componentsModuleEntities[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(componentsModuleEntities[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
-    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
-    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(componentsModuleEntities[0].id)
+    expect(deployment.modules[0].components[1].componentId).toEqual(componentsModuleEntities[1].id)
   })
 
   it('/POST /deployments in default circle should fail if already exists deployment ', async() => {
@@ -586,16 +586,16 @@ describe('CreateDefaultDeploymentUsecase', () => {
 
     expect(component1.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ destination: { version: 'image-tag-f5d23a57' } }],
-        pipelineVersions: [{ version: 'image-tag-f5d23a57', versionUrl: 'image-url' }],
+        pipelineCircles: [{ destination: { version: 'image-tag' } }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
         pipelineUnusedVersions: []
       }
     )
 
     expect(component2.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ destination: { version: 'image-tag2-f5d23a57' } }],
-        pipelineVersions: [{ version: 'image-tag2-f5d23a57', versionUrl: 'image-url2' }],
+        pipelineCircles: [{ destination: { version: 'image-tag2' } }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
         pipelineUnusedVersions: []
       }
     )
@@ -699,7 +699,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url',
-          version: 'component-name-image-tag-f5d23a57',
+          version: 'component-name-image-tag',
           versionCircle: AppConstants.DEFAULT_CIRCLE_ID
         }
       ],
@@ -730,7 +730,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url2',
-          version: 'component-name2-image-tag2-f5d23a57',
+          version: 'component-name2-image-tag2',
           versionCircle: AppConstants.DEFAULT_CIRCLE_ID
         }
       ],
