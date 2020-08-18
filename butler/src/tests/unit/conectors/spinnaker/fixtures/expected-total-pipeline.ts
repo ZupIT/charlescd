@@ -73,12 +73,12 @@ const expectedTotalPipeline = {
         {
           defaultArtifact: {
             customKind: true,
-            id: 'useless - deployment - v1-f5d23a57'
+            id: 'useless - deployment - v1'
           },
-          displayName: 'deployment - v1-f5d23a57',
-          id: 'deployment - v1-f5d23a57',
+          displayName: 'deployment - v1',
+          id: 'deployment - v1',
           matchArtifact: {
-            id: 'useless - deployment - v1-f5d23a57 - match',
+            id: 'useless - deployment - v1 - match',
             name: 'app-name',
             type: 'embedded/base64'
           },
@@ -97,14 +97,14 @@ const expectedTotalPipeline = {
           id: 'value - app-name'
         }
       ],
-      name: 'Bake v1-f5d23a57',
+      name: 'Bake v1',
       namespace: 'app-namespace',
-      outputName: 'app-name-v1-f5d23a57',
+      outputName: 'app-name-v1',
       overrides: {
         'image.tag': '/v1',
-        'name': 'v1-f5d23a57',
+        'name': 'v1',
         'circleId': AppConstants.DEFAULT_CIRCLE_ID,
-        'version' : 'v1'
+        'suffix' : '-f5d23a57'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -119,11 +119,11 @@ const expectedTotalPipeline = {
       continuePipeline: true,
       failPipeline: false,
       manifestArtifactAccount: 'embedded-artifact',
-      manifestArtifactId: 'deployment - v1-f5d23a57',
+      manifestArtifactId: 'deployment - v1',
       moniker: {
         app: 'app-name'
       },
-      name: 'Deploy v1-f5d23a57',
+      name: 'Deploy v1',
       refId: '2',
       requisiteStageRefIds: [
         '1'
@@ -131,7 +131,7 @@ const expectedTotalPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
-        expression: '${ #stage(\'Bake v1-f5d23a57\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Bake v1\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -153,7 +153,7 @@ const expectedTotalPipeline = {
       method: 'POST',
       name: 'Trigger webhook',
       payload: {
-        status: '${#stage( \'Deploy v1-f5d23a57\' ).status.toString()}',
+        status: '${#stage( \'Deploy v1\' ).status.toString()}',
         callbackType: 'DEPLOYMENT'
       },
       refId: '3',

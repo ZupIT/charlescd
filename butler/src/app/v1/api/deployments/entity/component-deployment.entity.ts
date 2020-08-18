@@ -89,7 +89,4 @@ export class ComponentDeploymentEntity extends BaseEntity {
     )
   }
 
-  concatImageAndCircleId(circleId: string): void {
-    this.buildImageTag = this.buildImageTag.concat('-' ).concat(circleId.substring(0, 8))
-  }
 }

@@ -22,13 +22,13 @@ import expectedBaseHelmPreviousStages from './fixtures/expected-base-helm-previo
 it('builds the helm stage without previous stage', () => {
   expect(
     baseStageHelm({ appNamespace: 'app-namespace', appName: 'app-name' },
-      'github-config', 'version-d0d9f3d3', 'version.url', 'ref-if', ['req-ref-id'], undefined, 'circleId')
+      'github-config', 'version', 'version.url', 'ref-if', ['req-ref-id'], undefined, '0e19100a-448d-4aa4-8fa0-7cf84e91ae10')
   ).toEqual(expectedBaseStageHelm)
 })
 
 it('builds the helm stage with previous stage', () => {
   expect(
     baseStageHelm({ appNamespace: 'app-namespace', appName: 'app-name' },
-      'github-config', 'version-d0d9f3d3', 'version.url', 'ref-if', ['req-ref-id'], 'Previous stage', 'circleId')
+      'github-config', 'version', 'version.url', 'ref-if', ['req-ref-id'], 'Previous stage', '0e19100a-448d-4aa4-8fa0-7cf84e91ae10')
   ).toEqual(expectedBaseHelmPreviousStages)
 })

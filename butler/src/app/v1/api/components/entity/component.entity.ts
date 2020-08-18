@@ -89,7 +89,6 @@ export class ComponentEntity extends BaseEntity {
   }
 
   public setPipelineDefaultCircle(componentDeployment: ComponentDeploymentEntity): void {
-    componentDeployment.concatImageAndCircleId(AppConstants.DEFAULT_CIRCLE_ID)
     this.removeCurrentDefaultCircle()
     this.addDefaultCircle(componentDeployment)
     this.setUnusedVersions()
@@ -97,7 +96,6 @@ export class ComponentEntity extends BaseEntity {
   }
 
   public setPipelineCircle(circle: CircleDeploymentEntity, componentDeployment: ComponentDeploymentEntity): void {
-    componentDeployment.concatImageAndCircleId(circle.headerValue)
     this.removeCurrentCircleRule(circle)
     this.addCircleRule(circle, componentDeployment)
     this.setUnusedVersions()
