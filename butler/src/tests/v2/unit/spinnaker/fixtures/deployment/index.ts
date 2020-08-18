@@ -1,4 +1,4 @@
-import { completeSpinnakerPipeline } from './complete-pipeline'
+import { completeSpinnakerPipeline } from './deployment-complete-pipeline'
 import { noUnusedSpinnakerPipeline } from './no-unused'
 import { oneComponentSpinnakerPipeline } from './one-component'
 import { oneComponentVSSpinnakerPipeline } from './one-component-virtualservice'

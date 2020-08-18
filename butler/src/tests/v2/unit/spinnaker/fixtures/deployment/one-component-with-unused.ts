@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from '../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../app/v1/core/constants'
-import { DeploymentStatusEnum } from '../../../../../app/v1/api/deployments/enums'
-import { ExecutionTypeEnum } from '../../../../../app/v2/api/deployments/enums'
+import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
+import { AppConstants } from '../../../../../../app/v1/core/constants'
+import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
+import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
+export const oneComponentWithUnused: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -222,7 +222,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     headers: {
                       cookie: {
-                        regex: '.*x-circle-id=circle-id.*'
+                        regex: '.*x-circle-id=circle-id2.*'
                       }
                     }
                   }
@@ -236,12 +236,12 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'circle-id2'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'circle-id2'
                         }
                       }
                     }
@@ -253,7 +253,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id'
+                        exact: 'circle-id2'
                       }
                     }
                   }
@@ -267,12 +267,12 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'circle-id2'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'circle-id2'
                         }
                       }
                     }
@@ -406,6 +406,51 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'app',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'version',
+            kind: 'EQUALS',
+            values: [
+              'A-v1'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '8',
+      requisiteStageRefIds: [
+        '7'
+      ],
+      stageEnabled: {
+        expression: '${proxyDeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -418,7 +463,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '8',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
         '7'
@@ -444,7 +489,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '9',
+      refId: '10',
       requisiteStageRefIds: [
         '5',
         '7'
