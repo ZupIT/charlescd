@@ -19,15 +19,12 @@ import { wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import { useCreateUser } from '../hooks';
 import { NewUser } from '../interfaces/User';
-import { AllTheProviders as wrapper } from 'unit-test/testUtils';
-import { useGlobalState } from 'core/state/hooks';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
 jest.mock('core/state/hooks', () => ({
-  ...jest.requireActual('core/state/hooks'),
   useDispatch: () => jest.fn()
 }));
 
@@ -36,7 +33,6 @@ const payload = {
   email: 'charles@zup.com.br',
   password: '123457'
 };
-
 
 test('create a new user', async () => {
   const newUser = {
