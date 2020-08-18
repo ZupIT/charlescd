@@ -40,7 +40,7 @@ func (main Main) Parse(plugin io.ReadCloser) (Plugin, error) {
 }
 
 func (main Main) FindAll() ([]Plugin, error) {
-	plugins := []Plugin{}
+	var plugins []Plugin
 	db := main.db.Find(&plugins)
 	if db.Error != nil {
 		return []Plugin{}, db.Error
@@ -77,7 +77,7 @@ func (main Main) GetPluginByID(id string) (*plugin.Plugin, error) {
 }
 
 func (main Main) Update(id string, plugin Plugin) (Plugin, error) {
-	db := main.db.Where("id = ?", id).Update(&plugin)
+	db := main.db.Table("plugins").Where("id = ?", id).Update(&plugin)
 	if db.Error != nil {
 		return Plugin{}, db.Error
 	}

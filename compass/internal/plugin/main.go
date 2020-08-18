@@ -9,12 +9,12 @@ import (
 )
 
 type UseCases interface {
-	Parse(metricsGroup io.ReadCloser) (Plugin, error)
+	Parse(plugin io.ReadCloser) (Plugin, error)
 	FindAll() ([]Plugin, error)
-	Save(metricsGroup Plugin) (Plugin, error)
+	Save(plugin Plugin) (Plugin, error)
 	FindById(id string) (Plugin, error)
 	GetPluginByID(id string) (*plugin.Plugin, error)
-	Update(id string, metricsGroup Plugin) (Plugin, error)
+	Update(id string, plugin Plugin) (Plugin, error)
 	Remove(id string) error
 }
 
