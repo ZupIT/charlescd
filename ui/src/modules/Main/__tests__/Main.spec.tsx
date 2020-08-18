@@ -91,7 +91,7 @@ test('render menu in expanded mode with the workspaces screen active', () => {
   wait();
   const icon = getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
-  console.log('*eita*', iconStyle)
+  console.log('*AQUII*', iconStyle)
   expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 
