@@ -33,7 +33,11 @@ interface Props {
 
 const FormUser = ({ onFinish }: Props) => {
   const history = useHistory();
-  const { register, handleSubmit } = useForm<NewUser>();
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid }
+  } = useForm<NewUser>({ mode: 'onChange' });
   const { create, newUser, status } = useCreateUser();
 
   useEffect(() => {
@@ -59,15 +63,28 @@ const FormUser = ({ onFinish }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <Styled.Fields>
-        <Form.Input ref={register} name="name" label="User name" />
-        <Form.Input ref={register} name="email" label="E-mail" />
+        <Form.Input
+          ref={register({ required: true })}
+          name="name"
+          label="User name"
+        />
+        <Form.Input
+          ref={register({ required: true })}
+          name="email"
+          label="E-mail"
+        />
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
-        <Form.Password ref={register} name="password" label="Create password" />
+        <Form.Password
+          ref={register({ required: true })}
+          name="password"
+          label="Create password"
+        />
       </Styled.Fields>
       <Button.Default
         data-testid="button-create-user"
         size="EXTRA_SMALL"
         type="submit"
+        isDisabled={!isValid}
         isLoading={status.isPending}
       >
         Create User
