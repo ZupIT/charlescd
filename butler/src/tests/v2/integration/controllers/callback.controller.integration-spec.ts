@@ -1,6 +1,8 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { Server } from 'http'
 import * as request from 'supertest'
+import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
@@ -12,11 +14,14 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
-import { EntityManager } from 'typeorm'
+import express = require('express')
+
+let mock = express()
 
 describe('CallbackController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
+  let mockServer: Server
   let worker: PgBossWorker
   let manager: EntityManager
   beforeAll(async() => {
@@ -44,10 +49,18 @@ describe('CallbackController v2', () => {
   })
 
   beforeEach(async() => {
+    mock = express()
+    mockServer = mock.listen(9000)
     await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
     await worker.pgBoss.clearStorage()
   })
+
+  afterEach(async() => {
+    await fixtureUtilsService.clearDatabase()
+    mockServer.close()
+  })
+
 
   it('set deployment callback status and active boolean for success notification', async() => {
     const cdConfiguration = new CdConfigurationEntity(
@@ -75,7 +88,7 @@ describe('CallbackController v2', () => {
     const deploymentDto = new CreateDeploymentRequestDto(
       '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
       'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
-      'http://callback-url',
+      'http://localhost:9000/deploy/notifications/deployment',
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
@@ -86,6 +99,11 @@ describe('CallbackController v2', () => {
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
+
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      res.sendStatus(200)
+    })
+
     await request(app.getHttpServer())
       .post(`/v2/deployments/${deployment.id}/notify`)
       .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
@@ -100,7 +118,7 @@ describe('CallbackController v2', () => {
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
             priority: 0,
-            notificationStatus: 'NOT_SENT',
+            notificationStatus: 'SENT',
             active: true,
             components: [
               {
@@ -147,7 +165,7 @@ describe('CallbackController v2', () => {
     const deploymentDto = new CreateDeploymentRequestDto(
       '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
       'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
-      'http://callback-url',
+      'http://localhost:9000/deploy/notifications/deployment',
       cdConfiguration.id,
       { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
       DeploymentStatusEnum.CREATED,
@@ -158,6 +176,11 @@ describe('CallbackController v2', () => {
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
+
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      res.sendStatus(200)
+    })
+
     await request(app.getHttpServer())
       .post(`/v2/deployments/${deployment.id}/notify`)
       .send({ status: 'FAILED', type: 'DEPLOYMENT' })
@@ -171,7 +194,7 @@ describe('CallbackController v2', () => {
             circleId: deployment.circleId,
             callbackUrl: deployment.callbackUrl,
             id: deployment.id,
-            notificationStatus: 'NOT_SENT',
+            notificationStatus: 'SENT',
             priority: 0,
             active: false,
             components: [

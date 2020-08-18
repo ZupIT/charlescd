@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import { InjectRepository } from '@nestjs/typeorm'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { Repository } from 'typeorm'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { InternalServerErrorException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { UpdateResult } from 'typeorm'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
+import { MooveService } from '../../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
 
 export class ReceiveNotificationUseCase {
 
   constructor(
-    @InjectRepository(DeploymentEntity)
-    private deploymentRepository: Repository<DeploymentEntity>,
-    private readonly consoleLoggerService: ConsoleLoggerService
+    @InjectRepository(DeploymentRepositoryV2)
+    private deploymentRepository: DeploymentRepositoryV2,
+    private readonly consoleLoggerService: ConsoleLoggerService,
+    private mooveService: MooveService
   ) {}
 
   public async execute(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity>{
@@ -47,7 +51,7 @@ export class ReceiveNotificationUseCase {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
 
-    deployment.finishedAt = new Date()
+    deployment.finishedAt = DateUtils.now()
     deployment.components = deployment.components.map(c => {
       c.running = false
       return c
@@ -70,7 +74,9 @@ export class ReceiveNotificationUseCase {
       if (currentActiveDeployment) {
         await this.deploymentRepository.save(currentActiveDeployment)
       }
-      return await this.deploymentRepository.save(deployment)
+      const savedDeployment = await this.deploymentRepository.save(deployment)
+      await this.notifyMooveAndUpdateDeployment(savedDeployment)
+      return await this.deploymentRepository.findOneOrFail(savedDeployment.id, { relations: ['components'] })
     }
     catch (error) {
       if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
@@ -81,6 +87,21 @@ export class ReceiveNotificationUseCase {
         throw new InternalServerErrorException
       }
     }
+  }
+
+  private async notifyMooveAndUpdateDeployment(deployment: DeploymentEntity): Promise<UpdateResult> {
+    const notificationResult = await this.sendMooveNotification(deployment.id, deployment.status, deployment.callbackUrl, deployment.circleId)
+    const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
+    return updatedDeployment
+  }
+
+  private async sendMooveNotification(deploymentId: string, status: string, callbackUrl: string, circleId: string | null) {
+    return await this.mooveService.notifyDeploymentStatusV2(
+      deploymentId,
+      status,
+      callbackUrl,
+      circleId
+    )
   }
 
   private async handleUndeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
