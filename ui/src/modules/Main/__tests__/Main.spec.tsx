@@ -71,7 +71,7 @@ test('render menu component', () => {
   expect(footer.tagName).toBe('FOOTER');
 });
 
-test('render and collapse sidebar', () => {
+test('render and collapse sidebar', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const menuId = genMenuId(window.location.pathname);
   const { getByTestId } = render(<Main />);
@@ -80,25 +80,20 @@ test('render and collapse sidebar', () => {
 
   expect(getByTestId(menuId)).toHaveTextContent(/\w+/gi);
 
-  expandButton.click();
+  await act(async() => expandButton.click());
 
   expect(getByTestId(menuId).textContent).toBe('');
 });
 
-test.only('render menu in expanded mode with the workspaces screen active', () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-  const icon = getByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-  expect(iconStyle.color).toBe(dark.menuIconActive);
-});
-
-test('render menu in expanded mode with the workspaces screen active', () => {
+test('render menu in expanded mode with the workspaces screen active', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const { getByTestId } = render(<Main />);
 
   const icon = getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
+
+  await wait();
+
   expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 
@@ -120,14 +115,4 @@ test('lazy loading', async () => {
   const lazyLoading = getByText('loading...');
 
   expect(lazyLoading).toBeInTheDocument();
-});
-
-test('selecting workspace', async () => {
-  const setState = jest.fn();
-  const useStateMock: any = (state: string) => [state, setState];
-  jest.spyOn(React, 'useState').mockImplementation(useStateMock);
-
-  const wrapper = render(<Main />);
-
-  await wait(() => expect(setState).toHaveBeenCalledTimes(3));
 });
