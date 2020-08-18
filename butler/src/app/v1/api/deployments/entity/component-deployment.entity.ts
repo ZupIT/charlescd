@@ -88,5 +88,4 @@ export class ComponentDeploymentEntity extends BaseEntity {
       this.createdAt
     )
   }
-
 }

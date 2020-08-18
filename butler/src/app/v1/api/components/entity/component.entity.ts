@@ -165,5 +165,4 @@ export class ComponentEntity extends BaseEntity {
       version: componentDeployment.buildImageTag
     })
   }
-
 }
