@@ -6,7 +6,9 @@ import (
 	"compass/internal/util"
 	"compass/pkg/logger/fake"
 	"database/sql"
+	"io/ioutil"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -57,6 +59,54 @@ func (s *Suite) TestValidate() {
 	var errList = metricGroup.Validate()
 
 	require.NotEmpty(s.T(), errList)
+}
+
+func (s *Suite) TestParseMetricsGroup() {
+	stringReader := strings.NewReader(`{
+    "name": "Metricas de teste2",
+    "metrics": [
+        {
+            "dataSourceId": "b9d285fc-542b-4828-9e30-d28355b5fefb",
+            "metric": "istio_charles_request_total",
+            "query": "",
+            "filters": [
+                {
+                    "field": "circle_id",
+                    "value": "5c7979b7-51fd-4c16-8f2e-2c5d93651ed1",
+                    "operator": "="
+                },
+                {
+                    "field": "circle_source",
+                    "value": "f5d23a57-5607-4306-9993-477e1598cc2a",
+                    "operator": "="
+                }
+            ],
+            "groupBy": [
+                {
+                    "field": "app"
+                }
+            ],
+            "condition": "EQUAL",
+            "threshold": 30.0
+        }
+    ],
+    "circleId": "b9d285fc-542b-4828-9e30-d28355b5fefb"
+}`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	res, err := s.repository.Parse(stringReadCloser)
+
+	require.NoError(s.T(), err)
+	require.NotNil(s.T(), res)
+}
+
+func (s *Suite) TestParseMetricsGroupError() {
+	stringReader := strings.NewReader(`{ERROR}`)
+	stringReadCloser := ioutil.NopCloser(stringReader)
+
+	_, err := s.repository.Parse(stringReadCloser)
+
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestFindAll() {
@@ -260,4 +310,73 @@ func (s *Suite) TestFindById() {
 	}
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), res, metricGroup)
+}
+
+func (s *Suite) TestFindByIdError() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+	var (
+		metricId   = id
+		metricName = "Metrictest"
+		condition  = "test"
+		threshold  = 1.2
+	)
+	var (
+		field    = "circle_id"
+		value    = "5c7979b7-51fd-4c16-8f2e-2c5d93651ed1"
+		operator = "="
+	)
+
+	metricsGroupRows := sqlmock.
+		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
+		AddRow(id, name, workspaceID, status, circleId, timeNow)
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "ERROR"  WHERE (id = $1) ORDER BY "metrics_groups"."id" ASC LIMIT 1`)).
+		WithArgs(id).
+		WillReturnRows(metricsGroupRows)
+
+	_, err := s.repository.FindById(id.String())
+
+	filterList := make([]MetricFilter, 0)
+	groupByList := make([]MetricGroupBy, 0)
+	metricList := make([]Metric, 0)
+
+	metricFilter := MetricFilter{
+		BaseModel: baseModel,
+		MetricID:  metricId,
+		Field:     field,
+		Value:     value,
+		Operator:  operator,
+	}
+
+	metricGroupBy := MetricGroupBy{
+		BaseModel: baseModel,
+		MetricID:  metricId,
+		Field:     field,
+	}
+	filterList = append(filterList, metricFilter)
+	groupByList = append(groupByList, metricGroupBy)
+
+	metric := Metric{
+		BaseModel:      baseModel,
+		MetricsGroupID: id,
+		DataSourceID:   id,
+		Metric:         metricName,
+		Filters:        filterList,
+		GroupBy:        groupByList,
+		Condition:      condition,
+		Threshold:      threshold,
+		Status:         status,
+	}
+
+	metricList = append(metricList, metric)
+
+	require.Error(s.T(), err)
 }

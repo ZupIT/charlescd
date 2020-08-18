@@ -94,6 +94,7 @@ func (s *Suite) TestFindById() {
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
 
+	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
 		WithArgs(id).
@@ -156,6 +157,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
 
+	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((workspace_id = $1))`)).
 		WithArgs(workspaceID).
@@ -193,6 +195,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
 
+	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((workspace_id = $1 AND health = $2))`)).
 		WithArgs(workspaceID, health).
@@ -212,6 +215,32 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 
 	require.NoError(s.T(), err)
 	require.Contains(s.T(), res, expected)
+}
+
+func (s *Suite) TestFindAllByWorkspaceError() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = false
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	rows := sqlmock.
+		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "ERROR" WHERE "data_sources"."deleted_at" IS NULL AND ((workspace_id = $1))`)).
+		WithArgs(workspaceID).
+		WillReturnRows(rows)
+
+	_, err := s.repository.FindAllByWorkspace(workspaceID.String(), "")
+
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestDelete() {
@@ -242,6 +271,66 @@ func (s *Suite) TestDelete() {
 	res := s.repository.Delete(id.String())
 
 	require.Nil(s.T(), res)
+}
+
+func (s *Suite) TestDeleteError() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = true
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	rows := sqlmock.
+		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
+		WithArgs(id).
+		WillReturnRows(rows)
+
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(regexp.QuoteMeta(
+		`UPDATE "ERROR"`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	err := s.repository.Delete(id.String())
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestDeleteFindError() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = true
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	rows := sqlmock.
+		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "ERROR" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
+		WithArgs(id).
+		WillReturnRows(rows)
+
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(regexp.QuoteMeta(
+		`UPDATE "ERROR"`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	err := s.repository.Delete(id.String())
+
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestSave() {
@@ -289,6 +378,42 @@ func (s *Suite) TestSaveError() {
 		name        = "test-name"
 		pluginID    = uuid.New()
 		health      = false
+		data        = json.RawMessage(`{"url": "localhost:8080"}`)
+		workspaceID = uuid.New()
+	)
+
+	expected := DataSource{
+		BaseModel:   baseModel,
+		Name:        name,
+		PluginID:    pluginID,
+		Health:      health,
+		Data:        data,
+		WorkspaceID: workspaceID,
+		DeletedAt:   nil,
+	}
+
+	query := regexp.QuoteMeta(`INSERT INTO "plugins"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(query).
+		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+	s.mock.ExpectCommit()
+
+	_, err := s.repository.Save(expected)
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestSaveErrorWithHealth() {
+	var id = uuid.New()
+	var timeNow = time.Now()
+	var (
+		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
+		name        = "test-name"
+		pluginID    = uuid.New()
+		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
 	)
