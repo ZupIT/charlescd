@@ -77,7 +77,7 @@ test('render menu in expanded mode with the workspaces screen active', async () 
 
   const icon = getByTestId('icon-workspaces');
   const iconStyle = window.getComputedStyle(icon);
-
+  
   expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 
@@ -90,7 +90,7 @@ test('render and collapse sidebar', async () => {
 
   expect(getByTestId(menuId)).toHaveTextContent(/\w+/gi);
 
-  await act(async() => expandButton.click());
+  act(() => expandButton.click());
 
   expect(getByTestId(menuId).textContent).toBe('');
 });
