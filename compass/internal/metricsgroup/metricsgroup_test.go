@@ -210,6 +210,29 @@ func (s *Suite) TestFindAll() {
 	require.Contains(s.T(), res, metricGroup)
 }
 
+func (s *Suite) TestFindAllError() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+
+	s.mock.MatchExpectationsInOrder(false)
+	metricsGroupRows := sqlmock.
+		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
+		AddRow(id, name, workspaceID, status, circleId, timeNow)
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "metrics_groupss"`)).
+		WillReturnRows(metricsGroupRows)
+
+	_, err := s.repository.FindAll()
+
+	require.Error(s.T(), err)
+}
+
 func (s *Suite) TestFindById() {
 	id := uuid.New()
 	timeNow := time.Now()
@@ -232,6 +255,7 @@ func (s *Suite) TestFindById() {
 		operator = "="
 	)
 
+	s.mock.MatchExpectationsInOrder(false)
 	metricsGroupRows := sqlmock.
 		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
 		AddRow(id, name, workspaceID, status, circleId, timeNow)
