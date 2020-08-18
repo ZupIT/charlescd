@@ -18,12 +18,12 @@
 
 package io.charlescd.moove.application
 
+import javax.inject.Named
 import org.passay.AllowedCharacterRule
 import org.passay.CharacterData
 import org.passay.CharacterRule
 import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
-import javax.inject.Named
 
 @Named
 class UserPasswordGeneratorService(
