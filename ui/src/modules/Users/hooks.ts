@@ -70,9 +70,11 @@ export const useCreateUser = (): {
         return res;
       }
     } catch (e) {
+      const error = await e.json();
+
       dispatch(
         toogleNotification({
-          text: e.message,
+          text: error.message,
           status: 'error'
         })
       );
