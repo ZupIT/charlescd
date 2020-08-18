@@ -120,6 +120,7 @@ export class DeploymentEntityV2 implements Deployment {
   }
 
   public componentsToModules(): ReadModuleDeploymentDto {
+    // TODO returning dummy values on id and moduleId because we dont have the Module entity on v2
     return {
       id: 'dummy-id',
       moduleId: 'dummy-module-id',
