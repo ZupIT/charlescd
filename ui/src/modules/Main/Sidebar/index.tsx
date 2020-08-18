@@ -124,13 +124,12 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
             </Text.h5>
           )}
         </Styled.Item>
-        {/* <Styled.Item>
-          <Icon name="help" color="dark" size="15px" 
-            onClick={() => redirectToDocumentation()} 
+        <Styled.Item>
+          <Icon name="help" color="dark" size="15px" onClick={redirectToDocumentation}
             data-tip data-for="docTooltip"
           />
           <ReactTooltip id='docTooltip'>Documentation</ReactTooltip>
-        </Styled.Item> */}
+        </Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />
         </Styled.Item>
