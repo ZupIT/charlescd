@@ -132,7 +132,8 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Name":      version.Version,
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
-						"suffix":  version.getCircle(),
+						"circleId": version.VersionCircle,
+						"suffix":  version.getSuffixFromCircle(),
 					},
 				},
 			},
@@ -160,7 +161,7 @@ func (deprecatedPipeline NonAdjustablePipeline) generateIstioSteps() []Step {
 	return steps
 }
 
-func (pipelineVersion NonAdjustablePipelineVersion) getCircle() string {
+func (pipelineVersion NonAdjustablePipelineVersion) getSuffixFromCircle() string {
 	if pipelineVersion.VersionCircle != "" {
 		return fmt.Sprintf("%s%s","-", pipelineVersion.VersionCircle[0:8])
 	}
