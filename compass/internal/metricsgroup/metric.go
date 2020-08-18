@@ -40,20 +40,22 @@ type MetricGroupBy struct {
 	Field    string    `json:"field"`
 }
 
-func (metric Metric) Validate() error {
+func (metric Metric) Validate() []error {
+	ers := make([]error, 0)
+
 	if metric.Metric == "" {
-		return errors.New("Metric name is required")
+		ers = append(ers, errors.New("Metric name is required"))
 	}
 
 	if metric.Condition == "" {
-		return errors.New("Metric Condition is required")
+		ers = append(ers, errors.New("Metric condition is required"))
 	}
 
 	if metric.Threshold == 0 {
-		return errors.New("Metric Threshold is required")
+		ers = append(ers, errors.New("Metric Threshold is required"))
 	}
 
-	return nil
+	return ers
 }
 
 func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {

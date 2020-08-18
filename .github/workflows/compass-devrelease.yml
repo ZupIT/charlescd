@@ -1,4 +1,4 @@
-name: octopipe dev-release
+name: compass dev-release
 
 on:
   push:

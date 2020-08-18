@@ -48,8 +48,8 @@ func (metricsGroup MetricsGroup) Validate() []error {
 	}
 
 	for _, m := range metricsGroup.Metrics {
-		if m.Validate() != nil {
-			ers = append(ers, m.Validate())
+		if len(m.Validate()) > 0 {
+			ers = append(ers, m.Validate()...)
 		}
 	}
 
