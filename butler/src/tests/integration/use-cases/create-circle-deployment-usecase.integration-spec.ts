@@ -582,16 +582,16 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
 
     expect(component1.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag-circle-h' } }],
-        pipelineVersions: [{ version: 'image-tag-circle-h', versionUrl: 'image-url' }],
+        pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag' } }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
         pipelineUnusedVersions: []
       }
     )
 
     expect(component2.pipelineOptions).toEqual(
       {
-        pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag2-circle-h' } }],
-        pipelineVersions: [{ version: 'image-tag2-circle-h', versionUrl: 'image-url2' }],
+        pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag2' } }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
         pipelineUnusedVersions: []
       }
     )
@@ -700,7 +700,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       versions: [
         {
           versionUrl: 'image-url',
-          version: 'component-name-image-tag-circle-h',
+          version: 'component-name-image-tag',
           versionCircle: 'circle-header'
         }
       ],
@@ -731,7 +731,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       versions: [
         {
           versionUrl: 'image-url2',
-          version: 'component-name2-image-tag2-circle-h',
+          version: 'component-name2-image-tag2',
           versionCircle: 'circle-header'
         }
       ],
