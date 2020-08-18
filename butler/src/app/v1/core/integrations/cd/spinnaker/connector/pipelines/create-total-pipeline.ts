@@ -37,6 +37,7 @@ export default class TotalPipeline {
   deploymentsIds: string[]
   contract: ISpinnakerPipelineConfiguration
   basePipeline: IBaseSpinnakerPipeline
+
   constructor(contract: ISpinnakerPipelineConfiguration) {
     this.refId = 1
     this.previousStage = ''
@@ -90,7 +91,9 @@ export default class TotalPipeline {
   }
 
   private buildDeployments(): IDeploymentReturn | undefined {
-    if (this.contract.versions.length === 0) { return }
+    if (this.contract.versions.length === 0) {
+      return
+    }
 
     this.contract.circles.forEach(circle => {
       const version = this.getVersionCircle(this.contract.versions, circle)
@@ -229,9 +232,9 @@ export default class TotalPipeline {
   }
 
   private getVersionCircle(versions: IDeploymentVersion[], circle: IPipelineCircle): IDeploymentVersion {
-    return versions.find(
-      version => circle.destination.version === version.version
-    )!
+    const versionsSearch = versions.find(
+      octopipeVersion => octopipeVersion.version === circle.destination.version
+    )
+    return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
   }
-  
 }
