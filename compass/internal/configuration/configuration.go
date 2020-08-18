@@ -9,7 +9,6 @@ var initialValues = map[string]string{
 	"DB_NAME":     "charlescd_compass",
 	"DB_SSL":      "disable",
 	"DB_PORT":     "5432",
-	"ENV":         "DEV",
 	"PLUGINS_DIR": "./plugins",
 	"TIMEOUT":     "10",
 }
