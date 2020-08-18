@@ -20,7 +20,7 @@ import options from './conditional.options';
 import { getCondition } from './helpers';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   prefixName: string;
   viewMode: boolean;
   rule: Partial<
@@ -45,7 +45,7 @@ const Rule = ({
   const { register, control } = useFormContext();
 
   return (
-    <Styled.Rule isGroup={isGroup} hasGroups={hasGroup} viewMode={viewMode}>
+    <Styled.Rule data-testid="segments-rules" isGroup={isGroup} hasGroups={hasGroup} viewMode={viewMode}>
       <Styled.RuleTrash>
         {hasGroup && (
           <Styled.Button.Icon
@@ -64,7 +64,7 @@ const Rule = ({
       />
       <Styled.Input
         label="Key"
-        ref={register}
+        ref={register({ required: true })}
         disabled={viewMode}
         name={`${prefixName}.content.key`}
         defaultValue={rule?.content?.key}
@@ -72,6 +72,7 @@ const Rule = ({
       <Styled.Select
         options={options}
         control={control}
+        rules={{ required: true }}
         label="Conditional"
         isDisabled={viewMode}
         defaultValue={getCondition(rule?.content?.condition)}
