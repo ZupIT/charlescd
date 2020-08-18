@@ -162,8 +162,8 @@ func (metricsGroupApi MetricsGroupApi) createMetric(w http.ResponseWriter, r *ht
 		return
 	}
 
-	if err := metric.Validate(); err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+	if err := metric.Validate(); len(err) > 0 {
+		api.NewRestError(w, http.StatusInternalServerError, err)
 		return
 	}
 

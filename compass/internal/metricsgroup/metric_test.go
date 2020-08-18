@@ -51,6 +51,13 @@ func TestInitMetric(t *testing.T) {
 	suite.Run(t, new(SuiteMetric))
 }
 
+func (s *Suite) TestValidateMetric() {
+	metric := Metric{}
+	var errList = metric.Validate()
+
+	require.NotEmpty(s.T(), errList)
+}
+
 func (s *Suite) TestParse() {
 	stringReader := strings.NewReader(`{
     "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
