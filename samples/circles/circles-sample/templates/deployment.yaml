@@ -27,7 +27,7 @@ spec:
             failureThreshold: 3
             httpGet:
               path: /
-              port: 80
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 20
@@ -37,7 +37,7 @@ spec:
             failureThreshold: 3
             httpGet:
               path: /
-              port: 80
+              port: 8080
               scheme: HTTP  
             initialDelaySeconds: 30
             periodSeconds: 20
