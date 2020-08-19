@@ -62,6 +62,8 @@ export const Configuration: IEnvConfiguration = {
     password: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
     max: 5,
     retentionDays: 7
-  }
+  },
+
+  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL
 
 }
