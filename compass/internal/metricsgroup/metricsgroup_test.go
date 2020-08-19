@@ -404,3 +404,34 @@ func (s *Suite) TestFindByIdError() {
 
 	require.Error(s.T(), err)
 }
+
+func (s *Suite) TestRemove() {
+	id := uuid.New()
+	query := regexp.QuoteMeta(`DELETE FROM "metrics_groups"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	resErr := s.repository.Remove(id.String())
+
+	require.NoError(s.T(), resErr)
+	require.Nil(s.T(), resErr)
+}
+
+func (s *Suite) TestRemoveError() {
+	id := uuid.New()
+	query := regexp.QuoteMeta(`DELETE FROM "error"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	err := s.repository.Remove(id.String())
+
+	require.Error(s.T(), err)
+}
