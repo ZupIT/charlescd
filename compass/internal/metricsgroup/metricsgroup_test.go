@@ -130,7 +130,7 @@ func (s *Suite) TestFindAll() {
 		value    = "5c7979b7-51fd-4c16-8f2e-2c5d93651ed1"
 		operator = "="
 	)
-
+	s.mock.MatchExpectationsInOrder(false)
 	metricsGroupRows := sqlmock.
 		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
 		AddRow(id, name, workspaceID, status, circleId, timeNow)
@@ -357,7 +357,7 @@ func (s *Suite) TestFindByIdError() {
 		value    = "5c7979b7-51fd-4c16-8f2e-2c5d93651ed1"
 		operator = "="
 	)
-
+	s.mock.MatchExpectationsInOrder(false)
 	metricsGroupRows := sqlmock.
 		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
 		AddRow(id, name, workspaceID, status, circleId, timeNow)
@@ -433,5 +433,169 @@ func (s *Suite) TestRemoveError() {
 
 	err := s.repository.Remove(id.String())
 
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestUpdateMetricsGroup() {
+	id := uuid.New()
+
+	metricsGroupStruct := MetricsGroup{
+		BaseModel:   util.BaseModel{},
+		Name:        "Metricas de teste222",
+		Metrics:     nil,
+		Status:      "",
+		WorkspaceID: uuid.UUID{},
+		CircleID:    id,
+	}
+
+	query := regexp.QuoteMeta(`UPDATE "metrics_groups"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	res, err := s.repository.Update(id.String(), metricsGroupStruct)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), metricsGroupStruct, res)
+}
+
+func (s *Suite) TestUpdateMetricsGroupError() {
+	id := uuid.New()
+
+	metricsGroupStruct := MetricsGroup{
+		BaseModel:   util.BaseModel{},
+		Name:        "Metricas de teste222",
+		Metrics:     nil,
+		Status:      "",
+		WorkspaceID: uuid.UUID{},
+		CircleID:    id,
+	}
+
+	query := regexp.QuoteMeta(`UPDATE "error"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	_, err := s.repository.Update(id.String(), metricsGroupStruct)
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestSaveMetricsGroup() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+	var (
+		metricName = "Metrictest"
+		condition  = "test"
+		threshold  = 1.2
+	)
+
+	metricList := make([]Metric, 0)
+
+	metric := Metric{
+		BaseModel: util.BaseModel{
+			ID:        uuid.UUID{},
+			CreatedAt: time.Time{},
+		},
+		MetricsGroupID: uuid.UUID{},
+		DataSourceID:   id,
+		Metric:         metricName,
+		Condition:      condition,
+		Threshold:      threshold,
+		Status:         "",
+	}
+
+	metricList = append(metricList, metric)
+
+	metricsGroupStruct := MetricsGroup{
+		BaseModel:   baseModel,
+		Name:        name,
+		Metrics:     metricList,
+		Status:      status,
+		WorkspaceID: workspaceID,
+		CircleID:    circleId,
+	}
+	metricsGroupQuery := regexp.QuoteMeta(`INSERT INTO "metrics_groups"`)
+	metricsQuery := regexp.QuoteMeta(`INSERT INTO "metrics"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(metricsGroupQuery).
+		WithArgs(sqlmock.AnyArg(), metricsGroupStruct.CreatedAt, metricsGroupStruct.Name, metricsGroupStruct.Status, metricsGroupStruct.WorkspaceID, metricsGroupStruct.CircleID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+
+	s.mock.ExpectQuery(metricsQuery).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+	s.mock.ExpectCommit()
+
+	res, err := s.repository.Save(metricsGroupStruct)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), metricsGroupStruct, res)
+}
+
+func (s *Suite) TestSaveMetricsGroupError() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+	var (
+		metricName = "Metrictest"
+		condition  = "test"
+		threshold  = 1.2
+	)
+
+	metricList := make([]Metric, 0)
+
+	metric := Metric{
+		BaseModel: util.BaseModel{
+			ID:        uuid.UUID{},
+			CreatedAt: time.Time{},
+		},
+		MetricsGroupID: uuid.UUID{},
+		DataSourceID:   id,
+		Metric:         metricName,
+		Condition:      condition,
+		Threshold:      threshold,
+		Status:         "",
+	}
+
+	metricList = append(metricList, metric)
+
+	metricsGroupStruct := MetricsGroup{
+		BaseModel:   baseModel,
+		Name:        name,
+		Metrics:     metricList,
+		Status:      status,
+		WorkspaceID: workspaceID,
+		CircleID:    circleId,
+	}
+	metricsGroupQuery := regexp.QuoteMeta(`INSERT INTO "metrics_groups"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(metricsGroupQuery).
+		WithArgs(sqlmock.AnyArg(), metricsGroupStruct.CreatedAt, metricsGroupStruct.Name, metricsGroupStruct.Status, metricsGroupStruct.WorkspaceID, metricsGroupStruct.CircleID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+
+	_, err := s.repository.Save(metricsGroupStruct)
 	require.Error(s.T(), err)
 }
