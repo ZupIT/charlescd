@@ -26,30 +26,24 @@ import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
 
 @Named
-class UserPasswordGeneratorService(
-    val numberLowerCase: Int = 2,
-    val numberUpperCase: Int = 2,
-    val numberDigits: Int = 2,
-    val numberSpecialChars: Int = 2,
-    val passwordLength: Int = 10
-) {
-    fun create(): String {
+class UserPasswordGeneratorService() {
+    fun create(userPasswordFormat: UserPasswordFormat): String {
         val rules = listOf(
-            CharacterRule(EnglishCharacterData.LowerCase, numberLowerCase),
-            CharacterRule(EnglishCharacterData.UpperCase, numberUpperCase),
-            CharacterRule(EnglishCharacterData.Digit, numberDigits),
-            CharacterRule(SpecialChars(), numberSpecialChars)
+            CharacterRule(EnglishCharacterData.LowerCase, userPasswordFormat.numberLowerCase),
+            CharacterRule(EnglishCharacterData.UpperCase, userPasswordFormat.numberUpperCase),
+            CharacterRule(EnglishCharacterData.Digit, userPasswordFormat.numberDigits),
+            CharacterRule(SpecialChars(), userPasswordFormat.numberSpecialChars)
         )
-        return PasswordGenerator().generatePassword(passwordLength, rules)
+        return PasswordGenerator().generatePassword(userPasswordFormat.passwordLength, rules)
     }
 }
 
-class SpecialChars(private val specialChars: String? = "!@#$^*()_") : CharacterData {
+class SpecialChars(private val specialChars: String = "!@#$^*()_") : CharacterData {
     override fun getErrorCode(): String {
         return AllowedCharacterRule.ERROR_CODE
     }
 
     override fun getCharacters(): String {
-        return specialChars!!
+        return specialChars
     }
 }
