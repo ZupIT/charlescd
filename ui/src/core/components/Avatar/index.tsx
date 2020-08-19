@@ -22,7 +22,6 @@ import isEmpty from 'lodash/isEmpty';
 import Form from 'core/components/Form';
 import { useUpdateProfile } from 'modules/Users/hooks';
 import { Profile } from 'modules/Users/interfaces/User';
-import { isRoot } from 'core/utils/auth';
 import Styled from './styled';
 
 export interface Props {
