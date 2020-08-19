@@ -204,6 +204,19 @@ constraints:
       maintenance_write:
         - GET
 
+managementConstraints:
+  - pattern: /v2/users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/users/password
+    methods:
+      - PUT
+
+  - pattern: /users
+    methods:
+      - PUT
+
 publicConstraints:
   - pattern: /credentials/{service}/{id}
     methods:
@@ -212,18 +225,6 @@ publicConstraints:
   - pattern: /callback/**
     methods:
       - POST
-
-  - pattern: /users/{email:.+}
-    methods:
-      - GET
-
-  - pattern: /v2/users/{email:.+}
-    methods:
-      - GET
-
-  - pattern: /v2/users/password
-    methods:
-      - PUT
 
   - pattern: /v2/deployments/{id:.+}/callback
     methods:

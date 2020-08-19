@@ -40,7 +40,7 @@ import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 
 @Component
-@Profile("!local")
+//@Profile("!local")
 class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : GenericFilterBean() {
 
     private lateinit var constraints: SecurityConstraints
@@ -87,7 +87,11 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
 
         val parsedAccessToken = parseAccessToken(authorization)
 
-        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) } ?: throw Exception("Missing Authorization header")
+        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) } ?: throw Exception("Invalid Authorization header")
+
+        if (checkIfIsUserPath(constraints, path, method)) {
+            return
+        }
 
         if (parsedAccessToken?.isRoot == true) {
             return
@@ -129,6 +133,20 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         permission: Map.Entry<String, List<String>>
     ): Boolean {
         return workspace.permissions.any { workspacePermission -> permission.key == workspacePermission }
+    }
+
+    private fun checkIfIsUserPath(
+        constraints: SecurityConstraints,
+        path: String,
+        method: String
+    ): Boolean {
+        return constraints.managementConstraints.filter {
+            AntPathMatcher().match(it.pattern, path)
+        }.any {
+            it.methods.any { mth ->
+                mth.toLowerCase() == method.toLowerCase()
+            }
+        }
     }
 
     private fun checkIfIsOpenPath(

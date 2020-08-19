@@ -27,12 +27,10 @@ import javax.inject.Named
 @Named
 class ChangeUserPasswordInteractorImpl @Inject constructor(
     private val userService: UserService,
-    private val keycloakService: KeycloakService,
-    private val keycloakCustomService: KeycloakCustomService
+    private val keycloakService: KeycloakService
 ) : ChangeUserPasswordInteractor {
 
     override fun execute(authorization: String, request: ChangeUserPasswordRequest) {
-        this.keycloakCustomService.hitUserInfo(authorization)
         val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
         val user = userService.findByEmail(parsedEmail)
         keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
