@@ -497,7 +497,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       },
       statusUrlResolution: 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:1234/notifications/deployment?deploymentId=1'
+      url: 'http://localhost:8883/butler/v2/deployments/deployment-id/notify'
     },
     {
       completeOtherBranchesThenFail: false,
@@ -523,7 +523,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       },
       statusUrlResolution: 'getMethod',
       type: 'webhook',
-      url: 'http://localhost:1234/notifications/deployment?deploymentId=1'
+      url: 'http://localhost:8883/butler/v2/deployments/deployment-id/notify'
     }
   ]
 }

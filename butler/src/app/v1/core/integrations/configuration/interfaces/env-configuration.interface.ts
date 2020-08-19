@@ -60,4 +60,6 @@ export default interface IEnvConfiguration {
     max: number
     retentionDays: number
   }
+
+  butlerUrl: string
 }

@@ -18,6 +18,7 @@ import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
+import { UrlUtils } from '../../../../utils/url.utils'
 
 export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -40,7 +41,7 @@ export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stage
   },
   statusUrlResolution: 'getMethod',
   type: 'webhook',
-  url: `${deployment.callbackUrl}`
+  url: UrlUtils.getDeploymentNotificationUrl(deployment.id)
 })
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
