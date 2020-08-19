@@ -186,7 +186,7 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 
 func (main Main) FindActiveMetricGroups() ([]MetricsGroup, error) {
 	var metricsGroups []MetricsGroup
-	db := main.db.Preload("Metrics").Where("status = ?", Active).First(&metricsGroups)
+	db := main.db.Preload("Metrics").Where("status = ?", Active).Find(&metricsGroups)
 	if db.Error != nil {
 		return []MetricsGroup{}, db.Error
 	}
@@ -249,14 +249,9 @@ func (main Main) Query(id, period string) ([]datasource.MetricValues, error) {
 	return metricsValues, nil
 }
 
-func (main Main) Result(id string) ([]datasource.MetricResult, error) {
+func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, error) {
 	metricsResults := []datasource.MetricResult{}
-	metricsGroup, err := main.FindById(id)
-	if err != nil {
-		return nil, errors.New("Not found metrics group: " + id)
-	}
-
-	for _, metric := range metricsGroup.Metrics {
+	for _, metric := range group.Metrics {
 
 		dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 		if err != nil {
@@ -275,7 +270,7 @@ func (main Main) Result(id string) ([]datasource.MetricResult, error) {
 
 		dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 		metricData, _ := json.Marshal(metric)
-		result, err := getQuery.(func(datasourceConfiguration, metric []byte) (int, error))(dataSourceConfigurationData, metricData)
+		result, err := getQuery.(func(datasourceConfiguration, metric []byte) (float64, error))(dataSourceConfigurationData, metricData)
 		if err != nil {
 			return nil, err
 		}
@@ -287,4 +282,13 @@ func (main Main) Result(id string) ([]datasource.MetricResult, error) {
 	}
 
 	return metricsResults, nil
+}
+
+func (main Main) ResultByID(id string) ([]datasource.MetricResult, error) {
+	metricsGroup, err := main.FindById(id)
+	if err != nil {
+		return nil, errors.New("Not found metrics group: " + id)
+	}
+
+	return main.ResultByGroup(metricsGroup)
 }

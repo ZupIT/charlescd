@@ -116,7 +116,7 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 func (metricsGroupApi MetricsGroupApi) result(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 
-	queryResult, err := metricsGroupApi.metricsGroupMain.Result(id)
+	queryResult, err := metricsGroupApi.metricsGroupMain.ResultByID(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
