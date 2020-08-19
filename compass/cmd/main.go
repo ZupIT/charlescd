@@ -36,7 +36,7 @@ func main() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		log.Fatalln("failed to connect database")
+		log.Fatalf("failed to connect database: %s", err)
 	}
 	defer db.Close()
 
