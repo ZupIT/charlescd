@@ -3,6 +3,7 @@ package metricsgroup
 import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
+	"compass/internal/util"
 	"compass/pkg/logger/fake"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
@@ -14,6 +15,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 )
 
 type SuiteMetric struct {
@@ -51,14 +53,14 @@ func TestInitMetric(t *testing.T) {
 	suite.Run(t, new(SuiteMetric))
 }
 
-func (s *Suite) TestValidateMetric() {
+func (s *SuiteMetric) TestValidateMetric() {
 	metric := Metric{}
 	var errList = metric.Validate()
 
 	require.NotEmpty(s.T(), errList)
 }
 
-func (s *Suite) TestParse() {
+func (s *SuiteMetric) TestParse() {
 	stringReader := strings.NewReader(`{
     "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
     "metricGroupId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
@@ -86,7 +88,7 @@ func (s *Suite) TestParse() {
 	require.NotNil(s.T(), res)
 }
 
-func (s *Suite) TestParseError() {
+func (s *SuiteMetric) TestParseError() {
 	stringReader := strings.NewReader(`{ "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7saldajsndas" }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
@@ -99,6 +101,7 @@ func (s *SuiteMetric) TestRemoveMetric() {
 	id := uuid.New()
 	query := regexp.QuoteMeta(`DELETE FROM "metrics"`)
 
+	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -108,4 +111,156 @@ func (s *SuiteMetric) TestRemoveMetric() {
 
 	require.NoError(s.T(), resErr)
 	require.Nil(s.T(), resErr)
+}
+
+func (s *SuiteMetric) TestRemoveMetricError() {
+	id := uuid.New()
+	query := regexp.QuoteMeta(`DELETE FROM "error"`)
+
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	err := s.repository.RemoveMetric(id.String())
+
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetric) TestSaveMetric() {
+	id := uuid.New()
+	metricsGroupId := uuid.New()
+	dataSourceId := uuid.New()
+	timeNow := time.Now()
+	metricStruct := Metric{
+		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
+		MetricsGroupID: metricsGroupId,
+		DataSourceID:   dataSourceId,
+		Metric:         "MetricName",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		Status:         "ACTIVE",
+	}
+
+	query := regexp.QuoteMeta(`INSERT INTO "metrics"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(query).
+		WithArgs(sqlmock.AnyArg(),
+			metricStruct.CreatedAt,
+			metricStruct.MetricsGroupID.String(),
+			metricStruct.DataSourceID.String(),
+			metricStruct.Metric,
+			metricStruct.Condition,
+			metricStruct.Threshold,
+			metricStruct.Status).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+	s.mock.ExpectCommit()
+
+	res, err := s.repository.SaveMetric(metricStruct)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), metricStruct, res)
+}
+
+func (s *SuiteMetric) TestSaveMetricError() {
+	id := uuid.New()
+	metricsGroupId := uuid.New()
+	dataSourceId := uuid.New()
+	timeNow := time.Now()
+	metricStruct := Metric{
+		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
+		MetricsGroupID: metricsGroupId,
+		DataSourceID:   dataSourceId,
+		Metric:         "MetricName",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		Status:         "ACTIVE",
+	}
+
+	query := regexp.QuoteMeta(`INSERT INTO "ERROR"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(query).
+		WithArgs(sqlmock.AnyArg(),
+			metricStruct.CreatedAt,
+			metricStruct.MetricsGroupID.String(),
+			metricStruct.DataSourceID.String(),
+			metricStruct.Metric,
+			metricStruct.Condition,
+			metricStruct.Threshold,
+			metricStruct.Status).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+	s.mock.ExpectCommit()
+
+	_, err := s.repository.SaveMetric(metricStruct)
+
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetric) TestUpdateMetric() {
+	id := uuid.New()
+	metricsGroupId := uuid.New()
+	dataSourceId := uuid.New()
+	timeNow := time.Now()
+	metricStruct := Metric{
+		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
+		MetricsGroupID: metricsGroupId,
+		DataSourceID:   dataSourceId,
+		Metric:         "MetricName",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		Status:         "ACTIVE",
+	}
+
+	query := regexp.QuoteMeta(`UPDATE "metrics"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	res, err := s.repository.UpdateMetric(id.String(), metricStruct)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), metricStruct, res)
+}
+
+func (s *SuiteMetric) TestUpdateMetricError() {
+	id := uuid.New()
+	metricsGroupId := uuid.New()
+	dataSourceId := uuid.New()
+	timeNow := time.Now()
+	metricStruct := Metric{
+		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
+		MetricsGroupID: metricsGroupId,
+		DataSourceID:   dataSourceId,
+		Metric:         "MetricName",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		Status:         "ACTIVE",
+	}
+
+	query := regexp.QuoteMeta(`UPDATE "ERROR"`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(query).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	_, err := s.repository.UpdateMetric(id.String(), metricStruct)
+
+	require.Error(s.T(), err)
 }
