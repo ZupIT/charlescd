@@ -32,9 +32,9 @@ import {
 import { OctopipeApiService } from '../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
 import {  of } from 'rxjs'
 import { PipelineErrorHandlerService } from '../../../app/v1/api/deployments/services'
-
 import { ModuleUndeploymentsRepository } from '../../../app/v1/api/deployments/repository/module-undeployments.repository'
 import { UndeploymentsRepository } from '../../../app/v1/api/deployments/repository/undeployments.repository'
+import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
 import * as uuid from 'uuid'
 import { CdTypeEnum } from '../../../app/v1/api/configurations/enums'
 
@@ -218,7 +218,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       unusedVersions: [],
       versions: [],
       webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
-
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
 
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
@@ -284,6 +284,7 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
       unusedVersions: [],
       versions: [],
       webHookUrl: expect.stringContaining(envConfiguration.darwinUndeploymentCallbackUrl),
+      callbackType: CallbackTypeEnum.UNDEPLOYMENT
     }
 
     expect(octopipeServiceSpy).toHaveBeenCalledWith(
@@ -625,8 +626,8 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
           { undeploymentId: undeployment.id },
       relations: ['componentUndeployments'],
       order : { status: 'ASC' }
-
       })
+
     expect(spyHandleUndeployment).toHaveBeenCalledTimes(3)
     expect(spyHandleComponentUndeployment).toHaveBeenCalledTimes(2)
     expect(undeployment.status).toBe(UndeploymentStatusEnum.FAILED)
