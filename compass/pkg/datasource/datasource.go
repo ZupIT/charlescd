@@ -14,8 +14,8 @@ type UseCases interface {
 type MetricList []string
 
 type MetricResult struct {
-	Metric string `json:"metric"`
-	Result int    `json:"result"`
+	Metric string  `json:"metric"`
+	Result float64 `json:"result"`
 }
 
 type MetricValues struct {

@@ -102,7 +102,7 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 	}
 }
 
-func Result(datasourceConfiguration, metric []byte) (int, error) {
+func Result(datasourceConfiguration, metric []byte) (float64, error) {
 	query, err := Query(datasourceConfiguration, metric, []byte(""))
 	if err != nil {
 		return 0, err
@@ -121,6 +121,6 @@ func Result(datasourceConfiguration, metric []byte) (int, error) {
 		return 0, err
 	}
 
-	return count, nil
+	return float64(count), nil
 
 }
