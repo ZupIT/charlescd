@@ -306,7 +306,7 @@
                 <configuration>
                     <excludes>
                         <exclude>
-                        **/io/charlescd/moove/infrastructure/repository
+                        **/io/charlescd/moove/infrastructure/repository/**
                         </exclude>
                     </excludes>
                 </configuration>
