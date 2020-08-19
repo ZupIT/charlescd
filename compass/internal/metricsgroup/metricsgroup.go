@@ -39,10 +39,6 @@ func (metricsGroup MetricsGroup) Validate() []error {
 		ers = append(ers, errors.New("Name is required"))
 	}
 
-	if metricsGroup.Metrics == nil || len(metricsGroup.Metrics) == 0 {
-		ers = append(ers, errors.New("Metrics is required"))
-	}
-
 	if metricsGroup.CircleID == uuid.Nil {
 		ers = append(ers, errors.New("CircleID is required"))
 	}
