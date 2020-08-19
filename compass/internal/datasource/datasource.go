@@ -74,10 +74,6 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 func (main Main) FindById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
-	if result.Error != nil && gorm.IsRecordNotFoundError(result.Error) {
-		return DataSource{}, errors.New("Not found")
-	}
-
 	if result.Error != nil {
 		return DataSource{}, result.Error
 	}

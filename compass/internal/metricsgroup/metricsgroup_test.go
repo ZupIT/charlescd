@@ -55,7 +55,20 @@ func TestInit(t *testing.T) {
 }
 
 func (s *Suite) TestValidate() {
-	metricGroup := MetricsGroup{Metrics: []Metric{}}
+	metric := Metric{
+		BaseModel: util.BaseModel{
+			ID:        uuid.UUID{},
+			CreatedAt: time.Time{},
+		},
+		MetricsGroupID: uuid.UUID{},
+		DataSourceID:   uuid.UUID{},
+		Metric:         "test",
+		Condition:      "EQUAL",
+		Threshold:      0,
+		Status:         "",
+	}
+	metricGroup := MetricsGroup{Metrics: []Metric{metric}}
+
 	var errList = metricGroup.Validate()
 
 	require.NotEmpty(s.T(), errList)
