@@ -210,7 +210,7 @@ func (main Main) Remove(id string) error {
 }
 
 func (main Main) Query(id, period string) ([]datasource.MetricValues, error) {
-	metricsValues := []datasource.MetricValues{}
+	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		return nil, errors.New("Not found metrics group: " + id)
