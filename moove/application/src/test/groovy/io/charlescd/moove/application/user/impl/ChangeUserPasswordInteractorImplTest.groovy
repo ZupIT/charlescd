@@ -21,13 +21,11 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
 
     private UserRepository userRepository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
-    private KeycloakCustomService keycloakCustomService = Mock(KeycloakCustomService)
 
     void setup() {
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
                 new UserService(userRepository),
-                keycloakService,
-                keycloakCustomService
+                keycloakService
         )
     }
 
@@ -41,7 +39,6 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
         this.changeUserPasswordInteractor.execute(authorization, request)
 
         then:
-        1 * keycloakCustomService.hitUserInfo(authorization)
         1 * this.keycloakService.getEmailByAccessToken(authorization) >> userEmail
         1 * this.userRepository.findByEmail(userEmail) >> Optional.empty()
 
@@ -61,7 +58,6 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
         this.changeUserPasswordInteractor.execute(authorization, request)
 
         then:
-        1 * keycloakCustomService.hitUserInfo(authorization)
         1 * this.keycloakService.getEmailByAccessToken(authorization) >> userEmail
         1 * this.userRepository.findByEmail(userEmail) >> Optional.of(user)
         1 * this.keycloakService.changeUserPassword(user.email, request.oldPassword, request.newPassword)
