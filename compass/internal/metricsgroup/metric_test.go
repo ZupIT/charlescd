@@ -101,6 +101,7 @@ func (s *SuiteMetric) TestRemoveMetric() {
 	id := uuid.New()
 	query := regexp.QuoteMeta(`DELETE FROM "metrics"`)
 
+	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec(query).
 		WillReturnResult(sqlmock.NewResult(1, 1))
