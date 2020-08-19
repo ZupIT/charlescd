@@ -80,12 +80,12 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
       ) : (
         <Styled.Avatar.WithPhoto data-testid="avatar" size={size} src={url} />
       )}
-      {isRoot() && (
+      {
         <Styled.Avatar.Edit
           name="edit-avatar"
           onClick={() => setEditAvatar(true)}
         />
-      )}
+      }
     </>
   );
 
