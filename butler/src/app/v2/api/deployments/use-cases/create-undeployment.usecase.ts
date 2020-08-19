@@ -23,6 +23,7 @@ import { Execution } from '../entity/execution.entity'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
 import { ExecutionTypeEnum } from '../enums'
+import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 
 @Injectable()
 export class CreateUndeploymentUseCase {
@@ -40,12 +41,13 @@ export class CreateUndeploymentUseCase {
   public async execute(
     deploymentId: string,
     incomingCircleId: string | null
-  ): Promise<void> {
+  ): Promise<ReadUndeploymentDto> {
 
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { deploymentId, incomingCircleId })
     const execution = await this.createExecution(deploymentId, incomingCircleId)
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_UNDEPLOYMENT_USECASE', { execution, jobId })
+    return { id: deploymentId }
   }
 
   private async createExecution(deploymentId: string, incomingCircleId: string | null): Promise<Execution> {

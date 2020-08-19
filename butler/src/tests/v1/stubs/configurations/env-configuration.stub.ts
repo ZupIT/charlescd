@@ -61,5 +61,7 @@ export const EnvConfigurationStub: IEnvConfiguration = {
     password: 'postgrespass',
     retentionDays: 7,
     user: 'postgresuser'
-  }
+  },
+
+  butlerUrl: 'http://butler-url:3000'
 }
