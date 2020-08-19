@@ -36,12 +36,6 @@ func main() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		fmt.Println(configuration.GetConfiguration("DB_HOST"))
-		fmt.Println(configuration.GetConfiguration("DB_PORT"))
-		fmt.Println(configuration.GetConfiguration("DB_USER"))
-		fmt.Println(configuration.GetConfiguration("DB_NAME"))
-		fmt.Println(configuration.GetConfiguration("DB_PASSWORD"))
-		fmt.Println(configuration.GetConfiguration("DB_SSL"))
 		log.Fatalf("failed to connect database: %s", err)
 	}
 	defer db.Close()
