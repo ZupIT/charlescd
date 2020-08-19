@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
@@ -37,24 +37,18 @@ const PrivateRoute = ({
 }: Props) => {
   const workspaceId = getWorkspaceId();
   const [, loadWorkspace] = useWorkspace();
-  const [isAuthorizedByWorkspace, setIsAuthorizedByWorkspace] = useState(true);
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (
+      status === 'idle' ||
+      (status !== 'pending' && workspaceId !== workspace?.id)
+    ) {
       loadWorkspace(workspaceId);
     }
-  }, [workspaceId, loadWorkspace, status]);
-
-  useEffect(() => {
-    if (workspace) {
-      setIsAuthorizedByWorkspace(
-        workspace?.status === WORKSPACE_STATUS.COMPLETE
-      );
-    }
-  }, [workspace, status]);
+  }, [workspaceId, loadWorkspace, status, workspace]);
 
   const isAuthorizedByUser =
     (isRoot() || isAllowed(allowedRoles)) && allowedRoute;
@@ -63,7 +57,7 @@ const PrivateRoute = ({
     <Route
       {...rest}
       render={props =>
-        isAuthorizedByWorkspace ? (
+        workspace.status === WORKSPACE_STATUS.COMPLETE ? (
           <Component {...props} />
         ) : isAuthorizedByUser ? (
           <Component {...props} />
