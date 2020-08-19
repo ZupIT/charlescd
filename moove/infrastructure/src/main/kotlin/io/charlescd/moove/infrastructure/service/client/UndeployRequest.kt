@@ -17,6 +17,5 @@
 package io.charlescd.moove.infrastructure.service.client
 
 data class UndeployRequest(
-    val authorId: String,
-    val deploymentId: String
+    val authorId: String
 )
