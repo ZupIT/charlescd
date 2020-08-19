@@ -1,8 +1,8 @@
-import { AppConstants } from '../../../v1/core/constants'
+import { Configuration } from '../../../v1/core/config/configurations'
 
 const UrlUtils = {
   getDeploymentNotificationUrl: (deploymentId: string): string => {
-    return `${AppConstants.BUTLER_URL}/v2/deployments/${deploymentId}/notify`
+    return `${Configuration.butlerUrl}/v2/deployments/${deploymentId}/notify`
   }
 }
 
