@@ -612,3 +612,93 @@ func (s *Suite) TestSaveMetricsGroupError() {
 	_, err := s.repository.Save(metricsGroupStruct)
 	require.Error(s.T(), err)
 }
+
+func (s *Suite) TestFindActiveMetricGroups() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+	var (
+		metricName = "Metrictest"
+		condition  = "test"
+		threshold  = 1.2
+	)
+
+	metric := Metric{
+		BaseModel:      baseModel,
+		MetricsGroupID: id,
+		DataSourceID:   id,
+		Metric:         metricName,
+		Condition:      condition,
+		Threshold:      threshold,
+		Status:         status,
+	}
+
+	metricList := make([]Metric, 0)
+	metricList = append(metricList, metric)
+
+	metricsGroup := MetricsGroup{
+		BaseModel:   baseModel,
+		Name:        name,
+		Metrics:     metricList,
+		Status:      status,
+		WorkspaceID: workspaceID,
+		CircleID:    circleId,
+	}
+
+	metricGroupList := make([]MetricsGroup, 0)
+	metricGroupList = append(metricGroupList, metricsGroup)
+
+	query := regexp.QuoteMeta(`SELECT * FROM "metrics_groups" WHERE (status = $1)`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	metricsGroupRows := sqlmock.
+		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
+		AddRow(id, name, workspaceID, status, circleId, timeNow)
+	s.mock.ExpectQuery(query).
+		WithArgs(status).
+		WillReturnRows(metricsGroupRows)
+
+	metricRows := sqlmock.
+		NewRows([]string{"id", "metric", "threshold", "condition", "metrics_group_id", "data_source_id", "status", "created_at"}).
+		AddRow(id, metricName, threshold, condition, id, id, status, timeNow)
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		`SELECT * FROM "metrics" WHERE ("metrics_group_id" IN ($1))`)).
+		WithArgs(id).
+		WillReturnRows(metricRows)
+
+	res, err := s.repository.FindActiveMetricGroups()
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), metricGroupList, res)
+}
+
+func (s *Suite) TestFindActiveMetricGroupsError() {
+	id := uuid.New()
+	timeNow := time.Now()
+	var (
+		name        = "test-name"
+		workspaceID = uuid.New()
+		status      = "ACTIVE"
+		circleId    = uuid.New()
+	)
+
+	query := regexp.QuoteMeta(`SELECT * FROM "metrics_groups" WHERE (status = $1)`)
+
+	s.mock.MatchExpectationsInOrder(false)
+	metricsGroupRows := sqlmock.
+		NewRows([]string{"id", "name", "workspace_id", "status", "circle_id", "created_at"}).
+		AddRow(id, name, workspaceID, status, circleId, timeNow)
+	s.mock.ExpectQuery(query).
+		WithArgs(status).
+		WillReturnRows(metricsGroupRows)
+
+	_, err := s.repository.FindActiveMetricGroups()
+
+	require.Error(s.T(), err)
+}
