@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, getByTestId, wait } from 'unit-test/testUtils';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
 import { dark as inputTheme } from 'core/assets/themes/input';
 import Input from '..';
 
@@ -56,9 +56,32 @@ test('renders Input component as a resume', () => {
   expect(inputElement).toHaveStyle('border: none;');
 });
 
-test('renders Input component with label', () => {
-  const { container } = render(<Input name="keyName" label="Label" />);
-  expect(container).toHaveTextContent('Label');
+test('renders Input component with label', async () => {
+  const { getByTestId } = render(<Input name="keyName" label="Label" />);
+
+  const Label = getByTestId('label-text-keyName');
+  const Element = getByTestId('input-text-keyName');
+
+  expect(Label).toBeInTheDocument();
+  expect(Element).not.toHaveFocus();
+
+  fireEvent.click(Label);
+
+  expect(Element).toHaveFocus();
+});
+
+test('renders Input component disabled with label', async () => {
+  const { getByTestId } = render(<Input disabled name="keyName" label="Label" />);
+
+  const Label = getByTestId('label-text-keyName');
+  const Element = getByTestId('input-text-keyName');
+
+  expect(Label).toBeInTheDocument();
+  expect(Element).not.toHaveFocus();
+
+  fireEvent.click(Label);
+
+  expect(Element).not.toHaveFocus();
 });
 
 test('floating label when Input has value', () => {
