@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
-import Icon from 'core/components/Icon';
+import isEmpty from 'lodash/isEmpty';
+import xorBy from 'lodash/xorBy';
 import { User } from 'modules/Users/interfaces/User';
 import { UserChecked } from '../../interfaces/UserChecked';
+import Icon from 'core/components/Icon';
+import Text from 'core/components/Text';
+import useOutsideClick from 'core/hooks/useClickOutside';
+import Button from 'core/components/Button';
 import Styled from './styled';
 
 interface UserItemProps extends User {
   checked: boolean;
-  onSelected: (id: string, checked: boolean) => void;
+  onSelected: (id?: string, checked?: boolean) => void;
 }
 
 interface UserCheckedProps {
@@ -32,12 +37,19 @@ interface UserCheckedProps {
   onSelected: (id: string, checked: boolean) => void;
 }
 
-interface Props {
+export interface Props {
   users: UserChecked[];
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onSearch: (name: string) => void;
-  onSelected: (id: string, checked: boolean) => void;
+  onSelected: (changedUsers: ChangedUser[]) => void;
+  className?: string;
+  isOutsideClick?: boolean;
+}
+
+export interface ChangedUser {
+  id: string;
+  checked: boolean;
 }
 
 const MemberChecked = ({ checked }: UserCheckedProps) => (
@@ -57,43 +69,110 @@ const UserItem = ({
   photoUrl,
   checked,
   onSelected
-}: UserItemProps) => (
-  <Styled.Item.Wrapper onClick={() => onSelected(id, checked)}>
-    <Styled.Item.Profile>
-      <Styled.Item.Photo src={photoUrl} name={name} />
-      <div>
-        <Styled.Item.Name>{name}</Styled.Item.Name>
-        <Styled.Item.Email>{email}</Styled.Item.Email>
-      </div>
-    </Styled.Item.Profile>
-    <MemberChecked checked={checked} onSelected={onSelected} />
-  </Styled.Item.Wrapper>
-);
+}: UserItemProps) => {
+  const [isChecked, setIsChecked] = useState(checked);
+
+  const handleSelected = (id: string) => {
+    setIsChecked(!isChecked);
+    onSelected(id, !isChecked);
+  };
+
+  return (
+    <Styled.Item.Wrapper onClick={() => handleSelected(id)}>
+      <Styled.Item.Profile>
+        <Styled.Item.Photo src={photoUrl} name={name} />
+        <div>
+          <Styled.Item.Name>{name}</Styled.Item.Name>
+          <Styled.Item.Email>{email}</Styled.Item.Email>
+        </div>
+      </Styled.Item.Profile>
+      <MemberChecked checked={isChecked} onSelected={onSelected} />
+    </Styled.Item.Wrapper>
+  );
+};
 
 const AddUserModal = ({
   users,
   isOpen,
   onClose,
   onSearch,
-  onSelected
+  className,
+  onSelected,
+  isOutsideClick
 }: Props) => {
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [changedUsers, setChangedUsers] = useState<ChangedUser[]>([]);
+
   const handleChange = debounce(onSearch, 500);
 
+  const modalRef = useRef<HTMLDivElement>();
+  const contentRef = useRef<HTMLDivElement>();
+
+  useOutsideClick(modalRef, () => {
+    if (isOutsideClick) {
+      onClose();
+    }
+  });
+
+  useOutsideClick(contentRef, () => setIsDisabled(true));
+
+  const setSelected = (id: string, checked: boolean) => {
+    if (!isEmpty(id)) {
+      setIsDisabled(false);
+      setChangedUsers([...xorBy(changedUsers, [{ id, checked }], 'id')]);
+    }
+  };
+
+  const renderPlaceHolder = () => (
+    <Styled.Placeholder>
+      <Icon name="user-not-found" />
+      <Text.h4 color="light">User not found</Text.h4>
+      <Text.h4 color="light">
+        If you want to register, go to the users page
+      </Text.h4>
+    </Styled.Placeholder>
+  );
+
   return (
-    <Styled.Wrapper isOpen={isOpen} onClose={onClose}>
-      <Styled.Header>
-        Add or remove people in this user group
-        <Styled.Label>Add a user:</Styled.Label>
-        <Styled.Search
-          label="Enter the user's email"
-          onChange={e => handleChange(e.currentTarget.value)}
-        />
-      </Styled.Header>
-      <Styled.Content>
-        {map(users, user => (
-          <UserItem key={user.id} {...user} onSelected={onSelected} />
-        ))}
-      </Styled.Content>
+    <Styled.Wrapper
+      data-testid="modal-user"
+      className={className}
+      isOpen={isOpen}
+    >
+      <Styled.Background className="modal-user-background" />
+      <Styled.Dialog className="modal-user-dialog" ref={modalRef}>
+        <Styled.Container className="modal-user-content">
+          <Styled.Button.Close>
+            <Icon name="cancel" color="dark" size="22px" onClick={onClose} />
+          </Styled.Button.Close>
+          <Styled.Header>
+            Add or remove people in this user group
+            <Styled.Label>Add a user:</Styled.Label>
+            <Styled.Search
+              label="Enter the user's email"
+              onChange={e => handleChange(e.currentTarget.value)}
+            />
+          </Styled.Header>
+          <Styled.Content ref={contentRef}>
+            {map(users, user => (
+              <UserItem key={user.id} {...user} onSelected={setSelected} />
+            ))}
+            {isEmpty(users) && renderPlaceHolder()}
+          </Styled.Content>
+          <Styled.Button.Update>
+            <Button.Default
+              isDisabled={isDisabled}
+              onClick={() => {
+                onSelected(changedUsers);
+                setChangedUsers([]);
+                setIsDisabled(true);
+              }}
+            >
+              Update
+            </Button.Default>
+          </Styled.Button.Update>
+        </Styled.Container>
+      </Styled.Dialog>
     </Styled.Wrapper>
   );
 };

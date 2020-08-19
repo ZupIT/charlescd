@@ -8,4 +8,3 @@ keycloak:
   enabled: true
 octopipe:
   enabled: true
-

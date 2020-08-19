@@ -67,4 +67,10 @@ data class Build(
             artifactName.contains(component.name)
         }
     }
+
+    fun modulesDistincted(): List<ModuleSnapshot> {
+        return this.features.flatMap { feature ->
+            feature.modules
+        }.distinct()
+    }
 }
