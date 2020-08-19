@@ -23,6 +23,7 @@ import { DeploymentNotificationRequestDto } from '../dto/deployment-notification
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
+import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -49,7 +50,7 @@ export class DeploymentsController {
   public async createUndeployment(
     @Param('id') deploymentId: string,
     @Headers('x-circle-id') incomingCircleId: string | null
-  ): Promise<void> { // TODO what do we need to return here?
+  ): Promise<ReadUndeploymentDto> {
     return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
   }
 
