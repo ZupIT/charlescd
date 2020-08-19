@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.UserPasswordFormat
 import io.charlescd.moove.application.UserPasswordGeneratorService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ResetUserPasswordInteractor
@@ -33,7 +34,13 @@ class ResetUserPasswordInteractorImpl(
     private val userService: UserService
 ) : ResetUserPasswordInteractor {
     override fun execute(id: UUID): UserNewPasswordResponse {
-        val newPassword = passGenerator.create()
+        val userPasswordFormat = UserPasswordFormat.Builder()
+            .numberDigits(2)
+            .numberLowerCase(4)
+            .numberUpperCase(2)
+            .numberSpecialChars(2)
+            .build()
+        val newPassword = passGenerator.create(userPasswordFormat)
         val user = userService.find(id.toString())
         keycloakService.resetPassword(user.email, newPassword)
         return UserNewPasswordResponse(newPassword)
