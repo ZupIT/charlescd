@@ -60,7 +60,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def patches = [new PatchOperation(OpCodeEnum.ADD, "/name", "Men")]
         def request = new PatchCircleRequest(patches)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -121,7 +121,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def patches = [new PatchOperation(OpCodeEnum.ADD, "/name", "Men")]
         def request = new PatchCircleRequest(patches)
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -175,7 +175,7 @@ class PatchCircleInteractorImplTest extends Specification {
         def authorId = "5952df12-fc50-4697-9cd9-a7c41fec2bc3"
         def workspaceId = "53dc2fcb-34c8-421b-b58a-df5b6ff89dd1"
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
