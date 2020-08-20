@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository, UpdateResult } from 'typeorm'
+import { EntityRepository, getConnection, Repository, UpdateResult } from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+
+export type ReturningUpdate = { id: string, status: DeploymentStatusEnum, callback_url: string, circle_id: string }
 
 @EntityRepository(DeploymentEntityV2)
 export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
@@ -28,12 +30,23 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .getMany()
   }
 
-  public async updateTimedOutStatus(timeInMinutes: number) : Promise<UpdateResult>{
-    return await this.createQueryBuilder('v2deployments')
-      .where(`v2deployments.created_at < now() - interval '${timeInMinutes} minutes'`)
-      .andWhere('v2deployments.notification_status = \'NOT_SENT\'')
-      .update(DeploymentEntityV2)
-      .set({ status: DeploymentStatusEnum.TIMED_OUT }).returning(['id', 'deploymentId', 'status', 'callbackUrl', 'circleId']).execute()
+  public async updateTimedOutStatus(timeInMinutes: number): Promise<ReturningUpdate[] | undefined>{
+    const result = await getConnection().manager.query(`
+      WITH timed_out_deployments AS
+        (UPDATE v2deployments
+        SET status = '${DeploymentStatusEnum.TIMED_OUT}'
+        WHERE v2deployments.created_at < now() - interval '${timeInMinutes} minutes'
+        AND v2deployments.notification_status = 'NOT_SENT'
+        RETURNING *)
+      UPDATE v2components c
+      SET running = FALSE
+      FROM timed_out_deployments
+      WHERE c.deployment_id = timed_out_deployments.id RETURNING *
+    `)
+    if (Array.isArray(result)) {
+      return result[0]
+    }
+    return
   }
 
   public async updateDeployment(id: string, status: number) : Promise<UpdateResult>{
