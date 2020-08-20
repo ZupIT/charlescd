@@ -17,6 +17,7 @@
 import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import AddMetric from './AddMetric';
 
 interface Props {
   id: string;
@@ -24,28 +25,29 @@ interface Props {
 }
 
 const GroupMetrics = ({ onGoBack }: Props) => {
-  return (
-    <>
-      <Styled.Layer>
-        <Styled.Icon
-          name="arrow-left"
-          color="dark"
-          onClick={() => onGoBack()}
-        />
-      </Styled.Layer>
-      <Styled.Layer>
-        <Text.h2 color="light">Add metrics group</Text.h2>
-        <Styled.ButtonAdd
-          name="add"
-          icon="add"
-          color="dark"
-          onClick={() => null}
-        >
-          Add metrics group
-        </Styled.ButtonAdd>
-      </Styled.Layer>
-    </>
-  );
+  return <AddMetric />;
+  // return (
+  //   <>
+  //     <Styled.Layer>
+  //       <Styled.Icon
+  //         name="arrow-left"
+  //         color="dark"
+  //         onClick={() => onGoBack()}
+  //       />
+  //     </Styled.Layer>
+  //     <Styled.Layer>
+  //       <Text.h2 color="light">Add metrics group</Text.h2>
+  //       <Styled.ButtonAdd
+  //         name="add"
+  //         icon="add"
+  //         color="dark"
+  //         onClick={() => null}
+  //       >
+  //         Add metrics group
+  //       </Styled.ButtonAdd>
+  //     </Styled.Layer>
+  //   </>
+  // );
 };
 
 export default GroupMetrics;

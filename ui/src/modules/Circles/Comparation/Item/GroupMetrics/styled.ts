@@ -14,18 +14,32 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
+import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import SelectComponent from 'core/components/Form/Select';
+import InputNumberComponent from 'core/components/Form/Number';
+import Text from 'core/components/Text';
+import InputComponent from 'core/components/Form/Input';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 import Button from 'core/components/Button';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+
+interface ButtonDefaultProps {
+  isValid: boolean;
+}
+
+interface ButtonIconProps {
+  isActive: boolean;
+}
 
 const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
 `;
 
 const Layer = styled(LayerComponent)`
+  margin-top: 20px;
   margin-left: 40px;
 `;
 
@@ -42,8 +56,100 @@ const ButtonAdd = styled(Button.Rounded)`
   }
 `;
 
+const Input = styled(InputComponent)`
+  width: 190px;
+  margin: 10px 0 20px;
+`;
+
+const ButtonDefault = styled(Button.Default)<ButtonDefaultProps>`
+  background-color: ${({ theme, isValid }) => {
+    const { saveButton } = theme.circleSegmentation.importCSV;
+    return isValid
+      ? saveButton.valid.background
+      : saveButton.invalid.background;
+  }};
+`;
+
+const Form = styled.form`
+  width: 550px;
+`;
+
+const Subtitle = styled(Text.h5)`
+  margin: 20px 0;
+`;
+
+const Title = styled(Text.h2)`
+  margin-top: 40px;
+`;
+
+const ThresholdSelect = styled(SelectComponent.Single)`
+  width: 130px;
+  margin-right: 20px;
+`;
+
+const InputNumber = styled(InputNumberComponent)`
+  width: 130px;
+`;
+
+const ThresholdWrapper = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const ProviderSelect = styled(SelectComponent.Single)`
+  width: 190px;
+  margin-bottom: 20px;
+`;
+
+const Actions = styled.div`
+  margin: 20px 0;
+  display: flex;
+
+  button:first-child {
+    margin-right: 15px;
+  }
+`;
+
+const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+  height: 40px;
+  padding: 13px 25px;
+
+  span {
+    font-weight: normal;
+    font-size: ${HEADINGS_FONT_SIZE.h6};
+  }
+
+  ${({ isActive }: ButtonIconProps) =>
+    isActive &&
+    css`
+      background-color: ${({ theme }) => theme.radio.checked.background};
+      span {
+        color: ${({ theme }) => theme.radio.checked.color};
+      }
+      i {
+        color: ${({ theme }) => theme.radio.checked.color};
+      }
+    `};
+`;
+
+const AceEditorWrapper = styled.div`
+  margin: 20px 0;
+`;
+
 export default {
   Layer,
   Icon,
-  ButtonAdd
+  ButtonAdd,
+  Input,
+  ButtonDefault,
+  Form,
+  Subtitle,
+  Title,
+  ThresholdSelect,
+  InputNumber,
+  ThresholdWrapper,
+  ProviderSelect,
+  Actions,
+  ButtonIconRounded,
+  AceEditorWrapper
 };
