@@ -27,6 +27,7 @@ type UseCases interface {
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindActiveMetricGroups() ([]MetricsGroup, error)
+	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
 }
 
 type Main struct {

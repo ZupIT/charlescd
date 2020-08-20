@@ -15,6 +15,7 @@ type UseCases interface {
 	NewPluginApi(pluginMain plugin.UseCases) PluginApi
 	NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
+	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
 }
 
 type V1 struct {

@@ -189,6 +189,15 @@ func (main Main) FindActiveMetricGroups() ([]MetricsGroup, error) {
 	return metricsGroups, nil
 }
 
+func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error) {
+	var metricsGroups []MetricsGroup
+	db := main.db.Preload("Metrics").Where("circle_id = ?", circleId).Find(&metricsGroups)
+	if db.Error != nil {
+		return []MetricsGroup{}, db.Error
+	}
+	return metricsGroups, nil
+}
+
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
 	if db.Error != nil {

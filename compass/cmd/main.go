@@ -83,5 +83,6 @@ func main() {
 	v1.NewPluginApi(pluginMain)
 	v1.NewMetricsGroupApi(metricsgroupMain)
 	v1.NewDataSourceApi(datasourceMain)
+	v1.NewCircleApi(metricsgroupMain)
 	v1.Start()
 }
