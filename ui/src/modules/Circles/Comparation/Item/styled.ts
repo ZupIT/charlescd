@@ -97,6 +97,32 @@ const InputTitle = styled(InputTitleComponent)`
   margin-top: 1px;
 `;
 
+const GroupMetricsContent = styled.div`
+  background-color: ${({ theme }) =>
+    theme.circleGroupMetrics.content.background};
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 550px;
+`;
+
+const GroupMetricsHeader = styled.div`
+  display: flex;
+`;
+
+const GroupMetricsCard = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+  margin: 10px 5px 10px 15px;
+  border-radius: 5px;
+  width: 520px;
+  height: 40px;
+`;
+
+const GroupMetricsFooter = styled.div`
+  display: flex;
+  justify-content: right;
+`;
+
 export default {
   Link,
   Actions,
@@ -110,5 +136,9 @@ export default {
   SortLeft,
   SortRight,
   MetricsTitle,
-  InputTitle
+  InputTitle,
+  GroupMetricsContent,
+  GroupMetricsHeader,
+  GroupMetricsFooter,
+  GroupMetricsCard
 };
