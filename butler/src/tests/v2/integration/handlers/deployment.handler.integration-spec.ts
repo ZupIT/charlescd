@@ -201,7 +201,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([false])
   })
 
-  it('mark the deployment as timed out after 25 minutes', async() => {
+  it('stop the job when the deployment status is flagged as TIMED_OUT', async() => {
     const cdConfiguration = new CdConfigurationEntity(
       CdTypeEnum.SPINNAKER,
       { account: 'my-account', gitAccount: 'git-account', url: 'http://localhost:9000/ok', namespace: 'my-namespace' },
@@ -228,14 +228,8 @@ describe('DeploymentHandler', () => {
     }
 
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
-      new Date('2019-05-14T11:00:00.135Z').valueOf()
-    )
-    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { createdAt: DateUtils.now() })
+    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
 
-    jest.spyOn(global.Date, 'now').mockImplementationOnce(() =>
-      new Date('2019-05-14T11:26:00.135Z').valueOf()
-    )
     await expect(
       deploymentHandler.run(fixtures.job)
     ).rejects.toThrow(new Error('Deployment timed out'))

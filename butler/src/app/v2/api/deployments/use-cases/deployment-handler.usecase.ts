@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { JobWithDoneCallback } from 'pg-boss'
-import { In, Repository } from 'typeorm'
-import { CdConfigurationsRepository } from '../../../../v1/api/configurations/repository'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import {forwardRef, Inject, Injectable} from '@nestjs/common'
+import {InjectRepository} from '@nestjs/typeorm'
+import {JobWithDoneCallback} from 'pg-boss'
+import {In, Repository} from 'typeorm'
+import {CdConfigurationsRepository} from '../../../../v1/api/configurations/repository'
+import {DeploymentStatusEnum} from '../../../../v1/api/deployments/enums'
+import {IoCTokensConstants} from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
-import { SpinnakerConnector } from '../../../core/integrations/spinnaker/connector'
-import { ConnectorResultError } from '../../../core/integrations/spinnaker/interfaces/'
-import { DateUtils } from '../../../core/utils/date.utils'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { Execution } from '../entity/execution.entity'
-import { ExecutionTypeEnum } from '../enums'
-import { PgBossWorker } from '../jobs/pgboss.worker'
-import { ComponentsRepositoryV2 } from '../repository'
+import {ConsoleLoggerService} from '../../../../v1/core/logs/console'
+import {SpinnakerConnector} from '../../../core/integrations/spinnaker/connector'
+import {ConnectorResultError} from '../../../core/integrations/spinnaker/interfaces/'
+import {ComponentEntityV2 as ComponentEntity} from '../entity/component.entity'
+import {DeploymentEntityV2 as DeploymentEntity} from '../entity/deployment.entity'
+import {Execution} from '../entity/execution.entity'
+import {ExecutionTypeEnum} from '../enums'
+import {PgBossWorker} from '../jobs/pgboss.worker'
+import {ComponentsRepositoryV2} from '../repository'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -56,9 +55,8 @@ export class DeploymentHandlerUseCase {
   public async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
 
-    if (this.checkForTimeout(deployment)) {
+    if (deployment.status === DeploymentStatusEnum.TIMED_OUT) {
       const error = new Error('Deployment timed out')
-      await this.deploymentsRepository.update({ id: deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
       job.done(error)
       throw error
     }
@@ -106,14 +104,6 @@ export class DeploymentHandlerUseCase {
     this.consoleLoggerService.log('ERROR:INVALID_EXECUTION_TYPE', { type: job.data.type })
     job.done(new Error('Invalid execution type'))
     return job
-  }
-
-  public checkForTimeout(deployment: DeploymentEntity): boolean {
-    const currentTime = DateUtils.now()
-    const deploymentCreatedAt = deployment.createdAt
-    const difference = currentTime.getTime() - deploymentCreatedAt.getTime() // This will give difference in milliseconds
-    const resultInMinutes = Math.round(difference / 60000)
-    return resultInMinutes > this.envConfiguration.deploymentExpireTime
   }
 
   public async validateDeployment(job: ExecutionJob): Promise<DeploymentEntity> {
