@@ -18,6 +18,8 @@ type Metric struct {
 	util.BaseModel
 	MetricsGroupID uuid.UUID       `json:"metricGroupId"`
 	DataSourceID   uuid.UUID       `json:"dataSourceId"`
+	Nickname       string          `json:"nickname"`
+	Query          string          `json:"query"`
 	Metric         string          `json:"metric"`
 	Filters        []MetricFilter  `json:"filters"`
 	GroupBy        []MetricGroupBy `json:"groupBy"`
@@ -43,16 +45,12 @@ type MetricGroupBy struct {
 func (metric Metric) Validate() []error {
 	ers := make([]error, 0)
 
-	if metric.Metric == "" {
-		ers = append(ers, errors.New("Metric name is required"))
+	if metric.Nickname == "" {
+		ers = append(ers, errors.New("Metric nickname is required"))
 	}
 
-	if metric.Condition == "" {
-		ers = append(ers, errors.New("Metric condition is required"))
-	}
-
-	if metric.Threshold == 0 {
-		ers = append(ers, errors.New("Metric Threshold is required"))
+	if metric.Query == "" && metric.Metric == "" {
+		ers = append(ers, errors.New("Metric name or query is required"))
 	}
 
 	return ers
