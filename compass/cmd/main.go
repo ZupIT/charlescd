@@ -3,7 +3,6 @@ package main
 import (
 	"compass/internal/configuration"
 	"compass/internal/datasource"
-	"compass/internal/dispatcher"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	utils "compass/internal/util"
@@ -70,14 +69,14 @@ func main() {
 	pluginMain := plugin.NewMain(db, loggerProvider)
 	datasourceMain := datasource.NewMain(db, pluginMain, loggerProvider)
 	metricsgroupMain := metricsgroup.NewMain(db, datasourceMain, pluginMain, loggerProvider)
-	dispatcher := dispatcher.NewDispatcher(metricsgroupMain)
+	// dispatcher := dispatcher.NewDispatcher(metricsgroupMain)
 
 	_, err = strconv.Atoi(configuration.GetConfiguration("TIMEOUT"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	go dispatcher.Start()
+	// go dispatcher.Start()
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)
