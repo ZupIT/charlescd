@@ -20,7 +20,6 @@ import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Layer from 'core/components/Layer';
 import ContentIcon from 'core/components/ContentIcon';
-import map from 'lodash/map';
 import { useGroupMetrics } from '../GroupMetrics/hook';
 import { GroupMetrics } from '../GroupMetrics/interface';
 import Styled from '../styled';
@@ -33,11 +32,11 @@ type Props = {
 };
 
 const LayerGroupMetrics = ({ onClickCreate, circleId }: Props) => {
-  const { getGroupMetrics, metricsGroup, status } = useGroupMetrics();
+  const { getGroupMetrics, groupMetrics } = useGroupMetrics();
 
   useEffect(() => {
     getGroupMetrics(circleId);
-  }, [getGroupMetrics]);
+  }, [getGroupMetrics, circleId]);
 
   const renderAddGroupMetrics = () => (
     <Button.Rounded
@@ -68,7 +67,7 @@ const LayerGroupMetrics = ({ onClickCreate, circleId }: Props) => {
           <Text.h4 color="dark">Group name</Text.h4>
           <Text.h4 color="dark">Tresholds</Text.h4>
         </Styled.GroupMetricsHeader>
-        {renderGroupMetricsCard(metricsGroup)}
+        {renderGroupMetricsCard(groupMetrics)}
         <Styled.GroupMetricsFooter>
           <Text.h4 color="dark">View more</Text.h4>
           <Icon name={'arrow-right'} />

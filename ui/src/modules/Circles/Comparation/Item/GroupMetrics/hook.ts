@@ -30,7 +30,7 @@ export const useGroupMetrics = (): {
 } => {
   const getMetricsGroup = useFetchData<GroupMetrics[]>(getAllMetricsGroupById);
   const status = useFetchStatus();
-  const [metricsGroup, setMetricsGroup] = useState(null);
+  const [groupMetrics, setMetricsGroup] = useState(null);
 
   const getGroupMetrics = async (circleId: string) => {
     try {
@@ -49,7 +49,7 @@ export const useGroupMetrics = (): {
 
   return {
     getGroupMetrics,
-    metricsGroup,
+    groupMetrics,
     status
   };
 };
