@@ -20,9 +20,13 @@ import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Layer from 'core/components/Layer';
 import ContentIcon from 'core/components/ContentIcon';
-import { useMetricsGroups } from '../MetricsGroups/hook';
-import { MetricsGroups } from '../MetricsGroups/interface';
+import isEmpty from 'lodash/isEmpty';
+import { useMetricsGroupsResume } from '../MetricsGroups/hook';
+import { MetricsGroupsResume } from '../MetricsGroups/interface';
 import Styled from '../styled';
+
+// X-cicle-id = b2ccc0c5-464c-4192-a472-b90394766191
+//compass
 
 type Props = {
   onClickCreate: (
@@ -32,14 +36,13 @@ type Props = {
 };
 
 const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
-  const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
+  const { getMetricsgroupsResume, resume, status } = useMetricsGroupsResume();
 
   useEffect(() => {
     if (status.isIdle) {
-      getMetricsGroups(circleId);
-      console.log('group metrics useEffect');
+      getMetricsgroupsResume({ circleId });
     }
-  }, [getMetricsGroups, circleId, status]);
+  }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
     <Button.Rounded
@@ -52,31 +55,34 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
     </Button.Rounded>
   );
 
-  const renderMetricsGroupsCard = (metrics: MetricsGroups[]) => {
+  const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) => {
     const firstMetricsGroups = metrics?.slice(0, 5);
-//alterar o restos dos nomes
-//metrics groups
+
     return firstMetricsGroups?.map(metric => (
-      <Styled.GroupMetricsCard key={metric?.id}>
-        <Text.h5 color={'light'}>{metric?.name}</Text.h5>
-        <Text.h4 color={'light'}>{metric?.status}</Text.h4>
-      </Styled.GroupMetricsCard>
+      <Styled.MetricsGroupsCard key={metric?.id}>
+        <Styled.MetricsGroupsContentText color={'light'}>
+          {metric?.name}
+        </Styled.MetricsGroupsContentText>
+        <Styled.MetricsGroupsContentText color={'light'}>
+          {metric.allMetricsSuccessCount} / {metric.allMetricsCount}
+        </Styled.MetricsGroupsContentText>
+      </Styled.MetricsGroupsCard>
     ));
   };
 
   const renderContent = () => {
     return (
-      <Styled.GroupMetricsContent>
-        <Styled.GroupMetricsHeader>
+      <Styled.MetricsGroupsContent>
+        <Styled.MetricsGroupsHeader>
           <Text.h4 color="dark">Group name</Text.h4>
           <Text.h4 color="dark">Tresholds</Text.h4>
-        </Styled.GroupMetricsHeader>
-        {status.isResolved && renderMetricsGroupsCard(metricsGroups)}
-        <Styled.GroupMetricsFooter>
+        </Styled.MetricsGroupsHeader>
+        {status.isResolved && renderMetricsGroupsCard(resume)}
+        <Styled.MetricsGroupsFooter>
           <Text.h4 color="dark">View more</Text.h4>
-          <Icon name={'arrow-right'} />
-        </Styled.GroupMetricsFooter>
-      </Styled.GroupMetricsContent>
+          <Icon name={'arrow-right'} color={'dark'} />
+        </Styled.MetricsGroupsFooter>
+      </Styled.MetricsGroupsContent>
     );
   };
 
@@ -86,7 +92,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         <Text.h2 color="light">Group metrics</Text.h2>
       </ContentIcon>
       <Styled.Content>
-        {renderContent()}
+        {!isEmpty(resume) && renderContent()}
         {renderAddMetricsGroups()}
       </Styled.Content>
     </Layer>

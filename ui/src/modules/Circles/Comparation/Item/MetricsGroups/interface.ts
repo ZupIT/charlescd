@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+export type MetricsGroupsResume = {
+  id: string;
+  createdAt: string;
+  name: string;
+  allMetricsCount: number;
+  allMetricsSuccessCount: number;
+};
+
 export type MetricsGroups = {
   id: string;
   createdAt: string;
