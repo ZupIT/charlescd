@@ -95,7 +95,7 @@ export class ReceiveNotificationUseCase {
       NotificationStatusEnum.SUCCEEDED :
       NotificationStatusEnum.FAILED
 
-    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId)
+    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
     const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
     return updatedDeployment
   }
@@ -126,7 +126,7 @@ export class ReceiveNotificationUseCase {
         NotificationStatusEnum.UNDEPLOY_FAILED
 
       const updatedDeployment = await this.deploymentRepository.save(deployment)
-      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId)
+      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
       return updatedDeployment
     }
     catch (error) {
