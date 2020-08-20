@@ -5,6 +5,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -44,5 +45,5 @@ func health(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func (v1 V1) Start() {
 	fmt.Println("Server started on port 8080...")
-	http.ListenAndServe(":8080", v1.Router)
+	log.Fatalln(http.ListenAndServe(":8080", v1.Router))
 }
