@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { Server } from 'http'
 import { JobWithDoneCallback } from 'pg-boss'
-import { EntityManager } from 'typeorm'
+import { EntityManager, UpdateResult } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
 import { CdConfigurationEntity } from '../../../../app/v1/api/configurations/entity'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
@@ -85,14 +85,16 @@ describe('DeploymentCleanupHandler', () => {
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
     await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
     const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
+    await setComponentsToRunning(timedOutDeployment, manager)
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(200)
     })
     await cleanupHandler.run(job)
-    const updatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: timedOutDeployment.id })
+    const updatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: timedOutDeployment.id }, { relations: ['components'] })
     expect(updatedDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
     expect(updatedDeployment.notificationStatus).toEqual('SENT')
+    updatedDeployment.components.map(component => expect(component.running).toEqual(false))
 
     const nonUpdatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: recentDeployment.id })
     expect(nonUpdatedDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
@@ -141,6 +143,15 @@ describe('DeploymentCleanupHandler', () => {
   })
 })
 
+
+const setComponentsToRunning = async(deployment: DeploymentEntity, manager: EntityManager): Promise<UpdateResult> => {
+  return await manager
+    .createQueryBuilder()
+    .update(ComponentEntity)
+    .set({ running: true })
+    .where('deployment_id = :deploymentId', { deploymentId: deployment.id })
+    .execute()
+}
 
 const createDeployment = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity,  job: JobWithDoneCallback<unknown, unknown>  }> => {
   const components = params.components.map((c: any) => {

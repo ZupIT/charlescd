@@ -5,7 +5,7 @@ import { UpdateResult } from 'typeorm'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { MooveService } from '../../../../v1/core/integrations/moove'
-import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
+import { DeploymentRepositoryV2, ReturningUpdate } from '../repository/deployment.repository'
 
 interface UpdateResultReturning {
   id: string,
@@ -24,10 +24,10 @@ export class DeploymentCleanupHandler {
     private envConfiguration: IEnvConfiguration,
   ) { }
 
-  public async run(job: JobWithDoneCallback<unknown, unknown>): Promise<UpdateResult>{
+  public async run(job: JobWithDoneCallback<unknown, unknown>): Promise<ReturningUpdate[] | undefined>{
     const updatedDeployments =  await this.deploymentsRepository.updateTimedOutStatus(this.envConfiguration.deploymentExpireTime)
-    if (updatedDeployments.affected) {
-      for await (const row of updatedDeployments.raw) {
+    if (updatedDeployments) {
+      for (const row of updatedDeployments) {
         const result = await this.notifyMoove(row.id, row.status, row.callback_url, row.circle_id)
         await this.deploymentsRepository.updateDeployment(row.id, result.status)
       }
