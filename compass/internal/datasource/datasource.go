@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"path/filepath"
 	"plugin"
 	"strconv"
@@ -48,6 +47,7 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 	var newDataSource *DataSource
 	err := json.NewDecoder(dataSource).Decode(&newDataSource)
 	if err != nil {
+		util.Error(util.ParseDatasourceError, "Parse", err, dataSource)
 		return DataSource{}, err
 	}
 	return *newDataSource, nil
@@ -64,6 +64,7 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
 	}
 
+	util.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID)
 	if db.Error != nil {
 		return []DataSource{}, db.Error
 	}
@@ -75,6 +76,7 @@ func (main Main) FindById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
 	if result.Error != nil {
+		util.Error(util.FindDatasourceError, "FindById", result.Error, "Id = "+id)
 		return DataSource{}, result.Error
 	}
 	return dataSource, nil
@@ -87,6 +89,8 @@ func (main Main) Delete(id string) error {
 
 	db := main.db.Model(&DataSource{}).Where("id = ?", id).Delete(&DataSource{})
 	if db.Error != nil {
+		util.Error(util.DeleteDatasourceError, "Delete", db.Error, "Id = )"+id)
+
 		return db.Error
 	}
 
@@ -108,27 +112,31 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 
 	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
 	if err != nil {
+		util.Error(util.OpenPluginError, "GetMetrics", err, pluginsPath)
 		return datasource.MetricList{}, err
 	}
 
 	getList, err := plugin.Lookup("GetLists")
 	if err != nil {
+		util.Error(util.PluginLookupError, "GetMetrics", err, plugin)
 		return datasource.MetricList{}, err
 	}
 
 	configurationData, _ := json.Marshal(dataSourceResult.Data)
 	list, err := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
 	if err != nil {
+		util.Error(util.PluginListError, "GetMetrics", err, configurationData)
 		return datasource.MetricList{}, err
 	}
 
 	return list, nil
 }
 
-func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
+func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, error) {
 	var count int8
 	result := main.db.Table("data_sources").Where("workspace_id = ? AND health = true AND deleted_at IS NULL", workspaceId).Count(&count)
 	if result.Error != nil {
+		util.Error(util.VerifyDatasourceHealthError, "VerifyHealthAtWorkspace", result.Error, "WorkspaceId: "+workspaceId)
 		return false, result.Error
 	}
 
@@ -137,14 +145,15 @@ func (main Main) verifyHealthAtWorkspace(workspaceId string) (bool, error) {
 
 func (main Main) Save(dataSource DataSource) (DataSource, error) {
 	if dataSource.Health == true {
-		if hasHealth, err := main.verifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
-			log.Print(err)
+		if hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
+			util.Error(util.ExistingDatasourceHealthError, "Save", err, "Health=true")
 			return DataSource{}, errors.New("Cannot set as Health")
 		}
 	}
 
 	db := main.db.Create(&dataSource)
 	if db.Error != nil {
+		util.Error(util.DatasourceSaveError, "Save", db.Error, dataSource)
 		return DataSource{}, db.Error
 	}
 	return dataSource, nil
