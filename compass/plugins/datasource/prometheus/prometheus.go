@@ -114,8 +114,6 @@ func Result(datasourceConfiguration, metric []byte) (float64, error) {
 		return 0, nil
 	}
 
-	fmt.Println(resultValue)
-
 	count, err := strconv.Atoi(resultValue[1].(string))
 	if err != nil {
 		return 0, err
