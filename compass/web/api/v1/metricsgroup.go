@@ -44,6 +44,7 @@ func (metricsGroupApi MetricsGroupApi) list(w http.ResponseWriter, r *http.Reque
 
 func (metricsGroupApi MetricsGroupApi) resume(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
 	circleId := r.URL.Query().Get("circleId")
+
 	metricGroups, err := metricsGroupApi.metricsGroupMain.ResumeByCircle(circleId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
