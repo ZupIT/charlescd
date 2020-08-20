@@ -34,12 +34,13 @@ class ResetUserPasswordInteractorImpl(
     private val userService: UserService
 ) : ResetUserPasswordInteractor {
     override fun execute(id: UUID): UserNewPasswordResponse {
-        val userPasswordFormat = UserPasswordFormat.Builder()
-            .numberDigits(2)
-            .numberLowerCase(4)
-            .numberUpperCase(2)
-            .numberSpecialChars(2)
-            .build()
+        val userPasswordFormat = UserPasswordFormat(
+            numberDigits = 2,
+            numberLowerCase = 4,
+            numberUpperCase = 2,
+            numberSpecialChars = 2,
+            passwordLength = 10
+        )
         val newPassword = passGenerator.create(userPasswordFormat)
         val user = userService.find(id.toString())
         keycloakService.resetPassword(user.email, newPassword)
