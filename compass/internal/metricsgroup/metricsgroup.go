@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 const (
@@ -134,14 +135,16 @@ func (main Main) getAllMetricsFinished(metrics []Metric) int {
 }
 
 func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
+	var db *gorm.DB
 	var metricsGroups []MetricsGroup
-	var metricsGroupsResume []MetricGroupResume
+	metricsGroupsResume := []MetricGroupResume{}
 
-	circleIdParsed, _ := uuid.Parse(circleId)
-
-	db := main.db.Set("gorm:auto_preload", true).Where(
-		&MetricsGroup{CircleID: circleIdParsed},
-	).Find(&metricsGroups)
+	if circleId == "" {
+		db = main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
+	} else {
+		circleIdParsed, _ := uuid.Parse(circleId)
+		db = main.db.Set("gorm:auto_preload", true).Where("circle_id=?", circleIdParsed).Find(&metricsGroups)
+	}
 
 	if db.Error != nil {
 		return []MetricGroupResume{}, db.Error
