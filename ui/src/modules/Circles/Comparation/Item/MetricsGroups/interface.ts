@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export type GroupMetrics = {
+export type MetricsGroups = {
   id: string;
   createdAt: string;
   name: string;

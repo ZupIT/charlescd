@@ -23,7 +23,7 @@ interface Props {
   onGoBack: Function;
 }
 
-const GroupMetrics = ({ onGoBack }: Props) => {
+const MetricsGroups = ({ onGoBack }: Props) => {
   return (
     <>
       <Styled.Layer>
@@ -48,4 +48,4 @@ const GroupMetrics = ({ onGoBack }: Props) => {
   );
 };
 
-export default GroupMetrics;
+export default MetricsGroups;
