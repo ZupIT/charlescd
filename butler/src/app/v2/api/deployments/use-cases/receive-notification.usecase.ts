@@ -26,6 +26,7 @@ import { DeploymentNotificationRequestDto } from '../dto/deployment-notification
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
+import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
 
 export class ReceiveNotificationUseCase {
 
@@ -90,7 +91,11 @@ export class ReceiveNotificationUseCase {
   }
 
   private async notifyMooveAndUpdateDeployment(deployment: DeploymentEntity): Promise<UpdateResult> {
-    const notificationResult = await this.sendMooveNotification(deployment.id, deployment.status, deployment.callbackUrl, deployment.circleId)
+    const notificationStatus = deployment.status === DeploymentStatusEnum.SUCCEEDED ?
+      NotificationStatusEnum.SUCCEEDED :
+      NotificationStatusEnum.FAILED
+
+    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId)
     const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
     return updatedDeployment
   }
@@ -116,7 +121,13 @@ export class ReceiveNotificationUseCase {
     }
 
     try {
-      return await this.deploymentRepository.save(deployment)
+      const notificationStatus = deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED ?
+        NotificationStatusEnum.UNDEPLOYED :
+        NotificationStatusEnum.UNDEPLOY_FAILED
+
+      const updatedDeployment = await this.deploymentRepository.save(deployment)
+      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId)
+      return updatedDeployment
     }
     catch (error) {
       this.consoleLoggerService.log('ERROR:Failed to save deployment')
