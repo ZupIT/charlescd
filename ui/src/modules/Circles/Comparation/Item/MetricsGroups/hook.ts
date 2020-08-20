@@ -20,8 +20,48 @@ import {
   useFetchStatus,
   FetchStatus
 } from 'core/providers/base/hooks';
-import { getAllMetricsGroupsById } from 'core/providers/metricsGroups';
-import { MetricsGroups } from './interface';
+import {
+  getAllMetricsGroupsById,
+  getMetricsGroupsResumeById
+} from 'core/providers/metricsGroups';
+import { buildParams, URLParams } from 'core/utils/query';
+import { MetricsGroups, MetricsGroupsResume } from './interface';
+
+export const useMetricsGroupsResume = (): {
+  getMetricsgroupsResume: Function;
+  resume: MetricsGroupsResume[];
+  status: FetchStatus;
+} => {
+  const getMetricsGroupsResumeData = useFetchData<MetricsGroupsResume[]>(
+    getMetricsGroupsResumeById
+  );
+  const status = useFetchStatus();
+  const [resume, setResume] = useState(null);
+
+  const getMetricsgroupsResume = useCallback(
+    async (payload: URLParams) => {
+      try {
+        status.pending();
+        const params = buildParams(payload);
+        const resumeResponse = await getMetricsGroupsResumeData(params);
+
+        setResume(resumeResponse);
+        status.resolved();
+
+        return resumeResponse;
+      } catch (e) {
+        status.rejected();
+      }
+    },
+    [getMetricsGroupsResumeData, status]
+  );
+
+  return {
+    getMetricsgroupsResume,
+    resume,
+    status
+  };
+};
 
 export const useMetricsGroups = (): {
   getMetricsGroups: Function;
@@ -38,13 +78,12 @@ export const useMetricsGroups = (): {
     async (circleId: string) => {
       try {
         status.pending();
-        const res = await getMetricsGroupData(circleId);
-        const [metricsGroups] = res;
+        const metricsGroupsResponse = await getMetricsGroupData(circleId);
 
-        setMetricsGroups(metricsGroups);
+        setMetricsGroups(metricsGroupsResponse);
         status.resolved();
 
-        return metricsGroups;
+        return metricsGroupsResponse;
       } catch (e) {
         status.rejected();
       }
