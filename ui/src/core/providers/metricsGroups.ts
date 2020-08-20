@@ -17,10 +17,10 @@
 import { baseRequest } from './base';
 // import { groupMetric } from 'modules/Circles/Comparation/Item/GroupMetrics/interface';
 
-const endpoint = '/compass/v1';
+const endpoint = '/compass/api/v1';
 
 // export const create = (payload: groupMetric) =>
 //   postRequest(`${endpoint}/?`, payload);
 
-export const getAllMetricsGroupById = (circleId: string) =>
+export const getAllMetricsGroupsById = (circleId: string) =>
   baseRequest(`${endpoint}/circles/${circleId}/metrics-groups`);
