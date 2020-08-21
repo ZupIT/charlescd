@@ -39,6 +39,12 @@ const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
 `;
 
+const TrashIcon = styled(ComponentIcon)`
+  display: flex;
+  margin-bottom: 6px;
+  cursor: pointer;
+`;
+
 const Layer = styled(LayerComponent)`
   margin-top: 20px;
   margin-left: 40px;
@@ -170,12 +176,34 @@ const MetricsGroupsCardHeader = styled.div`
   padding-left: 20px;
 `;
 
-const MetricsGroupsCardContent = styled.div`
-`;
+const MetricsGroupsCardContent = styled.div``;
 
 const MetricCard = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+`;
+
+const RuleTrash = styled.div`
+  display: none;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: -40px;
+  align-items: flex-end;
+  justify-content: center;
+`;
+
+const Rule = styled.div`
+  display: flex;
+  position: relative;
+  height: 62px;
+  box-sizing: border-box;
+  padding-top: 20px;
+  justify-content: space-between;
+
+  :hover ${RuleTrash} {
+    display: flex;
+  }
 `;
 
 export default {
@@ -202,5 +230,8 @@ export default {
   MetricsGroupsCard,
   MetricsGroupsCardHeader,
   MetricsGroupsCardContent,
-  MetricCard
+  MetricCard,
+  Rule,
+  RuleTrash,
+  TrashIcon
 };

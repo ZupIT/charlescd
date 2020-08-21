@@ -55,9 +55,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   console.log(metricsGroups, id);
 
-  const onSubmit = ({ name }: Record<string, string>) => {
-    createMetricsGroup(name, id);
+  const onSubmit = async ({ name }: Record<string, string>) => {
+    await createMetricsGroup(name, id);
     setToggleModal(false);
+    getMetricsGroups(id);
   };
 
   const renderModal = () =>
@@ -85,9 +86,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const renderMetrics = (metrics: Metric[]) =>
     metrics.map(metric => (
-      <Styled.MetricCard key={metric.id}>
-        {metric.nickname}
-      </Styled.MetricCard>
+      <Styled.MetricCard key={metric.id}>{metric.nickname}</Styled.MetricCard>
     ));
 
   const renderMetricsGroupsCards = () =>
