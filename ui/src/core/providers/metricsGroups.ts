@@ -15,7 +15,10 @@
  */
 
 import { baseRequest, postRequest } from './base';
-import { Metric } from 'modules/Circles/Comparation/Item/MetricsGroups/types';
+import {
+  Metric,
+  MetricsGroups
+} from 'modules/Circles/Comparation/Item/MetricsGroups/types';
 
 const endpoint = '/compass/api/v1';
 
@@ -36,3 +39,6 @@ export const saveMetric = (metricsGroupsId: string, metricPayload: Metric) =>
 
 export const getAllDataSourceMetrics = (datasourceId: string) =>
   baseRequest(`${endpoint}/datasources/${datasourceId}/metrics`);
+
+export const saveMetricGroup = (metricsGroupPayload: MetricsGroups) =>
+  postRequest(`${endpoint}/metrics-groups`, metricsGroupPayload);

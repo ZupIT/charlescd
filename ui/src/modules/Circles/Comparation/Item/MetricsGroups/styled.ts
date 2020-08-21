@@ -16,6 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
+import ButtonComponent from 'core/components/Button';
 import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import SelectComponent from 'core/components/Form/Select';
 import InputNumberComponent from 'core/components/Form/Number';
@@ -136,6 +137,47 @@ const AceEditorWrapper = styled.div`
   margin: 20px 0;
 `;
 
+const ModalInput = styled(InputComponent)`
+  width: 315px;
+
+  > input {
+    background-color: ${({ theme }) => theme.modal.default.background};
+  }
+`;
+
+const ModalTitle = styled(Text.h2)`
+  margin-bottom: 20px;
+`;
+
+const ButtonModal = styled(ButtonComponent.Default)`
+  width: 155px;
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 20px;
+`;
+
+const MetricsGroupsCard = styled.div`
+  background-color: ${({ theme }) =>
+    theme.circleGroupMetrics.content.background};
+  margin-top: 15px;
+  border-radius: 5px;
+  width: 520px;
+`;
+
+const MetricsGroupsCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+`;
+
+const MetricsGroupsCardContent = styled.div`
+`;
+
+const MetricCard = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+`;
+
 export default {
   Layer,
   Icon,
@@ -151,5 +193,14 @@ export default {
   ProviderSelect,
   Actions,
   ButtonIconRounded,
-  AceEditorWrapper
+  AceEditorWrapper,
+  Modal: {
+    Input: ModalInput,
+    Title: ModalTitle,
+    Button: ButtonModal
+  },
+  MetricsGroupsCard,
+  MetricsGroupsCardHeader,
+  MetricsGroupsCardContent,
+  MetricCard
 };
