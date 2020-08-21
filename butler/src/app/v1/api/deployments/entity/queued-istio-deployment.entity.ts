@@ -44,7 +44,7 @@ export class QueuedIstioDeploymentEntity extends BaseEntity {
   @Column({ name: 'status' })
   public status: QueuedPipelineStatusEnum
 
-  @CreateDateColumn({ name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
   constructor(

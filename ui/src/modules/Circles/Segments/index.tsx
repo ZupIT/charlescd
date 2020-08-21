@@ -16,7 +16,7 @@
 
 import React from 'react';
 import isEmpty from 'lodash/isEmpty';
-import { useFieldArray, useForm, FormContext } from 'react-hook-form';
+import { useFieldArray, useForm, FormContext, ArrayField } from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Rule as IRule } from './interfaces/Rule';
 import { getGroupVerticalLine, changeOperatorValue } from './helpers';
@@ -60,6 +60,45 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
   const group = getGroupVerticalLine(fields);
   const hasGroup = fields.length > ONE;
 
+  const renderGroup = (group: Partial<ArrayField<Record<string, any>, "id">>, index: number) => {
+    return (
+      <Styled.Group key={group.id}>
+        {group.type === 'CLAUSE' ? (
+          <Clause
+            clauses={group}
+            viewMode={viewMode}
+            hasGroup={hasGroup}
+            prefixName={`clauses[${index}]`}
+            onRemoveRule={(clauseIndex: number) =>
+              removeRule(group, index, clauseIndex)
+            }
+          />
+        ) : (
+          <Rule
+            isGroup
+            rule={group}
+            viewMode={viewMode}
+            prefixName={`clauses[${index}]`}
+            onRemoveRule={() => removeRule(group, index)}
+            hasGroup={hasGroup}
+          />
+        )}
+        {!viewMode && (
+          <Styled.Button.Clause
+            id="add-clause"
+            size="EXTRA_SMALL"
+            onClick={() => addRule(index, group)}
+          >
+            <Icon name="add" size="16px" color="light" /> Rule
+          </Styled.Button.Clause>
+        )}
+      </Styled.Group>
+    )
+  }
+
+  const renderGroups = () => 
+    fieldArray.fields?.map((group, index) => renderGroup(group, index))
+
   return (
     <FormContext {...form}>
       <Styled.Form onSubmit={form.handleSubmit(onSubmit)}>
@@ -80,38 +119,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
             />
           </Styled.Operator>
           <Styled.Input type="hidden" ref={form.register} name="type" />
-          {fieldArray.fields?.map((group, index) => (
-            <Styled.Group key={group.id}>
-              {group.type === 'CLAUSE' ? (
-                <Clause
-                  clauses={group}
-                  viewMode={viewMode}
-                  hasGroup={hasGroup}
-                  prefixName={`clauses[${index}]`}
-                  onRemoveRule={(clauseIndex: number) =>
-                    removeRule(group, index, clauseIndex)
-                  }
-                />
-              ) : (
-                <Rule
-                  isGroup
-                  rule={group}
-                  viewMode={viewMode}
-                  prefixName={`clauses[${index}]`}
-                  onRemoveRule={() => removeRule(group, index)}
-                  hasGroup={hasGroup}
-                />
-              )}
-              {!viewMode && (
-                <Styled.Button.Clause
-                  size="EXTRA_SMALL"
-                  onClick={() => addRule(index, group)}
-                >
-                  <Icon name="add" size="16px" color="light" /> Rule
-                </Styled.Button.Clause>
-              )}
-            </Styled.Group>
-          ))}
+          {renderGroups()}
         </Styled.Group>
         {!viewMode && (
           <>
