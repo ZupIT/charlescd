@@ -29,12 +29,7 @@ import {
   saveMetricGroup
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
-import {
-  MetricsGroups,
-  MetricsGroupsResume,
-  Metric,
-  DataSource
-} from './types';
+import { MetricsGroup, MetricsGroupsResume, Metric, DataSource } from './types';
 
 export const useMetricsGroupsResume = (): {
   getMetricsgroupsResume: Function;
@@ -74,10 +69,10 @@ export const useMetricsGroupsResume = (): {
 
 export const useMetricsGroups = (): {
   getMetricsGroups: Function;
-  metricsGroups: MetricsGroups[];
+  metricsGroups: MetricsGroup[];
   status: FetchStatus;
 } => {
-  const getMetricsGroupData = useFetchData<MetricsGroups[]>(
+  const getMetricsGroupData = useFetchData<MetricsGroup[]>(
     getAllMetricsGroupsById
   );
   const status = useFetchStatus();
@@ -189,9 +184,7 @@ export const useProviderMetrics = () => {
 };
 
 export const useCreateMetricsGroup = () => {
-  const createMetricsGroupPayload = useFetchData<MetricsGroups>(
-    saveMetricGroup
-  );
+  const createMetricsGroupPayload = useFetchData<MetricsGroup>(saveMetricGroup);
   const status = useFetchStatus();
 
   const createMetricsGroup = useCallback(

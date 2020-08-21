@@ -22,7 +22,7 @@ export type MetricsGroupsResume = {
   allMetricsSuccessCount: number;
 };
 
-export type MetricsGroups = {
+export type MetricsGroup = {
   id?: string;
   createdAt?: string;
   name: string;
