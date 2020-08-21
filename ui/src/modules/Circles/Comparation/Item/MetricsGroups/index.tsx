@@ -24,7 +24,8 @@ import { Metric, MetricsGroup } from './types';
 import {
   useCreateMetricsGroup,
   useMetricsGroups,
-  useDeleteMetricsGroup
+  useDeleteMetricsGroup,
+  useDeleteMetric
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
@@ -43,6 +44,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     status: statusCreating
   } = useCreateMetricsGroup();
   const { deleteMetricsGroup } = useDeleteMetricsGroup();
+  const { deleteMetric } = useDeleteMetric();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
   const {
     register,
@@ -69,6 +71,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const handleDeleteMetricsGroup = (metricGroupId: string) => {
     deleteMetricsGroup(metricGroupId);
+    getMetricsGroups(id);
+  };
+
+  const handleDeleteMetric = (metricGroupId: string, metricId: string) => {
+    deleteMetric(metricGroupId, metricId);
     getMetricsGroups(id);
   };
 
@@ -100,7 +107,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Modal.Default>
     );
 
-  const renderMetrics = (metrics: Metric[]) =>
+  const renderMetrics = (metrics: Metric[], metricsGroupId: string) =>
     metrics.map(metric => (
       <Styled.MetricCardBody key={metric.id}>
         <Styled.MetricNickname color="light">
@@ -122,7 +129,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Dropdown.Item
               icon="delete"
               name="Delete"
-              onClick={() => console.log('delete metric')}
+              onClick={() => handleDeleteMetric(metricsGroupId, metric.id)}
             />
           </Dropdown>
         </Styled.MetricDropdown>
@@ -153,7 +160,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>
             </Styled.MetricCardTableHead>
-            {renderMetrics(metricGroup.metrics)}
+            {renderMetrics(metricGroup.metrics, metricGroup.id)}
           </Styled.MetricsGroupsCardContent>
         )}
       </Styled.MetricsGroupsCard>
