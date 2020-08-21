@@ -18,26 +18,28 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
-import { metricProviders } from 'core/constants/metrics-providers';
-import Styled from './styled';
 import { thresholdOptions } from './constants';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
 import { Metric } from './interface';
+import { normalizeMetricOptions } from './helpers';
+import BasicQueryForm from './BasicQueryForm';
+import Styled from './styled';
 
-interface Props {
+type Props = {
   id: string;
   onGoBack: Function;
-}
+};
 
 const AddMetric = ({ onGoBack, id }: Props) => {
   const { handleSubmit, register, control } = useForm<Metric>();
   const [isBasicQuery, setIsBasicQuery] = useState(true);
   const { getMetricsProviders } = useMetricProviders();
-  const { getAllDataSourceMetrics, dataSourceMetrics } = useProviderMetrics();
+  const { getAllDataSourceMetrics } = useProviderMetrics();
   const { saveMetric } = useSaveMetric();
   const [providerOptions, setProviderOptions] = useState<Option[]>();
+  const [metrics, setMetrics] = useState<Option[]>();
   const [selectedProvider, setSelectedProvider] = useState<Option>();
 
   useEffect(() => {
@@ -45,11 +47,14 @@ const AddMetric = ({ onGoBack, id }: Props) => {
       const normalizedOptions = normalizeSelectOptions(providersResponse);
       setProviderOptions(normalizedOptions);
     });
-  }, []);
+  }, [getMetricsProviders]);
 
   useEffect(() => {
     if (isBasicQuery && selectedProvider) {
-      getAllDataSourceMetrics(selectedProvider.value);
+      getAllDataSourceMetrics(selectedProvider.value).then(metricsResponse => {
+        const normalizedOptions = normalizeMetricOptions(metricsResponse);
+        setMetrics(normalizedOptions);
+      });
     }
   }, [isBasicQuery, selectedProvider]);
 
@@ -112,12 +117,7 @@ const AddMetric = ({ onGoBack, id }: Props) => {
           </Styled.Actions>
 
           {isBasicQuery && (
-            <Styled.ProviderSelect
-              control={control}
-              name="metric"
-              label="Select a metric"
-              options={dataSourceMetrics}
-            />
+            <BasicQueryForm metrics={metrics} control={control} />
           )}
 
           {!isBasicQuery && (
