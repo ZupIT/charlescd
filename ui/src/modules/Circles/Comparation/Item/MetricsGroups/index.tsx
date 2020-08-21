@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
-import { Metric } from './types';
+import { Metric, MetricsGroup } from './types';
 import { useCreateMetricsGroup, useMetricsGroups } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
@@ -36,7 +36,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const { createMetricsGroup } = useCreateMetricsGroup();
+  const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
+  const {
+    createMetricsGroup,
+    status: statusCreating
+  } = useCreateMetricsGroup();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
   const { register, handleSubmit, watch } = useForm();
   const name = watch('name');
@@ -61,6 +65,16 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     getMetricsGroups(id);
   };
 
+  const handleAddMetric = (metricGroup: MetricsGroup) => {
+    setActiveMetricsGroup(metricGroup);
+    setShowAddMetricForm(true);
+  };
+
+  const handleGoBack = () => {
+    setShowAddMetricForm(false);
+    getMetricsGroups(id);
+  };
+
   const renderModal = () =>
     toggleModal && (
       <Modal.Default onClose={() => setToggleModal(false)}>
@@ -76,7 +90,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
           <Styled.Modal.Button
             type="submit"
             isDisabled={!isDisabled}
-            isLoading={false}
+            isLoading={statusCreating.isPending}
           >
             Add group
           </Styled.Modal.Button>
@@ -93,8 +107,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     metricsGroups.map(metricGroup => (
       <Styled.MetricsGroupsCard key={metricGroup.id}>
         <Styled.MetricsGroupsCardHeader>
-          <Text.h3 color="light">{metricGroup.name}</Text.h3>
-          <Dropdown icon="vertical-dots" size="24px">
+          <Text.h2 color="light">{metricGroup.name}</Text.h2>
+          <Dropdown icon="vertical-dots" size="16px">
             <Dropdown.Item
               icon="edit"
               name="Edit metric"
@@ -103,7 +117,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Dropdown.Item
               icon="add"
               name="Add metric"
-              onClick={() => console.log('add', metricGroup.id)}
+              onClick={() => handleAddMetric(metricGroup)}
             />
             <Dropdown.Item
               icon="delete"
@@ -142,7 +156,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Styled.Layer>
     </>
   ) : (
-    <AddMetric onGoBack={() => setShowAddMetricForm(false)} id={id} />
+    <AddMetric onGoBack={handleGoBack} id={activeMetricsGroup.id} />
   );
 };
 

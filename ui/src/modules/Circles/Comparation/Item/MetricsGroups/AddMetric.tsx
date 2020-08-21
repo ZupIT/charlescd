@@ -26,6 +26,7 @@ import { Metric } from './types';
 import { normalizeMetricOptions } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
+import Button from 'core/components/Button/Default';
 
 type Props = {
   id: string;
@@ -33,11 +34,16 @@ type Props = {
 };
 
 const AddMetric = ({ onGoBack, id }: Props) => {
-  const { handleSubmit, register, control } = useForm<Metric>();
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { isValid }
+  } = useForm<Metric>({ mode: 'onChange' });
   const [isBasicQuery, setIsBasicQuery] = useState(true);
   const { getMetricsProviders } = useMetricProviders();
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric } = useSaveMetric();
+  const { saveMetric, status: creatingStatus } = useSaveMetric();
   const [providerOptions, setProviderOptions] = useState<Option[]>();
   const [metrics, setMetrics] = useState<Option[]>();
   const [selectedProvider, setSelectedProvider] = useState<Option>();
@@ -58,12 +64,10 @@ const AddMetric = ({ onGoBack, id }: Props) => {
     }
   }, [isBasicQuery, selectedProvider, getAllDataSourceMetrics]);
 
-  const onSubmit = (data: Metric) => {
+  const onSubmit = async (data: Metric) => {
     const payload = { ...data, threshold: Number(data.threshold) };
-    const metricGroupId = '11151f52-7f03-4ffa-9c80-b89515d37021';
-    saveMetric(metricGroupId, payload).then(res => {
-      console.log(res);
-    });
+    await saveMetric(id, payload);
+    onGoBack();
   };
 
   return (
@@ -95,6 +99,7 @@ const AddMetric = ({ onGoBack, id }: Props) => {
             label="Select a type server"
             options={providerOptions}
             onChange={option => setSelectedProvider(option)}
+            rules={{ required: true }}
           />
           <Text.h5 color="dark">
             You can fill your query in a basic or advanced way:
@@ -130,6 +135,7 @@ const AddMetric = ({ onGoBack, id }: Props) => {
                   mode="json"
                   name="query"
                   control={control}
+                  rules={{ required: true }}
                 />
               </Styled.AceEditorWrapper>
             </>
@@ -157,14 +163,13 @@ const AddMetric = ({ onGoBack, id }: Props) => {
             />
           </Styled.ThresholdWrapper>
 
-          <Styled.ButtonDefault
+          <Button
             type="submit"
-            isLoading={false}
-            isDisabled={false}
-            isValid={false}
+            isLoading={creatingStatus.isPending}
+            isDisabled={!isValid}
           >
-            <Text.h6 color={'dark'}>Save</Text.h6>
-          </Styled.ButtonDefault>
+            Save
+          </Button>
         </Styled.Layer>
       </Styled.Form>
     </>

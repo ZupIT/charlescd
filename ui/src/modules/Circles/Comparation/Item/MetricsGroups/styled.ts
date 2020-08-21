@@ -24,7 +24,6 @@ import Text from 'core/components/Text';
 import InputComponent from 'core/components/Form/Input';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
-import Button from 'core/components/Button';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 
 interface ButtonDefaultProps {
@@ -50,7 +49,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const ButtonAdd = styled(Button.Rounded)`
+const ButtonAdd = styled(ButtonComponent.Rounded)`
   margin-top: 15px;
   margin-bottom: 15px;
 
@@ -68,7 +67,7 @@ const Input = styled(InputComponent)`
   margin: 10px 0 20px;
 `;
 
-const ButtonDefault = styled(Button.Default)<ButtonDefaultProps>`
+const ButtonDefault = styled(ButtonComponent.Default)<ButtonDefaultProps>`
   background-color: ${({ theme, isValid }) => {
     const { saveButton } = theme.circleSegmentation.importCSV;
     return isValid
@@ -168,12 +167,14 @@ const MetricsGroupsCard = styled.div`
   margin-top: 15px;
   border-radius: 5px;
   width: 520px;
+  padding: 20px;
 `;
 
 const MetricsGroupsCardHeader = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 20px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 `;
 
 const MetricsGroupsCardContent = styled.div``;

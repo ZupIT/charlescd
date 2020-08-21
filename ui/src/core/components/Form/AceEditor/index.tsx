@@ -24,6 +24,7 @@ type Props = {
   className?: string;
   mode?: string;
   defaultValue?: string;
+  rules?: Partial<{ required: boolean | string }>;
 } & AceEditorProps;
 
 const AceEditorForm = ({
@@ -34,7 +35,8 @@ const AceEditorForm = ({
   defaultValue,
   value,
   onChange,
-  height
+  height,
+  rules
 }: Props) => (
   <Controller
     as={
@@ -46,6 +48,7 @@ const AceEditorForm = ({
         height={height}
       />
     }
+    rules={rules}
     name={name}
     control={control}
     className={className}
