@@ -77,7 +77,7 @@ const ButtonDefault = styled(ButtonComponent.Default)<ButtonDefaultProps>`
 `;
 
 const Form = styled.form`
-  width: 550px;
+  width: 540px;
 `;
 
 const Subtitle = styled(Text.h5)`
@@ -184,29 +184,6 @@ const MetricCard = styled.div`
   background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
 `;
 
-const RuleTrash = styled.div`
-  display: none;
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  left: -40px;
-  align-items: flex-end;
-  justify-content: center;
-`;
-
-const Rule = styled.div`
-  display: flex;
-  position: relative;
-  height: 62px;
-  box-sizing: border-box;
-  padding-top: 20px;
-  justify-content: space-between;
-
-  :hover ${RuleTrash} {
-    display: flex;
-  }
-`;
-
 export default {
   Layer,
   Icon,
@@ -232,7 +209,5 @@ export default {
   MetricsGroupsCardHeader,
   MetricsGroupsCardContent,
   MetricCard,
-  Rule,
-  RuleTrash,
   TrashIcon
 };
