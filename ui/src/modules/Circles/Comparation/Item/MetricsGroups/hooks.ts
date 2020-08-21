@@ -27,7 +27,8 @@ import {
   saveMetric as saveMetricRequest,
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
   saveMetricGroup,
-  deleteMetricGroup
+  deleteMetricGroup,
+  deleteMetricByMetricId
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
@@ -217,10 +218,10 @@ export const useDeleteMetricsGroup = () => {
   const dispatch = useDispatch();
 
   const deleteMetricsGroup = useCallback(
-    async (circleId: string) => {
+    async (metricsGroupId: string) => {
       try {
-        const createdMetricsGroupResponse = await deleteMetricsGroupRequest(
-          circleId
+        const deleteMetricsGroupResponse = await deleteMetricsGroupRequest(
+          metricsGroupId
         );
 
         dispatch(
@@ -230,7 +231,7 @@ export const useDeleteMetricsGroup = () => {
           })
         );
 
-        return createdMetricsGroupResponse;
+        return deleteMetricsGroupResponse;
       } catch (e) {
         console.log(e);
         dispatch(
@@ -246,5 +247,44 @@ export const useDeleteMetricsGroup = () => {
 
   return {
     deleteMetricsGroup
+  };
+};
+
+export const useDeleteMetric = () => {
+  const deleteMetricRequest = useFetchData<MetricsGroup>(
+    deleteMetricByMetricId
+  );
+  const dispatch = useDispatch();
+
+  const deleteMetric = useCallback(
+    async (metricsGroupId: string, metricId: string) => {
+      try {
+        const deleteMetricResponse = await deleteMetricRequest(
+          metricsGroupId,
+          metricId
+        );
+
+        dispatch(
+          toogleNotification({
+            text: `Success deleting metric`,
+            status: 'success'
+          })
+        );
+
+        return deleteMetricResponse;
+      } catch (e) {
+        dispatch(
+          toogleNotification({
+            text: `Error metric delete`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [deleteMetricRequest, dispatch]
+  );
+
+  return {
+    deleteMetric
   };
 };
