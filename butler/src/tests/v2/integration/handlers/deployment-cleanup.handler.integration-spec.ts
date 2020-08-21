@@ -85,7 +85,7 @@ describe('DeploymentCleanupHandler', () => {
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
-    await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
+    await manager.update(Execution, { deploymentId: timedOutDeployment.id }, { createdAt: createdAt })
     const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
     await setComponentsToRunning(timedOutDeployment, manager)
 

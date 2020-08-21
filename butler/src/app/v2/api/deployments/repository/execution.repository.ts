@@ -23,11 +23,11 @@ export type ReturningUpdate = { id: string, status: DeploymentStatusEnum, callba
 @EntityRepository(Execution)
 export class ExecutionRepository extends Repository<Execution> {
 
-  public async updateDeployment(id: string, status: number) : Promise<UpdateResult>{
+  public async updateNotificationStatus(id: string, status: number) : Promise<UpdateResult>{
     if (status >= 200 && status < 300) {
-      return await this.update({ deploymentId: id }, { notificationStatus: 'SENT' })
+      return await this.update({ id: id }, { notificationStatus: 'SENT' })
     } else {
-      return await this.update({ deploymentId: id }, { notificationStatus: 'ERROR' })
+      return await this.update({ id: id }, { notificationStatus: 'ERROR' })
     }
   }
 }

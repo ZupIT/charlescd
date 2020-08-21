@@ -18,7 +18,7 @@ import { EntityRepository, getConnection, Repository } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
-export type ReturningUpdate = { id: string, status: DeploymentStatusEnum, callback_url: string, circle_id: string }
+export type UpdatedExecution = { id: string }
 
 @EntityRepository(DeploymentEntityV2)
 export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
@@ -30,7 +30,7 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .getMany()
   }
 
-  public async updateTimedOutStatus(timeInMinutes: number): Promise<ReturningUpdate[] | undefined>{
+  public async updateTimedOutStatus(timeInMinutes: number): Promise<UpdatedExecution[] | undefined>{ // TODO move to executions repo
     const result = await getConnection().manager.query(`
       WITH timed_out_executions AS
         (UPDATE v2executions
@@ -41,7 +41,7 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       UPDATE v2components c
       SET running = FALSE
       FROM timed_out_executions
-      WHERE c.deployment_id = timed_out_executions.deployment_id RETURNING *
+      WHERE c.deployment_id = timed_out_executions.deployment_id RETURNING timed_out_executions.id
     `)
     if (Array.isArray(result)) {
       return result[0]

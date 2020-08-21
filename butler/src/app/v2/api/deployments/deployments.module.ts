@@ -33,6 +33,7 @@ import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
 import { DeploymentRepositoryV2 } from './repository/deployment.repository'
+import { ExecutionRepository } from './repository/execution.repository'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DeploymentRepositoryV2 } from './repository/deployment.repository'
       CdConfigurationEntity,
       CdConfigurationsRepository,
       ComponentsRepositoryV2,
+      ExecutionRepository,
       DeploymentRepositoryV2
     ])
   ],

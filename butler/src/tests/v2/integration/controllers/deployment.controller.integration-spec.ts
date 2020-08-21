@@ -9,7 +9,7 @@ import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.wor
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
-import { ReadDeploymentDto } from '../../../../app/v1/api/deployments/dto'
+import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -92,7 +92,6 @@ describe('DeploymentController v2', () => {
           id: 'dummy-id',
           moduleId: 'dummy-module-id',
           createdAt: expect.any(String),
-          status: 'CREATED',
           helmRepository: 'https://some-helm.repo',
           componentsDeployments: [
             {
@@ -102,12 +101,10 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               componentName: 'component-name',
               createdAt: expect.any(String),
-              status: 'CREATED'
             }
           ]
         }
       ],
-      status: 'CREATED'
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')

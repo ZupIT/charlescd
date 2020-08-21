@@ -53,11 +53,13 @@ export class Execution {
   constructor(
     deployment: DeploymentEntity,
     type: ExecutionTypeEnum,
-    incomingCircleId: string | null
+    incomingCircleId: string | null,
+    status: DeploymentStatusEnum,
   ) {
     this.deployment = deployment
     this.type = type
     this.incomingCircleId = incomingCircleId
+    this.status = status
   }
 
 }

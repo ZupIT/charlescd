@@ -228,14 +228,14 @@ describe('DeploymentHandler', () => {
     }
 
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
+    manager.update(Execution, { deploymentId: fixtures.deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
 
     await expect(
       deploymentHandler.run(fixtures.job)
     ).rejects.toThrow(new Error('Deployment timed out'))
 
     const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id })
-    expect(timedOutDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
+    expect(timedOutDeployment.executions.map(e => e.status)).toEqual([DeploymentStatusEnum.TIMED_OUT])
   })
 })
 
@@ -252,7 +252,6 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
   const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
     params.deploymentId,
     params.authorId,
-    DeploymentStatusEnum.CREATED,
     params.circle,
     cdConfiguration,
     params.callbackUrl,
@@ -262,7 +261,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
   const execution : Execution = await manager.save(new Execution(
     deployment,
     ExecutionTypeEnum.DEPLOYMENT,
-    params.incomingCircleId
+    params.incomingCircleId,
+    DeploymentStatusEnum.CREATED,
   ))
 
   const job : JobWithDoneCallback<Execution, unknown> = {
