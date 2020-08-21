@@ -45,3 +45,11 @@ export const saveMetricGroup = (metricsGroupPayload: MetricsGroup) =>
 
 export const deleteMetricGroup = (metricsGroupId: string) =>
   deleteRequest(`${endpoint}/metrics-groups/${metricsGroupId}`);
+
+export const deleteMetricByMetricId = (
+  metricsGroupId: string,
+  metricId: string
+) =>
+  deleteRequest(
+    `${endpoint}/metrics-groups/${metricsGroupId}/metrics/${metricId}`
+  );
