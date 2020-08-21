@@ -43,6 +43,7 @@ export type Metric = {
   groupBy?: MetricGroupBy[];
   condition: string;
   threshold: number;
+  lastValue?: string;
   status: string;
 };
 
