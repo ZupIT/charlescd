@@ -26,9 +26,12 @@ import {
   getAllMetricsProviders,
   saveMetric as saveMetricRequest,
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
-  saveMetricGroup
+  saveMetricGroup,
+  deleteMetricGroup
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 import { MetricsGroup, MetricsGroupsResume, Metric, DataSource } from './types';
 
 export const useMetricsGroupsResume = (): {
@@ -204,5 +207,44 @@ export const useCreateMetricsGroup = () => {
   return {
     createMetricsGroup,
     status
+  };
+};
+
+export const useDeleteMetricsGroup = () => {
+  const deleteMetricsGroupRequest = useFetchData<MetricsGroup>(
+    deleteMetricGroup
+  );
+  const dispatch = useDispatch();
+
+  const deleteMetricsGroup = useCallback(
+    async (circleId: string) => {
+      try {
+        const createdMetricsGroupResponse = await deleteMetricsGroupRequest(
+          circleId
+        );
+
+        dispatch(
+          toogleNotification({
+            text: `Success deleting metrics group`,
+            status: 'success'
+          })
+        );
+
+        return createdMetricsGroupResponse;
+      } catch (e) {
+        console.log(e);
+        dispatch(
+          toogleNotification({
+            text: `Error deleting metrics group`,
+            status: 'error'
+          })
+        );
+      }
+    },
+    [deleteMetricsGroupRequest, dispatch]
+  );
+
+  return {
+    deleteMetricsGroup
   };
 };

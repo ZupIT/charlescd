@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { baseRequest, postRequest } from './base';
+import { baseRequest, postRequest, deleteRequest } from './base';
 import {
   Metric,
   MetricsGroup
@@ -42,3 +42,6 @@ export const getAllDataSourceMetrics = (datasourceId: string) =>
 
 export const saveMetricGroup = (metricsGroupPayload: MetricsGroup) =>
   postRequest(`${endpoint}/metrics-groups`, metricsGroupPayload);
+
+export const deleteMetricGroup = (metricsGroupId: string) =>
+  deleteRequest(`${endpoint}/metrics-groups/${metricsGroupId}`);
