@@ -103,7 +103,7 @@ const ThresholdWrapper = styled.div`
 `;
 
 const ProviderSelect = styled(SelectComponent.Single)`
-  width: 190px;
+  width: 230px;
   margin-bottom: 20px;
 `;
 
@@ -219,6 +219,10 @@ const MetricConditionThreshold = styled.div`
   }
 `;
 
+const RuleWrapper = styled.div`
+  max-width: 80%;
+`;
+
 export default {
   Layer,
   Icon,
@@ -248,5 +252,6 @@ export default {
   MetricConditionThreshold,
   MetricNickname,
   MetricDropdown,
-  TrashIcon
+  TrashIcon,
+  RuleWrapper
 };
