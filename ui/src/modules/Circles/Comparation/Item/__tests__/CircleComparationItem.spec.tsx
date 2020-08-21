@@ -15,11 +15,13 @@
  */
 
 import React, { ReactElement } from 'react';
-import { render, wait, getByTestId, fireEvent } from 'unit-test/testUtils';
+import { render, wait, fireEvent } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import CirclesComparationItem from '..';
 import { FetchMock } from 'jest-fetch-mock/types';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 
 (global as any).MutationObserver = MutationObserver
@@ -71,6 +73,13 @@ test('render CircleComparationItem default component', async () => {
 });
 
 test('render CircleComparationItem with release', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123-workspace',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
 

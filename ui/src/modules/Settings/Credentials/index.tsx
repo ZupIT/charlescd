@@ -49,7 +49,7 @@ const Credentials = () => {
     if (isNull(form)) {
       loadWorkspace(id);
     }
-  }, [id, form]);
+  }, [id, form, loadWorkspace]);
 
   const renderContent = () => (
     <Layer>

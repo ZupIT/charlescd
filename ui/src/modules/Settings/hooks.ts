@@ -57,14 +57,16 @@ export const useWorkspace = (): [
         setWorkspace(response);
         status.resolved();
       } catch (error) {
-        status.rejected();
-        dispatch(statusWorkspaceAction('rejected'));
-        dispatch(
-          toogleNotification({
-            text: `[${error.status}] Could not list`,
-            status: 'error'
-          })
-        );
+        if (error.status !== 403) {
+          status.rejected();
+          dispatch(statusWorkspaceAction('rejected'));
+          dispatch(
+            toogleNotification({
+              text: `[${error.status}] Could not list`,
+              status: 'error'
+            })
+          );
+        }
       }
     },
     [getWorkspaceById, dispatch, status]

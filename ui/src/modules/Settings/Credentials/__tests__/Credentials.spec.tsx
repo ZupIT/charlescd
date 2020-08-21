@@ -18,6 +18,8 @@ import React from 'react';
 import MutationObserver from 'mutation-observer'
 import { render, fireEvent, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '..';
 
 (global as any).MutationObserver = MutationObserver
@@ -35,11 +37,16 @@ test('render Credentials default component', async () => {
 
 test('render Credentials with inner form', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  const { getByTestId, getAllByTestId } = render(
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  const { getByTestId, getAllByTestId, debug } = render(
     <Credentials />
   );
-
-  await wait();
 
   const addButtons = getAllByTestId("button-iconRounded-add");
   expect(addButtons.length).toBe(6);

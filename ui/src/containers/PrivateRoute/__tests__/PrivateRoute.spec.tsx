@@ -15,10 +15,13 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, queryByTestId } from 'unit-test/testUtils';
 import PrivateRoute from '../index';
 import { MemoryRouter } from 'react-router-dom';
 import { setAccessToken } from 'core/utils/auth';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import * as workspaceUtils from 'core/utils/workspace';
 
 const MockApp = () => <span data-testid="mock-component">mock app</span>;
 
@@ -29,6 +32,15 @@ beforeAll(() => {
 });
 
 test('render Private Route allowed', async () => {
+  const workspaceID = '1234-workspace';
+  jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: workspaceID,
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
   const { getByTestId } = render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
@@ -44,7 +56,16 @@ test('render Private Route allowed', async () => {
 });
 
 test('render Private Route not allowed', async () => {
-  const { getByTestId } = render(
+  const workspaceID = '1234-workspace';
+  jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: workspaceID,
+      status: WORKSPACE_STATUS.INCOMPLETE
+    },
+    status: 'resolved'
+  }));
+  const { queryByTestId } = render(
     <MemoryRouter initialEntries={['/main']}>
       <PrivateRoute
         path="/main"
@@ -53,7 +74,7 @@ test('render Private Route not allowed', async () => {
       />
     </MemoryRouter>
   );
-  const body = getByTestId('mock-component');
+  const body = queryByTestId('mock-component');
   await wait(() => expect(body).not.toBeInTheDocument());
 });
 

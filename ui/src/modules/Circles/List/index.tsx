@@ -36,14 +36,14 @@ const CirclesList = () => {
   const { metrics: list } = useGlobalState<CircleState>(
     ({ circles }) => circles
   );
-  const [response, loadWorkspace] = useWorkspace();
+  const [response, loadWorkspace, , status] = useWorkspace();
   const profileName = getProfileByKey('name');
 
   useEffect(() => {
-    if (response === null) {
+    if (status.isIdle) {
       loadWorkspace(getWorkspaceId());
     }
-  }, [loadWorkspace, response]);
+  }, [loadWorkspace, status.isIdle]);
 
   useEffect(() => {
     getCircles();
