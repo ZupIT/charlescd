@@ -50,7 +50,7 @@ func (metric Metric) Validate() []error {
 	}
 
 	if metric.Metric == "" {
-		ers = append(ers, errors.New("Metric name or query is required"))
+		ers = append(ers, errors.New("Metric name is required"))
 	}
 
 	return ers
