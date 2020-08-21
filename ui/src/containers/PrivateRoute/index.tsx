@@ -51,15 +51,13 @@ const PrivateRoute = ({
   }, [workspaceId, loadWorkspace, status, workspace]);
 
   const isAuthorizedByUser =
-    (isRoot() || isAllowed(allowedRoles)) && allowedRoute;
+    (isAllowed(allowedRoles) || isRoot()) && allowedRoute;
 
   return (
     <Route
       {...rest}
       render={props =>
-        workspace.status === WORKSPACE_STATUS.COMPLETE ? (
-          <Component {...props} />
-        ) : isAuthorizedByUser ? (
+        workspace.status === WORKSPACE_STATUS.COMPLETE || isAuthorizedByUser ? (
           <Component {...props} />
         ) : (
           <Redirect to={routes.error403} />
