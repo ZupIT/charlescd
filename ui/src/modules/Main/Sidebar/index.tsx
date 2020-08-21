@@ -35,6 +35,8 @@ import { ExpandClick } from './Types';
 import MenuItems from './MenuItems';
 import Styled from './styled';
 import { useWorkspaces } from 'modules/Settings/hooks';
+import ReactTooltip from 'react-tooltip';
+import { goTo } from 'core/utils/routes';
 
 interface Props {
   isExpanded: boolean;
@@ -100,6 +102,10 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
       </Styled.Dropdown>
     );
 
+  const redirectToDocumentation = () => {
+    goTo('https://docs.charlescd.io/v/v0.2.1/')
+  }
+
   return (
     <Styled.Nav data-testid="sidebar">
       <Styled.Logo name="charles" size="37px" onClick={() => handleClick()} />
@@ -117,6 +123,12 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
               {!menu && (workspace?.name || selectedWorkspace)}
             </Text.h5>
           )}
+        </Styled.Item>
+        <Styled.Item>
+          <Icon name="help" color="dark" size="15px" onClick={redirectToDocumentation}
+            data-tip data-for="docTooltip"
+          />
+          <ReactTooltip id='docTooltip'>Documentation</ReactTooltip>
         </Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />
