@@ -47,7 +47,7 @@ func compareResultWithMetricTreshhold(result float64, threshold float64, conditi
 }
 
 func getAllActiveMetrics(metrics []metricsgroup.Metric) []metricsgroup.Metric {
-	activeMetrics := []metricsgroup.Metric{}
+	var activeMetrics []metricsgroup.Metric
 	for _, metric := range metrics {
 		if metric.Status == metricsgroup.Active {
 			activeMetrics = append(activeMetrics, metric)
