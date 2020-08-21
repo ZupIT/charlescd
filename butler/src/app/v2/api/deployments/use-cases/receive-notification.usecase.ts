@@ -27,12 +27,16 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { ExecutionTypeEnum } from '../enums'
 import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
 import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
+import { Execution } from '../entity/execution.entity'
+import { ExecutionRepository } from '../repository/execution.repository'
 
 export class ReceiveNotificationUseCase {
 
   constructor(
     @InjectRepository(DeploymentRepositoryV2)
     private deploymentRepository: DeploymentRepositoryV2,
+    @InjectRepository(ExecutionRepository)
+    private executionRepository: ExecutionRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private mooveService: MooveService
   ) {}
@@ -50,6 +54,7 @@ export class ReceiveNotificationUseCase {
 
   private async handleDeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
+    const execution = await this.executionRepository.findOneOrFail({ deployment: deployment })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
 
     deployment.finishedAt = DateUtils.now()
@@ -59,7 +64,7 @@ export class ReceiveNotificationUseCase {
     })
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
-      deployment.status = DeploymentStatusEnum.SUCCEEDED
+      execution.status = DeploymentStatusEnum.SUCCEEDED
       deployment.active = true
       if (currentActiveDeployment) {
         currentActiveDeployment.active = false
@@ -67,7 +72,7 @@ export class ReceiveNotificationUseCase {
     }
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.FAILED) {
-      deployment.status = DeploymentStatusEnum.FAILED
+      execution.status = DeploymentStatusEnum.FAILED
       deployment.active = false
     }
 
@@ -75,8 +80,9 @@ export class ReceiveNotificationUseCase {
       if (currentActiveDeployment) {
         await this.deploymentRepository.save(currentActiveDeployment)
       }
+      const savedExecution = await this.executionRepository.save(execution)
       const savedDeployment = await this.deploymentRepository.save(deployment)
-      await this.notifyMooveAndUpdateDeployment(savedDeployment)
+      await this.notifyMooveAndUpdateDeployment(savedExecution)
       return await this.deploymentRepository.findOneOrFail(savedDeployment.id, { relations: ['components'] })
     }
     catch (error) {
@@ -90,13 +96,13 @@ export class ReceiveNotificationUseCase {
     }
   }
 
-  private async notifyMooveAndUpdateDeployment(deployment: DeploymentEntity): Promise<UpdateResult> {
-    const notificationStatus = deployment.status === DeploymentStatusEnum.SUCCEEDED ?
+  private async notifyMooveAndUpdateDeployment(execution: Execution): Promise<UpdateResult> {
+    const notificationStatus = execution.status === DeploymentStatusEnum.SUCCEEDED ?
       NotificationStatusEnum.SUCCEEDED :
       NotificationStatusEnum.FAILED
 
-    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
-    const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
+    const notificationResult = await this.sendMooveNotification(execution.id, notificationStatus, execution.deployment.callbackUrl, execution.deployment.circleId) // TODO incomingCircleId
+    const updatedDeployment = await this.executionRepository.updateDeployment(execution.id, notificationResult.status)
     return updatedDeployment
   }
 

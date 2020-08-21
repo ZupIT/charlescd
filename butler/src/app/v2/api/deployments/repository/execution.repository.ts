@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
+import { EntityRepository, Repository, UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { CdConfiguration, Component } from './'
+import { Execution } from '../entity/execution.entity'
 
-export interface Deployment {
-    id: string
+export type ReturningUpdate = { id: string, status: DeploymentStatusEnum, callback_url: string, circle_id: string }
 
-    authorId: string
+@EntityRepository(Execution)
+export class ExecutionRepository extends Repository<Execution> {
 
-    callbackUrl: string
-
-    createdAt: Date
-
-    // finishedAt: Date | null
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string | null
-
-    components?: Component[]
+  public async updateDeployment(id: string, status: number) : Promise<UpdateResult>{
+    if (status >= 200 && status < 300) {
+      return await this.update({ deploymentId: id }, { notificationStatus: 'SENT' })
+    } else {
+      return await this.update({ deploymentId: id }, { notificationStatus: 'ERROR' })
+    }
+  }
 }

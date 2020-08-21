@@ -16,11 +16,11 @@
 
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { ReadDeploymentDto } from '../dto/read-deployment.dto'
+import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
+import { Deployment } from '../interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
-import { Deployment } from '../interfaces'
-import { ReadDeploymentDto, ReadModuleDeploymentDto } from '../../../../v1/api/deployments/dto'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
@@ -34,14 +34,14 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
-  @Column({ name: 'status', nullable: false, type: 'varchar' })
-  public status!: DeploymentStatusEnum
+  // @Column({ name: 'status', nullable: false, type: 'varchar' })
+  // public status!: DeploymentStatusEnum
 
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
 
-  @Column({ name: 'finished_at' })
-  public finishedAt!: Date
+  // @Column({ name: 'finished_at' })
+  // public finishedAt!: Date
 
   @Column()
   public priority!: number
@@ -62,13 +62,12 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
-  @Column({ name: 'notification_status', type: 'varchar' })
-  public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
+  // @Column({ name: 'notification_status', type: 'varchar' })
+  // public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
 
   constructor(
     deploymentId: string,
     authorId: string,
-    status: DeploymentStatusEnum,
     circleId: string | null,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
@@ -76,7 +75,6 @@ export class DeploymentEntityV2 implements Deployment {
   ) {
     this.id = deploymentId
     this.authorId = authorId
-    this.status = status
     this.circleId = circleId
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
@@ -99,8 +97,7 @@ export class DeploymentEntityV2 implements Deployment {
       createdAt: this.createdAt,
       description: '',
       modulesDeployments: [this.componentsToModules()],
-      defaultCircle: false,
-      status: this.status
+      defaultCircle: false
     }
   }
 
@@ -114,8 +111,7 @@ export class DeploymentEntityV2 implements Deployment {
       createdAt: this.createdAt,
       description: '',
       modulesDeployments: [this.componentsToModules()],
-      defaultCircle: false,
-      status: this.status
+      defaultCircle: false
     }
   }
 
@@ -126,11 +122,9 @@ export class DeploymentEntityV2 implements Deployment {
       moduleId: 'dummy-module-id',
       helmRepository: this.components[0].helmUrl,
       createdAt: this.createdAt,
-      status: this.status,
       componentsDeployments: this.components.map(c => {
         return {
           id: c.id,
-          status: this.status,
           createdAt: this.createdAt,
           buildImageTag: c.imageTag,
           buildImageUrl: c.imageUrl,

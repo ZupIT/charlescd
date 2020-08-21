@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
-import { CdConfiguration, Component } from './'
+export class ReadCircleDeploymentDto {
 
-export interface Deployment {
-    id: string
+  public readonly headerValue: string
 
-    authorId: string
-
-    callbackUrl: string
-
-    createdAt: Date
-
-    // finishedAt: Date | null
-
-    cdConfiguration: CdConfiguration
-
-    circleId: string | null
-
-    components?: Component[]
+  constructor(
+    headerValue: string
+  ) {
+    this.headerValue = headerValue
+  }
 }

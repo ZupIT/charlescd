@@ -25,6 +25,10 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
         "type" Character Varying NOT NULL,
         "deployment_id" uuid NOT NULL,
         "incoming_circle_id" Character Varying,
+        "status" Character Varying DEFAULT 'CREATED' NOT NULL,
+        "notification_status" Character Varying DEFAULT 'NOT_SENT' NOT NULL,
+        "created_at" timestamp without time zone DEFAULT now() NOT NULL,
+        "finished_at" timestamp without time zone,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "unique_executions_id" UNIQUE( "id" ),
         CONSTRAINT "fk_v2executions_v2deployments" FOREIGN KEY ( "deployment_id" ) REFERENCES "public"."v2deployments" ( "id" )

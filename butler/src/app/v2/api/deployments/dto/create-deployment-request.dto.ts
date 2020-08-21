@@ -78,7 +78,6 @@ export class CreateDeploymentRequestDto {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      DeploymentStatusEnum.CREATED,
       this.circle ? this.circle.headerValue : null,
       this.cdConfiguration,
       this.callbackUrl,
@@ -90,7 +89,6 @@ export class CreateDeploymentRequestDto {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      DeploymentStatusEnum.CREATED,
       null,
       this.cdConfiguration,
       this.callbackUrl,

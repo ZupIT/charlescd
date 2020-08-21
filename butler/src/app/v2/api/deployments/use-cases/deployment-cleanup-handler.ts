@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
-import { UpdateResult } from 'typeorm'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { MooveService } from '../../../../v1/core/integrations/moove'
 import { DeploymentRepositoryV2, ReturningUpdate } from '../repository/deployment.repository'
+import { ExecutionRepository } from '../repository/execution.repository'
 
 interface UpdateResultReturning {
   id: string,
@@ -19,6 +19,8 @@ export class DeploymentCleanupHandler {
   constructor(
     @InjectRepository(DeploymentRepositoryV2)
     private deploymentsRepository: DeploymentRepositoryV2,
+    @InjectRepository(ExecutionRepository)
+    private executionRepository: ExecutionRepository,
     private mooveService: MooveService,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private envConfiguration: IEnvConfiguration,
@@ -29,7 +31,7 @@ export class DeploymentCleanupHandler {
     if (updatedDeployments) {
       for (const row of updatedDeployments) {
         const result = await this.notifyMoove(row.id, row.status, row.callback_url, row.circle_id) // TODO incomingCircleId
-        await this.deploymentsRepository.updateDeployment(row.id, result.status)
+        await this.executionRepository.updateDeployment(row.id, result.status)
       }
     }
     job.done()

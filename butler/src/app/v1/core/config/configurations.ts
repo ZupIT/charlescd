@@ -27,7 +27,7 @@ export const Configuration: IEnvConfiguration = {
 
   postgresPass: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
 
-  postgresDbName: 'butlerv2' || ConfigurationConstants.DATABASE_DB_NAME, // TODO change this
+  postgresDbName: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME, // TODO change this
 
   postgresSSL: (process.env.DATABASE_SSL === 'true') || ConfigurationConstants.DATABASE_SSL,
 
@@ -57,7 +57,7 @@ export const Configuration: IEnvConfiguration = {
 
   pgBossConfig: {
     host: process.env.DATABASE_HOST || ConfigurationConstants.DATABASE_HOST,
-    database: 'butlerv2' || ConfigurationConstants.DATABASE_DB_NAME, // TODO change this
+    database: process.env.DATABASE_NAME || ConfigurationConstants.DATABASE_DB_NAME, // TODO change this
     user: process.env.DATABASE_USER || ConfigurationConstants.DATABASE_USER,
     password: process.env.DATABASE_PASS || ConfigurationConstants.DATABASE_DB_PASS,
     max: 5,

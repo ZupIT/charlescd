@@ -22,8 +22,8 @@ import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
-import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
+import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
