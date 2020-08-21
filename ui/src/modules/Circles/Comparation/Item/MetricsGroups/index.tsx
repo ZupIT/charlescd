@@ -24,6 +24,9 @@ interface Props {
   onGoBack: Function;
 }
 
+// X-cicle-id = b2ccc0c5-464c-4192-a472-b90394766191
+//compass
+
 const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [showAddMetricForm, setShowAddMetricForm] = useState(true);
 

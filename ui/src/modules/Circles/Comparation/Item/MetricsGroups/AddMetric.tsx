@@ -24,7 +24,7 @@ import { thresholdOptions } from './constants';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { Metric } from './interface';
+import { Metric } from './types';
 
 interface Props {
   id: string;

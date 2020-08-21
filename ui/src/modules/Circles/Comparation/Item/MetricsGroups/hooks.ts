@@ -28,8 +28,12 @@ import {
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
-import { MetricsGroups, MetricsGroupsResume, Metric } from './interface';
-import { DataSource } from './types';
+import {
+  MetricsGroups,
+  MetricsGroupsResume,
+  Metric,
+  DataSource
+} from './types';
 
 export const useMetricsGroupsResume = (): {
   getMetricsgroupsResume: Function;
