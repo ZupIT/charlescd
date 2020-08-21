@@ -125,7 +125,7 @@ const MetricsGroupsContentText = styled(Text.h5)`
 
 const MetricsGroupsFooter = styled.div`
   display: flex;
-  justify-content: right;
+  justify-content: flex-end;
   padding-bottom: 15px;
   padding-right: 15px;
 

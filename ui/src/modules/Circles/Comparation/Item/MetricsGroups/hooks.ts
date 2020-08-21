@@ -25,7 +25,8 @@ import {
   getMetricsGroupsResumeById,
   getAllMetricsProviders,
   saveMetric as saveMetricRequest,
-  getAllDataSourceMetrics as getAllDataSourceMetricsRequest
+  getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
+  saveMetricGroup
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import {
@@ -44,7 +45,7 @@ export const useMetricsGroupsResume = (): {
     getMetricsGroupsResumeById
   );
   const status = useFetchStatus();
-  const [resume, setResume] = useState(null);
+  const [resume, setResume] = useState([]);
 
   const getMetricsgroupsResume = useCallback(
     async (payload: URLParams) => {
@@ -80,7 +81,7 @@ export const useMetricsGroups = (): {
     getAllMetricsGroupsById
   );
   const status = useFetchStatus();
-  const [metricsGroups, setMetricsGroups] = useState(null);
+  const [metricsGroups, setMetricsGroups] = useState([]);
 
   const getMetricsGroups = useCallback(
     async (circleId: string) => {
@@ -190,6 +191,37 @@ export const useProviderMetrics = () => {
   return {
     getAllDataSourceMetrics,
     dataSourceMetrics,
+    status
+  };
+};
+
+export const useCreateMetricsGroup = () => {
+  const createMetricsGroupPayload = useFetchData<MetricsGroups>(
+    saveMetricGroup
+  );
+  const status = useFetchStatus();
+
+  const createMetricsGroup = useCallback(
+    async (name: string, circleId: string) => {
+      try {
+        status.pending();
+        const createdMetricsGroupResponse = await createMetricsGroupPayload({
+          name,
+          circleId
+        });
+
+        status.resolved();
+
+        return createdMetricsGroupResponse;
+      } catch (e) {
+        status.rejected();
+      }
+    },
+    [createMetricsGroupPayload, status]
+  );
+
+  return {
+    createMetricsGroup,
     status
   };
 };

@@ -23,11 +23,11 @@ export type MetricsGroupsResume = {
 };
 
 export type MetricsGroups = {
-  id: string;
-  createdAt: string;
+  id?: string;
+  createdAt?: string;
   name: string;
-  metrics: Metric[];
-  status: string;
+  metrics?: Metric[];
+  status?: string;
   circleId: string;
 };
 
