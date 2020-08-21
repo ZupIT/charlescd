@@ -179,9 +179,44 @@ const MetricsGroupsCardHeader = styled.div`
 
 const MetricsGroupsCardContent = styled.div``;
 
-const MetricCard = styled.div`
+const MetricCardTableHead = styled.div`
   display: flex;
+  justify-content: space-between;
+
+  span {
+    margin: 0 145px 10px 10px;
+  }
+`;
+
+const MetricCardBody = styled.div`
   background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  height: 40px;
+`;
+
+const MetricDropdown = styled.div`
+  margin-right: 10px;
+`;
+
+const MetricNickname = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 260px;
+  margin-left: 10px;
+`;
+
+const MetricConditionThreshold = styled.div`
+  display: flex;
+  margin-right: 120px;
+
+  span {
+    margin-right: 5px;
+  }
 `;
 
 export default {
@@ -208,6 +243,10 @@ export default {
   MetricsGroupsCard,
   MetricsGroupsCardHeader,
   MetricsGroupsCardContent,
-  MetricCard,
+  MetricCardTableHead,
+  MetricCardBody,
+  MetricConditionThreshold,
+  MetricNickname,
+  MetricDropdown,
   TrashIcon
 };
