@@ -5,11 +5,12 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
+	"compass/internal/util"
+
 	utils "compass/internal/util"
 	"compass/pkg/logger"
 	v1 "compass/web/api/v1"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -35,7 +36,7 @@ func main() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		log.Fatalf("failed to connect database: %s", err)
+		util.Fatal("Failed to connect database", err)
 	}
 	defer db.Close()
 
@@ -47,7 +48,7 @@ func main() {
 
 	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
 	if err != nil {
-		log.Fatal(err)
+		util.Fatal("", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -55,11 +56,11 @@ func main() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		log.Fatal(err)
+		util.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal(err)
+		util.Fatal("", err)
 	}
 
 	if utils.IsDeveloperRunning() {
@@ -73,7 +74,7 @@ func main() {
 
 	_, err = strconv.Atoi(configuration.GetConfiguration("TIMEOUT"))
 	if err != nil {
-		log.Fatal(err)
+		util.Fatal("", err)
 	}
 
 	// go dispatcher.Start()

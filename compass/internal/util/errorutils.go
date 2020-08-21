@@ -1,10 +1,5 @@
 package util
 
-import (
-	log "github.com/sirupsen/logrus"
-	"time"
-)
-
 const (
 	GeneralParseError = "PARSE_ERROR"
 	PluginLookupError = "PLUGIN_LOOKUP_ERROR"
@@ -51,30 +46,3 @@ const (
 const (
 	ResultByGroupMetricError = "RESULT_BY_GROUP_METRIC_ERROR"
 )
-
-func Info(msg string, data interface{}) {
-	infoLogger := log.WithFields(log.Fields{
-		"Message": msg,
-		"Data":    data,
-	})
-	log.Info(infoLogger)
-}
-
-func Error(msg string, functionName string, err error, data interface{}) {
-	errorLogger := log.WithFields(log.Fields{
-		"Message":      msg,
-		"Error":        err,
-		"FunctionName": functionName,
-		"Data":         data,
-	}).WithTime(time.Now())
-	log.Error(errorLogger)
-}
-func Panic(msg string, functionName string, err error, data interface{}) {
-	panicLogger := log.WithFields(log.Fields{
-		"Message":      msg,
-		"Error":        err,
-		"FunctionName": functionName,
-		"Data":         data,
-	}).WithTime(time.Now())
-	log.Panic(panicLogger)
-}
