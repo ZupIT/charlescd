@@ -41,22 +41,46 @@ class RetrieveDeploymentsMetricsInteractorImpl(
 
         val deploymentsStats = deploymentRepository
             .countBetweenTodayAndDaysPastGroupingByStatusAndCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
+
+        val deploymentsStatsGroupedByEnum = deploymentsStats
             .groupBy { it.deploymentStatus }
 
-        var successDeploymentsInPeriod = deploymentsStats[DeploymentStatusEnum.DEPLOYED]
+        val deploymentsDates = deploymentsStats
+            .map { it.date }
+
+        var successDeploymentsInPeriod = deploymentsStatsGroupedByEnum[DeploymentStatusEnum.DEPLOYED]
         if (!successDeploymentsInPeriod.isNullOrEmpty() && successDeploymentsInPeriod.size <= period.numberOfDays) {
             successDeploymentsInPeriod = fillDeploymentsWithZeroedValues(successDeploymentsInPeriod, period, DeploymentStatusEnum.DEPLOYED)
+        } else if (successDeploymentsInPeriod.isNullOrEmpty() && deploymentsDates.isNotEmpty()) {
+
+            successDeploymentsInPeriod = fillDeploymentsWithZeroedValues(
+                deploymentsDates.map { DeploymentStats(total = 0, deploymentStatus = DeploymentStatusEnum.DEPLOYED, date = it) },
+                period,
+                DeploymentStatusEnum.DEPLOYED
+            )
         }
 
-        var failedDeploymentsInPeriod = deploymentsStats[DeploymentStatusEnum.DEPLOY_FAILED]
+        var failedDeploymentsInPeriod = deploymentsStatsGroupedByEnum[DeploymentStatusEnum.DEPLOY_FAILED]
         if (!failedDeploymentsInPeriod.isNullOrEmpty() && failedDeploymentsInPeriod.size <= period.numberOfDays) {
             failedDeploymentsInPeriod = fillDeploymentsWithZeroedValues(failedDeploymentsInPeriod, period, DeploymentStatusEnum.DEPLOY_FAILED)
+        } else if (failedDeploymentsInPeriod.isNullOrEmpty() && deploymentsDates.isNotEmpty()) {
+
+            failedDeploymentsInPeriod = fillDeploymentsWithZeroedValues(
+                deploymentsDates.map { DeploymentStats(total = 0, deploymentStatus = DeploymentStatusEnum.DEPLOY_FAILED, date = it) },
+                period,
+                DeploymentStatusEnum.DEPLOY_FAILED
+            )
         }
 
         var deploymentsAverageTime = deploymentRepository
             .averageDeployTimeBetweenTodayAndDaysPastGroupingByCreationDate(workspaceId, circlesIds ?: emptyList(), period.numberOfDays)
         if (deploymentsAverageTime.isNotEmpty() && deploymentsAverageTime.size <= period.numberOfDays) {
             deploymentsAverageTime = fillDeploymentsAverageTimeWithZeroesdValues(deploymentsAverageTime, period)
+        } else if (deploymentsAverageTime.isEmpty() && deploymentsDates.isNotEmpty()) {
+
+            deploymentsAverageTime = fillDeploymentsAverageTimeWithZeroesdValues(
+                deploymentsDates.map { DeploymentAverageTimeStats(Duration.ZERO, it) }, period
+            )
         }
 
         return DeploymentMetricsRepresentation.from(

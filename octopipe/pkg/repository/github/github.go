@@ -17,11 +17,13 @@
 package github
 
 import (
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
@@ -32,13 +34,19 @@ type GithubRepository struct {
 	Token string `json:"token"`
 }
 
-func NewGithubRepository(repository GithubRepository) GithubRepository {
-	return repository
+func NewGithubRepository(url, token string) GithubRepository {
+	return GithubRepository{url, token}
 }
 
 func (githubRepository GithubRepository) GetTemplateAndValueByName(name string) (string, string, error) {
 	var responseMap map[string]interface{}
-	client := &http.Client{}
+	skipTLS, errParse := strconv.ParseBool(os.Getenv("SKIP_GIT_HTTPS_VALIDATION"))
+	if errParse != nil {
+		log.WithFields(log.Fields{"function": "GetTemplateAndValueByName"}).Info("SKIP_GIT_HTTPS_VALIDATION invalid, valid options (1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)")
+	}
+	customTransport := http.DefaultTransport.(*http.Transport).Clone()
+	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: skipTLS}
+	client := &http.Client{Transport: customTransport}
 	filesData := []string{}
 
 	for _, fileName := range githubRepository.getDefaultFileNamesByName(name) {
