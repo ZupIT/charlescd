@@ -205,7 +205,7 @@ func (main Main) FindActiveMetricGroups() ([]MetricsGroup, error) {
 
 func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error) {
 	var metricsGroups []MetricsGroup
-	db := main.db.Preload("Metrics").Where("circle_id = ?", circleId).Find(&metricsGroups)
+	db := main.db.Set("gorm:auto_preload", true).Where("circle_id = ?", circleId).Find(&metricsGroups)
 	if db.Error != nil {
 		util.Error(util.FindMetricsGroupError, "FindCircleMetricGroups", db.Error, "CircleId= "+circleId)
 		return []MetricsGroup{}, db.Error
