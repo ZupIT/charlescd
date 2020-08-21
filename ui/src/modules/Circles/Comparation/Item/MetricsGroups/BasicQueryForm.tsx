@@ -26,33 +26,35 @@ const BasicQueryForm = ({ metrics }: Props) => {
         options={metrics}
       />
       {fields.map((item, index) => (
-        <StyledRule.Rule data-testid="segments-rules" key={item.id}>
-          <StyledRule.RuleTrash>
-            <StyledRule.Button.Icon
-              name="trash"
-              size="15px"
-              color="light"
-              onClick={() => remove(index)}
+        <Styled.RuleWrapper key={item.id}>
+          <StyledRule.Rule data-testid="segments-rules">
+            <StyledRule.RuleTrash>
+              <StyledRule.Button.Icon
+                name="trash"
+                size="15px"
+                color="light"
+                onClick={() => remove(index)}
+              />
+            </StyledRule.RuleTrash>
+            <StyledRule.Input
+              label="Filter"
+              ref={register({ required: true })}
+              name={`filters.${index}.field`}
             />
-          </StyledRule.RuleTrash>
-          <StyledRule.Input
-            label="Filter"
-            ref={register({ required: true })}
-            name={`filters.${index}.field`}
-          />
-          <StyledRule.Select
-            options={thresholdOptions}
-            control={control}
-            rules={{ required: true }}
-            label="Conditional"
-            name={`filters.${index}.condition`}
-          />
-          <StyledRule.Input
-            label="Value"
-            ref={register}
-            name={`filters.${index}.value`}
-          />
-        </StyledRule.Rule>
+            <StyledRule.Select
+              options={thresholdOptions}
+              control={control}
+              rules={{ required: true }}
+              label="Conditional"
+              name={`filters.${index}.condition`}
+            />
+            <StyledRule.Input
+              label="Value"
+              ref={register}
+              name={`filters.${index}.value`}
+            />
+          </StyledRule.Rule>
+        </Styled.RuleWrapper>
       ))}
       <StyledRule.Button.Clause
         id="add-clause"

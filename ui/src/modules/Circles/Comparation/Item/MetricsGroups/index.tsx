@@ -38,7 +38,7 @@ interface Props {
 //compass
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {
-  const [showAddMetricForm, setShowAddMetricForm] = useState(false);
+  const [showAddMetricForm, setShowAddMetricForm] = useState(true);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
   const {
@@ -186,7 +186,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Styled.Layer>
     </>
   ) : (
-    <AddMetric onGoBack={handleGoBack} id={activeMetricsGroup.id} />
+    <AddMetric
+      onGoBack={handleGoBack}
+      id="11151f52-7f03-4ffa-9c80-b89515d37021"
+    />
   );
 };
 
