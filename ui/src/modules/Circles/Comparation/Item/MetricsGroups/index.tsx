@@ -119,6 +119,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
           </Text.h5>
           <Text.h5 color="light">{metric.threshold}</Text.h5>
         </Styled.MetricConditionThreshold>
+        <Styled.MetricConditionLastValue color="light">
+          {isEmpty(metric.lastValue) ? 0 : metric.lastValue}
+        </Styled.MetricConditionLastValue>
         <Styled.MetricDropdown>
           <Dropdown icon="vertical-dots" size="16px">
             <Dropdown.Item
@@ -159,6 +162,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>
+              <Text.h5 color="dark">Last Value</Text.h5>
             </Styled.MetricCardTableHead>
             {renderMetrics(metricGroup.metrics, metricGroup.id)}
           </Styled.MetricsGroupsCardContent>
