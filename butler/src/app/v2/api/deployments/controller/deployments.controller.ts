@@ -59,8 +59,7 @@ export class DeploymentsController {
   public async receiveNotification(
     @Param('id') deploymentId: string,
     @Body() deploymentNotification: DeploymentNotificationRequestDto,
-    @Headers('x-circle-id') incomingCircleId: string | null
   ): Promise<DeploymentEntity> {
-    return this.receiveNotificationUseCase.execute(deploymentId, deploymentNotification, incomingCircleId)
+    return this.receiveNotificationUseCase.execute(deploymentId, deploymentNotification)
   }
 }

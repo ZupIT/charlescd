@@ -37,28 +37,18 @@ export class ReceiveNotificationUseCase {
     private mooveService: MooveService
   ) {}
 
-  public async execute(
-    deploymentId: string,
-    deploymentNotificationDto: DeploymentNotificationRequestDto,
-    incomingCircleId: string | null
-  ): Promise<DeploymentEntity>{
-
+  public async execute(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity>{
     switch (deploymentNotificationDto.type) {
       case ExecutionTypeEnum.DEPLOYMENT:
-        return await this.handleDeploymentNotification(deploymentId, deploymentNotificationDto, incomingCircleId)
+        return await this.handleDeploymentNotification(deploymentId, deploymentNotificationDto)
       case ExecutionTypeEnum.UNDEPLOYMENT:
-        return await this.handleUndeploymentNotification(deploymentId, deploymentNotificationDto, incomingCircleId)
+        return await this.handleUndeploymentNotification(deploymentId, deploymentNotificationDto)
       default:
         throw new Error('Invalid Execution Type')
     }
   }
 
-  private async handleDeploymentNotification(
-    deploymentId: string,
-    deploymentNotificationDto: DeploymentNotificationRequestDto,
-    incomingCircleId: string | null
-  ): Promise<DeploymentEntity> {
-
+  private async handleDeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
 
@@ -86,7 +76,7 @@ export class ReceiveNotificationUseCase {
         await this.deploymentRepository.save(currentActiveDeployment)
       }
       const savedDeployment = await this.deploymentRepository.save(deployment)
-      await this.notifyMooveAndUpdateDeployment(savedDeployment, incomingCircleId)
+      await this.notifyMooveAndUpdateDeployment(savedDeployment)
       return await this.deploymentRepository.findOneOrFail(savedDeployment.id, { relations: ['components'] })
     }
     catch (error) {
@@ -100,34 +90,26 @@ export class ReceiveNotificationUseCase {
     }
   }
 
-  private async notifyMooveAndUpdateDeployment(
-    deployment: DeploymentEntity,
-    incomingCircleId: string | null
-  ): Promise<UpdateResult> {
-
+  private async notifyMooveAndUpdateDeployment(deployment: DeploymentEntity): Promise<UpdateResult> {
     const notificationStatus = deployment.status === DeploymentStatusEnum.SUCCEEDED ?
       NotificationStatusEnum.SUCCEEDED :
       NotificationStatusEnum.FAILED
 
-    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, incomingCircleId)
-    return await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
+    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
+    const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
+    return updatedDeployment
   }
 
-  private async sendMooveNotification(deploymentId: string, status: string, callbackUrl: string, incomingCircleId: string | null) {
+  private async sendMooveNotification(deploymentId: string, status: string, callbackUrl: string, circleId: string | null) {
     return await this.mooveService.notifyDeploymentStatusV2(
       deploymentId,
       status,
       callbackUrl,
-      incomingCircleId
+      circleId
     )
   }
 
-  private async handleUndeploymentNotification(
-    deploymentId: string,
-    deploymentNotificationDto: DeploymentNotificationRequestDto,
-    incomingCircleId: string | null
-  ): Promise<DeploymentEntity> {
-
+  private async handleUndeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
     const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
     deployment.components = deployment.components.map(c => {
       c.running = false
@@ -144,7 +126,7 @@ export class ReceiveNotificationUseCase {
         NotificationStatusEnum.UNDEPLOY_FAILED
 
       const updatedDeployment = await this.deploymentRepository.save(deployment)
-      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, incomingCircleId)
+      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
       return updatedDeployment
     }
     catch (error) {
