@@ -130,7 +130,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(firstDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
+    await notificationUseCase.execute(firstDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT }, 'incoming-circle')
     await deploymentHandler.run(secondJob)
 
     const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
@@ -138,7 +138,7 @@ describe('DeploymentHandler', () => {
     expect(secondHandled.components.map(c => c.running)).toEqual([true])
     expect(firstHandled.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(secondDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
+    await notificationUseCase.execute(secondDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT }, 'incoming-circle')
 
     const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
     const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
