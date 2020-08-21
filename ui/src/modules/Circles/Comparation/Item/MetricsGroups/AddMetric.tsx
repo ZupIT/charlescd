@@ -23,20 +23,31 @@ import AceEditorForm from 'core/components/Form/AceEditor';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
 import { Metric } from './types';
-import { normalizeMetricOptions } from './helpers';
+import {
+  normalizeMetricOptions,
+  getCondition,
+  getDataSourceDefaultValue
+} from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
+import isEmpty from 'lodash/isEmpty';
 
 type Props = {
   id: string;
   onGoBack: Function;
+  metric?: Metric;
 };
 
-const AddMetric = ({ onGoBack, id }: Props) => {
+const AddMetric = ({ onGoBack, id, metric }: Props) => {
+  console.log(metric);
+
   const formMethods = useForm<Metric>({
     mode: 'onChange',
-    defaultValues: defaultFilterValues
+    defaultValues: {
+      ...metric,
+      filters: isEmpty(metric?.filters) ? defaultFilterValues : metric.filters
+    }
   });
   const {
     handleSubmit,
@@ -46,6 +57,7 @@ const AddMetric = ({ onGoBack, id }: Props) => {
   } = formMethods;
   const [isBasicQuery, setIsBasicQuery] = useState(true);
   const { getMetricsProviders } = useMetricProviders();
+  const [loadingProviders, setLoadingProviders] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
   const { saveMetric, status: creatingStatus } = useSaveMetric();
   const [providerOptions, setProviderOptions] = useState<Option[]>();
@@ -53,10 +65,21 @@ const AddMetric = ({ onGoBack, id }: Props) => {
   const [selectedProvider, setSelectedProvider] = useState<Option>();
 
   useEffect(() => {
-    getMetricsProviders().then(providersResponse => {
-      const normalizedOptions = normalizeSelectOptions(providersResponse);
-      setProviderOptions(normalizedOptions);
-    });
+    if (metric) {
+      setIsBasicQuery(!isEmpty(metric?.filters));
+    } else {
+      setIsBasicQuery(true);
+    }
+  }, [metric]);
+
+  useEffect(() => {
+    setLoadingProviders(true);
+    getMetricsProviders()
+      .then(providersResponse => {
+        const normalizedOptions = normalizeSelectOptions(providersResponse);
+        setProviderOptions(normalizedOptions);
+      })
+      .finally(() => setLoadingProviders(false));
   }, [getMetricsProviders]);
 
   useEffect(() => {
@@ -69,8 +92,7 @@ const AddMetric = ({ onGoBack, id }: Props) => {
   }, [isBasicQuery, selectedProvider, getAllDataSourceMetrics]);
 
   const onSubmit = async (data: Metric) => {
-    const query = data.query ?? 'x';
-    const payload = { ...data, query, threshold: Number(data.threshold) };
+    const payload = { ...data, threshold: Number(data.threshold) };
     await saveMetric(id, payload);
     onGoBack();
   };
@@ -99,81 +121,94 @@ const AddMetric = ({ onGoBack, id }: Props) => {
               label="Type a nickname for metric"
             />
 
-            <Styled.ProviderSelect
-              control={control}
-              name="dataSourceId"
-              label="Select a type server"
-              options={providerOptions}
-              onChange={option => setSelectedProvider(option)}
-              rules={{ required: true }}
-            />
-            <Text.h5 color="dark">
-              You can fill your query in a basic or advanced way:
-            </Text.h5>
-            <Styled.Actions>
-              <Styled.ButtonIconRounded
-                color="dark"
-                onClick={() => setIsBasicQuery(true)}
-                isActive={isBasicQuery}
-              >
-                Basic
-              </Styled.ButtonIconRounded>
-              <Styled.ButtonIconRounded
-                color="dark"
-                onClick={() => setIsBasicQuery(false)}
-                isActive={!isBasicQuery}
-              >
-                Advanced
-              </Styled.ButtonIconRounded>
-            </Styled.Actions>
-
-            {isBasicQuery && <BasicQueryForm metrics={metrics} />}
-
-            {!isBasicQuery && (
+            {!loadingProviders && (
+              <Styled.ProviderSelect
+                control={control}
+                name="dataSourceId"
+                label="Select a type server"
+                options={providerOptions}
+                onChange={option => setSelectedProvider(option)}
+                rules={{ required: true }}
+                defaultValue={getDataSourceDefaultValue(
+                  metric?.dataSourceId,
+                  providerOptions
+                )}
+              />
+            )}
+            {true && (
               <>
-                <Text.h5 color="dark">Type a query:</Text.h5>
+                <Text.h5 color="dark">
+                  You can fill your query in a basic or advanced way:
+                </Text.h5>
+                <Styled.Actions>
+                  <Styled.ButtonIconRounded
+                    color="dark"
+                    onClick={() => setIsBasicQuery(true)}
+                    isActive={isBasicQuery}
+                  >
+                    Basic
+                  </Styled.ButtonIconRounded>
+                  <Styled.ButtonIconRounded
+                    color="dark"
+                    onClick={() => setIsBasicQuery(false)}
+                    isActive={!isBasicQuery}
+                  >
+                    Advanced
+                  </Styled.ButtonIconRounded>
+                </Styled.Actions>
 
-                <Styled.AceEditorWrapper>
-                  <AceEditorForm
-                    height="50px"
-                    mode="json"
-                    name="query"
+                {isBasicQuery && (
+                  <BasicQueryForm filters={metric?.filters} metrics={metrics} />
+                )}
+
+                {!isBasicQuery && (
+                  <>
+                    <Text.h5 color="dark">Type a query:</Text.h5>
+
+                    <Styled.AceEditorWrapper>
+                      <AceEditorForm
+                        height="50px"
+                        mode="json"
+                        name="query"
+                        control={control}
+                        rules={{ required: true }}
+                      />
+                    </Styled.AceEditorWrapper>
+                  </>
+                )}
+
+                <Styled.Title color="light">Threshold</Styled.Title>
+                <Styled.Subtitle color="dark">
+                  Set the threshold to indicate when to reach the configured
+                  numeric value.
+                </Styled.Subtitle>
+
+                <Styled.ThresholdWrapper>
+                  <Styled.ThresholdSelect
+                    options={thresholdOptions}
                     control={control}
                     rules={{ required: true }}
+                    label="Conditional"
+                    name="condition"
+                    defaultValue={getCondition(metric?.condition)}
                   />
-                </Styled.AceEditorWrapper>
+
+                  <Styled.InputNumber
+                    name="threshold"
+                    label="Threshold"
+                    ref={register({ required: true })}
+                  />
+                </Styled.ThresholdWrapper>
+
+                <Button
+                  type="submit"
+                  isLoading={creatingStatus.isPending}
+                  isDisabled={!isValid}
+                >
+                  Save
+                </Button>
               </>
             )}
-
-            <Styled.Title color="light">Threshold</Styled.Title>
-            <Styled.Subtitle color="dark">
-              Set the threshold to indicate when to reach the configured numeric
-              value.
-            </Styled.Subtitle>
-
-            <Styled.ThresholdWrapper>
-              <Styled.ThresholdSelect
-                options={thresholdOptions}
-                control={control}
-                rules={{ required: true }}
-                label="Conditional"
-                name="condition"
-              />
-
-              <Styled.InputNumber
-                name="threshold"
-                label="Threshold"
-                ref={register({ required: true })}
-              />
-            </Styled.ThresholdWrapper>
-
-            <Button
-              type="submit"
-              isLoading={creatingStatus.isPending}
-              isDisabled={!isValid}
-            >
-              Save
-            </Button>
           </Styled.Layer>
         </Styled.Form>
       </FormContext>

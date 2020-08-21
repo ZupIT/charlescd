@@ -5,12 +5,15 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import StyledRule from 'modules/Circles/Segments/styled';
 import { thresholdOptions, FILTER } from './constants';
 import Icon from 'core/components/Icon';
+import { getCondition } from './helpers';
+import { MetricFilter } from './types';
 
 type Props = {
   metrics: Option[];
+  filters: MetricFilter[];
 };
 
-const BasicQueryForm = ({ metrics }: Props) => {
+const BasicQueryForm = ({ metrics, filters }: Props) => {
   const { register, control } = useFormContext();
   const { fields, remove, append } = useFieldArray({
     control,
@@ -46,7 +49,8 @@ const BasicQueryForm = ({ metrics }: Props) => {
               control={control}
               rules={{ required: true }}
               label="Conditional"
-              name={`filters.${index}.condition`}
+              name={`filters.${index}.operator`}
+              defaultValue={getCondition(filters?.[index]?.operator)}
             />
             <StyledRule.Input
               label="Value"

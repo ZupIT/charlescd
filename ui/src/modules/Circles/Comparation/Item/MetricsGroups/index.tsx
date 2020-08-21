@@ -36,9 +36,10 @@ interface Props {
 }
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {
-  const [showAddMetricForm, setShowAddMetricForm] = useState(true);
+  const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
+  const [activeMetric, setActiveMetric] = useState<Metric>();
   const {
     createMetricsGroup,
     status: statusCreating
@@ -81,7 +82,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const handleGoBack = () => {
     setShowAddMetricForm(false);
+    setActiveMetric(null);
     getMetricsGroups(id);
+  };
+
+  const handleEditMetric = (metric: Metric) => {
+    setShowAddMetricForm(true);
+    setActiveMetric(metric);
   };
 
   const renderModal = () =>
@@ -124,7 +131,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Dropdown.Item
               icon="edit"
               name="Edit metric"
-              onClick={() => console.log('edit metric')}
+              onClick={() => handleEditMetric(metric)}
             />
             <Dropdown.Item
               icon="delete"
@@ -192,7 +199,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   ) : (
     <AddMetric
       onGoBack={handleGoBack}
-      id="11151f52-7f03-4ffa-9c80-b89515d37021"
+      id={activeMetricsGroup?.id}
+      metric={activeMetric}
     />
   );
 };
