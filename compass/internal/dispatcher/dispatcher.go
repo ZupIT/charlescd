@@ -2,8 +2,8 @@ package dispatcher
 
 import (
 	"compass/internal/metricsgroup"
+	"compass/internal/util"
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -21,9 +21,8 @@ func NewDispatcher(metricsgroup metricsgroup.UseCases) UseCases {
 
 func (dispatcher Dispatcher) dispatch() {
 	groups, err := dispatcher.metricsGroups.FindActiveMetricGroups()
-
 	if err != nil {
-		log.Panic("Cannot find active metric groups")
+		util.Panic("Cannot find active metric groups", "Dispatch", err, nil)
 	}
 
 	for _, group := range groups {
@@ -60,7 +59,7 @@ func getAllActiveMetrics(metrics []metricsgroup.Metric) []metricsgroup.Metric {
 func (dispatcher Dispatcher) getMetricResult(group metricsgroup.MetricsGroup) {
 	metricResults, err := dispatcher.metricsGroups.ResultByGroup(group)
 	if err != nil {
-		fmt.Println(err)
+		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, group)
 		return
 	}
 

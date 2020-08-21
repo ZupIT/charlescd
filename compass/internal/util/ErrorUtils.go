@@ -48,11 +48,17 @@ const (
 	RemovePluginError  = "REMOVE_PLUGIN_ERROR"
 )
 
-//
-//func (logger Logger) Info(msg string, functionName string, data interface{}, keysAndValues ...interface{}) {
-//	keysAndValues = append(keysAndValues, "functionName", functionName, "data", data)
-//	logger.logProvider.Infow(msg, keysAndValues...)
-//}
+const (
+	ResultByGroupMetricError = "RESULT_BY_GROUP_METRIC_ERROR"
+)
+
+func Info(msg string, data interface{}) {
+	infoLogger := log.WithFields(log.Fields{
+		"Message": msg,
+		"Data":    data,
+	})
+	log.Info(infoLogger)
+}
 
 func Error(msg string, functionName string, err error, data interface{}) {
 	errorLogger := log.WithFields(log.Fields{
@@ -62,4 +68,13 @@ func Error(msg string, functionName string, err error, data interface{}) {
 		"Data":         data,
 	}).WithTime(time.Now())
 	log.Error(errorLogger)
+}
+func Panic(msg string, functionName string, err error, data interface{}) {
+	panicLogger := log.WithFields(log.Fields{
+		"Message":      msg,
+		"Error":        err,
+		"FunctionName": functionName,
+		"Data":         data,
+	}).WithTime(time.Now())
+	log.Panic(panicLogger)
 }
