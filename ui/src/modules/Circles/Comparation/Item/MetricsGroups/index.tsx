@@ -24,7 +24,8 @@ import { Metric, MetricsGroup } from './types';
 import {
   useCreateMetricsGroup,
   useMetricsGroups,
-  useDeleteMetricsGroup
+  useDeleteMetricsGroup,
+  useDeleteMetric
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
@@ -33,9 +34,6 @@ interface Props {
   id: string;
   onGoBack: Function;
 }
-
-// X-cicle-id = b2ccc0c5-464c-4192-a472-b90394766191
-//compass
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [showAddMetricForm, setShowAddMetricForm] = useState(true);
@@ -46,6 +44,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     status: statusCreating
   } = useCreateMetricsGroup();
   const { deleteMetricsGroup } = useDeleteMetricsGroup();
+  const { deleteMetric } = useDeleteMetric();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
   const {
     register,
@@ -72,6 +71,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const handleDeleteMetricsGroup = (metricGroupId: string) => {
     deleteMetricsGroup(metricGroupId);
+    getMetricsGroups(id);
+  };
+
+  const handleDeleteMetric = (metricGroupId: string, metricId: string) => {
+    deleteMetric(metricGroupId, metricId);
     getMetricsGroups(id);
   };
 
@@ -103,7 +107,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Modal.Default>
     );
 
-  const renderMetrics = (metrics: Metric[]) =>
+  const renderMetrics = (metrics: Metric[], metricsGroupId: string) =>
     metrics.map(metric => (
       <Styled.MetricCardBody key={metric.id}>
         <Styled.MetricNickname color="light">
@@ -120,12 +124,12 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Dropdown.Item
               icon="edit"
               name="Edit metric"
-              onClick={() => console.log('edit')}
+              onClick={() => console.log('edit metric')}
             />
             <Dropdown.Item
               icon="delete"
               name="Delete"
-              onClick={() => console.log('delete')}
+              onClick={() => handleDeleteMetric(metricsGroupId, metric.id)}
             />
           </Dropdown>
         </Styled.MetricDropdown>
@@ -156,7 +160,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>
             </Styled.MetricCardTableHead>
-            {renderMetrics(metricGroup.metrics)}
+            {renderMetrics(metricGroup.metrics, metricGroup.id)}
           </Styled.MetricsGroupsCardContent>
         )}
       </Styled.MetricsGroupsCard>
