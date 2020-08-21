@@ -159,27 +159,22 @@ export const useProviderMetrics = () => {
   const getAllDataSourceMetricsData = useFetchData<string[]>(
     getAllDataSourceMetricsRequest
   );
-  const status = useFetchStatus();
 
   const getAllDataSourceMetrics = useCallback(
     async (datasourceId: string) => {
       try {
-        status.pending();
         const response = await getAllDataSourceMetricsData(datasourceId);
-
-        status.resolved();
 
         return response;
       } catch (e) {
-        status.rejected();
+        console.log(e);
       }
     },
-    [getAllDataSourceMetricsData, status]
+    [getAllDataSourceMetricsData]
   );
 
   return {
-    getAllDataSourceMetrics,
-    status
+    getAllDataSourceMetrics
   };
 };
 
