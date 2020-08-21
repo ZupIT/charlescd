@@ -184,7 +184,7 @@ const MetricCardTableHead = styled.div`
   justify-content: space-between;
 
   span {
-    margin: 0 145px 10px 10px;
+    margin: 0 90px 10px 10px;
   }
 `;
 
@@ -206,17 +206,23 @@ const MetricNickname = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 260px;
+  width: 125px;
   margin-left: 10px;
 `;
 
 const MetricConditionThreshold = styled.div`
   display: flex;
-  margin-right: 120px;
+  margin-right: 100px;
 
   span {
     margin-right: 5px;
   }
+`;
+
+const MetricConditionLastValue = styled(Text.h5)`
+  margin-right: 10px;
+  position: relative;
+  right: 10px;
 `;
 
 export default {
@@ -247,6 +253,7 @@ export default {
   MetricCardBody,
   MetricConditionThreshold,
   MetricNickname,
+  MetricConditionLastValue,
   MetricDropdown,
   TrashIcon
 };
