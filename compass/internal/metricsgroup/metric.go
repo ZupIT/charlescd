@@ -66,6 +66,11 @@ func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
 }
 
 func (main Main) SaveMetric(metric Metric) (Metric, error) {
+	_, err := main.resultQuery(metric)
+	if err != nil {
+		return Metric{}, err
+	}
+
 	db := main.db.Create(&metric)
 	if db.Error != nil {
 		return Metric{}, db.Error

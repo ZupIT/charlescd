@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "56a85cf2-c6b5-4360-b6eb-482fdd8ef81e",
+		"_postman_id": "7bb710d6-0512-4b3b-afd0-664647cc0bbe",
 		"name": "Compass",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -16,6 +16,11 @@
 							{
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
+								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text"
 							}
 						],
@@ -41,6 +46,11 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -63,7 +73,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "defbb243-6c9c-4f33-84c0-2b7f7d6fa5cb",
+								"id": "e2d8fcc3-1d4e-4997-85b9-d67458c75a89",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"datasourceId\", response[\"id\"]);"
@@ -78,6 +88,11 @@
 							{
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
+								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text"
 							}
 						],
@@ -112,6 +127,11 @@
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
 								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -141,7 +161,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "53fe2800-4855-40f2-ad5c-e9ba0787174b",
+								"id": "25657d6e-c4fc-4a8f-8a94-0f01de12f36d",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"pluginId\", response[\"id\"]);"
@@ -156,6 +176,11 @@
 							{
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
+								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text"
 							}
 						],
@@ -190,6 +215,11 @@
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
 								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -214,6 +244,11 @@
 							{
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
+								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text"
 							}
 						],
@@ -245,7 +280,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "08ed950d-fa45-4c40-abb9-e9d1844a8661",
+										"id": "3accd799-6aff-4a14-8873-c92796a4e507",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -263,15 +298,14 @@
 										"value": "{{workspaceId}}"
 									},
 									{
-										"key": "",
+										"key": "x-circle-id",
 										"type": "text",
-										"value": "",
-										"disabled": true
+										"value": "{{circleId}}"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"metricGroupId\": \"{{metricsGroupsId}}\",\n    \"metric\": \"metric 213\",\n    \"filters\": [\n        {\n            \"field\": \"destination\",\n            \"value\": \"moove\",\n            \"operator\": \"EQUAL\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
+									"raw": "{\n    \"dataSourceId\": \"{{datasourceId}}\",\n    \"nickname\": \"Nickname 1\",\n    \"query\": \"\",\n    \"metric\": \"group_metric_example_2\",\n    \"filters\": [\n        {\n            \"field\": \"label1\",\n            \"value\": \"test 999\",\n            \"operator\": \"=\"\n        }\n    ],\n    \"groupBy\": [\n        {\n            \"field\": \"app\"\n        }\n    ],\n    \"condition\": \"EQUAL\",\n    \"threshold\": 30.0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -312,7 +346,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "62619c9d-be38-4ed1-a505-2227a3be44c4",
+										"id": "afcb4302-45dc-4f8c-8d31-f8b0d091725b",
 										"exec": [
 											"const response = JSON.parse(responseBody);",
 											"pm.environment.set(\"metricsId\", response[\"id\"]);"
@@ -330,10 +364,9 @@
 										"value": "{{workspaceId}}"
 									},
 									{
-										"key": "",
+										"key": "x-circle-id",
 										"type": "text",
-										"value": "",
-										"disabled": true
+										"value": "{{circleId}}"
 									}
 								],
 								"body": {
@@ -356,18 +389,6 @@
 										"{{metricsGroupsId}}",
 										"metrics",
 										"{{metricsId}}"
-									],
-									"query": [
-										{
-											"key": "providerType",
-											"value": "PROMETHEUS",
-											"disabled": true
-										},
-										{
-											"key": "workspaceId",
-											"value": "02ab0517-c795-4b66-b0ec-fea140b8d4e6",
-											"disabled": true
-										}
 									]
 								},
 								"description": "Save metrics group"
@@ -384,7 +405,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ac207d63-021f-4f55-98ec-5ae153c817d1",
+								"id": "8077c28b-771d-45f3-a378-09781c07984c",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"pm.environment.set(\"metricsGroupsId\", response[\"id\"]);"
@@ -402,8 +423,8 @@
 								"type": "text"
 							},
 							{
-								"key": "",
-								"value": "",
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text",
 								"disabled": true
 							}
@@ -425,18 +446,6 @@
 							"path": [
 								"v1",
 								"metrics-groups"
-							],
-							"query": [
-								{
-									"key": "providerType",
-									"value": "PROMETHEUS",
-									"disabled": true
-								},
-								{
-									"key": "workspaceId",
-									"value": "02ab0517-c795-4b66-b0ec-fea140b8d4e6",
-									"disabled": true
-								}
 							]
 						},
 						"description": "Save metrics group"
@@ -449,7 +458,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "78f1c991-b82c-4222-ab07-e2a8f6afc0f6",
+								"id": "ffd930f8-fd37-40ca-95e3-0d9268c9ad39",
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"postman.setGlobalVariable(\"metricsGroupsId\", response[\"id\"]);"
@@ -467,9 +476,9 @@
 								"value": "{{workspaceId}}"
 							},
 							{
-								"key": "",
+								"key": "x-circle-id",
 								"type": "text",
-								"value": "",
+								"value": "{{circleId}}",
 								"disabled": true
 							}
 						],
@@ -491,18 +500,6 @@
 								"v1",
 								"metrics-groups",
 								"{{metricsGroupsId}}"
-							],
-							"query": [
-								{
-									"key": "providerType",
-									"value": "PROMETHEUS",
-									"disabled": true
-								},
-								{
-									"key": "workspaceId",
-									"value": "02ab0517-c795-4b66-b0ec-fea140b8d4e6",
-									"disabled": true
-								}
 							]
 						},
 						"description": "Save metrics group"
@@ -517,6 +514,11 @@
 							{
 								"key": "x-workspace-id",
 								"value": "{{workspaceId}}",
+								"type": "text"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
 								"type": "text"
 							}
 						],
@@ -542,6 +544,11 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -568,6 +575,11 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -593,10 +605,15 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}/query",
+							"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}/query?period=5d",
 							"host": [
 								"{{host}}"
 							],
@@ -611,6 +628,10 @@
 									"key": "period",
 									"value": "1d",
 									"disabled": true
+								},
+								{
+									"key": "period",
+									"value": "5d"
 								}
 							]
 						}
@@ -626,6 +647,11 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -652,6 +678,11 @@
 								"key": "x-workspace-id",
 								"type": "text",
 								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"value": "{{circleId}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -680,7 +711,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}",
+							"raw": "{{host}}/v1/metrics-groups/{{metricsGroupsId}}?x-circle-id={{circleId}}",
 							"host": [
 								"{{host}}"
 							],
@@ -688,6 +719,12 @@
 								"v1",
 								"metrics-groups",
 								"{{metricsGroupsId}}"
+							],
+							"query": [
+								{
+									"key": "x-circle-id",
+									"value": "{{circleId}}"
+								}
 							]
 						}
 					},
