@@ -25,7 +25,6 @@ import InputComponent from 'core/components/Form/Input';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
-import Dropdown from 'core/components/Dropdown';
 
 interface ButtonDefaultProps {
   isValid: boolean;
