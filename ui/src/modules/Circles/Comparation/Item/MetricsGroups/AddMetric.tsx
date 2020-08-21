@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -22,18 +22,43 @@ import { metricProviders } from 'core/constants/metrics-providers';
 import Styled from './styled';
 import { thresholdOptions } from './constants';
 import AceEditorForm from 'core/components/Form/AceEditor';
+import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
+import { normalizeSelectOptions } from 'core/utils/select';
+import { Metric } from './interface';
 
 interface Props {
-  id?: string;
-  onGoBack?: Function;
+  id: string;
+  onGoBack: Function;
 }
 
-const AddMetric = ({ onGoBack }: Props) => {
-  const { handleSubmit, register, control } = useForm();
+const AddMetric = ({ onGoBack, id }: Props) => {
+  const { handleSubmit, register, control } = useForm<Metric>();
   const [isBasicQuery, setIsBasicQuery] = useState(true);
-  const [provider, setProvider] = useState<Option>();
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const { getMetricsProviders } = useMetricProviders();
+  const { getAllDataSourceMetrics, dataSourceMetrics } = useProviderMetrics();
+  const { saveMetric } = useSaveMetric();
+  const [providerOptions, setProviderOptions] = useState<Option[]>();
+  const [selectedProvider, setSelectedProvider] = useState<Option>();
+
+  useEffect(() => {
+    getMetricsProviders().then(providersResponse => {
+      const normalizedOptions = normalizeSelectOptions(providersResponse);
+      setProviderOptions(normalizedOptions);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isBasicQuery && selectedProvider) {
+      getAllDataSourceMetrics(selectedProvider.value);
+    }
+  }, [isBasicQuery, selectedProvider]);
+
+  const onSubmit = (data: Metric) => {
+    const payload = { ...data, threshold: Number(data.threshold) };
+    const metricGroupId = '11151f52-7f03-4ffa-9c80-b89515d37021';
+    saveMetric(metricGroupId, payload).then(res => {
+      console.log(res);
+    });
   };
 
   return (
@@ -54,17 +79,17 @@ const AddMetric = ({ onGoBack }: Props) => {
       >
         <Styled.Layer>
           <Styled.Input
-            name="metricName"
+            name="nickname"
             ref={register({ required: true })}
             label="Type a nickname for metric"
           />
 
           <Styled.ProviderSelect
             control={control}
-            name="url"
+            name="dataSourceId"
             label="Select a type server"
-            options={metricProviders}
-            onChange={option => setProvider(option)}
+            options={providerOptions}
+            onChange={option => setSelectedProvider(option)}
           />
           <Text.h5 color="dark">
             You can fill your query in a basic or advanced way:
@@ -85,6 +110,15 @@ const AddMetric = ({ onGoBack }: Props) => {
               Advanced
             </Styled.ButtonIconRounded>
           </Styled.Actions>
+
+          {isBasicQuery && (
+            <Styled.ProviderSelect
+              control={control}
+              name="metric"
+              label="Select a metric"
+              options={dataSourceMetrics}
+            />
+          )}
 
           {!isBasicQuery && (
             <>

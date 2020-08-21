@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import AddMetric from './AddMetric';
@@ -24,30 +24,33 @@ interface Props {
   onGoBack: Function;
 }
 
-const GroupMetrics = ({ onGoBack }: Props) => {
-  return <AddMetric />;
-  // return (
-  //   <>
-  //     <Styled.Layer>
-  //       <Styled.Icon
-  //         name="arrow-left"
-  //         color="dark"
-  //         onClick={() => onGoBack()}
-  //       />
-  //     </Styled.Layer>
-  //     <Styled.Layer>
-  //       <Text.h2 color="light">Add metrics group</Text.h2>
-  //       <Styled.ButtonAdd
-  //         name="add"
-  //         icon="add"
-  //         color="dark"
-  //         onClick={() => null}
-  //       >
-  //         Add metrics group
-  //       </Styled.ButtonAdd>
-  //     </Styled.Layer>
-  //   </>
-  // );
+const MetricsGroups = ({ onGoBack, id }: Props) => {
+  const [showAddMetricForm, setShowAddMetricForm] = useState(true);
+
+  return !showAddMetricForm ? (
+    <>
+      <Styled.Layer>
+        <Styled.Icon
+          name="arrow-left"
+          color="dark"
+          onClick={() => onGoBack()}
+        />
+      </Styled.Layer>
+      <Styled.Layer>
+        <Text.h2 color="light">Add metrics group</Text.h2>
+        <Styled.ButtonAdd
+          name="add"
+          icon="add"
+          color="dark"
+          onClick={() => setShowAddMetricForm(true)}
+        >
+          Add metrics group
+        </Styled.ButtonAdd>
+      </Styled.Layer>
+    </>
+  ) : (
+    <AddMetric onGoBack={() => setShowAddMetricForm(false)} id={id} />
+  );
 };
 
-export default GroupMetrics;
+export default MetricsGroups;

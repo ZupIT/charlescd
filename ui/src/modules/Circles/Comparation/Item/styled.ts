@@ -19,6 +19,7 @@ import { ReactComponent as SortSVG } from 'core/assets/svg/sort-left.svg';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import InputTitleComponent from 'core/components/Form/InputTitle';
 import Dropdown from 'core/components/Dropdown';
+import Text from 'core/components/Text';
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -97,6 +98,52 @@ const InputTitle = styled(InputTitleComponent)`
   margin-top: 1px;
 `;
 
+const MetricsGroupsHeader = styled.div`
+  display: flex;
+  padding: 15px 0 0 30px;
+
+  span {
+    padding-right: 180px;
+  }
+`;
+
+const MetricsGroupsContent = styled.div`
+  background-color: ${({ theme }) =>
+    theme.circleGroupMetrics.content.background};
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 550px;
+`;
+
+const MetricsGroupsContentText = styled(Text.h5)`
+  margin: auto 60px auto 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 200px;
+`;
+
+const MetricsGroupsFooter = styled.div`
+  display: flex;
+  justify-content: right;
+  padding-bottom: 15px;
+  padding-right: 15px;
+
+  svg {
+    padding-top: 4px;
+    padding-left: 10px;
+  }
+`;
+
+const MetricsGroupsCard = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+  margin: 10px 5px 10px 15px;
+  border-radius: 5px;
+  width: 520px;
+  height: 40px;
+`;
+
 export default {
   Link,
   Actions,
@@ -110,5 +157,10 @@ export default {
   SortLeft,
   SortRight,
   MetricsTitle,
-  InputTitle
+  InputTitle,
+  MetricsGroupsContent,
+  MetricsGroupsContentText,
+  MetricsGroupsHeader,
+  MetricsGroupsFooter,
+  MetricsGroupsCard
 };
