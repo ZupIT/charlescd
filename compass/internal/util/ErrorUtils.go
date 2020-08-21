@@ -41,6 +41,13 @@ const (
 	QueryByGroupIdError      = "QUERY_BY_GROUP_ID_ERROR"
 )
 
+const (
+	FindPluginError    = "FIND_PLUGIN_ERROR"
+	GetPluginByIdError = "GET_PLUGIN_BY_ID_ERROR"
+	UpdatePluginError  = "UPDATE_PLUGIN_ERROR"
+	RemovePluginError  = "REMOVE_PLUGIN_ERROR"
+)
+
 //
 //func (logger Logger) Info(msg string, functionName string, data interface{}, keysAndValues ...interface{}) {
 //	keysAndValues = append(keysAndValues, "functionName", functionName, "data", data)

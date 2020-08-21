@@ -34,6 +34,7 @@ func (main Main) Parse(plugin io.ReadCloser) (Plugin, error) {
 	var newPlugin *Plugin
 	err := json.NewDecoder(plugin).Decode(&newPlugin)
 	if err != nil {
+		util.Error(util.GeneralParseError, "Parse", err, plugin)
 		return Plugin{}, err
 	}
 	return *newPlugin, nil
@@ -43,6 +44,7 @@ func (main Main) FindAll() ([]Plugin, error) {
 	var plugins []Plugin
 	db := main.db.Find(&plugins)
 	if db.Error != nil {
+		util.Error(util.FindPluginError, "FindAll", db.Error, plugins)
 		return []Plugin{}, db.Error
 	}
 	return plugins, nil
@@ -60,6 +62,7 @@ func (main Main) FindById(id string) (Plugin, error) {
 	plugin := Plugin{}
 	db := main.db.Where("id = ?", id).First(&plugin)
 	if db.Error != nil {
+		util.Error(util.FindPluginError, "FindById", db.Error, id)
 		return Plugin{}, db.Error
 	}
 	return plugin, nil
@@ -70,6 +73,7 @@ func (main Main) GetPluginByID(id string) (*plugin.Plugin, error) {
 
 	pluginResult, err := main.FindById(id)
 	if err != nil {
+		util.Error(util.GetPluginByIdError, "GetPluginByID", err, id)
 		return nil, err
 	}
 
@@ -79,6 +83,7 @@ func (main Main) GetPluginByID(id string) (*plugin.Plugin, error) {
 func (main Main) Update(id string, plugin Plugin) (Plugin, error) {
 	db := main.db.Table("plugins").Where("id = ?", id).Update(&plugin)
 	if db.Error != nil {
+		util.Error(util.UpdatePluginError, "Update", db.Error, plugin)
 		return Plugin{}, db.Error
 	}
 	return plugin, nil
@@ -87,6 +92,7 @@ func (main Main) Update(id string, plugin Plugin) (Plugin, error) {
 func (main Main) Remove(id string) error {
 	db := main.db.Where("id = ?", id).Delete(Plugin{})
 	if db.Error != nil {
+		util.Error(util.RemovePluginError, "Remove", db.Error, id)
 		return db.Error
 	}
 	return nil
