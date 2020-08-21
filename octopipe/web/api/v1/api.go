@@ -17,7 +17,10 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
+	"net/http"
 )
 
 type API struct {
@@ -27,11 +30,14 @@ type API struct {
 
 const (
 	v1Path = "/api/v1"
+	limitRequestBySeconds = 10
+	limitRequestBurstBySeconds = 15
 )
 
 func NewAPI() *API {
+	requestLimiter := rate.NewLimiter(limitRequestBySeconds,limitRequestBurstBySeconds)
 	router := gin.Default()
-
+	router.Use(throttle(requestLimiter))
 	v1 := router.Group(v1Path)
 	v1.GET("/health", health)
 	return &API{router, v1}
@@ -43,4 +49,14 @@ func health(context *gin.Context) {
 
 func (api *API) Start() {
 	api.router.Run(":8080")
+}
+func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
+	return func(context *gin.Context){
+		if requestLimiter.Allow() {
+			context.Next()
+			return
+		}
+		context.Error(errors.New("Limit of requests reached"))
+		context.AbortWithStatus(http.StatusTooManyRequests)
+	}
 }
