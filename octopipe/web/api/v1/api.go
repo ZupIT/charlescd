@@ -35,7 +35,7 @@ const (
 )
 
 func NewAPI() *API {
-	requestLimiter := rate.NewLimiter(limitRequestBySeconds,limitRequestBurstBySeconds)
+	requestLimiter := rate.NewLimiter(limitRequestBySeconds, limitRequestBurstBySeconds)
 	router := gin.Default()
 	router.Use(throttle(requestLimiter))
 	v1 := router.Group(v1Path)
@@ -56,7 +56,7 @@ func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
 			context.Next()
 			return
 		}
-		context.Error(errors.New("Limit of requests reached"))
+		context.Error(errors.New("limit of requests by second reached"))
 		context.AbortWithStatus(http.StatusTooManyRequests)
 	}
 }
