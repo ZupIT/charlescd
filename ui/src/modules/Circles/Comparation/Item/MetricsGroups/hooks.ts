@@ -111,27 +111,23 @@ export const useMetricProviders = () => {
   const getMetricProvidersData = useFetchData<DataSource[]>(
     getAllMetricsProviders
   );
-  const status = useFetchStatus();
   const [providers, setProviders] = useState([]);
 
   const getMetricsProviders = useCallback(async () => {
     try {
-      status.pending();
       const providersResponse = await getMetricProvidersData();
 
       setProviders(providersResponse);
-      status.resolved();
 
       return providersResponse;
     } catch (e) {
-      status.rejected();
+      console.log(e);
     }
-  }, [getMetricProvidersData, status]);
+  }, [getMetricProvidersData]);
 
   return {
     getMetricsProviders,
-    providers,
-    status
+    providers
   };
 };
 
@@ -169,7 +165,6 @@ export const useProviderMetrics = () => {
     getAllDataSourceMetricsRequest
   );
   const status = useFetchStatus();
-  const [dataSourceMetrics, setDataSourceMetrics] = useState([]);
 
   const getAllDataSourceMetrics = useCallback(
     async (datasourceId: string) => {
@@ -177,7 +172,6 @@ export const useProviderMetrics = () => {
         status.pending();
         const response = await getAllDataSourceMetricsData(datasourceId);
 
-        setDataSourceMetrics(response);
         status.resolved();
 
         return response;
@@ -190,7 +184,6 @@ export const useProviderMetrics = () => {
 
   return {
     getAllDataSourceMetrics,
-    dataSourceMetrics,
     status
   };
 };

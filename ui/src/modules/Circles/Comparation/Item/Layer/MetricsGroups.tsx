@@ -26,9 +26,7 @@ import { MetricsGroupsResume } from '../MetricsGroups/types';
 import Styled from '../styled';
 
 type Props = {
-  onClickCreate: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
+  onClickCreate: () => void;
   circleId: string;
 };
 
@@ -76,8 +74,10 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         </Styled.MetricsGroupsHeader>
         {status.isResolved && renderMetricsGroupsCard(resume)}
         <Styled.MetricsGroupsFooter>
-          <Text.h4 color="dark">View more</Text.h4>
-          <Icon name={'arrow-right'} color={'dark'} />
+          <Text.h4 color="dark" onClick={onClickCreate}>
+            View more
+          </Text.h4>
+          <Icon name={'arrow-right'} color={'dark'} onClick={onClickCreate} />
         </Styled.MetricsGroupsFooter>
       </Styled.MetricsGroupsContent>
     );
