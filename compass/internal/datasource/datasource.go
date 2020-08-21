@@ -47,7 +47,7 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 	var newDataSource *DataSource
 	err := json.NewDecoder(dataSource).Decode(&newDataSource)
 	if err != nil {
-		util.Error(util.ParseDatasourceError, "Parse", err, dataSource)
+		util.Error(util.GeneralParseError, "Parse", err, dataSource)
 		return DataSource{}, err
 	}
 	return *newDataSource, nil
@@ -64,8 +64,8 @@ func (main Main) FindAllByWorkspace(workspaceID string, health string) ([]DataSo
 		db = main.db.Where("workspace_id = ? AND health = ?", workspaceID, healthValue).Find(&dataSources)
 	}
 
-	util.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID)
 	if db.Error != nil {
+		util.Error(util.FindDatasourceError, "FindAllByWorkspace", db.Error, "WorkspaceId = "+workspaceID)
 		return []DataSource{}, db.Error
 	}
 
@@ -89,8 +89,7 @@ func (main Main) Delete(id string) error {
 
 	db := main.db.Model(&DataSource{}).Where("id = ?", id).Delete(&DataSource{})
 	if db.Error != nil {
-		util.Error(util.DeleteDatasourceError, "Delete", db.Error, "Id = )"+id)
-
+		util.Error(util.DeleteDatasourceError, "Delete", db.Error, "Id = "+id)
 		return db.Error
 	}
 
@@ -107,12 +106,13 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 
 	pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
 	if err != nil {
+		util.Error(util.FindDatasourceGetMetricsError, "GetMetrics", err, dataSourceResult.PluginID.String())
 		return datasource.MetricList{}, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
 	}
 
 	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
 	if err != nil {
-		util.Error(util.OpenPluginError, "GetMetrics", err, pluginsPath)
+		util.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, pluginsPath)
 		return datasource.MetricList{}, err
 	}
 
