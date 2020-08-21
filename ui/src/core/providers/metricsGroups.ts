@@ -15,7 +15,7 @@
  */
 
 import { baseRequest, postRequest } from './base';
-import { Metric } from 'modules/Circles/Comparation/Item/MetricsGroups/interface';
+import { Metric } from 'modules/Circles/Comparation/Item/MetricsGroups/types';
 
 const endpoint = '/compass/api/v1';
 

@@ -22,11 +22,8 @@ import Layer from 'core/components/Layer';
 import ContentIcon from 'core/components/ContentIcon';
 import isEmpty from 'lodash/isEmpty';
 import { useMetricsGroupsResume } from '../MetricsGroups/hooks';
-import { MetricsGroupsResume } from '../MetricsGroups/interface';
+import { MetricsGroupsResume } from '../MetricsGroups/types';
 import Styled from '../styled';
-
-// X-cicle-id = b2ccc0c5-464c-4192-a472-b90394766191
-//compass
 
 type Props = {
   onClickCreate: (
