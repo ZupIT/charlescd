@@ -55,7 +55,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def deploymentId = "5e7323f9-bd7d-492e-980c-241b087a563f"
         def buildId = "73fc1a01-1787-4bf9-80d3-e0420d6dfbd2"
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
@@ -100,7 +100,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def workspaceId = "ba0d7a48-4a70-4efa-b068-e351b933e4e1"
         def authorId = "d961f594-c5c5-4940-bee2-1f67d7841567"
 
-        def rulePart = new NodePart.RulePart("username", "EQUAL", ["zup"])
+        def rulePart = new NodePart.RulePart("username", NodePart.ConditionEnum.EQUAL, ["zup"])
         def rule = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, rulePart)
         def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
 
