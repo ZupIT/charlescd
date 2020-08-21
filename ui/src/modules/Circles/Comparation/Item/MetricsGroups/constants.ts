@@ -10,6 +10,4 @@ export const FILTER = {
   value: ''
 };
 
-export const defaultFilterValues = {
-  filters: [FILTER]
-};
+export const defaultFilterValues = [FILTER];
