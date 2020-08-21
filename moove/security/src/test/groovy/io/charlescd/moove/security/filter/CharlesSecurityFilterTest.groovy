@@ -17,7 +17,7 @@ class CharlesSecurityFilterTest extends Specification {
         charlesSecurityFilter = new CharlesSecurityFilter(keycloakCustomService)
     }
 
-    def "Should allow root post requests"() {
+    def "should allow root post requests"() {
         given:
         def request = new MockHttpServletRequest()
         request.addHeader("Authorization", dummyTokenRoot())
@@ -36,7 +36,7 @@ class CharlesSecurityFilterTest extends Specification {
         notThrown()
     }
 
-    def "Should allow root get requests"() {
+    def "should allow root get requests"() {
         given:
         def request = new MockHttpServletRequest()
         request.addHeader("Authorization", dummyTokenRoot())
@@ -55,7 +55,7 @@ class CharlesSecurityFilterTest extends Specification {
         notThrown()
     }
 
-    def "Should not allow requests without an access token"() {
+    def "should not allow requests without an access token"() {
         given:
         def request = new MockHttpServletRequest()
         request.addHeader("x-workspace-id", "b659094f-999c-4d24-90b3-26c5e173b7ec")
@@ -72,7 +72,7 @@ class CharlesSecurityFilterTest extends Specification {
         assert response.status == HttpStatus.UNAUTHORIZED.value()
     }
 
-    def "Should return 403 HTTP code"() {
+    def "should return 403 HTTP code"() {
         given:
         def request = new MockHttpServletRequest()
         request.addHeader("Authorization", dummyTokenMaintenanceAndModules())
