@@ -23,7 +23,7 @@ type UseCases interface {
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	Remove(id string) error
 	RemoveMetric(id string) error
-	Query(id, period string) ([]datasourcePKG.MetricValues, error)
+	QueryByGroupID(id, period string) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindActiveMetricGroups() ([]MetricsGroup, error)

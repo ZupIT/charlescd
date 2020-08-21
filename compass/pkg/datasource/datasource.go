@@ -1,5 +1,7 @@
 package datasource
 
+import "github.com/google/uuid"
+
 const (
 	FunctionList   = "List"
 	FunctionQuery  = "Query"
@@ -14,11 +16,13 @@ type UseCases interface {
 type MetricList []string
 
 type MetricResult struct {
-	Metric string  `json:"metric"`
-	Result float64 `json:"result"`
+	ID       uuid.UUID `json:"id"`
+	Nickname string    `json:"metric"`
+	Result   float64   `json:"result"`
 }
 
 type MetricValues struct {
-	Metric string      `json:"metric"`
-	Values interface{} `json:"result"`
+	ID       uuid.UUID   `json:"id"`
+	Nickname string      `json:"metric"`
+	Values   interface{} `json:"result"`
 }

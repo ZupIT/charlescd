@@ -105,7 +105,7 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	queryResult, err := metricsGroupApi.metricsGroupMain.Query(id, period)
+	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, period)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

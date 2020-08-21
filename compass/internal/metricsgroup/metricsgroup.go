@@ -217,7 +217,30 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) Query(id, period string) ([]datasource.MetricValues, error) {
+func (main Main) query(metric Metric, period string) (interface{}, error) {
+
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	if err != nil {
+		return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
+	}
+
+	plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
+	if err != nil {
+		return nil, err
+	}
+
+	getQuery, err := plugin.Lookup("Query")
+	if err != nil {
+		return nil, err
+	}
+
+	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
+	metricData, _ := json.Marshal(metric)
+	return getQuery.(func(datasourceConfiguration, metric, period []byte) (interface{}, error))(dataSourceConfigurationData, metricData, []byte(period))
+
+}
+
+func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
@@ -226,66 +249,55 @@ func (main Main) Query(id, period string) ([]datasource.MetricValues, error) {
 
 	for _, metric := range metricsGroup.Metrics {
 
-		dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
-		if err != nil {
-			return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
-		}
-
-		plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
-		if err != nil {
-			return nil, err
-		}
-
-		getQuery, err := plugin.Lookup("Query")
-		if err != nil {
-			return nil, err
-		}
-
-		dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-		metricData, _ := json.Marshal(metric)
-		query, err := getQuery.(func(datasourceConfiguration, metric, period []byte) (interface{}, error))(dataSourceConfigurationData, metricData, []byte(period))
+		query, err := main.query(metric, period)
 		if err != nil {
 			return nil, err
 		}
 
 		metricsValues = append(metricsValues, datasource.MetricValues{
-			Metric: metric.Metric,
-			Values: query,
+			ID:       metric.ID,
+			Nickname: metric.Nickname,
+			Values:   query,
 		})
 	}
 
 	return metricsValues, nil
 }
 
+func (main Main) resultQuery(metric Metric) (float64, error) {
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	if err != nil {
+		return 0, errors.New("Not found data source: " + metric.DataSourceID.String())
+	}
+
+	plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
+	if err != nil {
+		return 0, err
+	}
+
+	getQuery, err := plugin.Lookup("Result")
+	if err != nil {
+		return 0, err
+	}
+
+	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
+	metricData, _ := json.Marshal(metric)
+	return getQuery.(func(datasourceConfiguration, metric []byte) (float64, error))(dataSourceConfigurationData, metricData)
+}
+
 func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, error) {
 	metricsResults := []datasource.MetricResult{}
 	for _, metric := range group.Metrics {
 
-		dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
-		if err != nil {
-			return nil, errors.New("Not found data source: " + metric.DataSourceID.String())
-		}
-
-		plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
-		if err != nil {
-			return nil, err
-		}
-
-		getQuery, err := plugin.Lookup("Result")
-		if err != nil {
-			return nil, err
-		}
-
-		dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-		metricData, _ := json.Marshal(metric)
-		result, err := getQuery.(func(datasourceConfiguration, metric []byte) (float64, error))(dataSourceConfigurationData, metricData)
+		result, err := main.resultQuery(metric)
 		if err != nil {
 			return nil, err
 		}
 
 		metricsResults = append(metricsResults, datasource.MetricResult{
-			Metric: metric.Metric,
-			Result: result,
+			ID:       metric.ID,
+			Nickname: metric.Nickname,
+			Result:   result,
 		})
 	}
 
