@@ -21,6 +21,7 @@ import Icon from 'core/components/Icon';
 import Layer from 'core/components/Layer';
 import ContentIcon from 'core/components/ContentIcon';
 import isEmpty from 'lodash/isEmpty';
+import Loader from '../Loaders/index';
 import { useMetricsGroupsResume } from '../MetricsGroups/hooks';
 import { MetricsGroupsResume } from '../MetricsGroups/types';
 import Styled from '../styled';
@@ -89,8 +90,9 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         <Text.h2 color="light">Group metrics</Text.h2>
       </ContentIcon>
       <Styled.Content>
-        {!isEmpty(resume) && renderContent()}
         {renderAddMetricsGroups()}
+        {status.isPending && <Loader.MetricsGroupslayer />}
+        {!isEmpty(resume) && renderContent()}
       </Styled.Content>
     </Layer>
   );
