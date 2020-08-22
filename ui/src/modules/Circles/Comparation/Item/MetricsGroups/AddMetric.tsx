@@ -26,7 +26,8 @@ import { Metric } from './types';
 import {
   normalizeMetricOptions,
   getCondition,
-  getSelectDefaultValue
+  getSelectDefaultValue,
+  buildMetricPayload
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
@@ -60,9 +61,11 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const { getAllDataSourceMetrics } = useProviderMetrics();
   const { saveMetric, status: creatingStatus } = useSaveMetric(metric?.id);
   const [providerOptions, setProviderOptions] = useState<Option[]>();
+  const [showThresholdForm, setShowThresholdForm] = useState(false);
   const [metrics, setMetrics] = useState<Option[]>();
   const { watch } = formMethods;
   const watchDataSourceId = watch('dataSourceId');
+  const canShowForm = watchDataSourceId || metric?.id;
 
   useEffect(() => {
     if (metric) {
@@ -95,11 +98,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   }, [isBasicQuery, watchDataSourceId, getAllDataSourceMetrics]);
 
   const onSubmit = async (data: Metric) => {
-    const payload = {
-      ...data,
-      threshold: Number(data.threshold),
-      id: metric?.id
-    };
+    const payload = buildMetricPayload(data, metric);
     await saveMetric(id, payload);
     onGoBack();
   };
@@ -143,17 +142,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                 )}
               />
             )}
-            {!loadingMetrics && (
-              <Styled.ProviderSelect
-                control={control}
-                name="metric"
-                label="Select a metric"
-                options={metrics}
-                defaultValue={getSelectDefaultValue(metric?.metric, metrics)}
-              />
-            )}
 
-            {true && (
+            {canShowForm && (
               <>
                 <Text.h5 color="dark">
                   You can fill your query in a basic or advanced way:
@@ -175,12 +165,27 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </Styled.ButtonIconRounded>
                 </Styled.Actions>
 
-                {isBasicQuery && <BasicQueryForm filters={metric?.filters} />}
+                {isBasicQuery && (
+                  <>
+                    {!loadingMetrics && (
+                      <Styled.ProviderSelect
+                        control={control}
+                        name="metric"
+                        label="Select a metric"
+                        options={metrics}
+                        defaultValue={getSelectDefaultValue(
+                          metric?.metric,
+                          metrics
+                        )}
+                      />
+                    )}
+                    <BasicQueryForm filters={metric?.filters} />
+                  </>
+                )}
 
                 {!isBasicQuery && (
                   <>
                     <Text.h5 color="dark">Type a query:</Text.h5>
-
                     <Styled.AceEditorWrapper>
                       <AceEditorForm
                         height="50px"
@@ -199,22 +204,35 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   numeric value.
                 </Styled.Subtitle>
 
-                <Styled.ThresholdWrapper>
-                  <Styled.ThresholdSelect
-                    options={conditionOptions}
-                    control={control}
-                    rules={{ required: true }}
-                    label="Conditional"
-                    name="condition"
-                    defaultValue={getCondition(metric?.condition)}
-                  />
+                {!showThresholdForm && !metric?.condition && (
+                  <Styled.ButtonAdd
+                    name="add"
+                    icon="add"
+                    color="dark"
+                    onClick={() => setShowThresholdForm(true)}
+                  >
+                    Add threshold
+                  </Styled.ButtonAdd>
+                )}
 
-                  <Styled.InputNumber
-                    name="threshold"
-                    label="Threshold"
-                    ref={register({ required: true })}
-                  />
-                </Styled.ThresholdWrapper>
+                {(showThresholdForm || metric?.condition) && (
+                  <Styled.ThresholdWrapper>
+                    <Styled.ThresholdSelect
+                      options={conditionOptions}
+                      control={control}
+                      rules={{ required: true }}
+                      label="Conditional"
+                      name="condition"
+                      defaultValue={getCondition(metric?.condition)}
+                    />
+
+                    <Styled.InputNumber
+                      name="threshold"
+                      label="Threshold"
+                      ref={register({ required: true })}
+                    />
+                  </Styled.ThresholdWrapper>
+                )}
 
                 <Button
                   type="submit"
