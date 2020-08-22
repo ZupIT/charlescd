@@ -45,7 +45,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [filters, setFilters] = useState<MetricFilter[]>([]);
   const formMethods = useForm<Metric>({
     mode: 'onChange',
-    defaultValues: metric
+    defaultValues: metric ?? {}
   });
   const {
     handleSubmit,
@@ -183,6 +183,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         name="metric"
                         label="Select a metric"
                         options={metrics}
+                        rules={{ required: true }}
                         defaultValue={getSelectDefaultValue(
                           metric?.metric,
                           metrics
