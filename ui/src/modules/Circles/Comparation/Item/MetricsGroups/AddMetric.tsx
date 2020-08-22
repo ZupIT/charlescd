@@ -45,7 +45,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [filters, setFilters] = useState<MetricFilter[]>([]);
   const formMethods = useForm<Metric>({
     mode: 'onChange',
-    defaultValues: metric
+    defaultValues: metric ?? {}
   });
   const {
     handleSubmit,
