@@ -52,14 +52,6 @@ const Layer = styled(LayerComponent)`
 const ButtonAdd = styled(ButtonComponent.Rounded)`
   margin-top: 15px;
   margin-bottom: 15px;
-
-  height: 40px;
-  padding: 13px 25px;
-
-  span {
-    font-weight: normal;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
-  }
 `;
 
 const Input = styled(InputComponent)`

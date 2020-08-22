@@ -1,3 +1,5 @@
+import { MetricFilter } from './types';
+
 export const conditionOptions = [
   { value: 'EQUAL', label: 'Equal' },
   { value: 'GREATER_THAN', label: 'Higher than' },
@@ -10,9 +12,9 @@ export const operatorsOptions = [
   { value: '!~', label: 'Regex' }
 ];
 
-export const FILTER = {
+export const FILTER: MetricFilter = {
   field: '',
-  condition: '',
+  operator: '',
   value: ''
 };
 
