@@ -49,7 +49,7 @@ func (metric Metric) Validate() []error {
 		ers = append(ers, errors.New("Metric nickname is required"))
 	}
 
-	if metric.Metric == "" {
+	if metric.Query == "" && metric.Metric == "" {
 		ers = append(ers, errors.New("Metric name is required"))
 	}
 
