@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@FeignClient(name = "compassApi", url = "\${compass.url}")
+@FeignClient(name = "compassApi", url = "\${charlescd.compass.url}")
 interface CompassApi {
 
     companion object {
