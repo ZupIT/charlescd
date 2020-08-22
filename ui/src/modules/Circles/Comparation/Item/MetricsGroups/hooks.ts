@@ -24,7 +24,8 @@ import {
   getAllMetricsGroupsById,
   getMetricsGroupsResumeById,
   getAllMetricsProviders,
-  saveMetric as saveMetricRequest,
+  createMetric,
+  updateMetric,
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
   saveMetricGroup,
   deleteMetricGroup,
@@ -130,8 +131,9 @@ export const useMetricProviders = () => {
   };
 };
 
-export const useSaveMetric = () => {
-  const saveMetricPayload = useFetchData<Metric>(saveMetricRequest);
+export const useSaveMetric = (metricId: string) => {
+  const saveRequest = metricId ? updateMetric : createMetric;
+  const saveMetricPayload = useFetchData<Metric>(saveRequest);
   const status = useFetchStatus();
 
   const saveMetric = useCallback(

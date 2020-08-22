@@ -86,9 +86,20 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     getMetricsGroups(id);
   };
 
-  const handleEditMetric = (metric: Metric) => {
+  const handleEditMetric = (metric: Metric, metricsGroup: MetricsGroup) => {
+    setActiveMetricsGroup(metricsGroup);
     setShowAddMetricForm(true);
     setActiveMetric(metric);
+  };
+
+  const getMetricCondition = (condition: string) => {
+    const textByCondition = {
+      EQUAL: 'Equal',
+      GREATER_THAN: 'Greater than',
+      LOWER_THAN: 'Lower than'
+    } as Record<string, string>;
+
+    return textByCondition[condition] ?? 'Not configured';
   };
 
   const renderModal = () =>
@@ -96,7 +107,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       <Modal.Default onClose={() => setToggleModal(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Modal.Title color="light">
-            Add group metrics
+            Add metrics group
           </Styled.Modal.Title>
           <Styled.Modal.Input
             name="name"
@@ -114,15 +125,15 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Modal.Default>
     );
 
-  const renderMetrics = (metrics: Metric[], metricsGroupId: string) =>
-    metrics.map(metric => (
+  const renderMetrics = (metricsGroup: MetricsGroup) =>
+    metricsGroup.metrics.map(metric => (
       <Styled.MetricCardBody key={metric.id}>
         <Styled.MetricNickname color="light">
           {metric.nickname}
         </Styled.MetricNickname>
         <Styled.MetricConditionThreshold>
           <Text.h5 color="dark">
-            {metric.condition.toLocaleLowerCase()}:
+            {getMetricCondition(metric.condition)}:
           </Text.h5>
           <Text.h5 color="light">{metric.threshold}</Text.h5>
         </Styled.MetricConditionThreshold>
@@ -134,12 +145,12 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             <Dropdown.Item
               icon="edit"
               name="Edit metric"
-              onClick={() => handleEditMetric(metric)}
+              onClick={() => handleEditMetric(metric, metricsGroup)}
             />
             <Dropdown.Item
               icon="delete"
               name="Delete"
-              onClick={() => handleDeleteMetric(metricsGroupId, metric.id)}
+              onClick={() => handleDeleteMetric(metricsGroup.id, metric.id)}
             />
           </Dropdown>
         </Styled.MetricDropdown>
@@ -171,7 +182,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               <Text.h5 color="dark">Condition Threshold</Text.h5>
               <Text.h5 color="dark">Last Value</Text.h5>
             </Styled.MetricCardTableHead>
-            {renderMetrics(metricGroup.metrics, metricGroup.id)}
+            {renderMetrics(metricGroup)}
           </Styled.MetricsGroupsCardContent>
         )}
       </Styled.MetricsGroupsCard>
@@ -188,7 +199,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">Add metrics group</Text.h2>
+        <Text.h2 color="light">Metrics groups</Text.h2>
         <Styled.ButtonAdd
           name="add"
           icon="add"
