@@ -29,6 +29,7 @@ import {
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
+import Loader from '../Loaders/index';
 
 interface Props {
   id: string;
@@ -208,7 +209,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         >
           Add metrics group
         </Styled.ButtonAdd>
-        {renderMetricsGroupsCards()}
+        {status.isPending ? (
+          <Loader.MetricsGroupslayer />
+        ) : (
+          renderMetricsGroupsCards()
+        )}
       </Styled.Layer>
     </>
   ) : (
