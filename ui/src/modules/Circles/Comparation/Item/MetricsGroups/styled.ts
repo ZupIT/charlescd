@@ -55,7 +55,7 @@ const ButtonAdd = styled(ButtonComponent.Rounded)`
 `;
 
 const Input = styled(InputComponent)`
-  width: 190px;
+  width: 230px;
   margin: 10px 0 20px;
 `;
 
