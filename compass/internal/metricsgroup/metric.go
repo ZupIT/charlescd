@@ -82,7 +82,11 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 }
 
 func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
-	db := main.db.Where("id = ?", id).Save(&metric)
+
+	currentMetric := metric
+	currentMetric.Filters = []MetricFilter{}
+
+	db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
 	if db.Error != nil {
 		util.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 		return Metric{}, db.Error
