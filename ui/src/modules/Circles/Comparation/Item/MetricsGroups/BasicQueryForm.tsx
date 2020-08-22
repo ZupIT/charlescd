@@ -1,26 +1,24 @@
 import React from 'react';
 import Styled from './styled';
-import { useFormContext, useFieldArray } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import StyledRule from 'modules/Circles/Segments/styled';
-import { operatorsOptions, FILTER } from './constants';
+import { operatorsOptions } from './constants';
 import Icon from 'core/components/Icon';
 import { getOperator } from './helpers';
 import { MetricFilter } from './types';
 
 type Props = {
   filters: MetricFilter[];
+  onAddFilter: () => void;
+  onRemoveFilter: (index: string) => void;
 };
 
-const BasicQueryForm = ({ filters }: Props) => {
+const BasicQueryForm = ({ filters, onAddFilter, onRemoveFilter }: Props) => {
   const { register, control } = useFormContext();
-  const { fields, remove, append } = useFieldArray({
-    control,
-    name: 'filters'
-  });
 
   return (
     <>
-      {fields.map((item, index) => (
+      {filters.map((item, index) => (
         <Styled.RuleWrapper key={item.id}>
           <StyledRule.Rule data-testid="segments-rules">
             <StyledRule.RuleTrash>
@@ -28,13 +26,14 @@ const BasicQueryForm = ({ filters }: Props) => {
                 name="trash"
                 size="15px"
                 color="light"
-                onClick={() => remove(index)}
+                onClick={() => onRemoveFilter(item.id)}
               />
             </StyledRule.RuleTrash>
             <StyledRule.Input
               label="Filter"
               ref={register({ required: true })}
               name={`filters.${index}.field`}
+              defaultValue={item.field}
             />
             <StyledRule.Select
               options={operatorsOptions}
@@ -42,12 +41,13 @@ const BasicQueryForm = ({ filters }: Props) => {
               rules={{ required: true }}
               label="Conditional"
               name={`filters.${index}.operator`}
-              defaultValue={getOperator(filters?.[index]?.operator)}
+              defaultValue={getOperator(item.operator)}
             />
             <StyledRule.Input
               label="Value"
               ref={register}
               name={`filters.${index}.value`}
+              defaultValue={item.value}
             />
           </StyledRule.Rule>
         </Styled.RuleWrapper>
@@ -55,7 +55,7 @@ const BasicQueryForm = ({ filters }: Props) => {
       <StyledRule.Button.Clause
         id="add-clause"
         size="EXTRA_SMALL"
-        onClick={() => append(FILTER)}
+        onClick={onAddFilter}
       >
         <Icon name="add" size="16px" color="light" /> Rule
       </StyledRule.Button.Clause>

@@ -18,16 +18,17 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
-import { conditionOptions, defaultFilterValues } from './constants';
+import { conditionOptions } from './constants';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { Metric } from './types';
+import { Metric, MetricFilter } from './types';
 import {
   normalizeMetricOptions,
   getCondition,
   getSelectDefaultValue,
-  buildMetricPayload
+  buildMetricPayload,
+  getBlankFilter
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
@@ -41,12 +42,10 @@ type Props = {
 };
 
 const AddMetric = ({ onGoBack, id, metric }: Props) => {
+  const [filters, setFilters] = useState<MetricFilter[]>([]);
   const formMethods = useForm<Metric>({
     mode: 'onChange',
-    defaultValues: {
-      ...metric,
-      filters: isEmpty(metric?.filters) ? defaultFilterValues : metric.filters
-    }
+    defaultValues: metric
   });
   const {
     handleSubmit,
@@ -70,6 +69,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   useEffect(() => {
     if (metric) {
       setIsBasicQuery(!isEmpty(metric?.filters));
+      setFilters(metric.filters);
     } else {
       setIsBasicQuery(true);
     }
@@ -103,6 +103,16 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     onGoBack();
   };
 
+  const handleAddFilter = () => {
+    const newFilters = [...filters, getBlankFilter()];
+    setFilters(newFilters);
+  };
+
+  const handleRemoveFilter = (idToRemove: string) => {
+    const newFilters = filters.filter(item => item.id !== idToRemove);
+    setFilters(newFilters);
+  };
+
   return (
     <>
       <Styled.Layer>
@@ -133,7 +143,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               <Styled.ProviderSelect
                 control={control}
                 name="dataSourceId"
-                label="Select a type server"
+                label="Select a data source"
                 options={providerOptions}
                 rules={{ required: true }}
                 defaultValue={getSelectDefaultValue(
@@ -179,7 +189,11 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         )}
                       />
                     )}
-                    <BasicQueryForm filters={metric?.filters} />
+                    <BasicQueryForm
+                      filters={filters}
+                      onAddFilter={handleAddFilter}
+                      onRemoveFilter={handleRemoveFilter}
+                    />
                   </>
                 )}
 
