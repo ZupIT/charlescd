@@ -212,7 +212,8 @@ const MetricNickname = styled(Text.h5)`
 
 const MetricConditionThreshold = styled.div`
   display: flex;
-  margin-right: 100px;
+  width: 100px;
+  margin-right: 55px;
 
   span {
     margin-right: 5px;
@@ -226,7 +227,11 @@ const RuleWrapper = styled.div`
 const MetricConditionLastValue = styled(Text.h5)`
   margin-right: 10px;
   position: relative;
-  right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 60px;
+  left: 20px;
 `;
 
 export default {
