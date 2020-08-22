@@ -26,7 +26,7 @@ func (v1 V1) NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsG
 	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.update))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupApi.delete))
 	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricsGroupApi.createMetric))
-	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.updateMetric))
+	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.updateMetric))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricsGroupApi.deleteMetric))
 	v1.Router.GET(v1.getCompletePath("/resume"+apiPath), api.HttpValidator(metricsGroupApi.resume))
 	return metricsGroupApi
@@ -179,14 +179,18 @@ func (metricsGroupApi MetricsGroupApi) createMetric(w http.ResponseWriter, r *ht
 }
 
 func (metricsGroupApi MetricsGroupApi) updateMetric(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	id := ps.ByName("metricId")
+	groupID := ps.ByName("id")
+	metricID := ps.ByName("metricId")
 	metric, err := metricsGroupApi.metricsGroupMain.ParseMetric(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	updatedMetric, err := metricsGroupApi.metricsGroupMain.UpdateMetric(string(id), metric)
+	metric.ID, _ = uuid.Parse(metricID)
+	metric.MetricsGroupID, _ = uuid.Parse(groupID)
+
+	updatedMetric, err := metricsGroupApi.metricsGroupMain.UpdateMetric(metricID, metric)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
