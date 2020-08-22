@@ -183,6 +183,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         name="metric"
                         label="Select a metric"
                         options={metrics}
+                        rules={{ required: true }}
                         defaultValue={getSelectDefaultValue(
                           metric?.metric,
                           metrics
