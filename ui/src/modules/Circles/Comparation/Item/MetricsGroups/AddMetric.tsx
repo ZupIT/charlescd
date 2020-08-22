@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
-import { thresholdOptions, defaultFilterValues } from './constants';
+import { conditionOptions, defaultFilterValues } from './constants';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
@@ -26,7 +26,7 @@ import { Metric } from './types';
 import {
   normalizeMetricOptions,
   getCondition,
-  getDataSourceDefaultValue
+  getSelectDefaultValue
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
@@ -40,8 +40,6 @@ type Props = {
 };
 
 const AddMetric = ({ onGoBack, id, metric }: Props) => {
-  console.log(metric);
-
   const formMethods = useForm<Metric>({
     mode: 'onChange',
     defaultValues: {
@@ -58,11 +56,13 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [isBasicQuery, setIsBasicQuery] = useState(true);
   const { getMetricsProviders } = useMetricProviders();
   const [loadingProviders, setLoadingProviders] = useState(false);
+  const [loadingMetrics, setLoadingMetrics] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric, status: creatingStatus } = useSaveMetric();
+  const { saveMetric, status: creatingStatus } = useSaveMetric(metric?.id);
   const [providerOptions, setProviderOptions] = useState<Option[]>();
   const [metrics, setMetrics] = useState<Option[]>();
-  const [selectedProvider, setSelectedProvider] = useState<Option>();
+  const { watch } = formMethods;
+  const watchDataSourceId = watch('dataSourceId');
 
   useEffect(() => {
     if (metric) {
@@ -83,16 +83,23 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   }, [getMetricsProviders]);
 
   useEffect(() => {
-    if (isBasicQuery && selectedProvider) {
-      getAllDataSourceMetrics(selectedProvider.value).then(metricsResponse => {
-        const normalizedOptions = normalizeMetricOptions(metricsResponse);
-        setMetrics(normalizedOptions);
-      });
+    if (isBasicQuery && watchDataSourceId) {
+      setLoadingMetrics(true);
+      getAllDataSourceMetrics(watchDataSourceId)
+        .then(metricsResponse => {
+          const normalizedOptions = normalizeMetricOptions(metricsResponse);
+          setMetrics(normalizedOptions);
+        })
+        .finally(() => setLoadingMetrics(false));
     }
-  }, [isBasicQuery, selectedProvider, getAllDataSourceMetrics]);
+  }, [isBasicQuery, watchDataSourceId, getAllDataSourceMetrics]);
 
   const onSubmit = async (data: Metric) => {
-    const payload = { ...data, threshold: Number(data.threshold) };
+    const payload = {
+      ...data,
+      threshold: Number(data.threshold),
+      id: metric?.id
+    };
     await saveMetric(id, payload);
     onGoBack();
   };
@@ -107,7 +114,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">Add metric</Text.h2>
+        <Text.h2 color="light">
+          {metric?.id ? 'Update metric' : 'Add metric'}
+        </Text.h2>
       </Styled.Layer>
       <FormContext {...formMethods}>
         <Styled.Form
@@ -127,14 +136,23 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                 name="dataSourceId"
                 label="Select a type server"
                 options={providerOptions}
-                onChange={option => setSelectedProvider(option)}
                 rules={{ required: true }}
-                defaultValue={getDataSourceDefaultValue(
+                defaultValue={getSelectDefaultValue(
                   metric?.dataSourceId,
                   providerOptions
                 )}
               />
             )}
+            {!loadingMetrics && (
+              <Styled.ProviderSelect
+                control={control}
+                name="metric"
+                label="Select a metric"
+                options={metrics}
+                defaultValue={getSelectDefaultValue(metric?.metric, metrics)}
+              />
+            )}
+
             {true && (
               <>
                 <Text.h5 color="dark">
@@ -157,9 +175,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </Styled.ButtonIconRounded>
                 </Styled.Actions>
 
-                {isBasicQuery && (
-                  <BasicQueryForm filters={metric?.filters} metrics={metrics} />
-                )}
+                {isBasicQuery && <BasicQueryForm filters={metric?.filters} />}
 
                 {!isBasicQuery && (
                   <>
@@ -185,7 +201,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
                 <Styled.ThresholdWrapper>
                   <Styled.ThresholdSelect
-                    options={thresholdOptions}
+                    options={conditionOptions}
                     control={control}
                     rules={{ required: true }}
                     label="Conditional"

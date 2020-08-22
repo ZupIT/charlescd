@@ -1,19 +1,17 @@
 import React from 'react';
 import Styled from './styled';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { Option } from 'core/components/Form/Select/interfaces';
 import StyledRule from 'modules/Circles/Segments/styled';
-import { thresholdOptions, FILTER } from './constants';
+import { operatorsOptions, FILTER } from './constants';
 import Icon from 'core/components/Icon';
-import { getCondition } from './helpers';
+import { getOperator } from './helpers';
 import { MetricFilter } from './types';
 
 type Props = {
-  metrics: Option[];
   filters: MetricFilter[];
 };
 
-const BasicQueryForm = ({ metrics, filters }: Props) => {
+const BasicQueryForm = ({ filters }: Props) => {
   const { register, control } = useFormContext();
   const { fields, remove, append } = useFieldArray({
     control,
@@ -22,12 +20,6 @@ const BasicQueryForm = ({ metrics, filters }: Props) => {
 
   return (
     <>
-      <Styled.ProviderSelect
-        control={control}
-        name="metric"
-        label="Select a metric"
-        options={metrics}
-      />
       {fields.map((item, index) => (
         <Styled.RuleWrapper key={item.id}>
           <StyledRule.Rule data-testid="segments-rules">
@@ -45,12 +37,12 @@ const BasicQueryForm = ({ metrics, filters }: Props) => {
               name={`filters.${index}.field`}
             />
             <StyledRule.Select
-              options={thresholdOptions}
+              options={operatorsOptions}
               control={control}
               rules={{ required: true }}
               label="Conditional"
               name={`filters.${index}.operator`}
-              defaultValue={getCondition(filters?.[index]?.operator)}
+              defaultValue={getOperator(filters?.[index]?.operator)}
             />
             <StyledRule.Input
               label="Value"
