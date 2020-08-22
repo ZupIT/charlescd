@@ -71,13 +71,16 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setShowAddMetricForm(true);
   };
 
-  const handleDeleteMetricsGroup = (metricGroupId: string) => {
-    deleteMetricsGroup(metricGroupId);
+  const handleDeleteMetricsGroup = async (metricGroupId: string) => {
+    await deleteMetricsGroup(metricGroupId);
     getMetricsGroups(id);
   };
 
-  const handleDeleteMetric = (metricGroupId: string, metricId: string) => {
-    deleteMetric(metricGroupId, metricId);
+  const handleDeleteMetric = async (
+    metricGroupId: string,
+    metricId: string
+  ) => {
+    await deleteMetric(metricGroupId, metricId);
     getMetricsGroups(id);
   };
 
