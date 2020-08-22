@@ -33,8 +33,7 @@ data class CreateMetricConfigurationRequest(
     val authorId: String,
     @field:NotBlank
     @field:NotNull
-    val url: String,
-    val name: String
+    val url: String
 ) {
     fun toMetricConfiguration(workspaceId: String, author: User) = MetricConfiguration(
         id = UUID.randomUUID().toString(),
