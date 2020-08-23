@@ -16,16 +16,17 @@ const (
 
 type Metric struct {
 	util.BaseModel
-	MetricsGroupID uuid.UUID       `json:"metricGroupId"`
-	DataSourceID   uuid.UUID       `json:"dataSourceId"`
-	Nickname       string          `json:"nickname"`
-	Query          string          `json:"query"`
-	Metric         string          `json:"metric"`
-	Filters        []MetricFilter  `json:"filters"`
-	GroupBy        []MetricGroupBy `json:"groupBy"`
-	Condition      string          `json:"condition"`
-	Threshold      float64         `json:"threshold"`
-	Status         string          `json:"status"`
+	MetricsGroupID  uuid.UUID       `json:"metricGroupId"`
+	DataSourceID    uuid.UUID       `json:"dataSourceId"`
+	Nickname        string          `json:"nickname"`
+	Query           string          `json:"query"`
+	Metric          string          `json:"metric"`
+	Filters         []MetricFilter  `json:"filters"`
+	GroupBy         []MetricGroupBy `json:"groupBy"`
+	Condition       string          `json:"condition"`
+	Threshold       float64         `json:"threshold"`
+	Status          string          `json:"status"`
+	MetricExecution MetricExecution `json:"execution"`
 }
 
 type MetricFilter struct {
@@ -66,8 +67,18 @@ func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
 	return *newMetric, nil
 }
 
+func (main Main) FindMetricById(id string) (Metric, error) {
+	metric := Metric{}
+	db := main.db.Where("id = ?", id).First(&metric)
+	if db.Error != nil {
+		util.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
+		return Metric{}, db.Error
+	}
+	return metric, nil
+}
+
 func (main Main) SaveMetric(metric Metric) (Metric, error) {
-	_, err := main.resultQuery(metric)
+	_, err := main.ResultQuery(metric)
 	if err != nil {
 		util.Error(util.ResultQueryError, "SaveMetric", err, metric)
 		return Metric{}, err
@@ -78,15 +89,43 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 		util.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
 		return Metric{}, db.Error
 	}
+
+	if metric.Condition != "" {
+		_, err := main.SaveMetricExecution(MetricExecution{
+			MetricID: metric.ID,
+			Status:   Active,
+		})
+		if err != nil {
+			return Metric{}, err
+		}
+	}
+
 	return metric, nil
 }
 
 func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
+	_, err := main.ResultQuery(metric)
+	if err != nil {
+		util.Error(util.ResultQueryError, "UpdateMetric", err, metric)
+		return Metric{}, err
+	}
+
 	db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
 	if db.Error != nil {
 		util.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 		return Metric{}, db.Error
 	}
+
+	if metric.Condition != "" {
+		_, err := main.SaveMetricExecution(MetricExecution{
+			MetricID: metric.ID,
+			Status:   Active,
+		})
+		if err != nil {
+			return Metric{}, err
+		}
+	}
+
 	return metric, nil
 }
 
