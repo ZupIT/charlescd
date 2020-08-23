@@ -28,9 +28,9 @@ type MetricsGroup struct {
 
 type MetricGroupResume struct {
 	util.BaseModel
-	Name                   string `json:"name"`
-	AllMetricsCount        int    `json:"allMetricsCount"`
-	AllMetricsSuccessCount int    `json:"allMetricsSuccessCount"`
+	Name              string `json:"name"`
+	Thresholds        int    `json:"thresholds"`
+	ThresholdsReached int    `json:"thresholdsReached"`
 }
 
 func (metricsGroup MetricsGroup) Validate() []error {
