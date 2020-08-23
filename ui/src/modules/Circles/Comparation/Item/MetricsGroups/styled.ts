@@ -36,6 +36,7 @@ interface ButtonIconProps {
 
 const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
+  margin-bottom: 40px;
 `;
 
 const TrashIcon = styled(ComponentIcon)`
@@ -55,7 +56,7 @@ const ButtonAdd = styled(ButtonComponent.Rounded)`
 `;
 
 const Input = styled(InputComponent)`
-  width: 190px;
+  width: 230px;
   margin: 10px 0 20px;
 `;
 
@@ -130,7 +131,8 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
     `};
 `;
 
-const AceEditorWrapper = styled.div`
+const AdvancedQueryWrapper = styled.div`
+  width: 100%;
   margin: 20px 0;
 `;
 
@@ -166,7 +168,7 @@ const MetricsGroupsCardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 `;
 
 const MetricsGroupsCardContent = styled.div``;
@@ -241,7 +243,7 @@ export default {
   ProviderSelect,
   Actions,
   ButtonIconRounded,
-  AceEditorWrapper,
+  AdvancedQueryWrapper,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
