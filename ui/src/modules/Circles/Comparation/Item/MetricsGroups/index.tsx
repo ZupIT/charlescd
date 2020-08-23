@@ -60,10 +60,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     }
   }, [getMetricsGroups, id, status.isIdle]);
 
-  const onSubmit = async ({ name }: Record<string, string>) => {
-    await createMetricsGroup(name, id);
-    setToggleModal(false);
-    getMetricsGroups(id);
+  const onSubmit = ({ name }: Record<string, string>) => {
+    createMetricsGroup(name, id).then(response => {
+      if (response) {
+        getMetricsGroups(id);
+        setToggleModal(false);
+      }
+    });
   };
 
   const handleAddMetric = (metricGroup: MetricsGroup) => {
@@ -71,9 +74,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setShowAddMetricForm(true);
   };
 
-  const handleDeleteMetricsGroup = async (metricGroupId: string) => {
-    await deleteMetricsGroup(metricGroupId);
-    getMetricsGroups(id);
+  const handleDeleteMetricsGroup = (metricGroupId: string) => {
+    deleteMetricsGroup(metricGroupId).then(() => {
+      getMetricsGroups(id);
+    });
   };
 
   const handleDeleteMetric = async (

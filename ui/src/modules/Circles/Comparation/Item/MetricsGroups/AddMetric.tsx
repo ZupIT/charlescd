@@ -19,7 +19,7 @@ import { useForm, FormContext } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { conditionOptions } from './constants';
-import AceEditorForm from 'core/components/Form/AceEditor';
+import Input from 'core/components/Form/Input';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
 import { Metric, MetricFilter } from './types';
@@ -33,7 +33,6 @@ import {
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
-import isEmpty from 'lodash/isEmpty';
 
 type Props = {
   id: string;
@@ -68,7 +67,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   useEffect(() => {
     if (metric) {
-      setIsBasicQuery(!isEmpty(metric?.filters));
+      setIsBasicQuery(!!metric?.metric);
       setFilters(metric.filters);
     } else {
       setIsBasicQuery(true);
@@ -99,8 +98,11 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   const onSubmit = async (data: Metric) => {
     const payload = buildMetricPayload(data, metric);
-    await saveMetric(id, payload);
-    onGoBack();
+    saveMetric(id, payload).then(response => {
+      if (response) {
+        onGoBack();
+      }
+    });
   };
 
   const handleAddFilter = () => {
@@ -200,16 +202,13 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
                 {!isBasicQuery && (
                   <>
-                    <Text.h5 color="dark">Type a query:</Text.h5>
-                    <Styled.AceEditorWrapper>
-                      <AceEditorForm
-                        height="50px"
-                        mode="json"
+                    <Styled.AdvancedQueryWrapper>
+                      <Input
                         name="query"
-                        control={control}
-                        rules={{ required: true }}
+                        ref={register({ required: true })}
+                        label="Type a query"
                       />
-                    </Styled.AceEditorWrapper>
+                    </Styled.AdvancedQueryWrapper>
                   </>
                 )}
 
