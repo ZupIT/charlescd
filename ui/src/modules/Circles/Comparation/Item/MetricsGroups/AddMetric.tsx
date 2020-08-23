@@ -18,21 +18,21 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
-import { conditionOptions, defaultFilterValues } from './constants';
-import AceEditorForm from 'core/components/Form/AceEditor';
+import { conditionOptions } from './constants';
+import Input from 'core/components/Form/Input';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { Metric } from './types';
+import { Metric, MetricFilter } from './types';
 import {
   normalizeMetricOptions,
   getCondition,
   getSelectDefaultValue,
-  buildMetricPayload
+  buildMetricPayload,
+  getBlankFilter
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
-import isEmpty from 'lodash/isEmpty';
 
 type Props = {
   id: string;
@@ -41,12 +41,10 @@ type Props = {
 };
 
 const AddMetric = ({ onGoBack, id, metric }: Props) => {
+  const [filters, setFilters] = useState<MetricFilter[]>([]);
   const formMethods = useForm<Metric>({
     mode: 'onChange',
-    defaultValues: {
-      ...metric,
-      filters: isEmpty(metric?.filters) ? defaultFilterValues : metric.filters
-    }
+    defaultValues: metric ?? {}
   });
   const {
     handleSubmit,
@@ -69,7 +67,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   useEffect(() => {
     if (metric) {
-      setIsBasicQuery(!isEmpty(metric?.filters));
+      setIsBasicQuery(!!metric?.metric);
+      setFilters(metric.filters);
     } else {
       setIsBasicQuery(true);
     }
@@ -99,8 +98,21 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   const onSubmit = async (data: Metric) => {
     const payload = buildMetricPayload(data, metric);
-    await saveMetric(id, payload);
-    onGoBack();
+    saveMetric(id, payload).then(response => {
+      if (response) {
+        onGoBack();
+      }
+    });
+  };
+
+  const handleAddFilter = () => {
+    const newFilters = [...filters, getBlankFilter()];
+    setFilters(newFilters);
+  };
+
+  const handleRemoveFilter = (idToRemove: string) => {
+    const newFilters = filters.filter(item => item.id !== idToRemove);
+    setFilters(newFilters);
   };
 
   return (
@@ -133,7 +145,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               <Styled.ProviderSelect
                 control={control}
                 name="dataSourceId"
-                label="Select a type server"
+                label="Select a data source"
                 options={providerOptions}
                 rules={{ required: true }}
                 defaultValue={getSelectDefaultValue(
@@ -173,28 +185,30 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         name="metric"
                         label="Select a metric"
                         options={metrics}
+                        rules={{ required: true }}
                         defaultValue={getSelectDefaultValue(
                           metric?.metric,
                           metrics
                         )}
                       />
                     )}
-                    <BasicQueryForm filters={metric?.filters} />
+                    <BasicQueryForm
+                      filters={filters}
+                      onAddFilter={handleAddFilter}
+                      onRemoveFilter={handleRemoveFilter}
+                    />
                   </>
                 )}
 
                 {!isBasicQuery && (
                   <>
-                    <Text.h5 color="dark">Type a query:</Text.h5>
-                    <Styled.AceEditorWrapper>
-                      <AceEditorForm
-                        height="50px"
-                        mode="json"
+                    <Styled.AdvancedQueryWrapper>
+                      <Input
                         name="query"
-                        control={control}
-                        rules={{ required: true }}
+                        ref={register({ required: true })}
+                        label="Type a query"
                       />
-                    </Styled.AceEditorWrapper>
+                    </Styled.AdvancedQueryWrapper>
                   </>
                 )}
 

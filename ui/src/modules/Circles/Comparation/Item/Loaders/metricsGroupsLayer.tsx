@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-const Footer = styled.footer`
-  grid-area: footer;
-  height: 35px;
-  background-color: ${({ theme }) => theme.footer.background};
-  z-index: ${({ theme }) => theme.zIndex.OVER_3};
-`;
-
-export default {
-  Footer
-};
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={4}
+    width={450}
+    height={250}
+    viewBox="0 0 450 220"
+    backgroundColor="#3a393c"
+    foregroundColor="#2c2b2e"
+  >
+    <rect x="0" y="0" rx="2" ry="2" width="450" height="60" />
+    <rect x="2" y="78" rx="2" ry="2" width="450" height="60" />
+    <rect x="1" y="152" rx="2" ry="2" width="450" height="60" />
+  </ContentLoader>
+);

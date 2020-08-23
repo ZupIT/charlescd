@@ -111,6 +111,7 @@ const MetricsGroupsContent = styled.div`
   background-color: ${({ theme }) =>
     theme.circleGroupMetrics.content.background};
   border-radius: 5px;
+  margin-top: 20px;
   margin-bottom: 10px;
   width: 550px;
 `;

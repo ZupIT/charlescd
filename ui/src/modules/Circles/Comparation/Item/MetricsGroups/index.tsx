@@ -29,6 +29,7 @@ import {
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
+import Loader from '../Loaders/index';
 
 interface Props {
   id: string;
@@ -59,10 +60,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     }
   }, [getMetricsGroups, id, status.isIdle]);
 
-  const onSubmit = async ({ name }: Record<string, string>) => {
-    await createMetricsGroup(name, id);
-    setToggleModal(false);
-    getMetricsGroups(id);
+  const onSubmit = ({ name }: Record<string, string>) => {
+    createMetricsGroup(name, id).then(response => {
+      if (response) {
+        getMetricsGroups(id);
+        setToggleModal(false);
+      }
+    });
   };
 
   const handleAddMetric = (metricGroup: MetricsGroup) => {
@@ -71,12 +75,16 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   };
 
   const handleDeleteMetricsGroup = (metricGroupId: string) => {
-    deleteMetricsGroup(metricGroupId);
-    getMetricsGroups(id);
+    deleteMetricsGroup(metricGroupId).then(() => {
+      getMetricsGroups(id);
+    });
   };
 
-  const handleDeleteMetric = (metricGroupId: string, metricId: string) => {
-    deleteMetric(metricGroupId, metricId);
+  const handleDeleteMetric = async (
+    metricGroupId: string,
+    metricId: string
+  ) => {
+    await deleteMetric(metricGroupId, metricId);
     getMetricsGroups(id);
   };
 
@@ -208,7 +216,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         >
           Add metrics group
         </Styled.ButtonAdd>
-        {renderMetricsGroupsCards()}
+        {status.isPending ? (
+          <Loader.MetricsGroupslayer />
+        ) : (
+          renderMetricsGroupsCards()
+        )}
       </Styled.Layer>
     </>
   ) : (

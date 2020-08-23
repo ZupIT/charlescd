@@ -135,6 +135,7 @@ export const useSaveMetric = (metricId: string) => {
   const saveRequest = metricId ? updateMetric : createMetric;
   const saveMetricPayload = useFetchData<Metric>(saveRequest);
   const status = useFetchStatus();
+  const dispatch = useDispatch();
 
   const saveMetric = useCallback(
     async (metricsGroupsId: string, metricPayload: Metric) => {
@@ -148,11 +149,20 @@ export const useSaveMetric = (metricId: string) => {
         status.resolved();
 
         return savedMetricResponse;
-      } catch (e) {
+      } catch (error) {
         status.rejected();
+        error.text().then((errorMessage: any) => {
+          const parsedError = JSON.parse(errorMessage);
+          dispatch(
+            toogleNotification({
+              text: parsedError?.[0].message ?? 'Error on creating metric',
+              status: 'error'
+            })
+          );
+        });
       }
     },
-    [saveMetricPayload, status]
+    [saveMetricPayload, status, dispatch]
   );
 
   return {
@@ -187,6 +197,7 @@ export const useProviderMetrics = () => {
 export const useCreateMetricsGroup = () => {
   const createMetricsGroupPayload = useFetchData<MetricsGroup>(saveMetricGroup);
   const status = useFetchStatus();
+  const dispatch = useDispatch();
 
   const createMetricsGroup = useCallback(
     async (name: string, circleId: string) => {
@@ -200,11 +211,21 @@ export const useCreateMetricsGroup = () => {
         status.resolved();
 
         return createdMetricsGroupResponse;
-      } catch (e) {
+      } catch (error) {
         status.rejected();
+        error.text().then((errorMessage: any) => {
+          const parsedError = JSON.parse(errorMessage);
+          dispatch(
+            toogleNotification({
+              text:
+                parsedError?.[0].message ?? 'Error on creating metric group',
+              status: 'error'
+            })
+          );
+        });
       }
     },
-    [createMetricsGroupPayload, status]
+    [createMetricsGroupPayload, status, dispatch]
   );
 
   return {
@@ -235,7 +256,6 @@ export const useDeleteMetricsGroup = () => {
 
         return deleteMetricsGroupResponse;
       } catch (e) {
-        console.log(e);
         dispatch(
           toogleNotification({
             text: `Error deleting metrics group`,
