@@ -15,8 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen, queryByTestId } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock';
+import { render, wait, screen } from 'unit-test/testUtils';
 import PrivateRoute from '../index';
 import { MemoryRouter } from 'react-router-dom';
 import { setAccessToken } from 'core/utils/auth';
@@ -134,6 +133,4 @@ test('render PrivateRoute by refresh', async () => {
   await wait(() => 
     expect(screen.queryByTestId('mock-component')).toBeInTheDocument()
   );
-
-  expect(true).toBeTruthy();
 });
