@@ -130,7 +130,8 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
     `};
 `;
 
-const AceEditorWrapper = styled.div`
+const AdvancedQueryWrapper = styled.div`
+  width: 100%;
   margin: 20px 0;
 `;
 
@@ -166,7 +167,7 @@ const MetricsGroupsCardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 `;
 
 const MetricsGroupsCardContent = styled.div``;
@@ -241,7 +242,7 @@ export default {
   ProviderSelect,
   Actions,
   ButtonIconRounded,
-  AceEditorWrapper,
+  AdvancedQueryWrapper,
   Modal: {
     Input: ModalInput,
     Title: ModalTitle,
