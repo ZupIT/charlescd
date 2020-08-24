@@ -60,7 +60,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
           {metric?.name}
         </Styled.MetricsGroupsContentText>
         <Styled.MetricsGroupsContentText color={'light'}>
-          {metric.allMetricsSuccessCount} / {metric.allMetricsCount}
+          {metric.thresholdsReached} / {metric.thresholds}
         </Styled.MetricsGroupsContentText>
       </Styled.MetricsGroupsCard>
     ));

@@ -206,8 +206,11 @@ const MetricNickname = styled(Text.h5)`
 
 const MetricConditionThreshold = styled.div`
   display: flex;
-  width: 100px;
-  margin-right: 55px;
+  width: 125px;
+  margin-right: 45px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   span {
     margin-right: 5px;
