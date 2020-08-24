@@ -1,4 +1,4 @@
-package metricsgroup
+package metric
 
 import (
 	"compass/internal/datasource"
@@ -141,7 +141,6 @@ func (s *SuiteMetric) TestSaveMetric() {
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
-		Status:         "ACTIVE",
 	}
 
 	query := regexp.QuoteMeta(`INSERT INTO "metrics"`)
@@ -155,8 +154,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 			metricStruct.DataSourceID.String(),
 			metricStruct.Metric,
 			metricStruct.Condition,
-			metricStruct.Threshold,
-			metricStruct.Status).
+			metricStruct.Threshold).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
 	s.mock.ExpectCommit()
 
@@ -180,7 +178,6 @@ func (s *SuiteMetric) TestSaveMetricError() {
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
-		Status:         "ACTIVE",
 	}
 
 	query := regexp.QuoteMeta(`INSERT INTO "ERROR"`)
@@ -194,8 +191,7 @@ func (s *SuiteMetric) TestSaveMetricError() {
 			metricStruct.DataSourceID.String(),
 			metricStruct.Metric,
 			metricStruct.Condition,
-			metricStruct.Threshold,
-			metricStruct.Status).
+			metricStruct.Threshold).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
 	s.mock.ExpectCommit()
 
@@ -218,7 +214,6 @@ func (s *SuiteMetric) TestUpdateMetric() {
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
-		Status:         "ACTIVE",
 	}
 
 	query := regexp.QuoteMeta(`UPDATE "metrics"`)
@@ -249,7 +244,6 @@ func (s *SuiteMetric) TestUpdateMetricError() {
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
-		Status:         "ACTIVE",
 	}
 
 	query := regexp.QuoteMeta(`UPDATE "ERROR"`)

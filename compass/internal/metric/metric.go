@@ -1,4 +1,4 @@
-package metricsgroup
+package metric
 
 import (
 	"compass/internal/util"
@@ -7,11 +7,6 @@ import (
 	"io"
 
 	"github.com/google/uuid"
-)
-
-const (
-	MetricActive   = "ACTIVE"
-	MetricFinished = "FINISHED"
 )
 
 type Metric struct {
@@ -25,7 +20,6 @@ type Metric struct {
 	GroupBy         []MetricGroupBy `json:"groupBy"`
 	Condition       string          `json:"condition"`
 	Threshold       float64         `json:"threshold"`
-	Status          string          `json:"status"`
 	MetricExecution MetricExecution `json:"execution"`
 }
 
@@ -67,6 +61,37 @@ func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
 	return *newMetric, nil
 }
 
+func (main Main) CountAllMetricsWithConditions(metrics []Metric) int {
+	metricsWithConditions := 0
+	for _, metric := range metrics {
+		if metric.Condition != "" {
+			metricsWithConditions++
+		}
+	}
+
+	return metricsWithConditions
+}
+
+func (main Main) CountAllMetricsFinished(metrics []Metric) int {
+	metricsFinished := 0
+	for _, currentMetric := range metrics {
+		if currentMetric.MetricExecution.Status == MetricReached {
+			metricsFinished++
+		}
+	}
+
+	return metricsFinished
+}
+
+func (main Main) CountAllMetricsInGroup(metrics []Metric) int {
+	metricsTotal := 0
+	for _, _ = range metrics {
+		metricsTotal++
+	}
+
+	return metricsTotal
+}
+
 func (main Main) FindMetricById(id string) (Metric, error) {
 	metric := Metric{}
 	db := main.db.Where("id = ?", id).First(&metric)
@@ -93,7 +118,7 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 	if metric.Condition != "" {
 		_, err := main.SaveMetricExecution(MetricExecution{
 			MetricID: metric.ID,
-			Status:   Active,
+			Status: MetricActive,
 		})
 		if err != nil {
 			return Metric{}, err
@@ -119,7 +144,7 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 	if metric.Condition != "" {
 		_, err := main.SaveMetricExecution(MetricExecution{
 			MetricID: metric.ID,
-			Status:   Active,
+			Status: MetricActive,
 		})
 		if err != nil {
 			return Metric{}, err
@@ -136,4 +161,64 @@ func (main Main) RemoveMetric(id string) error {
 		return db.Error
 	}
 	return nil
+}
+
+func (main Main) getQueryByMetric(metric Metric) []byte {
+	if metric.Query != "" {
+		return []byte(metric.Query)
+	}
+
+	return []byte(metric.Metric)
+}
+
+func (main Main) ResultQuery(metric Metric) (float64, error) {
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	if err != nil {
+		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
+		util.Error(util.QueryFindDatasourceError, "ResultQuery", notFoundErr, metric.DataSourceID.String())
+		return 0, notFoundErr
+	}
+
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	if err != nil {
+		util.Error(util.QueryGetPluginError, "ResultQuery", err, dataSourceResult.PluginSrc)
+		return 0, err
+	}
+
+	getQuery, err := plugin.Lookup("Result")
+	if err != nil {
+		util.Error(util.PluginLookupError, "ResultQuery", err, plugin)
+		return 0, err
+	}
+
+	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
+	filters, _ := json.Marshal(metric.Filters)
+	query := main.getQueryByMetric(metric)
+	return getQuery.(func(datasourceConfiguration, metric, filters []byte) (float64, error))(dataSourceConfigurationData, query, filters)
+}
+
+func (main Main) Query(metric Metric, period string) (interface{}, error) {
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	if err != nil {
+		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
+		util.Error(util.QueryFindDatasourceError, "Query", notFoundErr, metric.DataSourceID.String())
+		return nil, notFoundErr
+	}
+
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	if err != nil {
+		util.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginSrc)
+		return nil, err
+	}
+
+	getQuery, err := plugin.Lookup("Query")
+	if err != nil {
+		util.Error(util.PluginLookupError, "Query", err, plugin)
+		return nil, err
+	}
+
+	query := main.getQueryByMetric(metric)
+	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
+	filters, _ := json.Marshal(metric.Filters)
+	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) (interface{}, error))(dataSourceConfigurationData, query, filters, []byte(period))
 }

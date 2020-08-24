@@ -1,6 +1,8 @@
 package dispatcher
 
 import (
+	"compass/internal/configuration"
+	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"fmt"
@@ -9,20 +11,20 @@ import (
 )
 
 type UseCases interface {
-	Start()
+	Start() error
 }
 
 type Dispatcher struct {
-	metricsGroups metricsgroup.UseCases
+	metric metric.UseCases
 	mux           sync.Mutex
 }
 
-func NewDispatcher(metricsgroup metricsgroup.UseCases) UseCases {
-	return &Dispatcher{metricsgroup, sync.Mutex{}}
+func NewDispatcher(metric metric.UseCases) UseCases {
+	return &Dispatcher{metric, sync.Mutex{}}
 }
 
 func (dispatcher *Dispatcher) dispatch() {
-	metricExecutions, err := dispatcher.metricsGroups.FindAllActivesMetricExecutions()
+	metricExecutions, err := dispatcher.metric.FindAllActivesMetricExecutions()
 	if err != nil {
 		util.Panic("Cannot find active metric executions", "Dispatch", err, nil)
 	}
@@ -47,34 +49,43 @@ func compareResultWithMetricTreshhold(result float64, threshold float64, conditi
 	}
 }
 
-func (dispatcher *Dispatcher) getMetricResult(execution metricsgroup.MetricExecution) {
-	metric, err := dispatcher.metricsGroups.FindMetricById(execution.MetricID.String())
+func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) {
+	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID.String())
 	if err != nil {
 		return
 	}
 
-	metricResult, err := dispatcher.metricsGroups.ResultQuery(metric)
+	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
-		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, metric)
+		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
 		return
 	}
 
-	if compareResultWithMetricTreshhold(metricResult, metric.Threshold, metric.Condition) {
+	if compareResultWithMetricTreshhold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 		dispatcher.mux.Lock()
-		execution.Status = metricsgroup.Completed
-		dispatcher.metricsGroups.SaveMetricExecution(execution)
+		execution.Status = metric.MetricReached
+		dispatcher.metric.SaveMetricExecution(execution)
 		dispatcher.mux.Unlock()
 	}
 
 	dispatcher.mux.Lock()
 	execution.LastValue = metricResult
-	dispatcher.metricsGroups.SaveMetricExecution(execution)
+	dispatcher.metric.SaveMetricExecution(execution)
 	dispatcher.mux.Unlock()
 }
 
-func (dispatcher *Dispatcher) Start() {
+func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
+	return time.ParseDuration(configuration.GetConfiguration("DISPATCHER_INTERVAL"))
+}
+
+func (dispatcher *Dispatcher) Start() error {
+	interval, err := dispatcher.getInterval()
+	if err != nil {
+		return err
+	}
+
 	for {
-		time.Sleep(2 * time.Second)
+		time.Sleep(interval * time.Second)
 		dispatcher.dispatch()
 	}
 }

@@ -1,4 +1,4 @@
-package metricsgroup
+package metric
 
 import (
 	"compass/internal/util"
@@ -6,6 +6,11 @@ import (
 	"io"
 
 	"github.com/google/uuid"
+)
+
+const (
+	MetricReached = "REACHED"
+	MetricActive  = "ACTIVE"
 )
 
 type MetricExecution struct {
@@ -37,7 +42,7 @@ func (main Main) FindAllMetricExecutions() ([]MetricExecution, error) {
 
 func (main Main) FindAllActivesMetricExecutions() ([]MetricExecution, error) {
 	var metricExecutions []MetricExecution
-	db := main.db.Where("status = ?", Active).Find(&metricExecutions)
+	db := main.db.Where("status = ?", MetricActive).Find(&metricExecutions)
 	if db.Error != nil {
 		util.Error(util.FindAllMetricExecutionsError, "FindAllMetricExecutions", db.Error, metricExecutions)
 		return []MetricExecution{}, db.Error
@@ -55,13 +60,13 @@ func (main Main) FindMetricExecutionById(id string) (MetricExecution, error) {
 	return metricExecution, nil
 }
 
-func (main Main) SaveMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
-	db := main.db.Save(&metricExecution)
+func (main Main) SaveMetricExecution(execution MetricExecution) (MetricExecution, error) {
+	db := main.db.Save(&execution)
 	if db.Error != nil {
-		util.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, metricExecution)
+		util.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, execution)
 		return MetricExecution{}, db.Error
 	}
-	return metricExecution, nil
+	return execution, nil
 }
 
 func (main Main) UpdateMetricExecution(id string, metricExecution MetricExecution) (MetricExecution, error) {
