@@ -26,7 +26,7 @@ import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto
 import { ComponentsRepositoryV2 } from '../repository'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ExecutionTypeEnum } from '../enums'
-import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
+import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 
 @Injectable()
 export class CreateDeploymentUseCase {

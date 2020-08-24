@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository } from 'typeorm'
-import { DeploymentEntityV2 } from '../entity/deployment.entity'
+export class ReadCircleDeploymentDto {
 
-@EntityRepository(DeploymentEntityV2)
-export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
+  public readonly headerValue: string
 
-  public async findActiveComponents(): Promise<DeploymentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
-      .getMany()
+  constructor(
+    headerValue: string
+  ) {
+    this.headerValue = headerValue
   }
 }

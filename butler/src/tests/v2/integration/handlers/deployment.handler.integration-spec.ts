@@ -69,6 +69,10 @@ describe('DeploymentHandler', () => {
   })
 
   it('set only one component deployment status to running, set the second to running when the first is finished', async() => {
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      return res.send({ ok: 'ok' })
+    })
+
     mock.post('/ok/tasks', (req, res) => {
       res.sendStatus(200)
     })
@@ -107,7 +111,7 @@ describe('DeploymentHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
     }
 
@@ -115,10 +119,12 @@ describe('DeploymentHandler', () => {
 
     const firstFixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
     const firstDeployment = firstFixtures.deployment
+    const firstExecution = firstFixtures.execution
     const firstJob = firstFixtures.job
 
     const secondFixtures = await createDeploymentAndExecution({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
     const secondDeployment = secondFixtures.deployment
+    const secondExecution = secondFixtures.execution
     const secondJob = secondFixtures.job
 
     await deploymentHandler.run(firstJob)
@@ -130,7 +136,7 @@ describe('DeploymentHandler', () => {
     expect(handledDeployment.components.map(c => c.running)).toEqual([true])
     expect(notHandledDeployment.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(firstDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
+    await notificationUseCase.execute(firstExecution.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
     await deploymentHandler.run(secondJob)
 
     const secondHandled = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondDeployment.id } })
@@ -138,7 +144,7 @@ describe('DeploymentHandler', () => {
     expect(secondHandled.components.map(c => c.running)).toEqual([true])
     expect(firstHandled.components.map(c => c.running)).toEqual([false])
 
-    await notificationUseCase.execute(secondDeployment.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
+    await notificationUseCase.execute(secondExecution.id, { status: DeploymentStatusEnum.SUCCEEDED, type: ExecutionTypeEnum.DEPLOYMENT })
 
     const secondsStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: secondHandled.id } })
     const firstStopped = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: firstHandled.id } })
@@ -224,18 +230,18 @@ describe('DeploymentHandler', () => {
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      deploymentStatus: DeploymentStatusEnum.TIMED_OUT
     }
 
     const fixtures = await createDeploymentAndExecution(params, cdConfiguration, manager)
-    manager.update(DeploymentEntity, { id: fixtures.deployment.id }, { status: DeploymentStatusEnum.TIMED_OUT })
 
     await expect(
       deploymentHandler.run(fixtures.job)
     ).rejects.toThrow(new Error('Deployment timed out'))
 
-    const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id })
-    expect(timedOutDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
+    const timedOutDeployment = await manager.findOneOrFail(DeploymentEntity, { id: fixtures.deployment.id }, { relations: ['executions'] })
+    expect(timedOutDeployment.executions.map(e => e.status)).toEqual([DeploymentStatusEnum.TIMED_OUT])
   })
 })
 
@@ -252,7 +258,6 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
   const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
     params.deploymentId,
     params.authorId,
-    DeploymentStatusEnum.CREATED,
     params.circle,
     cdConfiguration,
     params.callbackUrl,
@@ -262,7 +267,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
   const execution : Execution = await manager.save(new Execution(
     deployment,
     ExecutionTypeEnum.DEPLOYMENT,
-    params.incomingCircleId
+    params.incomingCircleId,
+    params.deploymentStatus,
   ))
 
   const job : JobWithDoneCallback<Execution, unknown> = {

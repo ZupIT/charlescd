@@ -36,31 +36,32 @@ import {
   getUndeploymentProxyEvaluationStage, getUndeploymentsDeleteUnusedStage, getUndeploymentsSuccessWebhookStage,
   getUndeploymentVirtualServiceStage
 } from './templates/undeployment'
+import { ConnectorConfiguration } from './connector'
 
 export class SpinnakerPipelineBuilder {
 
   private currentStageId = 1
 
-  public buildSpinnakerDeploymentPipeline(deployment: Deployment, activeComponents: Component[], incomingCircleId: string | null): SpinnakerPipeline {
+  public buildSpinnakerDeploymentPipeline(deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration): SpinnakerPipeline {
     return {
       application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
       expectedArtifacts: this.getExpectedArtifacts(deployment),
-      stages: this.getSpinnakerDeploymentStages(deployment, activeComponents, incomingCircleId)
+      stages: this.getSpinnakerDeploymentStages(deployment, activeComponents, configuration)
     }
   }
 
   public buildSpinnakerUndeploymentPipeline(
     deployment: Deployment,
     activeComponents: Component[],
-    incomingCircleId: string | null
+    configuration: ConnectorConfiguration
   ): SpinnakerPipeline {
 
     return {
       application: `app-${deployment.cdConfiguration.id}`,
       name: `${deployment.id}`,
       expectedArtifacts: [],
-      stages: this.getSpinnakerUndeploymentStages(deployment, activeComponents, incomingCircleId)
+      stages: this.getSpinnakerUndeploymentStages(deployment, activeComponents, configuration)
     }
   }
 
@@ -73,7 +74,7 @@ export class SpinnakerPipelineBuilder {
     return expectedArtifacts
   }
 
-  private getSpinnakerDeploymentStages(deployment: Deployment, activeComponents: Component[], incomingCircleId: string | null): Stage[] {
+  private getSpinnakerDeploymentStages(deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration): Stage[] {
     this.currentStageId = 1
     return [
       ...this.getDeploymentStages(deployment),
@@ -82,18 +83,18 @@ export class SpinnakerPipelineBuilder {
       ...this.getRollbackDeploymentsStage(deployment),
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
       ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
-      ...this.getFailureWebhookStage(deployment, incomingCircleId),
-      ...this.getSuccessWebhookStage(deployment, incomingCircleId)
+      ...this.getFailureWebhookStage(deployment, configuration),
+      ...this.getSuccessWebhookStage(deployment, configuration)
     ]
   }
 
-  private getSpinnakerUndeploymentStages(deployment: Deployment, activeComponents: Component[], incomingCircleId: string | null): Stage[] {
+  private getSpinnakerUndeploymentStages(deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration): Stage[] {
     this.currentStageId = 1
     return [
       ...this.getProxyUndeploymentStages(deployment, activeComponents),
       ...this.getProxyUndeploymentsEvaluationStage(deployment.components),
-      ...this.getUndeploymentFailureWebhookStage(deployment, incomingCircleId),
-      ...this.getUndeploymentSuccessWebhookStage(deployment, incomingCircleId),
+      ...this.getUndeploymentFailureWebhookStage(deployment, configuration),
+      ...this.getUndeploymentSuccessWebhookStage(deployment, configuration),
       ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents)
     ]
   }
@@ -191,20 +192,20 @@ export class SpinnakerPipelineBuilder {
     return stages
   }
 
-  private getFailureWebhookStage(deployment: Deployment, incomingCircleId: string | null): Stage[] {
-    return [getFailureWebhookStage(deployment, this.currentStageId++, incomingCircleId)]
+  private getFailureWebhookStage(deployment: Deployment, configuration: ConnectorConfiguration): Stage[] {
+    return [getFailureWebhookStage(deployment, this.currentStageId++, configuration)]
   }
 
-  private getSuccessWebhookStage(deployment: Deployment, incomingCircleId: string | null): Stage[] {
-    return [getSuccessWebhookStage(deployment, this.currentStageId++, incomingCircleId)]
+  private getSuccessWebhookStage(deployment: Deployment, configuration: ConnectorConfiguration): Stage[] {
+    return [getSuccessWebhookStage(deployment, this.currentStageId++, configuration)]
   }
 
-  private getUndeploymentFailureWebhookStage(deployment: Deployment, incomingCircleId: string | null): Stage[] {
-    return [getUndeploymentFailureWebhookStage(deployment, this.currentStageId++, incomingCircleId)]
+  private getUndeploymentFailureWebhookStage(deployment: Deployment, configuration: ConnectorConfiguration): Stage[] {
+    return [getUndeploymentFailureWebhookStage(deployment, this.currentStageId++, configuration)]
   }
 
-  private getUndeploymentSuccessWebhookStage(deployment: Deployment, incomingCircleId: string | null): Stage[] {
-    return [getUndeploymentsSuccessWebhookStage(deployment, this.currentStageId++, incomingCircleId)]
+  private getUndeploymentSuccessWebhookStage(deployment: Deployment, configuration: ConnectorConfiguration): Stage[] {
+    return [getUndeploymentsSuccessWebhookStage(deployment, this.currentStageId++, configuration)]
   }
 
   private getActiveComponentsByName(activeComponents: Component[], name: string): Component[] {

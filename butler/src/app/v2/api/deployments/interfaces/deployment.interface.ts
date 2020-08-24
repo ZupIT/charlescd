@@ -24,11 +24,9 @@ export interface Deployment {
 
     callbackUrl: string
 
-    status: DeploymentStatusEnum
-
     createdAt: Date
 
-    finishedAt: Date | null
+    // finishedAt: Date | null
 
     cdConfiguration: CdConfiguration
 

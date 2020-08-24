@@ -14,16 +14,33 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository } from 'typeorm'
-import { DeploymentEntityV2 } from '../entity/deployment.entity'
+export class ReadComponentDeploymentDto {
 
-@EntityRepository(DeploymentEntityV2)
-export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
+  public readonly id: string
 
-  public async findActiveComponents(): Promise<DeploymentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
-      .getMany()
+  public readonly componentId: string
+
+  public readonly componentName: string
+
+  public readonly buildImageUrl: string
+
+  public readonly buildImageTag: string
+
+  public readonly createdAt: Date
+
+  constructor(
+    id: string,
+    componentId: string,
+    componentName: string,
+    buildImageUrl: string,
+    buildImageTag: string,
+    createdAt: Date
+  ) {
+    this.id = id
+    this.componentId = componentId
+    this.componentName = componentName
+    this.buildImageUrl = buildImageUrl
+    this.buildImageTag = buildImageTag
+    this.createdAt = createdAt
   }
 }

@@ -17,7 +17,6 @@
 import 'jest'
 
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
-import { DeploymentStatusEnum } from '../../../../app/v1/api/deployments/enums'
 import {
   completeSpinnakerPipeline,
   noUnusedSpinnakerPipeline, oneComponentNoRepeatedSubset,
@@ -49,8 +48,6 @@ const deploymentWith3Components: Deployment = {
   },
   circleId: 'circle-id',
   createdAt: new Date(),
-  finishedAt: null,
-  status: DeploymentStatusEnum.CREATED,
   components: [
     {
       id: 'component-id-1',
@@ -100,8 +97,6 @@ const deploymentWith1ComponentCircle1: Deployment = {
   },
   circleId: 'circle-id',
   createdAt: new Date(),
-  finishedAt: null,
-  status: DeploymentStatusEnum.CREATED,
   components: [
     {
       id: 'component-id-1',
@@ -135,8 +130,6 @@ const deploymentWith1ComponentCircle2: Deployment = {
   },
   circleId: 'circle-id2',
   createdAt: new Date(),
-  finishedAt: null,
-  status: DeploymentStatusEnum.CREATED,
   components: [
     {
       id: 'component-id-1',
@@ -166,8 +159,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
           circleId: 'circle-id',
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -198,8 +189,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
           circleId: 'circle-id',
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -230,8 +219,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -262,8 +249,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -294,8 +279,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -316,7 +299,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(completeSpinnakerPipeline)
   })
 
@@ -336,8 +319,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -368,8 +349,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -400,8 +379,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -422,7 +399,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith3Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(noUnusedSpinnakerPipeline)
   })
 
@@ -442,8 +419,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -474,8 +449,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -506,8 +479,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -528,7 +499,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(oneComponentSpinnakerPipeline)
   })
 
@@ -548,8 +519,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -580,8 +549,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -612,8 +579,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -644,8 +609,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -666,7 +629,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(oneComponentVSSpinnakerPipeline)
   })
 
@@ -686,8 +649,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -718,8 +679,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -750,8 +709,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -782,8 +739,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -804,7 +759,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(oneComponentNoUnused)
   })
 
@@ -824,8 +779,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -856,8 +809,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -888,8 +839,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
           circleId: null,
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -920,8 +869,6 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id2',
           createdAt: new Date(),
-          finishedAt: new Date(),
-          status: DeploymentStatusEnum.SUCCEEDED,
           cdConfiguration: {
             id: 'cd-configuration-id',
             type: CdTypeEnum.SPINNAKER,
@@ -942,7 +889,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ]
 
     expect(
-      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, 'Default')
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
     ).toEqual(oneComponentWithUnused)
   })
 

@@ -15,6 +15,8 @@ import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import express = require('express')
 import { ConfigurationConstants } from '../../../../app/v1/core/constants/application/configuration.constants'
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
+import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 
 let mock = express()
 
@@ -83,7 +85,7 @@ describe('DeploymentCleanupHandler', () => {
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
-    await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
+    await manager.update(Execution, { deploymentId: timedOutDeployment.id }, { createdAt: createdAt })
     const { deployment: recentDeployment } = await createDeployment({ ...params, deploymentId: secondDeploymentId }, cdConfiguration, manager)
     await setComponentsToRunning(timedOutDeployment, manager)
 
@@ -91,14 +93,14 @@ describe('DeploymentCleanupHandler', () => {
       res.sendStatus(200)
     })
     await cleanupHandler.run(job)
-    const updatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: timedOutDeployment.id }, { relations: ['components'] })
-    expect(updatedDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
-    expect(updatedDeployment.notificationStatus).toEqual('SENT')
-    updatedDeployment.components.map(component => expect(component.running).toEqual(false))
+    const updatedExecution = await manager.findOneOrFail(Execution, { deployment: timedOutDeployment }, { relations: ['deployment', 'deployment.components'] })
+    expect(updatedExecution.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
+    expect(updatedExecution.notificationStatus).toEqual('SENT')
+    updatedExecution.deployment.components.map(component => expect(component.running).toEqual(false))
 
-    const nonUpdatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: recentDeployment.id })
-    expect(nonUpdatedDeployment.status).toEqual(DeploymentStatusEnum.CREATED)
-    expect(nonUpdatedDeployment.notificationStatus).toEqual('NOT_SENT')
+    const nonUpdatedExecution = await manager.findOneOrFail(Execution, { deployment: recentDeployment })
+    expect(nonUpdatedExecution.status).toEqual(DeploymentStatusEnum.CREATED)
+    expect(nonUpdatedExecution.notificationStatus).toEqual('NOT_SENT')
   })
 
   it('set deployment notification_status to error when notification fails', async() => {
@@ -131,15 +133,15 @@ describe('DeploymentCleanupHandler', () => {
     const { deployment: timedOutDeployment, job } = await createDeployment(params, cdConfiguration, manager)
     const createdAt = new Date()
     createdAt.setMinutes(createdAt.getMinutes() - ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME)
-    await manager.update(DeploymentEntity, { id: timedOutDeployment.id }, { createdAt: createdAt })
+    await manager.update(Execution, { deploymentId: timedOutDeployment.id }, { createdAt: createdAt })
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(500)
     })
     await cleanupHandler.run(job)
-    const updatedDeployment = await manager.findOneOrFail(DeploymentEntity, { id: timedOutDeployment.id })
-    expect(updatedDeployment.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
-    expect(updatedDeployment.notificationStatus).toEqual('ERROR')
+    const updatedExecution = await manager.findOneOrFail(Execution, { deployment: timedOutDeployment })
+    expect(updatedExecution.status).toEqual(DeploymentStatusEnum.TIMED_OUT)
+    expect(updatedExecution.notificationStatus).toEqual('ERROR')
   })
 })
 
@@ -153,7 +155,12 @@ const setComponentsToRunning = async(deployment: DeploymentEntity, manager: Enti
     .execute()
 }
 
-const createDeployment = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<{deployment: DeploymentEntity,  job: JobWithDoneCallback<unknown, unknown>  }> => {
+const createDeployment = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any): Promise<
+  {
+    deployment: DeploymentEntity,
+    job: JobWithDoneCallback<unknown, unknown>,
+    execution: Execution
+  }> => {
   const components = params.components.map((c: any) => {
     return new ComponentEntity(
       c.helmRepository,
@@ -166,12 +173,20 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
   const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(
     params.deploymentId,
     params.authorId,
-    DeploymentStatusEnum.CREATED,
     params.circle,
     cdConfiguration,
     params.callbackUrl,
     components
   ))
+
+  const execution: Execution = await manager.save(
+    new Execution(
+      deployment,
+      ExecutionTypeEnum.DEPLOYMENT,
+      'incoming',
+      DeploymentStatusEnum.CREATED
+    )
+  )
 
   const job : JobWithDoneCallback<unknown, unknown> = {
     data: {},
@@ -182,6 +197,7 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
 
   return {
     deployment,
-    job
+    job,
+    execution
   }
 }

@@ -16,14 +16,14 @@
 
 import { Body, Controller, Headers, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+import { ReadDeploymentDto } from '../dto/read-deployment.dto'
+import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
+import { Execution } from '../entity/execution.entity'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
-import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
-import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
-import { ReadDeploymentDto } from '../../../../v1/api/deployments/dto'
-import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
+import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -52,14 +52,5 @@ export class DeploymentsController {
     @Headers('x-circle-id') incomingCircleId: string | null
   ): Promise<ReadUndeploymentDto> {
     return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
-  }
-
-  @Post('/:id/notify')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  public async receiveNotification(
-    @Param('id') deploymentId: string,
-    @Body() deploymentNotification: DeploymentNotificationRequestDto,
-  ): Promise<DeploymentEntity> {
-    return this.receiveNotificationUseCase.execute(deploymentId, deploymentNotification)
   }
 }

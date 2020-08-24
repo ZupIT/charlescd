@@ -15,6 +15,8 @@ import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.wor
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import express = require('express')
+import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
+import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 
 let mock = express()
 
@@ -98,44 +100,59 @@ describe('CallbackController v2', () => {
     deploymentEntity.cdConfiguration = cdConfiguration
     deploymentEntity.components[0].running = true
     const savedDeployment = await manager.save(deploymentEntity)
+    const execution = await manager.save(
+      new Execution(
+        savedDeployment,
+        ExecutionTypeEnum.DEPLOYMENT,
+        '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+        DeploymentStatusEnum.CREATED
+      )
+    )
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
 
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(200)
     })
 
+    const expectedResponse = {
+      deployment: {
+        id: deployment.id,
+        authorId: 'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        circleId: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+        components: [
+          {
+            helmUrl: 'http://helm-repo.com',
+            imageTag: 'build-image-tag',
+            imageUrl: 'build-image-url.com',
+            name: 'component-name',
+            componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
+            merged: false,
+            id: deployment.components[0].id,
+            running: false
+          }
+        ],
+        createdAt: expect.anything(),
+        priority: 0,
+        active: true
+      },
+      type: 'DEPLOYMENT',
+      incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      status: 'SUCCEEDED',
+      id: execution.id,
+      notificationStatus: 'SENT',
+      deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      createdAt: expect.anything(),
+      finishedAt: expect.anything()
+    }
+
     await request(app.getHttpServer())
-      .post(`/v2/deployments/${deployment.id}/notify`)
+      .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)
       .expect(response => {
-        expect(response.body).toEqual(
-          {
-            authorId: deployment.authorId,
-            status: 'SUCCEEDED',
-            circleId: deployment.circleId,
-            callbackUrl: deployment.callbackUrl,
-            id: deployment.id,
-            priority: 0,
-            notificationStatus: 'SENT',
-            active: true,
-            components: [
-              {
-                componentId: deployment.components[0].componentId,
-                helmUrl: deployment.components[0].helmUrl,
-                id: deployment.components[0].id,
-                imageTag: deployment.components[0].imageTag,
-                imageUrl: deployment.components[0].imageUrl,
-                merged: false,
-                name: deployment.components[0].name,
-                running: false
-              }
-            ],
-            createdAt: expect.anything(),
-            finishedAt: expect.anything()
-          }
-        )
+        expect(response.body).toEqual(expectedResponse)
       })
   })
 
@@ -177,42 +194,58 @@ describe('CallbackController v2', () => {
     const savedDeployment = await manager.save(deploymentEntity)
     const deployment = await manager.findOneOrFail(DeploymentEntity, { where: { id: savedDeployment.id }, relations: ['components'] })
 
+    const execution = await manager.save(
+      new Execution(
+        savedDeployment,
+        ExecutionTypeEnum.DEPLOYMENT,
+        '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+        DeploymentStatusEnum.CREATED
+      )
+    )
+
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(200)
     })
 
+    const expectedResponse = {
+      deployment: {
+        id: deployment.id,
+        authorId: 'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        circleId: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+        components: [
+          {
+            helmUrl: 'http://helm-repo.com',
+            imageTag: 'build-image-tag',
+            imageUrl: 'build-image-url.com',
+            name: 'component-name',
+            componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
+            merged: false,
+            id: deployment.components[0].id,
+            running: false
+          }
+        ],
+        createdAt: expect.anything(),
+        priority: 0,
+        active: false
+      },
+      type: 'DEPLOYMENT',
+      incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      status: 'FAILED',
+      id: execution.id,
+      notificationStatus: 'SENT',
+      deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      createdAt: expect.anything(),
+      finishedAt: expect.anything()
+    }
+
     await request(app.getHttpServer())
-      .post(`/v2/deployments/${deployment.id}/notify`)
+      .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'FAILED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)
       .expect(response => {
-        expect(response.body).toEqual(
-          {
-            authorId: deployment.authorId,
-            status: 'FAILED',
-            circleId: deployment.circleId,
-            callbackUrl: deployment.callbackUrl,
-            id: deployment.id,
-            notificationStatus: 'SENT',
-            priority: 0,
-            active: false,
-            components: [
-              {
-                componentId: deployment.components[0].componentId,
-                helmUrl: deployment.components[0].helmUrl,
-                id: deployment.components[0].id,
-                imageTag: deployment.components[0].imageTag,
-                imageUrl: deployment.components[0].imageUrl,
-                merged: false,
-                name: deployment.components[0].name,
-                running: false
-              }
-            ],
-            createdAt: expect.anything(),
-            finishedAt: expect.anything()
-          }
-        )
+        expect(response.body).toEqual(expectedResponse)
       })
   })
 })

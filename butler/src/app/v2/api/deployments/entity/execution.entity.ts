@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
 
 @Entity('v2executions')
 export class Execution {
@@ -26,6 +28,21 @@ export class Execution {
 
   @Column()
   public type!: ExecutionTypeEnum
+
+  @Column({ name: 'status', nullable: false, type: 'varchar' })
+  public status!: DeploymentStatusEnum
+
+  @Column({ name: 'notification_status', type: 'varchar' })
+  public notificationStatus!: NotificationStatusEnum
+
+  @Column({ name: 'deployment_id' })
+  public deploymentId!: string
+
+  @CreateDateColumn({ name: 'created_at' })
+  public createdAt!: Date
+
+  @Column({ name: 'finished_at' })
+  public finishedAt!: Date
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.executions)
@@ -37,11 +54,13 @@ export class Execution {
   constructor(
     deployment: DeploymentEntity,
     type: ExecutionTypeEnum,
-    incomingCircleId: string | null
+    incomingCircleId: string | null,
+    status: DeploymentStatusEnum,
   ) {
     this.deployment = deployment
     this.type = type
     this.incomingCircleId = incomingCircleId
+    this.status = status
   }
 
 }

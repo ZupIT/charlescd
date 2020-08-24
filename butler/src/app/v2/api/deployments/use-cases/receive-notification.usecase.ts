@@ -18,66 +18,74 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
 import { MooveService } from '../../../../v1/core/integrations/moove'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { ComponentsRepositoryV2 } from '../repository'
 import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
-import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
+import { ExecutionRepository } from '../repository/execution.repository'
 
 export class ReceiveNotificationUseCase {
 
   constructor(
     @InjectRepository(DeploymentRepositoryV2)
     private deploymentRepository: DeploymentRepositoryV2,
+    @InjectRepository(ComponentsRepositoryV2)
+    private componentRepository: ComponentsRepositoryV2,
+    @InjectRepository(ExecutionRepository)
+    private executionRepository: ExecutionRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
     private mooveService: MooveService
   ) {}
 
-  public async execute(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity>{
+  public async execute(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution>{
     switch (deploymentNotificationDto.type) {
       case ExecutionTypeEnum.DEPLOYMENT:
-        return await this.handleDeploymentNotification(deploymentId, deploymentNotificationDto)
+        return await this.handleDeploymentNotification(executionId, deploymentNotificationDto)
       case ExecutionTypeEnum.UNDEPLOYMENT:
-        return await this.handleUndeploymentNotification(deploymentId, deploymentNotificationDto)
+        return await this.handleUndeploymentNotification(executionId, deploymentNotificationDto)
       default:
         throw new Error('Invalid Execution Type')
     }
   }
 
-  private async handleDeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
-    const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
-    const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: deployment.circleId, active: true } })
+  private async handleDeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+    const execution = await this.executionRepository.findOneOrFail({ id: executionId }, { relations: ['deployment', 'deployment.components'] })
+    const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: execution.deployment.circleId, active: true } })
 
-    deployment.finishedAt = DateUtils.now()
-    deployment.components = deployment.components.map(c => {
+    execution.finishedAt = DateUtils.now()
+    execution.deployment.components = execution.deployment.components.map(c => {
       c.running = false
       return c
     })
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
-      deployment.status = DeploymentStatusEnum.SUCCEEDED
-      deployment.active = true
+      execution.status = DeploymentStatusEnum.SUCCEEDED
+      execution.deployment.active = true
       if (currentActiveDeployment) {
         currentActiveDeployment.active = false
       }
     }
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.FAILED) {
-      deployment.status = DeploymentStatusEnum.FAILED
-      deployment.active = false
+      execution.status = DeploymentStatusEnum.FAILED
+      execution.deployment.active = false
     }
 
     try {
       if (currentActiveDeployment) {
         await this.deploymentRepository.save(currentActiveDeployment)
       }
-      const savedDeployment = await this.deploymentRepository.save(deployment)
-      await this.notifyMooveAndUpdateDeployment(savedDeployment)
-      return await this.deploymentRepository.findOneOrFail(savedDeployment.id, { relations: ['components'] })
+      await this.componentRepository.save(execution.deployment.components)
+      await this.deploymentRepository.save(execution.deployment)
+      const savedExecution = await this.executionRepository.save(execution)
+      await this.notifyMooveAndUpdateDeployment(savedExecution)
+      return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
     }
     catch (error) {
       if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
@@ -90,13 +98,18 @@ export class ReceiveNotificationUseCase {
     }
   }
 
-  private async notifyMooveAndUpdateDeployment(deployment: DeploymentEntity): Promise<UpdateResult> {
-    const notificationStatus = deployment.status === DeploymentStatusEnum.SUCCEEDED ?
+  private async notifyMooveAndUpdateDeployment(execution: Execution): Promise<UpdateResult> {
+    const notificationStatus = execution.status === DeploymentStatusEnum.SUCCEEDED ?
       NotificationStatusEnum.SUCCEEDED :
       NotificationStatusEnum.FAILED
 
-    const notificationResult = await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
-    const updatedDeployment = await this.deploymentRepository.updateDeployment(deployment.id, notificationResult.status)
+    const notificationResult = await this.sendMooveNotification(
+      execution.id,
+      notificationStatus,
+      execution.deployment.callbackUrl,
+      execution.incomingCircleId
+    )
+    const updatedDeployment = await this.executionRepository.updateNotificationStatus(execution.id, notificationResult.status)
     return updatedDeployment
   }
 
@@ -109,15 +122,15 @@ export class ReceiveNotificationUseCase {
     )
   }
 
-  private async handleUndeploymentNotification(deploymentId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<DeploymentEntity> {
-    const deployment = await this.deploymentRepository.findOneOrFail(deploymentId, { relations: ['components'] })
-    deployment.components = deployment.components.map(c => {
+  private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+    const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
+    execution.deployment.components = execution.deployment.components.map(c => {
       c.running = false
       return c
     })
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
-      deployment.active = false
+      execution.deployment.active = false
     }
 
     try {
@@ -125,9 +138,9 @@ export class ReceiveNotificationUseCase {
         NotificationStatusEnum.UNDEPLOYED :
         NotificationStatusEnum.UNDEPLOY_FAILED
 
-      const updatedDeployment = await this.deploymentRepository.save(deployment)
-      await this.sendMooveNotification(deployment.id, notificationStatus, deployment.callbackUrl, deployment.circleId) // TODO incomingCircleId
-      return updatedDeployment
+      const updatedExecution = await this.executionRepository.save(execution)
+      await this.sendMooveNotification(execution.id, notificationStatus, execution.deployment.callbackUrl, execution.incomingCircleId)
+      return updatedExecution
     }
     catch (error) {
       this.consoleLoggerService.log('ERROR:Failed to save deployment')

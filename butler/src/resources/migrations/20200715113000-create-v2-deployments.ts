@@ -25,13 +25,10 @@ export class CreateV2Deployments20200715113000 implements MigrationInterface {
         "author_id" Character Varying NOT NULL,
         "callback_url" Character Varying NOT NULL,
         "circle_id" Character Varying,
-        "status" Character Varying DEFAULT 'CREATED' NOT NULL,
-        "notification_status" Character Varying DEFAULT 'NOT_SENT' NOT NULL,
         "active" Boolean DEFAULT false NOT NULL,
         priority int DEFAULT 0 NOT NULL,
         "cd_configuration_id" Character Varying NOT NULL,
         "created_at" timestamp without time zone DEFAULT now() NOT NULL,
-        "finished_at" timestamp without time zone,
         PRIMARY KEY ( "id" ),
         CONSTRAINT "unique_deployments_id" UNIQUE( "id" ),
         CONSTRAINT "fk_v2cd_config_deployments" FOREIGN KEY ( "cd_configuration_id" ) REFERENCES "public"."cd_configurations" ( "id" )
