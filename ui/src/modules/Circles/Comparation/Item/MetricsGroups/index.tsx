@@ -147,10 +147,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             {metric.threshold}
           </Text.h5>
         </Styled.MetricConditionThreshold>
-        <Styled.MetricConditionLastValue
-          color="light"
-          title={metric.lastValue}
-        >
+        <Styled.MetricConditionLastValue color="light" title={metric.lastValue}>
           {isEmpty(metric.lastValue) ? 0 : metric.lastValue}
         </Styled.MetricConditionLastValue>
         <Styled.MetricDropdown>
