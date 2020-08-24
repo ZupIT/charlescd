@@ -11,6 +11,7 @@ import (
 const (
 	MetricReached = "REACHED"
 	MetricActive  = "ACTIVE"
+	MetricError   = "ERROR"
 )
 
 type MetricExecution struct {
@@ -42,7 +43,7 @@ func (main Main) FindAllMetricExecutions() ([]MetricExecution, error) {
 
 func (main Main) FindAllActivesMetricExecutions() ([]MetricExecution, error) {
 	var metricExecutions []MetricExecution
-	db := main.db.Where("status = ?", MetricActive).Find(&metricExecutions)
+	db := main.db.Find(&metricExecutions)
 	if db.Error != nil {
 		util.Error(util.FindAllMetricExecutionsError, "FindAllMetricExecutions", db.Error, metricExecutions)
 		return []MetricExecution{}, db.Error
