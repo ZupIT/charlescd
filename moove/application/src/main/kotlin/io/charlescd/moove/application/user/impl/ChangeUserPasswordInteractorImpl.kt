@@ -19,7 +19,6 @@ package io.charlescd.moove.application.user.impl
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
-import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
