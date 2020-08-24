@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository } from 'typeorm'
-import { DeploymentEntityV2 } from '../entity/deployment.entity'
-
-@EntityRepository(DeploymentEntityV2)
-export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
-
-  public async findActiveComponents(): Promise<DeploymentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .where('deployment.active = true')
-      .getMany()
-  }
+export enum NotificationStatusEnum {
+    SENT = 'SENT',
+    NOT_SENT = 'NOT_SENT',
+    ERROR = 'ERROR',
 }

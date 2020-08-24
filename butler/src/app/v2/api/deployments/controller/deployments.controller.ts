@@ -53,13 +53,4 @@ export class DeploymentsController {
   ): Promise<ReadUndeploymentDto> {
     return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
   }
-
-  @Post('/:id/notify')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  public async receiveNotification(
-    @Param('id') executionId: string,
-    @Body() deploymentNotification: DeploymentNotificationRequestDto,
-  ): Promise<Execution> {
-    return await this.receiveNotificationUseCase.execute(executionId, deploymentNotification)
-  }
 }

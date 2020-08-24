@@ -1,25 +1,14 @@
 import { Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JobWithDoneCallback } from 'pg-boss'
+import { In } from 'typeorm'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { MooveService } from '../../../../v1/core/integrations/moove'
-import { DeploymentRepositoryV2, UpdatedExecution } from '../repository/deployment.repository'
-import { ExecutionRepository } from '../repository/execution.repository'
-import { In } from 'typeorm'
-
-interface UpdateResultReturning {
-  id: string,
-  external_id: string,
-  status: string,
-  callback_url: string,
-  circle_id: string | null
-}
+import { ExecutionRepository, UpdatedExecution } from '../repository/execution.repository'
 
 export class DeploymentCleanupHandler {
   constructor(
-    @InjectRepository(DeploymentRepositoryV2)
-    private deploymentsRepository: DeploymentRepositoryV2,
     @InjectRepository(ExecutionRepository)
     private executionRepository: ExecutionRepository,
     private mooveService: MooveService,
@@ -28,7 +17,7 @@ export class DeploymentCleanupHandler {
   ) { }
 
   public async run(job: JobWithDoneCallback<unknown, unknown>): Promise<UpdatedExecution[] | undefined>{
-    const updatedExecutionIds = await this.deploymentsRepository.updateTimedOutStatus(this.envConfiguration.deploymentExpireTime)
+    const updatedExecutionIds = await this.executionRepository.updateTimedOutStatus(this.envConfiguration.deploymentExpireTime)
     if (updatedExecutionIds) {
       const updatedExecutions = await this.executionRepository.find({ where: { id: In(updatedExecutionIds.map(e => e.id)) }, relations: ['deployment'] })
       for (const row of updatedExecutions) {

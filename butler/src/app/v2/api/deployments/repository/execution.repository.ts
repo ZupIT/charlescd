@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository, UpdateResult } from 'typeorm'
+import { EntityRepository, Repository, UpdateResult, getConnection } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { Execution } from '../entity/execution.entity'
 
-export type ReturningUpdate = { id: string, status: DeploymentStatusEnum, callback_url: string, circle_id: string }
+export type UpdatedExecution = { id: string }
 
 @EntityRepository(Execution)
 export class ExecutionRepository extends Repository<Execution> {
@@ -29,5 +29,24 @@ export class ExecutionRepository extends Repository<Execution> {
     } else {
       return await this.update({ id: id }, { notificationStatus: 'ERROR' })
     }
+  }
+
+  public async updateTimedOutStatus(timeInMinutes: number): Promise<UpdatedExecution[] | undefined>{ // TODO move to executions repo
+    const result = await getConnection().manager.query(`
+      WITH timed_out_executions AS
+        (UPDATE v2executions
+        SET status = '${DeploymentStatusEnum.TIMED_OUT}'
+        WHERE v2executions.created_at < now() - interval '${timeInMinutes} minutes'
+        AND v2executions.notification_status = 'NOT_SENT'
+        RETURNING *)
+      UPDATE v2components c
+      SET running = FALSE
+      FROM timed_out_executions
+      WHERE c.deployment_id = timed_out_executions.deployment_id RETURNING timed_out_executions.id
+    `)
+    if (Array.isArray(result)) {
+      return result[0]
+    }
+    return
   }
 }

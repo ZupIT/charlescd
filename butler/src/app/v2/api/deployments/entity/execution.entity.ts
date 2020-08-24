@@ -18,6 +18,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDa
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
+import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
 
 @Entity('v2executions')
 export class Execution {
@@ -32,7 +33,7 @@ export class Execution {
   public status!: DeploymentStatusEnum
 
   @Column({ name: 'notification_status', type: 'varchar' })
-  public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
+  public notificationStatus!: NotificationStatusEnum
 
   @Column({ name: 'deployment_id' })
   public deploymentId!: string

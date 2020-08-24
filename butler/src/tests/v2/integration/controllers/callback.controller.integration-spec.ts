@@ -147,7 +147,7 @@ describe('CallbackController v2', () => {
     }
 
     await request(app.getHttpServer())
-      .post(`/v2/deployments/${execution.id}/notify`)
+      .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)
@@ -240,7 +240,7 @@ describe('CallbackController v2', () => {
     }
 
     await request(app.getHttpServer())
-      .post(`/v2/deployments/${execution.id}/notify`)
+      .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'FAILED', type: 'DEPLOYMENT' })
       .set('x-circle-id', '12345')
       .expect(201)

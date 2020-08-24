@@ -34,6 +34,7 @@ import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
 import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 import { ExecutionRepository } from './repository/execution.repository'
+import { ExecutionsController } from './controller/executions.controller'
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { ExecutionRepository } from './repository/execution.repository'
     ])
   ],
   controllers: [
-    DeploymentsController
+    DeploymentsController,
+    ExecutionsController
   ],
   providers: [
     PgBossWorker,
