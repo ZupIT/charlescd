@@ -238,6 +238,6 @@ export default class TotalPipeline {
     return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
   }
   private getSuffix() {
-    return crypto.randomBytes(4).toString('hex')
+    return ('-').concat(crypto.randomBytes(4).toString('hex'))
   }
 }

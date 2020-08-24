@@ -282,7 +282,6 @@ export class OctopipeService implements ICdServiceStrategy {
   }
 
   private getSuffix() {
-    const randomString =  crypto.randomBytes(4).toString('hex')
-    return ('-').concat(randomString)
+    return ('-').concat(crypto.randomBytes(4).toString('hex'))
   }
 }
