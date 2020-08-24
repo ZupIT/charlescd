@@ -76,7 +76,7 @@ const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
       'image.tag': versionUrl,
       'name': version,
       'circleId': circleId,
-      'suffix' : '-'.concat(suffix)
+      'suffix' : suffix
     },
     templateRenderer: 'HELM2',
     type: 'bakeManifest',
