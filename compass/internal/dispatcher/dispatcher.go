@@ -17,7 +17,7 @@ type UseCases interface {
 
 type Dispatcher struct {
 	metric metric.UseCases
-	mux           sync.Mutex
+	mux    sync.Mutex
 }
 
 func NewDispatcher(metric metric.UseCases) UseCases {
@@ -37,7 +37,7 @@ func (dispatcher *Dispatcher) dispatch() {
 	fmt.Printf("after 5 seconds... %s", time.Now().String())
 }
 
-func compareResultWithMetricTreshhold(result float64, threshold float64, condition string) bool {
+func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {
 	switch condition {
 	case metricsgroup.EQUAL.String():
 		return result == threshold
@@ -59,22 +59,25 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
 		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
+		dispatcher.mux.Lock()
+		execution.Status = metric.MetricError
+		dispatcher.metric.SaveMetricExecution(execution)
+		dispatcher.mux.Unlock()
 		return
 	}
 
-	fmt.Println("METRIC RESULT", metricResult)
+	if metricResult != execution.LastValue {
+		if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
+			execution.Status = metric.MetricReached
+		} else {
+			execution.Status = metric.MetricActive
+		}
 
-	if compareResultWithMetricTreshhold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 		dispatcher.mux.Lock()
-		execution.Status = metric.MetricReached
+		execution.LastValue = metricResult
 		dispatcher.metric.SaveMetricExecution(execution)
 		dispatcher.mux.Unlock()
 	}
-
-	dispatcher.mux.Lock()
-	execution.LastValue = metricResult
-	dispatcher.metric.SaveMetricExecution(execution)
-	dispatcher.mux.Unlock()
 }
 
 func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
