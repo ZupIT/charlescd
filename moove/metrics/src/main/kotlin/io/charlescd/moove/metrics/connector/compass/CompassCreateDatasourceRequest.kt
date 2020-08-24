@@ -21,7 +21,7 @@ package io.charlescd.moove.metrics.connector.compass
 
 data class CompassCreateDatasourceRequest(
     val name: String,
-    val pluginId: String,
+    val pluginSrc: String,
     val health: Boolean,
     val data: DatasourceDataRequest
 )

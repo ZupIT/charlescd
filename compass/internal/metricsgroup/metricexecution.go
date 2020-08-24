@@ -12,7 +12,7 @@ type MetricExecution struct {
 	util.BaseModel `json:"-"`
 	MetricID       uuid.UUID `json:"-"`
 	LastValue      float64   `json:"lastValue"`
-	Status         string    `json:"-"`
+	Status         string    `json:"status"`
 }
 
 func (main Main) ParseMetricExecution(metricExecutionExecution io.ReadCloser) (MetricExecution, error) {

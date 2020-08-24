@@ -5,12 +5,11 @@ import (
 	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 	"io"
 	"regexp"
 	"sort"
-
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 const (
@@ -135,7 +134,7 @@ func (main Main) getAllMetricsWithConditions(metrics []Metric) int {
 func (main Main) getAllMetricsFinished(metrics []Metric) int {
 	metricsFinished := 0
 	for _, metric := range metrics {
-		if metric.Status == MetricFinished {
+		if metric.MetricExecution.Status == Completed {
 			metricsFinished++
 		}
 	}
@@ -187,23 +186,31 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 
 	sort.SliceStable(metricsGroupResume, func(i, j int) bool {
+
+		if (metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds) &&
+			(metricsGroupResume[j].ThresholdsReached == metricsGroupResume[j].Thresholds) &&
+			(metricsGroupResume[i].ThresholdsReached > metricsGroupResume[j].ThresholdsReached) {
+			return true
+		}
+
 		if metricsGroupResume[i].Thresholds == 0 {
 			return false
 		}
 
-		if metricsGroupResume[i].ThresholdsReached == 0 {
+		if metricsGroupResume[j].Thresholds == 0 {
+			return true
+		}
+
+		if metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds {
+			return true
+		}
+
+		if metricsGroupResume[j].ThresholdsReached == metricsGroupResume[j].Thresholds {
+			return false
+		}
+
+		if metricsGroupResume[i].ThresholdsReached == 0 && metricsGroupResume[j].ThresholdsReached == 0 {
 			return metricsGroupResume[i].Thresholds > metricsGroupResume[j].Thresholds
-		}
-
-		if (metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds) &&
-			(metricsGroupResume[i].ThresholdsReached != metricsGroupResume[j].Thresholds) {
-			return true
-		}
-
-		if (metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds) &&
-			(metricsGroupResume[i].ThresholdsReached == metricsGroupResume[j].Thresholds) &&
-			(metricsGroupResume[i].ThresholdsReached > metricsGroupResume[j].ThresholdsReached) {
-			return true
 		}
 
 		return metricsGroupResume[i].ThresholdsReached > metricsGroupResume[j].ThresholdsReached
