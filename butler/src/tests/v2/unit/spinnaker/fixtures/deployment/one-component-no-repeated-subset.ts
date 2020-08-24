@@ -342,6 +342,68 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                 ]
               },
               {
+                match: [
+                  {
+                    headers: {
+                      cookie: {
+                        regex: '.*x-circle-id=circle-id5.*'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v0'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      'x-circle-id': {
+                        exact: 'circle-id5'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v0'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
                 route: [
                   {
                     destination: {

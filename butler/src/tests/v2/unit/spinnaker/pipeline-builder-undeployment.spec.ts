@@ -625,7 +625,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           }
         }
-      }, // A v1 circle-id
+      },
       {
         id: 'component-id-5',
         helmUrl: 'http://localhost:2222/helm',
@@ -657,7 +657,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // B v1 circle-id
+      },
       {
         id: 'component-id-6',
         helmUrl: 'http://localhost:2222/helm',
@@ -689,7 +689,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 open sea
+      },
       {
         id: 'component-id-7',
         helmUrl: 'http://localhost:2222/helm',
@@ -721,7 +721,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // B v1 open sea,
+      },
       {
         id: 'component-id-8',
         helmUrl: 'http://localhost:2222/helm',
@@ -753,7 +753,39 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 circle-id2
+      },
+      {
+        id: 'component-id-9',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v0',
+        imageUrl: 'https://repository.com/A:v0',
+        name: 'A',
+        running: true,
+        deployment: {
+          id: 'deployment-id6',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+          circleId: 'circle-id3',
+          createdAt: new Date(),
+          finishedAt: new Date(),
+          status: DeploymentStatusEnum.SUCCEEDED,
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      }
     ]
 
     expect(

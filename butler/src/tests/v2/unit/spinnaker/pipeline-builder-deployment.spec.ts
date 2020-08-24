@@ -982,7 +982,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         }
       },
       {
-        id: 'component-id-1',
+        id: 'component-id-6',
         helmUrl: 'http://localhost:2222/helm',
         imageTag: 'v0',
         imageUrl: 'https://repository.com/A:v0',
@@ -993,6 +993,38 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
           circleId: 'circle-id3',
+          createdAt: new Date(),
+          finishedAt: new Date(),
+          status: DeploymentStatusEnum.SUCCEEDED,
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      },
+      {
+        id: 'component-id-7',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v0',
+        imageUrl: 'https://repository.com/A:v0',
+        name: 'A',
+        running: true,
+        deployment: {
+          id: 'deployment-id6',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+          circleId: 'circle-id5',
           createdAt: new Date(),
           finishedAt: new Date(),
           status: DeploymentStatusEnum.SUCCEEDED,
