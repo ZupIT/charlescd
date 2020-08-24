@@ -4,6 +4,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -13,20 +14,21 @@ type UseCases interface {
 
 type Dispatcher struct {
 	metricsGroups metricsgroup.UseCases
+	mux           sync.Mutex
 }
 
 func NewDispatcher(metricsgroup metricsgroup.UseCases) UseCases {
-	return Dispatcher{metricsgroup}
+	return &Dispatcher{metricsgroup, sync.Mutex{}}
 }
 
-func (dispatcher Dispatcher) dispatch() {
-	groups, err := dispatcher.metricsGroups.FindActiveMetricGroups()
+func (dispatcher *Dispatcher) dispatch() {
+	metricExecutions, err := dispatcher.metricsGroups.FindAllActivesMetricExecutions()
 	if err != nil {
-		util.Panic("Cannot find active metric groups", "Dispatch", err, nil)
+		util.Panic("Cannot find active metric executions", "Dispatch", err, nil)
 	}
 
-	for _, group := range groups {
-		go dispatcher.getMetricResult(group)
+	for _, execution := range metricExecutions {
+		go dispatcher.getMetricResult(execution)
 	}
 
 	fmt.Printf("after 5 seconds... %s", time.Now().String())
@@ -45,37 +47,32 @@ func compareResultWithMetricTreshhold(result float64, threshold float64, conditi
 	}
 }
 
-func getAllActiveMetrics(metrics []metricsgroup.Metric) []metricsgroup.Metric {
-	var activeMetrics []metricsgroup.Metric
-	for _, metric := range metrics {
-		if metric.Status == metricsgroup.Active {
-			activeMetrics = append(activeMetrics, metric)
-		}
-	}
-
-	return activeMetrics
-}
-
-func (dispatcher Dispatcher) getMetricResult(group metricsgroup.MetricsGroup) {
-	metricResults, err := dispatcher.metricsGroups.ResultByGroup(group)
+func (dispatcher *Dispatcher) getMetricResult(execution metricsgroup.MetricExecution) {
+	metric, err := dispatcher.metricsGroups.FindMetricById(execution.MetricID.String())
 	if err != nil {
-		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, group)
 		return
 	}
 
-	for _, metric := range getAllActiveMetrics(group.Metrics) {
-		for _, metricResult := range metricResults {
-			if metric.Metric == metricResult.Metric &&
-				compareResultWithMetricTreshhold(metricResult.Result, metric.Threshold, metric.Condition) {
-
-				metric.Status = metricsgroup.Completed
-				dispatcher.metricsGroups.UpdateMetric(metric.ID.String(), metric)
-			}
-		}
+	metricResult, err := dispatcher.metricsGroups.ResultQuery(metric)
+	if err != nil {
+		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, metric)
+		return
 	}
+
+	if compareResultWithMetricTreshhold(metricResult, metric.Threshold, metric.Condition) {
+		dispatcher.mux.Lock()
+		execution.Status = metricsgroup.Completed
+		dispatcher.metricsGroups.SaveMetricExecution(execution)
+		dispatcher.mux.Unlock()
+	}
+
+	dispatcher.mux.Lock()
+	execution.LastValue = metricResult
+	dispatcher.metricsGroups.SaveMetricExecution(execution)
+	dispatcher.mux.Unlock()
 }
 
-func (dispatcher Dispatcher) Start() {
+func (dispatcher *Dispatcher) Start() {
 	for {
 		time.Sleep(2 * time.Second)
 		dispatcher.dispatch()
