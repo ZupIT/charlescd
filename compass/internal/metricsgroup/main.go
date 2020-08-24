@@ -17,6 +17,7 @@ type UseCases interface {
 	FindAll() ([]MetricsGroup, error)
 	ResumeByCircle(circleId string) ([]MetricGroupResume, error)
 	Save(metricsGroup MetricsGroup) (MetricsGroup, error)
+	FindMetricById(id string) (Metric, error)
 	SaveMetric(metric Metric) (Metric, error)
 	FindById(id string) (MetricsGroup, error)
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
@@ -24,10 +25,13 @@ type UseCases interface {
 	Remove(id string) error
 	RemoveMetric(id string) error
 	QueryByGroupID(id, period string) ([]datasourcePKG.MetricValues, error)
+	ResultQuery(metric Metric) (float64, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindActiveMetricGroups() ([]MetricsGroup, error)
 	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
+	FindAllActivesMetricExecutions() ([]MetricExecution, error)
+	SaveMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
 }
 
 type Main struct {

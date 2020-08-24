@@ -58,3 +58,4 @@ CREATE TABLE IF NOT EXISTS METRIC_GROUP_BIES (
 	CREATED_AT TIMESTAMP DEFAULT clock_timestamp() NOT NULL,
 	CONSTRAINT fk_metric_metric_group_by FOREIGN KEY(metric_id) REFERENCES METRICS(id) on delete cascade
 );
+
