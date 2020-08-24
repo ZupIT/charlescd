@@ -60,7 +60,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
           {metric?.name}
         </Styled.MetricsGroupsNameContent>
         <Styled.MetricsGroupsContentText color={'light'}>
-          {isEmpty(metric?.metrics) ? '-' : metric.metrics}
+          {metric.metricsCount}
         </Styled.MetricsGroupsContentText>
         <Styled.MetricsGroupsContentText
           color={'light'}
