@@ -29,6 +29,7 @@ import { ConsoleLoggerService } from '../../../app/v1/core/logs/console'
 import { EnvConfigurationStub } from '../../stubs/configurations'
 import { ConsoleLoggerServiceStub, OctopipeApiServiceStub } from '../../stubs/services'
 import { CallbackTypeEnum } from '../../../app/v1/api/notifications/enums/callback-type.enum'
+import any = jasmine.any
 
 describe('Octopipe Service', () => {
   let octopipeService: OctopipeService
@@ -137,7 +138,8 @@ describe('Octopipe Service', () => {
           {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
-            versionCircle: 'dummy-value'
+            versionCircle: 'dummy-value',
+            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',
@@ -423,7 +425,8 @@ describe('Octopipe Service', () => {
           {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
-            versionCircle: 'dummy-value'
+            versionCircle: 'dummy-value',
+            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',
@@ -694,7 +697,8 @@ describe('Octopipe Service', () => {
           {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
-            versionCircle: 'dummy-value'
+            versionCircle: 'dummy-value',
+            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',

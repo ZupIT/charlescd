@@ -32,6 +32,7 @@ import { OctopipeApiService } from './octopipe-api.service'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../../constants'
+import * as crypto from 'crypto'
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {
@@ -271,12 +272,17 @@ export class OctopipeService implements ICdServiceStrategy {
     const versionSearch = octopipeVersions.find(
       octopipeVersion => octopipeVersion.version === circle.destination.version
     )
-    return { ...versionSearch, versionCircle: circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
+    return { ...versionSearch, versionCircle: circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID, versionSuffix: this.getSuffix() }
   }
 
   private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]): IOctopipeVersion[] {
     return circles.map(
       circle => this.getVersionCircle(octopipeVersions, circle)
     )
+  }
+
+  private getSuffix() {
+    const randomString =  crypto.randomBytes(4).toString('hex')
+    return ('-').concat(randomString)
   }
 }
