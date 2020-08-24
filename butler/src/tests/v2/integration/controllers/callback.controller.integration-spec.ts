@@ -129,12 +129,12 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: deployment.components[0].id,
-            running: true
+            running: false
           }
         ],
         createdAt: expect.anything(),
         priority: 0,
-        active: false
+        active: true
       },
       type: 'DEPLOYMENT',
       incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
@@ -222,7 +222,7 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: deployment.components[0].id,
-            running: true
+            running: false
           }
         ],
         createdAt: expect.anything(),

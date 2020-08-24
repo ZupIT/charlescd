@@ -26,6 +26,7 @@ import { DateUtils } from '../../../core/utils/date.utils'
 import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { ComponentsRepositoryV2 } from '../repository'
 import { DeploymentRepositoryV2 } from '../repository/deployment.repository'
 import { ExecutionRepository } from '../repository/execution.repository'
 
@@ -34,6 +35,8 @@ export class ReceiveNotificationUseCase {
   constructor(
     @InjectRepository(DeploymentRepositoryV2)
     private deploymentRepository: DeploymentRepositoryV2,
+    @InjectRepository(ComponentsRepositoryV2)
+    private componentRepository: ComponentsRepositoryV2,
     @InjectRepository(ExecutionRepository)
     private executionRepository: ExecutionRepository,
     private readonly consoleLoggerService: ConsoleLoggerService,
@@ -78,6 +81,8 @@ export class ReceiveNotificationUseCase {
       if (currentActiveDeployment) {
         await this.deploymentRepository.save(currentActiveDeployment)
       }
+      await this.componentRepository.save(execution.deployment.components)
+      await this.deploymentRepository.save(execution.deployment)
       const savedExecution = await this.executionRepository.save(execution)
       await this.notifyMooveAndUpdateDeployment(savedExecution)
       return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })

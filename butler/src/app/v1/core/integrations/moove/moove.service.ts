@@ -78,7 +78,7 @@ export class MooveService {
       return response
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
-      return error
+      return { status: 500, data: error, statusText: 'Error notifying moove', headers:  [], config: {} }
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

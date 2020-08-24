@@ -33,7 +33,7 @@ export class DeploymentCleanupHandler {
       const updatedExecutions = await this.executionRepository.find({ where: { id: In(updatedExecutionIds.map(e => e.id)) }, relations: ['deployment'] })
       for (const row of updatedExecutions) {
         const result = await this.notifyMoove(row.deploymentId, row.status, row.deployment.callbackUrl, row.incomingCircleId)
-        await this.executionRepository.updateNotificationStatus(row.deploymentId, result.status)
+        await this.executionRepository.updateNotificationStatus(row.id, result.status)
       }
     }
     job.done()

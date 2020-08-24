@@ -55,7 +55,7 @@ export class DeploymentHandlerUseCase {
   public async run(job: ExecutionJob): Promise<ExecutionJob> {
     const deployment = await this.validateDeployment(job)
 
-    if (job.data.status === DeploymentStatusEnum.TIMED_OUT) {
+    if (job.data.status === DeploymentStatusEnum.TIMED_OUT) { //TODO Create ExecutionStatusEnum or rename this enum
       const error = new Error('Deployment timed out')
       job.done(error)
       throw error

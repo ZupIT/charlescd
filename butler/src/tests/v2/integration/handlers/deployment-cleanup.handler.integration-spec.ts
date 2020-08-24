@@ -179,7 +179,14 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
     components
   ))
 
-  const execution : Execution = await manager.save(new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, 'incoming'))
+  const execution: Execution = await manager.save(
+    new Execution(
+      deployment,
+      ExecutionTypeEnum.DEPLOYMENT,
+      'incoming',
+      DeploymentStatusEnum.CREATED
+    )
+  )
 
   const job : JobWithDoneCallback<unknown, unknown> = {
     data: {},
