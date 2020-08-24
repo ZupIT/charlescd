@@ -30,8 +30,8 @@ func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	if err := metric.Validate(); len(err) > 0 {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+	if err := metricApi.metricMain.Validate(metric); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save metric")
 		return
 	}
 

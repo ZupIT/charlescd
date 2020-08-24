@@ -1,6 +1,7 @@
 package api
 
 import (
+	"compass/internal/util"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -17,6 +18,11 @@ type RestError struct {
 	Message string `json:"message"`
 }
 
+type RestValidateError struct {
+	Message string           `json:"message"`
+	Errors  []util.ErrorUtil `json:"errors"`
+}
+
 func NewRestError(w http.ResponseWriter, status int, errs []error) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -25,6 +31,18 @@ func NewRestError(w http.ResponseWriter, status int, errs []error) {
 	for _, err := range errs {
 		restErrors = append(restErrors, RestError{Message: err.Error()})
 	}
+	json.NewEncoder(w).Encode(restErrors)
+}
+
+func NewRestValidateError(w http.ResponseWriter, status int, errs []util.ErrorUtil, msg string) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	var restErrors = RestValidateError{
+		Message: msg,
+		Errors:  errs,
+	}
+
 	json.NewEncoder(w).Encode(restErrors)
 }
 
