@@ -36,7 +36,8 @@ interface ButtonIconProps {
 
 const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  margin-top: 22px;
 `;
 
 const TrashIcon = styled(ComponentIcon)`

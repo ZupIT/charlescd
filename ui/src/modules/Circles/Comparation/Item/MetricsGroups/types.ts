@@ -18,6 +18,7 @@ export type MetricsGroupsResume = {
   id: string;
   createdAt: string;
   name: string;
+  metrics?: number;
   thresholds: number;
   thresholdsReached: number;
 };
