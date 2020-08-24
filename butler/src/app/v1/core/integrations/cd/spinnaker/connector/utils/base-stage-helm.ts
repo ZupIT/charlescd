@@ -61,7 +61,7 @@ export interface IBaseHelmStage {
 const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
   githubAccount: string,
   version: string, versionUrl: string, refId: string,
-  reqRefId: string[], previousStage: string | undefined | string[], circleId: string): IBaseHelmStage => {
+  reqRefId: string[], previousStage: string | undefined | string[], circleId: string, suffix: string): IBaseHelmStage => {
   const baseHelm: IBaseHelmStage = {
     stageEnabled: {},
     completeOtherBranchesThenFail: false,
@@ -76,7 +76,7 @@ const baseStageHelm = ({ appNamespace, appName }: IAppConfig,
       'image.tag': versionUrl,
       'name': version,
       'circleId': circleId,
-      'suffix' : '-'.concat(circleId.substring(0, 8))
+      'suffix' : '-'.concat(suffix)
     },
     templateRenderer: 'HELM2',
     type: 'bakeManifest',

@@ -21,6 +21,7 @@ export interface IOctopipeVersion {
   version?: string
   versionUrl?: string
   versionCircle?: string
+  versionSuffix?: string
 }
 
 export enum ClusterProviderEnum {

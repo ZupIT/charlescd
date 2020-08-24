@@ -15,6 +15,7 @@
  */
 
 import { AppConstants } from '../../../../../app/v1/core/constants'
+import any = jasmine.any
 
 const expectedTotalPipeline = {
   appConfig: {},
@@ -104,7 +105,7 @@ const expectedTotalPipeline = {
         'image.tag': '/v1',
         'name': 'v1',
         'circleId': AppConstants.DEFAULT_CIRCLE_ID,
-        'suffix' : '-f5d23a57'
+        'suffix' : any(String)
       },
       refId: '1',
       requisiteStageRefIds: [],

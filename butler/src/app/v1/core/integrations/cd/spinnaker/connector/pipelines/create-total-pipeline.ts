@@ -29,6 +29,7 @@ import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 import { AppConstants } from '../../../../../constants'
 import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
+import * as crypto from 'crypto'
 
 export default class TotalPipeline {
   refId: number
@@ -103,7 +104,8 @@ export default class TotalPipeline {
         String(this.refId),
         [],
         undefined,
-        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
+        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID,
+        this.getSuffix()
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -234,5 +236,8 @@ export default class TotalPipeline {
       octopipeVersion => octopipeVersion.version === circle.destination.version
     )
     return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
+  }
+  private getSuffix() {
+    return crypto.randomBytes(4).toString('hex')
   }
 }

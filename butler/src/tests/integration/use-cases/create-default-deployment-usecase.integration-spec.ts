@@ -700,7 +700,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
         {
           versionUrl: 'image-url',
           version: 'component-name-image-tag',
-          versionCircle: AppConstants.DEFAULT_CIRCLE_ID
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
+          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -731,7 +732,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
         {
           versionUrl: 'image-url2',
           version: 'component-name2-image-tag2',
-          versionCircle: AppConstants.DEFAULT_CIRCLE_ID
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
+          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -887,7 +889,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       relations: ['modules', 'modules.components'] })
 
     const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
-      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+      { where: { deployment: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
     )
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(modulesDeployment[0].status).toBe(DeploymentStatusEnum.CREATED)

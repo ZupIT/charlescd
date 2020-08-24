@@ -17,7 +17,6 @@
 package pipeline
 
 import (
-	"fmt"
 	"octopipe/pkg/cloudprovider"
 	"octopipe/pkg/deployment"
 	"octopipe/pkg/repository"
@@ -29,6 +28,7 @@ type NonAdjustablePipelineVersion struct {
 	Version    string    `json:"version"`
 	VersionURL string    `json:"versionUrl"`
 	VersionCircle string `json:"versionCircle"`
+	VersionSuffix string `json:"versionSuffix`
 }
 
 type NonAdjustablePipelineGithub struct {
@@ -133,7 +133,7 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
 						"circleId": version.VersionCircle,
-						"suffix":  version.getSuffixFromCircle(),
+						"suffix":  version.VersionSuffix,
 					},
 				},
 			},
@@ -161,9 +161,3 @@ func (deprecatedPipeline NonAdjustablePipeline) generateIstioSteps() []Step {
 	return steps
 }
 
-func (pipelineVersion NonAdjustablePipelineVersion) getSuffixFromCircle() string {
-	if pipelineVersion.VersionCircle != "" {
-		return fmt.Sprintf("%s%s","-", pipelineVersion.VersionCircle[0:8])
-	}
-	return ""
-}

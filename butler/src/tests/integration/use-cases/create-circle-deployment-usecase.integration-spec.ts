@@ -701,7 +701,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         {
           versionUrl: 'image-url',
           version: 'component-name-image-tag',
-          versionCircle: 'circle-header'
+          versionCircle: 'circle-header',
+          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -732,7 +733,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
         {
           versionUrl: 'image-url2',
           version: 'component-name2-image-tag2',
-          versionCircle: 'circle-header'
+          versionCircle: 'circle-header',
+          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -835,7 +837,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
 
     const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
-      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+      { where: { deployment: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
     )
 
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
