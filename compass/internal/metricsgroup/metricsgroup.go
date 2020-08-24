@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io"
 	"regexp"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -31,6 +32,7 @@ type MetricGroupResume struct {
 	Name              string `json:"name"`
 	Thresholds        int    `json:"thresholds"`
 	ThresholdsReached int    `json:"thresholdsReached"`
+	Metrics           int    `json:"metricsCount"`
 }
 
 func (metricsGroup MetricsGroup) Validate() []error {
@@ -141,6 +143,15 @@ func (main Main) getAllMetricsFinished(metrics []Metric) int {
 	return metricsFinished
 }
 
+func (main Main) getAllMetricsInGroup(metrics []Metric) int {
+	metricsTotal := 0
+	for _, _ = range metrics {
+		metricsTotal++
+	}
+
+	return metricsTotal
+}
+
 func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 	var db *gorm.DB
 	var metricsGroups []MetricsGroup
@@ -164,10 +175,40 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 			group.Name,
 			main.getAllMetricsWithConditions(group.Metrics),
 			main.getAllMetricsFinished(group.Metrics),
+			main.getAllMetricsInGroup(group.Metrics),
 		})
 	}
 
+	main.sortResumeMetrics(metricsGroupsResume)
+
 	return metricsGroupsResume, nil
+}
+
+func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
+
+	sort.SliceStable(metricsGroupResume, func(i, j int) bool {
+		if metricsGroupResume[i].Thresholds == 0 {
+			return false
+		}
+
+		if metricsGroupResume[i].ThresholdsReached == 0 {
+			return metricsGroupResume[i].Thresholds > metricsGroupResume[j].Thresholds
+		}
+
+		if (metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds) &&
+			(metricsGroupResume[i].ThresholdsReached != metricsGroupResume[j].Thresholds) {
+			return true
+		}
+
+		if (metricsGroupResume[i].ThresholdsReached == metricsGroupResume[i].Thresholds) &&
+			(metricsGroupResume[i].ThresholdsReached == metricsGroupResume[j].Thresholds) &&
+			(metricsGroupResume[i].ThresholdsReached > metricsGroupResume[j].ThresholdsReached) {
+			return true
+		}
+
+		return metricsGroupResume[i].ThresholdsReached > metricsGroupResume[j].ThresholdsReached
+
+	})
 }
 
 func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
