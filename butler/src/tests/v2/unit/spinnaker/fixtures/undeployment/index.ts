@@ -18,10 +18,12 @@ import { completeSpinnakerUndeploymentPipeline } from './undeploy-complete-pipel
 import { dummyVirtualserviceSpinnakerPipeline } from './dummy-virtualservice-pipeline'
 import { noUnusedSpinnakerUndeploymentPipeline } from './undeploy-no-unused'
 import { oneUnusedSpinnakerUndeploymentPipeline } from './undeploy-one-unused'
+import { noRepeatedSubsetUndeploymentPipeline } from './undeploy-no-repeated-subset'
 
 export {
   completeSpinnakerUndeploymentPipeline,
   dummyVirtualserviceSpinnakerPipeline,
   noUnusedSpinnakerUndeploymentPipeline,
-  oneUnusedSpinnakerUndeploymentPipeline
+  oneUnusedSpinnakerUndeploymentPipeline,
+  noRepeatedSubsetUndeploymentPipeline
 }
