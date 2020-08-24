@@ -1,27 +1,23 @@
 package metricsgroup
 
 import (
+	"compass/internal/metric"
 	"compass/internal/util"
 	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"io"
 	"regexp"
 	"sort"
-)
 
-const (
-	Active    = "ACTIVE"
-	Completed = "COMPLETED"
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 type MetricsGroup struct {
 	util.BaseModel
 	Name        string    `json:"name"`
-	Metrics     []Metric  `json:"metrics"`
-	Status      string    `json:"status"`
+	Metrics     []metric.Metric  `json:"metrics"`
 	WorkspaceID uuid.UUID `json:"-"`
 	CircleID    uuid.UUID `json:"circleId"`
 }
@@ -120,37 +116,6 @@ func (main Main) FindAll() ([]MetricsGroup, error) {
 	return metricsGroups, nil
 }
 
-func (main Main) getAllMetricsWithConditions(metrics []Metric) int {
-	metricsWithConditions := 0
-	for _, metric := range metrics {
-		if metric.Condition != "" {
-			metricsWithConditions++
-		}
-	}
-
-	return metricsWithConditions
-}
-
-func (main Main) getAllMetricsFinished(metrics []Metric) int {
-	metricsFinished := 0
-	for _, metric := range metrics {
-		if metric.MetricExecution.Status == Completed {
-			metricsFinished++
-		}
-	}
-
-	return metricsFinished
-}
-
-func (main Main) getAllMetricsInGroup(metrics []Metric) int {
-	metricsTotal := 0
-	for _, _ = range metrics {
-		metricsTotal++
-	}
-
-	return metricsTotal
-}
-
 func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 	var db *gorm.DB
 	var metricsGroups []MetricsGroup
@@ -172,9 +137,9 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 		metricsGroupsResume = append(metricsGroupsResume, MetricGroupResume{
 			group.BaseModel,
 			group.Name,
-			main.getAllMetricsWithConditions(group.Metrics),
-			main.getAllMetricsFinished(group.Metrics),
-			main.getAllMetricsInGroup(group.Metrics),
+			main.metricMain.CountAllMetricsWithConditions(group.Metrics),
+			main.metricMain.CountAllMetricsFinished(group.Metrics),
+			main.metricMain.CountAllMetricsInGroup(group.Metrics),
 		})
 	}
 
@@ -219,10 +184,6 @@ func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 }
 
 func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
-	metricsGroup.Status = Active
-	for i := 0; i < len(metricsGroup.Metrics); i++ {
-		metricsGroup.Metrics[i].Status = Active
-	}
 	db := main.db.Create(&metricsGroup)
 	if db.Error != nil {
 		util.Error(util.SaveMetricsGroupError, "Save", db.Error, metricsGroup)
@@ -239,16 +200,6 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
-}
-
-func (main Main) FindActiveMetricGroups() ([]MetricsGroup, error) {
-	var metricsGroups []MetricsGroup
-	db := main.db.Preload("Metrics").Where("status = ?", Active).Find(&metricsGroups)
-	if db.Error != nil {
-		util.Error(util.FindMetricsGroupError, "FindActiveMetricGroups", db.Error, metricsGroups)
-		return []MetricsGroup{}, db.Error
-	}
-	return metricsGroups, nil
 }
 
 func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error) {
@@ -279,42 +230,6 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) getQueryByMetric(metric Metric) []byte {
-	if metric.Query != "" {
-		return []byte(metric.Query)
-	}
-
-	return []byte(metric.Metric)
-}
-
-func (main Main) query(metric Metric, period string) (interface{}, error) {
-
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
-	if err != nil {
-		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
-		util.Error(util.QueryFindDatasourceError, "Query", notFoundErr, metric.DataSourceID.String())
-		return nil, notFoundErr
-	}
-
-	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
-	if err != nil {
-		util.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginSrc)
-		return nil, err
-	}
-
-	getQuery, err := plugin.Lookup("Query")
-	if err != nil {
-		util.Error(util.PluginLookupError, "Query", err, plugin)
-		return nil, err
-	}
-
-	query := main.getQueryByMetric(metric)
-	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	filters, _ := json.Marshal(metric.Filters)
-	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) (interface{}, error))(dataSourceConfigurationData, query, filters, []byte(period))
-
-}
-
 func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
@@ -326,7 +241,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 
 	for _, metric := range metricsGroup.Metrics {
 
-		query, err := main.query(metric, period)
+		query, err := main.metricMain.Query(metric, period)
 		if err != nil {
 			util.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
 			return nil, err
@@ -342,37 +257,11 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 	return metricsValues, nil
 }
 
-func (main Main) ResultQuery(metric Metric) (float64, error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
-	if err != nil {
-		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
-		util.Error(util.QueryFindDatasourceError, "ResultQuery", notFoundErr, metric.DataSourceID.String())
-		return 0, notFoundErr
-	}
-
-	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
-	if err != nil {
-		util.Error(util.QueryGetPluginError, "ResultQuery", err, dataSourceResult.PluginSrc)
-		return 0, err
-	}
-
-	getQuery, err := plugin.Lookup("Result")
-	if err != nil {
-		util.Error(util.PluginLookupError, "ResultQuery", err, plugin)
-		return 0, err
-	}
-
-	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	filters, _ := json.Marshal(metric.Filters)
-	query := main.getQueryByMetric(metric)
-	return getQuery.(func(datasourceConfiguration, metric, filters []byte) (float64, error))(dataSourceConfigurationData, query, filters)
-}
-
 func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, error) {
 	var metricsResults []datasource.MetricResult
 	for _, metric := range group.Metrics {
 
-		result, err := main.ResultQuery(metric)
+		result, err := main.metricMain.ResultQuery(metric)
 		if err != nil {
 			util.Error(util.ResultQueryError, "ResultByGroup", err, metric)
 			return nil, err

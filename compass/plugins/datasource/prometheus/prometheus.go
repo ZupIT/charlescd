@@ -1,7 +1,7 @@
 package main
 
 import (
-	"compass/internal/metricsgroup"
+	"compass/internal/metric"
 	"compass/pkg/datasource"
 	"encoding/json"
 	"errors"
@@ -77,7 +77,7 @@ func getResultValue(result PrometheusDataResponse) (interface{}, error) {
 	return nil, errors.New("Result type not valid")
 }
 
-func doPrometheusRequestByMetric(basePath string, period string, query string, filters []metricsgroup.MetricFilter) (*http.Response, error) {
+func doPrometheusRequestByMetric(basePath string, period string, query string, filters []metric.MetricFilter) (*http.Response, error) {
 	path := "/api/v1/query"
 
 	currentQuery := query
@@ -110,7 +110,7 @@ func Query(datasourceConfiguration, query, filters, period []byte) (interface{},
 	var prometheusConfig PrometheusConfig
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
-	var currentFilter []metricsgroup.MetricFilter
+	var currentFilter []metric.MetricFilter
 	_ = json.Unmarshal(filters, &currentFilter)
 
 	res, err := doPrometheusRequestByMetric(prometheusConfig.Url, string(period), string(query), currentFilter)

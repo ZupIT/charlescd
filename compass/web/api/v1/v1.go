@@ -2,6 +2,7 @@ package v1
 
 import (
 	"compass/internal/datasource"
+	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"compass/internal/util"
@@ -15,6 +16,7 @@ type UseCases interface {
 	Start()
 	NewPluginApi(pluginMain plugin.UseCases) PluginApi
 	NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi
+	NewMetricApi(metricMain metric.UseCases) MetricApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
 }

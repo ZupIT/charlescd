@@ -1,11 +1,11 @@
 package main
 
 import (
-	"compass/internal/metricsgroup"
+	"compass/internal/metric"
 	"fmt"
 )
 
-func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
+func transformFiltersToQuery(filters []metric.MetricFilter) string {
 	filterQuery := "{"
 	for index, filter := range filters {
 		filterQuery += fmt.Sprintf(`%s%s"%s"`, filter.Field, filter.Operator, filter.Value)
@@ -17,7 +17,7 @@ func transformFiltersToQuery(filters []metricsgroup.MetricFilter) string {
 	return filterQuery
 }
 
-func createQueryByMetric(filters []metricsgroup.MetricFilter, query, period string) string {
+func createQueryByMetric(filters []metric.MetricFilter, query, period string) string {
 	if period == "" {
 		return fmt.Sprintf("%s%s", query, transformFiltersToQuery(filters))
 	}
