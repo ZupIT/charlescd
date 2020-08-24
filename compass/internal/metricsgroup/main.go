@@ -4,6 +4,7 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/metric"
 	"compass/internal/plugin"
+	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
 	"compass/pkg/logger"
 	"io"
@@ -24,6 +25,7 @@ type UseCases interface {
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
+	Validate(metricsGroup MetricsGroup) []util.ErrorUtil
 }
 
 type Main struct {

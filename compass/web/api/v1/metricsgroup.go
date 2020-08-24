@@ -59,8 +59,8 @@ func (metricsGroupApi MetricsGroupApi) create(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	if err := metricsGroup.Validate(); len(err) > 0 {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+	if err := metricsGroupApi.metricsGroupMain.Validate(metricsGroup); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save metrics-group")
 		return
 	}
 

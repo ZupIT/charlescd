@@ -25,19 +25,19 @@ type DataSource struct {
 	DeletedAt   *time.Time      `json:"-"`
 }
 
-func (dataSource DataSource) Validate() []error {
-	ers := make([]error, 0)
+func (main Main) Validate(dataSource DataSource) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
 
 	if dataSource.Name == "" {
-		ers = append(ers, errors.New("Name is required"))
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Name is required").Error()})
 	}
 
 	if dataSource.PluginSrc == "" {
-		ers = append(ers, errors.New("Plugin src is required"))
+		ers = append(ers, util.ErrorUtil{Field: "PluginSrc", Error: errors.New("Plugin src is required").Error()})
 	}
 
 	if dataSource.Data == nil || len(dataSource.Data) == 0 {
-		ers = append(ers, errors.New("Data is required"))
+		ers = append(ers, util.ErrorUtil{Field: "Data", Error: errors.New("Data is required").Error()})
 	}
 
 	return ers
