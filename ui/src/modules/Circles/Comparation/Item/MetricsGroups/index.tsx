@@ -147,8 +147,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             {metric.threshold}
           </Text.h5>
         </Styled.MetricConditionThreshold>
-        <Styled.MetricConditionLastValue color="light" title={metric.lastValue}>
-          {isEmpty(metric.lastValue) ? 0 : metric.lastValue}
+        <Styled.MetricConditionLastValue
+          color="light"
+          title={metric.execution.lastValue.toString()}
+        >
+          {metric.execution.lastValue}
         </Styled.MetricConditionLastValue>
         <Styled.MetricDropdown>
           <Dropdown icon="vertical-dots" size="16px">
@@ -171,7 +174,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     metricsGroups.map(metricGroup => (
       <Styled.MetricsGroupsCard key={metricGroup.id}>
         <Styled.MetricsGroupsCardHeader>
-          <Text.h2 color="light">{metricGroup.name}</Text.h2>
+          <Text.h2 color="light" title={metricGroup.name}>
+            {metricGroup.name}
+          </Text.h2>
           <Dropdown icon="vertical-dots" size="16px">
             <Dropdown.Item
               icon="add"

@@ -170,6 +170,13 @@ const MetricsGroupsCardHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 30px;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+  }
 `;
 
 const MetricsGroupsCardContent = styled.div``;
