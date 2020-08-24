@@ -335,7 +335,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 	return metricsValues, nil
 }
 
-func (main Main) resultQuery(metric Metric) (float64, error) {
+func (main Main) ResultQuery(metric Metric) (float64, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
@@ -365,7 +365,7 @@ func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, e
 	var metricsResults []datasource.MetricResult
 	for _, metric := range group.Metrics {
 
-		result, err := main.resultQuery(metric)
+		result, err := main.ResultQuery(metric)
 		if err != nil {
 			util.Error(util.ResultQueryError, "ResultByGroup", err, metric)
 			return nil, err

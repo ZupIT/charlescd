@@ -18,9 +18,18 @@ const (
 )
 
 const (
+	FindMetricById    = "FIND_METRIC_BY_ID"
 	SaveMetricError   = "SAVE_METRIC_ERROR"
 	UpdateMetricError = "UPDATE_METRIC_ERROR"
 	RemoveMetricError = "REMOVE_METRIC_ERROR"
+)
+
+const (
+	FindAllMetricExecutionsError = "FIND_ALL_METRIC_EXECUTIONS_ERROR"
+	FindMetricExecutionByIdError = "FIND_METRIC_EXECUTION_BY_ID_ERROR"
+	SaveMetricExecutionError     = "SAVE_METRIC_EXECUTION_ERROR"
+	UpdateMetricExecutionError   = "UPDATE_METRIC_EXECUTION_ERROR"
+	RemoveMetricExecutionError   = "REMOVE_METRIC_EXECUTION_ERROR"
 )
 
 const (
