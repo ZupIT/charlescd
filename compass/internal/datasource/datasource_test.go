@@ -84,15 +84,15 @@ func (s *Suite) TestFindById() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
@@ -105,7 +105,7 @@ func (s *Suite) TestFindById() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -121,7 +121,7 @@ func (s *Suite) TestFindByIdWithError() {
 	var timeNow = time.Now()
 	var (
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -129,7 +129,7 @@ func (s *Suite) TestFindByIdWithError() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
@@ -147,7 +147,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -155,7 +155,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
@@ -168,7 +168,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -185,7 +185,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -193,7 +193,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
@@ -206,7 +206,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -222,7 +222,7 @@ func (s *Suite) TestFindAllByWorkspaceError() {
 	var timeNow = time.Now()
 	var (
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -230,7 +230,7 @@ func (s *Suite) TestFindAllByWorkspaceError() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectQuery(regexp.QuoteMeta(
@@ -248,7 +248,7 @@ func (s *Suite) TestDelete() {
 	var timeNow = time.Now()
 	var (
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -256,7 +256,7 @@ func (s *Suite) TestDelete() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
@@ -278,7 +278,7 @@ func (s *Suite) TestDeleteError() {
 	var timeNow = time.Now()
 	var (
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -286,7 +286,7 @@ func (s *Suite) TestDeleteError() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "data_sources" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
@@ -308,7 +308,7 @@ func (s *Suite) TestDeleteFindError() {
 	var timeNow = time.Now()
 	var (
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -316,7 +316,7 @@ func (s *Suite) TestDeleteFindError() {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
-		AddRow(id, timeNow, name, pluginID, health, data, workspaceID)
+		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(
 		`SELECT * FROM "ERROR" WHERE "data_sources"."deleted_at" IS NULL AND ((id = $1)) ORDER BY "data_sources"."id" ASC LIMIT 1`)).
@@ -339,7 +339,7 @@ func (s *Suite) TestSave() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -348,7 +348,7 @@ func (s *Suite) TestSave() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -360,7 +360,7 @@ func (s *Suite) TestSave() {
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(query).
-		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
+		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginSrc, health, data, workspaceID.String(), nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
 	s.mock.ExpectCommit()
 
@@ -376,7 +376,7 @@ func (s *Suite) TestSaveError() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = false
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -385,7 +385,7 @@ func (s *Suite) TestSaveError() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -397,7 +397,7 @@ func (s *Suite) TestSaveError() {
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(query).
-		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
+		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginSrc, health, data, workspaceID.String(), nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
 	s.mock.ExpectCommit()
 
@@ -412,7 +412,7 @@ func (s *Suite) TestSaveErrorWithHealth() {
 	var (
 		baseModel   = util.BaseModel{ID: id, CreatedAt: timeNow}
 		name        = "test-name"
-		pluginID    = uuid.New()
+		pluginSrc   = "fake_plugin"
 		health      = true
 		data        = json.RawMessage(`{"url": "localhost:8080"}`)
 		workspaceID = uuid.New()
@@ -421,7 +421,7 @@ func (s *Suite) TestSaveErrorWithHealth() {
 	expected := DataSource{
 		BaseModel:   baseModel,
 		Name:        name,
-		PluginID:    pluginID,
+		PluginSrc:   pluginSrc,
 		Health:      health,
 		Data:        data,
 		WorkspaceID: workspaceID,
@@ -433,7 +433,7 @@ func (s *Suite) TestSaveErrorWithHealth() {
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(query).
-		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginID.String(), health, data, workspaceID.String(), nil).
+		WithArgs(sqlmock.AnyArg(), timeNow, name, pluginSrc, health, data, workspaceID.String(), nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
 	s.mock.ExpectCommit()
 
