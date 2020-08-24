@@ -13,8 +13,6 @@ import (
 	"compass/pkg/logger"
 	v1 "compass/web/api/v1"
 	"fmt"
-	"strconv"
-
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -74,11 +72,6 @@ func main() {
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain, loggerProvider)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, loggerProvider)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
-
-	_, err = strconv.Atoi(configuration.GetConfiguration("TIMEOUT"))
-	if err != nil {
-		util.Fatal("", err)
-	}
 
 	go dispatcher.Start()
 
