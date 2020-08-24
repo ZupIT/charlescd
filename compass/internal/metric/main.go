@@ -3,6 +3,7 @@ package metric
 import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
+	"compass/internal/util"
 	"compass/pkg/logger"
 	"io"
 
@@ -22,6 +23,7 @@ type UseCases interface {
 	ResultQuery(metric Metric) (float64, error)
 	SaveMetricExecution(execution MetricExecution) (MetricExecution, error)
 	FindAllActivesMetricExecutions() ([]MetricExecution, error)
+	Validate(metric Metric) []util.ErrorUtil
 }
 
 type Main struct {

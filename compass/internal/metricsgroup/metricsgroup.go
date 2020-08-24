@@ -16,10 +16,10 @@ import (
 
 type MetricsGroup struct {
 	util.BaseModel
-	Name        string    `json:"name"`
-	Metrics     []metric.Metric  `json:"metrics"`
-	WorkspaceID uuid.UUID `json:"-"`
-	CircleID    uuid.UUID `json:"circleId"`
+	Name        string          `json:"name"`
+	Metrics     []metric.Metric `json:"metrics"`
+	WorkspaceID uuid.UUID       `json:"-"`
+	CircleID    uuid.UUID       `json:"circleId"`
 }
 
 type MetricGroupResume struct {
@@ -30,21 +30,15 @@ type MetricGroupResume struct {
 	Metrics           int    `json:"metricsCount"`
 }
 
-func (metricsGroup MetricsGroup) Validate() []error {
-	ers := make([]error, 0)
+func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
 
 	if metricsGroup.Name == "" {
-		ers = append(ers, errors.New("Name is required"))
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Name is required").Error()})
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
-		ers = append(ers, errors.New("CircleID is required"))
-	}
-
-	for _, m := range metricsGroup.Metrics {
-		if len(m.Validate()) > 0 {
-			ers = append(ers, m.Validate()...)
-		}
+		ers = append(ers, util.ErrorUtil{Field: "CircleID", Error: errors.New("CircleID is required").Error()})
 	}
 
 	return ers
