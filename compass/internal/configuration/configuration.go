@@ -10,7 +10,7 @@ var initialValues = map[string]string{
 	"DB_SSL":      "disable",
 	"DB_PORT":     "5432",
 	"PLUGINS_DIR": "./plugins",
-	"DISPATCHER_INTERVAL":     "15",
+	"DISPATCHER_INTERVAL":     "15s",
 }
 
 func GetConfiguration(configuration string) string {
