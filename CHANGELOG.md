@@ -1,5 +1,67 @@
 # Changelog
 
+## 0.3.4-rc.1 (13/08/2020)
+- [#386](https://github.com/ZupIT/charlescd/pull/386) added option for Octopipe to skip https validation on git requests
+- [#384](https://github.com/ZupIT/charlescd/pull/384) Changing circle sample's chart template value
+- [#327](https://github.com/ZupIT/charlescd/pull/327) Correction User Group Tab Layout
+- [#326](https://github.com/ZupIT/charlescd/pull/326) Creating Circle Sample.
+- [#381](https://github.com/ZupIT/charlescd/pull/381) Butler stabilization timeout
+
+---
+
+## 0.3.3 (12/08/2020)
+- [#379](https://github.com/ZupIT/charlescd/pull/379) Octopipe support for gitlab
+- [#363](https://github.com/ZupIT/charlescd/pull/363) Using Keycloak internal host for authentication
+- [#369](https://github.com/ZupIT/charlescd/pull/369) Merge default deployments
+- [#377](https://github.com/ZupIT/charlescd/pull/377) validate image url to match k8s format and length
+- [#376](https://github.com/ZupIT/charlescd/pull/376) validate unique components per on deploy
+
+---
+
+## 0.3.2 (07/08/2020)
+- [#368](https://github.com/ZupIT/charlescd/pull/368) extract functions
+- [#343](https://github.com/ZupIT/charlescd/pull/343) remove quiz app workflow
+- [#367](https://github.com/ZupIT/charlescd/pull/367) Fixing octopipe dockerfile path 
+
+---
+
+## 0.3.1 (06/08/2020)
+- [#364](https://github.com/ZupIT/charlescd/pull/364) Prioritize requeue deployments, fix deployment validation test
+- [#193](https://github.com/ZupIT/charlescd/pull/193) Unify callback resources
+- [#354](https://github.com/ZupIT/charlescd/pull/354)  Support for role authentication on AWS
+- [#338](https://github.com/ZupIT/charlescd/pull/338) Adding jsonformatter to missing localdatetime fields
+- [#334](https://github.com/ZupIT/charlescd/pull/334) Update resetVersion function to clean errors
+- [#333](https://github.com/ZupIT/charlescd/pull/333) Remove React.memo from some menus
+- [#302](https://github.com/ZupIT/charlescd/pull/302) Workspace Location Dropdown Issue
+- [#345](https://github.com/ZupIT/charlescd/pull/345) Provider connection test
+- [#362](https://github.com/ZupIT/charlescd/pull/362) Fix v2 butler unusedversions
+- [#350](https://github.com/ZupIT/charlescd/pull/350) Circle dashboard improvement
+- [#360](https://github.com/ZupIT/charlescd/pull/360) Tests mock server
+- [#361](https://github.com/ZupIT/charlescd/pull/361) Fix virtualservice consolidated value
+- [#359](https://github.com/ZupIT/charlescd/pull/359) Fix open sea deployment
+- [#298](https://github.com/ZupIT/charlescd/pull/298) Fix env string in butler
+- [#358](https://github.com/ZupIT/charlescd/pull/358) Spinnaker v2 integration
+- [#357](https://github.com/ZupIT/charlescd/pull/357) Removing intermitent unit test
+- [#355](https://github.com/ZupIT/charlescd/pull/355) Spinnaker v2 tests
+- [#330](https://github.com/ZupIT/charlescd/pull/330) Deployment dash history
+- [#356](https://github.com/ZupIT/charlescd/pull/356) Update components status on callback, more handler tests
+- [#352](https://github.com/ZupIT/charlescd/pull/352) Handler test example without testing pgboss
+- [#283](https://github.com/ZupIT/charlescd/pull/283) Circles Metrics Dashboard MVP
+- [#344](https://github.com/ZupIT/charlescd/pull/344) Stabilization v2 implement handler
+- [#346](https://github.com/ZupIT/charlescd/pull/346) Spinnaker connector v2
+- [#278](https://github.com/ZupIT/charlescd/pull/278) Octopipe new deployer
+- [#316](https://github.com/ZupIT/charlescd/pull/316) Remove global state integration test
+- [#340](https://github.com/ZupIT/charlescd/pull/340) Stabilization: setup queue and handler service
+- [#336](https://github.com/ZupIT/charlescd/pull/336) Updating copyright
+- [#323](https://github.com/ZupIT/charlescd/pull/323) Updating Deployment Graphics Dashboard
+- [#329](https://github.com/ZupIT/charlescd/pull/329) Stabilization v2 modules config
+- [#328](https://github.com/ZupIT/charlescd/pull/328) Fixing moove deployment template and single-file.
+- [#308](https://github.com/ZupIT/charlescd/pull/308) Fix Deployment callback update
+- [#324](https://github.com/ZupIT/charlescd/pull/324) WIP: Stabilization entities
+- [#321](https://github.com/ZupIT/charlescd/pull/321) CI Update of charts and changelog
+
+---
+
 ## 0.3.0 (22/07/2020)
 - [#251](https://github.com/ZupIT/charlescd/pull/251) Improve Circle Comparation Item options
 - [#307](https://github.com/ZupIT/charlescd/pull/307) Add access token signature validation
