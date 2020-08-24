@@ -136,16 +136,18 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const renderMetrics = (metricsGroup: MetricsGroup) =>
     metricsGroup.metrics.map(metric => (
       <Styled.MetricCardBody key={metric.id}>
-        <Styled.MetricNickname color="light">
+        <Styled.MetricNickname color="light" title={metric.nickname}>
           {metric.nickname}
         </Styled.MetricNickname>
         <Styled.MetricConditionThreshold>
           <Text.h5 color="dark">
             {getMetricCondition(metric.condition)}:
           </Text.h5>
-          <Text.h5 color="light">{metric.threshold}</Text.h5>
+          <Text.h5 color="light" title={metric.threshold.toString()}>
+            {metric.threshold}
+          </Text.h5>
         </Styled.MetricConditionThreshold>
-        <Styled.MetricConditionLastValue color="light">
+        <Styled.MetricConditionLastValue color="light" title={metric.lastValue}>
           {isEmpty(metric.lastValue) ? 0 : metric.lastValue}
         </Styled.MetricConditionLastValue>
         <Styled.MetricDropdown>

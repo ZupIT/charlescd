@@ -56,10 +56,16 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
 
     return firstMetricsGroups?.map(metric => (
       <Styled.MetricsGroupsCard key={metric?.id}>
-        <Styled.MetricsGroupsContentText color={'light'}>
+        <Styled.MetricsGroupsNameContent color={'light'} title={metric?.name}>
           {metric?.name}
-        </Styled.MetricsGroupsContentText>
+        </Styled.MetricsGroupsNameContent>
         <Styled.MetricsGroupsContentText color={'light'}>
+          {isEmpty(metric?.metrics) ? '-' : metric.metrics}
+        </Styled.MetricsGroupsContentText>
+        <Styled.MetricsGroupsContentText
+          color={'light'}
+          title={`${metric.thresholdsReached} / ${metric.thresholds}`}
+        >
           {metric.thresholdsReached} / {metric.thresholds}
         </Styled.MetricsGroupsContentText>
       </Styled.MetricsGroupsCard>
@@ -71,12 +77,13 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
       <Styled.MetricsGroupsContent>
         <Styled.MetricsGroupsHeader>
           <Text.h4 color="dark">Group name</Text.h4>
+          <Text.h4 color="dark">Metrics</Text.h4>
           <Text.h4 color="dark">Tresholds</Text.h4>
         </Styled.MetricsGroupsHeader>
         {status.isResolved && renderMetricsGroupsCard(resume)}
         <Styled.MetricsGroupsFooter>
           <Text.h4 color="dark" onClick={onClickCreate}>
-            View more
+            View more groups
           </Text.h4>
           <Icon name={'arrow-right'} color={'dark'} onClick={onClickCreate} />
         </Styled.MetricsGroupsFooter>

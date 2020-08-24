@@ -101,9 +101,10 @@ const InputTitle = styled(InputTitleComponent)`
 const MetricsGroupsHeader = styled.div`
   display: flex;
   padding: 15px 0 0 30px;
+  justify-content: space-between;
 
   span {
-    padding-right: 180px;
+    padding-right: 90px;
   }
 `;
 
@@ -121,7 +122,15 @@ const MetricsGroupsContentText = styled(Text.h5)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 200px;
+  min-width: 100px;
+`;
+
+const MetricsGroupsNameContent = styled(Text.h5)`
+  margin: auto 60px auto 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 140px;
 `;
 
 const MetricsGroupsFooter = styled.div`
@@ -163,5 +172,6 @@ export default {
   MetricsGroupsContentText,
   MetricsGroupsHeader,
   MetricsGroupsFooter,
-  MetricsGroupsCard
+  MetricsGroupsCard,
+  MetricsGroupsNameContent
 };
