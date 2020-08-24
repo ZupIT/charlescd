@@ -53,8 +53,8 @@ func (dataSourceApi DataSourceApi) create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := dataSource.Validate(); len(err) > 0 {
-		api.NewRestError(w, http.StatusInternalServerError, err)
+	if err := dataSourceApi.dataSourceMain.Validate(dataSource); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not create datasource")
 		return
 	}
 

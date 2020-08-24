@@ -55,3 +55,8 @@ const (
 const (
 	ResultByGroupMetricError = "RESULT_BY_GROUP_METRIC_ERROR"
 )
+
+type ErrorUtil struct {
+	Field string `json:"field"`
+	Error string `json:"error"`
+}

@@ -37,15 +37,24 @@ type MetricGroupBy struct {
 	Field    string    `json:"field"`
 }
 
-func (metric Metric) Validate() []error {
-	ers := make([]error, 0)
+func (main Main) Validate(metric Metric) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
 
 	if metric.Nickname == "" {
-		ers = append(ers, errors.New("Metric nickname is required"))
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Metric nickname is required").Error()})
 	}
 
 	if metric.Query == "" && metric.Metric == "" {
-		ers = append(ers, errors.New("Metric name is required"))
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Metric name/query is required").Error()})
+	}
+
+	_, err := main.ResultQuery(metric)
+	if err != nil {
+		util.Error(util.ResultQueryError, "Validate", err, metric)
+		ers = append(ers, util.ErrorUtil{
+			Field: "Query",
+			Error: err.Error(),
+		})
 	}
 
 	return ers
@@ -103,12 +112,6 @@ func (main Main) FindMetricById(id string) (Metric, error) {
 }
 
 func (main Main) SaveMetric(metric Metric) (Metric, error) {
-	_, err := main.ResultQuery(metric)
-	if err != nil {
-		util.Error(util.ResultQueryError, "SaveMetric", err, metric)
-		return Metric{}, err
-	}
-
 	db := main.db.Create(&metric)
 	if db.Error != nil {
 		util.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
@@ -118,7 +121,7 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 	if metric.Condition != "" {
 		_, err := main.SaveMetricExecution(MetricExecution{
 			MetricID: metric.ID,
-			Status: MetricActive,
+			Status:   MetricActive,
 		})
 		if err != nil {
 			return Metric{}, err
@@ -144,7 +147,7 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 	if metric.Condition != "" {
 		_, err := main.SaveMetricExecution(MetricExecution{
 			MetricID: metric.ID,
-			Status: MetricActive,
+			Status:   MetricActive,
 		})
 		if err != nil {
 			return Metric{}, err

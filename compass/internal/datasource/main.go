@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"compass/internal/plugin"
+	"compass/internal/util"
 	"compass/pkg/datasource"
 	"compass/pkg/logger"
 	"io"
@@ -16,6 +17,7 @@ type UseCases interface {
 	Save(dataSource DataSource) (DataSource, error)
 	Delete(id string) error
 	GetMetrics(dataSourceID, name string) (datasource.MetricList, error)
+	Validate(dataSource DataSource) []util.ErrorUtil
 }
 
 type Main struct {
