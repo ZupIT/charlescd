@@ -48,8 +48,8 @@ type Condition int
 
 const (
 	EQUAL Condition = iota
-	GREATER_THEN
-	LOWER_THEN
+	GREATER_THAN
+	LOWER_THAN
 )
 
 var Periods = map[string]string{
@@ -63,7 +63,7 @@ var Periods = map[string]string{
 }
 
 func (c Condition) String() string {
-	return [...]string{"EQUAL", "GREATER_THEN", "LOWER_THEN"}[c]
+	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
 func (main Main) PeriodValidate(currentPeriod string) error {

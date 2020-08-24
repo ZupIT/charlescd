@@ -52,7 +52,7 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	if err != nil {
 		util.Error(util.ResultQueryError, "Validate", err, metric)
 		ers = append(ers, util.ErrorUtil{
-			Field: "Query",
+			Field: "query",
 			Error: err.Error(),
 		})
 	}
