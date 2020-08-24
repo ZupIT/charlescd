@@ -60,15 +60,8 @@ func GetLists(configurationData []byte) (datasource.MetricList, error) {
 	return result.Data, nil
 }
 
-func getMetricLengthErrorByMetric(metric metricsgroup.Metric) error {
-	metricError := ""
-	if metric.Query != "" {
-		metricError = metric.Query
-	} else {
-		metricError = metric.Metric
-	}
-
-	return errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + metricError)
+func getMetricLengthErrorByMetric(query string) error {
+	return errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + query)
 }
 
 func getResultValue(result PrometheusDataResponse) (interface{}, error) {
@@ -84,20 +77,20 @@ func getResultValue(result PrometheusDataResponse) (interface{}, error) {
 	return nil, errors.New("Result type not valid")
 }
 
-func doPrometheusRequestByMetric(basePath string, period string, metric metricsgroup.Metric) (*http.Response, error) {
+func doPrometheusRequestByMetric(basePath string, period string, query string, filters []metricsgroup.MetricFilter) (*http.Response, error) {
 	path := "/api/v1/query"
-	query := ""
-	if metric.Query != "" {
-		query = metric.Query
-	} else {
-		query = createQueryByMetric(metric, string(period))
+
+	currentQuery := query
+	if len(filters) > 0 {
+		currentQuery = createQueryByMetric(filters, query, string(period))
 	}
+
 	Url, err := url.Parse(fmt.Sprintf("%s%s", basePath, path))
 	if err != nil {
 		return nil, err
 	}
 
-	completePath := fmt.Sprintf("%s?query=%s", Url.String(), url.PathEscape(query))
+	completePath := fmt.Sprintf("%s?query=%s", Url.String(), url.PathEscape(currentQuery))
 	res, err := http.Get(completePath)
 	if err != nil {
 		return nil, errors.New("FAILED QUERY: " + query)
@@ -112,15 +105,15 @@ func doPrometheusRequestByMetric(basePath string, period string, metric metricsg
 	return res, nil
 }
 
-func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) {
+func Query(datasourceConfiguration, query, filters, period []byte) (interface{}, error) {
 
 	var prometheusConfig PrometheusConfig
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
-	var currentMetric metricsgroup.Metric
-	_ = json.Unmarshal(metric, &currentMetric)
+	var currentFilter []metricsgroup.MetricFilter
+	_ = json.Unmarshal(filters, &currentFilter)
 
-	res, err := doPrometheusRequestByMetric(prometheusConfig.Url, string(period), currentMetric)
+	res, err := doPrometheusRequestByMetric(prometheusConfig.Url, string(period), string(query), currentFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -137,17 +130,17 @@ func Query(datasourceConfiguration, metric, period []byte) (interface{}, error) 
 	case 0:
 		return []interface{}{}, nil
 	default:
-		return nil, getMetricLengthErrorByMetric(currentMetric)
+		return nil, getMetricLengthErrorByMetric(string(query))
 	}
 }
 
-func Result(datasourceConfiguration, metric []byte) (float64, error) {
-	query, err := Query(datasourceConfiguration, metric, []byte(""))
+func Result(datasourceConfiguration, query, filters []byte) (float64, error) {
+	queryResult, err := Query(datasourceConfiguration, query, filters, []byte(""))
 	if err != nil {
 		return 0, err
 	}
 
-	resultValue := query.([]interface{})
+	resultValue := queryResult.([]interface{})
 
 	if len(resultValue) == 0 {
 		return 0, nil

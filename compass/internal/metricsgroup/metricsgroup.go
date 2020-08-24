@@ -231,6 +231,14 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
+func (main Main) getQueryByMetric(metric Metric) []byte {
+	if metric.Query != "" {
+		return []byte(metric.Query)
+	}
+
+	return []byte(metric.Metric)
+}
+
 func (main Main) query(metric Metric, period string) (interface{}, error) {
 
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
@@ -240,9 +248,9 @@ func (main Main) query(metric Metric, period string) (interface{}, error) {
 		return nil, notFoundErr
 	}
 
-	plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		util.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginID.String())
+		util.Error(util.QueryGetPluginError, "Query", err, dataSourceResult.PluginSrc)
 		return nil, err
 	}
 
@@ -252,9 +260,10 @@ func (main Main) query(metric Metric, period string) (interface{}, error) {
 		return nil, err
 	}
 
+	query := main.getQueryByMetric(metric)
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	metricData, _ := json.Marshal(metric)
-	return getQuery.(func(datasourceConfiguration, metric, period []byte) (interface{}, error))(dataSourceConfigurationData, metricData, []byte(period))
+	filters, _ := json.Marshal(metric.Filters)
+	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) (interface{}, error))(dataSourceConfigurationData, query, filters, []byte(period))
 
 }
 
@@ -293,9 +302,9 @@ func (main Main) resultQuery(metric Metric) (float64, error) {
 		return 0, notFoundErr
 	}
 
-	plugin, err := main.pluginMain.GetPluginByID(dataSourceResult.PluginID.String())
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		util.Error(util.QueryGetPluginError, "ResultQuery", err, dataSourceResult.PluginID.String())
+		util.Error(util.QueryGetPluginError, "ResultQuery", err, dataSourceResult.PluginSrc)
 		return 0, err
 	}
 
@@ -306,8 +315,9 @@ func (main Main) resultQuery(metric Metric) (float64, error) {
 	}
 
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	metricData, _ := json.Marshal(metric)
-	return getQuery.(func(datasourceConfiguration, metric []byte) (float64, error))(dataSourceConfigurationData, metricData)
+	filters, _ := json.Marshal(metric.Filters)
+	query := main.getQueryByMetric(metric)
+	return getQuery.(func(datasourceConfiguration, metric, filters []byte) (float64, error))(dataSourceConfigurationData, query, filters)
 }
 
 func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, error) {

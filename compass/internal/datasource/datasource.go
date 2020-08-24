@@ -18,7 +18,7 @@ import (
 type DataSource struct {
 	util.BaseModel
 	Name        string          `json:"name"`
-	PluginID    uuid.UUID       `json:"pluginId"`
+	PluginSrc   string          `json:"pluginSrc"`
 	Health      bool            `json:"health"`
 	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
 	WorkspaceID uuid.UUID       `json:"-"`
@@ -32,8 +32,8 @@ func (dataSource DataSource) Validate() []error {
 		ers = append(ers, errors.New("Name is required"))
 	}
 
-	if dataSource.PluginID == uuid.Nil {
-		ers = append(ers, errors.New("PluginId is required"))
+	if dataSource.PluginSrc == "" {
+		ers = append(ers, errors.New("Plugin src is required"))
 	}
 
 	if dataSource.Data == nil || len(dataSource.Data) == 0 {
@@ -104,13 +104,7 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}
 
-	pluginResult, err := main.pluginMain.FindById(dataSourceResult.PluginID.String())
-	if err != nil {
-		util.Error(util.FindDatasourceGetMetricsError, "GetMetrics", err, dataSourceResult.PluginID.String())
-		return datasource.MetricList{}, errors.New("Not found plugin: " + dataSourceResult.PluginID.String())
-	}
-
-	plugin, err := plugin.Open(filepath.Join(pluginsPath, pluginResult.Src+".so"))
+	plugin, err := plugin.Open(filepath.Join(pluginsPath, dataSourceResult.PluginSrc+".so"))
 	if err != nil {
 		util.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, pluginsPath)
 		return datasource.MetricList{}, err
