@@ -19,12 +19,13 @@ import { Component, Deployment } from '../../../../../api/deployments/interfaces
 import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 import { UrlUtils } from '../../../../utils/url.utils'
+import { ConnectorConfiguration } from '../../connector'
 
-export const getUndeploymentsSuccessWebhookStage = (deployment: Deployment, stageId: number, incomingCircleId: string | null): Stage => ({
+export const getUndeploymentsSuccessWebhookStage = (deployment: Deployment, stageId: number, configuration: ConnectorConfiguration): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   customHeaders: {
-    'x-circle-id': `${incomingCircleId}`
+    'x-circle-id': `${configuration.incomingCircleId}`
   },
   failPipeline: false,
   method: 'POST',
@@ -41,7 +42,7 @@ export const getUndeploymentsSuccessWebhookStage = (deployment: Deployment, stag
   },
   statusUrlResolution: 'getMethod',
   type: 'webhook',
-  url: UrlUtils.getDeploymentNotificationUrl(deployment.id)
+  url: UrlUtils.getDeploymentNotificationUrl(configuration.executionId)
 })
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {

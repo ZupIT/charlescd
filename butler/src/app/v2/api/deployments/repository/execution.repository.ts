@@ -17,6 +17,7 @@
 import { EntityRepository, Repository, UpdateResult, getConnection } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { Execution } from '../entity/execution.entity'
+import { NotificationStatusEnum } from '../../../core/enums/notification-status.enum'
 
 export type UpdatedExecution = { id: string }
 
@@ -25,9 +26,9 @@ export class ExecutionRepository extends Repository<Execution> {
 
   public async updateNotificationStatus(id: string, status: number) : Promise<UpdateResult>{
     if (status >= 200 && status < 300) {
-      return await this.update({ id: id }, { notificationStatus: 'SENT' })
+      return await this.update({ id: id }, { notificationStatus: NotificationStatusEnum.SENT })
     } else {
-      return await this.update({ id: id }, { notificationStatus: 'ERROR' })
+      return await this.update({ id: id }, { notificationStatus: NotificationStatusEnum.ERROR })
     }
   }
 
