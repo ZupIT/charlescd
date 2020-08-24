@@ -41,9 +41,9 @@ func compareResultWithMetricThreshold(result float64, threshold float64, conditi
 	switch condition {
 	case metricsgroup.EQUAL.String():
 		return result == threshold
-	case metricsgroup.GREATER_THEN.String():
+	case metricsgroup.GREATER_THAN.String():
 		return result > threshold
-	case metricsgroup.LOWER_THEN.String():
+	case metricsgroup.LOWER_THAN.String():
 		return result < threshold
 	default:
 		return false
