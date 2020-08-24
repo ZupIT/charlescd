@@ -6,6 +6,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -61,6 +62,8 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 		return
 	}
 
+	fmt.Println("METRIC RESULT", metricResult)
+
 	if compareResultWithMetricTreshhold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 		dispatcher.mux.Lock()
 		execution.Status = metric.MetricReached
@@ -81,11 +84,12 @@ func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
 func (dispatcher *Dispatcher) Start() error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
+		log.Fatalln(err)
 		return err
 	}
 
 	for {
-		time.Sleep(interval * time.Second)
+		time.Sleep(interval)
 		dispatcher.dispatch()
 	}
 }
