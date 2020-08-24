@@ -18,7 +18,7 @@ export type MetricsGroupsResume = {
   id: string;
   createdAt: string;
   name: string;
-  metrics?: number;
+  metricsCount?: number;
   thresholds: number;
   thresholdsReached: number;
 };
@@ -44,7 +44,12 @@ export type Metric = {
   groupBy?: MetricGroupBy[];
   condition: string;
   threshold: number;
-  lastValue?: string;
+  status: string;
+  execution: Execution;
+};
+
+export type Execution = {
+  lastValue: number;
   status: string;
 };
 
