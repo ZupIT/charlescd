@@ -29,6 +29,7 @@ type MetricGroupResume struct {
 	Thresholds        int    `json:"thresholds"`
 	ThresholdsReached int    `json:"thresholdsReached"`
 	Metrics           int    `json:"metricsCount"`
+	Status            string `json:"status"`
 }
 
 func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
@@ -115,6 +116,31 @@ func (main Main) FindAll() ([]MetricsGroup, error) {
 	return metricsGroups, nil
 }
 
+func (main Main) isMetricError(metrics []metric.Metric) bool {
+	for _, currentMetric := range metrics {
+		if currentMetric.MetricExecution.Status == metric.MetricError {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (main Main) getResumeStatusByGroup(metrics []metric.Metric) string {
+	allMetricsReached := main.metricMain.CountAllMetricsFinished(metrics)
+	allConfiguredMetrics := main.metricMain.CountAllMetricsWithConditions(metrics)
+
+	if main.isMetricError(metrics) {
+		return metric.MetricError
+	}
+
+	if allMetricsReached == allConfiguredMetrics {
+		return metric.MetricReached
+	}
+
+	return metric.MetricActive
+}
+
 func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 	var db *gorm.DB
 	var metricsGroups []MetricsGroup
@@ -139,6 +165,7 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 			main.metricMain.CountAllMetricsWithConditions(group.Metrics),
 			main.metricMain.CountAllMetricsFinished(group.Metrics),
 			main.metricMain.CountAllMetricsInGroup(group.Metrics),
+			main.getResumeStatusByGroup(group.Metrics),
 		})
 	}
 
