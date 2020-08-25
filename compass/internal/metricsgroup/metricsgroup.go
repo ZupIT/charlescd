@@ -35,15 +35,15 @@ func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if metricsGroup.Name == "" {
-		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Name is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Name is required").Error()})
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
-		ers = append(ers, util.ErrorUtil{Field: "CircleID", Error: errors.New("CircleID is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "circleID", Error: errors.New("CircleID is required").Error()})
 	}
 
 	if metricsGroup.Name != "" && len(metricsGroup.Name) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("100 Maximum length in Name").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
 	}
 
 	return ers
