@@ -36,6 +36,7 @@ interface ButtonIconProps {
 
 interface ThresholdIconProps {
   color: string;
+  hasTreshold: boolean;
 }
 
 const Icon = styled(ComponentIcon)`
@@ -251,8 +252,10 @@ const MetricLastValue = styled.div<ThresholdIconProps>`
   display: flex;
 
   svg {
-    color: ${({ theme, color }) =>
-      theme.circleGroupMetrics.execution.status[color]};
+    color: ${({ theme, color, hasTreshold }) =>
+      hasTreshold
+        ? 'transparent'
+        : theme.circleGroupMetrics.execution.status[color]};
   }
 `;
 
