@@ -146,13 +146,8 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 			return db.Error
 		}
 
-		_, err := main.saveMetricExecution(tx, MetricExecution{
-			BaseModel: util.BaseModel{
-				ID: metric.MetricExecution.ID,
-			},
-			MetricID: metric.ID,
-			Status:   MetricUpdated,
-		})
+		metric.MetricExecution.Status = MetricUpdated
+		_, err := main.saveMetricExecution(tx, metric.MetricExecution)
 		if err != nil {
 			return err
 		}
