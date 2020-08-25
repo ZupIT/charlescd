@@ -21,7 +21,10 @@ import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.security.WorkspacePermissionsMapping
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import org.keycloak.admin.client.Keycloak
+import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -36,19 +39,16 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
 
     override fun addPermissionsToUser(workspaceId: String, user: User, permissions: List<Permission>) {
         val keycloakUser = loadKeycloakUser(user.email)
-
         val keycloakWorkspaceAttribute = keycloakUser.attributes["workspaces"]
-
         val actualPermissionsMapping = keycloakWorkspaceAttribute?.map { objectMapper.readValue(it, WorkspacePermissionsMapping::class.java) }?.toMutableList()
-
         val workspaceAndPermissionsMapping = actualPermissionsMapping?.firstOrNull { it.id == workspaceId }
-
         val permissionsToBeAddedMapping = WorkspacePermissionsMapping(
             id = workspaceId,
             permissions = permissions.map { it.name })
 
         if (workspaceAndPermissionsMapping != null) {
             actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
+
             actualPermissionsMapping.add(
                 workspaceAndPermissionsMapping.copy(
                     permissions = workspaceAndPermissionsMapping.permissions.union(permissionsToBeAddedMapping.permissions).toList()
@@ -134,6 +134,45 @@ class KeycloakClientService(val keycloak: Keycloak) : KeycloakService {
         keycloakUser.attributes["workspaces"] = workspaceAndPermissionsJson
 
         updateKeycloakUser(keycloakUser)
+    }
+
+    override fun createUser(email: String, name: String, password: String, isRoot: Boolean) {
+        this.keycloak
+            .realm(this.realm)
+            .users()
+            .create(createUserRepresentation(email, name, password, isRoot))
+            .takeIf { it.status == 201 }
+            ?: throw RuntimeException("Could not create user on keycloak.")
+    }
+
+    private fun createUserRepresentation(
+        email: String,
+        name: String,
+        password: String,
+        isRoot: Boolean
+    ): UserRepresentation {
+        val userRepresentation = UserRepresentation()
+
+        val names = name.split(" ")
+        if (names.size > 1) userRepresentation.lastName = names.last()
+
+        userRepresentation.isEmailVerified = true
+        userRepresentation.isEnabled = true
+        userRepresentation.firstName = names.first()
+        userRepresentation.email = email
+        userRepresentation.username = email
+        userRepresentation.createdTimestamp = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
+        userRepresentation.credentials = listOf(createCredentialRepresentation(password))
+        userRepresentation.singleAttribute("isRoot", isRoot.toString())
+
+        return userRepresentation
+    }
+
+    private fun createCredentialRepresentation(password: String): CredentialRepresentation {
+        val credential = CredentialRepresentation()
+        credential.type = "password"
+        credential.value = password
+        return credential
     }
 
     private fun loadKeycloakUser(email: String): UserRepresentation {
