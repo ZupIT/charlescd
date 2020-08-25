@@ -4,7 +4,6 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger/fake"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -41,12 +40,10 @@ func (s *SuiteMetric) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	fakeLogger := fake.NewLoggerFake()
+	var pluginMain = plugin.NewMain(s.DB)
+	var datasourceMain = datasource.NewMain(s.DB, pluginMain)
 
-	var pluginMain = plugin.NewMain(s.DB, fakeLogger)
-	var datasourceMain = datasource.NewMain(s.DB, pluginMain, fakeLogger)
-
-	s.repository = NewMain(s.DB, datasourceMain, pluginMain, fakeLogger)
+	s.repository = NewMain(s.DB, datasourceMain, pluginMain)
 }
 
 func TestInitMetric(t *testing.T) {
