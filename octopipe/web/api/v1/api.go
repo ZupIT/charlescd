@@ -30,8 +30,8 @@ type API struct {
 
 const (
 	v1Path = "/api/v1"
-	limitRequestBySeconds = 10
-	limitRequestBurstBySeconds = 10
+	limitRequestBySeconds = 15
+	limitRequestBurstBySeconds = 15
 )
 
 func NewAPI() *API {
