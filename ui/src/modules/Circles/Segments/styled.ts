@@ -35,11 +35,12 @@ interface GroupProps {
   verticalLine?: number;
   top?: number;
   hasGroup?: boolean;
+  viewMode?: boolean;
 }
 const Group = styled.div<GroupProps>`
   position: relative;
 
-  ${({ verticalLine, top, theme, hasGroup }) =>
+  ${({ verticalLine, top, theme, hasGroup, viewMode }) =>
     hasGroup &&
     verticalLine &&
     css`
@@ -49,7 +50,7 @@ const Group = styled.div<GroupProps>`
         width: 1px;
         right: -80px;
         top: ${top}px;
-        height: ${verticalLine}px;
+        height: ${viewMode? 0 : verticalLine}px;
         background-color: ${theme.segments.line};
       }
     `}
