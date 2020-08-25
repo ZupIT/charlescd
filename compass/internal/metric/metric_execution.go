@@ -62,15 +62,6 @@ func (main Main) FindMetricExecutionById(id string) (MetricExecution, error) {
 	return metricExecution, nil
 }
 
-func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, error) {
-	db := tx.Save(&execution)
-	if db.Error != nil {
-		util.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, execution)
-		return MetricExecution{}, db.Error
-	}
-	return execution, nil
-}
-
 func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
 	db := main.db.Model(&metricExecution).Updates(metricExecution)
 	if db.Error != nil {
@@ -80,8 +71,17 @@ func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricE
 	return metricExecution, nil
 }
 
-func (main Main) RemoveMetricExecution(id string) error {
-	db := main.db.Where("id = ?", id).Delete(MetricExecution{})
+func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, error) {
+	db := tx.Save(&execution)
+	if db.Error != nil {
+		util.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, execution)
+		return MetricExecution{}, db.Error
+	}
+	return execution, nil
+}
+
+func (main Main) removeMetricExecution(tx *gorm.DB, id string) error {
+	db := tx.Where("id = ?", id).Delete(MetricExecution{})
 	if db.Error != nil {
 		util.Error(util.RemoveMetricExecutionError, "RemoveMetricExecution", db.Error, id)
 		return db.Error

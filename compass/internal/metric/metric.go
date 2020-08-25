@@ -104,7 +104,7 @@ func (main Main) CountAllMetricsInGroup(metrics []Metric) int {
 
 func (main Main) FindMetricById(id string) (Metric, error) {
 	metric := Metric{}
-	db := main.db.Where("id = ?", id).First(&metric)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
 		util.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
 		return Metric{}, db.Error
@@ -155,10 +155,23 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 }
 
 func (main Main) RemoveMetric(id string) error {
-	db := main.db.Where("id = ?", id).Delete(Metric{})
-	if db.Error != nil {
-		util.Error(util.RemoveMetricError, "RemoveMetric", db.Error, id)
-		return db.Error
+	err := main.db.Transaction(func(tx *gorm.DB) error {
+		db := main.db.Where("id = ?", id).Delete(Metric{})
+		if db.Error != nil {
+			util.Error(util.RemoveMetricError, "RemoveMetric", db.Error, id)
+			return db.Error
+		}
+
+		err := main.removeMetricExecution(tx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		util.Error(util.RemoveMetricError, "RemoveMetric", err, id)
+		return err
 	}
 	return nil
 }
