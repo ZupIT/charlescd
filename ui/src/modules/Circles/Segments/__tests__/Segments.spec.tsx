@@ -15,19 +15,19 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import MutationObserver from 'mutation-observer';
+import { render, fireEvent } from 'unit-test/testUtils';
 import Segments from '..';
 
-(global as any).MutationObserver = MutationObserver
+(global as any).MutationObserver = MutationObserver;
 
 test('render Segments default component', async () => {
-  const { getByTestId, queryByTestId } = render(
+  const { queryByTestId } = render(
     <Segments />
   );
 
   expect(queryByTestId('segments-rules')).not.toBeInTheDocument();
-  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
+  expect(queryByTestId('input-text-logicalOperator')).not.toBeInTheDocument();
   expect(queryByTestId('input-hidden-type')).toBeInTheDocument();
   expect(queryByTestId('button-default-save')).not.toBeInTheDocument();
 });
