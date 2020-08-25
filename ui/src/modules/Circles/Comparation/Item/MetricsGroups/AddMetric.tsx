@@ -50,6 +50,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     handleSubmit,
     register,
     control,
+    setError,
+    errors,
     formState: { isValid }
   } = formMethods;
   const [isBasicQuery, setIsBasicQuery] = useState(true);
@@ -57,13 +59,23 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [loadingProviders, setLoadingProviders] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric, status: creatingStatus } = useSaveMetric(metric?.id);
+  const { saveMetric, status: creatingStatus, validationError } = useSaveMetric(
+    metric?.id
+  );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
   const [showThresholdForm, setShowThresholdForm] = useState(false);
   const [metrics, setMetrics] = useState<Option[]>();
   const { watch } = formMethods;
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
+
+  useEffect(() => {
+    if (validationError?.errors?.length) {
+      validationError.errors.forEach(({ field, error }) => {
+        setError(field, 'required', error);
+      });
+    }
+  }, [validationError]);
 
   useEffect(() => {
     if (metric) {
@@ -98,11 +110,15 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   const onSubmit = async (data: Metric) => {
     const payload = buildMetricPayload(data, metric);
-    saveMetric(id, payload).then(response => {
-      if (response) {
-        onGoBack();
-      }
-    });
+    saveMetric(id, payload)
+      .then(response => {
+        if (response) {
+          onGoBack();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const handleAddFilter = () => {
@@ -142,7 +158,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
             />
 
             {!loadingProviders && (
-              <Styled.ProviderSelect
+              <Styled.Select
                 control={control}
                 name="dataSourceId"
                 label="Select a data source"
@@ -180,17 +196,26 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                 {isBasicQuery && (
                   <>
                     {!loadingMetrics && (
-                      <Styled.ProviderSelect
-                        control={control}
-                        name="metric"
-                        label="Select a metric"
-                        options={metrics}
-                        rules={{ required: true }}
-                        defaultValue={getSelectDefaultValue(
-                          metric?.metric,
-                          metrics
+                      <>
+                        <Styled.SelectMetric
+                          control={control}
+                          name="metric"
+                          label="Metric"
+                          options={metrics}
+                          rules={{ required: true }}
+                          hasError={!!errors?.metric}
+                          defaultValue={getSelectDefaultValue(
+                            metric?.metric,
+                            metrics
+                          )}
+                        />
+                        {!!errors.metric && (
+                          <Text.h6 color="error">
+                            Your query returned more than one result. Add a
+                            filter to your query or review the desired metric.
+                          </Text.h6>
                         )}
-                      />
+                      </>
                     )}
                     <BasicQueryForm
                       filters={filters}
@@ -206,9 +231,13 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       <Input
                         name="query"
                         ref={register({ required: true })}
+                        hasError={!!errors?.query}
                         label="Type a query"
                       />
                     </Styled.AdvancedQueryWrapper>
+                    {!!errors.query && (
+                      <Text.h6 color="error">{errors.query.message}</Text.h6>
+                    )}
                   </>
                 )}
 

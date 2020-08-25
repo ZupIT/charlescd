@@ -96,8 +96,13 @@ const ThresholdWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
-const ProviderSelect = styled(SelectComponent.Single)`
+const Select = styled(SelectComponent.Single)`
   width: 230px;
+  margin-bottom: 20px;
+`;
+
+const SelectMetric = styled(SelectComponent.Single)`
+  width: 380px;
   margin-bottom: 20px;
 `;
 
@@ -251,7 +256,8 @@ export default {
   ThresholdSelect,
   InputNumber,
   ThresholdWrapper,
-  ProviderSelect,
+  Select,
+  SelectMetric,
   Actions,
   ButtonIconRounded,
   AdvancedQueryWrapper,

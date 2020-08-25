@@ -73,7 +73,7 @@ const BasicQueryForm = ({ filters, onAddFilter, onRemoveFilter }: Props) => {
         size="EXTRA_SMALL"
         onClick={onAddFilter}
       >
-        <Icon name="add" size="16px" color="light" /> Rule
+        <Icon name="add" size="16px" color="light" /> Filter
       </StyledRule.Button.Clause>
     </>
   );
