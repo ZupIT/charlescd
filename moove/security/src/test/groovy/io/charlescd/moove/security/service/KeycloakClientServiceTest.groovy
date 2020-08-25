@@ -21,6 +21,7 @@ import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
@@ -542,4 +543,60 @@ class KeycloakClientServiceTest extends Specification {
 
         thrown(RuntimeException)
     }
+
+    def "should throw exception when user password does not match"(){
+        given:
+        def email = "email"
+        def oldPassword = "old-password"
+        def newPassword = "new-password"
+
+        when:
+        keycloakClientService.changeUserPassword(email, oldPassword, newPassword)
+
+        then:
+        1 * keycloakFormEncodedClient.authorizeUser(_, _) >> { throw new FeignException("Invalid credentials") }
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.USER_PASSWORD_DOES_NOT_MATCH
+    }
+
+    def "should change user password successfully"(){
+        given:
+        def email = "email"
+        def oldPassword = "old-password"
+        def newPassword = "new-password"
+        def keycloakUser = new UserRepresentation()
+        keycloakUser.id = "fake-user-id"
+        keycloakUser.firstName = "John"
+        keycloakUser.lastName = "Doe"
+        keycloakUser.email = email
+        keycloakUser.username = email
+        keycloakUser.attributes = [:]
+        def keycloakUsers = new ArrayList()
+        keycloakUsers.add(keycloakUser)
+
+        when:
+        keycloakClientService.changeUserPassword(email, oldPassword, newPassword)
+
+        then:
+        1 * keycloakFormEncodedClient.authorizeUser(_, _) >> {}
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.search(email) >> keycloakUsers
+        1 * keycloakClient.realm(_ as String) >> realmResource
+        1 * realmResource.users() >> usersResource
+        1 * usersResource.get(keycloakUser.id) >> userResource
+        1 * userResource.resetPassword(_) >> { arguments ->
+            def updatedKeycloakCredentials = arguments[0]
+
+            assert updatedKeycloakCredentials instanceof CredentialRepresentation
+
+            assert updatedKeycloakCredentials.type == CredentialRepresentation.PASSWORD
+            assert updatedKeycloakCredentials.value == newPassword
+            assert !updatedKeycloakCredentials.isTemporary()
+        }
+
+        notThrown()
+
+    }
+
 }
