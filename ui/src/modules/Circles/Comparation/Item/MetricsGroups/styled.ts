@@ -265,6 +265,14 @@ const MonitoringMetricsContent = styled.div``;
 
 const MonitoringMetricsFilter = styled.div``;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+
+  span {
+    margin-left: 5px;
+  }
+`;
+
 export default {
   Layer,
   Icon,
@@ -300,5 +308,6 @@ export default {
   TrashIcon,
   RuleWrapper,
   MonitoringMetricsContent,
-  MonitoringMetricsFilter
+  MonitoringMetricsFilter,
+  FieldErrorWrapper
 };
