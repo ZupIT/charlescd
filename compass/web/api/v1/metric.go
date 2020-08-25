@@ -54,6 +54,11 @@ func (metricApi MetricApi) updateMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	if err := metricApi.metricMain.Validate(metric); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not update metric")
+		return
+	}
+
 	metric.ID, _ = uuid.Parse(metricID)
 	metric.MetricsGroupID, _ = uuid.Parse(groupID)
 

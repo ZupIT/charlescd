@@ -63,7 +63,7 @@ func (s *Suite) TestParse() {
 }
 
 func (s *Suite) TestParseError() {
-	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bd" }`)
+	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginfasdf": "4*bd" `)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
 	_, err := s.repository.Parse(stringReadCloser)
@@ -73,7 +73,7 @@ func (s *Suite) TestParseError() {
 
 func (s *Suite) TestValidate() {
 	datasource := DataSource{}
-	var errList = datasource.Validate()
+	var errList = s.repository.Validate(datasource)
 
 	require.NotEmpty(s.T(), errList)
 }
@@ -154,7 +154,7 @@ func (s *Suite) TestFindAllByWorkspace() {
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
@@ -192,7 +192,7 @@ func (s *Suite) TestFindAllByWorkspaceWithHealthTrue() {
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
@@ -229,7 +229,7 @@ func (s *Suite) TestFindAllByWorkspaceError() {
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.MatchExpectationsInOrder(false)
@@ -255,7 +255,7 @@ func (s *Suite) TestDelete() {
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(
@@ -285,7 +285,7 @@ func (s *Suite) TestDeleteError() {
 	)
 
 	rows := sqlmock.
-		NewRows([]string{"id", "created_at", "name", "plugin_id", "health", "data", "workspace_id"}).
+		NewRows([]string{"id", "created_at", "name", "plugin_src", "health", "data", "workspace_id"}).
 		AddRow(id, timeNow, name, pluginSrc, health, data, workspaceID)
 
 	s.mock.ExpectQuery(regexp.QuoteMeta(

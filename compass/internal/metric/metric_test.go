@@ -55,7 +55,7 @@ func TestInitMetric(t *testing.T) {
 
 func (s *SuiteMetric) TestValidateMetric() {
 	metric := Metric{}
-	var errList = metric.Validate()
+	var errList = s.repository.Validate(metric)
 
 	require.NotEmpty(s.T(), errList)
 }
