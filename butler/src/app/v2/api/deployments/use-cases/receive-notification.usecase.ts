@@ -134,13 +134,9 @@ export class ReceiveNotificationUseCase {
     }
 
     try {
-      const notificationStatus = deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED ?
-        NotificationStatusEnum.UNDEPLOYED :
-        NotificationStatusEnum.UNDEPLOY_FAILED
-
       const updatedExecution = await this.executionRepository.save(execution)
-      await this.sendMooveNotification(execution.id, notificationStatus, execution.deployment.callbackUrl, execution.incomingCircleId)
-      return updatedExecution
+      await this.notifyMooveAndUpdateDeployment(updatedExecution)
+      return await this.executionRepository.findOneOrFail(updatedExecution.id, { relations: ['deployment', 'deployment.components'] })
     }
     catch (error) {
       this.consoleLoggerService.log('ERROR:Failed to save deployment')
