@@ -18,7 +18,7 @@ import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
-import { MetricFilter, Metric } from './types';
+import { MetricFilter, Metric, Execution } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
   map(metrics, item => ({
@@ -73,3 +73,29 @@ export const getBlankFilter = () => {
 };
 
 export const getDefaultFilters = () => [getBlankFilter()];
+
+export const getThresholdStatus = (execution: Execution) => {
+  switch (execution.status) {
+    case 'REACHED': {
+      return {
+        icon: 'bell',
+        color: 'reached',
+        message: 'This metric has reached its goal.'
+      };
+    }
+    case 'ERROR': {
+      return {
+        icon: 'error',
+        color: 'error',
+        message: 'An error occurred in this metric.'
+      };
+    }
+    default: {
+      return {
+        icon: 'bell',
+        color: 'active',
+        message: 'This metric has not yet reached its goal.'
+      };
+    }
+  }
+};
