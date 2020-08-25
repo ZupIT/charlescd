@@ -6,7 +6,6 @@ import (
 	"compass/internal/metric"
 	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger/fake"
 	"fmt"
 	"path/filepath"
 	"testing"
@@ -63,13 +62,11 @@ func (s *Suite) SetupSuite() {
 		util.Fatal("", err)
 	}
 
-	fakeLogger := fake.NewLoggerFake()
+	pluginMain := plugin.NewMain(s.db)
+	datasourceMain := datasource.NewMain(s.db, pluginMain)
+	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain)
 
-	pluginMain := plugin.NewMain(s.db, fakeLogger)
-	datasourceMain := datasource.NewMain(s.db, pluginMain, fakeLogger)
-	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain, fakeLogger)
-
-	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain, fakeLogger)
+	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain)
 	s.circleID = uuid.New()
 	s.workspaceID = uuid.New()
 }
