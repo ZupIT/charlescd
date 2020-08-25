@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen, fireEvent, getByText, cleanup } from 'unit-test/testUtils';
+import { render, wait, screen, fireEvent, getByText } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
