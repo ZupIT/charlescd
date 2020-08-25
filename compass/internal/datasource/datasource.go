@@ -40,6 +40,14 @@ func (main Main) Validate(dataSource DataSource) []util.ErrorUtil {
 		ers = append(ers, util.ErrorUtil{Field: "Data", Error: errors.New("Data is required").Error()})
 	}
 
+	if dataSource.Name != "" && len(dataSource.Name) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("100 Maximum length in Name").Error()})
+	}
+
+	if dataSource.PluginSrc != "" && len(dataSource.PluginSrc) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "PluginSrc", Error: errors.New("100 Maximum length in PluginSrc").Error()})
+	}
+
 	return ers
 }
 
