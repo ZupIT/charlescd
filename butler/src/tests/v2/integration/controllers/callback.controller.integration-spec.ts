@@ -18,6 +18,7 @@ import express = require('express')
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 let mock = express()
 
@@ -283,6 +284,7 @@ describe('CallbackController v2', () => {
       [modulesDto]
     )
     const deploymentEntity = deploymentDto.toCircleEntity()
+    deploymentEntity.active = true
     deploymentEntity.cdConfiguration = cdConfiguration
     const savedDeployment = await manager.save(deploymentEntity)
     const executionEntity = new Execution(
@@ -292,10 +294,10 @@ describe('CallbackController v2', () => {
       DeploymentStatusEnum.SUCCEEDED,
     )
     executionEntity.finishedAt = DateUtils.now()
+    await manager.update(ComponentEntityV2, { deployment: savedDeployment }, { running: true })
     const savedExecution = await manager.save(executionEntity)
 
     const execution = await manager.findOneOrFail(Execution, { id: savedExecution.id }, { relations: ['deployment', 'deployment.components'] })
-
     mock.post('/deploy/notifications/deployment', (req, res) => {
       res.sendStatus(200)
     })
