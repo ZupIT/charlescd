@@ -53,7 +53,6 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [delUser, delUserResponse] = useDeleteUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
   const isAbleToReset = loggedUserId !== user?.id;
-  console.log('isAbleToReset', loggedUserId, user?.id);
 
   const refresh = useCallback(() => loadUser(email), [loadUser, email]);
 
