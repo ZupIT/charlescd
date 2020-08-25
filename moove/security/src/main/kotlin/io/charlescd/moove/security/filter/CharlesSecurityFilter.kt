@@ -64,6 +64,7 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
 
         try {
             doAuthorization(workspaceId, authorization, path, method)
+            chain.doFilter(request, response)
         } catch (feignException: FeignException) {
             createResponse(response, feignException.contentUTF8(), HttpStatus.UNAUTHORIZED)
         } catch (businessException: BusinessException) {
@@ -71,8 +72,6 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         } catch (exception: Exception) {
             createResponse(response, exception.message, HttpStatus.UNAUTHORIZED)
         }
-
-        chain.doFilter(request, response)
     }
 
     private fun createResponse(response: ServletResponse, message: String?, httpStatus: HttpStatus) {
