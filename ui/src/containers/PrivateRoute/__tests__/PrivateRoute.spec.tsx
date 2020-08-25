@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { render, wait, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock';
 import PrivateRoute from '../index';
 import { MemoryRouter } from 'react-router-dom';
 import { setAccessToken } from 'core/utils/auth';
@@ -104,6 +105,7 @@ test('render PrivateRoute without role', async () => {
 test('render PrivateRoute by refresh', async () => {
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
+  (fetch as FetchMock).mockRejectedValue(JSON.stringify({ name: 'login' }));
   jest.spyOn(StateHooks, 'useGlobalState')
     .mockReturnValueOnce({
       item: {
@@ -117,7 +119,7 @@ test('render PrivateRoute by refresh', async () => {
         id: workspaceID,
         status: WORKSPACE_STATUS.COMPLETE
       },
-      status: 'resolved'
+      status: 'rejected'
     });
 
   render(
