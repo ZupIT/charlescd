@@ -50,6 +50,7 @@ const BasicQueryForm = ({ filters, onAddFilter, onRemoveFilter }: Props) => {
               ref={register({ required: true })}
               name={`filters.${index}.field`}
               defaultValue={item.field}
+              maxLength={100}
             />
             <StyledRule.Select
               options={operatorsOptions}
@@ -61,9 +62,10 @@ const BasicQueryForm = ({ filters, onAddFilter, onRemoveFilter }: Props) => {
             />
             <StyledRule.Input
               label="Value"
-              ref={register}
+              ref={register({ required: true })}
               name={`filters.${index}.value`}
               defaultValue={item.value}
+              maxLength={100}
             />
           </StyledRule.Rule>
         </Styled.RuleWrapper>
