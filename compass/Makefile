@@ -18,8 +18,13 @@ start:
 				$(GORUN) $(CMD_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
-test:
-				$(GOTEST) ./...
+tests:
+				docker-compose -f ./docker-compose.test.yaml up --build --abort-on-container-exit
+				docker-compose -f ./docker-compose.test.yml down --volumes
+tests-db-up:
+				docker-compose -f ./docker-compose.test.yaml up --build db
+tests-db-down:
+				docker-compose -f ./docker-compose.test.yaml down --volumes db
 cover:
 				$(GOTEST) -coverprofile cover.out ./...
 				$(GOTOOL) cover -func=cover.out
