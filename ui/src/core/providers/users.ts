@@ -84,7 +84,7 @@ export const deleteUserById = (id: string) =>
   baseRequest(`${v1Endpoint}/${id}`, null, { method: 'DELETE' });
 
 export const createNewUser = (user: NewUser) =>
-  postRequest(`${v1Endpoint}`, user);
+  postRequest(`${endpoint}`, user);
 
 export const changePassword = (data: CheckPassword) =>
   putRequest(`${endpoint}/password`, data);

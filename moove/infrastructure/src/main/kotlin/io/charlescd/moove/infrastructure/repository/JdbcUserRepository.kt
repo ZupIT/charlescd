@@ -87,6 +87,32 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         return findWorkspaceUsers(workspaceId, name, email, pageRequest)
     }
 
+    override fun save(user: User): User {
+        createUser(user)
+        return findById(user.id).get()
+    }
+
+    private fun createUser(user: User) {
+        val statement = "INSERT INTO users(" +
+                "id," +
+                "name," +
+                "photo_url," +
+                "email," +
+                "is_root," +
+                "created_at) " +
+                "VALUES(?,?,?,?,?,?)"
+
+        this.jdbcTemplate.update(
+            statement,
+            user.id,
+            user.name,
+            user.photoUrl,
+            user.email,
+            user.root,
+            user.createdAt
+        )
+    }
+
     private fun findWorkspaceUsers(workspaceId: String, name: String?, email: String?, page: PageRequest): Page<User> {
         val result = executeWorkspacePageQuery(createStatementWorkspaceUsers(name, email), workspaceId, name, email, page)
         return Page(
