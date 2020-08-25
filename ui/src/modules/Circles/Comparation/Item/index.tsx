@@ -65,7 +65,7 @@ interface Props {
 const CirclesComparationItem = ({ id, onChange }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [activeSection, setActiveSection] = useState<SECTIONS>(SECTIONS.GROUP_METRICS);
+  const [activeSection, setActiveSection] = useState<SECTIONS>();
   const [isEditing, setIsEditing] = useState(false);
   const [data, circleActions] = useCircle();
   const { circleResponse, components, loading } = data;
