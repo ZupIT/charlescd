@@ -241,7 +241,11 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                     {!!errors.query && (
                       <Styled.FieldErrorWrapper>
                         <Icon name="error" color="error" />
-                        <Text.h6 color="error">{errors.query.message}</Text.h6>
+                        <Text.h6 color="error">
+                          {errors.query.message
+                            ? errors.query.message
+                            : 'Type a valid query'}
+                        </Text.h6>
                       </Styled.FieldErrorWrapper>
                     )}
                   </>
