@@ -17,6 +17,8 @@ import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import express = require('express')
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
+import { DateUtils } from '../../../../app/v2/core/utils/date.utils'
+import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 let mock = express()
 
@@ -247,5 +249,100 @@ describe('CallbackController v2', () => {
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
       })
+  })
+
+  it('set undeployment callback status to inactive for success notification', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await manager.save(cdConfiguration)
+
+    const components = new CreateComponentRequestDto(
+      '945595ee-d851-4841-a170-c171c0a7b1a2',
+      'build-image-url.com',
+      'build-image-tag',
+      'component-name'
+    )
+
+    const modulesDto = new CreateModuleDeploymentDto(
+      '6b539c6a-04b2-45c2-8e10-b84cef0e949d',
+      'http://helm-repo.com',
+      [components]
+    )
+
+    const deploymentDto = new CreateDeploymentRequestDto(
+      '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+      'http://localhost:9000/deploy/notifications/deployment',
+      cdConfiguration.id,
+      { headerValue: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5' },
+      DeploymentStatusEnum.SUCCEEDED,
+      [modulesDto]
+    )
+    const deploymentEntity = deploymentDto.toCircleEntity()
+    deploymentEntity.active = true
+    deploymentEntity.cdConfiguration = cdConfiguration
+    const savedDeployment = await manager.save(deploymentEntity)
+    const executionEntity = new Execution(
+      savedDeployment,
+      ExecutionTypeEnum.UNDEPLOYMENT,
+      '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      DeploymentStatusEnum.SUCCEEDED,
+    )
+    executionEntity.finishedAt = DateUtils.now()
+    await manager.update(ComponentEntityV2, { deployment: savedDeployment }, { running: true })
+    const savedExecution = await manager.save(executionEntity)
+
+    const execution = await manager.findOneOrFail(Execution, { id: savedExecution.id }, { relations: ['deployment', 'deployment.components'] })
+    mock.post('/deploy/notifications/deployment', (req, res) => {
+      res.sendStatus(200)
+    })
+
+    const expectedResponse = {
+      deployment: {
+        id: execution.deployment.id,
+        authorId: 'fab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        circleId: 'bab07132-13eb-4d6d-8d5d-66f1881e68e5',
+        callbackUrl: 'http://localhost:9000/deploy/notifications/deployment',
+        components: [
+          {
+            helmUrl: 'http://helm-repo.com',
+            imageTag: 'build-image-tag',
+            imageUrl: 'build-image-url.com',
+            name: 'component-name',
+            componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
+            merged: false,
+            id: execution.deployment.components[0].id,
+            running: false
+          }
+        ],
+        createdAt: expect.anything(),
+        priority: 0,
+        active: false
+      },
+      type: 'UNDEPLOYMENT',
+      incomingCircleId: '7a648c6a-04b2-45c2-8e10-b84cef0e949d',
+      status: 'SUCCEEDED',
+      id: execution.id,
+      notificationStatus: 'SENT',
+      deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
+      createdAt: expect.anything(),
+      finishedAt: expect.anything()
+    }
+
+    await request(app.getHttpServer())
+      .post(`/v2/executions/${execution.id}/notify`)
+      .send({ status: 'SUCCEEDED', type: 'UNDEPLOYMENT' })
+      .set('x-circle-id', '12345')
+      .expect(201)
+      .expect(response => {
+        expect(response.body).toEqual(expectedResponse)
+      })
+
+
   })
 })

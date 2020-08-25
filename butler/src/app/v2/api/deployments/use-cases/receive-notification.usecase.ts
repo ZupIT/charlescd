@@ -99,9 +99,16 @@ export class ReceiveNotificationUseCase {
   }
 
   private async notifyMooveAndUpdateDeployment(execution: Execution): Promise<UpdateResult> {
-    const notificationStatus = execution.status === DeploymentStatusEnum.SUCCEEDED ?
-      NotificationStatusEnum.SUCCEEDED :
-      NotificationStatusEnum.FAILED
+    let notificationStatus
+    if (execution.type === ExecutionTypeEnum.DEPLOYMENT) {
+      notificationStatus = execution.status === DeploymentStatusEnum.SUCCEEDED ?
+        NotificationStatusEnum.SUCCEEDED :
+        NotificationStatusEnum.FAILED
+    } else {
+      notificationStatus = execution.status === DeploymentStatusEnum.SUCCEEDED ?
+        NotificationStatusEnum.UNDEPLOYED :
+        NotificationStatusEnum.UNDEPLOY_FAILED
+    }
 
     const notificationResult = await this.sendMooveNotification(
       execution.id,
@@ -124,6 +131,7 @@ export class ReceiveNotificationUseCase {
 
   private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
     const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
+    execution.finishedAt = DateUtils.now()
     execution.deployment.components = execution.deployment.components.map(c => {
       c.running = false
       return c
@@ -134,13 +142,11 @@ export class ReceiveNotificationUseCase {
     }
 
     try {
-      const notificationStatus = deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED ?
-        NotificationStatusEnum.UNDEPLOYED :
-        NotificationStatusEnum.UNDEPLOY_FAILED
-
+      await this.deploymentRepository.save(execution.deployment)
+      await this.componentRepository.save(execution.deployment.components)
       const updatedExecution = await this.executionRepository.save(execution)
-      await this.sendMooveNotification(execution.id, notificationStatus, execution.deployment.callbackUrl, execution.incomingCircleId)
-      return updatedExecution
+      await this.notifyMooveAndUpdateDeployment(updatedExecution)
+      return await this.executionRepository.findOneOrFail(updatedExecution.id, { relations: ['deployment', 'deployment.components'] })
     }
     catch (error) {
       this.consoleLoggerService.log('ERROR:Failed to save deployment')
