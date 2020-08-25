@@ -46,19 +46,25 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	}
 
 	if metric.Query == "" && metric.Metric == "" {
-		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Metric name/query is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "Query/Metric", Error: errors.New("Metric name/query is required").Error()})
 	}
 
 	_, err := main.ResultQuery(metric)
 	if err != nil {
-		util.Error(util.ResultQueryError, "Validate", err, metric)
-		ers = append(ers, util.ErrorUtil{
-			Field: "query",
-			Error: err.Error(),
-		})
+		ers = append(ers, util.ErrorUtil{Field: getFieldValidateByMetric(metric), Error: err.Error()})
+
 	}
 
 	return ers
+}
+
+func getFieldValidateByMetric(metric Metric) string {
+	field := "metric"
+	if metric.Query != "" {
+		field = "query"
+	}
+
+	return field
 }
 
 func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
