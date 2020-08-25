@@ -21,22 +21,23 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import * as workspaceUtils from 'core/utils/workspace';
 import LayerMetrics from '../Metrics';
 
-test('render Layer Metrics with button to add metrics', async () => {
+test('render Layer Metrics with  circles metrics', () => {
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
   jest.spyOn(StateHooks, 'useGlobalState')
     .mockReturnValueOnce({
       item: {
         id: workspaceID,
-        status: WORKSPACE_STATUS.COMPLETE
+        status: WORKSPACE_STATUS.COMPLETE,
+        metricConfiguration: { id: '' }
       },
       status: 'resolved'
     });
   render(<LayerMetrics id="123" />);
-  expect(screen.queryByTestId('button-iconRounded-add')).toBeInTheDocument();
+  expect(screen.queryByTestId('apexcharts-mock')).toBeInTheDocument();
 });
 
-test('render Layer Metrics without button to add metrics', async () => {
+test('render Layer Metrics with button to add metrics', async () => {
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
   jest.spyOn(StateHooks, 'useGlobalState')
