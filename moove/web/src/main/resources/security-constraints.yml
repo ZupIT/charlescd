@@ -213,7 +213,7 @@ managementConstraints:
     methods:
       - PUT
 
-  - pattern: /users
+  - pattern: /users/{id}
     methods:
       - PUT
 
