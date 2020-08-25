@@ -3,6 +3,7 @@ package plugin
 import (
 	"compass/internal/configuration"
 	"compass/internal/util"
+	"compass/pkg/logger"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -47,7 +48,7 @@ func (main Main) FindAll() ([]Plugin, error) {
 
 	files, err := ioutil.ReadDir(configuration.GetConfiguration("PLUGINS_DIR"))
 	if err != nil {
-		util.Error(util.FindPluginError, "FindAll", err, plugins)
+		logger.Error(util.FindPluginError, "FindAll", err, plugins)
 		return []Plugin{}, err
 	}
 

@@ -7,7 +7,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
-	"compass/internal/util"
+	"compass/pkg/logger"
 
 	utils "compass/internal/util"
 	v1 "compass/web/api/v1"
@@ -34,13 +34,13 @@ func main() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		util.Fatal("Failed to connect database", err)
+		logger.Fatal("Failed to connect database", err)
 	}
 	defer db.Close()
 
 	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -48,11 +48,11 @@ func main() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if utils.IsDeveloperRunning() {

@@ -4,6 +4,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/util"
 	"compass/pkg/datasource"
+	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"io"
@@ -73,13 +74,13 @@ func (c Condition) String() string {
 func (main Main) PeriodValidate(currentPeriod string) error {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
-		util.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
+		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
 		return err
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
 		err := errors.New("Invalid period: not found number")
-		util.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
+		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
 		return err
 	}
 
@@ -87,7 +88,7 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
 		err := errors.New("Invalid period: not found unit")
-		util.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
+		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
 		return err
 	}
 
@@ -98,7 +99,7 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 	var newMetricsGroup *MetricsGroup
 	err := json.NewDecoder(metricsGroup).Decode(&newMetricsGroup)
 	if err != nil {
-		util.Error(util.GeneralParseError, "Parse", err, metricsGroup)
+		logger.Error(util.GeneralParseError, "Parse", err, metricsGroup)
 		return MetricsGroup{}, err
 	}
 	return *newMetricsGroup, nil
@@ -108,7 +109,7 @@ func (main Main) FindAll() ([]MetricsGroup, error) {
 	var metricsGroups []MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
-		util.Error(util.FindMetricsGroupError, "FindAll", db.Error, metricsGroups)
+		logger.Error(util.FindMetricsGroupError, "FindAll", db.Error, metricsGroups)
 		return []MetricsGroup{}, db.Error
 	}
 	return metricsGroups, nil
@@ -127,7 +128,7 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 	}
 
 	if db.Error != nil {
-		util.Error(util.ResumeByCircleError, "ResumeByCircle", db.Error, metricsGroups)
+		logger.Error(util.ResumeByCircleError, "ResumeByCircle", db.Error, metricsGroups)
 		return []MetricGroupResume{}, db.Error
 	}
 
@@ -184,7 +185,7 @@ func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
 	db := main.db.Create(&metricsGroup)
 	if db.Error != nil {
-		util.Error(util.SaveMetricsGroupError, "Save", db.Error, metricsGroup)
+		logger.Error(util.SaveMetricsGroupError, "Save", db.Error, metricsGroup)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
@@ -194,7 +195,7 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 	metricsGroup := MetricsGroup{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
-		util.Error(util.FindMetricsGroupError, "FindById", db.Error, "Id = "+id)
+		logger.Error(util.FindMetricsGroupError, "FindById", db.Error, "Id = "+id)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
@@ -204,7 +205,7 @@ func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
 	var metricsGroups []MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Where("circle_id = ?", circleId).Find(&metricsGroups)
 	if db.Error != nil {
-		util.Error(util.FindMetricsGroupError, "FindCircleMetricGroups", db.Error, "CircleId= "+circleId)
+		logger.Error(util.FindMetricsGroupError, "FindCircleMetricGroups", db.Error, "CircleId= "+circleId)
 		return []MetricsGroup{}, db.Error
 	}
 	return metricsGroups, nil
@@ -213,7 +214,7 @@ func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
 	if db.Error != nil {
-		util.Error(util.UpdateMetricsGroupError, "Update", db.Error, metricsGroup)
+		logger.Error(util.UpdateMetricsGroupError, "Update", db.Error, metricsGroup)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
@@ -222,7 +223,7 @@ func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, err
 func (main Main) Remove(id string) error {
 	db := main.db.Where("id = ?", id).Delete(MetricsGroup{})
 	if db.Error != nil {
-		util.Error(util.RemoveMetricsGroupError, "Remove", db.Error, id)
+		logger.Error(util.RemoveMetricsGroupError, "Remove", db.Error, id)
 		return db.Error
 	}
 	return nil
@@ -233,7 +234,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		notFoundErr := errors.New("Not found metrics group: " + id)
-		util.Error(util.FindMetricsGroupError, "QueryByGroupID", notFoundErr, id)
+		logger.Error(util.FindMetricsGroupError, "QueryByGroupID", notFoundErr, id)
 		return nil, notFoundErr
 	}
 
@@ -241,7 +242,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 
 		query, err := main.metricMain.Query(metric, period)
 		if err != nil {
-			util.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
+			logger.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
 			return nil, err
 		}
 
@@ -261,7 +262,7 @@ func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, e
 
 		result, err := main.metricMain.ResultQuery(metric)
 		if err != nil {
-			util.Error(util.ResultQueryError, "ResultByGroup", err, metric)
+			logger.Error(util.ResultQueryError, "ResultByGroup", err, metric)
 			return nil, err
 		}
 
@@ -279,7 +280,7 @@ func (main Main) ResultByID(id string) ([]datasource.MetricResult, error) {
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		notFoundErr := errors.New("Not found metrics group: " + id)
-		util.Error(util.FindMetricsGroupError, "ResultByID", notFoundErr, id)
+		logger.Error(util.FindMetricsGroupError, "ResultByID", notFoundErr, id)
 		return nil, notFoundErr
 	}
 
