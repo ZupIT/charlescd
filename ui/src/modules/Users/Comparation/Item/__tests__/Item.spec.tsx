@@ -17,6 +17,7 @@
 import React from 'react';
 import { render, wait, fireEvent } from 'unit-test/testUtils';
 import UsersComparationItem from '..';
+import { FetchMock } from 'jest-fetch-mock/types';
 
 const props = {
   email: 'test@zup.com.br'
@@ -101,6 +102,10 @@ test('close UsersComparationItem component', async () => {
 });
 
 test('render UsersComparationItem component and trigger ModalResetPassword', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ id: '123-456', password: '123457' })
+  );
+
   const { queryByTestId, getByTestId } = render(
     <UsersComparationItem {...props} onChange={jest.fn} />
   );
