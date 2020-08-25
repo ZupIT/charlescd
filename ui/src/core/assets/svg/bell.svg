@@ -10,10 +10,10 @@
                     <g id="Group-8" transform="translate(44.000000, 196.000000)">
                         <g id="Group-6-Copy" transform="translate(20.000000, 25.000000)">
                             <g id="Icon/User/Circle-Copy-6" transform="translate(309.000000, 12.000000)">
-                                <mask id="mask-bell" fill="white">
+                                <mask id="mask-2" fill="white">
                                     <use xlink:href="#path-bell"></use>
                                 </mask>
-                                <use id="Icon-Notifications" fill="#currentColor" xlink:href="#path-bell"></use>
+                                <use id="Icon-Notifications" fill="currentColor" xlink:href="#path-bell"></use>
                             </g>
                         </g>
                     </g>

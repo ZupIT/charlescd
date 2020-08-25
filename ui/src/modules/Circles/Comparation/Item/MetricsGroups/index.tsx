@@ -16,7 +16,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import ReactTooltip from 'react-tooltip';
 import isEmpty from 'lodash/isEmpty';
+import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
@@ -29,6 +31,8 @@ import {
 } from './hooks';
 import Styled from './styled';
 import AddMetric from './AddMetric';
+import { getThresholdStatus } from './helpers';
+import MonitoringMetrics from './MonitoringMetrics';
 import Loader from '../Loaders/index';
 
 interface Props {
@@ -102,9 +106,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const getMetricCondition = (condition: string) => {
     const textByCondition = {
-      EQUAL: 'Equal',
-      GREATER_THAN: 'Greater than',
-      LOWER_THAN: 'Lower than'
+      EQUAL: 'Equal:',
+      GREATER_THAN: 'Greater than:',
+      LOWER_THAN: 'Lower than:'
     } as Record<string, string>;
 
     return textByCondition[condition] ?? 'Not configured';
@@ -134,41 +138,55 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     );
 
   const renderMetrics = (metricsGroup: MetricsGroup) =>
-    metricsGroup.metrics.map(metric => (
-      <Styled.MetricCardBody key={metric.id}>
-        <Styled.MetricNickname color="light" title={metric.nickname}>
-          {metric.nickname}
-        </Styled.MetricNickname>
-        <Styled.MetricConditionThreshold>
-          <Text.h5 color="dark">
-            {getMetricCondition(metric.condition)}:
-          </Text.h5>
-          <Text.h5 color="light" title={metric.threshold.toString()}>
-            {metric.threshold}
-          </Text.h5>
-        </Styled.MetricConditionThreshold>
-        <Styled.MetricConditionLastValue
-          color="light"
-          title={metric.execution.lastValue.toString()}
-        >
-          {metric.execution.lastValue}
-        </Styled.MetricConditionLastValue>
-        <Styled.MetricDropdown>
-          <Dropdown icon="vertical-dots" size="16px">
-            <Dropdown.Item
-              icon="edit"
-              name="Edit metric"
-              onClick={() => handleEditMetric(metric, metricsGroup)}
+    metricsGroup.metrics.map(metric => {
+      const thresholdStatus = getThresholdStatus(metric.execution);
+
+      return (
+        <Styled.MetricCardBody key={metric.id}>
+          <Styled.MetricNickname color="light" title={metric.nickname}>
+            {metric.nickname}
+          </Styled.MetricNickname>
+          <Styled.MetricConditionThreshold>
+            <Text.h5 color="dark">
+              {getMetricCondition(metric.condition)}
+            </Text.h5>
+            <Text.h5 color="light" title={metric.threshold.toString()}>
+              {metric.threshold !== 0 && metric.threshold}
+            </Text.h5>
+          </Styled.MetricConditionThreshold>
+          <Styled.MetricLastValue color={thresholdStatus.color}>
+            <Icon
+              name={thresholdStatus.icon}
+              data-tip
+              data-for={`thresholdTooltip-${metric.id}`}
             />
-            <Dropdown.Item
-              icon="delete"
-              name="Delete"
-              onClick={() => handleDeleteMetric(metricsGroup.id, metric.id)}
-            />
-          </Dropdown>
-        </Styled.MetricDropdown>
-      </Styled.MetricCardBody>
-    ));
+            <Styled.MetricLastValueText
+              color="light"
+              title={metric.execution.lastValue.toString()}
+            >
+              {metric.execution.lastValue}
+            </Styled.MetricLastValueText>
+            <ReactTooltip id={`thresholdTooltip-${metric.id}`} place="left">
+              {thresholdStatus.message}
+            </ReactTooltip>
+          </Styled.MetricLastValue>
+          <Styled.MetricDropdown>
+            <Dropdown icon="vertical-dots" size="16px">
+              <Dropdown.Item
+                icon="edit"
+                name="Edit metric"
+                onClick={() => handleEditMetric(metric, metricsGroup)}
+              />
+              <Dropdown.Item
+                icon="delete"
+                name="Delete"
+                onClick={() => handleDeleteMetric(metricsGroup.id, metric.id)}
+              />
+            </Dropdown>
+          </Styled.MetricDropdown>
+        </Styled.MetricCardBody>
+      );
+    });
 
   const renderMetricsGroupsCards = () =>
     metricsGroups.map(metricGroup => (
@@ -190,15 +208,18 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
+        <MonitoringMetrics />
         {!isEmpty(metricGroup.metrics) && (
-          <Styled.MetricsGroupsCardContent>
+          <>
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>
               <Text.h5 color="dark">Last Value</Text.h5>
             </Styled.MetricCardTableHead>
-            {renderMetrics(metricGroup)}
-          </Styled.MetricsGroupsCardContent>
+            <Styled.MetricsGroupsCardContent>
+              {renderMetrics(metricGroup)}
+            </Styled.MetricsGroupsCardContent>
+          </>
         )}
       </Styled.MetricsGroupsCard>
     ));

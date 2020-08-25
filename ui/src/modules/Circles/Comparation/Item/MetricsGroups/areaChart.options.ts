@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-import {
-  COLOR_BASTILLE,
-  COLOR_BLACK_MARLIN,
-  COLOR_RED_ORANGE,
-  COLOR_ORANGE_PEEL,
-  COLOR_SANTAS_GREY
-} from '../colors';
+import { getTheme } from 'core/utils/themes';
 
-export const light = {};
+const theme = getTheme();
 
-export const dark = {
-  content: {
-    background: COLOR_BASTILLE,
-    card: COLOR_BLACK_MARLIN
+export default {
+  chart: {
+    id: 'monitoringChart',
+    background: 'transparent',
+    stacked: false
   },
-  execution: {
-    status: {
-      error: COLOR_RED_ORANGE,
-      reached: COLOR_ORANGE_PEEL,
-      active: COLOR_SANTAS_GREY
+  colors: theme.metrics.chart.Comparison,
+  theme: {
+    mode: 'dark'
+  },
+  grid: {
+    show: true,
+    yaxis: {
+      lines: {
+        show: true
+      }
     }
+  },
+  legend: {
+    show: false
   }
 };
