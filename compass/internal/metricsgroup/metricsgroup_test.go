@@ -6,6 +6,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	"compass/pkg/logger"
 	"fmt"
 	"path/filepath"
 	"testing"
@@ -40,12 +41,12 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		util.Fatal("Failed to connect database", err)
+		logger.Fatal("Failed to connect database", err)
 	}
 
 	driver, err := postgres.WithInstance(s.db.DB(), &postgres.Config{})
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	fmt.Println(filepath.Join("migrations", "../../"))
@@ -55,11 +56,11 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	pluginMain := plugin.NewMain(s.db)
