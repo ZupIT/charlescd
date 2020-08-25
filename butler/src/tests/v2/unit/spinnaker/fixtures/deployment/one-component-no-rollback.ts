@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
+export const oneComponentNoRollbackStage: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -72,13 +72,13 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
         {
           defaultArtifact: {
             customKind: true,
-            id: 'useless - deployment - v2'
+            id: 'useless - deployment - v0'
           },
-          displayName: 'deployment - v2',
-          id: 'deployment - v2',
+          displayName: 'deployment - v0',
+          id: 'deployment - v0',
           matchArtifact: {
-            id: 'useless - deployment - v2 - match',
-            name: 'A-v2',
+            id: 'useless - deployment - v0 - match',
+            name: 'A-v0',
             type: 'embedded/base64'
           },
           useDefaultArtifact: false,
@@ -96,12 +96,12 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
           id: 'value - A'
         }
       ],
-      name: 'Bake A v2',
+      name: 'Bake A v0',
       namespace: 'sandbox',
-      outputName: 'A-v2',
+      outputName: 'A-v0',
       overrides: {
-        'image.tag': 'https://repository.com/A:v2',
-        name: 'v2'
+        'image.tag': 'https://repository.com/A:v0',
+        name: 'v0'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -118,11 +118,11 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       continuePipeline: true,
       failPipeline: false,
       manifestArtifactAccount: 'embedded-artifact',
-      manifestArtifactId: 'deployment - v2',
+      manifestArtifactId: 'deployment - v0',
       moniker: {
         app: 'default'
       },
-      name: 'Deploy A v2',
+      name: 'Deploy A v0',
       refId: '2',
       requisiteStageRefIds: [
         '1'
@@ -130,7 +130,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
-        expression: '${ #stage(\'Bake A v2\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Bake A v0\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -161,15 +161,15 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v2'
-                },
-                name: 'v2'
-              },
-              {
-                labels: {
                   version: 'A-v0'
                 },
                 name: 'v0'
+              },
+              {
+                labels: {
+                  version: 'A-v1'
+                },
+                name: 'v1'
               }
             ]
           }
@@ -217,68 +217,6 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
               'A'
             ],
             http: [
-              {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id2.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v2'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id2'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v2'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
               {
                 match: [
                   {
@@ -404,6 +342,68 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                 ]
               },
               {
+                match: [
+                  {
+                    headers: {
+                      cookie: {
+                        regex: '.*x-circle-id=circle-id2.*'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v1'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      'x-circle-id': {
+                        exact: 'circle-id2'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v1'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
                 route: [
                   {
                     destination: {
@@ -466,7 +466,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       variables: [
         {
           key: 'deploymentResult',
-          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Deploy A v0\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -486,95 +486,6 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       ]
     },
     {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v2'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Deployment A v2',
-      options: {
-        cascading: true
-      },
-      refId: '7',
-      requisiteStageRefIds: [
-        '5'
-      ],
-      stageEnabled: {
-        expression: '${!deploymentResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '8',
-      requisiteStageRefIds: [
-        '6'
-      ],
-      stageEnabled: {
-        expression: '${proxyDeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -587,7 +498,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '9',
+      refId: '7',
       requisiteStageRefIds: [
         '5',
         '6'
@@ -613,7 +524,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '10',
+      refId: '8',
       requisiteStageRefIds: [
         '5',
         '6'

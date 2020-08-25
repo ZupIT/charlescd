@@ -415,6 +415,21 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      failOnFailedExpressions: true,
+      name: 'Evaluate proxy deployments',
+      refId: '6',
+      requisiteStageRefIds: [
+        '4'
+      ],
+      type: 'evaluateVariables',
+      variables: [
+        {
+          key: 'proxyDeploymentsResult',
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}'
+        }
+      ]
+    },
+    {
       account: 'default',
       app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
@@ -448,7 +463,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '6',
+      refId: '7',
       requisiteStageRefIds: [
         '5'
       ],
@@ -457,21 +472,6 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    },
-    {
-      failOnFailedExpressions: true,
-      name: 'Evaluate proxy deployments',
-      refId: '7',
-      requisiteStageRefIds: [
-        '4'
-      ],
-      type: 'evaluateVariables',
-      variables: [
-        {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}'
-        }
-      ]
     },
     {
       completeOtherBranchesThenFail: false,
@@ -489,7 +489,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       refId: '8',
       requisiteStageRefIds: [
         '5',
-        '7'
+        '6'
       ],
       stageEnabled: {
         expression: '${ !deploymentResult || !proxyDeploymentsResult }',
@@ -515,7 +515,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       refId: '9',
       requisiteStageRefIds: [
         '5',
-        '7'
+        '6'
       ],
       stageEnabled: {
         expression: '${ deploymentResult && proxyDeploymentsResult }',
