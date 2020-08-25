@@ -156,8 +156,14 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               name="nickname"
               ref={register({ required: true })}
               label="Type a nickname for metric"
+              maxLength={100}
             />
-
+            {!!errors.nickname && (
+              <Styled.FieldErrorWrapper>
+                <Icon name="error" color="error" />
+                <Text.h6 color="error">{errors.nickname.message}</Text.h6>
+              </Styled.FieldErrorWrapper>
+            )}
             {!loadingProviders && (
               <Styled.Select
                 control={control}
@@ -236,6 +242,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         ref={register({ required: true })}
                         hasError={!!errors?.query}
                         label="Type a query"
+                        maxLength={100}
                       />
                     </Styled.AdvancedQueryWrapper>
                     {!!errors.query && (
@@ -283,6 +290,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       name="threshold"
                       label="Threshold"
                       ref={register({ required: true })}
+                      maxLength={100}
                     />
                   </Styled.ThresholdWrapper>
                 )}
