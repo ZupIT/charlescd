@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  postgres:
+  db:
     image: postgres:11.8-alpine
     ports:
       - 5432:5432
@@ -15,7 +15,7 @@ services:
 
   app:
     build:
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.test
       context: .
     image: compass
     ports:
@@ -24,12 +24,12 @@ services:
       - DB_NAME=charlescd_compass
       - DB_USER=charlescd_compass
       - DB_PASSWORD=compass
-      - DB_HOST=postgres
+      - DB_HOST=localhost
       - ENV=PROD
     networks:
       - development
     depends_on:
-      - "postgres"
+      - "db"
 
 networks:
   development:
