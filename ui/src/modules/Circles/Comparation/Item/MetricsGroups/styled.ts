@@ -34,6 +34,10 @@ interface ButtonIconProps {
   isActive: boolean;
 }
 
+interface ThresholdIconProps {
+  color: string;
+}
+
 const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
   margin-bottom: 20px;
@@ -174,7 +178,7 @@ const MetricsGroupsCardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 30px;
+  margin-bottom: 5px;
 
   span {
     white-space: nowrap;
@@ -184,7 +188,10 @@ const MetricsGroupsCardHeader = styled.div`
   }
 `;
 
-const MetricsGroupsCardContent = styled.div``;
+const MetricsGroupsCardContent = styled.div`
+  overflow: auto;
+  max-height: 315px;
+`;
 
 const MetricCardTableHead = styled.div`
   display: flex;
@@ -234,15 +241,29 @@ const RuleWrapper = styled.div`
   max-width: 80%;
 `;
 
-const MetricConditionLastValue = styled(Text.h5)`
+const MetricLastValueText = styled(Text.h5)`
   margin-right: 10px;
   position: relative;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 60px;
-  left: 20px;
+  left: 5px;
+  top: 2px;
 `;
+
+const MetricLastValue = styled.div<ThresholdIconProps>`
+  display: flex;
+
+  svg {
+    color: ${({ theme, color }) =>
+      theme.circleGroupMetrics.execution.status[color]};
+  }
+`;
+
+const MonitoringMetricsContent = styled.div``;
+
+const MonitoringMetricsFilter = styled.div``;
 
 export default {
   Layer,
@@ -273,8 +294,11 @@ export default {
   MetricCardBody,
   MetricConditionThreshold,
   MetricNickname,
-  MetricConditionLastValue,
+  MetricLastValue,
+  MetricLastValueText,
   MetricDropdown,
   TrashIcon,
-  RuleWrapper
+  RuleWrapper,
+  MonitoringMetricsContent,
+  MonitoringMetricsFilter
 };
