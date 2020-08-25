@@ -139,16 +139,29 @@ func (main Main) SaveMetric(metric Metric) (Metric, error) {
 }
 
 func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
-	_, err := main.ResultQuery(metric)
-	if err != nil {
-		util.Error(util.ResultQueryError, "UpdateMetric", err, metric)
-		return Metric{}, err
-	}
+	err := main.db.Transaction(func(tx *gorm.DB) error {
+		db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
+		if db.Error != nil {
+			util.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
+			return db.Error
+		}
 
-	db := main.db.Where("id = ?", id).Save(&metric).Association("Filters").Replace(metric.Filters)
-	if db.Error != nil {
-		util.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
-		return Metric{}, db.Error
+		_, err := main.saveMetricExecution(tx, MetricExecution{
+			BaseModel: util.BaseModel{
+				ID: metric.MetricExecution.ID,
+			},
+			MetricID: metric.ID,
+			Status:   MetricUpdated,
+		})
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return Metric{}, err
 	}
 
 	return metric, nil

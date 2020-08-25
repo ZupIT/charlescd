@@ -13,6 +13,7 @@ const (
 	MetricReached = "REACHED"
 	MetricActive  = "ACTIVE"
 	MetricError   = "ERROR"
+	MetricUpdated = "UPDATED"
 )
 
 type MetricExecution struct {

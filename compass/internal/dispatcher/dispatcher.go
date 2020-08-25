@@ -66,7 +66,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 		return
 	}
 
-	if metricResult != execution.LastValue {
+	if metricResult != execution.LastValue || execution.Status == metric.MetricUpdated {
 		if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 			execution.Status = metric.MetricReached
 		} else {
