@@ -72,6 +72,15 @@ func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricE
 	return metricExecution, nil
 }
 
+func (main Main) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
+	db := tx.Model(&MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
+	if db.Error != nil {
+		util.Error(util.UpdateMetricExecutionError, "updateExecutionStatus", db.Error, metricId)
+		return db.Error
+	}
+	return nil
+}
+
 func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, error) {
 	db := tx.Save(&execution)
 	if db.Error != nil {
