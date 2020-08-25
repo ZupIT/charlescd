@@ -61,7 +61,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
 		dispatcher.mux.Lock()
 		execution.Status = metric.MetricError
-		dispatcher.metric.SaveMetricExecution(execution)
+		dispatcher.metric.UpdateMetricExecution(execution)
 		dispatcher.mux.Unlock()
 		return
 	}
@@ -75,7 +75,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 
 		dispatcher.mux.Lock()
 		execution.LastValue = metricResult
-		dispatcher.metric.SaveMetricExecution(execution)
+		dispatcher.metric.UpdateMetricExecution(execution)
 		dispatcher.mux.Unlock()
 	}
 }

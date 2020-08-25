@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 const (
@@ -61,8 +62,8 @@ func (main Main) FindMetricExecutionById(id string) (MetricExecution, error) {
 	return metricExecution, nil
 }
 
-func (main Main) SaveMetricExecution(execution MetricExecution) (MetricExecution, error) {
-	db := main.db.Save(&execution)
+func (main Main) saveMetricExecution(tx *gorm.DB, execution MetricExecution) (MetricExecution, error) {
+	db := tx.Save(&execution)
 	if db.Error != nil {
 		util.Error(util.SaveMetricExecutionError, "SaveMetricExecution", db.Error, execution)
 		return MetricExecution{}, db.Error
@@ -70,8 +71,8 @@ func (main Main) SaveMetricExecution(execution MetricExecution) (MetricExecution
 	return execution, nil
 }
 
-func (main Main) UpdateMetricExecution(id string, metricExecution MetricExecution) (MetricExecution, error) {
-	db := main.db.Where("id = ?", id).Updates(metricExecution)
+func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
+	db := main.db.Model(&metricExecution).Updates(metricExecution)
 	if db.Error != nil {
 		util.Error(util.UpdateMetricExecutionError, "UpdateMetricExecution", db.Error, metricExecution)
 		return MetricExecution{}, db.Error

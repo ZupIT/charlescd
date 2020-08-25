@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 )
 
 type Metric struct {
@@ -112,20 +113,26 @@ func (main Main) FindMetricById(id string) (Metric, error) {
 }
 
 func (main Main) SaveMetric(metric Metric) (Metric, error) {
-	db := main.db.Create(&metric)
-	if db.Error != nil {
-		util.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
-		return Metric{}, db.Error
-	}
+	err := main.db.Transaction(func(tx *gorm.DB) error {
+		db := tx.Create(&metric)
+		if db.Error != nil {
+			util.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
+			return db.Error
+		}
 
-	if metric.Condition != "" {
-		_, err := main.SaveMetricExecution(MetricExecution{
+		_, err := main.saveMetricExecution(tx, MetricExecution{
 			MetricID: metric.ID,
 			Status:   MetricActive,
 		})
 		if err != nil {
-			return Metric{}, err
+			return err
 		}
+
+		return nil
+	})
+	if err != nil {
+		util.Error(util.SaveMetricError, "SaveMetric", err, metric)
+		return Metric{}, err
 	}
 
 	return metric, nil
@@ -142,16 +149,6 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 	if db.Error != nil {
 		util.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
 		return Metric{}, db.Error
-	}
-
-	if metric.Condition != "" {
-		_, err := main.SaveMetricExecution(MetricExecution{
-			MetricID: metric.ID,
-			Status:   MetricActive,
-		})
-		if err != nil {
-			return Metric{}, err
-		}
 	}
 
 	return metric, nil

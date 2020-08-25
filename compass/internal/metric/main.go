@@ -21,7 +21,7 @@ type UseCases interface {
 	RemoveMetric(id string) error
 	Query(metric Metric, period string) (interface{}, error)
 	ResultQuery(metric Metric) (float64, error)
-	SaveMetricExecution(execution MetricExecution) (MetricExecution, error)
+	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
 	FindAllActivesMetricExecutions() ([]MetricExecution, error)
 	Validate(metric Metric) []util.ErrorUtil
 }
