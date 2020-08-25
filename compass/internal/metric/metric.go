@@ -49,10 +49,54 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 		ers = append(ers, util.ErrorUtil{Field: "Query/Metric", Error: errors.New("Metric name/query is required").Error()})
 	}
 
+	if len(metric.Filters) > 0 {
+		for _, filter := range metric.Filters {
+			ers = append(ers, validateMetricFilter(filter)...)
+		}
+	}
+
+	if len(metric.GroupBy) > 0 {
+		for _, groupBy := range metric.GroupBy {
+			ers = append(ers, validateMetricGroupBy(groupBy)...)
+		}
+	}
+
 	_, err := main.ResultQuery(metric)
 	if err != nil {
 		ers = append(ers, util.ErrorUtil{Field: getFieldValidateByMetric(metric), Error: err.Error()})
 
+	}
+
+	if metric.Nickname != "" && len(metric.Nickname) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Nickname", Error: errors.New("100 Maximum length in Nickname").Error()})
+	}
+
+	if metric.Metric != "" && len(metric.Metric) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Metric", Error: errors.New("100 Maximum length in Metric").Error()})
+	}
+
+	return ers
+}
+
+func validateMetricFilter(metricFilter MetricFilter) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
+
+	if len(metricFilter.Field) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Filter-Field", Error: errors.New("100 Maximum length in Filter Field").Error()})
+	}
+
+	if len(metricFilter.Value) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Filter-Value", Error: errors.New("100 Maximum length in Filter Value").Error()})
+	}
+
+	return ers
+}
+
+func validateMetricGroupBy(metricGroupBy MetricGroupBy) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
+
+	if len(metricGroupBy.Field) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "GroupBy-Field", Error: errors.New("100 Maximum length in GroupBy Field").Error()})
 	}
 
 	return ers

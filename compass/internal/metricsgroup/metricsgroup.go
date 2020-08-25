@@ -41,6 +41,10 @@ func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
 		ers = append(ers, util.ErrorUtil{Field: "CircleID", Error: errors.New("CircleID is required").Error()})
 	}
 
+	if metricsGroup.Name != "" && len(metricsGroup.Name) > 100 {
+		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("100 Maximum length in Name").Error()})
+	}
+
 	return ers
 }
 
