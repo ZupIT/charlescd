@@ -155,11 +155,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             </Text.h5>
           </Styled.MetricConditionThreshold>
           <Styled.MetricLastValue color={thresholdStatus.color}>
-            <Icon
-              name={thresholdStatus.icon}
-              data-tip
-              data-for={`thresholdTooltip-${metric.id}`}
-            />
+            {!isEmpty(metric.condition) && (
+              <Icon
+                name={thresholdStatus.icon}
+                data-tip
+                data-for={`thresholdTooltip-${metric.id}`}
+              />
+            )}
             <Styled.MetricLastValueText
               color="light"
               title={metric.execution.lastValue.toString()}
