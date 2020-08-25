@@ -75,7 +75,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         setError(field, 'required', error);
       });
     }
-  }, [validationError]);
+  }, [validationError, setError]);
 
   useEffect(() => {
     if (metric) {
