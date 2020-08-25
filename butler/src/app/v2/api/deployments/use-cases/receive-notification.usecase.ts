@@ -143,6 +143,7 @@ export class ReceiveNotificationUseCase {
 
     try {
       await this.deploymentRepository.save(execution.deployment)
+      await this.componentRepository.save(execution.deployment.components)
       const updatedExecution = await this.executionRepository.save(execution)
       await this.notifyMooveAndUpdateDeployment(updatedExecution)
       return await this.executionRepository.findOneOrFail(updatedExecution.id, { relations: ['deployment', 'deployment.components'] })
