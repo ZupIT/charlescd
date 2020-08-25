@@ -30,23 +30,23 @@ func (main Main) Validate(dataSource DataSource) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if dataSource.Name == "" {
-		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("Name is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Name is required").Error()})
 	}
 
 	if dataSource.PluginSrc == "" {
-		ers = append(ers, util.ErrorUtil{Field: "PluginSrc", Error: errors.New("Plugin src is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "pluginSrc", Error: errors.New("Plugin src is required").Error()})
 	}
 
 	if dataSource.Data == nil || len(dataSource.Data) == 0 {
-		ers = append(ers, util.ErrorUtil{Field: "Data", Error: errors.New("Data is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "data", Error: errors.New("Data is required").Error()})
 	}
 
 	if dataSource.Name != "" && len(dataSource.Name) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "Name", Error: errors.New("100 Maximum length in Name").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("100 Maximum length in Name").Error()})
 	}
 
 	if dataSource.PluginSrc != "" && len(dataSource.PluginSrc) > 100 {
-		ers = append(ers, util.ErrorUtil{Field: "PluginSrc", Error: errors.New("100 Maximum length in PluginSrc").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "pluginSrc", Error: errors.New("100 Maximum length in PluginSrc").Error()})
 	}
 
 	return ers
