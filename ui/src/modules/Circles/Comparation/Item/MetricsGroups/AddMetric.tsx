@@ -33,6 +33,7 @@ import {
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
+import Icon from 'core/components/Icon';
 
 type Props = {
   id: string;
@@ -210,10 +211,12 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                           )}
                         />
                         {!!errors.metric && (
-                          <Text.h6 color="error">
-                            Your query returned more than one result. Add a
-                            filter to your query or review the desired metric.
-                          </Text.h6>
+                          <Styled.FieldErrorWrapper>
+                            <Icon name="error" color="error" />
+                            <Text.h6 color="error">
+                              {errors.metric.message}
+                            </Text.h6>
+                          </Styled.FieldErrorWrapper>
                         )}
                       </>
                     )}
@@ -236,7 +239,10 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       />
                     </Styled.AdvancedQueryWrapper>
                     {!!errors.query && (
-                      <Text.h6 color="error">{errors.query.message}</Text.h6>
+                      <Styled.FieldErrorWrapper>
+                        <Icon name="error" color="error" />
+                        <Text.h6 color="error">{errors.query.message}</Text.h6>
+                      </Styled.FieldErrorWrapper>
                     )}
                   </>
                 )}
