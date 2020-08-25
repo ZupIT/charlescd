@@ -7,22 +7,19 @@ import (
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
-	"compass/internal/util"
+	"compass/pkg/logger"
 
 	utils "compass/internal/util"
-	"compass/pkg/logger"
 	v1 "compass/web/api/v1"
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/lib/pq"
-	"go.uber.org/zap"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -37,19 +34,13 @@ func main() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		util.Fatal("Failed to connect database", err)
+		logger.Fatal("Failed to connect database", err)
 	}
 	defer db.Close()
 
-	loggerZap, _ := zap.NewProduction()
-	defer loggerZap.Sync()
-
-	sugar := loggerZap.Sugar()
-	loggerProvider := logger.NewLogger(sugar)
-
 	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -57,21 +48,21 @@ func main() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if utils.IsDeveloperRunning() {
 		db.LogMode(true)
 	}
 
-	pluginMain := plugin.NewMain(db, loggerProvider)
-	datasourceMain := datasource.NewMain(db, pluginMain, loggerProvider)
-	metricMain := metric.NewMain(db, datasourceMain, pluginMain, loggerProvider)
-	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain, loggerProvider)
+	pluginMain := plugin.NewMain(db)
+	datasourceMain := datasource.NewMain(db, pluginMain)
+	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
+	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
 	go dispatcher.Start()

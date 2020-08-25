@@ -101,8 +101,13 @@ const ThresholdWrapper = styled.div`
   margin-bottom: 20px;
 `;
 
-const ProviderSelect = styled(SelectComponent.Single)`
+const Select = styled(SelectComponent.Single)`
   width: 230px;
+  margin-bottom: 20px;
+`;
+
+const SelectMetric = styled(SelectComponent.Single)`
+  width: 380px;
   margin-bottom: 20px;
 `;
 
@@ -263,6 +268,14 @@ const MonitoringMetricsContent = styled.div``;
 
 const MonitoringMetricsFilter = styled.div``;
 
+const FieldErrorWrapper = styled.div`
+  display: flex;
+
+  span {
+    margin-left: 5px;
+  }
+`;
+
 export default {
   Layer,
   Icon,
@@ -275,7 +288,8 @@ export default {
   ThresholdSelect,
   InputNumber,
   ThresholdWrapper,
-  ProviderSelect,
+  Select,
+  SelectMetric,
   Actions,
   ButtonIconRounded,
   AdvancedQueryWrapper,
@@ -297,5 +311,6 @@ export default {
   TrashIcon,
   RuleWrapper,
   MonitoringMetricsContent,
-  MonitoringMetricsFilter
+  MonitoringMetricsFilter,
+  FieldErrorWrapper
 };

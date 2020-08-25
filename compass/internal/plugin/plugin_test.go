@@ -1,7 +1,6 @@
 package plugin
 
 import (
-	"compass/pkg/logger/fake"
 	"database/sql"
 	"os"
 	"path/filepath"
@@ -36,8 +35,7 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	fakeLogger := fake.NewLoggerFake()
-	s.repository = NewMain(s.DB, fakeLogger)
+	s.repository = NewMain(s.DB)
 }
 
 func TestInit(t *testing.T) {

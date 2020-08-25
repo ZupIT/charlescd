@@ -6,7 +6,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger/fake"
+	"compass/pkg/logger"
 	"fmt"
 	"path/filepath"
 	"testing"
@@ -41,12 +41,12 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		util.Fatal("Failed to connect database", err)
+		logger.Fatal("Failed to connect database", err)
 	}
 
 	driver, err := postgres.WithInstance(s.db.DB(), &postgres.Config{})
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	fmt.Println(filepath.Join("migrations", "../../"))
@@ -56,20 +56,18 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
-	fakeLogger := fake.NewLoggerFake()
+	pluginMain := plugin.NewMain(s.db)
+	datasourceMain := datasource.NewMain(s.db, pluginMain)
+	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain)
 
-	pluginMain := plugin.NewMain(s.db, fakeLogger)
-	datasourceMain := datasource.NewMain(s.db, pluginMain, fakeLogger)
-	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain, fakeLogger)
-
-	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain, fakeLogger)
+	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain)
 	s.circleID = uuid.New()
 	s.workspaceID = uuid.New()
 }
