@@ -105,8 +105,8 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
         <Styled.Group
           className="GROUP"
           top={group.top}
-          verticalLine={viewMode ? 0 : group.height}
-          // verticalLine={group.height}
+          verticalLine={group.height}
+          viewMode={viewMode}
           hasGroup={hasGroup}
         >
           {!viewMode && (
@@ -121,7 +121,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
               />
             </Styled.Operator>
           )}
-          {/* <Styled.Input type="hidden" ref={form.register} name="type" /> */}
+          <Styled.Input type="hidden" ref={form.register} name="type" />
           {renderGroups()}
         </Styled.Group>
         {!viewMode && (
