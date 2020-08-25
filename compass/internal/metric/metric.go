@@ -147,7 +147,7 @@ func (main Main) UpdateMetric(id string, metric Metric) (Metric, error) {
 		}
 
 		metric.MetricExecution.Status = MetricUpdated
-		_, err := main.saveMetricExecution(tx, metric.MetricExecution)
+		err := main.updateExecutionStatus(tx, metric.ID)
 		if err != nil {
 			return err
 		}
