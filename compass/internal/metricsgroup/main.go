@@ -6,7 +6,6 @@ import (
 	"compass/internal/plugin"
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
-	"compass/pkg/logger"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -33,11 +32,10 @@ type Main struct {
 	metricMain     metric.UseCases
 	datasourceMain datasource.UseCases
 	pluginMain     plugin.UseCases
-	logger         logger.UseCases
 }
 
 func NewMain(
-	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, logger logger.UseCases,
+	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases,
 ) UseCases {
-	return Main{db, metricMain, datasourceMain, pluginMain, logger}
+	return Main{db, metricMain, datasourceMain, pluginMain}
 }

@@ -4,7 +4,6 @@ import (
 	"compass/internal/plugin"
 	"compass/internal/util"
 	"compass/pkg/datasource"
-	"compass/pkg/logger"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -23,9 +22,8 @@ type UseCases interface {
 type Main struct {
 	db         *gorm.DB
 	pluginMain plugin.UseCases
-	logger     logger.UseCases
 }
 
-func NewMain(db *gorm.DB, pluginMain plugin.UseCases, logger logger.UseCases) UseCases {
-	return Main{db, pluginMain, logger}
+func NewMain(db *gorm.DB, pluginMain plugin.UseCases) UseCases {
+	return Main{db, pluginMain}
 }

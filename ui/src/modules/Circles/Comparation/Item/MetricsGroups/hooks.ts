@@ -35,6 +35,7 @@ import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { MetricsGroup, MetricsGroupsResume, Metric, DataSource } from './types';
+import { ValidationError } from 'core/interfaces/ValidationError';
 
 export const useMetricsGroupsResume = (): {
   getMetricsgroupsResume: Function;
@@ -135,7 +136,7 @@ export const useSaveMetric = (metricId: string) => {
   const saveRequest = metricId ? updateMetric : createMetric;
   const saveMetricPayload = useFetchData<Metric>(saveRequest);
   const status = useFetchStatus();
-  const dispatch = useDispatch();
+  const [validationError, setValidationError] = useState<ValidationError>();
 
   const saveMetric = useCallback(
     async (metricsGroupsId: string, metricPayload: Metric) => {
@@ -151,23 +152,19 @@ export const useSaveMetric = (metricId: string) => {
         return savedMetricResponse;
       } catch (error) {
         status.rejected();
-        error.text().then((errorMessage: any) => {
+        error.text().then((errorMessage: string) => {
           const parsedError = JSON.parse(errorMessage);
-          dispatch(
-            toogleNotification({
-              text: parsedError?.[0].message ?? 'Error on creating metric',
-              status: 'error'
-            })
-          );
+          setValidationError(parsedError);
         });
       }
     },
-    [saveMetricPayload, status, dispatch]
+    [saveMetricPayload, status]
   );
 
   return {
     saveMetric,
-    status
+    status,
+    validationError
   };
 };
 

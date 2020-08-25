@@ -1,26 +1,31 @@
 package logger
 
-import "go.uber.org/zap"
+import (
+	"github.com/sirupsen/logrus"
+	"time"
+)
 
-type UseCases interface {
-	Info(msg string, functionName string, data interface{}, keysAndValues ...interface{})
-	Error(msg string, functionName string, err error, data interface{}, keysAndValues ...interface{})
+func Info(msg string, data interface{}) {
+	logrus.WithFields(logrus.Fields{
+		"Data": data,
+	}).Infoln(msg)
 }
 
-type Logger struct {
-	logProvider *zap.SugaredLogger
+func Error(msg string, functionName string, err error, data interface{}) {
+	logrus.WithFields(logrus.Fields{
+		"Error":        err,
+		"FunctionName": functionName,
+		"Data":         data,
+	}).WithTime(time.Now()).Errorln(msg)
+}
+func Panic(msg string, functionName string, err error, data interface{}) {
+	logrus.WithFields(logrus.Fields{
+		"Error":        err,
+		"FunctionName": functionName,
+		"Data":         data,
+	}).WithTime(time.Now()).Panicln(msg)
 }
 
-func NewLogger(logProvider *zap.SugaredLogger) UseCases {
-	return Logger{logProvider}
-}
-
-func (logger Logger) Info(msg string, functionName string, data interface{}, keysAndValues ...interface{}) {
-	keysAndValues = append(keysAndValues, "functionName", functionName, "data", data)
-	logger.logProvider.Infow(msg, keysAndValues...)
-}
-
-func (logger Logger) Error(msg string, functionName string, err error, data interface{}, keysAndValues ...interface{}) {
-	keysAndValues = append(keysAndValues, "functionName", functionName, "err", err, "data", data)
-	logger.logProvider.Errorw(msg, keysAndValues...)
+func Fatal(msg string, err error) {
+	logrus.Fatalln(msg, err)
 }

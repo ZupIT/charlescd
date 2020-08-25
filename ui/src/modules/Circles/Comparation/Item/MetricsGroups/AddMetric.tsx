@@ -33,6 +33,7 @@ import {
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
 import Button from 'core/components/Button/Default';
+import Icon from 'core/components/Icon';
 
 type Props = {
   id: string;
@@ -50,6 +51,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     handleSubmit,
     register,
     control,
+    setError,
+    errors,
     formState: { isValid }
   } = formMethods;
   const [isBasicQuery, setIsBasicQuery] = useState(true);
@@ -57,13 +60,23 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   const [loadingProviders, setLoadingProviders] = useState(false);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
   const { getAllDataSourceMetrics } = useProviderMetrics();
-  const { saveMetric, status: creatingStatus } = useSaveMetric(metric?.id);
+  const { saveMetric, status: creatingStatus, validationError } = useSaveMetric(
+    metric?.id
+  );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
   const [showThresholdForm, setShowThresholdForm] = useState(false);
   const [metrics, setMetrics] = useState<Option[]>();
   const { watch } = formMethods;
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
+
+  useEffect(() => {
+    if (validationError?.errors?.length) {
+      validationError.errors.forEach(({ field, error }) => {
+        setError(field, 'required', error);
+      });
+    }
+  }, [validationError, setError]);
 
   useEffect(() => {
     if (metric) {
@@ -98,11 +111,15 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
   const onSubmit = async (data: Metric) => {
     const payload = buildMetricPayload(data, metric);
-    saveMetric(id, payload).then(response => {
-      if (response) {
-        onGoBack();
-      }
-    });
+    saveMetric(id, payload)
+      .then(response => {
+        if (response) {
+          onGoBack();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const handleAddFilter = () => {
@@ -142,7 +159,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
             />
 
             {!loadingProviders && (
-              <Styled.ProviderSelect
+              <Styled.Select
                 control={control}
                 name="dataSourceId"
                 label="Select a data source"
@@ -180,17 +197,28 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                 {isBasicQuery && (
                   <>
                     {!loadingMetrics && (
-                      <Styled.ProviderSelect
-                        control={control}
-                        name="metric"
-                        label="Select a metric"
-                        options={metrics}
-                        rules={{ required: true }}
-                        defaultValue={getSelectDefaultValue(
-                          metric?.metric,
-                          metrics
+                      <>
+                        <Styled.SelectMetric
+                          control={control}
+                          name="metric"
+                          label="Metric"
+                          options={metrics}
+                          rules={{ required: true }}
+                          hasError={!!errors?.metric}
+                          defaultValue={getSelectDefaultValue(
+                            metric?.metric,
+                            metrics
+                          )}
+                        />
+                        {!!errors.metric && (
+                          <Styled.FieldErrorWrapper>
+                            <Icon name="error" color="error" />
+                            <Text.h6 color="error">
+                              {errors.metric.message}
+                            </Text.h6>
+                          </Styled.FieldErrorWrapper>
                         )}
-                      />
+                      </>
                     )}
                     <BasicQueryForm
                       filters={filters}
@@ -206,9 +234,20 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       <Input
                         name="query"
                         ref={register({ required: true })}
+                        hasError={!!errors?.query}
                         label="Type a query"
                       />
                     </Styled.AdvancedQueryWrapper>
+                    {!!errors.query && (
+                      <Styled.FieldErrorWrapper>
+                        <Icon name="error" color="error" />
+                        <Text.h6 color="error">
+                          {errors.query.message
+                            ? errors.query.message
+                            : 'Type a valid query'}
+                        </Text.h6>
+                      </Styled.FieldErrorWrapper>
+                    )}
                   </>
                 )}
 
