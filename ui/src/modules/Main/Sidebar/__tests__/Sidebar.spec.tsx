@@ -38,7 +38,6 @@ beforeEach(() => {
 
 afterEach(() => {
   window = originalWindow;
-  cleanup();
 });
 
 test('renders sidebar component', async () => {
