@@ -37,6 +37,6 @@ export const dark = {
     }
   },
   chart: {
-    gridColor: COLOR_SANTAS_GREY
+    gridColor: COLOR_BLACK_MARLIN
   }
 };

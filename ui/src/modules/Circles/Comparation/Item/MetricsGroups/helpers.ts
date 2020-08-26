@@ -18,7 +18,14 @@ import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
-import { MetricFilter, Metric, Execution } from './types';
+import dayjs from 'dayjs';
+import {
+  MetricFilter,
+  Metric,
+  Execution,
+  ChartDataByQuery,
+  ChartData
+} from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
   map(metrics, item => ({
@@ -84,3 +91,15 @@ export const getThresholdStatus = (execution: Execution) => {
     }
   }
 };
+
+const buildSeriesData = (data: ChartData[]) =>
+  map(data, item => ({
+    x: dayjs(item.period).format('DD/MM'),
+    y: item.total
+  }));
+
+export const getDeploySeries = (data: ChartDataByQuery) =>
+  map(data, item => ({
+    name: item.metric,
+    data: buildSeriesData(item.result)
+  }));
