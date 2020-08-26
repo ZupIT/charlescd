@@ -17,7 +17,7 @@
 import React from 'react';
 import MutationObserver from 'mutation-observer';
 import { FormContext, useForm } from 'react-hook-form';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, wait, waitForElement } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -45,12 +45,12 @@ test('render Rule default component', async () => {
     </FormContext>
   );
 
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
 
-  const InputType = getByTestId('input-hidden-input-rule.type')
-  const InputKey = getByTestId('input-text-input-rule.content.key')
-  const WrapperCondition = getByTestId('select-input-rule.content.condition')
-  const InputValue = getByTestId('input-text-input-rule.content.value[0]')
+  const InputType = await waitForElement(() => getByTestId('input-hidden-input-rule.type'));
+  const InputKey = await waitForElement(() => getByTestId('input-text-input-rule.content.key'));
+  const WrapperCondition = await waitForElement(() => getByTestId('select-input-rule.content.condition'));
+  const InputValue = await waitForElement(() => getByTestId('input-text-input-rule.content.value[0]'));
 
   expect(InputType).toHaveAttribute('type', 'hidden');
   expect(InputKey).toBeInTheDocument();
@@ -70,7 +70,7 @@ test('render Rule default component with group', async () => {
     </FormContext>
   );
 
-  const InputTrash = getByTestId('icon-trash');
+  const InputTrash = await waitForElement(() => getByTestId('icon-trash'));
   expect(InputTrash).toBeInTheDocument();
 
   fireEvent.click(InputTrash);
