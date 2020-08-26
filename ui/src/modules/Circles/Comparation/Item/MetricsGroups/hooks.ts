@@ -29,12 +29,19 @@ import {
   getAllDataSourceMetrics as getAllDataSourceMetricsRequest,
   saveMetricGroup,
   deleteMetricGroup,
-  deleteMetricByMetricId
+  deleteMetricByMetricId,
+  getChartDataByQuery
 } from 'core/providers/metricsGroups';
 import { buildParams, URLParams } from 'core/utils/query';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { MetricsGroup, MetricsGroupsResume, Metric, DataSource } from './types';
+import {
+  MetricsGroup,
+  MetricsGroupsResume,
+  Metric,
+  DataSource,
+  ChartDataByQuery
+} from './types';
 import { ValidationError } from 'core/interfaces/ValidationError';
 
 export const useMetricsGroupsResume = (): {
@@ -305,5 +312,40 @@ export const useDeleteMetric = () => {
 
   return {
     deleteMetric
+  };
+};
+
+export const useMetricQuery = () => {
+  const getMetricByQueryRequest = useFetchData<ChartDataByQuery[]>(
+    getChartDataByQuery
+  );
+  const status = useFetchStatus();
+  const [chartData, setShartData] = useState([]);
+
+  const getMetricByQuery = useCallback(
+    async (metricsGroupId: string, payload: URLParams) => {
+      try {
+        status.pending();
+        const params = buildParams(payload);
+        const metricByQueryResponse = await getMetricByQueryRequest(
+          metricsGroupId,
+          params
+        );
+
+        setShartData(metricByQueryResponse);
+        status.resolved();
+
+        return metricByQueryResponse;
+      } catch (e) {
+        status.rejected();
+      }
+    },
+    [getMetricByQueryRequest, status]
+  );
+
+  return {
+    getMetricByQuery,
+    chartData,
+    status
   };
 };

@@ -29,6 +29,7 @@ export default {
     mode: 'dark'
   },
   grid: {
+    borderColor: theme.circleGroupMetrics.chart.gridColor,
     show: true,
     yaxis: {
       lines: {

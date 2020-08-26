@@ -59,3 +59,9 @@ export const deleteMetricByMetricId = (
   deleteRequest(
     `${endpoint}/metrics-groups/${metricsGroupId}/metrics/${metricId}`
   );
+
+export const getChartDataByQuery = (
+  metricsGroupId: string,
+  params: URLSearchParams
+) =>
+  baseRequest(`${endpoint}/metrics-groups/${metricsGroupId}/query?${params}`);

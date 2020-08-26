@@ -35,5 +35,8 @@ export const dark = {
       reached: COLOR_ORANGE_PEEL,
       active: COLOR_SANTAS_GREY
     }
+  },
+  chart: {
+    gridColor: COLOR_SANTAS_GREY
   }
 };
