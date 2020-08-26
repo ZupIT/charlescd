@@ -21,8 +21,8 @@ export class CreateV2Components20200715114000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "public"."v2components" (
-        "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
-        "deployment_id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
+        "id" uuid DEFAULT gen_random_uuid () NOT NULL,
+        "deployment_id" uuid DEFAULT gen_random_uuid () NOT NULL,
         "component_id" uuid NOT NULL,
         "name" Character Varying NOT NULL,
         "image_url" Character Varying NOT NULL,
