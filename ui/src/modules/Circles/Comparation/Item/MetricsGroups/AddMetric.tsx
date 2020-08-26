@@ -20,6 +20,7 @@ import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { conditionOptions } from './constants';
 import Input from 'core/components/Form/Input';
+import StyledRule from 'modules/Circles/Segments/styled';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
 import { Metric } from './types';
@@ -62,7 +63,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     metric?.id
   );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
-  const [showThresholdForm, setShowThresholdForm] = useState(false);
+  const [showThresholdForm, setShowThresholdForm] = useState(
+    () => !!metric?.condition
+  );
   const [metrics, setMetrics] = useState<Option[]>();
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
@@ -255,7 +258,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   numeric value.
                 </Styled.Subtitle>
 
-                {!showThresholdForm && !metric?.condition && (
+                {!showThresholdForm && (
                   <Styled.ButtonAdd
                     name="add"
                     icon="add"
@@ -266,23 +269,33 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </Styled.ButtonAdd>
                 )}
 
-                {(showThresholdForm || metric?.condition) && (
+                {showThresholdForm && (
                   <Styled.ThresholdWrapper>
-                    <Styled.ThresholdSelect
-                      options={conditionOptions}
-                      control={control}
-                      rules={{ required: true }}
-                      label="Conditional"
-                      name="condition"
-                      defaultValue={getCondition(metric?.condition)}
-                    />
+                    <StyledRule.Rule data-testid="threshold-form">
+                      <StyledRule.RuleTrash>
+                        <StyledRule.Button.Icon
+                          name="trash"
+                          size="15px"
+                          color="light"
+                          onClick={() => setShowThresholdForm(false)}
+                        />
+                      </StyledRule.RuleTrash>
+                      <Styled.ThresholdSelect
+                        options={conditionOptions}
+                        control={control}
+                        rules={{ required: true }}
+                        label="Conditional"
+                        name="condition"
+                        defaultValue={getCondition(metric?.condition)}
+                      />
 
-                    <Styled.InputNumber
-                      name="threshold"
-                      label="Threshold"
-                      ref={register({ required: true })}
-                      maxLength={100}
-                    />
+                      <Styled.InputNumber
+                        name="threshold"
+                        label="Threshold"
+                        ref={register({ required: true })}
+                        maxLength={100}
+                      />
+                    </StyledRule.Rule>
                   </Styled.ThresholdWrapper>
                 )}
 
