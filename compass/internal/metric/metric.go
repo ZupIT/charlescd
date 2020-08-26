@@ -2,6 +2,7 @@ package metric
 
 import (
 	"compass/internal/util"
+	"compass/pkg/datasource"
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
@@ -280,5 +281,5 @@ func (main Main) Query(metric Metric, period string) (interface{}, error) {
 	query := main.getQueryByMetric(metric)
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 	filters, _ := json.Marshal(metric.Filters)
-	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) (interface{}, error))(dataSourceConfigurationData, query, filters, []byte(period))
+	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) ([]datasource.Value, error))(dataSourceConfigurationData, query, filters, []byte(period))
 }
