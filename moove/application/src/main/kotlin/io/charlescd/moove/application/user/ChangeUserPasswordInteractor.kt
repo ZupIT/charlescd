@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.application.user
 
-data class VillagerBuildRequest(
-    val tagName: String,
-    val callbackUrl: String,
-    val modules: List<BuildModulePart>
-)
+import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 
-data class BuildModulePart(
-    val id: String,
-    val name: String,
-    val registryConfigurationId: String,
-    val components: List<BuildModuleComponentPart>
-)
+interface ChangeUserPasswordInteractor {
 
-data class BuildModuleComponentPart(
-    val name: String,
-    val tagName: String
-)
+    fun execute(authorization: String, request: ChangeUserPasswordRequest)
+}

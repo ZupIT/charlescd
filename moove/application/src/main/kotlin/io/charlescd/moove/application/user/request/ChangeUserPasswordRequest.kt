@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.application.user.request
 
-data class UndeployRequest(
-    val authorId: String,
-    val deploymentId: String
+import javax.validation.constraints.Pattern
+
+data class ChangeUserPasswordRequest(
+    val oldPassword: String,
+    @field:Pattern(
+        regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{10,}\$",
+        message = "Your password must fill our minimum security requirements."
+    )
+    val newPassword: String
 )
