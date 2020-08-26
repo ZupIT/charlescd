@@ -79,3 +79,9 @@ export type DataSource = {
 export type DataSourceData = {
   url: string;
 };
+
+export type ChartDataByQuery = {
+  id: string;
+  metric: string;
+  result: Array<number | string>;
+};
