@@ -51,6 +51,14 @@ func compareResultWithMetricThreshold(result float64, threshold float64, conditi
 	}
 }
 
+func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric metric.Metric) string {
+	if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
+		return metric.MetricReached
+	}
+
+	return metric.MetricActive
+}
+
 func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) {
 	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID.String())
 	if err != nil {
@@ -68,15 +76,13 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 	}
 
 	if metricResult != execution.LastValue || execution.Status == metric.MetricUpdated {
-		if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
-			execution.Status = metric.MetricReached
-		} else {
-			execution.Status = metric.MetricActive
-		}
-
 		dispatcher.mux.Lock()
-		execution.LastValue = metricResult
-		dispatcher.metric.UpdateMetricExecution(execution)
+		dispatcher.metric.UpdateMetricExecution(metric.MetricExecution{
+			BaseModel: execution.BaseModel,
+			MetricID:  execution.MetricID,
+			LastValue: metricResult,
+			Status:    dispatcher.getNewStatusForExecution(metricResult, currentMetric),
+		})
 		dispatcher.mux.Unlock()
 	}
 }

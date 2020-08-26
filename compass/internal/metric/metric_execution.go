@@ -65,7 +65,7 @@ func (main Main) FindMetricExecutionById(id string) (MetricExecution, error) {
 }
 
 func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
-	db := main.db.Model(&metricExecution).Updates(metricExecution)
+	db := main.db.Save(&metricExecution)
 	if db.Error != nil {
 		logger.Error(util.UpdateMetricExecutionError, "UpdateMetricExecution", db.Error, metricExecution)
 		return MetricExecution{}, db.Error

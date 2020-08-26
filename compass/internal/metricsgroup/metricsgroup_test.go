@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -25,6 +26,7 @@ import (
 type Suite struct {
 	suite.Suite
 	db               *gorm.DB
+	metricMain       metric.UseCases
 	metricsgroupMain UseCases
 	circleID         uuid.UUID
 	workspaceID      uuid.UUID
@@ -67,6 +69,7 @@ func (s *Suite) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.db, pluginMain)
 	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain)
 
+	s.metricMain = metricMain
 	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain)
 	s.circleID = uuid.New()
 	s.workspaceID = uuid.New()
@@ -148,7 +151,7 @@ func (s *Suite) TestResumeByCircle() {
 		Name:        "data source 1",
 		PluginSrc:   "prometheus",
 		Health:      false,
-		Data:        []byte(`{ "url": "localhost:9090" }`),
+		Data:        []byte(`{ "url": "http://localt:9090" }`),
 		WorkspaceID: s.workspaceID,
 	}
 
@@ -162,19 +165,18 @@ func (s *Suite) TestResumeByCircle() {
 
 	s.db.Create(&metricGroup)
 
-	insertMetrics := []metric.Metric{
-		{
-			DataSourceID:   insertDatasource.ID,
-			MetricsGroupID: metricGroup.ID,
-			Nickname:       "metric 1",
-			Query:          "tdfd ddd",
-			Condition:      "EQUAL",
-			Threshold:      1,
-		},
+	insertMetric := metric.Metric{
+		DataSourceID:   insertDatasource.ID,
+		MetricsGroupID: metricGroup.ID,
+		Nickname:       "metric 1",
+		Query:          "tdfd ddd",
+		Condition:      "EQUAL",
+		Threshold:      1,
 	}
 
-	for _, insertMetric := range insertMetrics {
-		s.db.Create(&insertMetric)
+	_, err := s.metricMain.SaveMetric(insertMetric)
+	if err != nil {
+		s.T().Error(err)
 	}
 
 	resume, err := s.metricsgroupMain.ResumeByCircle(s.circleID.String())
@@ -182,5 +184,10 @@ func (s *Suite) TestResumeByCircle() {
 		s.T().Fatal(err)
 	}
 
-	fmt.Println(resume)
+	time.Sleep(20 * time.Second)
+
+	fmt.Println("Threshold: ", resume[0].Thresholds)
+	fmt.Println("Threshold reached: ", resume[0].ThresholdsReached)
+	fmt.Println("Metrics : ", resume[0].Metrics)
+	fmt.Println("Status : ", resume[0].Status)
 }
