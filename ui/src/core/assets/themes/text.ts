@@ -20,7 +20,7 @@ import {
   COLOR_GHOST_WHITE,
   COLOR_LAVENDER_GREY,
   COLOR_DODGER_BLUE,
-  COLOR_MALACHITE,
+  COLOR_MOUNTAIN_MEADOW,
   COLOR_SUNFLOWER
 } from '../colors';
 
@@ -32,7 +32,7 @@ export const dark = {
   light: COLOR_GHOST_WHITE,
   medium: COLOR_LAVENDER_GREY,
   primary: COLOR_DODGER_BLUE,
-  success: COLOR_MALACHITE,
+  success: COLOR_MOUNTAIN_MEADOW,
   warning: COLOR_SUNFLOWER,
   stable: COLOR_GHOST_WHITE
 };
