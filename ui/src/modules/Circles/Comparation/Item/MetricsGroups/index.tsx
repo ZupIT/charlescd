@@ -213,7 +213,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
-        <MonitoringMetrics />
+        <MonitoringMetrics metricsGroupId={metricGroup.id} />
         {!isEmpty(metricGroup.metrics) && (
           <>
             <Styled.MetricCardTableHead>
