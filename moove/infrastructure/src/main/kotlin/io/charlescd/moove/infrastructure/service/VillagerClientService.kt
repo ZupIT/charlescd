@@ -19,6 +19,7 @@ package io.charlescd.moove.infrastructure.service
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.VillagerService
 import io.charlescd.moove.infrastructure.service.client.*
+import io.charlescd.moove.infrastructure.service.client.request.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
