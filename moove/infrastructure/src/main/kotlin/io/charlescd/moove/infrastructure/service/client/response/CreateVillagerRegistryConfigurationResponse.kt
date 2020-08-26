@@ -14,30 +14,8 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import ComponentIcon from 'core/components/Icon';
+package io.charlescd.moove.infrastructure.service.client.response
 
-interface WrapperProps {
-  type?: string;
-}
-
-const Wrapper = styled.div<WrapperProps>`
-  position: relative;
-  height: 42px;
-  ${({ type }) =>
-    type === 'hidden' &&
-    css`
-      display: none;
-    `};
-`;
-
-const Icon = styled(ComponentIcon)`
-  bottom: 10px;
-  right: 5px;
-  position: absolute;
-`;
-
-export default {
-  Wrapper,
-  Icon
-};
+data class CreateVillagerRegistryConfigurationResponse(
+    val id: String
+)

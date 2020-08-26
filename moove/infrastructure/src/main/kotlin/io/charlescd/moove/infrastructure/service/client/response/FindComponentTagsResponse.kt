@@ -14,30 +14,13 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import ComponentIcon from 'core/components/Icon';
+package io.charlescd.moove.infrastructure.service.client.response
 
-interface WrapperProps {
-  type?: string;
+data class FindComponentTagsResponse(
+    val tags: List<ComponentTag>
+) {
+    data class ComponentTag(
+        val name: String,
+        val artifact: String
+    )
 }
-
-const Wrapper = styled.div<WrapperProps>`
-  position: relative;
-  height: 42px;
-  ${({ type }) =>
-    type === 'hidden' &&
-    css`
-      display: none;
-    `};
-`;
-
-const Icon = styled(ComponentIcon)`
-  bottom: 10px;
-  right: 5px;
-  position: absolute;
-`;
-
-export default {
-  Wrapper,
-  Icon
-};
