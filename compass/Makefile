@@ -11,6 +11,8 @@ DIST_PATH=dist
 CMD_PATH=cmd/*.go
 BINARY_NAME=compass
 
+COMPOSE_TESTS=./test/docker-compose.test.yaml
+
 # $(GOBUILDPLUGIN) "$$plugin"/*.go
 
 start:
@@ -18,13 +20,16 @@ start:
 				$(GORUN) $(CMD_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
+
+local-tests:
+				$(GOTEST) ./...
 tests:
-				docker-compose -f ./docker-compose.test.yaml up --build --abort-on-container-exit
-				docker-compose -f ./docker-compose.test.yml down --volumes
-tests-db-up:
-				docker-compose -f ./docker-compose.test.yaml up --build db
-tests-db-down:
-				docker-compose -f ./docker-compose.test.yaml down --volumes db
+				docker-compose -f $(COMPOSE_TESTS) up --build --abort-on-container-exit
+				docker-compose -f $(COMPOSE_TESTS) down --volumes
+tests-dep-up:
+				docker-compose -f $(COMPOSE_TESTS) up --build db provider
+tests-dep-down:
+				docker-compose -f $(COMPOSE_TESTS) down --volumes db provider
 cover:
 				$(GOTEST) -coverprofile cover.out ./...
 				$(GOTOOL) cover -func=cover.out

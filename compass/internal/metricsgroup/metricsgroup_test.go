@@ -6,7 +6,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger/fake"
+	"compass/pkg/logger"
 	"fmt"
 	"path/filepath"
 	"testing"
@@ -41,12 +41,12 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_SSL"),
 	))
 	if err != nil {
-		util.Fatal("Failed to connect database", err)
+		logger.Fatal("Failed to connect database", err)
 	}
 
 	driver, err := postgres.WithInstance(s.db.DB(), &postgres.Config{})
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	fmt.Println(filepath.Join("migrations", "../../"))
@@ -56,22 +56,25 @@ func (s *Suite) SetupSuite() {
 		configuration.GetConfiguration("DB_NAME"), driver)
 
 	if err != nil {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		util.Fatal("", err)
+		logger.Fatal("", err)
 	}
 
-	fakeLogger := fake.NewLoggerFake()
+	pluginMain := plugin.NewMain(s.db)
+	datasourceMain := datasource.NewMain(s.db, pluginMain)
+	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain)
 
-	pluginMain := plugin.NewMain(s.db, fakeLogger)
-	datasourceMain := datasource.NewMain(s.db, pluginMain, fakeLogger)
-	metricMain := metric.NewMain(s.db, datasourceMain, pluginMain, fakeLogger)
-
-	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain, fakeLogger)
+	s.metricsgroupMain = NewMain(s.db, metricMain, datasourceMain, pluginMain)
 	s.circleID = uuid.New()
 	s.workspaceID = uuid.New()
+}
+
+func (s *Suite) BeforeTest(suiteName, testName string) {
+	s.db.Exec("delete from metrics_groups")
+	s.db.Exec("delete from data_sources")
 }
 
 func TestInit(t *testing.T) {
@@ -109,18 +112,6 @@ func (s *Suite) TestValidateError() {
 	require.Contains(s.T(), ers[1].Error, "CircleID is required")
 }
 
-func (s *Suite) InsertMetricGroups(metricGroups []MetricsGroup) {
-	for _, metricGroup := range metricGroups {
-		s.db.Create(&metricGroup)
-	}
-}
-
-func (s *Suite) DeleteMetricGroups(metricGroups []MetricsGroup) {
-	for _, metricGroup := range metricGroups {
-		s.db.Where("name = ?", metricGroup.Name).Delete(&metricGroup)
-	}
-}
-
 func (s *Suite) TestFindAll() {
 	insertMetricGroups := []MetricsGroup{
 		{
@@ -135,19 +126,61 @@ func (s *Suite) TestFindAll() {
 		},
 	}
 
-	s.InsertMetricGroups(insertMetricGroups)
+	for _, metricGroup := range insertMetricGroups {
+		s.db.Create(&metricGroup)
+	}
+
 	metricGroups, err := s.metricsgroupMain.FindAll()
 	if err != nil {
-		s.DeleteMetricGroups(insertMetricGroups)
 		s.T().Fatal(err)
 	}
 
 	require.Equal(s.T(), len(insertMetricGroups), len(metricGroups))
 	for index, metricGroup := range metricGroups {
 		metricGroup.BaseModel = insertMetricGroups[index].BaseModel
+		metricGroup.Metrics = nil
 		require.Equal(s.T(), insertMetricGroups[index], metricGroup)
 	}
+}
 
-	s.DeleteMetricGroups(insertMetricGroups)
+func (s *Suite) TestResumeByCircle() {
+	insertDatasource := datasource.DataSource{
+		Name:        "data source 1",
+		PluginSrc:   "prometheus",
+		Health:      false,
+		Data:        []byte(`{ "url": "localhost:9090" }`),
+		WorkspaceID: s.workspaceID,
+	}
 
+	s.db.Create(&insertDatasource)
+
+	metricGroup := MetricsGroup{
+		Name:        "group 1",
+		CircleID:    s.circleID,
+		WorkspaceID: s.workspaceID,
+	}
+
+	s.db.Create(&metricGroup)
+
+	insertMetrics := []metric.Metric{
+		{
+			DataSourceID:   insertDatasource.ID,
+			MetricsGroupID: metricGroup.ID,
+			Nickname:       "metric 1",
+			Query:          "tdfd ddd",
+			Condition:      "EQUAL",
+			Threshold:      1,
+		},
+	}
+
+	for _, insertMetric := range insertMetrics {
+		s.db.Create(&insertMetric)
+	}
+
+	resume, err := s.metricsgroupMain.ResumeByCircle(s.circleID.String())
+	if err != nil {
+		s.T().Fatal(err)
+	}
+
+	fmt.Println(resume)
 }

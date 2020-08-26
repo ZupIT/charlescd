@@ -154,23 +154,26 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               {metric.threshold !== 0 && metric.threshold}
             </Text.h5>
           </Styled.MetricConditionThreshold>
-          <Styled.MetricLastValue color={thresholdStatus.color}>
-            {!isEmpty(metric.condition) && (
-              <Icon
-                name={thresholdStatus.icon}
-                data-tip
-                data-for={`thresholdTooltip-${metric.id}`}
-              />
-            )}
+          <Styled.MetricLastValue
+            color={thresholdStatus.color}
+            hasTreshold={isEmpty(metric.condition)}
+          >
+            <Icon
+              name={thresholdStatus.icon}
+              data-tip
+              data-for={`thresholdTooltip-${metric.id}`}
+            />
             <Styled.MetricLastValueText
               color="light"
               title={metric.execution.lastValue.toString()}
             >
               {metric.execution.lastValue}
             </Styled.MetricLastValueText>
-            <ReactTooltip id={`thresholdTooltip-${metric.id}`} place="left">
-              {thresholdStatus.message}
-            </ReactTooltip>
+            {!isEmpty(metric.condition) && (
+              <ReactTooltip id={`thresholdTooltip-${metric.id}`} place="left">
+                {thresholdStatus.message}
+              </ReactTooltip>
+            )}
           </Styled.MetricLastValue>
           <Styled.MetricDropdown>
             <Dropdown icon="vertical-dots" size="16px">
@@ -210,7 +213,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
-        <MonitoringMetrics />
+        <MonitoringMetrics metricsGroupId={metricGroup.id} />
         {!isEmpty(metricGroup.metrics) && (
           <>
             <Styled.MetricCardTableHead>

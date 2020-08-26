@@ -4,7 +4,6 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger"
 	"io"
 
 	"github.com/jinzhu/gorm"
@@ -12,9 +11,7 @@ import (
 
 type UseCases interface {
 	ParseMetric(metric io.ReadCloser) (Metric, error)
-	CountAllMetricsWithConditions(metrics []Metric) int
-	CountAllMetricsFinished(metrics []Metric) int
-	CountAllMetricsInGroup(metrics []Metric) int
+	CountMetrics(metrics []Metric) (int, int, int)
 	FindMetricById(id string) (Metric, error)
 	SaveMetric(metric Metric) (Metric, error)
 	UpdateMetric(id string, metric Metric) (Metric, error)
@@ -30,11 +27,10 @@ type Main struct {
 	db             *gorm.DB
 	datasourceMain datasource.UseCases
 	pluginMain     plugin.UseCases
-	logger         logger.UseCases
 }
 
 func NewMain(
-	db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, logger logger.UseCases,
+	db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases,
 ) UseCases {
-	return Main{db, datasourceMain, pluginMain, logger}
+	return Main{db, datasourceMain, pluginMain}
 }
