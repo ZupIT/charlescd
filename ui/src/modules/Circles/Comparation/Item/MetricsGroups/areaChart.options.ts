@@ -35,6 +35,10 @@ export default {
       lines: {
         show: true
       }
+    },
+    padding: {
+      left: 8,
+      right: 14
     }
   },
   legend: {

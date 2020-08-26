@@ -83,5 +83,10 @@ export type DataSourceData = {
 export type ChartDataByQuery = {
   id: string;
   metric: string;
-  result: Array<number | string>;
+  result: ChartData[];
+}[];
+
+export type ChartData = {
+  total: string;
+  period: string;
 };

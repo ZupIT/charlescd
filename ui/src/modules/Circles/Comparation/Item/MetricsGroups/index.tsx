@@ -214,9 +214,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
-        <MonitoringMetrics metricsGroupId={metricGroup.id} />
         {!isEmpty(metricGroup.metrics) && (
           <>
+            <MonitoringMetrics metricsGroupId={metricGroup.id} />
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>
