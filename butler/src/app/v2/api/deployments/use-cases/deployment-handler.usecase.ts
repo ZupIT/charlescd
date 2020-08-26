@@ -77,13 +77,13 @@ export class DeploymentHandlerUseCase {
   }
 
   private async runDeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
-    this.consoleLoggerService.log('START:RUN_DEPLOYMENT_EXECUTION', { deployment, job })
+    this.consoleLoggerService.log('START:RUN_DEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
     if (!deployment.circleId) {
       deployment.components = deployment.components.filter(c => !c.merged)
     }
 
     const activeComponents = await this.componentsRepository.findActiveComponents()
-    this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
+    this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
     const cdResponse = await this.spinnakerConnector.createDeployment(
       deployment,
       activeComponents,
@@ -95,9 +95,9 @@ export class DeploymentHandlerUseCase {
   }
 
   private async runUndeployment(deployment: DeploymentEntity, job: ExecutionJob): Promise<ExecutionJob> {
-    this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment, job })
+    this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
     const activeComponents = await this.componentsRepository.findActiveComponents()
-    this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents })
+    this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
     const cdResponse = await this.spinnakerConnector.createUndeployment(
       deployment,
       activeComponents,
@@ -119,7 +119,7 @@ export class DeploymentHandlerUseCase {
     if (!deployment) {
       const error = new Error('Deployment not found')
       job.done(error)
-      this.consoleLoggerService.error('ERROR:DEPLOYMENT_NOT_FOUND', { job: job })
+      this.consoleLoggerService.error('ERROR:DEPLOYMENT_NOT_FOUND', { job: job.id })
       throw error
     }
     return deployment
@@ -127,20 +127,20 @@ export class DeploymentHandlerUseCase {
 
   public async handleOverlap(job: ExecutionJob): Promise<ExecutionJob> {
     await this.pgBoss.publishWithPriority(job.data)
-    this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job })
+    this.consoleLoggerService.log('Overlapping components, requeing the job', { job: job.id })
     job.done()
     return job
   }
 
   public async handleCdSuccess(job: ExecutionJob, deployment: DeploymentEntity) : Promise<ExecutionJob> {
     await this.updateComponentsToRunning(deployment)
-    this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job })
+    this.consoleLoggerService.log('FINISH:RUN_EXECUTION Updated components to running', { job: job.id })
     job.done()
     return job
   }
 
   public async handleCdError(job: ExecutionJob, cdResponse: ConnectorResultError): Promise<ExecutionJob> {
-    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job, error: cdResponse.error })
+    this.consoleLoggerService.error('FINISH:RUN_EXECUTION CD Response error', { job: job.id, error: cdResponse.error })
     job.done(new Error(cdResponse.error))
     return job
   }

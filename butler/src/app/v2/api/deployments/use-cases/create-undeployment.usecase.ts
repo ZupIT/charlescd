@@ -54,14 +54,14 @@ export class CreateUndeploymentUseCase {
     this.consoleLoggerService.log('START:CREATE_UNDEPLOYMENT_EXECUTION', { deployment: deploymentId })
     const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
     const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.UNDEPLOYMENT, incomingCircleId })
-    this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT_EXECUTION', { execution })
+    this.consoleLoggerService.log('FINISH:CREATE_UNDEPLOYMENT_EXECUTION', { execution: execution.id })
     return execution
   }
 
   private async publishExecutionJob(execution: Execution): Promise<string | null> {
     this.consoleLoggerService.log('START:PUBLISHING_UNDEPLOYMENT_EXECUTION', { execution: execution.id })
     const jobId = await this.pgBoss.publish(execution)
-    this.consoleLoggerService.log('FINISH:PUBLISHING_UNDEPLOYMENT_EXECUTION', { jobId: jobId, executions: execution.id })
+    this.consoleLoggerService.log('FINISH:PUBLISHING_UNDEPLOYMENT_EXECUTION', { jobId: jobId, execution: execution.id })
     return jobId
   }
 }

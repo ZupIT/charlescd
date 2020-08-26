@@ -43,13 +43,13 @@ export class CreateDeploymentUseCase {
   ) {}
 
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
-    this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { createDeploymentDto, incomingCircleId })
+    this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const deployment = createDeploymentDto.circle ?
       await this.createCircleDeployment(createDeploymentDto) :
       await this.createDefaultDeployment(createDeploymentDto)
     const execution = await this.createExecution(deployment, incomingCircleId)
     const jobId = await this.publishExecutionJob(execution)
-    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment, execution, jobId })
+    this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: deployment.id, execution: execution.id, jobId: jobId })
     const reloadedDeployment = await this.deploymentsRepository.findOneOrFail(deployment.id, { relations: ['components', 'executions', 'cdConfiguration'] })
     return reloadedDeployment.toReadDto() // BUG typeorm https://github.com/typeorm/typeorm/issues/4090
   }
@@ -87,7 +87,7 @@ export class CreateDeploymentUseCase {
   private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_EXECUTION', { deployment: deployment.id })
     const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.DEPLOYMENT, incomingCircleId })
-    this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_EXECUTION', { execution })
+    this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_EXECUTION', { execution: execution.id })
     return execution
   }
 
