@@ -21,7 +21,7 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner) : Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "public"."v2executions" (
-        "id" uuid DEFAULT uuid_generate_v4 () NOT NULL,
+        "id" uuid DEFAULT gen_random_uuid () NOT NULL,
         "type" Character Varying NOT NULL,
         "deployment_id" uuid NOT NULL,
         "incoming_circle_id" Character Varying,
