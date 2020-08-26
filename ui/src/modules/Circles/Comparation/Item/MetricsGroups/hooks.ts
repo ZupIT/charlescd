@@ -316,36 +316,39 @@ export const useDeleteMetric = () => {
 };
 
 export const useMetricQuery = () => {
-  const getMetricByQueryRequest = useFetchData<ChartDataByQuery[]>(
+  const getMetricByQueryRequest = useFetchData<ChartDataByQuery>(
     getChartDataByQuery
   );
-  const status = useFetchStatus();
-  const [chartData, setShartData] = useState([]);
+  const dispatch = useDispatch();
 
   const getMetricByQuery = useCallback(
     async (metricsGroupId: string, payload: URLParams) => {
       try {
-        status.pending();
         const params = buildParams(payload);
         const metricByQueryResponse = await getMetricByQueryRequest(
           metricsGroupId,
           params
         );
 
-        setShartData(metricByQueryResponse);
-        status.resolved();
-
         return metricByQueryResponse;
-      } catch (e) {
-        status.rejected();
+      } catch (error) {
+        error.text().then((errorMessage: string) => {
+          const parsedError = JSON.parse(errorMessage);
+          dispatch(
+            toogleNotification({
+              text:
+                parsedError?.[0].message ??
+                'Error on loaging metric chart data',
+              status: 'error'
+            })
+          );
+        });
       }
     },
-    [getMetricByQueryRequest, status]
+    [getMetricByQueryRequest, dispatch]
   );
 
   return {
-    getMetricByQuery,
-    chartData,
-    status
+    getMetricByQuery
   };
 };
