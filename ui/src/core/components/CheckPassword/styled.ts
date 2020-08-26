@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import ComponentIcon from 'core/components/Icon';
+import styled from 'styled-components';
 
-interface WrapperProps {
-  type?: string;
-}
+const Item = styled.div`
+  display: flex;
+  margin-bottom: 5px;
 
-const Wrapper = styled.div<WrapperProps>`
-  position: relative;
-  height: 42px;
-  ${({ type }) =>
-    type === 'hidden' &&
-    css`
-      display: none;
-    `};
-`;
-
-const Icon = styled(ComponentIcon)`
-  bottom: 10px;
-  right: 5px;
-  position: absolute;
+  > :first-child {
+    margin-right: 5px;
+  }
 `;
 
 export default {
-  Wrapper,
-  Icon
+  Item
 };
