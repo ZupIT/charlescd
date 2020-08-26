@@ -122,35 +122,23 @@ func (main Main) ParseMetric(metric io.ReadCloser) (Metric, error) {
 	return *newMetric, nil
 }
 
-func (main Main) CountAllMetricsWithConditions(metrics []Metric) int {
-	metricsWithConditions := 0
+func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
+	configuredMetrics := 0
+	reachedMetrics := 0
+	allMetrics := 0
 	for _, metric := range metrics {
 		if metric.Condition != "" {
-			metricsWithConditions++
+			configuredMetrics++
 		}
-	}
 
-	return metricsWithConditions
-}
-
-func (main Main) CountAllMetricsFinished(metrics []Metric) int {
-	metricsFinished := 0
-	for _, currentMetric := range metrics {
-		if currentMetric.MetricExecution.Status == MetricReached {
-			metricsFinished++
+		if metric.MetricExecution.Status == MetricReached {
+			reachedMetrics++
 		}
+
+		allMetrics++
 	}
 
-	return metricsFinished
-}
-
-func (main Main) CountAllMetricsInGroup(metrics []Metric) int {
-	metricsTotal := 0
-	for _, _ = range metrics {
-		metricsTotal++
-	}
-
-	return metricsTotal
+	return configuredMetrics, reachedMetrics, allMetrics
 }
 
 func (main Main) FindMetricById(id string) (Metric, error) {

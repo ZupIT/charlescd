@@ -11,9 +11,7 @@ import (
 
 type UseCases interface {
 	ParseMetric(metric io.ReadCloser) (Metric, error)
-	CountAllMetricsWithConditions(metrics []Metric) int
-	CountAllMetricsFinished(metrics []Metric) int
-	CountAllMetricsInGroup(metrics []Metric) int
+	CountMetrics(metrics []Metric) (int, int, int)
 	FindMetricById(id string) (Metric, error)
 	SaveMetric(metric Metric) (Metric, error)
 	UpdateMetric(id string, metric Metric) (Metric, error)
