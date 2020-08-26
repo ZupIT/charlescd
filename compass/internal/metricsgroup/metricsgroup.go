@@ -260,7 +260,11 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 	if err != nil {
 		notFoundErr := errors.New("Not found metrics group: " + id)
 		logger.Error(util.FindMetricsGroupError, "QueryByGroupID", notFoundErr, id)
-		return nil, notFoundErr
+		return []datasource.MetricValues{}, notFoundErr
+	}
+
+	if len(metricsGroup.Metrics) == 0 {
+		return []datasource.MetricValues{}, nil
 	}
 
 	for _, metric := range metricsGroup.Metrics {
@@ -268,7 +272,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 		query, err := main.metricMain.Query(metric, period)
 		if err != nil {
 			logger.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
-			return nil, err
+			return []datasource.MetricValues{}, err
 		}
 
 		metricsValues = append(metricsValues, datasource.MetricValues{
@@ -306,7 +310,7 @@ func (main Main) ResultByID(id string) ([]datasource.MetricResult, error) {
 	if err != nil {
 		notFoundErr := errors.New("Not found metrics group: " + id)
 		logger.Error(util.FindMetricsGroupError, "ResultByID", notFoundErr, id)
-		return nil, notFoundErr
+		return []datasource.MetricResult{}, notFoundErr
 	}
 
 	return main.ResultByGroup(metricsGroup)
