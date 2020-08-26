@@ -125,6 +125,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             name="name"
             label="Type a name for the metrics group"
             ref={register({ required: true })}
+            maxLength={100}
           />
           <Styled.Modal.Button
             type="submit"
@@ -213,7 +214,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
-        <MonitoringMetrics />
+        <MonitoringMetrics metricsGroupId={metricGroup.id} />
         {!isEmpty(metricGroup.metrics) && (
           <>
             <Styled.MetricCardTableHead>

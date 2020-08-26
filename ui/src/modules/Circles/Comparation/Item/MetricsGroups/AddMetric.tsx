@@ -20,15 +20,14 @@ import Text from 'core/components/Text';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { conditionOptions } from './constants';
 import Input from 'core/components/Form/Input';
+import StyledRule from 'modules/Circles/Segments/styled';
 import { useMetricProviders, useSaveMetric, useProviderMetrics } from './hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
-import { Metric, MetricFilter } from './types';
+import { Metric } from './types';
 import {
   normalizeMetricOptions,
   getCondition,
-  getSelectDefaultValue,
-  buildMetricPayload,
-  getBlankFilter
+  getSelectDefaultValue
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
@@ -42,7 +41,6 @@ type Props = {
 };
 
 const AddMetric = ({ onGoBack, id, metric }: Props) => {
-  const [filters, setFilters] = useState<MetricFilter[]>([]);
   const formMethods = useForm<Metric>({
     mode: 'onChange',
     defaultValues: metric ?? {}
@@ -53,6 +51,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     control,
     setError,
     errors,
+    watch,
     formState: { isValid }
   } = formMethods;
   const [isBasicQuery, setIsBasicQuery] = useState(true);
@@ -64,9 +63,10 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     metric?.id
   );
   const [providerOptions, setProviderOptions] = useState<Option[]>();
-  const [showThresholdForm, setShowThresholdForm] = useState(false);
+  const [showThresholdForm, setShowThresholdForm] = useState(
+    () => !!metric?.condition
+  );
   const [metrics, setMetrics] = useState<Option[]>();
-  const { watch } = formMethods;
   const watchDataSourceId = watch('dataSourceId');
   const canShowForm = watchDataSourceId || metric?.id;
 
@@ -81,7 +81,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   useEffect(() => {
     if (metric) {
       setIsBasicQuery(!!metric?.metric);
-      setFilters(metric.filters);
     } else {
       setIsBasicQuery(true);
     }
@@ -110,7 +109,16 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   }, [isBasicQuery, watchDataSourceId, getAllDataSourceMetrics]);
 
   const onSubmit = async (data: Metric) => {
-    const payload = buildMetricPayload(data, metric);
+    const filtersPayload = data.filters?.map(({ id, ...rest }) => {
+      return id ? { id, ...rest } : rest;
+    });
+    const payload = {
+      ...data,
+      id: metric?.id,
+      filters: filtersPayload ?? [],
+      threshold: Number(data.threshold)
+    };
+
     saveMetric(id, payload)
       .then(response => {
         if (response) {
@@ -120,16 +128,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
       .catch(error => {
         console.log(error);
       });
-  };
-
-  const handleAddFilter = () => {
-    const newFilters = [...filters, getBlankFilter()];
-    setFilters(newFilters);
-  };
-
-  const handleRemoveFilter = (idToRemove: string) => {
-    const newFilters = filters.filter(item => item.id !== idToRemove);
-    setFilters(newFilters);
   };
 
   return (
@@ -156,8 +154,14 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
               name="nickname"
               ref={register({ required: true })}
               label="Type a nickname for metric"
+              maxLength={100}
             />
-
+            {!!errors.nickname && (
+              <Styled.FieldErrorWrapper>
+                <Icon name="error" color="error" />
+                <Text.h6 color="error">{errors.nickname.message}</Text.h6>
+              </Styled.FieldErrorWrapper>
+            )}
             {!loadingProviders && (
               <Styled.Select
                 control={control}
@@ -220,11 +224,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         )}
                       </>
                     )}
-                    <BasicQueryForm
-                      filters={filters}
-                      onAddFilter={handleAddFilter}
-                      onRemoveFilter={handleRemoveFilter}
-                    />
+                    <BasicQueryForm />
                   </>
                 )}
 
@@ -236,6 +236,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         ref={register({ required: true })}
                         hasError={!!errors?.query}
                         label="Type a query"
+                        maxLength={100}
                       />
                     </Styled.AdvancedQueryWrapper>
                     {!!errors.query && (
@@ -257,7 +258,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   numeric value.
                 </Styled.Subtitle>
 
-                {!showThresholdForm && !metric?.condition && (
+                {!showThresholdForm && (
                   <Styled.ButtonAdd
                     name="add"
                     icon="add"
@@ -268,22 +269,33 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </Styled.ButtonAdd>
                 )}
 
-                {(showThresholdForm || metric?.condition) && (
+                {showThresholdForm && (
                   <Styled.ThresholdWrapper>
-                    <Styled.ThresholdSelect
-                      options={conditionOptions}
-                      control={control}
-                      rules={{ required: true }}
-                      label="Conditional"
-                      name="condition"
-                      defaultValue={getCondition(metric?.condition)}
-                    />
+                    <StyledRule.Rule data-testid="threshold-form">
+                      <StyledRule.RuleTrash>
+                        <StyledRule.Button.Icon
+                          name="trash"
+                          size="15px"
+                          color="light"
+                          onClick={() => setShowThresholdForm(false)}
+                        />
+                      </StyledRule.RuleTrash>
+                      <Styled.ThresholdSelect
+                        options={conditionOptions}
+                        control={control}
+                        rules={{ required: true }}
+                        label="Conditional"
+                        name="condition"
+                        defaultValue={getCondition(metric?.condition)}
+                      />
 
-                    <Styled.InputNumber
-                      name="threshold"
-                      label="Threshold"
-                      ref={register({ required: true })}
-                    />
+                      <Styled.InputNumber
+                        name="threshold"
+                        label="Threshold"
+                        ref={register({ required: true })}
+                        maxLength={100}
+                      />
+                    </StyledRule.Rule>
                   </Styled.ThresholdWrapper>
                 )}
 
