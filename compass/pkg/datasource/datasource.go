@@ -26,3 +26,8 @@ type MetricValues struct {
 	Nickname string      `json:"metric"`
 	Values   interface{} `json:"result"`
 }
+
+type Value struct {
+	Total  float64 `json:"total"`
+	Period string  `json:"period"`
+}
