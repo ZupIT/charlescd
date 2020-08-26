@@ -16,7 +16,6 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { FetchMock } from 'jest-fetch-mock/types';
 import { render, wait, fireEvent, act } from 'unit-test/testUtils';
 import CreateUser from '..';
 
@@ -85,7 +84,7 @@ test("render CreateUser Form component with empty fields", async () => {
   const InputName = getByTestId("input-text-name");
   const InputEmail = getByTestId("input-text-email");
   const InputPhotourl = getByTestId("input-text-photoUrl");
-  const InputPassword = getByTestId("password-password-password");
+  const InputPassword = getByTestId("input-password-password");
   
   expect(InputName).toBeEmpty();
   expect(InputEmail).toBeEmpty();
@@ -101,7 +100,7 @@ test("render CreateUser Form and submit when required fields filled", async () =
   const ButtonCreateUser = getByTestId("button-create-user");
   const InputName = getByTestId("input-text-name");
   const InputEmail = getByTestId("input-text-email");
-  const InputPassword = getByTestId("password-password-password");
+  const InputPassword = getByTestId("input-password-password");
 
   await act(async () => {
     fireEvent.change(InputName, { target: { value: 'name' }});
