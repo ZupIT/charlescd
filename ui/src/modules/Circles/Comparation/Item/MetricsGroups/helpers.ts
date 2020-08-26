@@ -59,21 +59,6 @@ export const buildMetricPayload = (formData: Metric, metric: Metric) => {
   return payload;
 };
 
-export const getBlankFilter = () => {
-  const id = Math.random()
-    .toString(36)
-    .slice(2);
-
-  return {
-    id,
-    field: '',
-    operator: '',
-    value: ''
-  };
-};
-
-export const getDefaultFilters = () => [getBlankFilter()];
-
 export const getThresholdStatus = (execution: Execution) => {
   switch (execution.status) {
     case 'REACHED': {
