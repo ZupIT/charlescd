@@ -21,6 +21,7 @@ export type MetricsGroupsResume = {
   metricsCount?: number;
   thresholds: number;
   thresholdsReached: number;
+  status: string;
 };
 
 export type MetricsGroup = {
