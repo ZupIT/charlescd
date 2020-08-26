@@ -347,6 +347,21 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       ]
     },
     {
+      failOnFailedExpressions: true,
+      name: 'Evaluate proxy deployments',
+      refId: '6',
+      requisiteStageRefIds: [
+        '4'
+      ],
+      type: 'evaluateVariables',
+      variables: [
+        {
+          key: 'proxyDeploymentsResult',
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}'
+        }
+      ]
+    },
+    {
       account: 'default',
       app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
@@ -380,7 +395,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '6',
+      refId: '7',
       requisiteStageRefIds: [
         '5'
       ],
@@ -389,21 +404,6 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    },
-    {
-      failOnFailedExpressions: true,
-      name: 'Evaluate proxy deployments',
-      refId: '7',
-      requisiteStageRefIds: [
-        '4'
-      ],
-      type: 'evaluateVariables',
-      variables: [
-        {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}'
-        }
-      ]
     },
     {
       account: 'default',
@@ -442,7 +442,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       },
       refId: '8',
       requisiteStageRefIds: [
-        '7'
+        '6'
       ],
       stageEnabled: {
         expression: '${proxyDeploymentsResult}',
@@ -466,7 +466,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       refId: '9',
       requisiteStageRefIds: [
         '5',
-        '7'
+        '6'
       ],
       stageEnabled: {
         expression: '${ !deploymentResult || !proxyDeploymentsResult }',
@@ -492,7 +492,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       refId: '10',
       requisiteStageRefIds: [
         '5',
-        '7'
+        '6'
       ],
       stageEnabled: {
         expression: '${ deploymentResult && proxyDeploymentsResult }',

@@ -955,6 +955,23 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      failOnFailedExpressions: true,
+      name: 'Evaluate proxy deployments',
+      refId: '14',
+      requisiteStageRefIds: [
+        '8',
+        '10',
+        '12'
+      ],
+      type: 'evaluateVariables',
+      variables: [
+        {
+          key: 'proxyDeploymentsResult',
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
+        }
+      ]
+    },
+    {
       account: 'default',
       app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
@@ -988,7 +1005,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '14',
+      refId: '15',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1032,7 +1049,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '15',
+      refId: '16',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1076,7 +1093,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '16',
+      refId: '17',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1085,23 +1102,6 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    },
-    {
-      failOnFailedExpressions: true,
-      name: 'Evaluate proxy deployments',
-      refId: '17',
-      requisiteStageRefIds: [
-        '8',
-        '10',
-        '12'
-      ],
-      type: 'evaluateVariables',
-      variables: [
-        {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
-        }
-      ]
     },
     {
       account: 'default',
@@ -1140,7 +1140,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       },
       refId: '18',
       requisiteStageRefIds: [
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${proxyDeploymentsResult}',
@@ -1185,7 +1185,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       },
       refId: '19',
       requisiteStageRefIds: [
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${proxyDeploymentsResult}',
@@ -1209,7 +1209,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       refId: '20',
       requisiteStageRefIds: [
         '13',
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${ !deploymentResult || !proxyDeploymentsResult }',
@@ -1235,7 +1235,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       refId: '21',
       requisiteStageRefIds: [
         '13',
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${ deploymentResult && proxyDeploymentsResult }',

@@ -37,6 +37,8 @@ import {
   getUndeploymentVirtualServiceStage
 } from './templates/undeployment'
 import { ConnectorConfiguration } from './connector'
+import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
+import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
 
 export class SpinnakerPipelineBuilder {
 
@@ -80,8 +82,8 @@ export class SpinnakerPipelineBuilder {
       ...this.getDeploymentStages(deployment),
       ...this.getProxyDeploymentStages(deployment, activeComponents),
       ...this.getDeploymentsEvaluationStage(deployment.components),
-      ...this.getRollbackDeploymentsStage(deployment),
       ...this.getProxyDeploymentsEvaluationStage(deployment.components),
+      ...this.getRollbackDeploymentsStage(deployment, activeComponents),
       ...this.getDeleteUnusedDeploymentsStage(deployment, activeComponents),
       ...this.getFailureWebhookStage(deployment, configuration),
       ...this.getSuccessWebhookStage(deployment, configuration)
@@ -113,7 +115,7 @@ export class SpinnakerPipelineBuilder {
       return []
     }
     const proxyStages: Stage[] = []
-    const evalStageId: number = deployment.components.length * 4 + 1
+    const evalStageId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(deployment.components)
     deployment.components.forEach(component => {
       const activeByName: Component[] = this.getActiveComponentsByName(activeComponents, component.name)
       proxyStages.push(getDestinationRulesStage(component, deployment, activeByName, this.currentStageId++, evalStageId))
@@ -144,11 +146,17 @@ export class SpinnakerPipelineBuilder {
       []
   }
 
-  private getRollbackDeploymentsStage(deployment: Deployment): Stage[] {
+  private getRollbackDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
     const stages: Stage[] = []
-    const evalStageId: number = this.currentStageId - 1
+    const evalStageId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(deployment.components)
     deployment.components?.forEach(component => {
-      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+      const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
+      if (!activeByName.find(activeComponent => activeComponent.imageTag === component.imageTag)) {
+        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+      }
     })
     return stages
   }
@@ -166,9 +174,12 @@ export class SpinnakerPipelineBuilder {
   }
 
   private getDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+    if (!deployment?.components) {
+      return []
+    }
     const stages: Stage[] = []
-    const evalStageId: number = this.currentStageId - 1
-    deployment?.components?.forEach(component => {
+    const evalStageId: number = DeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
+    deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = this.getUnusedComponent(activeComponents, component, deployment.circleId)
       if (unusedComponent) {
         stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
@@ -182,7 +193,7 @@ export class SpinnakerPipelineBuilder {
       return []
     }
     const stages: Stage[] = []
-    const evalStageId: number = deployment.components.length * 2 + 1
+    const evalStageId: number = UndeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = this.getUndeploymentUnusedComponent(activeComponents, component)
       if (unusedComponent) {
