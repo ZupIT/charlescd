@@ -59,15 +59,18 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         <Styled.MetricsGroupsNameContent color={'light'} title={metric?.name}>
           {metric?.name}
         </Styled.MetricsGroupsNameContent>
-        <Styled.MetricsGroupsContentText color={'light'}>
+        <Styled.MetricsGroupsCountContent color={'light'}>
           {metric.metricsCount}
-        </Styled.MetricsGroupsContentText>
-        <Styled.MetricsGroupsContentText
+        </Styled.MetricsGroupsCountContent>
+        <Styled.MetricsGroupsThresholdsContent
+          hasData={metric.thresholds === 0}
           color={'light'}
           title={`${metric.thresholdsReached} / ${metric.thresholds}`}
         >
-          {metric.thresholdsReached} / {metric.thresholds}
-        </Styled.MetricsGroupsContentText>
+          {metric.thresholds === 0
+            ? 'Not configured'
+            : `${metric.thresholdsReached} / ${metric.thresholds}`}
+        </Styled.MetricsGroupsThresholdsContent>
       </Styled.MetricsGroupsCard>
     ));
   };

@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import areaChartOption from './areaChart.options';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { AreaChart } from 'core/components/Charts';
-// import { getOperator } from './helpers';
-// import { MetricFilter } from './types';
+import { useMetricQuery } from './hooks';
 
-// type Props = {
+type Props = {
+  metricsGroupId: string;
+};
 
-// };
-
-const MonitoringMetrics = () => {
+const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   const [chartViewMode, setChartViewMode] = useState(false);
+  const { getMetricByQuery, chartData, status } = useMetricQuery();
+
+  useEffect(() => {
+    if (status.isIdle) {
+      getMetricByQuery(metricsGroupId, { period: '5d' });
+    }
+  }, [getMetricByQuery, status.isIdle, metricsGroupId]);
 
   const toogleChart = () => {
-    console.log(chartViewMode);
+    console.log(chartViewMode, chartData);
     setChartViewMode(!chartViewMode);
   };
 
@@ -57,6 +63,18 @@ const MonitoringMetrics = () => {
               {
                 name: 'series2',
                 data: [11, 32, 45, 32, 34, 52, 41]
+              },
+              {
+                name: 'series3',
+                data: [0, 11, 34, 32, 21, 11, 20]
+              },
+              {
+                name: 'series4',
+                data: [2, 5, 10, 16, 34, 52, 21]
+              },
+              {
+                name: 'series5',
+                data: [7, 50, 60, 70, 80, 90, 100]
               }
             ]}
             width={490}

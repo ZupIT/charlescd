@@ -5,6 +5,7 @@ import (
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
+	"compass/pkg/logger"
 	"fmt"
 	"log"
 	"sync"
@@ -27,7 +28,7 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 func (dispatcher *Dispatcher) dispatch() {
 	metricExecutions, err := dispatcher.metric.FindAllActivesMetricExecutions()
 	if err != nil {
-		util.Panic("Cannot find active metric executions", "Dispatch", err, nil)
+		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
 	}
 
 	for _, execution := range metricExecutions {
@@ -58,7 +59,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
-		util.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
+		logger.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
 		dispatcher.mux.Lock()
 		execution.Status = metric.MetricError
 		dispatcher.metric.UpdateMetricExecution(execution)

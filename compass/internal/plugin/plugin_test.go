@@ -1,10 +1,7 @@
 package plugin
 
 import (
-	"compass/pkg/logger/fake"
 	"database/sql"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -36,45 +33,9 @@ func (s *Suite) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	fakeLogger := fake.NewLoggerFake()
-	s.repository = NewMain(s.DB, fakeLogger)
+	s.repository = NewMain(s.DB)
 }
 
 func TestInit(t *testing.T) {
 	suite.Run(t, new(Suite))
-}
-
-func (s *Suite) TestValidate() {
-	plugin := Plugin{}
-	var errList = plugin.Validate()
-
-	require.NotEmpty(s.T(), errList)
-}
-
-func (s *Suite) TestFindAll() {
-	var (
-		name = "Fake Plugin"
-		src  = "fake_plugin"
-	)
-
-	os.Setenv("PLUGINS_DIR", filepath.Join("./fake"))
-
-	res, err := s.repository.FindAll()
-
-	expected := Plugin{
-		Name: name,
-		Src:  src,
-	}
-
-	require.NoError(s.T(), err)
-	require.Contains(s.T(), res, expected)
-}
-
-func (s *Suite) TestFindAllError() {
-
-	os.Setenv("PLUGINS_DIR", filepath.Join("./teste"))
-
-	_, err := s.repository.FindAll()
-
-	require.Error(s.T(), err)
 }

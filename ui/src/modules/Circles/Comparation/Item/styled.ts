@@ -21,6 +21,10 @@ import InputTitleComponent from 'core/components/Form/InputTitle';
 import Dropdown from 'core/components/Dropdown';
 import Text from 'core/components/Text';
 
+interface NoDataThresholds {
+  hasData: boolean;
+}
+
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
 `;
@@ -117,8 +121,17 @@ const MetricsGroupsContent = styled.div`
   width: 550px;
 `;
 
-const MetricsGroupsContentText = styled(Text.h5)`
+const MetricsGroupsCountContent = styled(Text.h5)`
   margin: auto 60px auto 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 100px;
+`;
+
+const MetricsGroupsThresholdsContent = styled(Text.h5)<NoDataThresholds>`
+  margin: ${({ hasData }) =>
+    hasData ? 'auto 0 auto 0' : 'auto 60px auto 15px'};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -169,9 +182,10 @@ export default {
   MetricsTitle,
   InputTitle,
   MetricsGroupsContent,
-  MetricsGroupsContentText,
   MetricsGroupsHeader,
   MetricsGroupsFooter,
   MetricsGroupsCard,
-  MetricsGroupsNameContent
+  MetricsGroupsNameContent,
+  MetricsGroupsCountContent,
+  MetricsGroupsThresholdsContent
 };
