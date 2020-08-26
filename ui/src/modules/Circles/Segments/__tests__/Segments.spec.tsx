@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, wait, waitForElement } from 'unit-test/testUtils';
 import Segments from '..';
 
 (global as any).MutationObserver = MutationObserver;
@@ -26,10 +26,10 @@ test('render Segments default component', async () => {
     <Segments />
   );
 
-  expect(queryByTestId('segments-rules')).not.toBeInTheDocument();
-  expect(queryByTestId('input-text-logicalOperator')).not.toBeInTheDocument();
-  expect(queryByTestId('input-hidden-type')).toBeInTheDocument();
-  expect(queryByTestId('button-default-save')).not.toBeInTheDocument();
+  await wait(() => expect(queryByTestId('segments-rules')).not.toBeInTheDocument());
+  await wait(() => expect(queryByTestId('input-text-logicalOperator')).not.toBeInTheDocument());
+  await wait(() => expect(queryByTestId('input-hidden-type')).toBeInTheDocument());
+  await wait(() => expect(queryByTestId('button-default-save')).not.toBeInTheDocument());
 });
 
 test('render Segments default component with viewMode off', async () => {
@@ -37,9 +37,9 @@ test('render Segments default component with viewMode off', async () => {
     <Segments viewMode={false} />
   );
 
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
-  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
-  expect(getByTestId('button-default-save')).toBeInTheDocument();
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+  await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
+  await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
 });
 
 test('render Segments default component and Rules', async () => {
@@ -47,17 +47,17 @@ test('render Segments default component and Rules', async () => {
     <Segments viewMode={false} />
   );
 
-  const InputType = getByTestId('input-hidden-clauses[0].type')
-  const InputKey = getByTestId('input-text-clauses[0].content.key')
-  const WrapperCondition = getByTestId('select-clauses[0].content.condition')
-  const InputValue = getByTestId('input-text-clauses[0].content.value[0]')
+  const inputTypeText = 'input-hidden-clauses[0].type';
+  const inputKeyText = 'input-text-clauses[0].content.key';
+  const wrapperConditionText = 'select-clauses[0].content.condition';
+  const inputValueText = 'input-text-clauses[0].content.value[0]';
 
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
-  expect(InputType).toHaveAttribute('type', 'hidden');
-  expect(InputKey).toBeInTheDocument();
-  expect(InputKey).toHaveAttribute('type', 'text');
-  expect(WrapperCondition).toBeInTheDocument();
-  expect(InputValue).toBeInTheDocument();
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden'));
+  await wait(() => expect(getByTestId(inputKeyText)).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputKeyText)).toHaveAttribute('type', 'text'));
+  await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
 });
 
 test('render Segments default component and adding new rule', async () => {
@@ -65,14 +65,14 @@ test('render Segments default component and adding new rule', async () => {
     <Segments viewMode={false} />
   );
 
-  const ButtonAddClause = getByTestId('button-default-add-clause');
+  const ButtonAddClause = await waitForElement(() => getByTestId('button-default-add-clause'));
   expect(ButtonAddClause).toBeInTheDocument();
 
-  const KeyInput0 = getByTestId('input-text-clauses[0].content.key');
+  const KeyInput0 = await waitForElement(() => getByTestId('input-text-clauses[0].content.key'));
   expect(KeyInput0).toBeInTheDocument();
 
   fireEvent.click(ButtonAddClause);
 
-  const KeyInput1 = getByTestId('input-text-clauses[0].clauses[1].content.key');
+  const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
   expect(KeyInput1).toBeInTheDocument();
 });
