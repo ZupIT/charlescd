@@ -126,15 +126,12 @@ func (main Main) isMetricError(metrics []metric.Metric) bool {
 	return false
 }
 
-func (main Main) getResumeStatusByGroup(metrics []metric.Metric) string {
-	allMetricsReached := main.metricMain.CountAllMetricsFinished(metrics)
-	allConfiguredMetrics := main.metricMain.CountAllMetricsWithConditions(metrics)
-
+func (main Main) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, metrics []metric.Metric) string {
 	if main.isMetricError(metrics) {
 		return metric.MetricError
 	}
 
-	if allMetricsReached == allConfiguredMetrics {
+	if reachedMetrics == configuredMetrics && reachedMetrics > 0 {
 		return metric.MetricReached
 	}
 
@@ -159,13 +156,14 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, error) {
 	}
 
 	for _, group := range metricsGroups {
+		configuredMetrics, reachedMetrics, allMetrics := main.metricMain.CountMetrics(group.Metrics)
 		metricsGroupsResume = append(metricsGroupsResume, MetricGroupResume{
 			group.BaseModel,
 			group.Name,
-			main.metricMain.CountAllMetricsWithConditions(group.Metrics),
-			main.metricMain.CountAllMetricsFinished(group.Metrics),
-			main.metricMain.CountAllMetricsInGroup(group.Metrics),
-			main.getResumeStatusByGroup(group.Metrics),
+			configuredMetrics,
+			reachedMetrics,
+			allMetrics,
+			main.getResumeStatusByGroup(reachedMetrics, configuredMetrics, group.Metrics),
 		})
 	}
 

@@ -11,7 +11,6 @@ COPY . .
 
 RUN chmod a+rx build-plugins.sh
 RUN sh build-plugins.sh
-# RUN go build -o ./out/compass cmd/*.go
 
 CMD CGO_ENABLED=0 go test ./...
 
