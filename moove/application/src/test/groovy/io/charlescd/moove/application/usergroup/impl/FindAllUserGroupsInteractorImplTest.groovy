@@ -39,7 +39,7 @@ class FindAllUserGroupsInteractorImplTest extends Specification {
 
     def "when there is no user group should return an empty page"() {
         given:
-        def name = ""
+        def name = null
         def pageRequest = new PageRequest()
         def emptyPage = new Page([], 0, 20, 0)
 
