@@ -24,8 +24,6 @@ interface ChartProps {
 const Chart = styled(Charts)<ChartProps>`
   cursor: crosshair;
   padding-right: 15px;
-  position: relative;
-  right: 20px;
 
   .apexcharts-canvas,
   .apexcharts-canvas.apexcharts-theme-dark {
