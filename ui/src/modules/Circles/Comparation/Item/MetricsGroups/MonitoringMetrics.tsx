@@ -28,7 +28,7 @@ type Props = {
 };
 
 const MonitoringMetrics = ({ metricsGroupId }: Props) => {
-  const [chartViewMode, setChartViewMode] = useState(false);
+  const [chartViewMode, setChartViewMode] = useState(true);
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
@@ -109,7 +109,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
             <AreaChart
               options={areaChartOption}
               series={chartData}
-              width={530}
+              width={500}
               height={200}
             />
             {renderChartPeriodFilter()}
