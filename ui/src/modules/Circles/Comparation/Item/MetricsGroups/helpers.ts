@@ -18,7 +18,7 @@ import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
-import dayjs from 'dayjs';
+import { convertFromUnixToDatetime } from 'core/utils/date';
 import { MetricFilter, Metric, ChartDataByQuery, ChartData } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
@@ -91,7 +91,7 @@ export const getThresholdStatus = (status: string) => {
 
 const buildSeriesData = (data: ChartData[]) =>
   map(data, item => ({
-    x: dayjs(item.period).format('DD/MMM'),
+    x: convertFromUnixToDatetime(item.period),
     y: item.total
   }));
 
