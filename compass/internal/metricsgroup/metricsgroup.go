@@ -80,7 +80,7 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
-		err := errors.New("Invalid period: not found number")
+		err := errors.New("Invalid period or interval: not found number")
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
 		return err
 	}
@@ -88,7 +88,7 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
-		err := errors.New("Invalid period: not found unit")
+		err := errors.New("Invalid period or interval: not found unit")
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
 		return err
 	}
@@ -254,7 +254,7 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, error) {
+func (main Main) QueryByGroupID(id, period, interval string) ([]datasource.MetricValues, error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
@@ -269,7 +269,7 @@ func (main Main) QueryByGroupID(id, period string) ([]datasource.MetricValues, e
 
 	for _, metric := range metricsGroup.Metrics {
 
-		query, err := main.metricMain.Query(metric, period)
+		query, err := main.metricMain.Query(metric, period, interval)
 		if err != nil {
 			logger.Error(util.QueryByGroupIdError, "QueryByGroupID", err, metric)
 			return []datasource.MetricValues{}, err
