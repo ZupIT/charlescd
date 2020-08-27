@@ -20,5 +20,5 @@ import io.charlescd.moove.application.user.response.UserNewPasswordResponse
 import java.util.UUID
 
 interface ResetUserPasswordInteractor {
-    fun execute(id: UUID): UserNewPasswordResponse
+    fun execute(authorization: String, id: UUID): UserNewPasswordResponse
 }

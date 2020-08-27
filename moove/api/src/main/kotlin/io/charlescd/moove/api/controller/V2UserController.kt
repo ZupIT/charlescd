@@ -64,8 +64,9 @@ class V2UserController(
     @PutMapping("/{id}/reset-password")
     @ResponseStatus(HttpStatus.OK)
     fun resetPassword(
+        @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable id: UUID
-    ) = resetUserPasswordInteractor.execute(id)
+    ) = resetUserPasswordInteractor.execute(authorization, id)
 
     @ApiOperation(value = "Create user")
     @ApiImplicitParam(
