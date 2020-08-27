@@ -93,8 +93,7 @@ export default class TotalPipeline {
   private buildDeployments(): IDeploymentReturn | undefined {
     if (this.contract.versions.length === 0) { return }
 
-    this.contract.circles.forEach(circle => {
-      const version = this.getVersionCircle(this.contract.versions, circle)
+    this.contract.versions.forEach(version => {
       const helmStage = baseStageHelm(
         this.contract,
         this.contract.githubAccount,
@@ -103,7 +102,7 @@ export default class TotalPipeline {
         String(this.refId),
         [],
         undefined,
-        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
+        version.versionCircle
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -229,10 +228,4 @@ export default class TotalPipeline {
     }
   }
 
-  private getVersionCircle(versions: IDeploymentVersion[], circle: IPipelineCircle): IDeploymentVersion {
-    const versionsSearch = versions.find(
-      octopipeVersion => octopipeVersion.version === circle.destination.version
-    )
-    return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
-  }
 }

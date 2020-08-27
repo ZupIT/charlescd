@@ -117,11 +117,7 @@ export class OctopipeService implements ICdServiceStrategy {
       helmUrl: configuration.helmRepository,
       istio: { virtualService: {}, destinationRules: {} },
       unusedVersions: [{}],
-      versions: this.fillVersionProperties(
-        configuration.pipelineCirclesOptions.pipelineVersions,
-        configuration.componentName,
-        configuration.pipelineCirclesOptions.pipelineCircles
-      ),
+      versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
       callbackType:  configuration.callbackType,
@@ -215,10 +211,6 @@ export class OctopipeService implements ICdServiceStrategy {
     })
   }
 
-  private fillVersionProperties(versions: IOctopipeVersion[], appName: string, circles: IPipelineCircle[]): IOctopipeVersion[] {
-    const versionsUpdated = this.getCircleVersions(versions, circles)
-    return this.concatAppNameAndVersion(versionsUpdated, appName)
-  }
 
   private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
     if (deploymentConfiguration.provider === ClusterProviderEnum.DEFAULT) {
@@ -267,17 +259,5 @@ export class OctopipeService implements ICdServiceStrategy {
       : createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
   }
 
-  private getVersionCircle(octopipeVersions: IOctopipeVersion[], circle: IPipelineCircle): IOctopipeVersion {
-    const versionSearch = octopipeVersions.find(
-      octopipeVersion => octopipeVersion.version === circle.destination.version
-    )
-    return { ...versionSearch, versionCircle: circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID }
-  }
-
-  private getCircleVersions(octopipeVersions: IOctopipeVersion[], circles: IPipelineCircle[]): IOctopipeVersion[] {
-    return circles.map(
-      circle => this.getVersionCircle(octopipeVersions, circle)
-    )
-  }
 
 }

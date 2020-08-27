@@ -80,8 +80,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -177,8 +177,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -216,7 +216,8 @@ describe('Octopipe Service', () => {
         unusedVersions: [
           {
             version: 'some-app-name-v2',
-            versionUrl: 'version.url/tag:456'
+            versionUrl: 'version.url/tag:456',
+            versionCircle: 'dummy-value'
           }
         ],
         versions: [
@@ -366,8 +367,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -463,8 +464,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -502,7 +503,8 @@ describe('Octopipe Service', () => {
         unusedVersions: [
           {
             version: 'some-app-name-v2',
-            versionUrl: 'version.url/tag:456'
+            versionUrl: 'version.url/tag:456',
+            versionCircle: 'dummy-value'
           }
         ],
         versions: [
@@ -652,8 +654,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -734,8 +736,8 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -771,7 +773,8 @@ describe('Octopipe Service', () => {
         unusedVersions: [
           {
             version: 'some-app-name-v2',
-            versionUrl: 'version.url/tag:456'
+            versionUrl: 'version.url/tag:456',
+            versionCircle: 'dummy-value'
           }
         ],
         versions: [
@@ -916,8 +919,9 @@ describe('Octopipe Service', () => {
 
       const pipelineOptions: IPipelineOptions = {
         pipelineCircles: [{ header: { headerName: 'x-dummy-header', headerValue: 'dummy-value' }, destination: { version: 'v1' } }],
-        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123' }],
-        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456' }]
+        pipelineVersions: [{ version: 'v1', versionUrl: 'version.url/tag:123', versionCircle: 'dummy-value' }],
+
+        pipelineUnusedVersions: [{ version: 'v2', versionUrl: 'version.url/tag:456', versionCircle: 'dummy-value' }]
       }
 
       const octopipeConfiguration: OctopipeConfigurationData = {
@@ -951,7 +955,8 @@ describe('Octopipe Service', () => {
         unusedVersions: [
           {
             version: 'some-app-name-v2',
-            versionUrl: 'version.url/tag:456'
+            versionUrl: 'version.url/tag:456',
+            versionCircle: 'dummy-value'
           }
         ],
         versions: [
