@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+import CheckPassword from './CheckPassword';
+import { validationResolver } from './validationResolver';
 
-data class VillagerBuildResponse(
-    val id: String
-)
+export { validationResolver };
+export default CheckPassword;

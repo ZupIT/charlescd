@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
-data class FindComponentTagsResponse(
-    val tags: List<ComponentTag>
-) {
-    data class ComponentTag(
-        val name: String,
-        val artifact: String
-    )
+data class CreateVillagerRegistryConfigurationRequest(
+    val name: String,
+    val address: String,
+    val provider: CreateVillagerRegistryConfigurationProvider,
+    val username: String? = null,
+    val password: String? = null,
+    val accessKey: String? = null,
+    val secretKey: String? = null,
+    val region: String? = null,
+    val authorId: String
+)
+
+enum class CreateVillagerRegistryConfigurationProvider {
+    AWS, Azure
 }
