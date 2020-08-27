@@ -34,13 +34,10 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     private Client client;
     private String baseAddress;
 
-    public DockerRegistryHttpApiV2Client() {
-        this.client = ClientBuilder.newClient();
-    }
-
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
         this.baseAddress = config.address;
+        this.client = ClientBuilder.newClient();
 
         switch (type) {
             case AWS:
