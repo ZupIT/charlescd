@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.3.4-rc.2 (21/08/2020)
+- [#387](https://github.com/ZupIT/charlescd/pull/387) Add link that opens Charles Documentation
+- [#408](https://github.com/ZupIT/charlescd/pull/408) Set components running to false on cleanup
+- [#406](https://github.com/ZupIT/charlescd/pull/406) fix butler callback url
+- [#404](https://github.com/ZupIT/charlescd/pull/404) Remove hardcoded user/pass
+- [#403](https://github.com/ZupIT/charlescd/pull/403) Fix butler undeployment return
+- [#401](https://github.com/ZupIT/charlescd/pull/401) fix callback url
+- [#400](https://github.com/ZupIT/charlescd/pull/400) notify moove on cd callback
+- [#399](https://github.com/ZupIT/charlescd/pull/399) Return the same dto for v1 and v2 deployments
+- [#372](https://github.com/ZupIT/charlescd/pull/372) CI Update of charts and changelog
+- [#396](https://github.com/ZupIT/charlescd/pull/396) Butler v2 undeploy tests
+- [#382](https://github.com/ZupIT/charlescd/pull/382) Fix empty deploy period
+- [#394](https://github.com/ZupIT/charlescd/pull/394) Butler stabilization autofix
+- [#380](https://github.com/ZupIT/charlescd/pull/380) V2 Undeployments
+- [#322](https://github.com/ZupIT/charlescd/pull/322) Improve tests
+- [#331](https://github.com/ZupIT/charlescd/pull/331) Validating circle segments
+- [#391](https://github.com/ZupIT/charlescd/pull/391) add new circles-sample tgz and change service port
+- [#389](https://github.com/ZupIT/charlescd/pull/389) Fixing Octopipe Host and Circles Sample port
+- [#373](https://github.com/ZupIT/charlescd/pull/373) Bump class-transformer from 0.2.3 to 0.3.1 in /butler
+- [#388](https://github.com/ZupIT/charlescd/pull/388) Butler stabilization lint fix
+- [#385](https://github.com/ZupIT/charlescd/pull/385) enable CORS on the moove and circle matcher routes via nginx
+- [#335](https://github.com/ZupIT/charlescd/pull/335) Issue modal user group layout
+- [#366](https://github.com/ZupIT/charlescd/pull/366) Fixing GitLab integration
+
+---
+
 ## 0.3.4-rc.1 (13/08/2020)
 - [#386](https://github.com/ZupIT/charlescd/pull/386) added option for Octopipe to skip https validation on git requests
 - [#384](https://github.com/ZupIT/charlescd/pull/384) Changing circle sample's chart template value

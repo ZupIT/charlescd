@@ -102,7 +102,16 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, period)
+	interval := r.URL.Query().Get("interval")
+	if interval != "" {
+		err := metricsGroupApi.metricsGroupMain.PeriodValidate(interval)
+		if err != nil {
+			api.NewRestError(w, http.StatusInternalServerError, []error{err})
+			return
+		}
+	}
+
+	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, period, interval)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

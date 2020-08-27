@@ -198,6 +198,7 @@ const MetricsGroupsCardContent = styled.div`
 const MetricCardTableHead = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-top: 20px;
 
   span {
     margin: 0 90px 10px 10px;
@@ -267,7 +268,38 @@ const MetricLastValue = styled.div<ThresholdIconProps>`
 
 const MonitoringMetricsContent = styled.div``;
 
-const MonitoringMetricsFilter = styled.div``;
+const MonitoringMetricsFilter = styled.div`
+  padding-top: 10px;
+`;
+
+const MonitoringMetricsPeriodFilter = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 0px 80px;
+`;
+
+const ButtonIconRoundedPeriod = styled(ButtonIconRoundedComponent)`
+  height: 17px;
+  width: 37px;
+  padding: 10px 25px;
+  display: flex;
+  justify-content: center;
+
+  span {
+    font-weight: normal;
+    font-size: ${HEADINGS_FONT_SIZE.h6};
+  }
+
+  ${({ isActive }: ButtonIconProps) =>
+    isActive &&
+    css`
+      border: solid 1px ${({ theme }) => theme.radio.checked.color};
+
+      span {
+        color: ${({ theme }) => theme.radio.checked.color};
+      }
+    `};
+`;
 
 const FieldErrorWrapper = styled.div`
   display: flex;
@@ -313,5 +345,7 @@ export default {
   RuleWrapper,
   MonitoringMetricsContent,
   MonitoringMetricsFilter,
+  MonitoringMetricsPeriodFilter,
+  ButtonIconRoundedPeriod,
   FieldErrorWrapper
 };

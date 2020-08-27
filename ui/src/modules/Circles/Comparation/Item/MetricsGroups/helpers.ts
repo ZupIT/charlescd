@@ -18,7 +18,8 @@ import map from 'lodash/map';
 import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
-import { MetricFilter, Metric, Execution } from './types';
+import dayjs from 'dayjs';
+import { MetricFilter, Metric, ChartDataByQuery, ChartData } from './types';
 
 export const normalizeMetricOptions = (metrics: string[]) =>
   map(metrics, item => ({
@@ -59,28 +60,43 @@ export const buildMetricPayload = (formData: Metric, metric: Metric) => {
   return payload;
 };
 
-export const getThresholdStatus = (execution: Execution) => {
-  switch (execution.status) {
+export const getThresholdStatus = (status: string) => {
+  switch (status) {
     case 'REACHED': {
       return {
         icon: 'bell',
         color: 'reached',
-        message: 'This metric has reached its goal.'
+        message: 'This metric has reached its goal.',
+        ResumeMessage: 'This metrics group has reached its goal.'
       };
     }
     case 'ERROR': {
       return {
         icon: 'error',
         color: 'error',
-        message: 'An error occurred in this metric.'
+        message: 'An error occurred in this metric.',
+        ResumeMessage: 'There is at least one error in your metrics group.'
       };
     }
     default: {
       return {
         icon: 'bell',
         color: 'active',
-        message: 'This metric has not yet reached its goal.'
+        message: 'This metric has not yet reached its goal.',
+        ResumeMessage: 'This metrics group has not yet reached its goal.'
       };
     }
   }
 };
+
+const buildSeriesData = (data: ChartData[]) =>
+  map(data, item => ({
+    x: dayjs(item.period).format('DD/MMM'),
+    y: item.total
+  }));
+
+export const getDeploySeries = (data: ChartDataByQuery) =>
+  map(data, item => ({
+    name: item.metric,
+    data: buildSeriesData(item.result)
+  }));
