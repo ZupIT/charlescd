@@ -138,7 +138,6 @@ describe('Octopipe Service', () => {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
             versionCircle: 'dummy-value',
-            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',
@@ -425,7 +424,6 @@ describe('Octopipe Service', () => {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
             versionCircle: 'dummy-value',
-            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',
@@ -697,7 +695,6 @@ describe('Octopipe Service', () => {
             version: 'some-app-name-v1',
             versionUrl: 'version.url/tag:123',
             versionCircle: 'dummy-value',
-            versionSuffix: expect.anything()
           }
         ],
         webHookUrl: 'dummy-callback-url',

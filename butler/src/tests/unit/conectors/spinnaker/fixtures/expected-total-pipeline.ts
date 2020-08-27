@@ -105,7 +105,6 @@ const expectedTotalPipeline = {
         'image.tag': '/v1',
         'name': 'v1',
         'circleId': AppConstants.DEFAULT_CIRCLE_ID,
-        'suffix' : any(String)
       },
       refId: '1',
       requisiteStageRefIds: [],

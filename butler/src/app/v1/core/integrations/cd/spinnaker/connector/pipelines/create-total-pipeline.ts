@@ -104,8 +104,7 @@ export default class TotalPipeline {
         String(this.refId),
         [],
         undefined,
-        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID,
-        this.getSuffix()
+        circle.header ? circle.header.headerValue : AppConstants.DEFAULT_CIRCLE_ID
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -236,8 +235,5 @@ export default class TotalPipeline {
       octopipeVersion => octopipeVersion.version === circle.destination.version
     )
     return { versionUrl: versionsSearch?.versionUrl || '', version: versionsSearch?.version || '' }
-  }
-  private getSuffix() {
-    return ('-').concat(crypto.randomBytes(4).toString('hex'))
   }
 }
