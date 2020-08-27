@@ -21,6 +21,7 @@ export type MetricsGroupsResume = {
   metricsCount?: number;
   thresholds: number;
   thresholdsReached: number;
+  status: string;
 };
 
 export type MetricsGroup = {
@@ -83,5 +84,10 @@ export type DataSourceData = {
 export type ChartDataByQuery = {
   id: string;
   metric: string;
-  result: Array<number | string>;
+  result: ChartData[];
+}[];
+
+export type ChartData = {
+  total: string;
+  period: string;
 };

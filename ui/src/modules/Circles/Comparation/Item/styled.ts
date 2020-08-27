@@ -22,7 +22,8 @@ import Dropdown from 'core/components/Dropdown';
 import Text from 'core/components/Text';
 
 interface NoDataThresholds {
-  hasData: boolean;
+  colorSVG: string;
+  hasTreshold: boolean;
 }
 
 const Wrapper = styled.div`
@@ -129,13 +130,25 @@ const MetricsGroupsCountContent = styled(Text.h5)`
   min-width: 100px;
 `;
 
-const MetricsGroupsThresholdsContent = styled(Text.h5)<NoDataThresholds>`
-  margin: ${({ hasData }) =>
-    hasData ? 'auto 0 auto 0' : 'auto 60px auto 15px'};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 100px;
+const MetricsGroupsThresholdsContent = styled.div<NoDataThresholds>`
+  margin: auto 0;
+  display: flex;
+
+  span {
+    margin-left: ${({ hasTreshold }) => (hasTreshold ? '0' : '5px')};
+    margin-top: ${({ hasTreshold }) => (hasTreshold ? '0' : '2px')};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+  }
+
+  svg {
+    color: ${({ theme, colorSVG, hasTreshold }) =>
+      hasTreshold
+        ? 'transparent'
+        : theme.circleGroupMetrics.execution.status[colorSVG]};
+  }
 `;
 
 const MetricsGroupsNameContent = styled(Text.h5)`
