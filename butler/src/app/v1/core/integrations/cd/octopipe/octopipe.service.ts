@@ -32,7 +32,6 @@ import { OctopipeApiService } from './octopipe-api.service'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../../constants'
-import * as crypto from 'crypto'
 
 @Injectable()
 export class OctopipeService implements ICdServiceStrategy {

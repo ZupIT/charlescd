@@ -29,7 +29,6 @@ import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 import { AppConstants } from '../../../../../constants'
 import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
-import * as crypto from 'crypto'
 
 export default class TotalPipeline {
   refId: number
