@@ -24,71 +24,100 @@ func getPrometheusApiClient(datasourceConfiguration []byte) (api.Client, error) 
 	return api.NewClient(apiConf)
 }
 
-func Query(datasourceConfiguration, query, filters, period []byte) ([]datasource.Value, error) {
+func getErrorMoreThanOneResultByQuery(query string) error {
+	return errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + query)
+}
+
+func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult model.Vector) ([]datasource.Value, error) {
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
+	}
+
+	datasourceValues := []datasource.Value{}
+	for _, value := range prometheusResult {
+		valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
+		if err != nil {
+			return nil, err
+		}
+
+		datasourceValues = append(datasourceValues, datasource.Value{
+			Total:  valueParsed,
+			Period: value.Timestamp.String(),
+		})
+	}
+
+	return datasourceValues, nil
+}
+
+func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult model.Matrix) ([]datasource.Value, error) {
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
+	}
+
+	datasourceValues := []datasource.Value{}
+	for _, matrixVector := range prometheusResult {
+		for _, value := range matrixVector.Values {
+			valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
+			if err != nil {
+				return nil, err
+			}
+
+			datasourceValues = append(datasourceValues, datasource.Value{
+				Total:  valueParsed,
+				Period: value.Timestamp.String(),
+			})
+		}
+	}
+
+	return datasourceValues, nil
+}
+
+func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
 
 	v1Api := v1.NewAPI(apiClient)
-	result, _, err := v1Api.Query(context.Background(), string(query), time.Now())
+	namedLabels := "__name__"
+	labelValues, _, err := v1Api.LabelValues(context.Background(), namedLabels, time.Now(), time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	metricList := []string{}
+	for _, label := range labelValues {
+		metricList = append(metricList, string(label))
+	}
+
+	return metricList, nil
+}
+
+func Query(datasourceConfiguration, query, period []byte, filters []datasource.MetricFilter) ([]datasource.Value, error) {
+	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
+	if err != nil {
+		return nil, err
+	}
+
+	v1Api := v1.NewAPI(apiClient)
+	buildedQuery := createQueryByMetric(filters, string(query), string(period))
+	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
 	if err != nil {
 		return nil, err
 	}
 
 	switch result.Type() {
 	case model.ValVector:
-		vectorResult := result.(model.Vector)
-
-		if vectorResult.Len() > 1 {
-			return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + string(query))
-		}
-
-		values := []datasource.Value{}
-		for _, value := range vectorResult {
-			valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
-			if err != nil {
-				return nil, err
-			}
-
-			values = append(values, datasource.Value{
-				Total:  valueParsed,
-				Period: value.Timestamp.String(),
-			})
-		}
-
-		return values, nil
+		return getDatasourceValuesByPrometheusVectorResult(buildedQuery, result.(model.Vector))
 	case model.ValMatrix:
-		matrixResult := result.(model.Matrix)
-
-		if matrixResult.Len() > 1 {
-			return nil, errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + string(query))
-		}
-
-		values := []datasource.Value{}
-		for _, matrixVector := range matrixResult {
-			for _, value := range matrixVector.Values {
-				valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
-				if err != nil {
-					return nil, err
-				}
-
-				values = append(values, datasource.Value{
-					Total:  valueParsed,
-					Period: value.Timestamp.String(),
-				})
-			}
-		}
-
-		return values, nil
-
+		return getDatasourceValuesByPrometheusVectorMetrix(buildedQuery, result.(model.Matrix))
 	default:
-		return nil, errors.New("")
+		return nil, errors.New("Unsuported result type")
 	}
 }
 
-func Result(datasourceConfiguration, query, filters []byte) (float64, error) {
-	values, err := Query(datasourceConfiguration, query, filters, []byte(""))
+func Result(datasourceConfiguration, query []byte, filters []datasource.MetricFilter) (float64, error) {
+	values, err := Query(datasourceConfiguration, query, []byte(""), filters)
 	if err != nil {
 		return 0, err
 	}
@@ -98,6 +127,5 @@ func Result(datasourceConfiguration, query, filters []byte) (float64, error) {
 	}
 
 	var resultQuery = 0
-
 	return values[resultQuery].Total, nil
 }
