@@ -22,6 +22,7 @@ import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
+import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import { Metric, MetricsGroup } from './types';
 import {
   useCreateMetricsGroup,
@@ -177,7 +178,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             )}
           </Styled.MetricLastValue>
           <Styled.MetricDropdown>
-            <Dropdown icon="vertical-dots" size="16px">
+            <NewDropDown icon="vertical-dots" size="16px">
               <Dropdown.Item
                 icon="edit"
                 name="Edit metric"
@@ -188,7 +189,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
                 name="Delete"
                 onClick={() => handleDeleteMetric(metricsGroup.id, metric.id)}
               />
-            </Dropdown>
+            </NewDropDown>
           </Styled.MetricDropdown>
         </Styled.MetricCardBody>
       );
