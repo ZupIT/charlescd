@@ -587,7 +587,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(component1.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ destination: { version: 'image-tag' } }],
-        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url', versionCircle: 'f5d23a57-5607-4306-9993-477e1598cc2a' }],
         pipelineUnusedVersions: []
       }
     )
@@ -595,7 +595,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(component2.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ destination: { version: 'image-tag2' } }],
-        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2', versionCircle: 'f5d23a57-5607-4306-9993-477e1598cc2a' }],
         pipelineUnusedVersions: []
       }
     )

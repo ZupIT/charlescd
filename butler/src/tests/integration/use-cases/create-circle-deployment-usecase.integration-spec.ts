@@ -583,7 +583,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(component1.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag' } }],
-        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url', versionCircle: 'circle-header' }],
         pipelineUnusedVersions: []
       }
     )
@@ -591,7 +591,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(component2.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag2' } }],
-        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2', versionCircle: 'circle-header' }],
         pipelineUnusedVersions: []
       }
     )
