@@ -702,7 +702,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           versionUrl: 'image-url',
           version: 'component-name-image-tag',
           versionCircle: 'circle-header',
-          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -734,7 +733,6 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
           versionUrl: 'image-url2',
           version: 'component-name2-image-tag2',
           versionCircle: 'circle-header',
-          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,

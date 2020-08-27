@@ -28,7 +28,6 @@ type NonAdjustablePipelineVersion struct {
 	Version    string    `json:"version"`
 	VersionURL string    `json:"versionUrl"`
 	VersionCircle string `json:"versionCircle"`
-	VersionSuffix string `json:"versionSuffix`
 }
 
 type NonAdjustablePipelineGithub struct {
@@ -133,7 +132,6 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
 						"circleId": version.VersionCircle,
-						"suffix":  version.VersionSuffix,
 					},
 				},
 			},

@@ -701,7 +701,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
           versionUrl: 'image-url',
           version: 'component-name-image-tag',
           versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
-          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -733,7 +732,6 @@ describe('CreateDefaultDeploymentUsecase', () => {
           versionUrl: 'image-url2',
           version: 'component-name2-image-tag2',
           versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
-          versionSuffix: expect.anything()
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
