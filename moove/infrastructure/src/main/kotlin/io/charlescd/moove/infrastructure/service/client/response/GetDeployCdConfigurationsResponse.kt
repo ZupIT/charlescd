@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.response
 
-import io.charlescd.moove.domain.SimpleCircle
+import java.time.LocalDateTime
 
-data class IdentifyResponse(
-    val circles: List<SimpleCircle>
+data class GetDeployCdConfigurationsResponse(
+    val id: String,
+    val name: String,
+    val authorId: String,
+    val workspaceId: String,
+    val createdAt: LocalDateTime
 )
