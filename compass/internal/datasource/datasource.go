@@ -119,7 +119,7 @@ func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, e
 		return datasource.MetricList{}, err
 	}
 
-	getList, err := plugin.Lookup("GetLists")
+	getList, err := plugin.Lookup("GetMetrics")
 	if err != nil {
 		logger.Error(util.PluginLookupError, "GetMetrics", err, plugin)
 		return datasource.MetricList{}, err
