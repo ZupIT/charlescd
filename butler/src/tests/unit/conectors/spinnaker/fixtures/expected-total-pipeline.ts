@@ -15,7 +15,6 @@
  */
 
 import { AppConstants } from '../../../../../app/v1/core/constants'
-import any = jasmine.any
 
 const expectedTotalPipeline = {
   appConfig: {},
