@@ -247,11 +247,15 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 	query := main.getQueryByMetric(metric)
-	metric.Filters = append(metric.Filters, datasource.MetricFilter{
-		Field:    "circle_source",
-		Operator: "=",
-		Value:    metric.CircleID.String(),
-	})
+
+	if metric.Query == "" {
+		metric.Filters = append(metric.Filters, datasource.MetricFilter{
+			Field:    "circle_source",
+			Operator: "=",
+			Value:    metric.CircleID.String(),
+		})
+	}
+
 	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
 }
 
@@ -277,10 +281,14 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 
 	query := main.getQueryByMetric(metric)
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	metric.Filters = append(metric.Filters, datasource.MetricFilter{
-		Field:    "circle_source",
-		Operator: "=",
-		Value:    metric.CircleID.String(),
-	})
+
+	if metric.Query == "" {
+		metric.Filters = append(metric.Filters, datasource.MetricFilter{
+			Field:    "circle_source",
+			Operator: "=",
+			Value:    metric.CircleID.String(),
+		})
+	}
+
 	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
 }
