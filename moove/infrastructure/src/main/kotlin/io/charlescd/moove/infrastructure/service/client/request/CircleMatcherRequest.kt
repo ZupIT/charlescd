@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

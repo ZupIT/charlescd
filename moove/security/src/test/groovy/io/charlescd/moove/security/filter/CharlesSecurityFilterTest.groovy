@@ -55,6 +55,40 @@ class CharlesSecurityFilterTest extends Specification {
         notThrown()
     }
 
+    def "should allow user management to post with authorization"(){
+        given:
+        def request = new MockHttpServletRequest()
+        request.addHeader("Authorization", dummyUserToken())
+        request.setRequestURI("/api/user")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = new MockFilterChain()
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        1 * keycloakCustomService.hitUserInfo(dummyUserToken())
+        notThrown()
+    }
+
+    def "should not allow user management to post without authorization"(){
+        given:
+        def request = new MockHttpServletRequest()
+        request.setRequestURI("/api/user")
+        request.setMethod(HttpMethod.GET.name())
+
+        def response = new MockHttpServletResponse()
+        def filterChain = new MockFilterChain()
+
+        when:
+        charlesSecurityFilter.doFilter(request, response, filterChain)
+
+        then:
+        assert response.status == HttpStatus.UNAUTHORIZED.value()
+    }
+
     def "should not allow requests without an access token"() {
         given:
         def request = new MockHttpServletRequest()
@@ -105,6 +139,18 @@ class CharlesSecurityFilterTest extends Specification {
                 "IEFmb25zbyBkZSBQYXVsYSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkYXV0by5wYXVsYUB6dXAuY29tLmJyIiwiZ2l2ZW5fbmF" +
                 "tZSI6IkFkYXV0byIsImZhbWlseV9uYW1lIjoiQWZvbnNvIGRlIFBhdWxhIiwiZW1haWwiOiJhZGF1dG8ucGF1bGFAenVwLmNvbS" +
                 "5iciJ9.y2KK5XLvOHkMbJCDkDcdY1495oCHcSmcKNIDjKR5edY"
+    }
+
+    def dummyUserToken() {
+        return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwMzc4YmVjZS1lYzU4LTQ2MTAtODc2Ny0zYWJhZDE5NjY4" +
+                "OGQiLCJleHAiOjE1ODgxOTI0MzEsIm5iZiI6MCwiaWF0IjoxNTgxMzU1MzE1LCJpc3MiOiJodHRwczovL2Rhcndpbi1rZXljbG9" +
+                "hay5jb250aW51b3VzcGxhdGZvcm0uY29tL2F1dGgvcmVhbG1zL2RhcndpbiIsImF1ZCI6WyJkYXJ3aW4tY2xpZW50IiwiYWNjb3" +
+                "VudCJdLCJzdWIiOiI5YjFiNGRhOS0wMWRhLTQ4OTctYTVhYi04MWQzMzZiZjQ5ZmIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJkY" +
+                "XJ3aW4tY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiYTNkOTU1MWYtZDM2OS00ODRlLTgxNTMtOGNiMGI3" +
+                "ZGE2MDI1IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImVtYWlsX3Z" +
+                "lcmlmaWVkIjpmYWxzZSwibmFtZSI6IkFkYXV0byBBZm9uc28gZGUgUGF1bGEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZGF1dG" +
+                "8ucGF1bGFAenVwLmNvbS5iciIsImdpdmVuX25hbWUiOiJBZGF1dG8iLCJmYW1pbHlfbmFtZSI6IkFmb25zbyBkZSBQYXVsYSIsI" +
+                "mVtYWlsIjoiYWRhdXRvLnBhdWxhQHp1cC5jb20uYnIifQ.ZO0l9_RSrk_FX6HByCo_ob8uVVVf-cybjhN4_a4lSWs"
     }
 
     def dummyTokenModulesRead() {

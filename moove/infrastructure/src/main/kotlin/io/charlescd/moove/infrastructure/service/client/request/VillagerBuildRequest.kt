@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
-import java.time.LocalDateTime
+data class VillagerBuildRequest(
+    val tagName: String,
+    val callbackUrl: String,
+    val modules: List<BuildModulePart>
+)
 
-data class GetDeployCdConfigurationsResponse(
+data class BuildModulePart(
     val id: String,
     val name: String,
-    val authorId: String,
-    val workspaceId: String,
-    val createdAt: LocalDateTime
+    val registryConfigurationId: String,
+    val components: List<BuildModuleComponentPart>
+)
+
+data class BuildModuleComponentPart(
+    val name: String,
+    val tagName: String
 )
