@@ -93,14 +93,14 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 	return metricList, nil
 }
 
-func Query(datasourceConfiguration, query, period []byte, filters []datasource.MetricFilter) ([]datasource.Value, error) {
+func Query(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error) {
 	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
 
 	v1Api := v1.NewAPI(apiClient)
-	buildedQuery := createQueryByMetric(filters, string(query), string(period))
+	buildedQuery := createQueryByMetric(filters, string(query), string(period), string(interval))
 	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
 	if err != nil {
 		return nil, err
@@ -117,7 +117,7 @@ func Query(datasourceConfiguration, query, period []byte, filters []datasource.M
 }
 
 func Result(datasourceConfiguration, query []byte, filters []datasource.MetricFilter) (float64, error) {
-	values, err := Query(datasourceConfiguration, query, []byte(""), filters)
+	values, err := Query(datasourceConfiguration, query, []byte(""), []byte(""), filters)
 	if err != nil {
 		return 0, err
 	}

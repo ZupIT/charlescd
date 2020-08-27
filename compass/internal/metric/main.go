@@ -16,7 +16,7 @@ type UseCases interface {
 	SaveMetric(metric Metric) (Metric, error)
 	UpdateMetric(id string, metric Metric) (Metric, error)
 	RemoveMetric(id string) error
-	Query(metric Metric, period string) (interface{}, error)
+	Query(metric Metric, period string, interval string) (interface{}, error)
 	ResultQuery(metric Metric) (float64, error)
 	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
 	FindAllActivesMetricExecutions() ([]MetricExecution, error)
