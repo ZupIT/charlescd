@@ -21,6 +21,7 @@ import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import { AreaChart } from 'core/components/Charts';
 import { useMetricQuery } from './hooks';
+import { getDeploySeries } from './helpers';
 
 type Props = {
   metricsGroupId: string;
@@ -28,18 +29,61 @@ type Props = {
 
 const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   const [chartViewMode, setChartViewMode] = useState(false);
-  const { getMetricByQuery, chartData, status } = useMetricQuery();
+  const [chartData, setChartData] = useState([]);
+  const [chartDataLoading, setChartDataLoading] = useState(true);
+  const [period, setPeriod] = useState('12h');
+  const { getMetricByQuery } = useMetricQuery();
 
   useEffect(() => {
-    if (status.isIdle) {
-      getMetricByQuery(metricsGroupId, { period: '5d' });
-    }
-  }, [getMetricByQuery, status.isIdle, metricsGroupId]);
+    setChartDataLoading(true);
+    getMetricByQuery(metricsGroupId, { period })
+      .then(metricByQueryResponse => {
+        const series = getDeploySeries(metricByQueryResponse);
+        setChartData(series);
+      })
+      .finally(() => setChartDataLoading(false));
+  }, [getMetricByQuery, metricsGroupId, period]);
 
   const toogleChart = () => {
-    console.log(chartViewMode, chartData);
     setChartViewMode(!chartViewMode);
   };
+
+  const renderChartPeriodFilter = () => (
+    <Styled.MonitoringMetricsPeriodFilter>
+      <Styled.ButtonIconRoundedPeriod
+        color="dark"
+        onClick={() => setPeriod('12h')}
+        isActive={period === '12h'}
+        isDisabled={chartDataLoading}
+      >
+        Hour
+      </Styled.ButtonIconRoundedPeriod>
+      <Styled.ButtonIconRoundedPeriod
+        color="dark"
+        onClick={() => setPeriod('1d')}
+        isActive={period === '1d'}
+        isDisabled={chartDataLoading}
+      >
+        Day
+      </Styled.ButtonIconRoundedPeriod>
+      <Styled.ButtonIconRoundedPeriod
+        color="dark"
+        onClick={() => setPeriod('1w')}
+        isActive={period === '1w'}
+        isDisabled={chartDataLoading}
+      >
+        Week
+      </Styled.ButtonIconRoundedPeriod>
+      <Styled.ButtonIconRoundedPeriod
+        color="dark"
+        onClick={() => setPeriod('1m')}
+        isActive={period === '1m'}
+        isDisabled={chartDataLoading}
+      >
+        Mouth
+      </Styled.ButtonIconRoundedPeriod>
+    </Styled.MonitoringMetricsPeriodFilter>
+  );
 
   return (
     <>
@@ -53,33 +97,15 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       </Styled.MonitoringMetricsFilter>
       <Styled.MonitoringMetricsContent>
         {chartViewMode && (
-          <AreaChart
-            options={areaChartOption}
-            series={[
-              {
-                name: 'series1',
-                data: [31, 40, 28, 51, 42, 109, 100]
-              },
-              {
-                name: 'series2',
-                data: [11, 32, 45, 32, 34, 52, 41]
-              },
-              {
-                name: 'series3',
-                data: [0, 11, 34, 32, 21, 11, 20]
-              },
-              {
-                name: 'series4',
-                data: [2, 5, 10, 16, 34, 52, 21]
-              },
-              {
-                name: 'series5',
-                data: [7, 50, 60, 70, 80, 90, 100]
-              }
-            ]}
-            width={490}
-            height={200}
-          />
+          <>
+            <AreaChart
+              options={areaChartOption}
+              series={chartData}
+              width={490}
+              height={200}
+            />
+            {renderChartPeriodFilter()}
+          </>
         )}
       </Styled.MonitoringMetricsContent>
     </>

@@ -1,156 +1,131 @@
 package main
 
 import (
-	"compass/internal/metric"
 	"compass/pkg/datasource"
+	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"net/http"
-	"net/url"
 	"strconv"
+	"time"
+
+	"github.com/prometheus/client_golang/api"
+	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
+	"github.com/prometheus/common/model"
 )
 
-type APIError struct {
-	Error     string `json:"error"`
-	ErrorType string `json:"errorType"`
-	Status    string `json:"status"`
-}
+func getPrometheusApiClient(datasourceConfiguration []byte) (api.Client, error) {
+	var prometheusConfig map[string]string
+	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
-type PrometheusConfig struct {
-	Url string `json:"url"`
-}
-
-type PrometheusMetricsResponse struct {
-	Status string   `json:"status"`
-	Data   []string `json:"data"`
-}
-
-type PrometheusResultResponse struct {
-	Metric interface{} `json:"metric"`
-	Values interface{} `json:"values"`
-}
-
-type PrometheusResultsResponse struct {
-	Result     []map[string]interface{} `json:"result"`
-	ResultType string                   `json:"resultType"`
-}
-
-type PrometheusDataResponse struct {
-	Data PrometheusResultsResponse `json:"data"`
-}
-
-func GetLists(configurationData []byte) (datasource.MetricList, error) {
-	path := "/api/v1/label/__name__/values"
-
-	var prometheusConfig PrometheusConfig
-	_ = json.Unmarshal(configurationData, &prometheusConfig)
-
-	res, err := http.Get(fmt.Sprintf("%s%s", prometheusConfig.Url, path))
-	if err != nil {
-		return datasource.MetricList{}, errors.New("FAILED GET: " + string(configurationData))
+	apiConf := api.Config{
+		Address: prometheusConfig["url"],
 	}
 
-	var result PrometheusMetricsResponse
-	err = json.NewDecoder(res.Body).Decode(&result)
-	if err != nil {
-		return datasource.MetricList{}, errors.New("FAILED DECODER: " + err.Error())
-	}
-
-	return result.Data, nil
+	return api.NewClient(apiConf)
 }
 
-func getMetricLengthErrorByMetric(query string) error {
+func getErrorMoreThanOneResultByQuery(query string) error {
 	return errors.New("Your query returned more than one result. Add a filter to your query or review the desired metric: " + query)
 }
 
-func getResultValue(result PrometheusDataResponse) (interface{}, error) {
-	resultValues := map[string]interface{}{
-		"matrix": result.Data.Result[0]["values"],
-		"vector": result.Data.Result[0]["value"],
+func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult model.Vector) ([]datasource.Value, error) {
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
 	}
 
-	if resultValue, ok := resultValues[result.Data.ResultType]; ok {
-		return resultValue, nil
+	datasourceValues := []datasource.Value{}
+	for _, value := range prometheusResult {
+		valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
+		if err != nil {
+			return nil, err
+		}
+
+		datasourceValues = append(datasourceValues, datasource.Value{
+			Total:  valueParsed,
+			Period: value.Timestamp.String(),
+		})
 	}
 
-	return nil, errors.New("Result type not valid")
+	return datasourceValues, nil
 }
 
-func doPrometheusRequestByMetric(basePath string, period string, query string, filters []metric.MetricFilter) (*http.Response, error) {
-	path := "/api/v1/query"
-
-	currentQuery := query
-	if len(filters) > 0 {
-		currentQuery = createQueryByMetric(filters, query, string(period))
+func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult model.Matrix) ([]datasource.Value, error) {
+	if prometheusResult.Len() > 1 {
+		return nil, getErrorMoreThanOneResultByQuery(string(query))
 	}
 
-	Url, err := url.Parse(fmt.Sprintf("%s%s", basePath, path))
+	datasourceValues := []datasource.Value{}
+	for _, matrixVector := range prometheusResult {
+		for _, value := range matrixVector.Values {
+			valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
+			if err != nil {
+				return nil, err
+			}
+
+			datasourceValues = append(datasourceValues, datasource.Value{
+				Total:  valueParsed,
+				Period: value.Timestamp.String(),
+			})
+		}
+	}
+
+	return datasourceValues, nil
+}
+
+func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
+	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
 
-	completePath := fmt.Sprintf("%s?query=%s", Url.String(), url.PathEscape(currentQuery))
-	res, err := http.Get(completePath)
-	if err != nil {
-		return nil, errors.New("FAILED QUERY: " + query)
-	}
-
-	if res.StatusCode != 200 {
-		var apiError APIError
-		_ = json.NewDecoder(res.Body).Decode(&apiError)
-		return nil, errors.New(apiError.Error)
-	}
-
-	return res, nil
-}
-
-func Query(datasourceConfiguration, query, filters, period []byte) (interface{}, error) {
-
-	var prometheusConfig PrometheusConfig
-	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
-
-	var currentFilter []metric.MetricFilter
-	_ = json.Unmarshal(filters, &currentFilter)
-
-	res, err := doPrometheusRequestByMetric(prometheusConfig.Url, string(period), string(query), currentFilter)
+	v1Api := v1.NewAPI(apiClient)
+	namedLabels := "__name__"
+	labelValues, _, err := v1Api.LabelValues(context.Background(), namedLabels, time.Now(), time.Now())
 	if err != nil {
 		return nil, err
 	}
 
-	var result PrometheusDataResponse
-	err = json.NewDecoder(res.Body).Decode(&result)
-	if err != nil {
-		return nil, errors.New("FAILED DECODER: " + err.Error())
+	metricList := []string{}
+	for _, label := range labelValues {
+		metricList = append(metricList, string(label))
 	}
 
-	switch len(result.Data.Result) {
-	case 1:
-		return getResultValue(result)
-	case 0:
-		return []interface{}{}, nil
+	return metricList, nil
+}
+
+func Query(datasourceConfiguration, query, period []byte, filters []datasource.MetricFilter) ([]datasource.Value, error) {
+	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
+	if err != nil {
+		return nil, err
+	}
+
+	v1Api := v1.NewAPI(apiClient)
+	buildedQuery := createQueryByMetric(filters, string(query), string(period))
+	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	switch result.Type() {
+	case model.ValVector:
+		return getDatasourceValuesByPrometheusVectorResult(buildedQuery, result.(model.Vector))
+	case model.ValMatrix:
+		return getDatasourceValuesByPrometheusVectorMetrix(buildedQuery, result.(model.Matrix))
 	default:
-		return nil, getMetricLengthErrorByMetric(string(query))
+		return nil, errors.New("Unsuported result type")
 	}
 }
 
-func Result(datasourceConfiguration, query, filters []byte) (float64, error) {
-	queryResult, err := Query(datasourceConfiguration, query, filters, []byte(""))
+func Result(datasourceConfiguration, query []byte, filters []datasource.MetricFilter) (float64, error) {
+	values, err := Query(datasourceConfiguration, query, []byte(""), filters)
 	if err != nil {
 		return 0, err
 	}
 
-	resultValue := queryResult.([]interface{})
-
-	if len(resultValue) == 0 {
+	if len(values) <= 0 {
 		return 0, nil
 	}
 
-	count, err := strconv.Atoi(resultValue[1].(string))
-	if err != nil {
-		return 0, err
-	}
-
-	return float64(count), nil
-
+	var resultQuery = 0
+	return values[resultQuery].Total, nil
 }

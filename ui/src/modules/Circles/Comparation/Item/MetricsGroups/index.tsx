@@ -140,7 +140,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const renderMetrics = (metricsGroup: MetricsGroup) =>
     metricsGroup.metrics.map(metric => {
-      const thresholdStatus = getThresholdStatus(metric.execution);
+      const thresholdStatus = getThresholdStatus(metric.execution.status);
 
       return (
         <Styled.MetricCardBody key={metric.id}>
@@ -214,9 +214,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
             />
           </Dropdown>
         </Styled.MetricsGroupsCardHeader>
-        <MonitoringMetrics metricsGroupId={metricGroup.id} />
         {!isEmpty(metricGroup.metrics) && (
           <>
+            <MonitoringMetrics metricsGroupId={metricGroup.id} />
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>

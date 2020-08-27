@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.request
 
-data class CreateVillagerRegistryConfigurationResponse(
-    val id: String
+data class UndeployRequest(
+    val authorId: String,
+    val deploymentId: String
 )

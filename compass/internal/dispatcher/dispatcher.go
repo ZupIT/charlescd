@@ -59,6 +59,9 @@ func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, cur
 }
 
 func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) {
+	defer dispatcher.mux.Unlock()
+	dispatcher.mux.Lock()
+
 	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID.String())
 	if err != nil {
 		return
@@ -67,22 +70,18 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
 		logger.Error(util.ResultByGroupMetricError, "getMetricResult", err, currentMetric)
-		dispatcher.mux.Lock()
 		execution.Status = metric.MetricError
 		dispatcher.metric.UpdateMetricExecution(execution)
-		dispatcher.mux.Unlock()
 		return
 	}
 
 	if metricResult != execution.LastValue || execution.Status == metric.MetricUpdated {
-		dispatcher.mux.Lock()
 		dispatcher.metric.UpdateMetricExecution(metric.MetricExecution{
 			BaseModel: execution.BaseModel,
 			MetricID:  execution.MetricID,
 			LastValue: metricResult,
 			Status:    dispatcher.getNewStatusForExecution(metricResult, currentMetric),
 		})
-		dispatcher.mux.Unlock()
 	}
 }
 
