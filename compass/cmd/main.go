@@ -70,7 +70,7 @@ func main() {
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)
 	v1.NewMetricsGroupApi(metricsgroupMain)
-	v1.NewMetricApi(metricMain)
+	v1.NewMetricApi(metricMain, metricsgroupMain)
 	v1.NewDataSourceApi(datasourceMain)
 	v1.NewCircleApi(metricsgroupMain)
 	v1.Start()

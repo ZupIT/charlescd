@@ -2,19 +2,22 @@ package v1
 
 import (
 	"compass/internal/metric"
+	"compass/internal/metricsgroup"
 	"compass/web/api"
+	"net/http"
+
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
-	"net/http"
 )
 
 type MetricApi struct {
-	metricMain metric.UseCases
+	metricMain      metric.UseCases
+	metricGroupMain metricsgroup.UseCases
 }
 
-func (v1 V1) NewMetricApi(metricMain metric.UseCases) MetricApi {
+func (v1 V1) NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi {
 	apiPath := "/metrics-groups"
-	metricApi := MetricApi{metricMain}
+	metricApi := MetricApi{metricMain, metricGroupMain}
 	v1.Router.POST(v1.getCompletePath(apiPath)+"/:id/metrics", api.HttpValidator(metricApi.createMetric))
 	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.updateMetric))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id/metrics/:metricId"), api.HttpValidator(metricApi.deleteMetric))
@@ -35,7 +38,14 @@ func (metricApi MetricApi) createMetric(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	metricgroup, err := metricApi.metricGroupMain.FindById(id)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
 	metric.MetricsGroupID, err = uuid.Parse(id)
+	metric.CircleID = metricgroup.CircleID
 	createdMetric, err := metricApi.metricMain.SaveMetric(metric)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})

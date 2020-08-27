@@ -16,7 +16,7 @@ type UseCases interface {
 	Start()
 	NewPluginApi(pluginMain plugin.UseCases) PluginApi
 	NewMetricsGroupApi(metricsGroupMain metricsgroup.UseCases) MetricsGroupApi
-	NewMetricApi(metricMain metric.UseCases) MetricApi
+	NewMetricApi(metricMain metric.UseCases, metricGroupMain metricsgroup.UseCases) MetricApi
 	NewDataSourceApi(dataSourceMain datasource.UseCases) DataSourceApi
 	NewCircleApi(circleMain metricsgroup.UseCases) CircleApi
 }
