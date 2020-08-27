@@ -15,8 +15,7 @@
  */
 
 import React, { Ref, useRef, useImperativeHandle, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { ChangeInputEvent, InputEvents } from 'core/interfaces/InputEvents';
+import Input, { Props } from 'core/components/Form/Input';
 import {
   INPUT_TYPE_PASSWORD,
   INPUT_TYPE_TEXT,
@@ -25,63 +24,24 @@ import {
 } from './constants';
 import Styled from './styled';
 
-export interface Props extends InputEvents {
-  id?: string;
-  className?: string;
-  resume?: boolean;
-  type?: string;
-  name?: string;
-  label?: string;
-  autoComplete?: string;
-  defaultValue?: string;
-  password?: boolean;
-  onChange?: (event: ChangeInputEvent) => void;
-  disabled?: boolean;
-}
-
 const FormPassword = React.forwardRef(
   (
-    {
-      name,
-      label,
-      className,
-      type = 'password',
-      disabled = false,
-      autoComplete = 'off',
-      ...rest
-    }: Props,
+    { className, type = 'password', ...rest }: Props,
     ref: Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const isPassword = type === INPUT_TYPE_PASSWORD;
-    const [isFocused, setIsFocused] = useState(!isEmpty(rest.defaultValue));
     const [isHidden, setHidden] = useState(isPassword);
 
     useImperativeHandle(ref, () => inputRef.current);
 
-    const handleChange = (event: ChangeInputEvent) =>
-      setIsFocused(!isEmpty(event.currentTarget.value));
-
     return (
       <Styled.Wrapper type={type} className={className}>
-        <Styled.Input
+        <Input
           ref={inputRef}
           type={isHidden ? INPUT_TYPE_PASSWORD : INPUT_TYPE_TEXT}
-          name={name}
-          data-testid={`password-${type}-${name}`}
-          autoComplete={autoComplete}
-          onChange={handleChange}
-          disabled={disabled}
           {...rest}
         />
-        {label && (
-          <Styled.Label
-            isFocused={isFocused}
-            onClick={() => inputRef.current.focus()}
-          >
-            {label}
-          </Styled.Label>
-        )}
         <Styled.Icon
           name={isHidden ? INPUT_ICON_NO_VIEW : INPUT_ICON_VIEW}
           color="light"

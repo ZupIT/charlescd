@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.response
 
-data class UndeployResponse(
+data class VillagerBuildResponse(
     val id: String
 )

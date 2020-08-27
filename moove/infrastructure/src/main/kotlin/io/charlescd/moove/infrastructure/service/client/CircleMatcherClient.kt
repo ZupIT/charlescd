@@ -16,6 +16,9 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
+import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
+import io.charlescd.moove.infrastructure.service.client.response.IdentifyResponse
 import java.net.URI
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
