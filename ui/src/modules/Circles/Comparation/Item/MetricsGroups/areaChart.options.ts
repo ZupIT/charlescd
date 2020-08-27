@@ -24,6 +24,9 @@ export default {
     background: 'transparent',
     stacked: false
   },
+  zoom: {
+    enabled: false
+  },
   colors: theme.metrics.chart.Comparison,
   theme: {
     mode: 'dark'
@@ -35,13 +38,18 @@ export default {
       lines: {
         show: true
       }
-    },
-    padding: {
-      left: 8,
-      right: 14
     }
   },
   legend: {
     show: false
+  },
+  xaxis: {
+    type: 'datetime',
+    tickAmount: 5
+  },
+  tooltip: {
+    x: {
+      format: 'dd MMM yyyy HH:mm'
+    }
   }
 };

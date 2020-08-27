@@ -89,5 +89,5 @@ export type ChartDataByQuery = {
 
 export type ChartData = {
   total: string;
-  period: string;
+  period: number;
 };
