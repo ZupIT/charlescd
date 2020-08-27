@@ -16,6 +16,18 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
 import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+setPublicPath('@devcraft/charlescd');
+
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App
+});
+
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;
