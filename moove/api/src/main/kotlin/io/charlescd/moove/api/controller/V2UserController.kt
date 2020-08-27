@@ -31,20 +31,14 @@ import io.swagger.annotations.ApiOperation
 import java.util.UUID
 import javax.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v2/users")
 class V2UserController(
     private val findUserByEmailInteractor: FindUserByEmailInteractor,
     private val findAllUsersInteractor: FindAllUsersInteractor,
-    private val resetUserPasswordInteractor: ResetUserPasswordInteractor
+    private val resetUserPasswordInteractor: ResetUserPasswordInteractor,
     private val createUserInteractor: CreateUserInteractor,
     private val changeUserPasswordInteractor: ChangeUserPasswordInteractor
 ) {
@@ -72,7 +66,7 @@ class V2UserController(
     fun resetPassword(
         @PathVariable id: UUID
     ) = resetUserPasswordInteractor.execute(id)
-    
+
     @ApiOperation(value = "Create user")
     @ApiImplicitParam(
         name = "createUserRequest",
