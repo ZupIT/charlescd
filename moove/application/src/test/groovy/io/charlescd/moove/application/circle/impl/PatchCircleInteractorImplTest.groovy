@@ -280,7 +280,7 @@ class PatchCircleInteractorImplTest extends Specification {
         exception.message == "Key cannot be blank"
     }
 
-    def "should throw error condition notBlank"() {
+    def "should throw error condition notNull"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def rulePart = new NodePart.RulePart("username", null, ["zup"])
