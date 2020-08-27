@@ -211,7 +211,6 @@ export class OctopipeService implements ICdServiceStrategy {
     })
   }
 
-
   private addK8sConfig(payload: IOctopipePayload, deploymentConfiguration: OctopipeConfigurationData): IOctopipePayload {
     if (deploymentConfiguration.provider === ClusterProviderEnum.DEFAULT) {
       return payload
@@ -258,6 +257,4 @@ export class OctopipeService implements ICdServiceStrategy {
       ? createEmptyVirtualService(appName, appNamespace)
       : createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
   }
-
-
 }
