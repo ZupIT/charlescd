@@ -67,3 +67,10 @@ export const dateTimeFormatter = (date: string | Date) => {
     .local()
     .format('DD/MM/YYYY • HH:MM');
 };
+
+export const convertFromUnixToDatetime = (date: number) => {
+  return dayjs
+    .unix(date)
+    .utc()
+    .format();
+};

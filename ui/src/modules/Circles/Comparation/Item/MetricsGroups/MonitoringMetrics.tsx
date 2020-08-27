@@ -31,8 +31,8 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   const [chartViewMode, setChartViewMode] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
-  const [period, setPeriod] = useState('12h');
-  const [interval, setInterval] = useState('1h');
+  const [period, setPeriod] = useState('1h');
+  const [interval, setInterval] = useState('5m');
   const { getMetricByQuery } = useMetricQuery();
 
   console.log(chartData);
@@ -60,8 +60,8 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
     <Styled.MonitoringMetricsPeriodFilter>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => toogleChartPeriod('12h', '1h')}
-        isActive={period === '12h'}
+        onClick={() => toogleChartPeriod('1h', '5m')}
+        isActive={period === '1h'}
         isDisabled={chartDataLoading}
       >
         Hour
@@ -84,7 +84,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       </Styled.ButtonIconRoundedPeriod>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => toogleChartPeriod('1m', '1d')}
+        onClick={() => toogleChartPeriod('1m', '1w')}
         isActive={period === '1m'}
         isDisabled={chartDataLoading}
       >
@@ -109,7 +109,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
             <AreaChart
               options={areaChartOption}
               series={chartData}
-              width={490}
+              width={530}
               height={200}
             />
             {renderChartPeriodFilter()}
