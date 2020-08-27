@@ -38,6 +38,9 @@ export default {
       lines: {
         show: true
       }
+    },
+    padding: {
+      left: 10
     }
   },
   legend: {
@@ -45,11 +48,13 @@ export default {
   },
   xaxis: {
     type: 'datetime',
-    tickAmount: 5
+    labels: {
+      datetimeUTC: false
+    }
   },
   tooltip: {
     x: {
-      format: 'dd MMM yyyy HH:mm'
+      format: 'dd MMM • HH:mm'
     }
   }
 };
