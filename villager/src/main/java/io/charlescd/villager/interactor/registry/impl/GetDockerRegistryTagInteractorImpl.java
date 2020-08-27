@@ -64,6 +64,8 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
 
         var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
 
+        response.get().close();
+
         if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
             return Optional.empty();
         }
