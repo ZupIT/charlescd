@@ -73,14 +73,7 @@ test('render CircleComparationItem default component', async () => {
 });
 
 test('render CircleComparationItem with release', async () => {
-  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
-    item: {
-      id: '123-workspace',
-      status: WORKSPACE_STATUS.COMPLETE
-    },
-    status: 'resolved'
-  }));
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(circle));
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({})).mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
 
   const { getByText, getByTestId } = render(

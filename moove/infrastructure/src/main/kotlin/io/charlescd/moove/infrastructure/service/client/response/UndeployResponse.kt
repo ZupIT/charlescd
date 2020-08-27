@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+package io.charlescd.moove.infrastructure.service.client.response
 
-data class FindVillagerRegistryConfigurationsResponse(
-    val id: String,
-    val name: String,
-    val authorId: String
+data class UndeployResponse(
+    val id: String
 )

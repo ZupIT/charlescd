@@ -38,15 +38,6 @@ class UserServiceLegacy(
     private val keycloakService: KeycloakService
 ) {
 
-    @Transactional
-    fun create(createUserRequest: CreateUserRequest): UserRepresentation {
-        return createUserRequest
-            .toModel()
-            .let(this::saveAndFlushUser)
-            .also { user -> addUserToKeycloak(user, createUserRequest.password) }
-            .toRepresentation()
-    }
-
     fun addGroupsToUser(userId: String, addGroupsRequest: AddGroupsRequest) {
         this.userRepository.findById(userId)
             .map { this.keycloakService.addGroupsToUser(it.email, addGroupsRequest.groupIds) }
@@ -100,15 +91,6 @@ class UserServiceLegacy(
         isRoot = this.isRoot ?: false,
         createdAt = LocalDateTime.now()
     )
-
-    private fun addUserToKeycloak(user: User, password: String) {
-        this.keycloakService.createUser(
-            user.email,
-            user.name,
-            password,
-            user.isRoot
-        )
-    }
 
     fun resetPassword(email: String, request: ResetPasswordRequest) {
 

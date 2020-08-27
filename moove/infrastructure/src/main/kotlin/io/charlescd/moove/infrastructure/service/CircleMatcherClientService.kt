@@ -25,9 +25,9 @@ import io.charlescd.moove.domain.SimpleCircle
 import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
-import io.charlescd.moove.infrastructure.service.client.CircleMatcherRequest
-import io.charlescd.moove.infrastructure.service.client.IdentifyRequest
-import io.charlescd.moove.infrastructure.service.client.Node
+import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
+import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
+import io.charlescd.moove.infrastructure.service.client.request.Node
 import java.net.URI
 import org.springframework.stereotype.Service
 
@@ -67,7 +67,10 @@ class CircleMatcherClientService(
     override fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle> {
         return this.circleMatcherClient.identify(
             URI(workspace.circleMatcherUrl!!),
-            IdentifyRequest(workspace.id, request)
+            IdentifyRequest(
+                workspace.id,
+                request
+            )
         ).circles.map { SimpleCircle(it.id, it.name) }
     }
 
@@ -78,24 +81,34 @@ class CircleMatcherClientService(
         return nodes.map { createImportMatcherRequest(circle, it) }
     }
 
-    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode) = CircleMatcherRequest(
-        name = circle.name,
-        reference = circle.reference,
-        node = objectMapper.treeToValue(jsonNode, Node::class.java),
-        circleId = circle.id,
-        type = circle.matcherType.name,
-        workspaceId = circle.workspaceId,
-        isDefault = circle.defaultCircle
-    )
+    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode) =
+        CircleMatcherRequest(
+            name = circle.name,
+            reference = circle.reference,
+            node = objectMapper.treeToValue(
+                jsonNode,
+                Node::class.java
+            ),
+            circleId = circle.id,
+            type = circle.matcherType.name,
+            workspaceId = circle.workspaceId,
+            isDefault = circle.defaultCircle
+        )
 
-    private fun createMatcherRequest(circle: Circle, previousReference: String? = null) = CircleMatcherRequest(
-        name = circle.name,
-        reference = circle.reference,
-        previousReference = previousReference,
-        node = circle.rules?.let { objectMapper.treeToValue(it, Node::class.java) },
-        circleId = circle.id,
-        type = circle.matcherType.name,
-        workspaceId = circle.workspaceId,
-        isDefault = circle.defaultCircle
-    )
+    private fun createMatcherRequest(circle: Circle, previousReference: String? = null) =
+        CircleMatcherRequest(
+            name = circle.name,
+            reference = circle.reference,
+            previousReference = previousReference,
+            node = circle.rules?.let {
+                objectMapper.treeToValue(
+                    it,
+                    Node::class.java
+                )
+            },
+            circleId = circle.id,
+            type = circle.matcherType.name,
+            workspaceId = circle.workspaceId,
+            isDefault = circle.defaultCircle
+        )
 }

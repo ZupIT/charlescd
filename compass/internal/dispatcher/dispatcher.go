@@ -6,7 +6,6 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"compass/pkg/logger"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -35,7 +34,7 @@ func (dispatcher *Dispatcher) dispatch() {
 		go dispatcher.getMetricResult(execution)
 	}
 
-	fmt.Printf("after 5 seconds... %s", time.Now().String())
+	logger.Info("After 5 seconds... ", time.Now())
 }
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {
