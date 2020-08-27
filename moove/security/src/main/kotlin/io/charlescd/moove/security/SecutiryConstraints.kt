@@ -18,6 +18,7 @@ package io.charlescd.moove.security
 
 data class SecurityConstraints(
     var publicConstraints: List<OpenConstraints> = emptyList(),
+    var managementConstraints: List<OpenConstraints> = emptyList(),
     var constraints: List<SecuredConstraints> = emptyList()
 )
 

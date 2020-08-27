@@ -14,30 +14,8 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-import ComponentIcon from 'core/components/Icon';
-
-interface WrapperProps {
-  type?: string;
+export interface CheckPassword {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword?: string;
 }
-
-const Wrapper = styled.div<WrapperProps>`
-  position: relative;
-  height: 42px;
-  ${({ type }) =>
-    type === 'hidden' &&
-    css`
-      display: none;
-    `};
-`;
-
-const Icon = styled(ComponentIcon)`
-  bottom: 10px;
-  right: 5px;
-  position: absolute;
-`;
-
-export default {
-  Wrapper,
-  Icon
-};

@@ -89,6 +89,10 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
 
         authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) } ?: throw Exception("Missing Authorization header")
 
+        if (checkIfIsUserPath(constraints, path, method)) {
+            return
+        }
+
         if (parsedAccessToken?.isRoot == true) {
             return
         }
@@ -129,6 +133,20 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         permission: Map.Entry<String, List<String>>
     ): Boolean {
         return workspace.permissions.any { workspacePermission -> permission.key == workspacePermission }
+    }
+
+    private fun checkIfIsUserPath(
+        constraints: SecurityConstraints,
+        path: String,
+        method: String
+    ): Boolean {
+        return constraints.managementConstraints.filter {
+            AntPathMatcher().match(it.pattern, path)
+        }.any {
+            it.methods.any { mth ->
+                mth.toLowerCase() == method.toLowerCase()
+            }
+        }
     }
 
     private fun checkIfIsOpenPath(
