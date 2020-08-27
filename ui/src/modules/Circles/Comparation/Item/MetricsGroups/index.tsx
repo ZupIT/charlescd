@@ -140,7 +140,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
 
   const renderMetrics = (metricsGroup: MetricsGroup) =>
     metricsGroup.metrics.map(metric => {
-      const thresholdStatus = getThresholdStatus(metric.execution);
+      const thresholdStatus = getThresholdStatus(metric.execution.status);
 
       return (
         <Styled.MetricCardBody key={metric.id}>
