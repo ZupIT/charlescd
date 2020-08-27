@@ -50,18 +50,18 @@ data class PatchCircleRequest(override val patches: List<PatchOperation>) : Base
         patches.forEach { patch ->
             when (patch.path) {
                 "/name" -> Assert.notNull(patch.value, "Name cannot be null.")
-                "/rules" -> {
-                    Assert.notNull(patch.value, "Rules cannot be null.")
-                    patch.value?.let {
-                        jacksonObjectMapper().convertValue<NodePart>(it).let { node ->
-                            node.clauses?.forEach { clause ->
-                                Assert.notNull(clause.content?.key, "Key cannot be null")
-                                Assert.notNull(clause.content?.condition, "Condition cannot be null")
-                                Assert.isTrue(clause.content?.key!!.isNotBlank(), "Key cannot be blank")
-                            }
-                        }
-                    }
-                }
+                "/rules" -> validadeRulesValues(patch)
+            }
+        }
+    }
+
+    private fun validadeRulesValues(patch: PatchOperation) {
+        Assert.notNull(patch.value, "Rules cannot be null.")
+        jacksonObjectMapper().convertValue<NodePart>(patch.value!!).let { node ->
+            node.clauses?.forEach { clause ->
+                Assert.notNull(clause.content?.key, "Key cannot be null")
+                Assert.notNull(clause.content?.condition, "Condition cannot be null")
+                Assert.isTrue(clause.content?.key!!.isNotBlank(), "Key cannot be blank")
             }
         }
     }
