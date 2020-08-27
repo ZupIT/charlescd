@@ -27,8 +27,6 @@ import baseDeleteDeployments from '../utils/manifests/base-delete-deployment'
 import baseDeployment from '../utils/manifests/base-deployment'
 import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
-import { AppConstants } from '../../../../../constants'
-import { IDeploymentVersion, IPipelineCircle } from '../../../../../../api/components/interfaces'
 
 export default class TotalPipeline {
   refId: number
