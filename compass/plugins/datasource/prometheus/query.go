@@ -17,9 +17,25 @@ func transformFiltersToQuery(filters []datasource.MetricFilter) string {
 	return filterQuery
 }
 
-func createQueryByMetric(filters []datasource.MetricFilter, query, period string) string {
-	if period == "" {
-		return fmt.Sprintf("%s%s", query, transformFiltersToQuery(filters))
+func createQueryByMetric(filters []datasource.MetricFilter, query, period, interval string) string {
+	return addPeriodAndIntervalToQuery(addFiltersToQuery(filters, query), period, interval)
+}
+
+func addFiltersToQuery(filters []datasource.MetricFilter, query string) string {
+	if len(filters) <= 0 {
+		return query
 	}
-	return fmt.Sprintf("%s%s[%s]", query, transformFiltersToQuery(filters), period)
+
+	return fmt.Sprintf("%s%s", query, transformFiltersToQuery(filters))
+}
+
+func addPeriodAndIntervalToQuery(query, period, interval string) string {
+	if period != "" {
+		if interval != "" {
+			return fmt.Sprintf("%s[%s:%s]", query, period, interval)
+		}
+		return fmt.Sprintf("%s[%s]", query, period)
+	}
+
+	return query
 }

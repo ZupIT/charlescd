@@ -190,7 +190,8 @@ const MetricsGroupsCardHeader = styled.div`
 `;
 
 const MetricsGroupsCardContent = styled.div`
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   max-height: 315px;
 `;
 
