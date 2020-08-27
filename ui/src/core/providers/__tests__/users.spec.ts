@@ -14,9 +14,26 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.infrastructure.service.client
+import { FetchMock } from 'jest-fetch-mock';
+import { createNewUser } from '../users';
 
-data class UndeployRequest(
-    val authorId: String,
-    val deploymentId: String
-)
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+test('create new user provider request', async () => {
+  const user = {
+    name: 'name',
+    email: 'charles@zup.com.br',
+    password: '123457'
+  };
+
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify({ message: 'new user created' })
+  );
+
+  const response = await createNewUser(user)({});
+  const data = await response.json();
+
+  expect(data).toEqual({ message: 'new user created' });
+});

@@ -2,6 +2,7 @@ package metric
 
 import (
 	"compass/internal/util"
+	"compass/pkg/datasource"
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
@@ -13,24 +14,16 @@ import (
 
 type Metric struct {
 	util.BaseModel
-	MetricsGroupID  uuid.UUID       `json:"metricGroupId"`
-	DataSourceID    uuid.UUID       `json:"dataSourceId"`
-	Nickname        string          `json:"nickname"`
-	Query           string          `json:"query"`
-	Metric          string          `json:"metric"`
-	Filters         []MetricFilter  `json:"filters"`
-	GroupBy         []MetricGroupBy `json:"groupBy"`
-	Condition       string          `json:"condition"`
-	Threshold       float64         `json:"threshold"`
-	MetricExecution MetricExecution `json:"execution"`
-}
-
-type MetricFilter struct {
-	util.BaseModel
-	MetricID uuid.UUID `json:"-"`
-	Field    string    `json:"field"`
-	Value    string    `json:"value"`
-	Operator string    `json:"operator"`
+	MetricsGroupID  uuid.UUID                 `json:"metricGroupId"`
+	DataSourceID    uuid.UUID                 `json:"dataSourceId"`
+	Nickname        string                    `json:"nickname"`
+	Query           string                    `json:"query"`
+	Metric          string                    `json:"metric"`
+	Filters         []datasource.MetricFilter `json:"filters"`
+	GroupBy         []MetricGroupBy           `json:"groupBy"`
+	Condition       string                    `json:"condition"`
+	Threshold       float64                   `json:"threshold"`
+	MetricExecution MetricExecution           `json:"execution"`
 }
 
 type MetricGroupBy struct {
@@ -79,7 +72,7 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	return ers
 }
 
-func validateMetricFilter(metricFilter MetricFilter) []util.ErrorUtil {
+func validateMetricFilter(metricFilter datasource.MetricFilter) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if len(metricFilter.Field) > 100 {
@@ -252,12 +245,11 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 	}
 
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	filters, _ := json.Marshal(metric.Filters)
 	query := main.getQueryByMetric(metric)
-	return getQuery.(func(datasourceConfiguration, metric, filters []byte) (float64, error))(dataSourceConfigurationData, query, filters)
+	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
 }
 
-func (main Main) Query(metric Metric, period string) (interface{}, error) {
+func (main Main) Query(metric Metric, period, interval string) (interface{}, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
@@ -279,6 +271,5 @@ func (main Main) Query(metric Metric, period string) (interface{}, error) {
 
 	query := main.getQueryByMetric(metric)
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
-	filters, _ := json.Marshal(metric.Filters)
-	return getQuery.(func(datasourceConfiguration, query, filters, period []byte) (interface{}, error))(dataSourceConfigurationData, query, filters, []byte(period))
+	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
 }

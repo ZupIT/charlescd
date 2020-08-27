@@ -20,7 +20,7 @@ type UseCases interface {
 	FindById(id string) (MetricsGroup, error)
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
 	Remove(id string) error
-	QueryByGroupID(id, period string) ([]datasourcePKG.MetricValues, error)
+	QueryByGroupID(id, period, interval string) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)

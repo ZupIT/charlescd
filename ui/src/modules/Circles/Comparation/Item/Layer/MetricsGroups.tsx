@@ -15,6 +15,7 @@
  */
 
 import React, { memo, useEffect } from 'react';
+import ReactTooltip from 'react-tooltip';
 import Button from 'core/components/Button';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
@@ -24,6 +25,7 @@ import isEmpty from 'lodash/isEmpty';
 import Loader from '../Loaders/index';
 import { useMetricsGroupsResume } from '../MetricsGroups/hooks';
 import { MetricsGroupsResume } from '../MetricsGroups/types';
+import { getThresholdStatus } from '../MetricsGroups/helpers';
 import Styled from '../styled';
 
 type Props = {
@@ -51,29 +53,46 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
     </Button.Rounded>
   );
 
-  const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) => {
-    const firstMetricsGroups = metrics?.slice(0, 5);
+  const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) =>
+    metrics?.slice(0, 5).map(metric => {
+      const thresholdStatus = getThresholdStatus(metric.status);
 
-    return firstMetricsGroups?.map(metric => (
-      <Styled.MetricsGroupsCard key={metric?.id}>
-        <Styled.MetricsGroupsNameContent color={'light'} title={metric?.name}>
-          {metric?.name}
-        </Styled.MetricsGroupsNameContent>
-        <Styled.MetricsGroupsCountContent color={'light'}>
-          {metric.metricsCount}
-        </Styled.MetricsGroupsCountContent>
-        <Styled.MetricsGroupsThresholdsContent
-          hasData={metric.thresholds === 0}
-          color={'light'}
-          title={`${metric.thresholdsReached} / ${metric.thresholds}`}
-        >
-          {metric.thresholds === 0
-            ? 'Not configured'
-            : `${metric.thresholdsReached} / ${metric.thresholds}`}
-        </Styled.MetricsGroupsThresholdsContent>
-      </Styled.MetricsGroupsCard>
-    ));
-  };
+      return (
+        <Styled.MetricsGroupsCard key={metric?.id}>
+          <Styled.MetricsGroupsNameContent color={'light'} title={metric?.name}>
+            {metric?.name}
+          </Styled.MetricsGroupsNameContent>
+          <Styled.MetricsGroupsCountContent color={'light'}>
+            {metric.metricsCount}
+          </Styled.MetricsGroupsCountContent>
+          <Styled.MetricsGroupsThresholdsContent
+            hasTreshold={metric.thresholds === 0}
+            colorSVG={thresholdStatus.color}
+          >
+            {!(metric.thresholds === 0) && (
+              <Icon
+                name={thresholdStatus.icon}
+                data-tip
+                data-for={`thresholdTooltip-${metric.id}`}
+              />
+            )}
+            <Text.h5
+              color={'light'}
+              title={`${metric.thresholdsReached} / ${metric.thresholds}`}
+            >
+              {metric.thresholds === 0
+                ? 'Not configured'
+                : `${metric.thresholdsReached} / ${metric.thresholds}`}
+            </Text.h5>
+          </Styled.MetricsGroupsThresholdsContent>
+          {!(metric.thresholds === 0) && (
+            <ReactTooltip id={`thresholdTooltip-${metric.id}`} place="left">
+              {thresholdStatus.ResumeMessage}
+            </ReactTooltip>
+          )}
+        </Styled.MetricsGroupsCard>
+      );
+    });
 
   const renderContent = () => {
     return (
