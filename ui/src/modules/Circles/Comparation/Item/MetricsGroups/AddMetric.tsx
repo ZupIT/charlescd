@@ -115,7 +115,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     const payload = {
       ...data,
       id: metric?.id,
-      circleId: metric.circleId,
+      circleId: metric?.circleId,
       filters: filtersPayload ?? [],
       threshold: Number(data.threshold)
     };
