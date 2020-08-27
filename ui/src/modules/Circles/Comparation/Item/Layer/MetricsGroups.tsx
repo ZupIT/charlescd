@@ -56,7 +56,6 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
   const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) =>
     metrics?.slice(0, 5).map(metric => {
       const thresholdStatus = getThresholdStatus(metric.status);
-      console.log(thresholdStatus.color);
 
       return (
         <Styled.MetricsGroupsCard key={metric?.id}>

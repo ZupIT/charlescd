@@ -32,27 +32,35 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('12h');
+  const [interval, setInterval] = useState('1h');
   const { getMetricByQuery } = useMetricQuery();
+
+  console.log(chartData);
 
   useEffect(() => {
     setChartDataLoading(true);
-    getMetricByQuery(metricsGroupId, { period })
+    getMetricByQuery(metricsGroupId, { period, interval })
       .then(metricByQueryResponse => {
         const series = getDeploySeries(metricByQueryResponse);
         setChartData(series);
       })
       .finally(() => setChartDataLoading(false));
-  }, [getMetricByQuery, metricsGroupId, period]);
+  }, [getMetricByQuery, metricsGroupId, period, interval]);
 
   const toogleChart = () => {
     setChartViewMode(!chartViewMode);
+  };
+
+  const toogleChartPeriod = (chartPeriod: string, chartInterval: string) => {
+    setPeriod(chartPeriod);
+    setInterval(chartInterval);
   };
 
   const renderChartPeriodFilter = () => (
     <Styled.MonitoringMetricsPeriodFilter>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => setPeriod('12h')}
+        onClick={() => toogleChartPeriod('12h', '1h')}
         isActive={period === '12h'}
         isDisabled={chartDataLoading}
       >
@@ -60,7 +68,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       </Styled.ButtonIconRoundedPeriod>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => setPeriod('1d')}
+        onClick={() => toogleChartPeriod('1d', '1h')}
         isActive={period === '1d'}
         isDisabled={chartDataLoading}
       >
@@ -68,7 +76,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       </Styled.ButtonIconRoundedPeriod>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => setPeriod('1w')}
+        onClick={() => toogleChartPeriod('1w', '1d')}
         isActive={period === '1w'}
         isDisabled={chartDataLoading}
       >
@@ -76,7 +84,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
       </Styled.ButtonIconRoundedPeriod>
       <Styled.ButtonIconRoundedPeriod
         color="dark"
-        onClick={() => setPeriod('1m')}
+        onClick={() => toogleChartPeriod('1m', '1d')}
         isActive={period === '1m'}
         isDisabled={chartDataLoading}
       >
