@@ -138,6 +138,7 @@ interface Spec {
     subsets?: Subset[]
     hosts?: string[]
     http?: Http[]
+    gateways?: string[]
 }
 
 interface Manifest {

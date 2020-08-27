@@ -25,6 +25,10 @@ export interface Component {
 
     imageUrl: string
 
+    hostValue?: string
+
+    gatewayName?: string
+
     name: string
 
     running: boolean

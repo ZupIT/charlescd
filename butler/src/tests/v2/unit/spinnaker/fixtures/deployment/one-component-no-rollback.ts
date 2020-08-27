@@ -213,6 +213,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
