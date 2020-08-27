@@ -15,20 +15,23 @@
  */
 module.exports = {
   webpack(config) {
-    config.entry = './src/index.tsx';
     config.output = {
       ...config.output,
-      filename: 'microfrontends.js',
-      libraryTarget: 'system'
+      filename: 'microfrontends.js'
     };
 
-    // config.externals = ['react', 'react-dom'];
+    if (process.env.REACT_APP_MICROFRONTEND === 'on') {
+      config.entry = './src/microfrontend.tsx';
+      config.output.libraryTarget = 'system';
+      config.plugins = config.plugins.filter(
+        plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
+      );
 
-    // config.plugins = config.plugins.filter(
-    //   plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
-    // );
+      delete config.optimization;
+    } else {
+      config.entry = './src/index.tsx';
+    }
 
-    delete config.optimization;
     return config;
   },
   devServer(configFunction) {
