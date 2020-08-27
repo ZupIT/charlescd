@@ -44,6 +44,7 @@ interface InputArtifact {
 interface Overrides {
     'image.tag': string
     name: string
+    circleId: string
 }
 
 interface StageEnabled {

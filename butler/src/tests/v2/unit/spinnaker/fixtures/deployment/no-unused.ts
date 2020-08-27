@@ -181,7 +181,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -258,7 +259,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'B-v2',
       overrides: {
         'image.tag': 'https://repository.com/B:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '3',
       requisiteStageRefIds: [],
@@ -335,7 +337,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'C-v2',
       overrides: {
         'image.tag': 'https://repository.com/C:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '5',
       requisiteStageRefIds: [],
