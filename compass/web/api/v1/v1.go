@@ -7,6 +7,7 @@ import (
 	"compass/internal/plugin"
 	"compass/pkg/logger"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -33,8 +34,13 @@ const (
 func NewV1() UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
+	router.GET("/metrics", metricHandler)
 
 	return V1{router, v1Path}
+}
+
+func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	promhttp.Handler().ServeHTTP(w, r)
 }
 
 func (v1 V1) getCompletePath(path string) string {
