@@ -3,53 +3,7 @@ package metric
 import (
 	"compass/internal/datasource"
 	"compass/internal/plugin"
-	"database/sql"
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
-	"testing"
-)
-
-type SuiteMetric struct {
-	suite.Suite
-	DB   *gorm.DB
-	mock sqlmock.Sqlmock
-
-	repository UseCases
-	metric     *Metric
-}
-
-func (s *SuiteMetric) SetupSuite() {
-	var (
-		db  *sql.DB
-		err error
-	)
-
-	db, s.mock, err = sqlmock.New()
-	require.NoError(s.T(), err)
-
-	s.DB, err = gorm.Open("postgres", db)
-	require.NoError(s.T(), err)
-
-	s.DB.LogMode(true)
-
-	var pluginMain = plugin.NewMain(s.DB)
-	var datasourceMain = datasource.NewMain(s.DB, pluginMain)
-
-	s.repository = NewMain(s.DB, datasourceMain, pluginMain)
-}
-
-func TestInitMetric(t *testing.T) {
-	suite.Run(t, new(SuiteMetric))
-}
-package metric
-
-import (
-	"compass/internal/datasource"
-	"compass/internal/plugin"
 	"compass/internal/util"
-	"compass/pkg/logger/fake"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
@@ -86,12 +40,10 @@ func (s *SuiteMetric) SetupSuite() {
 
 	s.DB.LogMode(true)
 
-	fakeLogger := fake.NewLoggerFake()
+	pluginMain := plugin.NewMain(s.DB)
+	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
-	var pluginMain = plugin.NewMain(s.DB, fakeLogger)
-	var datasourceMain = datasource.NewMain(s.DB, pluginMain, fakeLogger)
-
-	s.repository = NewMain(s.DB, datasourceMain, pluginMain, fakeLogger)
+	s.repository = NewMain(s.DB, datasourceMain, pluginMain)
 }
 
 func TestInitMetric(t *testing.T) {
@@ -144,11 +96,16 @@ func (s *SuiteMetric) TestParseError() {
 
 func (s *SuiteMetric) TestRemoveMetric() {
 	id := uuid.New()
-	query := regexp.QuoteMeta(`DELETE FROM "metrics"`)
+	metricQuery := regexp.QuoteMeta(`DELETE FROM "metrics"`)
+	metricExecQuery := regexp.QuoteMeta(`DELETE FROM "metric_executions"`)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
-	s.mock.ExpectExec(query).
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(metricQuery).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+	s.mock.ExpectExec(metricExecQuery).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
@@ -177,31 +134,41 @@ func (s *SuiteMetric) TestSaveMetric() {
 	metricsGroupId := uuid.New()
 	dataSourceId := uuid.New()
 	timeNow := time.Now()
+	circleId := uuid.New()
 	metricStruct := Metric{
 		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
 		MetricsGroupID: metricsGroupId,
 		DataSourceID:   dataSourceId,
+		Query:          "group_metric_example_2",
 		Metric:         "MetricName",
 		Filters:        nil,
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
+		CircleID:       circleId,
 	}
 
 	query := regexp.QuoteMeta(`INSERT INTO "metrics"`)
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
+	s.mock.ExpectCommit()
+	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(query).
-		WithArgs(sqlmock.AnyArg(),
+		WithArgs(
 			metricStruct.CreatedAt,
 			metricStruct.MetricsGroupID.String(),
 			metricStruct.DataSourceID.String(),
+			metricStruct.Query,
 			metricStruct.Metric,
 			metricStruct.Condition,
-			metricStruct.Threshold).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
+			metricStruct.Threshold,
+			metricStruct.CircleID.String()).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).
+			AddRow(id))
+
 	s.mock.ExpectCommit()
+	s.mock.ExpectRollback()
 
 	res, err := s.repository.SaveMetric(metricStruct)
 
