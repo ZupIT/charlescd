@@ -17,12 +17,12 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-    - 9090:9090
+      - 9090:9090
     command:
-    - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-    - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
-  
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
   app:
     build:
       dockerfile: ./test/Dockerfile.test
@@ -40,6 +40,7 @@ services:
       - development
     depends_on:
       - "db"
+      - "provider"
 
 networks:
   development:
