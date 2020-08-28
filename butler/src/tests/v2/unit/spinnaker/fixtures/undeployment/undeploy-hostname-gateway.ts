@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 
-export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
+export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [],
@@ -39,7 +39,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'A',
+            host: 'host-value-1',
             subsets: [
               {
                 labels: {
@@ -83,9 +83,9 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            gateways: [],
+            gateways: ['gateway-name-1'],
             hosts: [
-              'A'
+              'host-value-1'
             ],
             http: [
               {
@@ -276,7 +276,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'B',
+            host: 'host-value-2',
             subsets: [
               {
                 labels: {
@@ -320,9 +320,9 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            gateways: [],
+            gateways: ['gateway-name-2'],
             hosts: [
-              'B'
+              'host-value-2'
             ],
             http: [
               {

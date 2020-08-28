@@ -213,6 +213,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],

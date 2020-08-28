@@ -447,6 +447,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
@@ -633,6 +634,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'B'
             ],
@@ -819,6 +821,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'C'
             ],

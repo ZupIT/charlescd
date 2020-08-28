@@ -219,6 +219,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],

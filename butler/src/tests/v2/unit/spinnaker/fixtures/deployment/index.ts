@@ -6,6 +6,7 @@ import { oneComponentNoUnused } from './one-component-no-unused'
 import { oneComponentWithUnused } from './one-component-with-unused'
 import { oneComponentNoRepeatedSubset } from './one-component-no-repeated-subset'
 import { oneComponentNoRollbackStage } from './one-component-no-rollback'
+import { oneComponentHostnameGateway } from './one-component-hostname-gateway'
 
 export {
   completeSpinnakerPipeline,
@@ -15,5 +16,6 @@ export {
   oneComponentNoUnused,
   oneComponentWithUnused,
   oneComponentNoRepeatedSubset,
-  oneComponentNoRollbackStage
+  oneComponentNoRollbackStage,
+  oneComponentHostnameGateway
 }

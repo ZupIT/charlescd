@@ -131,7 +131,9 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: deployment.components[0].id,
-            running: false
+            running: false,
+            hostValue: null,
+            gatewayName: null
           }
         ],
         createdAt: expect.anything(),
@@ -224,7 +226,9 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: deployment.components[0].id,
-            running: false
+            running: false,
+            hostValue: null,
+            gatewayName: null
           }
         ],
         createdAt: expect.anything(),
@@ -317,7 +321,9 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: execution.deployment.components[0].id,
-            running: false
+            running: false,
+            hostValue: null,
+            gatewayName: null
           }
         ],
         createdAt: expect.anything(),
@@ -410,7 +416,9 @@ describe('CallbackController v2', () => {
             componentId: '945595ee-d851-4841-a170-c171c0a7b1a2',
             merged: false,
             id: execution.deployment.components[0].id,
-            running: false
+            running: false,
+            hostValue: null,
+            gatewayName: null
           }
         ],
         createdAt: expect.anything(),
