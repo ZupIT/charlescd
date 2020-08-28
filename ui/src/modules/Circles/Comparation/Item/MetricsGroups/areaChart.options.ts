@@ -22,7 +22,7 @@ export default {
   chart: {
     id: 'monitoringChart',
     background: 'transparent',
-    stacked: true,
+    stacked: false,
     zoom: {
       enabled: false
     }
@@ -52,13 +52,14 @@ export default {
       datetimeUTC: false
     }
   },
+  markers: {
+    size: 0.1,
+    strokeColors: 'transparent'
+  },
   stroke: {
     curve: 'smooth'
   },
   tooltip: {
-    marker: {
-      show: true
-    },
     x: {
       format: 'dd MMM • HH:mm'
     }
