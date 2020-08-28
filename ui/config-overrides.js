@@ -15,11 +15,6 @@
  */
 module.exports = {
   webpack(config) {
-    config.output = {
-      ...config.output,
-      filename: 'microfrontends.js'
-    };
-
     if (process.env.REACT_APP_MICROFRONTEND === 'on') {
       config.entry = './src/microfrontend.tsx';
       config.output.libraryTarget = 'system';
@@ -27,6 +22,10 @@ module.exports = {
         plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
       );
 
+      config.output = {
+        ...config.output,
+        filename: 'microfrontends.js'
+      };
       delete config.optimization;
     } else {
       config.entry = './src/index.tsx';
