@@ -17,6 +17,12 @@ export class ComponentEntityV2 implements Component {
   @Column({ name: 'image_url' })
   public imageUrl!: string
 
+  @Column({ name: 'host_value' })
+  public hostValue!: string
+
+  @Column({ name: 'gateway_name' })
+  public gatewayName!: string
+
   @Column({ name: 'name' })
   public name!: string
 

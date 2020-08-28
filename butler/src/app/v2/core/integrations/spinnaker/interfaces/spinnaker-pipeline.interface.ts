@@ -44,6 +44,7 @@ interface InputArtifact {
 interface Overrides {
     'image.tag': string
     name: string
+    circleId: string
 }
 
 interface StageEnabled {
@@ -138,6 +139,7 @@ interface Spec {
     subsets?: Subset[]
     hosts?: string[]
     http?: Http[]
+    gateways?: string[]
 }
 
 interface Manifest {

@@ -19,11 +19,13 @@ import { dummyVirtualserviceSpinnakerPipeline } from './dummy-virtualservice-pip
 import { noUnusedSpinnakerUndeploymentPipeline } from './undeploy-no-unused'
 import { oneUnusedSpinnakerUndeploymentPipeline } from './undeploy-one-unused'
 import { noRepeatedSubsetUndeploymentPipeline } from './undeploy-no-repeated-subset'
+import { hostnameGatewayUndeploymentPipeline } from './undeploy-hostname-gateway'
 
 export {
   completeSpinnakerUndeploymentPipeline,
   dummyVirtualserviceSpinnakerPipeline,
   noUnusedSpinnakerUndeploymentPipeline,
   oneUnusedSpinnakerUndeploymentPipeline,
-  noRepeatedSubsetUndeploymentPipeline
+  noRepeatedSubsetUndeploymentPipeline,
+  hostnameGatewayUndeploymentPipeline
 }

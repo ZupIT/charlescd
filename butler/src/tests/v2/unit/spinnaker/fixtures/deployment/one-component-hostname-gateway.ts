@@ -18,9 +18,8 @@ import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/sp
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import {ConfigurationConstants} from '../../../../../../app/v1/core/constants/application/configuration.constants'
 
-export const oneComponentNoRollbackStage: SpinnakerPipeline = {
+export const oneComponentHostnameGateway: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -73,13 +72,13 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
         {
           defaultArtifact: {
             customKind: true,
-            id: 'useless - deployment - v0'
+            id: 'useless - deployment - v2'
           },
-          displayName: 'deployment - v0',
-          id: 'deployment - v0',
+          displayName: 'deployment - v2',
+          id: 'deployment - v2',
           matchArtifact: {
-            id: 'useless - deployment - v0 - match',
-            name: 'A-v0',
+            id: 'useless - deployment - v2 - match',
+            name: 'A-v2',
             type: 'embedded/base64'
           },
           useDefaultArtifact: false,
@@ -97,13 +96,12 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
           id: 'value - A'
         }
       ],
-      name: 'Bake A v0',
+      name: 'Bake A v2',
       namespace: 'sandbox',
-      outputName: 'A-v0',
+      outputName: 'A-v2',
       overrides: {
-        'image.tag': 'https://repository.com/A:v0',
-        name: 'v0',
-        circleId: ConfigurationConstants.DEFAULT_CIRCLE_ID
+        'image.tag': 'https://repository.com/A:v2',
+        name: 'v2'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -120,11 +118,11 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       continuePipeline: true,
       failPipeline: false,
       manifestArtifactAccount: 'embedded-artifact',
-      manifestArtifactId: 'deployment - v0',
+      manifestArtifactId: 'deployment - v2',
       moniker: {
         app: 'default'
       },
-      name: 'Deploy A v0',
+      name: 'Deploy A v2',
       refId: '2',
       requisiteStageRefIds: [
         '1'
@@ -132,7 +130,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
-        expression: '${ #stage(\'Bake A v0\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Bake A v2\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -159,19 +157,25 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'A',
+            host: 'host-value-1',
             subsets: [
               {
                 labels: {
-                  version: 'A-v0'
+                  version: 'A-v2'
                 },
-                name: 'v0'
+                name: 'v2'
               },
               {
                 labels: {
                   version: 'A-v1'
                 },
                 name: 'v1'
+              },
+              {
+                labels: {
+                  version: 'A-v0'
+                },
+                name: 'v0'
               }
             ]
           }
@@ -215,9 +219,9 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            gateways: [],
+            gateways: ['gateway-name-1'],
             hosts: [
-              'A'
+              'host-value-1'
             ],
             http: [
               {
@@ -225,7 +229,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     headers: {
                       cookie: {
-                        regex: '.*x-circle-id=circle-id3.*'
+                        regex: '.*x-circle-id=circle-id.*'
                       }
                     }
                   }
@@ -234,17 +238,17 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'v2'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id3'
+                          'x-circle-source': 'circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id3'
+                          'x-circle-source': 'circle-id'
                         }
                       }
                     }
@@ -256,7 +260,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     headers: {
                       'x-circle-id': {
-                        exact: 'circle-id3'
+                        exact: 'circle-id'
                       }
                     }
                   }
@@ -265,79 +269,17 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'v2'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id3'
+                          'x-circle-source': 'circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id3'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id5.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id5'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
+                          'x-circle-source': 'circle-id'
                         }
                       }
                     }
@@ -469,7 +411,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       variables: [
         {
           key: 'deploymentResult',
-          value: '${#stage(\'Deploy A v0\').status.toString() == \'SUCCEEDED\'}'
+          value: '${#stage(\'Deploy A v2\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -489,6 +431,50 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       ]
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'app',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'version',
+            kind: 'EQUALS',
+            values: [
+              'A-v2'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Deployment A v2',
+      options: {
+        cascading: true
+      },
+      refId: '7',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${!deploymentResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -501,7 +487,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '7',
+      refId: '8',
       requisiteStageRefIds: [
         '5',
         '6'
@@ -527,7 +513,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '8',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
         '6'

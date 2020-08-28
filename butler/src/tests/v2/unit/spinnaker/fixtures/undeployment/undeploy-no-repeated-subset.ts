@@ -83,6 +83,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
@@ -319,6 +320,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'B'
             ],

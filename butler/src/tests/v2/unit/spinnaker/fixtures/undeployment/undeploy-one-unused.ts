@@ -83,6 +83,7 @@ export const oneUnusedSpinnakerUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
@@ -195,6 +196,7 @@ export const oneUnusedSpinnakerUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'B'
             ],

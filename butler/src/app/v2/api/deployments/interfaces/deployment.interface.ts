@@ -26,8 +26,6 @@ export interface Deployment {
 
     createdAt: Date
 
-    // finishedAt: Date | null
-
     cdConfiguration: CdConfiguration
 
     circleId: string | null

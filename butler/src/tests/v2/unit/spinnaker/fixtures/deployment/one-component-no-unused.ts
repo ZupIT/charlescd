@@ -101,7 +101,8 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id2'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -213,6 +214,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],

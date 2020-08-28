@@ -16,134 +16,14 @@
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
 import { AppConstants } from '../../../../../../app/v1/core/constants'
-import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import {ConfigurationConstants} from '../../../../../../app/v1/core/constants/application/configuration.constants'
+import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 
-export const oneComponentNoRollbackStage: SpinnakerPipeline = {
+export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
-  expectedArtifacts: [
-    {
-      defaultArtifact: {
-        artifactAccount: 'github-artifact',
-        id: 'template-A-default-artifact',
-        name: 'template-A',
-        reference: 'http://localhost:2222/helm/A/A-darwin.tgz',
-        type: 'github/file',
-        version: 'master'
-      },
-      displayName: 'template',
-      id: 'template - A',
-      matchArtifact: {
-        artifactAccount: 'github-artifact',
-        id: 'useless-template',
-        name: 'template-A',
-        type: 'github/file'
-      },
-      useDefaultArtifact: true,
-      usePriorArtifact: false
-    },
-    {
-      defaultArtifact: {
-        artifactAccount: 'github-artifact',
-        id: 'value-A-default-artifact',
-        name: 'value-A',
-        reference: 'http://localhost:2222/helm/A/A.yaml',
-        type: 'github/file',
-        version: 'master'
-      },
-      displayName: 'value',
-      id: 'value - A',
-      matchArtifact: {
-        artifactAccount: 'github-artifact',
-        id: 'useless-value',
-        name: 'value-A',
-        type: 'github/file'
-      },
-      useDefaultArtifact: true,
-      usePriorArtifact: false
-    }
-  ],
+  expectedArtifacts: [],
   stages: [
-    {
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      expectedArtifacts: [
-        {
-          defaultArtifact: {
-            customKind: true,
-            id: 'useless - deployment - v0'
-          },
-          displayName: 'deployment - v0',
-          id: 'deployment - v0',
-          matchArtifact: {
-            id: 'useless - deployment - v0 - match',
-            name: 'A-v0',
-            type: 'embedded/base64'
-          },
-          useDefaultArtifact: false,
-          usePriorArtifact: false
-        }
-      ],
-      failPipeline: false,
-      inputArtifacts: [
-        {
-          account: 'github-artifact',
-          id: 'template - A'
-        },
-        {
-          account: 'github-artifact',
-          id: 'value - A'
-        }
-      ],
-      name: 'Bake A v0',
-      namespace: 'sandbox',
-      outputName: 'A-v0',
-      overrides: {
-        'image.tag': 'https://repository.com/A:v0',
-        name: 'v0',
-        circleId: ConfigurationConstants.DEFAULT_CIRCLE_ID
-      },
-      refId: '1',
-      requisiteStageRefIds: [],
-      stageEnabled: {
-        type: 'expression'
-      },
-      templateRenderer: 'HELM2',
-      type: 'bakeManifest'
-    },
-    {
-      account: 'default',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      manifestArtifactAccount: 'embedded-artifact',
-      manifestArtifactId: 'deployment - v0',
-      moniker: {
-        app: 'default'
-      },
-      name: 'Deploy A v0',
-      refId: '2',
-      requisiteStageRefIds: [
-        '1'
-      ],
-      skipExpressionEvaluation: false,
-      source: 'artifact',
-      stageEnabled: {
-        expression: '${ #stage(\'Bake A v0\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
-      },
-      trafficManagement: {
-        enabled: false,
-        options: {
-          enableTraffic: false,
-          services: []
-        }
-      },
-      type: 'deployManifest'
-    },
     {
       account: 'default',
       cloudProvider: 'kubernetes',
@@ -159,19 +39,13 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'A',
+            host: 'host-value-1',
             subsets: [
               {
                 labels: {
                   version: 'A-v0'
                 },
                 name: 'v0'
-              },
-              {
-                labels: {
-                  version: 'A-v1'
-                },
-                name: 'v1'
               }
             ]
           }
@@ -180,17 +54,11 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Deploy Destination Rules A',
-      refId: '3',
-      requisiteStageRefIds: [
-        '5'
-      ],
+      name: 'Undeploy Destination Rules A',
+      refId: '1',
+      requisiteStageRefIds: [],
       skipExpressionEvaluation: false,
       source: 'text',
-      stageEnabled: {
-        expression: '${deploymentResult}',
-        type: 'expression'
-      },
       trafficManagement: {
         enabled: false,
         options: {
@@ -215,11 +83,73 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            gateways: [],
+            gateways: ['gateway-name-1'],
             hosts: [
-              'A'
+              'host-value-1'
             ],
             http: [
+              {
+                match: [
+                  {
+                    headers: {
+                      cookie: {
+                        regex: '.*x-circle-id=circle-id2.*'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v0'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      'x-circle-id': {
+                        exact: 'circle-id2'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'v0'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id2'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
               {
                 match: [
                   {
@@ -283,130 +213,6 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                 ]
               },
               {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id5.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id5'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id5'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id2.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v1'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id2'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v1'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
                 route: [
                   {
                     destination: {
@@ -435,15 +241,15 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       moniker: {
         app: 'default'
       },
-      name: 'Deploy Virtual Service A',
-      refId: '4',
+      name: 'Undeploy Virtual Service A',
+      refId: '2',
       requisiteStageRefIds: [
-        '3'
+        '1'
       ],
       skipExpressionEvaluation: false,
       source: 'text',
       stageEnabled: {
-        expression: '${ #stage(\'Deploy Destination Rules A\').status.toString() == \'SUCCEEDED\'}',
+        expression: '${ #stage(\'Undeploy Destination Rules A\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },
       trafficManagement: {
@@ -456,35 +262,131 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       type: 'deployManifest'
     },
     {
+      account: 'default',
+      cloudProvider: 'kubernetes',
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
-      failOnFailedExpressions: true,
       failPipeline: false,
-      name: 'Evaluate deployments',
-      refId: '5',
-      requisiteStageRefIds: [
-        '2'
-      ],
-      type: 'evaluateVariables',
-      variables: [
+      manifests: [
         {
-          key: 'deploymentResult',
-          value: '${#stage(\'Deploy A v0\').status.toString() == \'SUCCEEDED\'}'
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'DestinationRule',
+          metadata: {
+            name: 'B',
+            namespace: 'sandbox'
+          },
+          spec: {
+            host: 'host-value-2',
+            subsets: [
+              {
+                labels: {
+                  version: 'B-v1'
+                },
+                name: 'v1'
+              }
+            ]
+          }
         }
-      ]
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Destination Rules B',
+      refId: '3',
+      requisiteStageRefIds: [],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
+    },
+    {
+      account: 'default',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      manifests: [
+        {
+          apiVersion: 'networking.istio.io/v1alpha3',
+          kind: 'VirtualService',
+          metadata: {
+            name: 'B',
+            namespace: 'sandbox'
+          },
+          spec: {
+            gateways: ['gateway-name-2'],
+            hosts: [
+              'host-value-2'
+            ],
+            http: [
+              {
+                route: [
+                  {
+                    destination: {
+                      host: 'B',
+                      subset: 'v1'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      moniker: {
+        app: 'default'
+      },
+      name: 'Undeploy Virtual Service B',
+      refId: '4',
+      requisiteStageRefIds: [
+        '3'
+      ],
+      skipExpressionEvaluation: false,
+      source: 'text',
+      stageEnabled: {
+        expression: '${ #stage(\'Undeploy Destination Rules B\').status.toString() == \'SUCCEEDED\'}',
+        type: 'expression'
+      },
+      trafficManagement: {
+        enabled: false,
+        options: {
+          enableTraffic: false,
+          services: []
+        }
+      },
+      type: 'deployManifest'
     },
     {
       failOnFailedExpressions: true,
-      name: 'Evaluate proxy deployments',
-      refId: '6',
+      name: 'Evaluate proxy undeployments',
+      refId: '5',
       requisiteStageRefIds: [
+        '2',
         '4'
       ],
       type: 'evaluateVariables',
       variables: [
         {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\'}'
+          key: 'proxyUndeploymentsResult',
+          value: '${#stage(\'Undeploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Undeploy Virtual Service B\').status.toString() == \'SUCCEEDED\'}'
         }
       ]
     },
@@ -499,15 +401,14 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '7',
+      refId: '6',
       requisiteStageRefIds: [
-        '5',
-        '6'
+        '5'
       ],
       stageEnabled: {
-        expression: '${ !deploymentResult || !proxyDeploymentsResult }',
+        expression: '${ !proxyUndeploymentsResult }',
         type: 'expression'
       },
       statusUrlResolution: 'getMethod',
@@ -525,20 +426,64 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '8',
+      refId: '7',
       requisiteStageRefIds: [
         '5',
-        '6'
       ],
       stageEnabled: {
-        expression: '${ deploymentResult && proxyDeploymentsResult }',
+        expression: '${ proxyUndeploymentsResult }',
         type: 'expression'
       },
       statusUrlResolution: 'getMethod',
       type: 'webhook',
       url: 'http://localhost:8883/butler/v2/executions/execution-id/notify'
+    },
+    {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'app',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'version',
+            kind: 'EQUALS',
+            values: [
+              'A-v1'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '8',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${proxyUndeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
     }
   ]
 }
