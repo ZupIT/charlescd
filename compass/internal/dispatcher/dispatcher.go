@@ -6,6 +6,8 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"compass/pkg/logger"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"log"
 	"sync"
 	"time"
@@ -19,6 +21,13 @@ type Dispatcher struct {
 	metric metric.UseCases
 	mux    sync.Mutex
 }
+
+var (
+	metricsReachedOpts = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "metrics_reached_total",
+		Help: "The total of metrics reached",
+	})
+)
 
 func NewDispatcher(metric metric.UseCases) UseCases {
 	return &Dispatcher{metric, sync.Mutex{}}
@@ -82,6 +91,8 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 			LastValue: metricResult,
 			Status:    dispatcher.getNewStatusForExecution(metricResult, currentMetric),
 		})
+
+		metricsReachedOpts.Inc()
 	}
 }
 
