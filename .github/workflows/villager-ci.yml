@@ -43,3 +43,7 @@ jobs:
     - name: Code style
       run: mvn checkstyle:checkstyle
       working-directory: ./villager
+    - name: Running Horus Security
+      run: |
+        curl -fsSL https://horus-assets.s3.amazonaws.com/install.sh | bash
+        horus start -p ./villager
