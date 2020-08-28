@@ -34,7 +34,7 @@ services:
       - DB_NAME=charlescd_compass
       - DB_USER=charlescd_compass
       - DB_PASSWORD=compass
-      - DB_HOST=localhost
+      - DB_HOST=db
       - ENV=PROD
     networks:
       - development
