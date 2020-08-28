@@ -243,14 +243,25 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <Text.h2 color="light">Metrics groups</Text.h2>
-        <Styled.ButtonAdd
-          name="add"
-          icon="add"
-          color="dark"
-          onClick={() => setToggleModal(true)}
-        >
-          Add metrics group
-        </Styled.ButtonAdd>
+        <Styled.Actions>
+          <Styled.ButtonAdd
+            name="add"
+            icon="add"
+            color="dark"
+            onClick={() => setToggleModal(true)}
+          >
+            Add metrics group
+          </Styled.ButtonAdd>
+          <Styled.ButtonAdd
+            name="refresh"
+            icon="refresh"
+            color="dark"
+            isDisabled={status.isPending}
+            onClick={() => getMetricsGroups(id)}
+          >
+            Refresh
+          </Styled.ButtonAdd>
+        </Styled.Actions>
         {status.isPending ? (
           <Loader.MetricsGroupslayer />
         ) : (
