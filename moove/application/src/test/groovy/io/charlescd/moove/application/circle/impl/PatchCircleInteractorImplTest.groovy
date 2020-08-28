@@ -244,7 +244,23 @@ class PatchCircleInteractorImplTest extends Specification {
         "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."
     }
 
-    def "should throw error key notNull"() {
+    def "should throw an exception when clauses is null"() {
+        given:
+        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, null)
+
+        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
+        def request = new PatchCircleRequest(patches)
+
+        when:
+        this.patchCircleInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(NullPointerException)
+        exception.message == "Ops, something went wrong. Try again!"
+    }
+
+    def "should throw an exception when key is null"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def rulePart = new NodePart.RulePart(null, NodePart.ConditionEnum.EQUAL, ["zup"])
@@ -262,7 +278,7 @@ class PatchCircleInteractorImplTest extends Specification {
         exception.message == "Key cannot be null"
     }
 
-    def "should throw error key notBlank"() {
+    def "should throw an exception when key is blank"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def rulePart = new NodePart.RulePart("", NodePart.ConditionEnum.EQUAL, ["zup"])
@@ -280,7 +296,7 @@ class PatchCircleInteractorImplTest extends Specification {
         exception.message == "Key cannot be blank"
     }
 
-    def "should throw error condition notNull"() {
+    def "should throw an exception when condition is null"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
         def rulePart = new NodePart.RulePart("username", null, ["zup"])
