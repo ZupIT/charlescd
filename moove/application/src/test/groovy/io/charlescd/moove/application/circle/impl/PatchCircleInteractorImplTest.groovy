@@ -256,8 +256,8 @@ class PatchCircleInteractorImplTest extends Specification {
         this.patchCircleInteractor.execute(circleId, request)
 
         then:
-        def exception = thrown(NullPointerException)
-        exception.message == "Ops, something went wrong. Try again!"
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Clauses cannot be null"
     }
 
     def "should throw an exception when key is null"() {
