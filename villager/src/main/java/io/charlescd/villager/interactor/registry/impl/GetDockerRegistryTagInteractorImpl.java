@@ -69,8 +69,6 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
           return Optional.empty();
         }
         
-        response.get().close();
-        
         return Optional.of(new ComponentTagDTO(
                 input.getName(),
                 entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()

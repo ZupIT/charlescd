@@ -62,9 +62,13 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     @Override
     public Optional<Response> getImage(String name, String tagName) {
 
-        String url = createGetImageUrl(this.baseAddress, name, tagName);
-
-        return Optional.ofNullable(this.client.target(url).request().get());
+        try {
+          String url = createGetImageUrl(this.baseAddress, name, tagName);
+          
+          return Optional.ofNullable(this.client.target(url).request().get());
+        } finally {
+          this.client.close();
+        }
 
     }
 
