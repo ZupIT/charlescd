@@ -37,7 +37,7 @@ data class CreateBuildRequest(
     @field:NotEmpty
     val features: List<String>,
 
-    @field:Size(min = 1, max = 41)
+    @field:Size(min = 1, max = 50)
     @field:NotBlank
     val tagName: String,
 
