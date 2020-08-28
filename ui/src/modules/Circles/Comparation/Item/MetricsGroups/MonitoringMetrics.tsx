@@ -28,7 +28,7 @@ type Props = {
 };
 
 const MonitoringMetrics = ({ metricsGroupId }: Props) => {
-  const [chartViewMode, setChartViewMode] = useState(false); //fix state to false
+  const [chartViewMode, setChartViewMode] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
