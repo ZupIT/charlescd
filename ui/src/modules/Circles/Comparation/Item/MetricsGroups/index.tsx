@@ -20,6 +20,7 @@ import ReactTooltip from 'react-tooltip';
 import isEmpty from 'lodash/isEmpty';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
+import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
@@ -41,7 +42,12 @@ interface Props {
   onGoBack: Function;
 }
 
+type ChartOpen = {
+  [key: string]: boolean;
+};
+
 const MetricsGroups = ({ onGoBack, id }: Props) => {
+  const [groupChartOpen, setGroupChartOpen] = useState<ChartOpen>({});
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
@@ -103,6 +109,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setActiveMetricsGroup(metricsGroup);
     setShowAddMetricForm(true);
     setActiveMetric(metric);
+  };
+
+  const toggleMetricGroupChart = (metricGroupId: string) => {
+    setGroupChartOpen(previous => ({
+      ...previous,
+      [metricGroupId]: !groupChartOpen[metricGroupId]
+    }));
   };
 
   const getMetricCondition = (condition: string) => {
@@ -217,7 +230,17 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         </Styled.MetricsGroupsCardHeader>
         {!isEmpty(metricGroup.metrics) && (
           <>
-            <MonitoringMetrics metricsGroupId={metricGroup.id} />
+            <Styled.MonitoringMetricsFilter>
+              <LabeledIcon
+                icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
+                onClick={() => toggleMetricGroupChart(metricGroup.id)}
+              >
+                <Text.h5 color="dark">View Chart</Text.h5>
+              </LabeledIcon>
+            </Styled.MonitoringMetricsFilter>
+            {groupChartOpen[metricGroup.id] && (
+              <MonitoringMetrics metricsGroupId={metricGroup.id} />
+            )}
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
               <Text.h5 color="dark">Condition Threshold</Text.h5>

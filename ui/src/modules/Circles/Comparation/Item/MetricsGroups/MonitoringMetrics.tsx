@@ -16,8 +16,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import Text from 'core/components/Text';
-import LabeledIcon from 'core/components/LabeledIcon';
 import { AreaChart } from 'core/components/Charts';
 import areaChartOption from './areaChart.options';
 import { useMetricQuery } from './hooks';
@@ -29,7 +27,6 @@ type Props = {
 };
 
 const MonitoringMetrics = ({ metricsGroupId }: Props) => {
-  const [chartViewMode, setChartViewMode] = useState(true);
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
@@ -41,15 +38,10 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
     getMetricByQuery(metricsGroupId, { period, interval })
       .then(metricByQueryResponse => {
         const series = getDeploySeries(metricByQueryResponse);
-        console.log(series);
         setChartData(series);
       })
       .finally(() => setChartDataLoading(false));
   }, [getMetricByQuery, metricsGroupId, period, interval]);
-
-  const toogleChart = () => {
-    setChartViewMode(!chartViewMode);
-  };
 
   const toogleChartPeriod = (chartPeriod: string, chartInterval: string) => {
     setPeriod(chartPeriod);
@@ -94,33 +86,19 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   );
 
   return (
-    <>
-      <Styled.MonitoringMetricsFilter>
-        <LabeledIcon
-          icon={chartViewMode ? 'view' : 'no-view'}
-          onClick={() => toogleChart()}
-        >
-          <Text.h5 color="dark">View Chart</Text.h5>
-        </LabeledIcon>
-      </Styled.MonitoringMetricsFilter>
-      <Styled.MonitoringMetricsContent>
-        {chartViewMode && (
-          <>
-            {chartDataLoading ? (
-              <Loader.MetricsGroupsChart />
-            ) : (
-              <AreaChart
-                options={areaChartOption}
-                series={chartData}
-                width={500}
-                height={200}
-              />
-            )}
-            {renderChartPeriodFilter()}
-          </>
-        )}
-      </Styled.MonitoringMetricsContent>
-    </>
+    <Styled.MonitoringMetricsContent>
+      {chartDataLoading ? (
+        <Loader.MetricsGroupsChart />
+      ) : (
+        <AreaChart
+          options={areaChartOption}
+          series={chartData}
+          width={500}
+          height={200}
+        />
+      )}
+      {renderChartPeriodFilter()}
+    </Styled.MonitoringMetricsContent>
   );
 };
 
