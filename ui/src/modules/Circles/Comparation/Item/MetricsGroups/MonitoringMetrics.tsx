@@ -35,8 +35,6 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   const [interval, setInterval] = useState('5m');
   const { getMetricByQuery } = useMetricQuery();
 
-  console.log(chartData);
-
   useEffect(() => {
     setChartDataLoading(true);
     getMetricByQuery(metricsGroupId, { period, interval })

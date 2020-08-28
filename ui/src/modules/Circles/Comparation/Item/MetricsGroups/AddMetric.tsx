@@ -115,6 +115,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     const payload = {
       ...data,
       id: metric?.id,
+      circleId: metric?.circleId,
       filters: filtersPayload ?? [],
       threshold: Number(data.threshold)
     };
@@ -236,7 +237,6 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                         ref={register({ required: true })}
                         hasError={!!errors?.query}
                         label="Type a query"
-                        maxLength={100}
                       />
                     </Styled.AdvancedQueryWrapper>
                     {!!errors.query && (

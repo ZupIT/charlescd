@@ -47,6 +47,7 @@ export type Metric = {
   threshold: number;
   status: string;
   execution: Execution;
+  circleId: string;
 };
 
 export type Execution = {
