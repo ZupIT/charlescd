@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Loader as LoaderTab } from './tab';
-import { Loader as LoaderMetricsGroupsLayer } from './metricsGroupsLayer';
-import { Loader as LoaderMetricsGroupsChart } from './metricsGroupsChart';
+import React, { FunctionComponent } from 'react';
+import ContentLoader from 'react-content-loader';
 
-const Loader = {
-  Tab: () => <LoaderTab />,
-  MetricsGroupsLayer: () => <LoaderMetricsGroupsLayer />,
-  MetricsGroupsChart: () => <LoaderMetricsGroupsChart />
-};
-
-export default Loader;
+export const Loader: FunctionComponent = () => (
+  <ContentLoader
+    speed={2}
+    width={500}
+    height={200}
+    viewBox="0 0 500 200"
+    backgroundColor="#3a393c"
+    foregroundColor="#2c2b2e"
+  >
+    <rect x="5" y="5" rx="10" ry="10" width="490" height="190" />
+  </ContentLoader>
+);

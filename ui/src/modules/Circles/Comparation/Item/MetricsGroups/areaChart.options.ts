@@ -22,10 +22,10 @@ export default {
   chart: {
     id: 'monitoringChart',
     background: 'transparent',
-    stacked: true
-  },
-  zoom: {
-    enabled: false
+    stacked: false,
+    zoom: {
+      enabled: false
+    }
   },
   colors: theme.metrics.chart.Comparison,
   theme: {
@@ -52,16 +52,14 @@ export default {
       datetimeUTC: false
     }
   },
+  markers: {
+    size: 0.1,
+    strokeColors: 'transparent'
+  },
   stroke: {
     curve: 'smooth'
   },
-  dataLabels: {
-    enabled: false
-  },
   tooltip: {
-    marker: {
-      show: true
-    },
     x: {
       format: 'dd MMM • HH:mm'
     }
