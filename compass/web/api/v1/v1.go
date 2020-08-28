@@ -34,9 +34,13 @@ const (
 func NewV1() UseCases {
 	router := httprouter.New()
 	router.GET("/health", health)
-	http.Handle("/metrics", promhttp.Handler())
+	router.GET("/metrics", metricHandler)
 
 	return V1{router, v1Path}
+}
+
+func metricHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	promhttp.Handler().ServeHTTP(w, r)
 }
 
 func (v1 V1) getCompletePath(path string) string {
