@@ -263,7 +263,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
           </Styled.ButtonAdd>
         </Styled.Actions>
         {status.isPending ? (
-          <Loader.MetricsGroupslayer />
+          <Loader.MetricsGroupsLayer />
         ) : (
           renderMetricsGroupsCards()
         )}
