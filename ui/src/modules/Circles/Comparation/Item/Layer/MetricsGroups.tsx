@@ -115,7 +115,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
       </ContentIcon>
       <Styled.Content>
         {renderAddMetricsGroups()}
-        {status.isPending && <Loader.MetricsGroupslayer />}
+        {status.isPending && <Loader.MetricsGroupsLayer />}
         {!isEmpty(resume) && renderContent()}
       </Styled.Content>
     </Layer>
