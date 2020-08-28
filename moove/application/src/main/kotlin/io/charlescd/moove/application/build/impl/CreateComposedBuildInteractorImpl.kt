@@ -151,8 +151,7 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
             components = moduleSnapshot.components.map { componentSnapshot ->
                 copyComponentSnapshot(
                     componentSnapshot,
-                    findComponentRequest(module.id, componentSnapshot.componentId, request),
-                    request.releaseName
+                    findComponentRequest(module.id, componentSnapshot.componentId, request)
                 )
             }
         )
@@ -160,26 +159,23 @@ open class CreateComposedBuildInteractorImpl @Inject constructor(
 
     private fun copyComponentSnapshot(
         componentSnapshot: ComponentSnapshot,
-        componentRequest: CreateComposedBuildRequest.ComponentRequest,
-        releaseName: String
+        componentRequest: CreateComposedBuildRequest.ComponentRequest
     ): ComponentSnapshot {
         return componentSnapshot.copy(
             artifact = createArtifactSnapshot(
                 componentSnapshot,
-                componentRequest,
-                releaseName
+                componentRequest
             )
         )
     }
 
     private fun createArtifactSnapshot(
         componentSnapshot: ComponentSnapshot,
-        componentRequest: CreateComposedBuildRequest.ComponentRequest,
-        releaseName: String
+        componentRequest: CreateComposedBuildRequest.ComponentRequest
     ) = ArtifactSnapshot(
         UUID.randomUUID().toString(),
         componentRequest.artifact,
-        releaseName,
+        componentRequest.version,
         componentSnapshot.id,
         LocalDateTime.now()
     )
