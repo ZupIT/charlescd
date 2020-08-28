@@ -101,7 +101,8 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '1',
       requisiteStageRefIds: [],
