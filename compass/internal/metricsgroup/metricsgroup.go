@@ -76,21 +76,19 @@ func (main Main) PeriodValidate(currentPeriod string) error {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
-		return err
+		return errors.New("Invalid period or interval")
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
-		err := errors.New("Invalid period or interval: not found number")
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return err
+		return errors.New("Invalid period or interval: not found number")
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
-		err := errors.New("Invalid period or interval: not found unit")
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return err
+		return errors.New("Invalid period or interval: not found unit")
 	}
 
 	return nil
