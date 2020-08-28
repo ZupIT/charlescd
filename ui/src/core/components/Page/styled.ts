@@ -17,11 +17,13 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
+const isMicroFrontend = window.ENVIRONMENT?.REACT_APP_MICROFRONTEND === 'on';
+
 const Page = styled.div`
   display: grid;
   grid-template-areas: 'menu content';
   grid-template-columns: 300px;
-  grid-template-rows: 100vh;
+  grid-template-rows: ${isMicroFrontend ? 'calc(100vh - 76px)' : '100vh'};
 `;
 
 const Menu = styled.div`

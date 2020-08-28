@@ -16,12 +16,16 @@
 
 import styled from 'styled-components';
 
+const isMicroFrontend = window.ENVIRONMENT?.REACT_APP_MICROFRONTEND === 'on';
+
 const Main = styled.main<{ isSidebarExpanded: boolean }>`
   display: grid;
   grid-template-areas:
     'nav content'
     'footer footer';
-  grid-template-rows: calc(100vh - 35px);
+  grid-template-rows: ${isMicroFrontend
+    ? 'calc(100vh - 76px)'
+    : 'calc(100vh - 35px)'};
   transition: all 0.2s;
   grid-template-columns: ${({ isSidebarExpanded }) =>
     isSidebarExpanded ? '140px' : '60px'};
