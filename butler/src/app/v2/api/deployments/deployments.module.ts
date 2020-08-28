@@ -35,6 +35,7 @@ import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.useca
 import { DeploymentRepositoryV2 } from './repository/deployment.repository'
 import { ExecutionRepository } from './repository/execution.repository'
 import { ExecutionsController } from './controller/executions.controller'
+import { PaginatedExecutionsUseCase } from './use-cases/paginated-executions.usecase'
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { ExecutionsController } from './controller/executions.controller'
     CreateUndeploymentUseCase,
     ReceiveNotificationUseCase,
     DeploymentHandlerUseCase,
+    PaginatedExecutionsUseCase,
     MooveService,
     DeploymentCleanupHandler,
     ConsoleLoggerService,
