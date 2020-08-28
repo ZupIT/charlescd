@@ -20,11 +20,18 @@ import { NotificationStatusEnum } from '../../../core/enums/notification-status.
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
+import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
 
 export type UpdatedExecution = { id: string }
 
 @EntityRepository(Execution)
 export class ExecutionRepository extends Repository<Execution> {
+
+  constructor(
+    private readonly consoleLoggerService: ConsoleLoggerService
+  ) {
+    super()
+  }
 
   public async updateNotificationStatus(id: string, status: number) : Promise<UpdateResult>{
     if (status >= 200 && status < 300) {
@@ -64,8 +71,6 @@ export class ExecutionRepository extends Repository<Execution> {
       .limit(pageSize)
       .offset(pageSize * (page - 1))
 
-    const dbResult = await baseQuery.getRawMany()
-
     // TODO leaving this here to discuss keyset pagination
     // if (lastSeenId && lastSeenTimestamp) {
     //   baseQuery = baseQuery.andWhere(
@@ -73,22 +78,28 @@ export class ExecutionRepository extends Repository<Execution> {
     //     { createdAt: lastSeenTimestamp, executionId: lastSeenId }
     //   )
     // }
-
-    if (dbResult.length > 0) {
-      const entities = dbResult.map((e) => {
-        const execution = new Execution(e.deployment, e.type, e.incomingCircleId, e.status)
-        execution.id = e.id
-        execution.createdAt = e.created_at
-        execution.finishedAt = e.finished_at
-        execution.incomingCircleId = e.incoming_circle_id
-        execution.notificationStatus = e.notification_status
-        execution.status = e.status
-        execution.type = e.type
-        return execution
-      })
-      return entities
+    try {
+      const dbResult = await baseQuery.getRawMany()
+      if (dbResult.length > 0) {
+        const entities = dbResult.map((e) => {
+          const execution = new Execution(e.deployment, e.type, e.incomingCircleId, e.status)
+          execution.id = e.id
+          execution.createdAt = e.created_at
+          execution.finishedAt = e.finished_at
+          execution.incomingCircleId = e.incoming_circle_id
+          execution.notificationStatus = e.notification_status
+          execution.status = e.status
+          execution.type = e.type
+          return execution
+        })
+        return entities
+      }
+      return []
+    } catch (error) {
+      this.consoleLoggerService.log('ERROR:EXECUTIONS_PAGINATION', { error: error })
+      return []
     }
-    return []
+
   }
 
   public async updateTimedOutStatus(timeInMinutes: number): Promise<UpdatedExecution[] | undefined>{ // TODO move to executions repo
