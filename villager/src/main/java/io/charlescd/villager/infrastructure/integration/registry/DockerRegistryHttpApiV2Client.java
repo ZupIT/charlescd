@@ -21,23 +21,26 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import java.util.Optional;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
-@ApplicationScoped
+@RequestScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
     private Client client;
     private String baseAddress;
 
+    public DockerRegistryHttpApiV2Client() {
+        this.client = ClientBuilder.newClient();
+    }
+
     public void configureAuthentication(RegistryType type,
                                         DockerRegistryConfigurationEntity.DockerRegistryConnectionData config) {
         this.baseAddress = config.address;
-        this.client = ClientBuilder.newClient();
 
         switch (type) {
             case AWS:
@@ -62,13 +65,9 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
     @Override
     public Optional<Response> getImage(String name, String tagName) {
 
-        try {
-          String url = createGetImageUrl(this.baseAddress, name, tagName);
-          
-          return Optional.ofNullable(this.client.target(url).request().get());
-        } finally {
-          this.client.close();
-        }
+        String url = createGetImageUrl(this.baseAddress, name, tagName);
+
+        return Optional.ofNullable(this.client.target(url).request().get());
 
     }
 
