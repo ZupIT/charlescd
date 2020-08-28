@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { CdConfiguration, Component } from './'
 
 export interface Deployment {

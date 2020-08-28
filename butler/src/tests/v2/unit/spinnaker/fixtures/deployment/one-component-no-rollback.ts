@@ -18,7 +18,7 @@ import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/sp
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import {ConfigurationConstants} from '../../../../../../app/v1/core/constants/application/configuration.constants'
+import { ConfigurationConstants } from '../../../../../../app/v1/core/constants/application/configuration.constants'
 
 export const oneComponentNoRollbackStage: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',

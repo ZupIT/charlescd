@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
@@ -12,7 +13,6 @@ import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils.service'
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
-import * as moment from 'moment'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService

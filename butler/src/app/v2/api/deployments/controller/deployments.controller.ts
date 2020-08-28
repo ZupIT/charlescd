@@ -16,10 +16,8 @@
 
 import { Body, Controller, Headers, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
-import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
-import { Execution } from '../entity/execution.entity'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
