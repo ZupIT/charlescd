@@ -32,6 +32,19 @@ test('render Segments default component', async () => {
   await wait(() => expect(queryByTestId('button-default-save')).not.toBeInTheDocument());
 });
 
+test('render Segments default component and shows logical operator OR', async () => {
+  const { queryByTestId, getByTestId} = render(
+    <Segments viewMode={false} />
+  );
+  
+  const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
+  expect(buttonAddRule).toBeInTheDocument();
+  fireEvent.click(buttonAddRule);
+
+  const operator = getByTestId('input-text-clauses[0].logicalOperator');
+  expect(operator).toHaveAttribute('value', 'OR');
+})
+
 test('render Segments default component with viewMode off', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
@@ -60,7 +73,7 @@ test('render Segments default component and Rules', async () => {
   await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
 });
 
-test('render Segments default component and adding new rule', async () => {
+test('render Segments default component and add new rule', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
   );
@@ -76,3 +89,22 @@ test('render Segments default component and adding new rule', async () => {
   const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
   expect(KeyInput1).toBeInTheDocument();
 });
+
+// render segments
+// in edit mode, when I click inputoperator, should call changeOperatorValue()
+// test('render Segments default component with viewMode off and change logical operator', async () => {
+//   const changeOperatorValue = jest.fn();
+//   const { getByTestId, debug } = render(
+//     <Segments viewMode={false} />
+//   );
+
+//   const innerInputOperator = await waitForElement(() => getByTestId('input-text-clauses[0].logicalOperator'));
+//   const outerInputOperator = await waitForElement(() => getByTestId('input-text-logicalOperator'));
+
+//   fireEvent.click(innerInputOperator);
+//   fireEvent.click(outerInputOperator);
+
+//   debug()
+
+//   expect(changeOperatorValue).toHaveBeenCalled();
+// })
