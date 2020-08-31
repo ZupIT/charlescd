@@ -37,7 +37,7 @@ export const getUndeploymentVirtualServiceStage = (
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${ component.namespace || (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],

@@ -60,7 +60,7 @@ export const getUndeploymentsDeleteUnusedStage = (
       }
     ]
   },
-  location: `${(configuration.configurationData as ISpinnakerConfigurationData).namespace}`,
+  location: `${component.namespace || (configuration.configurationData as ISpinnakerConfigurationData).namespace}`,
   mode: 'label',
   name: `Delete Unused Deployment ${component.name} ${component.imageTag}`,
   nameStage: 'Delete Deployments',

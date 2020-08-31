@@ -36,7 +36,7 @@ export const getUndeploymentDestinationRulesStage = (
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${component.namespace || (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
         host: component.name,

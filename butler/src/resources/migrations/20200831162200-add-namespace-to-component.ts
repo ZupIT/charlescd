@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-import { Deployment } from './'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export interface Component {
-    id: string
+export class AddNamespaceToComponents20200831162900 implements MigrationInterface {
 
-    helmUrl: string
+  public async up(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.addColumn('v2components', new TableColumn({
+      name: 'namespace',
+      type: 'varchar',
+      isNullable: true,
+    }))
+  }
 
-    imageTag: string
-
-    imageUrl: string
-
-    hostValue: string | null
-
-    gatewayName: string | null
-
-    namespace: string | null
-
-    name: string
-
-    running: boolean
-
-    deployment?: Deployment
+  public async down(queryRunner: QueryRunner) : Promise<void> {
+    await queryRunner.dropColumn('v2components', 'namespace')
+  }
 }

@@ -1,7 +1,6 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Component } from '../interfaces'
-
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
 
@@ -33,11 +32,14 @@ export class ComponentEntityV2 implements Component {
   public componentId!: string
 
   @Column({ name: 'merged' })
-  public merged! : boolean
+  public merged!: boolean
 
   @JoinColumn({ name: 'deployment_id' })
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
+
+  @Column({ name: 'namespace' })
+  public namespace!: string | null
 
   constructor(
     helmUrl: string,
@@ -47,6 +49,7 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
+    namespace: string | null,
     merged = false
   ) {
     this.helmUrl = helmUrl
@@ -56,6 +59,7 @@ export class ComponentEntityV2 implements Component {
     this.componentId = componentId
     this.hostValue = hostValue
     this.gatewayName = gatewayName
+    this.namespace = namespace
     this.merged = merged
   }
 
@@ -68,6 +72,7 @@ export class ComponentEntityV2 implements Component {
       this.componentId,
       this.hostValue,
       this.gatewayName,
+      this.namespace,
       true
     )
   }
