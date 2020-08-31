@@ -261,7 +261,7 @@ class DeployClientServiceTest extends Specification {
     private static ComponentSnapshot getDummyComponentSnapshot(String workspaceId, String id, String componentId, String name,
                                                         String moduleSnapshotId, ArtifactSnapshot artifact) {
         new ComponentSnapshot(id, componentId, name, LocalDateTime.now(), artifact,
-                workspaceId, moduleSnapshotId, 'host', 'gateway')
+                workspaceId, moduleSnapshotId, 'host', 'gateway', 'namespace')
     }
 
     private static ArtifactSnapshot getDummyArtifactSnapshot(String id, String artifact, String version, String componentSnapshotId) {

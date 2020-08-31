@@ -102,7 +102,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfLabels.add(new Label('b803558d-3c70-4321-ace5-ae8317902c05', 'Label name', LocalDateTime.now(), author, '#FFFFFF'))
 
         def component = new Component('1a58c67c-6acb-11ea-bc55-0242ac131111', '1a58c280-6acb-11ea-bc55-0242ac130003', 'testing-module',
-                LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway')
+                LocalDateTime.now(), workspaceId, 10, 10, 'host', 'gateway', 'namespace')
 
         def listOfComponents = new ArrayList()
         listOfComponents.add(component)
@@ -168,7 +168,7 @@ class CreateComposedBuildInteractorImplTest extends Specification {
         listOfLabels.add(new Label('b803558d-3c70-4321-ace5-ae8317902c05', 'Label name', LocalDateTime.now(), author, '#FFFFFF'))
 
         def component = new Component('1a58c67c-6acb-11ea-bc55-0242ac130003', '1a58c280-6acb-11ea-bc55-0242ac130003', 'testing-module',
-                LocalDateTime.now(), workspaceId, 10, 01, 'host', 'gateway')
+                LocalDateTime.now(), workspaceId, 10, 01, 'host', 'gateway', 'namespace')
 
         def listOfComponents = new ArrayList()
         listOfComponents.add(component)

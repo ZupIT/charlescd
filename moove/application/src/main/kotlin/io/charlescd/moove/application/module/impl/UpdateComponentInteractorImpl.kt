@@ -56,7 +56,8 @@ class UpdateComponentInteractorImpl @Inject constructor(private val moduleServic
             errorThreshold = request.errorThreshold,
             latencyThreshold = request.latencyThreshold,
             hostValue = request.hostValue,
-            gatewayName = request.gatewayName
+            gatewayName = request.gatewayName,
+            namespace = request.namespace
         )
     }
 

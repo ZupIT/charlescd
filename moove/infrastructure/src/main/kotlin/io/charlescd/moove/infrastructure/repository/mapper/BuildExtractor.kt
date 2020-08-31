@@ -175,7 +175,8 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         workspaceId = resultSet.getString("component_snapshot_workspace_id"),
         moduleSnapshotId = resultSet.getString("component_snapshot_module_snapshot_id"),
         hostValue = resultSet.getString("component_snapshot_host_value"),
-        gatewayName = resultSet.getString("component_snapshot_gateway_name")
+        gatewayName = resultSet.getString("component_snapshot_gateway_name"),
+        namespace = resultSet.getString("component_snapshot_namespace")
     )
 
     private fun mapArtifactSnapshot(resultSet: ResultSet) = ArtifactSnapshot(

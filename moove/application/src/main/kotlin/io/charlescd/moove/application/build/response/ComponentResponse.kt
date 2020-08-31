@@ -29,7 +29,8 @@ data class ComponentResponse(
     val errorThreshold: Int? = null,
     val latencyThreshold: Int? = null,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 ) {
     companion object {
         fun from(component: ComponentSnapshot): ComponentResponse {
@@ -38,7 +39,8 @@ data class ComponentResponse(
                 name = component.name,
                 createdAt = component.createdAt,
                 hostValue = component.hostValue,
-                gatewayName = component.gatewayName
+                gatewayName = component.gatewayName,
+                namespace = component.namespace
             )
         }
 
@@ -50,7 +52,8 @@ data class ComponentResponse(
                 errorThreshold = component.errorThreshold,
                 latencyThreshold = component.latencyThreshold,
                 hostValue = component.hostValue,
-                gatewayName = component.gatewayName
+                gatewayName = component.gatewayName,
+                namespace = component.namespace
             )
         }
     }

@@ -55,6 +55,7 @@ class ModuleMapper(private val gitConfigurationMapper: GitConfigurationMapper) {
         errorThreshold = resultSet.getInt("component_error_threshold"),
         latencyThreshold = resultSet.getInt("component_latency_threshold"),
         hostValue = resultSet.getString("component_host_value"),
-        gatewayName = resultSet.getString("component_gateway_name")
+        gatewayName = resultSet.getString("component_gateway_name"),
+        namespace = resultSet.getString("component_snapshot_namespace")
     )
 }

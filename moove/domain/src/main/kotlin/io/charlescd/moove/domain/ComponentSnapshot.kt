@@ -27,7 +27,8 @@ data class ComponentSnapshot(
     val workspaceId: String,
     val moduleSnapshotId: String,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 ) {
     companion object {
         fun from(id: String, moduleSnapshotId: String, component: Component) = ComponentSnapshot(
@@ -38,7 +39,8 @@ data class ComponentSnapshot(
             workspaceId = component.workspaceId,
             moduleSnapshotId = moduleSnapshotId,
             hostValue = component.hostValue,
-            gatewayName = component.gatewayName
+            gatewayName = component.gatewayName,
+            namespace = component.namespace
         )
     }
 }
