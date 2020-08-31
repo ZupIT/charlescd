@@ -15,7 +15,12 @@
  */
 
 import { useEffect, useCallback, useState } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import {
+  useFetch,
+  useFetchData,
+  useFetchStatus,
+  FetchStatus
+} from 'core/providers/base/hooks';
 import {
   findAllUsers,
   updateProfileById,
@@ -43,27 +48,46 @@ export const useUser = (): [User, boolean, Function] => {
   return [response, loading, loadUser];
 };
 
-export const useCreateUser = (): [Function, User, boolean] => {
-  const [user, , loadUser] = useUser();
-  const [createData, createUser] = useFetch<NewUser>(createNewUser);
-  const { response, error, loading } = createData;
+export const useCreateUser = (): {
+  create: Function;
+  newUser: User;
+  status: FetchStatus;
+} => {
+  const dispatch = useDispatch();
+  const createUser = useFetchData<NewUser>(createNewUser);
+  const status = useFetchStatus();
+  const [newUser, setNewUser] = useState(null);
 
-  const save = useCallback(
-    (user: NewUser) => {
-      createUser(user);
-    },
-    [createUser]
-  );
+  const create = async (user: NewUser) => {
+    try {
+      if (user) {
+        status.pending();
+        const res = await createUser(user);
 
-  useEffect(() => {
-    if (response) {
-      loadUser(response.email);
-    } else if (error) {
-      console.error(error);
+        setNewUser(res);
+        status.resolved();
+
+        return res;
+      }
+    } catch (e) {
+      const error = await e.json();
+
+      dispatch(
+        toogleNotification({
+          text: error.message,
+          status: 'error'
+        })
+      );
+
+      status.rejected();
     }
-  }, [response, error, loadUser]);
+  };
 
-  return [save, user, loading];
+  return {
+    create,
+    newUser,
+    status
+  };
 };
 
 export const useDeleteUser = (): [Function, string] => {
