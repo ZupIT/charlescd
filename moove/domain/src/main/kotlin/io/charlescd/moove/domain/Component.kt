@@ -17,6 +17,7 @@
 package io.charlescd.moove.domain
 
 import java.time.LocalDateTime
+import javax.xml.stream.events.Namespace
 
 data class Component(
     val id: String,
@@ -27,5 +28,6 @@ data class Component(
     val errorThreshold: Int,
     val latencyThreshold: Int,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 )

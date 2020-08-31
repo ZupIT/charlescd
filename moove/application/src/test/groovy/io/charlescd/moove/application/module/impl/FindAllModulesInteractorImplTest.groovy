@@ -49,7 +49,7 @@ class FindAllModulesInteractorImplTest extends Specification {
                 LocalDateTime.now(), author, workspaceId)
 
         def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", "d4a89574-1ff0-4bf1-93e9-275a0036e48c", "component", LocalDateTime.now(),
-                workspaceId, 10, 10, 'host',  'gateway')
+                workspaceId, 10, 10, 'host',  'gateway', 'namespace')
 
         def module = new Module("d4a89574-1ff0-4bf1-93e9-275a0036e48c", "Villager", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,

@@ -49,10 +49,10 @@ class RetrieveCircleComponentsPeriodMetricInteractorImplUnitTest extends Specifi
             "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
 
     def componentX = new Component("component-x-id", "module-id", "componentX",
-            LocalDateTime.of(2019, 12, 1, 0, 0), workspaceId, 10, 50, 'host', 'gateway')
+            LocalDateTime.of(2019, 12, 1, 0, 0), workspaceId, 10, 50, 'host', 'gateway', 'namespace')
 
     def componentY = new Component("component-y-id", "module-id", "componentY",
-            LocalDateTime.of(2019, 12, 1, 0, 0), workspaceId, 10, 50, 'host', 'gateway')
+            LocalDateTime.of(2019, 12, 1, 0, 0), workspaceId, 10, 50, 'host', 'gateway', 'namespace')
 
     def componentModule = new Module("module-id", "module", "gitRepositoryAddress",
             LocalDateTime.of(2019, 12, 1, 0, 0), "helm-repository", author, [], null, [componentX, componentY], workspaceId)

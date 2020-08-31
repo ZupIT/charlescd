@@ -42,6 +42,7 @@ class ComponentExtractor : ResultSetExtractor<Set<Component>> {
             latencyThreshold = resultSet.getInt("components_latency_threshold"),
             workspaceId = resultSet.getString("components_workspace_id"),
             hostValue = resultSet.getString("components_host_value"),
-            gatewayName = resultSet.getString("components_gateway_name")
+            gatewayName = resultSet.getString("components_gateway_name"),
+            namespace = resultSet.getString("component_snapshot_namespace")
     )
 }

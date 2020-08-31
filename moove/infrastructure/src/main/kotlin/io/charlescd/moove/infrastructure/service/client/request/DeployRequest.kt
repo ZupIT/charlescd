@@ -39,7 +39,8 @@ data class DeployComponentRequest(
     val buildImageUrl: String,
     val buildImageTag: String,
     val hostValue: String?,
-    val gatewayName: String?
+    val gatewayName: String?,
+    val namespace: String?
 )
 
 data class DeployCircleRequest(

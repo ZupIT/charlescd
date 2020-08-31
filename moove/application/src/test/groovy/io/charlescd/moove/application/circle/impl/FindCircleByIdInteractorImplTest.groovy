@@ -196,7 +196,7 @@ class FindCircleByIdInteractorImplTest extends Specification {
         def componentSnapshotList = new ArrayList<ComponentSnapshot>()
         componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
                 'Component snapshot name', LocalDateTime.now(), null,
-                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway'))
+                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway', 'namespace'))
 
         def moduleSnapshotList = new ArrayList<ModuleSnapshot>()
         moduleSnapshotList.add(new ModuleSnapshot('3e1f3969-c6ec-4a44-96a0-101d45b668e7', '000f3969-c6ec-4a44-96a0-101d45b668e7',

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20200831142700-1
+      author: thalles.freitas
+      comment: "Add namespace column to components table"
+      changes:
+        - addColumn:
+            tableName: components
+            column:
+              name: namespace
+              type: varchar(255)
+              constraints:
+                nullable: true

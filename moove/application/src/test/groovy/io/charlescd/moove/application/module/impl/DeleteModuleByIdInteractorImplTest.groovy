@@ -50,7 +50,7 @@ class DeleteModuleByIdInteractorImplTest extends Specification {
                 LocalDateTime.now(), author, workspaceId)
 
         def component = new Component("0e6fbc62-41e5-461a-ba11-1765b5d17776", moduleId, "component", LocalDateTime.now(),
-                workspaceId, 10, 10, 'host', 'gateway')
+                workspaceId, 10, 10, 'host', 'gateway', 'namespace')
 
         def module = new Module(moduleId, "Villager", "gitRepositoryAddress",
                 LocalDateTime.now(), "helm-repository", author,
