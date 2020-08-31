@@ -22,7 +22,6 @@ import isEmpty from 'lodash/isEmpty';
 import Form from 'core/components/Form';
 import { useUpdateProfile } from 'modules/Users/hooks';
 import { Profile } from 'modules/Users/interfaces/User';
-import { isRoot } from 'core/utils/auth';
 import Styled from './styled';
 
 export interface Props {
@@ -80,12 +79,12 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
       ) : (
         <Styled.Avatar.WithPhoto data-testid="avatar" size={size} src={url} />
       )}
-      {isRoot() && (
+      {
         <Styled.Avatar.Edit
           name="edit-avatar"
           onClick={() => setEditAvatar(true)}
         />
-      )}
+      }
     </>
   );
 
