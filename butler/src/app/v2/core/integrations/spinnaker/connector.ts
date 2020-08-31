@@ -29,7 +29,7 @@ export class SpinnakerConnector {
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
-      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT', { deployment, activeComponents })
+      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       await this.createSpinnakerApplication(deployment.cdConfiguration)
       await this.createSpinnakerDeploymentPipeline(deployment, activeComponents, configuration)
       await this.deploySpinnakerPipeline(deployment)
@@ -48,7 +48,7 @@ export class SpinnakerConnector {
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
-      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_UNDEPLOYMENT', { deployment, activeComponents })
+      this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_UNDEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       await this.createSpinnakerApplication(deployment.cdConfiguration)
       await this.createSpinnakerUndeploymentPipeline(deployment, activeComponents, configuration)
       await this.deploySpinnakerPipeline(deployment)
@@ -82,10 +82,10 @@ export class SpinnakerConnector {
     configuration: ConnectorConfiguration
   ): Promise<void> {
 
-    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT_PIPELINE', { deployment })
+    this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_DEPLOYMENT_PIPELINE', { deployment: deployment.id })
     const spinnakerPipeline: SpinnakerPipeline =
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deployment, activeComponents, configuration)
-    this.consoleLoggerService.log('GET:SPINNAKER_V2_DEPLOYMENT_PIPELINE', { spinnakerPipeline })
+    this.consoleLoggerService.log('GET:SPINNAKER_V2_DEPLOYMENT_PIPELINE', { spinnakerPipeline: spinnakerPipeline.name })
     await this.verifyAndCreatePipeline(deployment, spinnakerPipeline)
     this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_PIPELINE')
   }
@@ -99,7 +99,7 @@ export class SpinnakerConnector {
     this.consoleLoggerService.log('START:CREATE_V2_SPINNAKER_UNDEPLOYMENT_PIPELINE', { deployment })
     const spinnakerPipeline: SpinnakerPipeline =
       new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deployment, activeComponents, configuration)
-    this.consoleLoggerService.log('GET:SPINNAKER_V2_UNDEPLOYMENT_PIPELINE', { spinnakerPipeline })
+    this.consoleLoggerService.log('GET:SPINNAKER_V2_UNDEPLOYMENT_PIPELINE', { spinnakerPipeline: spinnakerPipeline.name })
     await this.verifyAndCreatePipeline(deployment, spinnakerPipeline)
     this.consoleLoggerService.log('FINISH:CREATE_V2_SPINNAKER_UNDEPLOYMENT_PIPELINE')
   }

@@ -181,7 +181,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -258,7 +259,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'B-v2',
       overrides: {
         'image.tag': 'https://repository.com/B:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '3',
       requisiteStageRefIds: [],
@@ -335,7 +337,8 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'C-v2',
       overrides: {
         'image.tag': 'https://repository.com/C:v2',
-        name: 'v2'
+        name: 'v2',
+        circleId: 'circle-id'
       },
       refId: '5',
       requisiteStageRefIds: [],
@@ -447,6 +450,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
@@ -633,6 +637,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'B'
             ],
@@ -819,6 +824,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'C'
             ],
@@ -955,6 +961,23 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      failOnFailedExpressions: true,
+      name: 'Evaluate proxy deployments',
+      refId: '14',
+      requisiteStageRefIds: [
+        '8',
+        '10',
+        '12'
+      ],
+      type: 'evaluateVariables',
+      variables: [
+        {
+          key: 'proxyDeploymentsResult',
+          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
+        }
+      ]
+    },
+    {
       account: 'default',
       app: 'app-cd-configuration-id',
       cloudProvider: 'kubernetes',
@@ -988,7 +1011,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '14',
+      refId: '15',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1032,7 +1055,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '15',
+      refId: '16',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1076,7 +1099,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       options: {
         cascading: true
       },
-      refId: '16',
+      refId: '17',
       requisiteStageRefIds: [
         '13'
       ],
@@ -1085,23 +1108,6 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
         type: 'expression'
       },
       type: 'deleteManifest'
-    },
-    {
-      failOnFailedExpressions: true,
-      name: 'Evaluate proxy deployments',
-      refId: '17',
-      requisiteStageRefIds: [
-        '8',
-        '10',
-        '12'
-      ],
-      type: 'evaluateVariables',
-      variables: [
-        {
-          key: 'proxyDeploymentsResult',
-          value: '${#stage(\'Deploy Virtual Service A\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service B\').status.toString() == \'SUCCEEDED\' && #stage(\'Deploy Virtual Service C\').status.toString() == \'SUCCEEDED\'}'
-        }
-      ]
     },
     {
       completeOtherBranchesThenFail: false,
@@ -1119,7 +1125,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       refId: '18',
       requisiteStageRefIds: [
         '13',
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${ !deploymentResult || !proxyDeploymentsResult }',
@@ -1145,7 +1151,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       refId: '19',
       requisiteStageRefIds: [
         '13',
-        '17'
+        '14'
       ],
       stageEnabled: {
         expression: '${ deploymentResult && proxyDeploymentsResult }',

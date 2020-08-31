@@ -18,7 +18,7 @@ export class DeploymentCleanupHandler {
 
   public async run(job: JobWithDoneCallback<unknown, unknown>): Promise<UpdatedExecution[] | undefined>{
     const updatedExecutionIds = await this.executionRepository.updateTimedOutStatus(this.envConfiguration.deploymentExpireTime)
-    if (updatedExecutionIds) {
+    if (updatedExecutionIds !== undefined && updatedExecutionIds.length > 0) {
       const updatedExecutions = await this.executionRepository.find({ where: { id: In(updatedExecutionIds.map(e => e.id)) }, relations: ['deployment'] })
       for (const row of updatedExecutions) {
         const result = await this.notifyMoove(row.deploymentId, row.status, row.deployment.callbackUrl, row.incomingCircleId)

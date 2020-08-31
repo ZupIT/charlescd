@@ -34,14 +34,8 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
 
-  // @Column({ name: 'status', nullable: false, type: 'varchar' })
-  // public status!: DeploymentStatusEnum
-
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
-
-  // @Column({ name: 'finished_at' })
-  // public finishedAt!: Date
 
   @Column()
   public priority!: number
@@ -61,9 +55,6 @@ export class DeploymentEntityV2 implements Deployment {
 
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
-
-  // @Column({ name: 'notification_status', type: 'varchar' })
-  // public notificationStatus!: 'SENT' | 'NOT_SENT' | 'ERROR' // TODO create enum
 
   constructor(
     deploymentId: string,

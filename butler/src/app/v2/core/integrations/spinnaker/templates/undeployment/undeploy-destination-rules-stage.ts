@@ -38,7 +38,7 @@ export const getUndeploymentDestinationRulesStage = (
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-        host: `${component.name}`,
+        host: component.hostValue ? component.hostValue : component.name,
         subsets: getActiveComponentsSubsets(deployment.circleId, activeComponents)
       }
     }

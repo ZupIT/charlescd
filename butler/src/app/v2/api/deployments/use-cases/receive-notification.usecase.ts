@@ -139,6 +139,11 @@ export class ReceiveNotificationUseCase {
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
       execution.deployment.active = false
+      execution.status = DeploymentStatusEnum.SUCCEEDED
+    }
+
+    if (deploymentNotificationDto.status === DeploymentStatusEnum.FAILED) {
+      execution.status = DeploymentStatusEnum.FAILED
     }
 
     try {

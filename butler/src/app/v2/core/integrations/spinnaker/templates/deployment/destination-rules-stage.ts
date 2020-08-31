@@ -39,7 +39,7 @@ export const getDestinationRulesStage = (
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-        host: `${component.name}`,
+        host: component.hostValue ? component.hostValue : component.name,
         subsets: deployment?.components ? getSubsets(component, deployment.circleId, activeComponents) : []
       }
     }

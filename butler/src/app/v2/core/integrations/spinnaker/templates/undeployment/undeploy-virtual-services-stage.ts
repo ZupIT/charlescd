@@ -40,9 +40,8 @@ export const getUndeploymentVirtualServiceStage = (
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-        hosts: [
-          `${component.name}`
-        ],
+        gateways: component.gatewayName ? [component.gatewayName] : [],
+        hosts: component.hostValue ? [component.hostValue] : [component.name],
         http: getActiveComponentsCircleHTTPRules(deployment.circleId, activeComponents)
       }
     }

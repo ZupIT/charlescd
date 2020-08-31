@@ -75,6 +75,7 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'A'
             ],
@@ -176,6 +177,7 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
+            gateways: [],
             hosts: [
               'B'
             ],
