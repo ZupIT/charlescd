@@ -16,6 +16,7 @@
 
 import { baseRequest, putRequest, postRequest } from './base';
 import { Profile, NewUser } from 'modules/Users/interfaces/User';
+import { CheckPassword } from 'modules/Account/interfaces/ChangePassword';
 
 const endpoint = '/moove/v2/users';
 const endpointWorkspaces = '/moove/v2/workspaces/users';
@@ -84,3 +85,6 @@ export const deleteUserById = (id: string) =>
 
 export const createNewUser = (user: NewUser) =>
   postRequest(`${endpoint}`, user);
+
+export const changePassword = (data: CheckPassword) =>
+  putRequest(`${endpoint}/password`, data);
