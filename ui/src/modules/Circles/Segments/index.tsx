@@ -62,7 +62,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
 
   const renderGroup = (group: Partial<ArrayField<Record<string, any>, "id">>, index: number) => {
     return (
-      <Styled.Group key={group.id}>
+      <Styled.Group key={group.id} data-testid='luanetestid'>
         {group.type === 'CLAUSE' ? (
           <Clause
             clauses={group}
