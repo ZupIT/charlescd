@@ -39,21 +39,8 @@ export class ComponentEntityV2 implements Component {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
 
-  constructor(
-    helmUrl: string,
-    buildImageTag: string,
-    buildImageUrl: string,
-    componentName: string,
-    componentId: string,
-    merged = false
-  ) {
-    this.helmUrl = helmUrl
-    this.imageTag = buildImageTag
-    this.imageUrl = buildImageUrl
-    this.name = componentName
-    this.componentId = componentId
-    this.merged = merged
-  }
+  @Column({ name: 'namespace' })
+  public namespace!: string
 
   public clone(): ComponentEntityV2 {
     return new ComponentEntityV2(
@@ -62,7 +49,26 @@ export class ComponentEntityV2 implements Component {
       this.imageUrl,
       this.name,
       this.componentId,
+      this.namespace,
       true
     )
+  }
+
+  constructor(
+    helmUrl: string,
+    buildImageTag: string,
+    buildImageUrl: string,
+    componentName: string,
+    componentId: string,
+    namespace: string,
+    merged = false,
+  ) {
+    this.helmUrl = helmUrl
+    this.imageTag = buildImageTag
+    this.imageUrl = buildImageUrl
+    this.name = componentName
+    this.componentId = componentId
+    this.merged = merged
+    this.namespace = namespace
   }
 }

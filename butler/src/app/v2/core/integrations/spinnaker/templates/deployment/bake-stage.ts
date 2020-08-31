@@ -18,7 +18,7 @@ import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component } from '../../../../../api/deployments/interfaces'
 import { ConfigurationConstants } from '../../../../../../v1/core/constants/application/configuration.constants'
 
-export const getBakeStage = (component: Component, stageId: number, circleId: string | null): Stage => ({
+export const getBakeStage = (component: Component, stageId: number, circleId: string | null, namespace: string): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   expectedArtifacts: [
@@ -50,7 +50,7 @@ export const getBakeStage = (component: Component, stageId: number, circleId: st
     }
   ],
   name: `Bake ${component.name} ${component.imageTag}`,
-  namespace: 'sandbox',
+  namespace: component.namespace || namespace,
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': `${component.imageUrl}`,

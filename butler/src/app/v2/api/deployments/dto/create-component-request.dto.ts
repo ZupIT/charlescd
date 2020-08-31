@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
+import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 
 export class CreateComponentRequestDto {
@@ -37,11 +37,15 @@ export class CreateComponentRequestDto {
   @IsNotEmpty()
   public componentName: string
 
-  constructor(componentId: string, buildImageUrl: string, buildImageTag: string, componentName: string) {
+  @ValidateIf((object, value) => value)
+  public namespace: string
+
+  constructor(componentId: string, buildImageUrl: string, buildImageTag: string, componentName: string, namespace: string) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
     this.componentName = componentName
+    this.namespace = namespace
   }
 
   public toEntity(helmRepositoryUrl: string): ComponentEntity {
@@ -50,7 +54,8 @@ export class CreateComponentRequestDto {
       this.buildImageTag,
       this.buildImageUrl,
       this.componentName,
-      this.componentId
+      this.componentId,
+      this.namespace
     )
   }
 }
