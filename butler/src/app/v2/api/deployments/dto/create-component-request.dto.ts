@@ -16,7 +16,6 @@
 
 import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
-import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateComponentRequestDto {
 
