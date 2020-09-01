@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { IsUUID, IsNotEmpty, IsString, Matches, Length } from 'class-validator'
+import {IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf} from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import {ApiProperty} from '@nestjs/swagger'
 
 export class CreateComponentRequestDto {
 
@@ -37,11 +38,30 @@ export class CreateComponentRequestDto {
   @IsNotEmpty()
   public componentName: string
 
-  constructor(componentId: string, buildImageUrl: string, buildImageTag: string, componentName: string) {
+  @ValidateIf((obj, value) => { return value })
+  @IsString()
+  @IsNotEmpty()
+  public readonly hostValue!: string
+
+  @ValidateIf((obj, value) => { return value })
+  @IsString()
+  @IsNotEmpty()
+  public readonly gatewayName!: string
+
+  constructor(
+    componentId: string,
+    buildImageUrl: string,
+    buildImageTag: string,
+    componentName: string,
+    hostValue: string,
+    gatewayName: string
+  ) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
     this.componentName = componentName
+    this.hostValue = hostValue
+    this.gatewayName = gatewayName
   }
 
   public toEntity(helmRepositoryUrl: string): ComponentEntity {
@@ -50,7 +70,9 @@ export class CreateComponentRequestDto {
       this.buildImageTag,
       this.buildImageUrl,
       this.componentName,
-      this.componentId
+      this.componentId,
+      this.hostValue ? this.hostValue : null,
+      this.gatewayName ? this.gatewayName : null
     )
   }
 }

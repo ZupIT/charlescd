@@ -21,15 +21,13 @@ import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
-import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
 
   constructor(
     private createDeploymentUseCase: CreateDeploymentUseCase,
-    private createUndeploymentUseCase: CreateUndeploymentUseCase,
-    private receiveNotificationUseCase: ReceiveNotificationUseCase
+    private createUndeploymentUseCase: CreateUndeploymentUseCase
   ) { }
 
   @Post('/')

@@ -28,12 +28,18 @@ export class ReadComponentDeploymentDto {
 
   public readonly createdAt: Date
 
+  public readonly hostValue: string | null
+
+  public readonly gatewayName: string | null
+
   constructor(
     id: string,
     componentId: string,
     componentName: string,
     buildImageUrl: string,
     buildImageTag: string,
+    hostValue: string | null,
+    gatewayName: string | null,
     createdAt: Date
   ) {
     this.id = id
@@ -41,6 +47,8 @@ export class ReadComponentDeploymentDto {
     this.componentName = componentName
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag
+    this.hostValue = hostValue
+    this.gatewayName = gatewayName
     this.createdAt = createdAt
   }
 }

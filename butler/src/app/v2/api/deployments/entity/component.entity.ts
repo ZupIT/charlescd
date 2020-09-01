@@ -18,10 +18,10 @@ export class ComponentEntityV2 implements Component {
   public imageUrl!: string
 
   @Column({ name: 'host_value' })
-  public hostValue!: string
+  public hostValue!: string | null
 
   @Column({ name: 'gateway_name' })
-  public gatewayName!: string
+  public gatewayName!: string | null
 
   @Column({ name: 'name' })
   public name!: string
@@ -45,6 +45,8 @@ export class ComponentEntityV2 implements Component {
     buildImageUrl: string,
     componentName: string,
     componentId: string,
+    hostValue: string | null,
+    gatewayName: string | null,
     merged = false
   ) {
     this.helmUrl = helmUrl
@@ -52,6 +54,7 @@ export class ComponentEntityV2 implements Component {
     this.imageUrl = buildImageUrl
     this.name = componentName
     this.componentId = componentId
+    this.hostValue = hostValue
     this.merged = merged
   }
 
@@ -62,6 +65,8 @@ export class ComponentEntityV2 implements Component {
       this.imageUrl,
       this.name,
       this.componentId,
+      this.hostValue,
+      this.gatewayName,
       true
     )
   }
