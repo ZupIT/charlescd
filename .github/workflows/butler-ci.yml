@@ -49,7 +49,7 @@ jobs:
       working-directory: ./butler
     - run: docker-compose exec -T app npm ci && npm run test:all:cov
       working-directory: ./butler
-    - uses: codecov/codecov-action@v1.0.7
+    - uses: codecov/codecov-action@v1.0.13
       with:
         fail_ci_if_error: true
         file: ./butler/coverage/coverage-final.json

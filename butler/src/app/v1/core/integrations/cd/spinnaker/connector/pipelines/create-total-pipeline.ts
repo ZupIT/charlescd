@@ -29,12 +29,13 @@ import createDestinationRules from '../utils/manifests/base-destination-rules'
 import { createVirtualService, createEmptyVirtualService } from '../utils/manifests/base-virtual-service'
 
 export default class TotalPipeline {
-  public refId: number
-  public previousStage: string
-  public previousStages: string[]
-  public deploymentsIds: string[]
-  public contract: ISpinnakerPipelineConfiguration
-  public basePipeline: IBaseSpinnakerPipeline
+  refId: number
+  previousStage: string
+  previousStages: string[]
+  deploymentsIds: string[]
+  contract: ISpinnakerPipelineConfiguration
+  basePipeline: IBaseSpinnakerPipeline
+
   constructor(contract: ISpinnakerPipelineConfiguration) {
     this.refId = 1
     this.previousStage = ''
@@ -98,7 +99,8 @@ export default class TotalPipeline {
         version.versionUrl,
         String(this.refId),
         [],
-        undefined
+        undefined,
+        version.versionCircle
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -223,4 +225,5 @@ export default class TotalPipeline {
       deploymentsIds: this.deploymentsIds
     }
   }
+
 }
