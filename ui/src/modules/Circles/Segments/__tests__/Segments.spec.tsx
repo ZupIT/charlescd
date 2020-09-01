@@ -120,3 +120,33 @@ test('render Segments default component, add new rule and change logical operato
   fireEvent.click(operator);
   await waitForElement(() => getByDisplayValue('AND'));
 });
+
+test.only('render Segments default component, add new group and verify line height', async () => {
+  const { getByTestId, getByDisplayValue, getByText } = render(
+    <Segments viewMode={false} />
+    );
+
+    const ButtonAddGroup = getByText('Group');
+    expect(ButtonAddGroup).toBeInTheDocument();
+  
+    fireEvent.click(ButtonAddGroup);
+  
+    await wait();
+  
+    const group = getByTestId('group-logicalOperator');
+    const groupBeforeStyle = window.getComputedStyle(group, ':before');
+    // console.log('**', groupBeforeStyle);
+    expect(groupBeforeStyle.height).toBe('');
+});
+
+// const buttonAddGroup = await waitForElement(() => getByText('Group'));
+    // fireEvent.click(buttonAddGroup);
+  
+    // await waitForElement(() => getByDisplayValue('OR'));
+
+    // const groupLogicalOp = getByTestId('group-logicalOperator');
+    // // console.log('**', groupLogicalOp);
+
+    // const temp = window.getComputedStyle(groupLogicalOp, '::before' );
+    // expect(temp).toHaveStyle('height: 112px');
+    // // console.log('**', typeof temp);

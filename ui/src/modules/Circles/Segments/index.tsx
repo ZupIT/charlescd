@@ -108,6 +108,7 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           verticalLine={group.height}
           viewMode={viewMode}
           hasGroup={hasGroup}
+          data-testid="group-logicalOperator"
         >
           {!viewMode && (
             <Styled.Operator top={group.operator} hasGroup={hasGroup}>
