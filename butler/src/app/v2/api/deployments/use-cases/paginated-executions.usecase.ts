@@ -19,8 +19,8 @@ export class PaginatedExecutionsUseCase {
       executions: executions[0],
       totalPages: totalPages,
       size: params.size,
-      page: params.page - 1,
-      last: params.page === totalPages
+      page: params.page,
+      last: params.page === (totalPages -1)
     }
     return response
   }
