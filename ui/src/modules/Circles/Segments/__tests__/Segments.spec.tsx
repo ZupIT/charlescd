@@ -48,21 +48,21 @@ test('render Segments default component, add new rule and shows logical operator
     <Segments viewMode={false} />
     );
   
-    const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
-    expect(buttonAddRule).toBeInTheDocument();
-    fireEvent.click(buttonAddRule);
+  const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
+  expect(buttonAddRule).toBeInTheDocument();
+  fireEvent.click(buttonAddRule);
 
-    const operator = getByTestId('input-text-clauses[0].logicalOperator');
+  const operator = getByTestId('input-text-clauses[0].logicalOperator');
   expect(operator).toHaveAttribute('value', 'OR');
-})
+});
 
 test('render Segments default component with viewMode off', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
     );
     
-    await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
-    await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+  await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
   await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
 });
 
@@ -71,32 +71,47 @@ test('render Segments default component and Rules', async () => {
     <Segments viewMode={false} />
     );
     
-    const inputTypeText = 'input-hidden-clauses[0].type';
-    const inputKeyText = 'input-text-clauses[0].content.key';
-    const wrapperConditionText = 'select-clauses[0].content.condition';
-    const inputValueText = 'input-text-clauses[0].content.value[0]';
-    
-    await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
-    await wait(() => expect(getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden'));
-    await wait(() => expect(getByTestId(inputKeyText)).toBeInTheDocument());
-    await wait(() => expect(getByTestId(inputKeyText)).toHaveAttribute('type', 'text'));
-    await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
-    await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
-  });
+  const inputTypeText = 'input-hidden-clauses[0].type';
+  const inputKeyText = 'input-text-clauses[0].content.key';
+  const wrapperConditionText = 'select-clauses[0].content.condition';
+  const inputValueText = 'input-text-clauses[0].content.value[0]';
+  
+  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden'));
+  await wait(() => expect(getByTestId(inputKeyText)).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputKeyText)).toHaveAttribute('type', 'text'));
+  await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
+  await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
+});
   
 test('render Segments default component and add new rule', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
     );
     
-    const ButtonAddClause = await waitForElement(() => getByTestId('button-default-add-clause'));
-    expect(ButtonAddClause).toBeInTheDocument();
-    
-    const KeyInput0 = await waitForElement(() => getByTestId('input-text-clauses[0].content.key'));
-    expect(KeyInput0).toBeInTheDocument();
-    
-    fireEvent.click(ButtonAddClause);
-    
-    const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
-    expect(KeyInput1).toBeInTheDocument();
-  });
+  const ButtonAddClause = await waitForElement(() => getByTestId('button-default-add-clause'));
+  expect(ButtonAddClause).toBeInTheDocument();
+  
+  const KeyInput0 = await waitForElement(() => getByTestId('input-text-clauses[0].content.key'));
+  expect(KeyInput0).toBeInTheDocument();
+  
+  fireEvent.click(ButtonAddClause);
+  
+  const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
+  expect(KeyInput1).toBeInTheDocument();
+});
+
+test('render Segments default component, add new rule and change logical operator', async () => {
+  const { getByTestId, getByText, getByDisplayValue } = render(
+    <Segments viewMode={false} />
+    );
+
+  const buttonAddRule = await waitForElement(() => getByTestId('button-default-add-clause'));
+  fireEvent.click(buttonAddRule);
+
+  const operator = getByTestId('input-text-clauses[0].logicalOperator');
+  expect(operator).toHaveAttribute('value', 'OR');
+
+  fireEvent.click(operator);
+  await waitForElement(() => getByDisplayValue('AND'));
+})
