@@ -50,7 +50,7 @@ const Group = styled.div<GroupProps>`
         width: 1px;
         right: -80px;
         top: ${top}px;
-        height: ${viewMode ? 0 : verticalLine}px;
+        height: ${viewMode ? null : verticalLine}px;
         background-color: ${theme.segments.line};
       }
     `}
