@@ -32,79 +32,71 @@ test('render Segments default component', async () => {
   await wait(() => expect(queryByTestId('button-default-save')).not.toBeInTheDocument());
 });
 
-test('render Segments default component and shows logical operator OR', async () => {
-  const { queryByTestId, getByTestId} = render(
+test('render Segments default component, add new group and shows logical operator OR', async () => {
+  const { getByText, getByDisplayValue} = render(
     <Segments viewMode={false} />
   );
-  
-  const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
-  expect(buttonAddRule).toBeInTheDocument();
-  fireEvent.click(buttonAddRule);
 
-  const operator = getByTestId('input-text-clauses[0].logicalOperator');
+  const buttonAddGroup = await waitForElement(() => getByText('Group'));
+  fireEvent.click(buttonAddGroup);
+
+  await waitForElement(() => getByDisplayValue('OR'));
+});
+
+test('render Segments default component, add new rule and shows logical operator OR', async () => {
+  const { queryByTestId, getByTestId} = render(
+    <Segments viewMode={false} />
+    );
+  
+    const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
+    expect(buttonAddRule).toBeInTheDocument();
+    fireEvent.click(buttonAddRule);
+
+    const operator = getByTestId('input-text-clauses[0].logicalOperator');
   expect(operator).toHaveAttribute('value', 'OR');
 })
 
 test('render Segments default component with viewMode off', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
-  );
-
-  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
-  await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
+    );
+    
+    await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+    await wait(() => expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument());
   await wait(() => expect(getByTestId('button-default-save')).toBeInTheDocument());
 });
 
 test('render Segments default component and Rules', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
-  );
-
-  const inputTypeText = 'input-hidden-clauses[0].type';
-  const inputKeyText = 'input-text-clauses[0].content.key';
-  const wrapperConditionText = 'select-clauses[0].content.condition';
-  const inputValueText = 'input-text-clauses[0].content.value[0]';
-
-  await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
-  await wait(() => expect(getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden'));
-  await wait(() => expect(getByTestId(inputKeyText)).toBeInTheDocument());
-  await wait(() => expect(getByTestId(inputKeyText)).toHaveAttribute('type', 'text'));
-  await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
-  await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
-});
-
+    );
+    
+    const inputTypeText = 'input-hidden-clauses[0].type';
+    const inputKeyText = 'input-text-clauses[0].content.key';
+    const wrapperConditionText = 'select-clauses[0].content.condition';
+    const inputValueText = 'input-text-clauses[0].content.value[0]';
+    
+    await wait(() => expect(getByTestId('segments-rules')).toBeInTheDocument());
+    await wait(() => expect(getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden'));
+    await wait(() => expect(getByTestId(inputKeyText)).toBeInTheDocument());
+    await wait(() => expect(getByTestId(inputKeyText)).toHaveAttribute('type', 'text'));
+    await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
+    await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
+  });
+  
 test('render Segments default component and add new rule', async () => {
   const { getByTestId } = render(
     <Segments viewMode={false} />
-  );
-
-  const ButtonAddClause = await waitForElement(() => getByTestId('button-default-add-clause'));
-  expect(ButtonAddClause).toBeInTheDocument();
-
-  const KeyInput0 = await waitForElement(() => getByTestId('input-text-clauses[0].content.key'));
-  expect(KeyInput0).toBeInTheDocument();
-
-  fireEvent.click(ButtonAddClause);
-
-  const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
-  expect(KeyInput1).toBeInTheDocument();
-});
-
-// render segments
-// in edit mode, when I click inputoperator, should call changeOperatorValue()
-// test('render Segments default component with viewMode off and change logical operator', async () => {
-//   const changeOperatorValue = jest.fn();
-//   const { getByTestId, debug } = render(
-//     <Segments viewMode={false} />
-//   );
-
-//   const innerInputOperator = await waitForElement(() => getByTestId('input-text-clauses[0].logicalOperator'));
-//   const outerInputOperator = await waitForElement(() => getByTestId('input-text-logicalOperator'));
-
-//   fireEvent.click(innerInputOperator);
-//   fireEvent.click(outerInputOperator);
-
-//   debug()
-
-//   expect(changeOperatorValue).toHaveBeenCalled();
-// })
+    );
+    
+    const ButtonAddClause = await waitForElement(() => getByTestId('button-default-add-clause'));
+    expect(ButtonAddClause).toBeInTheDocument();
+    
+    const KeyInput0 = await waitForElement(() => getByTestId('input-text-clauses[0].content.key'));
+    expect(KeyInput0).toBeInTheDocument();
+    
+    fireEvent.click(ButtonAddClause);
+    
+    const KeyInput1 = await waitForElement(() => getByTestId('input-text-clauses[0].clauses[1].content.key'));
+    expect(KeyInput1).toBeInTheDocument();
+  });
