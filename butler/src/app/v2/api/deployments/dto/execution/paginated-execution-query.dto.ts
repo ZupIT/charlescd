@@ -1,13 +1,15 @@
-import { IsBooleanString, IsOptional, IsNumber } from 'class-validator'
+import { IsBooleanString, IsOptional, IsInt, Min } from 'class-validator'
 import { Transform } from 'class-transformer'
 
 export class ExecutionQuery {
-  @IsNumber()
+  @IsInt()
+  @Min(1)
   @IsOptional()
   @Transform(size => parseInt(size), { toClassOnly: true })
   public size: number
 
-  @IsNumber()
+  @IsInt()
+  @Min(0)
   @IsOptional()
   @Transform(page => parseInt(page), { toClassOnly: true })
   public page: number
