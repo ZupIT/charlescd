@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ComponentEntity } from '../../../app/v1/api/components/entity'
-import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../app/v1/api/deployments/entity'
+import { ComponentEntity } from '../../../../app/v1/api/components/entity'
+import { CircleDeploymentEntity, ComponentDeploymentEntity } from '../../../../app/v1/api/deployments/entity'
 
 describe('ComponentEntity test', () => {
   it('should create the right version name with the first 8 chars of circle id', () => {

@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import { Test } from '@nestjs/testing'
 import { HttpService, INestApplication } from '@nestjs/common'
 import { FixtureUtilsService } from '../utils/fixture-utils.service'
-import { AppModule } from '../../../../app/app.module'
 import * as request from 'supertest'
 import { TestSetupUtils } from '../utils/test-setup-utils'
-import { DeploymentEntity, ModuleDeploymentEntity } from '../../../../app/v1/api/deployments/entity'
 import { Repository } from 'typeorm'
-import { DeploymentStatusEnum, QueuedPipelineStatusEnum, QueuedPipelineTypesEnum } from '../../../../app/v1/api/deployments/enums'
-import { QueuedDeploymentsRepository } from '../../../../app/v1/api/deployments/repository'
-import { ComponentEntity } from '../../../../app/v1/api/components/entity'
-import IEnvConfiguration from '../../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
-import { IoCTokensConstants } from '../../../../app/v1/core/constants/ioc'
 import { of } from 'rxjs'
 import { AxiosResponse } from 'axios'
-import { OctopipeApiService } from '../../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
-import { ModuleEntity } from '../../../../app/v1/api/modules/entity'
-import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
 import * as uuid from 'uuid'
+import { DeploymentEntity, ModuleDeploymentEntity } from '../../../../app/v1/api/deployments/entity'
+import { QueuedDeploymentsRepository } from '../../../../app/v1/api/deployments/repository'
+import { ComponentEntity } from '../../../../app/v1/api/components/entity'
+import { ModuleEntity } from '../../../../app/v1/api/modules/entity'
+import IEnvConfiguration from '../../../../app/v1/core/integrations/configuration/interfaces/env-configuration.interface'
+import { OctopipeApiService } from '../../../../app/v1/core/integrations/cd/octopipe/octopipe-api.service'
+import { AppModule } from '../../../../app/app.module'
+import {
+  DeploymentStatusEnum,
+  QueuedPipelineStatusEnum,
+  QueuedPipelineTypesEnum
+} from '../../../../app/v1/api/deployments/enums'
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
+import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
+import { AppConstants } from '../../../../app/v1/core/constants'
+import {IoCTokensConstants} from '../../../../app/v1/core/constants/ioc'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 
@@ -249,8 +255,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(moduleEntityUpdated.components.length).toBe(2)
     expect(componentsModuleEntities[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(componentsModuleEntities[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
-    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
-    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(componentsModuleEntities[0].id)
+    expect(deployment.modules[0].components[1].componentId).toEqual(componentsModuleEntities[1].id)
   })
 
   it('/POST /deployments in default circle should fail if already exists deployment ', async() => {
@@ -586,7 +592,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(component1.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ destination: { version: 'image-tag' } }],
-        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url', versionCircle: 'f5d23a57-5607-4306-9993-477e1598cc2a' }],
         pipelineUnusedVersions: []
       }
     )
@@ -594,7 +600,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(component2.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ destination: { version: 'image-tag2' } }],
-        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2', versionCircle: 'f5d23a57-5607-4306-9993-477e1598cc2a' }],
         pipelineUnusedVersions: []
       }
     )
@@ -698,7 +704,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url',
-          version: 'component-name-image-tag'
+          version: 'component-name-image-tag',
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -728,7 +735,8 @@ describe('CreateDefaultDeploymentUsecase', () => {
       versions: [
         {
           versionUrl: 'image-url2',
-          version: 'component-name2-image-tag2'
+          version: 'component-name2-image-tag2',
+          versionCircle: AppConstants.DEFAULT_CIRCLE_ID,
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -798,7 +806,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
     expect(deployment.modules[0].components[1].status).toBe(DeploymentStatusEnum.FAILED)
   })
 
-  it.skip('/POST deployments in default  should handle deployment failure ', async() => { // TODO skipped due to typeorm bugfix
+  it('/POST deployments in default  should handle deployment failure ', async() => {
 
     const cdConfiguration = await  fixtureUtilsService.createCdConfiguration( {
       'id': uuid.v4(),
@@ -884,7 +892,7 @@ describe('CreateDefaultDeploymentUsecase', () => {
       relations: ['modules', 'modules.components'] })
 
     const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
-      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+      { where: { deployment: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
     )
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)
     expect(modulesDeployment[0].status).toBe(DeploymentStatusEnum.CREATED)

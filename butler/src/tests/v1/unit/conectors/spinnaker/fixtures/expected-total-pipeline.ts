@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AppConstants } from '../../../../../app/v1/core/constants'
+import {AppConstants} from '../../../../../../app/v1/core/constants'
 
 const expectedTotalPipeline = {
   appConfig: {},
