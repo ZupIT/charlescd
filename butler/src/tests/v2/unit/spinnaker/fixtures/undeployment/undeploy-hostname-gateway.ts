@@ -85,7 +85,8 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
           spec: {
             gateways: ['gateway-name-1'],
             hosts: [
-              'host-value-1'
+              'host-value-1',
+              'A'
             ],
             http: [
               {
@@ -322,7 +323,8 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
           spec: {
             gateways: ['gateway-name-2'],
             hosts: [
-              'host-value-2'
+              'host-value-2',
+              'B'
             ],
             http: [
               {
