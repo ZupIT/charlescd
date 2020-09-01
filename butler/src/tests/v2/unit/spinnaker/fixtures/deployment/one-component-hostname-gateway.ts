@@ -222,7 +222,8 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
           spec: {
             gateways: ['gateway-name-1'],
             hosts: [
-              'host-value-1'
+              'host-value-1',
+              'A'
             ],
             http: [
               {

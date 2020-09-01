@@ -41,7 +41,7 @@ export const getVirtualServiceStage = (
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue] : [component.name],
+        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
         http: deployment.circleId ?
           getCircleHTTPRules(component, deployment.circleId, activeComponents) :
           getDefaultCircleHTTPRules(component, activeComponents)
