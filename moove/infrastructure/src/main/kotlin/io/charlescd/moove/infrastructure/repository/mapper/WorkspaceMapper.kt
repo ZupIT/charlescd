@@ -21,8 +21,8 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import java.sql.ResultSet
 import org.springframework.stereotype.Component
