@@ -111,7 +111,7 @@ test('execute onSubmit', async () => {
   await wait();
   const inputAwsName = getByTestId("input-text-name");
   const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("password-password-accessKey");
+  const inputAwsAccessKey = getByTestId("input-password-accessKey");
   const inputAwsSecretKey = getByTestId("input-text-secretKey");
   const inputAwsRegion = getByTestId("input-text-region");
   const submitButton = getByTestId("button-default-submit-registry")
@@ -141,7 +141,7 @@ test('should not execute onSubmit because validation (missing name)', async () =
   fireEvent.click(radioAuthButton);
   await wait();
   const inputAwsAddress = getByTestId("input-text-address");
-  const inputAwsAccessKey = getByTestId("password-password-accessKey");
+  const inputAwsAccessKey = getByTestId("input-password-accessKey");
   const inputAwsSecretKey = getByTestId("input-text-secretKey");
   const inputAwsRegion = getByTestId("input-text-region");
   const submitButton = getByTestId("button-default-submit-registry")

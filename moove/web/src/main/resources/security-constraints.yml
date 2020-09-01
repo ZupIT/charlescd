@@ -204,6 +204,19 @@ constraints:
       maintenance_write:
         - GET
 
+managementConstraints:
+  - pattern: /v2/users/{email:.+}
+    methods:
+      - GET
+
+  - pattern: /v2/users/password
+    methods:
+      - PUT
+
+  - pattern: /users/{id}
+    methods:
+      - PUT
+
 publicConstraints:
   - pattern: /credentials/{service}/{id}
     methods:
@@ -212,14 +225,6 @@ publicConstraints:
   - pattern: /callback/**
     methods:
       - POST
-
-  - pattern: /users/{email:.+}
-    methods:
-      - GET
-
-  - pattern: /v2/users/{email:.+}
-    methods:
-      - GET
 
   - pattern: /v2/deployments/{id:.+}/callback
     methods:
@@ -230,5 +235,21 @@ publicConstraints:
       - POST
 
   - pattern: /actuator/health
+    methods:
+      - GET
+
+  - pattern: /swagger-ui.html
+    methods:
+      - GET
+
+  - pattern: /webjars/**
+    methods:
+      - GET
+
+  - pattern: /swagger-resources/**
+    methods:
+      - GET
+
+  - pattern: /v2/api-docs
     methods:
       - GET
