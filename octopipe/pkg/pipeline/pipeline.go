@@ -25,8 +25,9 @@ import (
 )
 
 type NonAdjustablePipelineVersion struct {
-	Version    string `json:"version"`
-	VersionURL string `json:"versionUrl"`
+	Version    string    `json:"version"`
+	VersionURL string    `json:"versionUrl"`
+	VersionCircle string `json:"versionCircle"`
 }
 
 type NonAdjustablePipelineGithub struct {
@@ -130,6 +131,7 @@ func (deprecatedPipeline NonAdjustablePipeline) generateVersionSteps(versions []
 						"Name":      version.Version,
 						"Namespace": deprecatedPipeline.AppNamespace,
 						"image.tag": version.VersionURL,
+						"circleId": version.VersionCircle,
 					},
 				},
 			},
@@ -156,3 +158,4 @@ func (deprecatedPipeline NonAdjustablePipeline) generateIstioSteps() []Step {
 
 	return steps
 }
+
