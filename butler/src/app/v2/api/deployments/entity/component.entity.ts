@@ -55,6 +55,7 @@ export class ComponentEntityV2 implements Component {
     this.name = componentName
     this.componentId = componentId
     this.hostValue = hostValue
+    this.gatewayName = gatewayName
     this.merged = merged
   }
 
