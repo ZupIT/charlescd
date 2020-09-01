@@ -101,7 +101,7 @@ test('render Segments default component and add new rule', async () => {
   expect(KeyInput1).toBeInTheDocument();
 });
 
-test('render Segments default component, add new rule and change logical operator', async () => {
+test('render Segments default component, add new rule and change logical operator to AND', async () => {
   const { getByTestId, getByText, getByDisplayValue } = render(
     <Segments viewMode={false} />
     );
