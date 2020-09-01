@@ -41,20 +41,20 @@ export class CreateComponentRequestDto {
   @ValidateIf((obj, value) => { return value })
   @IsString()
   @IsNotEmpty()
-  public readonly hostValue!: string
+  public readonly hostValue!: string | undefined
 
   @ValidateIf((obj, value) => { return value })
   @IsString()
   @IsNotEmpty()
-  public readonly gatewayName!: string
+  public readonly gatewayName!: string | undefined
 
   constructor(
     componentId: string,
     buildImageUrl: string,
     buildImageTag: string,
     componentName: string,
-    hostValue: string,
-    gatewayName: string
+    hostValue: string | undefined,
+    gatewayName: string | undefined
   ) {
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl

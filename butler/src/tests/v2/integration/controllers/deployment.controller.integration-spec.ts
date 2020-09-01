@@ -101,6 +101,8 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               componentName: 'component-name',
               createdAt: expect.any(String),
+              hostValue: null,
+              gatewayName: null
             }
           ]
         }

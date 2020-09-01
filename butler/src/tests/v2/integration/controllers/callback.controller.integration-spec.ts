@@ -80,7 +80,9 @@ describe('CallbackController v2', () => {
       '945595ee-d851-4841-a170-c171c0a7b1a2',
       'build-image-url.com',
       'build-image-tag',
-      'component-name'
+      'component-name',
+      undefined,
+      undefined
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -174,7 +176,9 @@ describe('CallbackController v2', () => {
       '945595ee-d851-4841-a170-c171c0a7b1a2',
       'build-image-url.com',
       'build-image-tag',
-      'component-name'
+      'component-name',
+      undefined,
+      undefined
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -269,7 +273,9 @@ describe('CallbackController v2', () => {
       '945595ee-d851-4841-a170-c171c0a7b1a2',
       'build-image-url.com',
       'build-image-tag',
-      'component-name'
+      'component-name',
+      undefined,
+      undefined
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
@@ -364,7 +370,9 @@ describe('CallbackController v2', () => {
       '945595ee-d851-4841-a170-c171c0a7b1a2',
       'build-image-url.com',
       'build-image-tag',
-      'component-name'
+      'component-name',
+      undefined,
+      undefined
     )
 
     const modulesDto = new CreateModuleDeploymentDto(
