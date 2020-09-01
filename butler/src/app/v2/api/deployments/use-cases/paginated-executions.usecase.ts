@@ -13,9 +13,14 @@ export class PaginatedExecutionsUseCase {
 
   public async execute(params: ExecutionQuery): Promise<PaginatedExecutions>{
     this.consoleLoggerService.log('START:START_EXECUTIONS_PAGINATION', { params: params })
-    const executions = await this.executionRepository.listExecutionsAndRelations(params.active, params.pageSize, params.page)
+    const executions = await this.executionRepository.listExecutionsAndRelations(params.active, params.size, params.page)
+    const totalPages = Math.round(Math.ceil(executions[1] / params.size))
     const response : PaginatedExecutions = {
-      executions: executions
+      executions: executions[0],
+      totalPages: totalPages,
+      size: params.size,
+      page: params.page - 1,
+      last: params.page === totalPages
     }
     return response
   }
