@@ -17,10 +17,10 @@ export class ComponentEntityV2 implements Component {
   @Column({ name: 'image_url' })
   public imageUrl!: string
 
-  @Column({ name: 'host_value' })
+  @Column({ name: 'host_value', nullable: true, type: 'varchar' })
   public hostValue!: string | null
 
-  @Column({ name: 'gateway_name' })
+  @Column({ name: 'gateway_name', nullable: true, type: 'varchar' })
   public gatewayName!: string | null
 
   @Column({ name: 'name' })
