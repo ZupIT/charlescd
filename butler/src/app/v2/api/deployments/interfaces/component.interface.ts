@@ -25,9 +25,9 @@ export interface Component {
 
     imageUrl: string
 
-    hostValue?: string
+    hostValue: string | null
 
-    gatewayName?: string
+    gatewayName: string | null
 
     name: string
 

@@ -10,6 +10,7 @@ import { FixtureUtilsService } from '../../../v1/integration/utils/fixture-utils
 import { TestSetupUtils } from '../../../v1/integration/utils/test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ReadDeploymentDto } from '../../../../app/v2/api/deployments/dto/read-deployment.dto'
+import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -101,6 +102,8 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               componentName: 'component-name',
               createdAt: expect.any(String),
+              hostValue: null,
+              gatewayName: null
             }
           ]
         }
@@ -294,5 +297,51 @@ describe('DeploymentController v2', () => {
       .expect(response => {
         expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
       })
+  })
+
+  it('saves the host value / gateway name parameters correctly', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: 'tag1',
+              componentName: 'component-name',
+              hostValue: 'host-value-1',
+              gatewayName: 'gateway-name-1'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+    const response = await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
+
+    const componentsCount = await manager.findAndCount(ComponentEntity, { where: { deployment: createDeploymentRequest.deploymentId } })
+    expect(componentsCount[1]).toEqual(1)
+    const component = await manager.findOneOrFail(ComponentEntity)
+    expect(component.hostValue).toEqual(createDeploymentRequest.modules[0].components[0].hostValue)
+    expect(component.gatewayName).toEqual(createDeploymentRequest.modules[0].components[0].gatewayName)
   })
 })

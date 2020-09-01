@@ -120,7 +120,9 @@ export class DeploymentEntityV2 implements Deployment {
           buildImageTag: c.imageTag,
           buildImageUrl: c.imageUrl,
           componentId: c.componentId,
-          componentName: c.name
+          componentName: c.name,
+          hostValue: c.hostValue,
+          gatewayName: c.gatewayName
         }
       })
     }
