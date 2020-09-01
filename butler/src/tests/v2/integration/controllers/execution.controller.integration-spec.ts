@@ -82,7 +82,7 @@ describe('DeploymentController v2', () => {
     const thirdExecution = await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
 
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 1, page: 1 })
+      .get('/v2/executions').query({ active: false, size: 1, page: 0 })
       .set('x-circle-id', '12345')
       .expect(200)
       .expect(response => {
@@ -97,7 +97,7 @@ describe('DeploymentController v2', () => {
     // testing pagination
     await request(app.getHttpServer())
       .get('/v2/executions')
-      .query({ active: false, size: 1, page: 2 })
+      .query({ active: false, size: 1, page: 1 })
       .set('x-circle-id', '12345')
       .expect(200)
       .expect(response => {
@@ -112,7 +112,7 @@ describe('DeploymentController v2', () => {
     // testing pagination
     await request(app.getHttpServer())
       .get('/v2/executions')
-      .query({ active: false, size: 1, page: 3 })
+      .query({ active: false, size: 1, page: 2 })
       .set('x-circle-id', '12345')
       .expect(200)
       .expect(response => {
@@ -122,6 +122,23 @@ describe('DeploymentController v2', () => {
         expect(response.body.size).toEqual(1)
         expect(response.body.totalPages).toEqual(3)
         expect(response.body.last).toEqual(true)
+      })
+  })
+
+  it('validate query string parameters', async() => {
+    const errorMessages = {
+      error: 'Bad Request',
+      message: [
+        'size must not be less than 1',
+        'page must not be less than 0'
+      ],
+      statusCode: 400
+    }
+    await request(app.getHttpServer())
+      .get('/v2/executions').query({ active: false, size: 0, page: -1 })
+      .set('x-circle-id', '12345')
+      .expect(response => {
+        expect(response.body).toEqual(errorMessages)
       })
   })
 })

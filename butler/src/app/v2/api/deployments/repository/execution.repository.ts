@@ -69,7 +69,7 @@ export class ExecutionRepository extends Repository<Execution> {
       .andWhere('d.active = :active', { active: active })
       .orderBy({ 'e.created_at': 'DESC', 'e.id': 'DESC' })
       .limit(pageSize)
-      .offset(pageSize * (page - 1))
+      .offset(pageSize * (page))
 
     // TODO leaving this here to discuss keyset pagination
     // if (lastSeenId && lastSeenTimestamp) {
