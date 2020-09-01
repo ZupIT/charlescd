@@ -32,8 +32,8 @@ test('render Segments default component', async () => {
   await wait(() => expect(queryByTestId('button-default-save')).not.toBeInTheDocument());
 });
 
-test('render Segments default component, add new group and shows logical operator OR', async () => {
-  const { getByText, getByDisplayValue} = render(
+test('render Segments default component, add new group and change group logical operator to AND', async () => {
+  const { getByText, getByDisplayValue, getByTestId } = render(
     <Segments viewMode={false} />
   );
 
@@ -41,19 +41,11 @@ test('render Segments default component, add new group and shows logical operato
   fireEvent.click(buttonAddGroup);
 
   await waitForElement(() => getByDisplayValue('OR'));
-});
 
-test('render Segments default component, add new rule and shows logical operator OR', async () => {
-  const { queryByTestId, getByTestId} = render(
-    <Segments viewMode={false} />
-    );
+  const operator = await waitForElement(() => getByTestId('input-text-logicalOperator'));
+  fireEvent.click(operator);
   
-  const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
-  expect(buttonAddRule).toBeInTheDocument();
-  fireEvent.click(buttonAddRule);
-
-  const operator = getByTestId('input-text-clauses[0].logicalOperator');
-  expect(operator).toHaveAttribute('value', 'OR');
+  await waitForElement(() => getByDisplayValue('AND'));
 });
 
 test('render Segments default component with viewMode off', async () => {
@@ -83,6 +75,19 @@ test('render Segments default component and Rules', async () => {
   await wait(() => expect(getByTestId(wrapperConditionText)).toBeInTheDocument());
   await wait(() => expect(getByTestId(inputValueText)).toBeInTheDocument());
 });
+
+test('render Segments default component, add new rule and shows logical operator OR', async () => {
+  const { queryByTestId, getByTestId} = render(
+    <Segments viewMode={false} />
+    );
+  
+  const buttonAddRule = await waitForElement(() => queryByTestId('button-default-add-clause'));
+  expect(buttonAddRule).toBeInTheDocument();
+  fireEvent.click(buttonAddRule);
+
+  const operator = getByTestId('input-text-clauses[0].logicalOperator');
+  expect(operator).toHaveAttribute('value', 'OR');
+});
   
 test('render Segments default component and add new rule', async () => {
   const { getByTestId } = render(
@@ -102,7 +107,7 @@ test('render Segments default component and add new rule', async () => {
 });
 
 test('render Segments default component, add new rule and change logical operator to AND', async () => {
-  const { getByTestId, getByText, getByDisplayValue } = render(
+  const { getByTestId, getByDisplayValue } = render(
     <Segments viewMode={false} />
     );
 
@@ -114,4 +119,4 @@ test('render Segments default component, add new rule and change logical operato
 
   fireEvent.click(operator);
   await waitForElement(() => getByDisplayValue('AND'));
-})
+});
