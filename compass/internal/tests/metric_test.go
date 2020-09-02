@@ -7,23 +7,20 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	datasource2 "compass/pkg/datasource"
 	"encoding/json"
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
-	"regexp"
 	"strings"
 	"testing"
-	"time"
 )
 
 type SuiteMetric struct {
 	suite.Suite
-	DB   *gorm.DB
-	mock sqlmock.Sqlmock
+	DB *gorm.DB
 
 	repository metric2.UseCases
 	metric     *metric2.Metric
@@ -56,7 +53,17 @@ func TestInitMetric(t *testing.T) {
 }
 
 func (s *SuiteMetric) TestValidateMetric() {
-	metric := metric2.Metric{}
+	filters := make([]datasource2.MetricFilter, 0)
+	filters = append(filters, datasource2.MetricFilter{Field: util.BigString, Value: util.BigString, Operator: "="})
+
+	groupBy := make([]metric2.MetricGroupBy, 0)
+	groupBy = append(groupBy, metric2.MetricGroupBy{Field: util.BigString})
+
+	metric := metric2.Metric{
+		Nickname: util.BigString,
+		Filters:  filters,
+		GroupBy:  groupBy,
+	}
 	var errList = s.repository.Validate(metric)
 
 	require.NotEmpty(s.T(), errList)
@@ -95,41 +102,6 @@ func (s *SuiteMetric) TestParseError() {
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
 	_, err := s.repository.ParseMetric(stringReadCloser)
-
-	require.Error(s.T(), err)
-}
-
-func (s *SuiteMetric) TestRemoveMetric() {
-	id := uuid.New()
-	metricQuery := regexp.QuoteMeta(`DELETE FROM "metrics"`)
-	metricExecQuery := regexp.QuoteMeta(`DELETE FROM "metric_executions"`)
-
-	s.mock.MatchExpectationsInOrder(false)
-	s.mock.ExpectBegin()
-	s.mock.ExpectBegin()
-	s.mock.ExpectExec(metricQuery).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
-	s.mock.ExpectExec(metricExecQuery).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
-
-	resErr := s.repository.RemoveMetric(id.String())
-
-	require.NoError(s.T(), resErr)
-	require.Nil(s.T(), resErr)
-}
-
-func (s *SuiteMetric) TestRemoveMetricError() {
-	id := uuid.New()
-	query := regexp.QuoteMeta(`DELETE FROM "error"`)
-
-	s.mock.ExpectBegin()
-	s.mock.ExpectExec(query).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
-
-	err := s.repository.RemoveMetric(id.String())
 
 	require.Error(s.T(), err)
 }
@@ -177,119 +149,143 @@ func (s *SuiteMetric) TestSaveMetric() {
 }
 
 func (s *SuiteMetric) TestUpdateMetric() {
-	id := uuid.New()
-	metricsGroupId := uuid.New()
-	dataSourceId := uuid.New()
-	timeNow := time.Now()
+	circleId := uuid.New()
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric2.Metric{},
+		CircleID:    circleId,
+		WorkspaceID: uuid.New(),
+	}
+
+	dataSource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+	s.DB.Create(&metricgroup)
 	metricStruct := metric2.Metric{
-		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
-		MetricsGroupID: metricsGroupId,
-		DataSourceID:   dataSourceId,
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
 		Filters:        nil,
 		GroupBy:        nil,
 		Condition:      "=",
 		Threshold:      1,
+		CircleID:       circleId,
 	}
 
-	res, err := s.repository.UpdateMetric(id.String(), metricStruct)
+	s.DB.Create(&metricStruct)
+
+	metricStruct.Metric = "Name"
+
+	res, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
 
 	require.NoError(s.T(), err)
+
+	metricStruct.BaseModel = res.BaseModel
+	metricStruct.MetricExecution.Status = res.MetricExecution.Status
 	require.Equal(s.T(), metricStruct, res)
 }
 
-//
-//func (s *SuiteMetric) TestSaveMetricError() {
-//	id := uuid.New()
-//	metricsGroupId := uuid.New()
-//	dataSourceId := uuid.New()
-//	timeNow := time.Now()
-//	metricStruct := Metric{
-//		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
-//		MetricsGroupID: metricsGroupId,
-//		DataSourceID:   dataSourceId,
-//		Metric:         "MetricName",
-//		Filters:        nil,
-//		GroupBy:        nil,
-//		Condition:      "=",
-//		Threshold:      1,
-//	}
-//
-//	query := regexp.QuoteMeta(`INSERT INTO "ERROR"`)
-//
-//	s.mock.MatchExpectationsInOrder(false)
-//	s.mock.ExpectBegin()
-//	s.mock.ExpectQuery(query).
-//		WithArgs(sqlmock.AnyArg(),
-//			metricStruct.CreatedAt,
-//			metricStruct.MetricsGroupID.String(),
-//			metricStruct.DataSourceID.String(),
-//			metricStruct.Metric,
-//			metricStruct.Condition,
-//			metricStruct.Threshold).
-//		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(id))
-//	s.mock.ExpectCommit()
-//
-//	_, err := s.repository.SaveMetric(metricStruct)
-//
-//	require.Error(s.T(), err)
-//}
-//
-//func (s *SuiteMetric) TestUpdateMetric() {
-//	id := uuid.New()
-//	metricsGroupId := uuid.New()
-//	dataSourceId := uuid.New()
-//	timeNow := time.Now()
-//	metricStruct := Metric{
-//		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
-//		MetricsGroupID: metricsGroupId,
-//		DataSourceID:   dataSourceId,
-//		Metric:         "MetricName",
-//		Filters:        nil,
-//		GroupBy:        nil,
-//		Condition:      "=",
-//		Threshold:      1,
-//	}
-//
-//	query := regexp.QuoteMeta(`UPDATE "metrics"`)
-//
-//	s.mock.MatchExpectationsInOrder(false)
-//	s.mock.ExpectBegin()
-//	s.mock.ExpectExec(query).
-//		WillReturnResult(sqlmock.NewResult(1, 1))
-//	s.mock.ExpectCommit()
-//
-//	res, err := s.repository.UpdateMetric(id.String(), metricStruct)
-//
-//	require.NoError(s.T(), err)
-//	require.Equal(s.T(), metricStruct, res)
-//}
-//
-//func (s *SuiteMetric) TestUpdateMetricError() {
-//	id := uuid.New()
-//	metricsGroupId := uuid.New()
-//	dataSourceId := uuid.New()
-//	timeNow := time.Now()
-//	metricStruct := Metric{
-//		BaseModel:      util.BaseModel{ID: id, CreatedAt: timeNow},
-//		MetricsGroupID: metricsGroupId,
-//		DataSourceID:   dataSourceId,
-//		Metric:         "MetricName",
-//		Filters:        nil,
-//		GroupBy:        nil,
-//		Condition:      "=",
-//		Threshold:      1,
-//	}
-//
-//	query := regexp.QuoteMeta(`UPDATE "ERROR"`)
-//
-//	s.mock.MatchExpectationsInOrder(false)
-//	s.mock.ExpectBegin()
-//	s.mock.ExpectExec(query).
-//		WillReturnResult(sqlmock.NewResult(1, 1))
-//	s.mock.ExpectCommit()
-//
-//	_, err := s.repository.UpdateMetric(id.String(), metricStruct)
-//
-//	require.Error(s.T(), err)
-//}
+func (s *SuiteMetric) TestRemoveMetric() {
+	id := uuid.New()
+
+	resErr := s.repository.RemoveMetric(id.String())
+
+	require.NoError(s.T(), resErr)
+	require.Nil(s.T(), resErr)
+}
+
+func (s *SuiteMetric) TestFindMetricById() {
+	circleId := uuid.New()
+
+	metricGroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric2.Metric{},
+		CircleID:    circleId,
+		WorkspaceID: uuid.New(),
+	}
+
+	dataSource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+	s.DB.Create(&metricGroup)
+	metricStruct := metric2.Metric{
+		MetricsGroupID: metricGroup.ID,
+		DataSourceID:   dataSource.ID,
+		Metric:         "MetricName",
+		Filters:        []datasource2.MetricFilter{},
+		GroupBy:        []metric2.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleId,
+	}
+
+	s.DB.Create(&metricStruct)
+
+	res, err := s.repository.FindMetricById(metricStruct.ID.String())
+
+	require.NoError(s.T(), err)
+
+	metricStruct.BaseModel = res.BaseModel
+	require.Equal(s.T(), metricStruct, res)
+}
+
+func (s *SuiteMetric) TestSaveMetricError() {
+	circleId := uuid.New()
+
+	metricStruct := metric2.Metric{
+		Query:     "group_metric_example_2",
+		Metric:    "MetricName",
+		Filters:   nil,
+		GroupBy:   nil,
+		Condition: "=",
+		Threshold: 1,
+		CircleID:  circleId,
+	}
+
+	_, err := s.repository.SaveMetric(metricStruct)
+
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetric) TestUpdateMetricError() {
+	circleId := uuid.New()
+
+	metricStruct := metric2.Metric{
+		Metric:    "MetricName",
+		Filters:   nil,
+		GroupBy:   nil,
+		Condition: "=",
+		Threshold: 1,
+		CircleID:  circleId,
+	}
+
+	s.DB.Create(&metricStruct)
+
+	metricStruct.Metric = "Name"
+
+	_, err := s.repository.UpdateMetric(metricStruct.ID.String(), metricStruct)
+
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetric) TestFindMetricByIdError() {
+
+	_, err := s.repository.FindMetricById("any-id")
+
+	require.Error(s.T(), err)
+}
