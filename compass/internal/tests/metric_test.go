@@ -9,13 +9,14 @@ import (
 	"compass/internal/util"
 	datasource2 "compass/pkg/datasource"
 	"encoding/json"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"strings"
-	"testing"
 )
 
 type SuiteMetric struct {
@@ -32,7 +33,7 @@ func (s *SuiteMetric) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(true)
+	s.DB.LogMode(false)
 
 	pluginMain := plugin.NewMain(s.DB)
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)

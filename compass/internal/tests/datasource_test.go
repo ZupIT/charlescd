@@ -6,13 +6,14 @@ import (
 	"compass/internal/plugin"
 	"compass/internal/util"
 	"encoding/json"
+	"io/ioutil"
+	"strings"
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"strings"
-	"testing"
 )
 
 type Suite struct {
@@ -29,7 +30,7 @@ func (s *Suite) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(true)
+	s.DB.LogMode(false)
 
 	var pluginMain = plugin.NewMain(s.DB)
 
