@@ -556,6 +556,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                    component_snapshots.module_snapshot_id   AS component_snapshot_module_snapshot_id,
                    component_snapshots.host_value           AS component_snapshot_host_value,
                    component_snapshots.gateway_name         AS component_snapshot_gateway_name,
+                   component_snapshots.namespace            AS component_snapshot_namespace,
                    artifact_snapshots.id                    AS artifact_snapshot_id,
                    artifact_snapshots.artifact              AS artifact_snapshot_artifact,
                    artifact_snapshots.version               AS artifact_snapshot_version,
