@@ -6,9 +6,9 @@ import (
 	metric2 "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
+	"compass/internal/util"
 	datasource2 "compass/pkg/datasource"
 	"encoding/json"
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
@@ -18,12 +18,9 @@ import (
 	"testing"
 )
 
-const BigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method.`
-
 type SuiteMetric struct {
 	suite.Suite
-	DB   *gorm.DB
-	mock sqlmock.Sqlmock
+	DB *gorm.DB
 
 	repository metric2.UseCases
 	metric     *metric2.Metric
@@ -57,13 +54,13 @@ func TestInitMetric(t *testing.T) {
 
 func (s *SuiteMetric) TestValidateMetric() {
 	filters := make([]datasource2.MetricFilter, 0)
-	filters = append(filters, datasource2.MetricFilter{Field: BigString, Value: BigString, Operator: "="})
+	filters = append(filters, datasource2.MetricFilter{Field: util.BigString, Value: util.BigString, Operator: "="})
 
 	groupBy := make([]metric2.MetricGroupBy, 0)
-	groupBy = append(groupBy, metric2.MetricGroupBy{Field: BigString})
+	groupBy = append(groupBy, metric2.MetricGroupBy{Field: util.BigString})
 
 	metric := metric2.Metric{
-		Nickname: BigString,
+		Nickname: util.BigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
 	}
