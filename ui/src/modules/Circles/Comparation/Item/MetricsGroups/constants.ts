@@ -18,7 +18,7 @@ import { MetricFilter } from './types';
 
 export const conditionOptions = [
   { value: 'EQUAL', label: 'Equal' },
-  { value: 'GREATER_THAN', label: 'Higher than' },
+  { value: 'GREATER_THAN', label: 'Greater than' },
   { value: 'LOWER_THAN', label: 'Lower than' }
 ];
 
