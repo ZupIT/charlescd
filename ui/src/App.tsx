@@ -26,8 +26,17 @@ import Routes from './Routes';
 const currentTheme = 'dark';
 setUserAbilities();
 
-function App() {
+interface Props {
+  isMicrofrontend?: boolean;
+  devcraft?: {
+    header: string;
+  };
+}
+
+function App(props: Props) {
   const globalState = useReducer(rootReducer, rootState);
+
+  console.log('charles:props', props);
 
   return (
     <ContextProvider value={globalState}>
