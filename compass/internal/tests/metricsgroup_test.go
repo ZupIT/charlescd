@@ -1,9 +1,10 @@
-package metricsgroup
+package tests
 
 import (
 	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/metric"
+	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"compass/internal/util"
 	"io/ioutil"
@@ -17,16 +18,16 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type Suite struct {
+type SuiteMetricGroup struct {
 	suite.Suite
 	DB   *gorm.DB
 	mock sqlmock.Sqlmock
 
-	repository UseCases
-	datasource *MetricsGroup
+	repository metricsgroup.UseCases
+	datasource *metricsgroup.MetricsGroup
 }
 
-func (s *Suite) SetupSuite() {
+func (s *SuiteMetricGroup) SetupSuite() {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -38,20 +39,20 @@ func (s *Suite) SetupSuite() {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
 
-	s.repository = NewMain(s.DB, metricMain, datasourceMain, pluginMain)
+	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain)
 }
 
-func (s *Suite) BeforeTest(suiteName, testName string) {
+func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM metrics_groups")
 	s.DB.Exec("DELETE FROM data_sources")
 }
 
-func TestInit(t *testing.T) {
-	suite.Run(t, new(Suite))
+func TestInitMetricGroup(t *testing.T) {
+	suite.Run(t, new(SuiteMetricGroup))
 }
 
-func (s *Suite) TestValidate() {
-	newMetricGroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestValidate() {
+	newMetricGroup := metricsgroup.MetricsGroup{
 		Name:        "Metric group",
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
@@ -61,8 +62,8 @@ func (s *Suite) TestValidate() {
 	require.Empty(s.T(), errList)
 }
 
-func (s *Suite) TestValidateError() {
-	newMetricGroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestValidateError() {
+	newMetricGroup := metricsgroup.MetricsGroup{
 		Name:        "",
 		CircleID:    uuid.Nil,
 		WorkspaceID: uuid.Nil,
@@ -74,8 +75,8 @@ func (s *Suite) TestValidateError() {
 	require.Equal(s.T(), util.ErrorUtil{Field: "circleID", Error: "CircleID is required"}, ers[1])
 }
 
-func (s *Suite) TestValidateNameLength() {
-	newMetricGroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestValidateNameLength() {
+	newMetricGroup := metricsgroup.MetricsGroup{
 		Name:        "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
@@ -85,24 +86,24 @@ func (s *Suite) TestValidateNameLength() {
 	require.Equal(s.T(), util.ErrorUtil{Field: "name", Error: "100 Maximum length in Name"}, ers[0])
 }
 
-func (s *Suite) TestPeriodValidate() {
+func (s *SuiteMetricGroup) TestPeriodValidate() {
 	err := s.repository.PeriodValidate("1d")
 	require.Nil(s.T(), err)
 }
 
-func (s *Suite) TestPeriodValidateNotFoundNumber() {
+func (s *SuiteMetricGroup) TestPeriodValidateNotFoundNumber() {
 	err := s.repository.PeriodValidate("d")
 
 	require.Equal(s.T(), "Invalid period or interval: not found number", err.Error())
 }
 
-func (s *Suite) TestPeriodValidateNotFoundUnit() {
+func (s *SuiteMetricGroup) TestPeriodValidateNotFoundUnit() {
 	err := s.repository.PeriodValidate("1")
 
 	require.Equal(s.T(), "Invalid period or interval: not found unit", err.Error())
 }
 
-func (s *Suite) TestParseMetricsGroup() {
+func (s *SuiteMetricGroup) TestParseMetricsGroup() {
 	stringReader := strings.NewReader(`{
     "name": "Metricas de teste2",
     "circleId": "b9d285fc-542b-4828-9e30-d28355b5fefb"
@@ -115,7 +116,7 @@ func (s *Suite) TestParseMetricsGroup() {
 	require.NotNil(s.T(), res)
 }
 
-func (s *Suite) TestParseMetricsGroupError() {
+func (s *SuiteMetricGroup) TestParseMetricsGroupError() {
 	stringReader := strings.NewReader(`{ERROR}`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
@@ -123,8 +124,8 @@ func (s *Suite) TestParseMetricsGroupError() {
 	require.Error(s.T(), err)
 }
 
-func (s *Suite) TestFindAll() {
-	expectMetricGroups := []MetricsGroup{
+func (s *SuiteMetricGroup) TestFindAll() {
+	expectMetricGroups := []metricsgroup.MetricsGroup{
 		{
 			Name:        "group 1",
 			Metrics:     []metric.Metric{},
@@ -153,8 +154,8 @@ func (s *Suite) TestFindAll() {
 	}
 }
 
-func (s *Suite) TestFindById() {
-	metricgroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestFindById() {
+	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
@@ -170,8 +171,8 @@ func (s *Suite) TestFindById() {
 	require.Equal(s.T(), item, metricgroup)
 }
 
-func (s *Suite) TestSave() {
-	metricgroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestSave() {
+	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
@@ -185,8 +186,8 @@ func (s *Suite) TestSave() {
 	require.Equal(s.T(), createMetricGroup, metricgroup)
 }
 
-func (s *Suite) TestUpdate() {
-	metricgroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestUpdate() {
+	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
@@ -202,8 +203,8 @@ func (s *Suite) TestUpdate() {
 	require.Equal(s.T(), createMetricGroup, metricgroup)
 }
 
-func (s *Suite) TestDelete() {
-	metricgroup := MetricsGroup{
+func (s *SuiteMetricGroup) TestDelete() {
+	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
