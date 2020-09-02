@@ -4,11 +4,7 @@ import org.junit.Test
 
 class GitLabClientFactoryLegacyTest {
 
-    
-
     @Test
-    fun `when using OAuth2Token credential should return GitHub client`(){
-
+    fun `when using OAuth2Token credential should return GitHub client`() {
     }
-
 }
