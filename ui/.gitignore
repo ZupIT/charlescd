@@ -13,6 +13,7 @@
 
 # production
 /build
+/dist
 /public/config.js
 
 # misc
