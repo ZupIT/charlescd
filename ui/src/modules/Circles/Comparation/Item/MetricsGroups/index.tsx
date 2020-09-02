@@ -257,7 +257,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   return !showAddMetricForm ? (
     <>
       {renderModal()}
-      <Styled.Layer>
+      <Styled.Layer data-testid="metrics-groups-list">
         <Styled.Icon
           name="arrow-left"
           color="dark"

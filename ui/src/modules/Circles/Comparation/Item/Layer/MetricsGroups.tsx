@@ -111,7 +111,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
   return (
     <Layer data-testid="layer-metrics-groups">
       <ContentIcon icon="group-metrics">
-        <Text.h2 color="light">Group metrics</Text.h2>
+        <Text.h2 color="light">Metrics Groups</Text.h2>
       </ContentIcon>
       <Styled.Content>
         {renderAddMetricsGroups()}
