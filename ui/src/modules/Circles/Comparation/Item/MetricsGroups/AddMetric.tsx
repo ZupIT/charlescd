@@ -132,7 +132,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
   };
 
   return (
-    <>
+    <div data-testid="add-metric">
       <Styled.Layer>
         <Styled.Icon
           name="arrow-left"
@@ -311,7 +311,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
           </Styled.Layer>
         </Styled.Form>
       </FormContext>
-    </>
+    </div>
   );
 };
 

@@ -19,9 +19,7 @@ import { render, wait, fireEvent } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer'
 import { AllTheProviders } from "unit-test/testUtils";
 import CirclesComparationItem from '..';
-import { FetchMock } from 'jest-fetch-mock/types';
-import * as StateHooks from 'core/state/hooks';
-import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { FetchMock } from 'jest-fetch-mock';
 import { Actions, Subjects } from 'core/utils/abilities';
 
 (global as any).MutationObserver = MutationObserver
@@ -85,6 +83,7 @@ test('render CircleComparationItem with release', async () => {
   await wait();
 
   expect(getByTestId('layer-metrics')).toBeInTheDocument();
+  expect(getByTestId('layer-metrics-groups')).toBeInTheDocument();
   expect(getByText('Override release')).toBeInTheDocument();
   expect(getByText('Last release deployed')).toBeInTheDocument();
   expect(getByText('Add Metrics Configuration')).toBeInTheDocument();
