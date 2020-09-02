@@ -24,7 +24,7 @@ jobs:
 
     - run: yarn install
       working-directory: ./ui
-    - run: yarn build
+    - run: yarn build:all
       working-directory: ./ui
       env:
         CI: true
