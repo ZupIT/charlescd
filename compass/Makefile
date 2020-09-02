@@ -13,7 +13,6 @@ BINARY_NAME=compass
 
 COMPOSE_TESTS=./test/docker-compose.test.yaml
 
-# $(GOBUILDPLUGIN) "$$plugin"/*.go
 
 start:
 				for plugin in ./plugins/datasource/*/; do $(GOBUILDPLUGIN) -o ./plugins "$$plugin"/*.go ; done
