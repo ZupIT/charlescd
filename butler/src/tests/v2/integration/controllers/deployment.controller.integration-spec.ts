@@ -344,4 +344,54 @@ describe('DeploymentController v2', () => {
     expect(component.hostValue).toEqual(createDeploymentRequest.modules[0].components[0].hostValue)
     expect(component.gatewayName).toEqual(createDeploymentRequest.modules[0].components[0].gatewayName)
   })
+
+  it('validates size of componentName + buildImageTag concatenation', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+      },
+      modules: [
+        {
+          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
+          helmRepository: 'https://some-helm.repo',
+          components: [
+            {
+              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+              buildImageUrl: 'imageurl.com',
+              buildImageTag: '11111111111111111111111111111111',
+              componentName: '2222222222222222222222222222222',
+              hostValue: 'host-value-1',
+              gatewayName: 'gateway-name-1'
+            }
+          ]
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
+    }
+
+    const errorMessages = [
+      '0.Sum of lengths of componentName and buildImageTag cant be greater than 63'
+    ]
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', '12345')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+      })
+
+  })
 })
