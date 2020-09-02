@@ -15,21 +15,17 @@
  */
 module.exports = {
   webpack(config) {
-    if (process.env.REACT_APP_MICROFRONTEND === 'on') {
-      config.entry = './src/microfrontend.tsx';
-      config.output.libraryTarget = 'system';
-      config.plugins = config.plugins.filter(
-        plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
-      );
+    config.entry = './src/microfrontend.tsx';
+    config.output.libraryTarget = 'system';
+    config.plugins = config.plugins.filter(
+      plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
+    );
+    config.output = {
+      ...config.output,
+      filename: 'main.js'
+    };
 
-      config.output = {
-        ...config.output,
-        filename: 'microfrontends.js'
-      };
-      delete config.optimization;
-    } else {
-      config.entry = './src/index.tsx';
-    }
+    delete config.optimization;
 
     return config;
   },

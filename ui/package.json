@@ -33,14 +33,18 @@
     "systemjs-webpack-interop": "^2.1.2"
   },
   "scripts": {
-    "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none PORT=3001 react-app-rewired start",
+    "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
+    "start:microfrontend": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none PORT=3001 react-app-rewired start",
     "mock:api": "cross-env ENVIRONMENT=local node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
     "test": "react-scripts test --watchAll=false --testPathIgnorePatterns='fixtures.ts'",
     "test:coverage": "react-scripts test --watchAll=false --coverage --testPathIgnorePatterns='fixtures.ts'",
     "test:watch": "react-scripts test --testPathIgnorePatterns='fixtures.ts'",
     "lint": "eslint './src/**/*.{ts,tsx}'",
-    "build": "react-app-rewired build",
-    "stub": "nodemon -r esm ./stub"
+    "build": "react-scripts build",
+    "build:microfrontend": "react-app-rewired build",
+    "build:all": "yarn build && yarn build:microfrontend",
+    "stub": "nodemon -r esm ./stub",
+    "postbuild": "rm -rf dist && mv build dist"
   },
   "bugs": {
     "url": "https://github.com/ZupIT/darwin-ui/issues"
