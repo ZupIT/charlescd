@@ -37,7 +37,7 @@ jobs:
       env:
         CI: true
     - name: Tests coverage
-      uses: codecov/codecov-action@v1.0.7
+      uses: codecov/codecov-action@v1.0.13
       with:
         file: ./ui/coverage/lcov.info
         flags: ui
