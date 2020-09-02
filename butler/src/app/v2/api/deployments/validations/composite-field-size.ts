@@ -24,7 +24,7 @@ export class CompositeFieldSize implements ValidatorConstraintInterface {
 
   public validate(components: CreateComponentRequestDto[]): boolean {
     this.invalidSizes = components.filter(c => {
-      return (c.componentName.length + c.buildImageTag.length) >= 63
+      return (c.componentName.length + c.buildImageTag.length) > 63
     })
     return this.invalidSizes.length === 0
   }
