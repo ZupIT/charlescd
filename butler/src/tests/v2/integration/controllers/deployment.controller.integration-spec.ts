@@ -368,7 +368,7 @@ describe('DeploymentController v2', () => {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
               buildImageTag: '11111111111111111111111111111111',
-              componentName: '2222222222222222222222222222222',
+              componentName: '22222222222222222222222222222222',
               hostValue: 'host-value-1',
               gatewayName: 'gateway-name-1'
             }
