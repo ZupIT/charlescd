@@ -18,6 +18,7 @@ import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
 import { CreateComponentRequestDto } from './create-component-request.dto'
 import { ComponentUniqueProp } from '../validations/component-unique-by-name'
+import { CompositeFieldSize } from '../validations/composite-field-size'
 
 export class CreateModuleDeploymentDto {
 
@@ -32,6 +33,7 @@ export class CreateModuleDeploymentDto {
   @ValidateNested({ each: true })
   @Type(() => CreateComponentRequestDto)
   @Validate(ComponentUniqueProp, ['componentName'])
+  @Validate(CompositeFieldSize)
   public readonly components: CreateComponentRequestDto[]
 
   constructor(moduleId: string, helmRepository: string, components: CreateComponentRequestDto[]) {
