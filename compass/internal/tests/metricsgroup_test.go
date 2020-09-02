@@ -33,7 +33,7 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(true)
+	s.DB.LogMode(false)
 
 	pluginMain := plugin.NewMain(s.DB)
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
