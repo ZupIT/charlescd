@@ -38,7 +38,7 @@ jobs:
           go test -race -covermode atomic -coverprofile=coverage.cov ./...
 
       - name: Tests coverage
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1.0.13
         with:
           file: ./octopipe/coverage.cov
           flags: octopipe
