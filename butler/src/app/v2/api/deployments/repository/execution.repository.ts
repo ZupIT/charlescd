@@ -62,6 +62,8 @@ export class ExecutionRepository extends Repository<Execution> {
              'image_url', c.image_url,
              'image_tag', c.image_tag,
              'running', c.running,
+             'hostValue', c.host_value,
+             'gatewayName', c.gateway_name,
              'merged', c.merged)
          )) AS deployment
       `)

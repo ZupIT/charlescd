@@ -55,7 +55,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     },
     {
       id: 'component-id-2',
@@ -63,7 +65,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/B:v2',
       name: 'B',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     },
     {
       id: 'component-id-3',
@@ -71,7 +75,9 @@ const deploymentWith3Components: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/C:v2',
       name: 'C',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -104,7 +110,9 @@ const deploymentWith1ComponentCircle1: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -137,7 +145,9 @@ const deploymentWith1ComponentCircle2: Deployment = {
       imageTag: 'v2',
       imageUrl: 'https://repository.com/A:v2',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -170,7 +180,9 @@ const deploymentWith1ComponentOpenSea: Deployment = {
       imageTag: 'v0',
       imageUrl: 'https://repository.com/A:v0',
       name: 'A',
-      running: false
+      running: false,
+      gatewayName: null,
+      hostValue: null
     }
   ]
 }
@@ -221,6 +233,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id4',
           authorId: 'user-1',
@@ -251,6 +265,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v1',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id5',
           authorId: 'user-1',
@@ -281,6 +297,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -311,6 +329,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -341,6 +361,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -381,6 +403,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -411,6 +435,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -441,6 +467,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -481,6 +509,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -511,6 +541,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -541,6 +573,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -581,6 +615,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -611,6 +647,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -641,6 +679,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -671,6 +711,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -711,6 +753,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -741,6 +785,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -771,6 +817,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -801,6 +849,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -841,6 +891,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -871,6 +923,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -901,6 +955,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -931,6 +987,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -971,6 +1029,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1001,6 +1061,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1031,6 +1093,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1061,6 +1125,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1091,6 +1157,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1121,6 +1189,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1161,6 +1231,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1191,6 +1263,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1221,6 +1295,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1251,6 +1327,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',
@@ -1281,6 +1359,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1321,6 +1401,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v0',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1351,6 +1433,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/A:v1',
         name: 'A',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id6',
           authorId: 'user-1',
@@ -1381,6 +1465,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/B:v0',
         name: 'B',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id7',
           authorId: 'user-1',
@@ -1411,6 +1497,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         imageUrl: 'https://repository.com/C:v0',
         name: 'C',
         running: true,
+        gatewayName: null,
+        hostValue: null,
         deployment: {
           id: 'deployment-id8',
           authorId: 'user-1',

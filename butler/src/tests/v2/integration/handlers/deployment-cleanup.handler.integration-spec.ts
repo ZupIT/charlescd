@@ -167,7 +167,10 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
       c.buildImageTag,
       c.buildImageUrl,
       c.componentName,
-      c.componentId)
+      c.componentId,
+      c.hostValue,
+      c.gatewayName
+    )
   })
 
   const deployment : DeploymentEntity = await manager.save(new DeploymentEntity(

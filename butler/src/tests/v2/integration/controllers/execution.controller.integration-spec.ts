@@ -141,6 +141,77 @@ describe('DeploymentController v2', () => {
         expect(response.body).toEqual(errorMessages)
       })
   })
+
+  it('returns the right entity values', async() => {
+    const cdConfiguration = new CdConfigurationEntity(
+      CdTypeEnum.SPINNAKER,
+      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
+      'config-name',
+      'authorId',
+      'workspaceId'
+    )
+    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+
+    const params = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      components: [
+        {
+          helmRepository: 'https://some-helm.repo',
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          hostValue: 'host-value',
+          gatewayName: 'gateway-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      cdConfigurationId: cdConfiguration.id,
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30'
+    }
+
+    await createDeploymentAndExecution(params, cdConfiguration, manager)
+    const expectedBody = {
+      createdAt: expect.any(String),
+      deployment: {
+        active: false,
+        author_id: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+        callback_url: 'http://localhost:8883/deploy/notifications/deployment',
+        cd_configuration_id: expect.any(String),
+        circle_id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        components: [
+          {
+            id: expect.any(String),
+            image_tag: 'tag1',
+            image_url: 'imageurl.com',
+            merged: false,
+            name: 'component-name',
+            running: false,
+            hostValue: 'host-value',
+            gatewayName: 'gateway-name'
+          }
+        ],
+        created_at: expect.any(String),
+        id: '28a3f957-3702-4c4e-8d92-015939f39cf2'
+      },
+      finishedAt: null,
+      id: expect.any(String),
+      incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      notificationStatus: 'NOT_SENT',
+      status: 'CREATED',
+      type: 'DEPLOYMENT'
+    }
+
+    await request(app.getHttpServer())
+      .get('/v2/executions').query({ active: false, size: 1, page: 0 })
+      .set('x-circle-id', '12345')
+      .expect(200)
+      .expect(response => {
+        expect(response.body.executions[0]).toEqual(expectedBody)
+      })
+  })
 })
 
 const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<Execution> => {
