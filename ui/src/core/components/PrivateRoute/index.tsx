@@ -57,7 +57,7 @@ const PrivateRoute = ({
     <Route
       {...rest}
       render={props =>
-        isAuthorizedByWorkspace && isAuthorizedByUser ? (
+        isAuthorizedByWorkspace || isAuthorizedByUser ? (
           <Component {...props} />
         ) : (
           <Redirect to={routes.error403} />

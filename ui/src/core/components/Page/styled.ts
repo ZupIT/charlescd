@@ -16,19 +16,18 @@
 
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
-const isMicroFrontend = window.ENVIRONMENT?.REACT_APP_MICROFRONTEND === 'on';
+import { isMicrofrontend } from 'App';
 
 const Page = styled.div`
   display: grid;
   grid-template-areas: 'menu content';
   grid-template-columns: 300px;
-  grid-template-rows: ${isMicroFrontend ? 'calc(100vh - 76px)' : '100vh'};
+  grid-template-rows: ${isMicrofrontend() ? 'calc(100vh - 83px)' : '100vh'};
 `;
 
 const Menu = styled.div`
   grid-area: menu;
-  padding-top: 70px;
+  padding-top: 63px;
   background-color: ${({ theme }) => theme.menuPage.background};
 `;
 
