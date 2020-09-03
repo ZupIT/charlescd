@@ -39,7 +39,6 @@ export interface EnvVariables {
   REACT_APP_AUTH_CLIENT_ID: string;
   REACT_APP_AUTH_REALM: string;
   REACT_APP_WORKSPACE_ID: string;
-  REACT_APP_MICROFRONTEND: string;
 }
 
 type GlobalApexCharts = {
