@@ -88,7 +88,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   return (
     <Styled.MonitoringMetricsContent data-testid="monitoring-metrics">
       {chartDataLoading ? (
-        <Loader.MetricsGroupsChart data-testid="monitoring-metrics-loader" />
+        <Loader.MetricsGroupsChart />
       ) : (
         <AreaChart
           options={areaChartOption}
