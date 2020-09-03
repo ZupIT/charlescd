@@ -33,7 +33,7 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(false)
+	s.DB.LogMode(true)
 
 	pluginMain := plugin.NewMain(s.DB)
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
@@ -214,4 +214,24 @@ func (s *SuiteMetricGroup) TestDelete() {
 
 	err := s.repository.Remove(metricgroup.ID.String())
 	require.NoError(s.T(), err)
+}
+
+func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	res, err := s.repository.FindCircleMetricGroups(metricgroup.CircleID.String())
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), res)
+}
+
+func (s *SuiteMetricGroup) TestFindByIdError() {
+	_, err := s.repository.FindById("any-id")
+	require.Error(s.T(), err)
 }
