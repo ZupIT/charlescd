@@ -379,3 +379,31 @@ func (s *SuiteMetric) TestQueryDatasourceError() {
 	_, err := s.repository.Query(metricStruct, "13", "1")
 	require.Error(s.T(), err)
 }
+
+func (s *SuiteMetric) TestCountMetrics() {
+	metrics := make([]metric2.Metric, 0)
+
+	metricStruct := metric2.Metric{
+		MetricsGroupID: uuid.New(),
+		DataSourceID:   uuid.New(),
+		Metric:         "MetricName",
+		Filters:        []datasource2.MetricFilter{},
+		GroupBy:        []metric2.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      5,
+		CircleID:       uuid.New(),
+	}
+	execution := metric2.MetricExecution{
+		MetricID:  metricStruct.ID,
+		LastValue: 5,
+		Status:    "REACHED",
+	}
+	metricStruct.MetricExecution = execution
+	metrics = append(metrics, metricStruct)
+
+	configured, reached, all := s.repository.CountMetrics(metrics)
+
+	require.Equal(s.T(), 1, all)
+	require.Equal(s.T(), 1, reached)
+	require.Equal(s.T(), 1, configured)
+}
