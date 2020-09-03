@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer';
-import { FormContext, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { render, fireEvent } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
@@ -40,9 +40,9 @@ test('render Rule default component', async () => {
   const methods = result.current;
 
   const { getByTestId, debug } = render(
-    <FormContext { ...methods }>
+    <FormProvider { ...methods }>
       <Rule { ...props } />
-    </FormContext>
+    </FormProvider>
   );
 
   expect(getByTestId('segments-rules')).toBeInTheDocument();

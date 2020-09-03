@@ -17,13 +17,17 @@
 import React from 'react';
 import { ActionMeta, ValueType, OptionTypeBase } from 'react-select';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
-import { Props, Option } from '../interfaces';
+import { Props as DefaultProps, Option } from '../interfaces';
 import customStyles from '../customStyle';
 import { allOption } from './constants';
 import Styled from '../styled';
 import { handleChange } from './helpers';
 import MultiValue from './MultiValue';
 import ValueContainer from './ValueContainer';
+
+type Props = {
+  onChange?: (event: Option[]) => void;
+} & DefaultProps;
 
 const Select = ({
   options,
