@@ -54,27 +54,31 @@ const Single = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={
-        <Select
-          placeholder={label}
-          className={className}
-          isDisabled={isDisabled}
-          isLoading={isLoading}
-          customOption={customOption}
-          onInputChange={onInputChange}
-          defaultValue={defaultValue}
-          closeMenuOnSelect={closeMenuOnSelect}
-          hideSelectedOptions={hideSelectedOptions}
-        />
-      }
-      onChange={([selected]: any) => {
-        onChange && onChange(selected);
-        return selected?.value;
+      render={({ onChange: onControllerChange }) => {
+        return (
+          <Select
+            placeholder={label}
+            className={className}
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            customOption={customOption}
+            onInputChange={onInputChange}
+            defaultValue={defaultValue}
+            closeMenuOnSelect={closeMenuOnSelect}
+            hideSelectedOptions={hideSelectedOptions}
+            options={options}
+            onChange={selected => {
+              onChange?.(selected);
+              onControllerChange(selected.value);
+
+              return selected?.value;
+            }}
+          />
+        );
       }}
-      defaultValue={defaultValue?.value}
+      defaultValue={defaultValue?.value ?? ''}
       rules={rules}
       control={control}
-      options={options}
       name={name}
     />
   </div>

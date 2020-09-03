@@ -27,7 +27,7 @@ export interface Props {
   isDisabled?: boolean;
   isLoading?: boolean;
   className?: string;
-  onChange?: (event: unknown) => void;
+  onChange?: (event: Option) => void;
   onInputChange?: (value: string) => void;
   customOption?: React.ReactNode;
   customMultiValue?: React.ReactNode;
