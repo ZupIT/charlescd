@@ -15,17 +15,23 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
+import { MetricsGroupChartData } from './fixtures';
 import MonitoringMetrics from '../MonitoringMetrics';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test('render Monitoring Metrics without data', async () => {
+test('render Monitoring Metrics with data', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  
   render(<MonitoringMetrics metricsGroupId={'1'} />);
 
+  await wait();
+
   expect(screen.getByTestId('monitoring-metrics')).toBeInTheDocument();
+  expect(screen.getByTestId('apexcharts-mock')).toBeInTheDocument();
   expect(screen.getByTestId('monitoring-metrics-period-filter')).toBeInTheDocument();
 });
