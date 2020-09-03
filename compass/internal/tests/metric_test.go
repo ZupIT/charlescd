@@ -6,7 +6,6 @@ import (
 	metric2 "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
-	"compass/internal/util"
 	datasource2 "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
@@ -55,13 +54,13 @@ func TestInitMetric(t *testing.T) {
 
 func (s *SuiteMetric) TestValidateMetric() {
 	filters := make([]datasource2.MetricFilter, 0)
-	filters = append(filters, datasource2.MetricFilter{Field: util.BigString, Value: util.BigString, Operator: "="})
+	filters = append(filters, datasource2.MetricFilter{Field: BigString, Value: BigString, Operator: "="})
 
 	groupBy := make([]metric2.MetricGroupBy, 0)
-	groupBy = append(groupBy, metric2.MetricGroupBy{Field: util.BigString})
+	groupBy = append(groupBy, metric2.MetricGroupBy{Field: BigString})
 
 	metric := metric2.Metric{
-		Nickname: util.BigString,
+		Nickname: BigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
 	}
