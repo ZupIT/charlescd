@@ -155,7 +155,7 @@ export class SpinnakerPipelineBuilder {
     deployment.components?.forEach(component => {
       const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
       if (!activeByName.find(activeComponent => activeComponent.imageTag === component.imageTag)) {
-        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
       }
     })
     return stages

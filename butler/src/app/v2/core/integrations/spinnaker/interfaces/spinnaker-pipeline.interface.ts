@@ -71,8 +71,11 @@ interface Metadata {
     namespace: string
 }
 
-interface Labels {
-    version: string
+interface Labels { // TODO remove optionals and remove version label
+    component?: string
+    tag?: string
+    circleId?: string
+    version?: string
 }
 
 interface Subset {

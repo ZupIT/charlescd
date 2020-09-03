@@ -17,12 +17,14 @@
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
+import {AppConstants} from '../../../../../../v1/core/constants'
 
 export const getRollbackDeploymentsStage = (
   component: Component,
   configuration: CdConfiguration,
   stageId: number,
-  evalStageId: number
+  evalStageId: number,
+  circleId: string | null
 ): Stage => ({
   account: (configuration.configurationData as ISpinnakerConfigurationData).account,
   app: `app-${configuration.id}`,
@@ -36,17 +38,24 @@ export const getRollbackDeploymentsStage = (
   labelSelectors: {
     selectors: [
       {
-        key: 'app',
+        key: 'component',
         kind: 'EQUALS',
         values: [
-          `${component.name}`
+          component.name
         ]
       },
       {
-        key: 'version',
+        key: 'tag',
         kind: 'EQUALS',
         values: [
-          `${component.name}-${component.imageTag}`
+          component.imageTag
+        ]
+      },
+      {
+        key: 'circleId',
+        kind: 'EQUALS',
+        values: [
+          circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
         ]
       }
     ]
