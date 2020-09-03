@@ -1,19 +1,24 @@
-import { IsBooleanString, IsNumberString, IsOptional } from 'class-validator'
+import { IsBooleanString, IsOptional, IsInt, Min } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 export class ExecutionQuery {
-  @IsNumberString()
+  @IsInt()
+  @Min(1)
   @IsOptional()
-  public pageSize: number
+  @Transform(size => parseInt(size), { toClassOnly: true })
+  public size: number
 
-  @IsNumberString()
+  @IsInt()
+  @Min(0)
   @IsOptional()
+  @Transform(page => parseInt(page), { toClassOnly: true })
   public page: number
 
   @IsBooleanString()
   public active: boolean
 
-  constructor(pageSize: number, page: number, active: boolean) {
-    this.pageSize = pageSize
+  constructor(size: number, page: number, active: boolean) {
+    this.size = size
     this.page = page
     this.active = active
   }

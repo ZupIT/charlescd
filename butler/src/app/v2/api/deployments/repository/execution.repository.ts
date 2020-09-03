@@ -41,9 +41,9 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
-  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 1): Promise<Execution[]> {
+  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 1): Promise<[Execution[], number]> {
     const baseQuery = this.createQueryBuilder('e')
-      .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at')
+      .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
       .leftJoin(ComponentEntity, 'c', 'd.id = c.deployment_id')
       .addSelect(`
@@ -62,6 +62,8 @@ export class ExecutionRepository extends Repository<Execution> {
              'image_url', c.image_url,
              'image_tag', c.image_tag,
              'running', c.running,
+             'hostValue', c.host_value,
+             'gatewayName', c.gateway_name,
              'merged', c.merged)
          )) AS deployment
       `)
@@ -69,7 +71,7 @@ export class ExecutionRepository extends Repository<Execution> {
       .andWhere('d.active = :active', { active: active })
       .orderBy({ 'e.created_at': 'DESC', 'e.id': 'DESC' })
       .limit(pageSize)
-      .offset(pageSize * (page - 1))
+      .offset(pageSize * (page))
 
     // TODO leaving this here to discuss keyset pagination
     // if (lastSeenId && lastSeenTimestamp) {
@@ -90,14 +92,14 @@ export class ExecutionRepository extends Repository<Execution> {
           execution.notificationStatus = e.notification_status
           execution.status = e.status
           execution.type = e.type
-          return execution
+          return { execution: execution, total: e.total_executions as number }
         })
-        return entities
+        return [entities.map(e=> e.execution), entities[0].total]
       }
-      return []
+      return [[], 0]
     } catch (error) {
       this.consoleLoggerService.log('ERROR:EXECUTIONS_PAGINATION', { error: error })
-      return []
+      return [[], 0]
     }
 
   }

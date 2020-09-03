@@ -41,7 +41,7 @@ export const getUndeploymentVirtualServiceStage = (
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue] : [component.name],
+        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
         http: getActiveComponentsCircleHTTPRules(deployment.circleId, activeComponents)
       }
     }

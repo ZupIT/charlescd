@@ -120,7 +120,7 @@ export class OctopipeService implements ICdServiceStrategy {
       versions: this.concatAppNameAndVersion(configuration.pipelineCirclesOptions.pipelineVersions, configuration.componentName),
       webHookUrl: configuration.pipelineCallbackUrl,
       circleId: configuration.callbackCircleId,
-      callbackType:  configuration.callbackType
+      callbackType:  configuration.callbackType,
     }
     payload = this.addK8sConfig(payload, deploymentConfiguration)
     return payload

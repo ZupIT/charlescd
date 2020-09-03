@@ -25,15 +25,15 @@ export interface Component {
 
     imageUrl: string
 
-    hostValue?: string
+    hostValue: string | null
 
-    gatewayName?: string
-
-    namespace?: string
+    gatewayName: string | null
 
     name: string
 
     running: boolean
 
     deployment?: Deployment
+
+    namespace: string | null
 }

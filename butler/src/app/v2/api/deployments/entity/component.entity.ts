@@ -17,11 +17,11 @@ export class ComponentEntityV2 implements Component {
   @Column({ name: 'image_url' })
   public imageUrl!: string
 
-  @Column({ name: 'host_value' })
-  public hostValue!: string
+  @Column({ name: 'host_value', nullable: true, type: 'varchar' })
+  public hostValue!: string | null
 
-  @Column({ name: 'gateway_name' })
-  public gatewayName!: string
+  @Column({ name: 'gateway_name', nullable: true, type: 'varchar' })
+  public gatewayName!: string | null
 
   @Column({ name: 'name' })
   public name!: string
@@ -40,7 +40,29 @@ export class ComponentEntityV2 implements Component {
   public deployment!: DeploymentEntity
 
   @Column({ name: 'namespace' })
-  public namespace!: string
+  public namespace!: string | null
+
+  constructor(
+    helmUrl: string,
+    buildImageTag: string,
+    buildImageUrl: string,
+    componentName: string,
+    componentId: string,
+    namespace: string | null,
+    hostValue: string | null,
+    gatewayName: string | null,
+    merged = false
+  ) {
+    this.helmUrl = helmUrl
+    this.imageTag = buildImageTag
+    this.imageUrl = buildImageUrl
+    this.name = componentName
+    this.componentId = componentId
+    this.hostValue = hostValue
+    this.gatewayName = gatewayName
+    this.merged = merged
+    this.namespace = namespace
+  }
 
   public clone(): ComponentEntityV2 {
     return new ComponentEntityV2(
@@ -50,25 +72,9 @@ export class ComponentEntityV2 implements Component {
       this.name,
       this.componentId,
       this.namespace,
+      this.hostValue,
+      this.gatewayName,
       true
     )
-  }
-
-  constructor(
-    helmUrl: string,
-    buildImageTag: string,
-    buildImageUrl: string,
-    componentName: string,
-    componentId: string,
-    namespace: string,
-    merged = false,
-  ) {
-    this.helmUrl = helmUrl
-    this.imageTag = buildImageTag
-    this.imageUrl = buildImageUrl
-    this.name = componentName
-    this.componentId = componentId
-    this.merged = merged
-    this.namespace = namespace
   }
 }

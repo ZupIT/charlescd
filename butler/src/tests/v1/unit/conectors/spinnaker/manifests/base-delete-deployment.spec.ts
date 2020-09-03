@@ -23,7 +23,7 @@ it('builds base deployment delete manifest', () => {
   expect(
     baseDeleteDeployments(
       {
-        account: 'account', appName: 'app-namespace', unusedVersions: [{ version: 'unused-version', versionUrl: 'version-url' }],
+        account: 'account', appName: 'app-namespace', unusedVersions: [{ version: 'unused-version', versionUrl: 'version-url', versionCircle: 'dummy-circle' }],
         applicationName: 'app-name', appNamespace: 'app-namespace',
         circleId: 'circle-id', circles: [], githubAccount: 'github-account',
         helmRepository: 'https://api.github.com/repos/org/repo/contents/',
