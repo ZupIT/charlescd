@@ -26,7 +26,7 @@ tests:
 				docker-compose -f $(COMPOSE_TESTS) up --build --abort-on-container-exit
 				docker-compose -f $(COMPOSE_TESTS) down --volumes
 tests-dep-up:
-				docker-compose -f $(COMPOSE_TESTS) up --build db provider
+				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down --volumes db provider
 cover:
