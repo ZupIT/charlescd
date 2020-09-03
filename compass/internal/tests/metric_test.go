@@ -326,3 +326,56 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	require.Error(s.T(), err)
 }
+
+func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
+	circleId := uuid.New()
+
+	metricGroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric2.Metric{},
+		CircleID:    circleId,
+		WorkspaceID: uuid.New(),
+	}
+
+	dataSource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+	s.DB.Create(&metricGroup)
+	metricStruct := metric2.Metric{
+		MetricsGroupID: metricGroup.ID,
+		DataSourceID:   dataSource.ID,
+		Metric:         "MetricName",
+		Filters:        []datasource2.MetricFilter{},
+		GroupBy:        []metric2.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleId,
+	}
+
+	_, err := s.repository.Query(metricStruct, "13", "1")
+
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetric) TestQueryDatasourceError() {
+	metricStruct := metric2.Metric{
+		MetricsGroupID: uuid.New(),
+		DataSourceID:   uuid.New(),
+		Metric:         "MetricName",
+		Filters:        []datasource2.MetricFilter{},
+		GroupBy:        []metric2.MetricGroupBy{},
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       uuid.New(),
+	}
+
+	_, err := s.repository.Query(metricStruct, "13", "1")
+	require.Error(s.T(), err)
+}
