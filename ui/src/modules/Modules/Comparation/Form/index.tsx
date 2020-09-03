@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
-import { useForm, useFieldArray, FormContext } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { getProfileByKey } from 'core/utils/profile';
@@ -108,7 +108,7 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Input
             label="Name the module"
@@ -149,7 +149,7 @@ const FormModule = ({ module, onChange }: Props) => {
             </Styled.Button>
           </Can>
         </Styled.Form>
-      </FormContext>
+      </FormProvider>
     </Styled.Content>
   );
 };

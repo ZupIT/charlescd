@@ -37,7 +37,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
     getValues
   } = useForm({
     mode: 'onBlur',
-    validationResolver
+    resolver: validationResolver
   });
   const newPassword = watch('newPassword') as string;
   const confirmPass = watch('confirmPassword') as string;
