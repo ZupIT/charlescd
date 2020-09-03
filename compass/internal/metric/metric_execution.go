@@ -3,9 +3,6 @@ package metric
 import (
 	"compass/internal/util"
 	"compass/pkg/logger"
-	"encoding/json"
-	"io"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -22,16 +19,6 @@ type MetricExecution struct {
 	MetricID       uuid.UUID `json:"-"`
 	LastValue      float64   `json:"lastValue"`
 	Status         string    `json:"status"`
-}
-
-func (main Main) ParseMetricExecution(metricExecutionExecution io.ReadCloser) (MetricExecution, error) {
-	var newMetricExecution *MetricExecution
-	err := json.NewDecoder(metricExecutionExecution).Decode(&newMetricExecution)
-	if err != nil {
-		logger.Error(util.GeneralParseError, "ParseMetricExecution", err, metricExecutionExecution)
-		return MetricExecution{}, err
-	}
-	return *newMetricExecution, nil
 }
 
 func (main Main) FindAllMetricExecutions() ([]MetricExecution, error) {
