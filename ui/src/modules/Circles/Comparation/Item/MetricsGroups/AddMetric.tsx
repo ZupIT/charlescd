@@ -108,7 +108,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
     }
   }, [isBasicQuery, watchDataSourceId, getAllDataSourceMetrics]);
 
-  const onSubmit = async (data: Metric) => {
+  const onSubmit = (data: Metric) => {
     const filtersPayload = data.filters?.map(({ id, ...rest }) => {
       return id ? { id, ...rest } : rest;
     });
@@ -303,6 +303,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   type="submit"
                   isLoading={creatingStatus.isPending}
                   isDisabled={!isValid}
+                  id="submit"
                 >
                   Save
                 </Button>
