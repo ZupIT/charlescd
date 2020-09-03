@@ -38,7 +38,7 @@ import {
 import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
 import { AppConstants } from '../../../../app/v1/core/constants'
-import {IoCTokensConstants} from '../../../../app/v1/core/constants/ioc'
+import { IoCTokensConstants } from '../../../../app/v1/core/constants/ioc'
 
 describe('CreateDefaultDeploymentUsecase', () => {
 

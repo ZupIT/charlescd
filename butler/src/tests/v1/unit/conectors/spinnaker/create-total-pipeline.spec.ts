@@ -21,7 +21,7 @@ import { ISpinnakerPipelineConfiguration } from '../../../../../app/v1/core/inte
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 import { CallbackTypeEnum } from '../../../../../app/v1/api/notifications/enums/callback-type.enum'
 import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
-import {AppConstants} from '../../../../../app/v1/core/constants'
+import { AppConstants } from '../../../../../app/v1/core/constants'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {

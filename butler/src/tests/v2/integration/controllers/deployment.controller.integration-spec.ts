@@ -333,7 +333,7 @@ describe('DeploymentController v2', () => {
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', '12345')
