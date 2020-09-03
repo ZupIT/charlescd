@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useForm, useFieldArray, FormContext } from 'react-hook-form';
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
@@ -50,7 +50,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
-    validationResolver
+    resolver: validationResolver
   });
   const { register, control, handleSubmit, watch, errors, getValues } = form;
   const watchFields = watch();
@@ -84,7 +84,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   }, [createDeployment, build, authorId, circleId]);
 
   const onSubmit = () => {
-    const data = getValues({ nest: true });
+    const data = getValues();
     const modules = formatDataModules(data);
 
     composeBuild({
@@ -95,7 +95,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   };
 
   return (
-    <FormContext {...form}>
+    <FormProvider {...form}>
       <Styled.Form
         onSubmit={handleSubmit(onSubmit)}
         data-testid="create-release"
@@ -135,7 +135,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           deploy
         </Styled.Submit>
       </Styled.Form>
-    </FormContext>
+    </FormProvider>
   );
 };
 

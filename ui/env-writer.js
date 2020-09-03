@@ -61,7 +61,11 @@ const sourceFile = () => {
   const endOfLine = os.EOL;
   if (ENVIRONMENT) {
     const lines = fs.readFileSync(`.env.${ENVIRONMENT}`);
-    const variables = lines.toString().split(endOfLine);
+    const variables = lines
+      .toString()
+      .trim()
+      .split(endOfLine);
+
     return variables;
   }
   return null;

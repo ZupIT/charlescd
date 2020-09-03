@@ -21,7 +21,7 @@ import Select from './Select';
 
 interface Props {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   options: Option[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option[];

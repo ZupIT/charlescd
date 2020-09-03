@@ -44,7 +44,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     control,
     getValues,
     setValue,
-    clearError
+    clearErrors
   } = useFormContext();
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
   const resetVersion = () => {
     setValue(`${prefixName}.tag`, '');
     setValue(`${prefixName}.version`, '');
-    clearError([`${prefixName}.tag`, `${prefixName}.version`]);
+    clearErrors([`${prefixName}.tag`, `${prefixName}.version`]);
     setIsEmptyTag(false);
   };
 

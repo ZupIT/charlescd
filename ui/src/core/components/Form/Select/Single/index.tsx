@@ -21,7 +21,7 @@ import { Option } from '../interfaces';
 
 interface Props {
   name: string;
-  control: Control<unknown>;
+  control: Control<any>;
   options: Option[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option;
@@ -67,7 +67,7 @@ const Single = ({
           hideSelectedOptions={hideSelectedOptions}
         />
       }
-      onChange={([selected]) => {
+      onChange={([selected]: any) => {
         onChange && onChange(selected);
         return selected?.value;
       }}
