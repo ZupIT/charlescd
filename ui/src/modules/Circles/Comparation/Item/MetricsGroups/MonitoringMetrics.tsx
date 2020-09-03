@@ -49,7 +49,7 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   };
 
   const renderChartPeriodFilter = () => (
-    <Styled.MonitoringMetricsPeriodFilter>
+    <Styled.MonitoringMetricsPeriodFilter data-testid="monitoring-metrics-period-filter">
       <Styled.ButtonIconRoundedPeriod
         color="dark"
         onClick={() => toogleChartPeriod('1h', '5m')}
@@ -86,15 +86,16 @@ const MonitoringMetrics = ({ metricsGroupId }: Props) => {
   );
 
   return (
-    <Styled.MonitoringMetricsContent>
+    <Styled.MonitoringMetricsContent data-testid="monitoring-metrics">
       {chartDataLoading ? (
-        <Loader.MetricsGroupsChart />
+        <Loader.MetricsGroupsChart data-testid="monitoring-metrics-loader" />
       ) : (
         <AreaChart
           options={areaChartOption}
           series={chartData}
           width={500}
           height={200}
+          data-testid="monitoring-metrics-chart"
         />
       )}
       {renderChartPeriodFilter()}
