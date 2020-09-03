@@ -15,12 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import MutationObserver from 'mutation-observer';
 import { FetchMock } from 'jest-fetch-mock';
 import AddMetric from '../AddMetric';
-
-(global as any).MutationObserver = MutationObserver
+import { metricsData } from './fixtures';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -29,13 +28,54 @@ beforeEach(() => {
 test('render Add Metric default value', async () => {
   const handleGoBack = jest.fn();
 
-  render(<AddMetric id={'1'} onGoBack={handleGoBack} />);
+  render(
+    <AddMetric
+      id={'1'}
+      onGoBack={handleGoBack}
+      metric={metricsData}
+    />
+  );
+
+  await wait();
 
   const goBackButton = screen.getByTestId('icon-arrow-left');
+  const submitButton = screen.getByTestId('button-default-submit');
 
   expect(screen.getByTestId('add-metric')).toBeInTheDocument();
   expect(screen.getByTestId('label-text-nickname')).toBeInTheDocument();
 
   fireEvent.click(goBackButton);
-  expect(handleGoBack).toBeCalled();
+  expect(handleGoBack).toBeCalledTimes(1);
+
+  fireEvent.click(submitButton);
+  await wait();
+
+  expect(handleGoBack).toBeCalledTimes(2);
 });
+
+
+// test('render with validation errors', async () => {
+//   const errorMessage = ``
+//   const responseError = {
+//     text: () => Promise.resolve(() => )
+//   };
+
+//   (fetch as FetchMock)
+//     .mockResponseOnce('')
+//     .mockResponseOnce('')
+//     .mockRejectOnce(new Error('fake error message 3'));
+
+//   render(
+//     <AddMetric
+//       id={'1'}
+//       onGoBack={jest.fn()}
+//       metric={metricsData}
+//     />
+//   );
+
+//   const submitButton = screen.getByTestId('button-default-submit');
+
+//   await wait();
+
+//   fireEvent.click(submitButton);
+// });
