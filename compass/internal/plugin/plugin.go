@@ -4,7 +4,6 @@ import (
 	"compass/internal/configuration"
 	"compass/internal/util"
 	"compass/pkg/logger"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -17,20 +16,6 @@ import (
 type Plugin struct {
 	Name string `json:"name"`
 	Src  string `json:"src"`
-}
-
-func (plugin Plugin) Validate() []error {
-	ers := make([]error, 0)
-
-	if plugin.Name == "" {
-		ers = append(ers, errors.New("Name is required"))
-	}
-
-	if plugin.Src == "" {
-		ers = append(ers, errors.New("Source path is required"))
-	}
-
-	return ers
 }
 
 func (main Main) getPluginSrcByFilename(filename string) string {
