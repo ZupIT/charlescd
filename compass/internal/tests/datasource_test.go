@@ -4,16 +4,14 @@ import (
 	"compass/internal/configuration"
 	datasource2 "compass/internal/datasource"
 	"compass/internal/plugin"
-	"compass/internal/util"
 	"encoding/json"
-	"io/ioutil"
-	"strings"
-	"testing"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"strings"
+	"testing"
 )
 
 type Suite struct {
@@ -73,8 +71,8 @@ func (s *Suite) TestValidate() {
 
 func (s *Suite) TestValidateNameLength() {
 	datasource := datasource2.DataSource{
-		Name:      util.BigString,
-		PluginSrc: util.BigString,
+		Name:      BigString,
+		PluginSrc: BigString,
 	}
 	var errList = s.repository.Validate(datasource)
 
@@ -232,7 +230,7 @@ func (s *Suite) TestDeleteError() {
 //
 //	res, err := s.repository.FindAllByWorkspace(workspaceID.String(), "")
 //
-//	expected := datasource2.DataSource{
+//	expected := DataSource{
 //		BaseModel:   baseModel,
 //		Name:        name,
 //		PluginSrc:   pluginSrc,
@@ -270,7 +268,7 @@ func (s *Suite) TestDeleteError() {
 //
 //	res, err := s.repository.FindAllByWorkspace(workspaceID.String(), "true")
 //
-//	expected := datasource2.DataSource{
+//	expected := DataSource{
 //		BaseModel:   baseModel,
 //		Name:        name,
 //		PluginSrc:   pluginSrc,
@@ -412,7 +410,7 @@ func (s *Suite) TestDeleteError() {
 //		workspaceID = uuid.New()
 //	)
 //
-//	expected := datasource2.DataSource{
+//	expected := DataSource{
 //		BaseModel:   baseModel,
 //		Name:        name,
 //		PluginSrc:   pluginSrc,
@@ -449,7 +447,7 @@ func (s *Suite) TestDeleteError() {
 //		workspaceID = uuid.New()
 //	)
 //
-//	expected := datasource2.DataSource{
+//	expected := DataSource{
 //		BaseModel:   baseModel,
 //		Name:        name,
 //		PluginSrc:   pluginSrc,
@@ -485,7 +483,7 @@ func (s *Suite) TestDeleteError() {
 //		workspaceID = uuid.New()
 //	)
 //
-//	expected := datasource2.DataSource{
+//	expected := DataSource{
 //		BaseModel:   baseModel,
 //		Name:        name,
 //		PluginSrc:   pluginSrc,
