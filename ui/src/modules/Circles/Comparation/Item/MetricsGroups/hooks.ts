@@ -89,7 +89,7 @@ export const useMetricsGroups = (): {
     getAllMetricsGroupsById
   );
   const status = useFetchStatus();
-  const [metricsGroups, setMetricsGroups] = useState([]);
+  const [metricsGroups, setMetricsGroups] = useState<MetricsGroup[]>([]);
 
   const getMetricsGroups = useCallback(
     async (circleId: string) => {

@@ -29,24 +29,18 @@ test('render Metrics Groups without data', async () => {
     JSON.stringify(MetricsGroupData)
   );
 
-  render(<MetricsGroups id='1' onGoBack={() => { }}/>);
+  const handleClick = jest.fn();
+  render(<MetricsGroups id={'1'} onGoBack={handleClick}/>);
 
   await wait();
 
-  // const handleClick = jest.fn();
+  const goBack = screen.getByTestId('icon-arrow-left');
 
-  // render(<MetricsGroups id={'1'} onGoBack={handleClick}/>);
+  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+  expect(screen.getByTestId('metrics-groups-list')).toBeInTheDocument();
+  expect(screen.getByTestId('button-iconRounded-refresh')).toBeInTheDocument();
+  expect(screen.getByTestId('button-iconRounded-add')).toBeInTheDocument();
 
-  // const goBack = screen.getByTestId('icon-arrow-left');
-
-  // expect(screen.getByTestId('metrics-groups-list')).toBeInTheDocument();
-  // expect(screen.getByTestId('button-iconRounded-refresh')).toBeInTheDocument();
-  // expect(screen.getByTestId('button-iconRounded-refresh')).toBeInTheDocument();
-  // expect(screen.getByText('Metrics groups')).toBeInTheDocument();
-  // expect(screen.getByTestId('button-iconRounded-add')).toBeInTheDocument();
-
-  // fireEvent.click(goBack);
-  // expect(handleClick).toHaveBeenCalled();
-
-  screen.debug();
+  fireEvent.click(goBack);
+  expect(handleClick).toHaveBeenCalled();
 });
