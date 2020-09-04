@@ -7,6 +7,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -236,5 +237,172 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 
 func (s *SuiteMetricGroup) TestFindByIdError() {
 	_, err := s.repository.FindById("any-id")
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetricGroup) TestResumeByCircle() {
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	metric1 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName1",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleID,
+	}
+
+	metric2 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName2",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      5,
+		CircleID:       circleID,
+	}
+
+	s.DB.Create(&metric1)
+	s.DB.Create(&metric2)
+
+	expectedGroupResume := []metricsgroup.MetricGroupResume{
+		{
+			Name: metricgroup.Name,
+			Thresholds: 2,
+			ThresholdsReached: 0,
+			Metrics: 2,
+			Status: "ACTIVE",
+		},
+	}
+
+	groupsResume, err := s.repository.ResumeByCircle(circleID.String())
+	require.NoError(s.T(), err)
+
+	for index, resume := range groupsResume {
+		expectedGroupResume[index].BaseModel = resume.BaseModel
+		require.Equal(s.T(), expectedGroupResume[index], resume)
+	}
+}
+
+func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	metric1 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName1",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleID,
+	}
+
+	metric2 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName2",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      5,
+		CircleID:       circleID,
+	}
+
+	s.DB.Create(&metric1)
+	s.DB.Create(&metric2)
+
+	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), "5d", "30m")
+	require.Error(s.T(), err)
+}
+
+func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	metric1 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName1",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleID,
+	}
+
+	metric2 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName2",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      5,
+		CircleID:       circleID,
+	}
+
+	s.DB.Create(&metric1)
+	s.DB.Create(&metric2)
+
+	metricgroup.Metrics = []metric.Metric{
+		metric1,
+		metric2,
+	}
+
+	_, err := s.repository.ResultByGroup(metricgroup)
 	require.Error(s.T(), err)
 }

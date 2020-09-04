@@ -25,24 +25,23 @@ func TestInitPlugins(t *testing.T) {
 }
 
 // TODO: VERIFY PLUGIN PATH IN GITHUB ACTIONS
-//func (s *SuitePlugins) TestFindAll() {
-//	expectedPlugins := []plugin.Plugin{
-//		{
-//			Name: "Plugin 1",
-//			Src: "plugin1",
-//		},
-//	}
-//
-//	dir, _ := os.Getwd()
-//	os.Setenv("PLUGINS_DIR", dir+"/plugins")
-//
-//	plugins, err := s.repository.FindAll()
-//	require.NoError(s.T(), err)
-//
-//	for i, p := range plugins {
-//		require.Equal(s.T(), expectedPlugins[i], p)
-//	}
-//}
+func (s *SuitePlugins) TestFindAll() {
+	expectedPlugins := []plugin.Plugin{
+		{
+			Name: "Prometheus",
+			Src: "prometheus",
+		},
+	}
+
+
+	os.Setenv("PLUGINS_DIR", "../../plugins")
+	plugins, err := s.repository.FindAll()
+	require.NoError(s.T(), err)
+
+	for i, p := range plugins {
+		require.Equal(s.T(), expectedPlugins[i], p)
+	}
+}
 
 func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
 	os.Setenv("PLUGINS_DIR", "./plugin")
