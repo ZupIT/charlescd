@@ -15,8 +15,6 @@
  */
 
 import { Module } from '@nestjs/common'
-import { ModulesController } from './controller'
-import { ModulesService } from './services'
 import { IntegrationsModule } from '../../core/integrations/integrations.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ModuleEntity } from './entity'
@@ -29,12 +27,6 @@ import { LogsModule } from '../../core/logs/logs.module'
       ModuleEntity
     ]),
     LogsModule
-  ],
-  controllers: [
-    ModulesController
-  ],
-  providers: [
-    ModulesService,
   ]
 })
 export class ModulesModule {}
