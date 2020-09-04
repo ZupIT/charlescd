@@ -208,6 +208,32 @@ func (s *Suite) TestDeleteError() {
 	require.Error(s.T(), err)
 }
 
+//func (s *Suite) TestGetMetrics() {
+//	os.Setenv("PLUGINS_DIR", "../../plugins")
+//	dataSource := datasource2.DataSource{
+//		Name:        "DataTest2",
+//		PluginSrc:   "prometheus",
+//		Health:      true,
+//		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+//		WorkspaceID: uuid.New(),
+//		DeletedAt:   nil,
+//	}
+//
+//	s.DB.Create(&dataSource)
+//
+//
+//	metrics, err := s.repository.GetMetrics(dataSource.ID.String(), "")
+//	require.NoError(s.T(), err)
+//
+//	require.Equal(s.T(), []string{
+//		"scrape_duration_seconds",
+//		"scrape_samples_post_metric_relabeling",
+//		"scrape_samples_scraped",
+//		"scrape_series_added",
+//		"up",
+//	}, metrics)
+//}
+
 //
 //func (s *Suite) TestFindAllByWorkspace() {
 //	var id = uuid.New()
