@@ -36,6 +36,7 @@ export const Settings = lazy(() => import('modules/Settings'));
 export const Metrics = lazy(() => import('modules/Metrics'));
 
 const Main = () => {
+  console.log('Main');
   const [isExpanded, setSideExpanded] = useState(getExpandMode());
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
 
