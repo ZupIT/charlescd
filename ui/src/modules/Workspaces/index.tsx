@@ -20,7 +20,12 @@ import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, logout } from 'core/utils/auth';
+import {
+  isRoot,
+  logout,
+  getAccessToken,
+  getAccessTokenDecoded
+} from 'core/utils/auth';
 import { clearWorkspace } from 'core/utils/workspace';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
@@ -30,7 +35,8 @@ interface Props {
 }
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
-  const profileName = getProfileByKey('name');
+  const accessToken = getAccessToken();
+  const { name: profileName } = getAccessTokenDecoded();
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
   const [name, setName] = useState('');
@@ -38,8 +44,13 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
 
   useEffect(() => {
     clearWorkspace();
-    if (isEmpty(profileName)) logout();
-  }, [profileName]);
+    console.log('Workspaces useEffect (accessToken)', accessToken);
+    console.log('Workspaces useEffect (profileName)', profileName);
+    if (isEmpty(profileName)) {
+      console.log('Workspaces logout()');
+      logout();
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     if (isRoot()) filterWorkspace(name);
