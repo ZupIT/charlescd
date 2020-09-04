@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { save, load, remove } from 'react-cookies';
 import JwtDecode from 'jwt-decode';
 import get from 'lodash/get';
 import find from 'lodash/find';
@@ -24,7 +23,6 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
-import { getCookieOptions } from './domain';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 
 type AccessToken = {
@@ -41,12 +39,12 @@ const accessTokenKey = 'access-token';
 const refreshTokenKey = 'refresh-token';
 
 export const setAccessToken = (token: string) =>
-  save(accessTokenKey, token, getCookieOptions());
+  localStorage.setItem(accessTokenKey, token);
 
 export const setRefreshToken = (token: string) =>
-  save(refreshTokenKey, token, getCookieOptions());
+  localStorage.setItem(refreshTokenKey, token);
 
-export const getAccessToken = () => load(accessTokenKey);
+export const getAccessToken = () => localStorage.getItem(accessTokenKey);
 
 export const getAccessTokenDecoded = (): AccessToken => {
   try {
@@ -75,23 +73,21 @@ export const getRoles = () => {
   }
 };
 
-export const getRefreshToken = () => load(refreshTokenKey);
+export const getRefreshToken = () => localStorage.getItem(refreshTokenKey);
 
 export const isLogged = () => getAccessToken() && getRefreshToken();
 
 export const clearSession = () => {
-  remove(accessTokenKey, getCookieOptions());
-  remove(refreshTokenKey, getCookieOptions());
+  localStorage.removeItem(accessTokenKey);
+  localStorage.removeItem(refreshTokenKey);
   clearCircleId();
   clearProfile();
   clearWorkspace();
 };
 
 export function saveSessionData(accessToken: string, refreshToken: string) {
-  remove(accessTokenKey, getCookieOptions());
-  remove(refreshTokenKey, getCookieOptions());
-  save(accessTokenKey, accessToken, getCookieOptions());
-  save(refreshTokenKey, refreshToken, getCookieOptions());
+  localStorage.setItem(accessTokenKey, accessToken);
+  localStorage.setItem(refreshTokenKey, refreshToken);
 }
 
 export const logout = () => {

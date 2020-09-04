@@ -19,4 +19,6 @@ export interface IDeploymentVersion {
   versionUrl: string,
 
   version: string
+
+  versionCircle: string
 }
