@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
+export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -101,7 +101,8 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2',
+        component:'A',
+        tag: 'v2',
         circleId: 'circle-id2'
       },
       refId: '1',
@@ -162,15 +163,35 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v2'
+                  component: 'A',
+                  tag: 'v2',
+                  circleId: 'circle-id2'
                 },
-                name: 'v2'
+                name: 'circle-id2'
               },
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id3'
                 },
-                name: 'v0'
+                name: 'circle-id3'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id5'
+                },
+                name: 'circle-id5'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
+                },
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -233,7 +254,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -264,7 +285,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -295,7 +316,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id3'
                     },
                     headers: {
                       request: {
@@ -326,7 +347,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id3'
                     },
                     headers: {
                       request: {
@@ -357,7 +378,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id5'
                     },
                     headers: {
                       request: {
@@ -388,7 +409,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id5'
                     },
                     headers: {
                       request: {
@@ -410,7 +431,7 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -500,17 +521,24 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'A'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'A-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id2'
             ]
           }
         ]
@@ -544,17 +572,24 @@ export const oneComponentNoRepeatedSubset: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'A'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'A-v1'
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id2'
             ]
           }
         ]

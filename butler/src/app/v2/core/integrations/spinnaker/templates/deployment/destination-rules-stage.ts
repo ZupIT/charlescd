@@ -75,13 +75,13 @@ const getSubsets = (newComponent: Component, circleId: string | null, activeComp
 
   activeComponents.forEach(component => {
     const activeCircleId = component.deployment?.circleId
-    if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag)) {
+    if (activeCircleId && activeCircleId !== circleId) {
       subsets.push(getSubsetObject(component, activeCircleId))
     }
   })
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
-  if (defaultComponent && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
+  if (defaultComponent) {
     subsets.push(getSubsetObject(defaultComponent, null))
   }
   return subsets

@@ -25,7 +25,7 @@ import {
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
 } from './fixtures/deployment'
-import { oneComponentNoRepeatedSubset } from './fixtures/deployment/one-component-no-repeated-subset'
+import { oneComponentDiffSubsetsSameTag } from './fixtures/deployment/one-component-diff-subsets-same-tag'
 
 const deploymentWith3Components: Deployment = {
   id: 'deployment-id',
@@ -1019,7 +1019,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ).toEqual(oneComponentWithUnused)
   })
 
-  it('should create the correct pipeline object without repeated destination rules subsets', async() => {
+  it('should create the correct pipeline object with different subsets with same tag', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -1218,7 +1218,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoRepeatedSubset)
+    ).toEqual(oneComponentDiffSubsetsSameTag)
   })
 
   it('should create the correct pipeline object without rollback stages', async() => {
