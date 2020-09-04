@@ -24,8 +24,6 @@ func TestInitPlugins(t *testing.T) {
 }
 
 func (s *SuitePlugins) TestFindAll() {
-	os.Setenv("PLUGINS_DIR", "./plugins")
-
 	expectedPlugins := []plugin.Plugin{
 		{
 			Name: "Plugin 1",
