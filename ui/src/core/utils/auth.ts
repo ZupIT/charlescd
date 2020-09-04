@@ -96,7 +96,12 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 
 export const logout = () => {
   clearSession();
-  const callback = `https://idm-dev.continuousplatform.com/auth/realms/ZupDev/protocol/openid-connect/auth?client_id=charlescd-client&response_type=token&redirect_uri=http%3A%2F%2Flocalhost:3000`;
+
+  const idmUrl = window.ENVIRONMENT?.REACT_APP_IDM_URI;
+  const idmClientId = window.ENVIRONMENT?.REACT_APP_IDM_CLIENT_ID;
+  const idmResponseType = window.ENVIRONMENT?.REACT_APP_IDM_RESPONSE_TYPE;
+  const callback = `${idmUrl}?client_id=${idmClientId}&response_type=${idmResponseType}&redirect_uri=http%3A%2F%2Flocalhost:3000`;
+
   window.location.href = callback;
 };
 

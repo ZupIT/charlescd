@@ -30,7 +30,6 @@ interface Props {
 }
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
-  console.log('Workspaces');
   const profileName = getProfileByKey('name');
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
