@@ -37,6 +37,7 @@ interface Props {
 const Workspaces = ({ selectedWorkspace }: Props) => {
   const accessToken = getAccessToken();
   const { name: profileName } = getAccessTokenDecoded();
+  // const profileName = getProfileByKey('name');
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
   const [name, setName] = useState('');
@@ -44,10 +45,8 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
 
   useEffect(() => {
     clearWorkspace();
-    console.log('Workspaces useEffect (accessToken)', accessToken);
-    console.log('Workspaces useEffect (profileName)', profileName);
+    console.log('profileName', profileName);
     if (isEmpty(profileName)) {
-      console.log('Workspaces logout()');
       logout();
     }
   }, [accessToken]);

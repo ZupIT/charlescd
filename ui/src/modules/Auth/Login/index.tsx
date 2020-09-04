@@ -23,6 +23,7 @@ import { validFields } from 'core/utils/validation';
 import routes from 'core/constants/routes';
 import Styled from '../styled';
 import { useLogin } from './hook';
+import { login } from 'core/utils/auth';
 
 const Login = () => {
   const [isDisabled, setIsDisabled] = useState(true);
@@ -32,6 +33,10 @@ const Login = () => {
   const { doLogin, status, error } = useLogin();
   const history = useHistory();
   const watchFields = watch();
+
+  useEffect(() => {
+    login();
+  }, []);
 
   useEffect(() => {
     setIsDisabled(!validFields(getValues()));
