@@ -13,7 +13,6 @@ require (
 	github.com/lib/pq v1.3.0
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.13.0
-	github.com/selvatico/go-mocket v1.0.7
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/sys v0.0.0-20200819171115-d785dc25833f // indirect
