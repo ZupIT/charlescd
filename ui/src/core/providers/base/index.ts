@@ -36,6 +36,7 @@ export const buildHeaders = (isFormData = false) => ({
 export interface EnvVariables {
   REACT_APP_API_URI: string;
   REACT_APP_AUTH_URI: string;
+  REACT_APP_IDM_URI: string;
   REACT_APP_AUTH_CLIENT_ID: string;
   REACT_APP_AUTH_REALM: string;
   REACT_APP_WORKSPACE_ID: string;
