@@ -19,7 +19,7 @@ type UseCases interface {
 	Query(metric Metric, period string, interval string) (interface{}, error)
 	ResultQuery(metric Metric) (float64, error)
 	UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error)
-	FindAllActivesMetricExecutions() ([]MetricExecution, error)
+	FindAllMetricExecutions() ([]MetricExecution, error)
 	Validate(metric Metric) []util.ErrorUtil
 }
 

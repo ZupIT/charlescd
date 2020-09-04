@@ -28,13 +28,14 @@ func main() {
 		db.LogMode(true)
 	}
 
-	pluginMain := plugin.NewMain(db)
+	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
-	go dispatcher.Start()
+	stopChan := make(chan bool, 0)
+	go dispatcher.Start(stopChan)
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)

@@ -31,26 +31,6 @@ func (main Main) FindAllMetricExecutions() ([]MetricExecution, error) {
 	return metricExecutions, nil
 }
 
-func (main Main) FindAllActivesMetricExecutions() ([]MetricExecution, error) {
-	var metricExecutions []MetricExecution
-	db := main.db.Find(&metricExecutions)
-	if db.Error != nil {
-		logger.Error(util.FindAllMetricExecutionsError, "FindAllMetricExecutions", db.Error, metricExecutions)
-		return []MetricExecution{}, db.Error
-	}
-	return metricExecutions, nil
-}
-
-func (main Main) FindMetricExecutionById(id string) (MetricExecution, error) {
-	metricExecution := MetricExecution{}
-	db := main.db.Where("id = ?", id).First(&metricExecution)
-	if db.Error != nil {
-		logger.Error(util.FindMetricExecutionByIdError, "FindMetricExecutionById", db.Error, "Id = "+id)
-		return MetricExecution{}, db.Error
-	}
-	return metricExecution, nil
-}
-
 func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricExecution, error) {
 	db := main.db.Save(&metricExecution)
 	if db.Error != nil {

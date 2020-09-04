@@ -9,6 +9,7 @@ import (
 	datasource2 "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -29,12 +30,14 @@ type SuiteMetric struct {
 func (s *SuiteMetric) SetupSuite() {
 	var err error
 
+	os.Setenv("ENV", "TEST")
+
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(false)
+	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain(s.DB)
+	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = metric2.NewMain(s.DB, datasourceMain, pluginMain)
