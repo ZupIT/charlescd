@@ -53,7 +53,6 @@ test('render Add Metric default value', async () => {
   expect(handleGoBack).toBeCalledTimes(2);
 });
 
-
 // test('render with validation errors', async () => {
 //   const errorMessage = ``
 //   const responseError = {
