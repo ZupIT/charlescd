@@ -14,7 +14,7 @@ import (
 )
 
 type UseCases interface {
-	Start() error
+	Start(stopChan chan bool) error
 }
 
 type Dispatcher struct {
@@ -34,7 +34,7 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *Dispatcher) dispatch() {
-	metricExecutions, err := dispatcher.metric.FindAllActivesMetricExecutions()
+	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
 	}
@@ -100,15 +100,20 @@ func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
 	return time.ParseDuration(configuration.GetConfiguration("DISPATCHER_INTERVAL"))
 }
 
-func (dispatcher *Dispatcher) Start() error {
+func (dispatcher *Dispatcher) Start(stopChan chan bool) error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
 		log.Fatalln(err)
 		return err
 	}
 
+	ticker := time.NewTicker(interval)
 	for {
-		time.Sleep(interval)
-		dispatcher.dispatch()
+		select {
+		case <-ticker.C:
+			dispatcher.dispatch()
+		case <-stopChan:
+			return nil
+		}
 	}
 }

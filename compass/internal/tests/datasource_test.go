@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -25,12 +26,14 @@ type Suite struct {
 func (s *Suite) SetupSuite() {
 	var err error
 
+	os.Setenv("ENV", "TEST")
+
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(false)
+	s.DB.LogMode(dbLog)
 
-	var pluginMain = plugin.NewMain(s.DB)
+	var pluginMain = plugin.NewMain()
 
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
 }
@@ -204,6 +207,32 @@ func (s *Suite) TestDeleteError() {
 	err := s.repository.Delete("any-id")
 	require.Error(s.T(), err)
 }
+
+//func (s *Suite) TestGetMetrics() {
+//	os.Setenv("PLUGINS_DIR", "../../plugins")
+//	dataSource := datasource2.DataSource{
+//		Name:        "DataTest2",
+//		PluginSrc:   "prometheus",
+//		Health:      true,
+//		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
+//		WorkspaceID: uuid.New(),
+//		DeletedAt:   nil,
+//	}
+//
+//	s.DB.Create(&dataSource)
+//
+//
+//	metrics, err := s.repository.GetMetrics(dataSource.ID.String(), "")
+//	require.NoError(s.T(), err)
+//
+//	require.Equal(s.T(), []string{
+//		"scrape_duration_seconds",
+//		"scrape_samples_post_metric_relabeling",
+//		"scrape_samples_scraped",
+//		"scrape_series_added",
+//		"up",
+//	}, metrics)
+//}
 
 //
 //func (s *Suite) TestFindAllByWorkspace() {

@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"path/filepath"
-	"plugin"
 	"strconv"
 	"time"
 
@@ -106,16 +104,14 @@ func (main Main) Delete(id string) error {
 }
 
 func (main Main) GetMetrics(dataSourceID, name string) (datasource.MetricList, error) {
-	pluginsPath := "plugins"
-
 	dataSourceResult, err := main.FindById(dataSourceID)
 	if err != nil {
 		return datasource.MetricList{}, errors.New("Not found data source: " + dataSourceID)
 	}
 
-	plugin, err := plugin.Open(filepath.Join(pluginsPath, dataSourceResult.PluginSrc+".so"))
+	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		logger.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, pluginsPath)
+		logger.Error(util.OpenPluginGetMetricsError, "GetMetrics", err, plugin)
 		return datasource.MetricList{}, err
 	}
 
