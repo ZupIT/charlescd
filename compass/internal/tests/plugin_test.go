@@ -15,6 +15,7 @@ type SuitePlugins struct {
 }
 
 func (s *SuitePlugins) SetupSuite() {
+	os.Setenv("ENV", "TEST")
 	s.repository = plugin.NewMain()
 }
 

@@ -5,12 +5,16 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
 	"compass/internal/metric"
+	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
+	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"os"
 	"testing"
+	"time"
 )
 
 type SuiteDispatcher struct {
@@ -36,7 +40,6 @@ func (s *SuiteDispatcher) SetupSuite() {
 }
 
 func (s *SuiteDispatcher) BeforeTest(suiteName, testName string) {
-	os.Setenv("DISPATCHER_INTERVAL", "1s")
 	s.DB.Exec("DELETE FROM metric_filters")
 	s.DB.Exec("DELETE FROM metric_group_bies")
 	s.DB.Exec("DELETE FROM metrics")
@@ -50,5 +53,49 @@ func TestInitDispatcher(t *testing.T) {
 	suite.Run(t, new(SuiteDispatcher))
 }
 
-func (s *SuiteDispatcher) TestStart() {
+func (s *SuiteDispatcher) TestStartMetricProviderError() {
+	os.Setenv("DISPATCHER_INTERVAL", "1s")
+	stopChan := make(chan bool, 1)
+	go s.repository.Start(stopChan)
+
+	circleID := uuid.New()
+	datasource := datasource.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:908"}`),
+		WorkspaceID: uuid.UUID{},
+		DeletedAt:   nil,
+	}
+	s.DB.Create(&datasource)
+
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric.Metric{},
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricgroup)
+
+	metric1 := metric.Metric{
+		MetricsGroupID: metricgroup.ID,
+		DataSourceID:   datasource.ID,
+		Metric:         "MetricName1",
+		Filters:        nil,
+		GroupBy:        nil,
+		Condition:      "=",
+		Threshold:      1,
+		CircleID:       circleID,
+	}
+
+	_, err := s.metricMain.SaveMetric(metric1)
+	require.NoError(s.T(), err)
+
+	time.Sleep(2 * time.Second)
+	stopChan<-true
+
+	execution, err := s.metricMain.FindAllMetricExecutions()
+	require.NoError(s.T(), err)
+
+	require.Equal(s.T(), "ERROR", execution[0].Status)
 }

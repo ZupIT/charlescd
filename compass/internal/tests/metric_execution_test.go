@@ -8,6 +8,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"encoding/json"
+	"os"
 	"testing"
 
 	"github.com/google/uuid"
@@ -26,6 +27,8 @@ type SuiteMetricExecution struct {
 
 func (s *SuiteMetricExecution) SetupSuite() {
 	var err error
+
+	os.Setenv("ENV", "TEST")
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
