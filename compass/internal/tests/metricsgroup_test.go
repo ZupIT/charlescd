@@ -8,6 +8,7 @@ import (
 	"compass/internal/plugin"
 	"compass/internal/util"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -29,6 +30,8 @@ type SuiteMetricGroup struct {
 
 func (s *SuiteMetricGroup) SetupSuite() {
 	var err error
+
+	os.Setenv("ENV", "TEST")
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)

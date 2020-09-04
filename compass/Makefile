@@ -28,7 +28,7 @@ tests:
 tests-dep-up:
 				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
 tests-dep-down:
-				docker-compose -f $(COMPOSE_TESTS) down --volumes db provider
+				docker-compose -f $(COMPOSE_TESTS) down db provider
 cover:
 				$(GOTEST) -coverprofile cover.out ./...
 				$(GOTOOL) cover -func=cover.out

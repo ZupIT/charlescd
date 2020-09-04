@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -24,6 +25,8 @@ type Suite struct {
 
 func (s *Suite) SetupSuite() {
 	var err error
+
+	os.Setenv("ENV", "TEST")
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)

@@ -34,7 +34,8 @@ func main() {
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
-	go dispatcher.Start()
+	stopChan := make(chan bool, 0)
+	go dispatcher.Start(stopChan)
 
 	v1 := v1.NewV1()
 	v1.NewPluginApi(pluginMain)
