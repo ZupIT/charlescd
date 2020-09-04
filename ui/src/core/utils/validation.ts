@@ -20,7 +20,7 @@ import { Module } from 'modules/Circles/Release/interfaces/Module';
 
 export const validFields = (fields: object) => {
   let status = true;
-  forEach(fields, (value: string | Module) => {
+  forEach(fields, (value: string | Module[]) => {
     if (isEmpty(value)) {
       status = false;
     }
