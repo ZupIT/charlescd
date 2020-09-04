@@ -182,7 +182,7 @@ export class SpinnakerPipelineBuilder {
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = this.getUnusedComponent(activeComponents, component, deployment.circleId)
       if (unusedComponent) {
-        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
       }
     })
     return stages

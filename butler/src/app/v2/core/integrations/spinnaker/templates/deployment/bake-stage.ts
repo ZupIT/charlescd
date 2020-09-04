@@ -54,7 +54,8 @@ export const getBakeStage = (component: Component, stageId: number, circleId: st
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': `${component.imageUrl}`,
-    name: `${component.imageTag}`,
+    component: component.name,
+    tag: component.imageTag,
     circleId: circleId ? circleId : ConfigurationConstants.DEFAULT_CIRCLE_ID
   },
   refId: `${stageId}`,

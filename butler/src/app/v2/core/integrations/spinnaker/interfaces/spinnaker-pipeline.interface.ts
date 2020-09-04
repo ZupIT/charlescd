@@ -41,9 +41,11 @@ interface InputArtifact {
     id: string
 }
 
-interface Overrides {
+interface Overrides { //TODO remove optionals and name
     'image.tag': string
-    name: string
+    name?: string
+    component?: string
+    tag?: string
     circleId: string
 }
 
