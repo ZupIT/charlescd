@@ -20,7 +20,7 @@ import { Component, Deployment } from '../../../../app/v2/api/deployments/interf
 import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/spinnaker/pipeline-builder'
 import {
   completeSpinnakerPipeline,
-  noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentNoRollbackStage,
+  noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentSameTagDiffCirclesRollback,
   oneComponentSameTagDiffCirclesUnused,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
@@ -1221,7 +1221,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ).toEqual(oneComponentDiffSubsetsSameTag)
   })
 
-  it('should create the correct pipeline object without rollback stages', async() => {
+  it('should create the correct pipeline object with rollback stage, even with same tag in different circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -1255,7 +1255,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 circle-id3
+      },
       {
         id: 'component-id-7',
         helmUrl: 'http://localhost:2222/helm',
@@ -1287,7 +1287,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // A v0 circle-id5
+      },
       {
         id: 'component-id-2',
         helmUrl: 'http://localhost:2222/helm',
@@ -1319,7 +1319,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // B v0 open sea
+      },
       {
         id: 'component-id-3',
         helmUrl: 'http://localhost:2222/helm',
@@ -1351,7 +1351,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }, // C v0 open sea
+      },
       {
         id: 'component-id-4',
         helmUrl: 'http://localhost:2222/helm',
@@ -1383,12 +1383,12 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
             deployments: null
           },
         }
-      }  // A v1 circle-id2
+      }
     ]
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentOpenSea, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoRollbackStage)
+    ).toEqual(oneComponentSameTagDiffCirclesRollback)
   })
 
   it('should create the correct pipeline object with custom host name and gateway name', async() => {

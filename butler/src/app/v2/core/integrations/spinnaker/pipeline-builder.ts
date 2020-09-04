@@ -153,10 +153,7 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(deployment.components)
     deployment.components?.forEach(component => {
-      const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
-      if (!activeByName.find(activeComponent => activeComponent.imageTag === component.imageTag)) {
-        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
-      }
+      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
     })
     return stages
   }
