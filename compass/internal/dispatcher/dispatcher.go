@@ -34,7 +34,7 @@ func NewDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *Dispatcher) dispatch() {
-	metricExecutions, err := dispatcher.metric.FindAllActivesMetricExecutions()
+	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logger.Panic("Cannot find active metric executions", "Dispatch", err, nil)
 	}

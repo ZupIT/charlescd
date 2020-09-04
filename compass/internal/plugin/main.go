@@ -2,8 +2,6 @@ package plugin
 
 import (
 	"plugin"
-
-	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
@@ -12,9 +10,8 @@ type UseCases interface {
 }
 
 type Main struct {
-	db *gorm.DB
 }
 
-func NewMain(db *gorm.DB) UseCases {
-	return Main{db}
+func NewMain() UseCases {
+	return Main{}
 }

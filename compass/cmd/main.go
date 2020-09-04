@@ -28,7 +28,7 @@ func main() {
 		db.LogMode(true)
 	}
 
-	pluginMain := plugin.NewMain(db)
+	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)

@@ -28,9 +28,9 @@ func (s *Suite) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(false)
+	s.DB.LogMode(dbLog)
 
-	var pluginMain = plugin.NewMain(s.DB)
+	var pluginMain = plugin.NewMain()
 
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
 }

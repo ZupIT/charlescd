@@ -33,9 +33,9 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(true)
+	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain(s.DB)
+	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
 
