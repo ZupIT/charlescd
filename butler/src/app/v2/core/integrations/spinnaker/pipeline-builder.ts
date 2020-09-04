@@ -226,11 +226,8 @@ export class SpinnakerPipelineBuilder {
   private getUnusedComponent(activeComponents: Component[], component: Component, circleId: string | null): Component | undefined {
     const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
     const sameCircleComponent = activeByName.find(activeComponent => activeComponent.deployment?.circleId === circleId)
-    const sameTagComponents = sameCircleComponent ?
-      activeByName.filter(activeComponent => activeComponent.imageTag === sameCircleComponent.imageTag) :
-      []
 
-    if (!sameCircleComponent || sameCircleComponent.imageTag === component.imageTag || sameTagComponents.length > 1) {
+    if (!sameCircleComponent || sameCircleComponent.imageTag === component.imageTag) {
       return undefined
     }
 

@@ -2,7 +2,7 @@ import { completeSpinnakerPipeline } from './deployment-complete-pipeline'
 import { noUnusedSpinnakerPipeline } from './no-unused'
 import { oneComponentSpinnakerPipeline } from './one-component'
 import { oneComponentVSSpinnakerPipeline } from './one-component-virtualservice'
-import { oneComponentNoUnused } from './one-component-no-unused'
+import { oneComponentSameTagDiffCirclesUnused } from './one-component-same-tag-diff-circles-unused'
 import { oneComponentWithUnused } from './one-component-with-unused'
 import { oneComponentNoRepeatedSubset } from './one-component-no-repeated-subset'
 import { oneComponentNoRollbackStage } from './one-component-no-rollback'
@@ -13,7 +13,7 @@ export {
   noUnusedSpinnakerPipeline,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline,
-  oneComponentNoUnused,
+  oneComponentSameTagDiffCirclesUnused,
   oneComponentWithUnused,
   oneComponentNoRepeatedSubset,
   oneComponentNoRollbackStage,

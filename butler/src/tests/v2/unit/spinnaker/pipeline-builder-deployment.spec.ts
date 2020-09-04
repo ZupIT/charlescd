@@ -21,7 +21,7 @@ import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/s
 import {
   completeSpinnakerPipeline,
   noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentNoRollbackStage,
-  oneComponentNoUnused,
+  oneComponentSameTagDiffCirclesUnused,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
 } from './fixtures/deployment'
@@ -743,7 +743,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
     ).toEqual(oneComponentVSSpinnakerPipeline)
   })
 
-  it('should create the correct pipeline object with 1 new component and without unused versions', async() => {
+  it('should create the correct pipeline object with 1 new component and unused version, even with same tag in different circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -878,7 +878,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle2, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneComponentNoUnused)
+    ).toEqual(oneComponentSameTagDiffCirclesUnused)
   })
 
   it('should create the correct pipeline object with 1 new component and with correct unused versions', async() => {
