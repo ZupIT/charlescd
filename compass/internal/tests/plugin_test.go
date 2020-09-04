@@ -24,7 +24,6 @@ func TestInitPlugins(t *testing.T) {
 	suite.Run(t, new(SuitePlugins))
 }
 
-// TODO: VERIFY PLUGIN PATH IN GITHUB ACTIONS
 func (s *SuitePlugins) TestFindAll() {
 	expectedPlugins := []plugin.Plugin{
 		{
