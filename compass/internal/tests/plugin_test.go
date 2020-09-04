@@ -2,7 +2,6 @@ package tests
 
 import (
 	"compass/internal/plugin"
-	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -33,7 +32,9 @@ func (s *SuitePlugins) TestFindAll() {
 		},
 	}
 
-	fmt.Println(os.Getwd())
+	dir, _ := os.Getwd()
+	os.Setenv("PLUGINS_DIR", dir+"/plugins")
+
 	plugins, err := s.repository.FindAll()
 	require.NoError(s.T(), err)
 
