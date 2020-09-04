@@ -11,7 +11,7 @@ const deleteFile = path => {
 const createFile = path => {
   // eslint-disable-next-line no-useless-catch
   try {
-    fs.writeFileSync(path, 'window.ENVIRONMENT = {');
+    fs.writeFileSync(path, 'window.CHARLESCD_ENVIRONMENT = {');
   } catch (error) {
     throw error;
   }
@@ -65,7 +65,6 @@ const sourceFile = () => {
       .toString()
       .trim()
       .split(endOfLine);
-
     return variables;
   }
   return null;

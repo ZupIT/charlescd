@@ -65,9 +65,9 @@ test('render Rule default component with group', async () => {
   const methods = result.current;
 
   const { getByTestId, debug } = render(
-    <FormContext { ...methods }>
+    <FormProvider { ...methods }>
       <Rule { ...props } hasGroup onRemoveRule={onRemoveRule} />
-    </FormContext>
+    </FormProvider>
   );
 
   const InputTrash = getByTestId('icon-trash');

@@ -16,12 +16,17 @@
 
 import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
+import { Module } from 'modules/Circles/Release/interfaces/Module';
 
 export const validFields = (fields: object) => {
   let status = true;
-  forEach(fields, (value: string) => {
+  forEach(fields, (value: string | Module) => {
     if (isEmpty(value)) {
       status = false;
+    }
+
+    if (Array.isArray(value)) {
+      status = !value.some(valueItem => !valueItem.tag);
     }
   });
 
