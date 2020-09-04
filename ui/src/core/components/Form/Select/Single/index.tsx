@@ -69,7 +69,7 @@ const Single = ({
             options={options}
             onChange={selected => {
               onChange?.(selected);
-              onControllerChange(selected.value);
+              onControllerChange(selected?.value);
 
               return selected?.value;
             }}

@@ -56,10 +56,10 @@ test('form should be valid', async () => {
   const { getByTestId, getByText } = render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = getByTestId('input-text-releaseName');
   fireEvent.change(nameInput, { target: { value: 'release-name' }});
-  
+
   const moduleLabel = getByText('Select a module');
   await act(async() => selectEvent.select(moduleLabel, 'module-1'));
 
@@ -81,10 +81,10 @@ test('form should be invalid when version name not found', async () => {
   const { getByTestId, getByText } = render(
     <CreateRelease circleId="123" onDeployed={() => { }} />
   );
-  
+
   const nameInput = getByTestId('input-text-releaseName');
   fireEvent.change(nameInput, { target: { value: 'release-name' }});
-  
+
   const moduleLabel = getByText('Select a module');
   await act(async() => selectEvent.select(moduleLabel, 'module-1'));
 
