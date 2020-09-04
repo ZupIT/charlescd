@@ -17,23 +17,30 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
+import { getParam } from 'core/utils/routes';
+import { setAccessToken } from 'core/utils/auth';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
 const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
-const Routes = () => (
-  <BrowserRouter>
-    <Suspense fallback="">
-      <Switch>
-        <Route path={routes.error403} component={Forbidden403} />
-        <Route path={routes.error404} component={NotFound404} />
-        <Route path={routes.auth} component={Auth} />
-        <Route path={routes.main} component={Main} />
-      </Switch>
-    </Suspense>
-  </BrowserRouter>
-);
+const Routes = () => {
+  const accessToken = getParam('access_token');
+  if (accessToken) setAccessToken(accessToken);
+
+  return (
+    <BrowserRouter>
+      <Suspense fallback="">
+        <Switch>
+          <Route path={routes.error403} component={Forbidden403} />
+          <Route path={routes.error404} component={NotFound404} />
+          <Route path={routes.auth} component={Auth} />
+          <Route path={routes.main} component={Main} />
+        </Switch>
+      </Suspense>
+    </BrowserRouter>
+  );
+};
 
 export default Routes;
