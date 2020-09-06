@@ -26,6 +26,8 @@ jobs:
       working-directory: ./ui
     - run: yarn build:all
       working-directory: ./ui
+    - run: yarn test
+      working-directory: ./ui
       env:
         CI: true
 
