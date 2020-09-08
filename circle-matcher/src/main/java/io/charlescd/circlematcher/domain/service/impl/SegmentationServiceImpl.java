@@ -116,7 +116,8 @@ public class SegmentationServiceImpl implements SegmentationService {
                     segmentationRequest.getCircleId(),
                     isItConvertibleToKv(item) ? SegmentationType.SIMPLE_KV : segmentationRequest.getType(),
                     segmentationRequest.getWorkspaceId(),
-                    segmentationRequest.getIsDefault())));
+                    segmentationRequest.getIsDefault(),
+                    segmentationRequest.getCreatedAt())));
 
             return segmentation;
         }

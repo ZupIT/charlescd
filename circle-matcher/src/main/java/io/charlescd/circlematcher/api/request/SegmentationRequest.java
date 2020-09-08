@@ -22,6 +22,7 @@ import io.charlescd.circlematcher.domain.SegmentationType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 public abstract class SegmentationRequest {
 
@@ -45,6 +46,8 @@ public abstract class SegmentationRequest {
 
     @NotNull
     private Boolean isDefault;
+
+    private LocalDateTime createdAt;
 
     public String getName() {
         return name;
@@ -103,6 +106,14 @@ public abstract class SegmentationRequest {
     }
 
     public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault);
+        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, createdAt);
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
