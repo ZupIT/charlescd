@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IdentificationResponse {
 
-    private List<CircleResponse> circles;
+    private LinkedHashSet<CircleResponse> circles;
 
-    public IdentificationResponse(List<CircleResponse> circles) {
+    public IdentificationResponse(LinkedHashSet<CircleResponse> circles) {
         this.circles = circles;
     }
 
@@ -37,13 +37,13 @@ public class IdentificationResponse {
         return new IdentificationResponse(from(circles));
     }
 
-    public List<CircleResponse> getCircles() {
+    public LinkedHashSet<CircleResponse> getCircles() {
         return circles;
     }
 
-    private static List<CircleResponse> from(LinkedHashSet<Circle> circles) {
+    private static LinkedHashSet<CircleResponse> from(LinkedHashSet<Circle> circles) {
         return circles.stream().map(
                 item -> new CircleResponse(item.getId(), item.getName())
-        ).collect(Collectors.toList());
+        ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
