@@ -153,7 +153,10 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(deployment.components)
     deployment.components?.forEach(component => {
-      stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
+      const activeSameCircleSameTag = this.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)
+      if (!activeSameCircleSameTag) {
+        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
+      }
     })
     return stages
   }
@@ -220,7 +223,24 @@ export class SpinnakerPipelineBuilder {
     return activeComponents.filter(component => component.name === name)
   }
 
-  private getUnusedComponent(activeComponents: Component[], component: Component, circleId: string | null): Component | undefined {
+  private getActiveSameCircleTagComponent(
+    activeComponents: Component[],
+    component: Component,
+    circleId: string | null
+  ): Component | undefined {
+
+    const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
+    return activeByName.find(
+      activeComponent => activeComponent.imageTag === component.imageTag && activeComponent.deployment?.circleId === circleId
+    )
+  }
+
+  private getUnusedComponent(
+    activeComponents: Component[],
+    component: Component,
+    circleId: string | null
+  ): Component | undefined {
+
     const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
     const sameCircleComponent = activeByName.find(activeComponent => activeComponent.deployment?.circleId === circleId)
 

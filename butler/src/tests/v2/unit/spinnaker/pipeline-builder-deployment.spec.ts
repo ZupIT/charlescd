@@ -21,7 +21,7 @@ import { SpinnakerPipelineBuilder } from '../../../../app/v2/core/integrations/s
 import {
   completeSpinnakerPipeline,
   noUnusedSpinnakerPipeline, oneComponentHostnameGateway, oneComponentSameTagDiffCirclesRollback,
-  oneComponentSameTagDiffCirclesUnused,
+  oneComponentSameTagDiffCirclesUnused, oneComponentSameTagSameCircle,
   oneComponentSpinnakerPipeline,
   oneComponentVSSpinnakerPipeline, oneComponentWithUnused
 } from './fixtures/deployment'
@@ -1530,5 +1530,47 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
         { executionId: 'execution-id', incomingCircleId: 'Default' }
       )
     ).toEqual(oneComponentHostnameGateway)
+  })
+
+  it('should create the correct pipeline object with no rollback/undeploy stage, because of same tag deployment in the circle', async() => {
+
+    const activeComponents: Component[] = [
+      {
+        id: 'component-id-6',
+        helmUrl: 'http://localhost:2222/helm',
+        imageTag: 'v2',
+        imageUrl: 'https://repository.com/A:v0',
+        name: 'A',
+        running: true,
+        gatewayName: null,
+        hostValue: null,
+        deployment: {
+          id: 'deployment-id6',
+          authorId: 'user-1',
+          callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
+          circleId: 'circle-id',
+          createdAt: new Date(),
+          cdConfiguration: {
+            id: 'cd-configuration-id',
+            type: CdTypeEnum.SPINNAKER,
+            configurationData: {
+              gitAccount: 'github-artifact',
+              account: 'default',
+              namespace: 'sandbox',
+              url: 'spinnaker-url'
+            },
+            name: 'spinnakerconfiguration',
+            authorId: 'user-2',
+            workspaceId: 'workspace-id',
+            createdAt: new Date(),
+            deployments: null
+          },
+        }
+      }
+    ]
+
+    expect(
+      new SpinnakerPipelineBuilder().buildSpinnakerDeploymentPipeline(deploymentWith1ComponentCircle1, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
+    ).toEqual(oneComponentSameTagSameCircle)
   })
 })
