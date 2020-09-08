@@ -25,7 +25,8 @@ setPublicPath('@devcraft/charlescd');
 const lifeCycle = SingleSpaReact({
   React,
   ReactDOM,
-  rootComponent: App
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
 });
 
 export const bootstrap = lifeCycle.bootstrap;
