@@ -25,12 +25,8 @@ import io.charlescd.circlematcher.domain.service.IdentificationService;
 import io.charlescd.circlematcher.infrastructure.SegmentationKeyUtils;
 import io.charlescd.circlematcher.infrastructure.repository.KeyMetadataRepository;
 import io.charlescd.circlematcher.infrastructure.repository.SegmentationRepository;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.paukov.combinatorics3.Generator;
 import org.springframework.stereotype.Service;
@@ -50,10 +46,11 @@ public class IdentificationServiceImpl implements IdentificationService {
         this.keyMetadataRepository = keyMetadataRepository;
     }
 
-    public Set<Circle> identify(IdentificationRequest request) {
+    public List<Circle> identify(IdentificationRequest request) {
         verifyRequestFormat(request);
 
         var keySubsets = createKeySubsets(request);
+        System.out.println(keySubsets);
         var keyMetadata = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
         var intersection = extractIntersection(keySubsets, keyMetadata);
 
@@ -93,14 +90,15 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .collect(Collectors.toList());
     }
 
-    private Set<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
+    private List<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
                 .filter(item -> item.isPresent() && isMatched(request, item.get()))
+                .sorted((Comparator.comparing(item -> item.get().getCreatedAt(),
+                        Comparator.nullsLast(Comparator.reverseOrder()))))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
-                .collect(Collectors.toSet());
-
+                .collect(Collectors.toList());
         if (matched.isEmpty()) {
             matched.add(createDefaultCircleFrom(metadata));
         }

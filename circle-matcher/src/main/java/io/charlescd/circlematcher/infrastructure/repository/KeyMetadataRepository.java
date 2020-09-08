@@ -46,7 +46,6 @@ public class KeyMetadataRepository implements RedisRepository {
         var cursor = this.template.opsForSet().scan(CHARLES_KEY_SET, ScanOptions.scanOptions()
                 .match(String.format("*\"workspaceId\":\"%s\"*", workspaceId))
                 .build());
-
         while (!cursor.isClosed() && cursor.hasNext()) {
             var metadata = this.objectMapper.convertValue(cursor.next(), KeyMetadata.class);
             metadataList.add(metadata);

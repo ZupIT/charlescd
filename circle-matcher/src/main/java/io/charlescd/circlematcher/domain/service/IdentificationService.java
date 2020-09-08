@@ -18,10 +18,10 @@ package io.charlescd.circlematcher.domain.service;
 
 import io.charlescd.circlematcher.api.request.IdentificationRequest;
 import io.charlescd.circlematcher.domain.Circle;
-import java.util.Set;
+import java.util.List;
 
 public interface IdentificationService {
 
-    Set<Circle> identify(IdentificationRequest request);
+    List<Circle> identify(IdentificationRequest request);
 
 }
