@@ -41,11 +41,10 @@ interface InputArtifact {
     id: string
 }
 
-interface Overrides { //TODO remove optionals and name
+interface Overrides {
     'image.tag': string
-    name?: string
-    component?: string
-    tag?: string
+    component: string
+    tag: string
     circleId: string
 }
 
@@ -73,11 +72,10 @@ interface Metadata {
     namespace: string
 }
 
-interface Labels { // TODO remove optionals and remove version label
-    component?: string
-    tag?: string
-    circleId?: string
-    version?: string
+interface Labels {
+    component: string
+    tag: string
+    circleId: string
 }
 
 interface Subset {
