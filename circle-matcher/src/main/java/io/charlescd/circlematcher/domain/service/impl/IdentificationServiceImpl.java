@@ -46,11 +46,10 @@ public class IdentificationServiceImpl implements IdentificationService {
         this.keyMetadataRepository = keyMetadataRepository;
     }
 
-    public List<Circle> identify(IdentificationRequest request) {
+    public LinkedHashSet<Circle> identify(IdentificationRequest request) {
         verifyRequestFormat(request);
 
         var keySubsets = createKeySubsets(request);
-        System.out.println(keySubsets);
         var keyMetadata = this.keyMetadataRepository.findByWorkspaceId(request.getWorkspaceId());
         var intersection = extractIntersection(keySubsets, keyMetadata);
 
@@ -90,7 +89,7 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .collect(Collectors.toList());
     }
 
-    private List<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
+    private LinkedHashSet<Circle> findMatchedCircles(IdentificationRequest request, List<KeyMetadata> metadata) {
         var matched = metadata.stream()
                 .parallel()
                 .map(item -> findSegmentation(item, request))
@@ -98,7 +97,7 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .sorted((Comparator.comparing(item -> item.get().getCreatedAt(),
                         Comparator.nullsLast(Comparator.reverseOrder()))))
                 .map(item -> new Circle(item.get().getCircleId(), item.get().getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         if (matched.isEmpty()) {
             matched.add(createDefaultCircleFrom(metadata));
         }
