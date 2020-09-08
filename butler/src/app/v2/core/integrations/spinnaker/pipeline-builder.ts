@@ -195,10 +195,7 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = UndeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
     deployment.components.forEach(component => {
-      const unusedComponent: Component | undefined = this.getUndeploymentUnusedComponent(activeComponents, component)
-      if (unusedComponent) {
-        stages.push(getUndeploymentsDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
-      }
+      stages.push(getUndeploymentsDeleteUnusedStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
     })
     return stages
   }
@@ -249,16 +246,5 @@ export class SpinnakerPipelineBuilder {
     }
 
     return sameCircleComponent
-  }
-
-  private getUndeploymentUnusedComponent(activeComponents: Component[], component: Component): Component | undefined {
-    const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
-    const sameTagComponents = activeByName.filter(activeComponent => activeComponent.imageTag === component.imageTag)
-
-    if (sameTagComponents.length > 1) {
-      return undefined
-    }
-
-    return component
   }
 }
