@@ -17,6 +17,7 @@
 package io.charlescd.moove.infrastructure.service.client.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDateTime
 
 class CircleMatcherRequest(
     val name: String,
@@ -27,7 +28,8 @@ class CircleMatcherRequest(
     val previousReference: String? = null,
     val workspaceId: String,
     @get:JsonProperty("isDefault")
-    val isDefault: Boolean
+    val isDefault: Boolean,
+    val createdAt: LocalDateTime? = null
 )
 
 data class Node(
