@@ -20,6 +20,7 @@ import { DeploymentStatusEnum } from '../../../../../../v1/api/deployments/enums
 import { ExecutionTypeEnum } from '../../../../../api/deployments/enums'
 import { UrlUtils } from '../../../../utils/url.utils'
 import { ConnectorConfiguration } from '../../connector'
+import { UndeploymentTemplateUtils } from '../../utils/undeployment-template.utils'
 
 export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stageId: number, configuration: ConnectorConfiguration): Stage => ({
   completeOtherBranchesThenFail: false,
@@ -46,7 +47,7 @@ export const getUndeploymentFailureWebhookStage = (deployment: Deployment, stage
 })
 
 const getRequisiteStageRefIds = (components: Component[]): string[] => {
-  const proxiesEvalId: number = components.length * 2 + 1
+  const proxiesEvalId: number = UndeploymentTemplateUtils.getProxyEvalStageId(components)
   return [
     `${proxiesEvalId}`
   ]

@@ -95,9 +95,9 @@ export class SpinnakerPipelineBuilder {
     return [
       ...this.getProxyUndeploymentStages(deployment, activeComponents),
       ...this.getProxyUndeploymentsEvaluationStage(deployment.components),
+      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents),
       ...this.getUndeploymentFailureWebhookStage(deployment, configuration),
-      ...this.getUndeploymentSuccessWebhookStage(deployment, configuration),
-      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents)
+      ...this.getUndeploymentSuccessWebhookStage(deployment, configuration)
     ]
   }
 
