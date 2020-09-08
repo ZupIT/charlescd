@@ -23,6 +23,7 @@ import forEach from 'lodash/forEach';
 import findLastIndex from 'lodash/findLastIndex';
 import groupBy from 'lodash/groupBy';
 import includes from 'lodash/includes';
+import isEmpty from 'lodash/isEmpty';
 
 export const formatModuleOptions = (module: Module[]) => {
   return map(module, content => ({
@@ -113,4 +114,19 @@ export const formatDataModules = ({ modules }: { modules: IModule[] }) => {
       components
     };
   });
+};
+
+export const validFields = (fields: object) => {
+  let status = true;
+  forEach(fields, (value: string | IModule[]) => {
+    if (isEmpty(value)) {
+      status = false;
+    }
+
+    if (Array.isArray(value)) {
+      status = !value.some(valueItem => !valueItem.tag);
+    }
+  });
+
+  return status;
 };
