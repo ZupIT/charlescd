@@ -61,7 +61,7 @@ open class CreateMetricConfigurationInteractorImpl @Inject constructor(
         val compassDatasource = CompassCreateDatasourceRequest(
             name = "prometheus",
             pluginSrc = "prometheus",
-            health = true,
+            healthy = true,
             data = DatasourceDataRequest(
                 url = request.url
             )
