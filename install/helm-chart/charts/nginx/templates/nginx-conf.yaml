@@ -17,11 +17,6 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
         server {
             listen 80;
             {{ if .Values.ui.enabled}}
