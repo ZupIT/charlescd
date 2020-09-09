@@ -18,10 +18,7 @@ package io.charlescd.circlematcher.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.domain.Circle;
-
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
