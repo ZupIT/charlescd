@@ -19,10 +19,10 @@ package io.charlescd.circlematcher.api.request;
 import io.charlescd.circlematcher.domain.Node;
 import io.charlescd.circlematcher.domain.Segmentation;
 import io.charlescd.circlematcher.domain.SegmentationType;
+import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 public abstract class SegmentationRequest {
 
@@ -106,7 +106,8 @@ public abstract class SegmentationRequest {
     }
 
     public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, createdAt);
+        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type,
+            workspaceId, isDefault, createdAt);
     }
 
     public LocalDateTime getCreatedAt() {
