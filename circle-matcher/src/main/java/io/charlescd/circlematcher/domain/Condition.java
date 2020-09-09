@@ -47,6 +47,13 @@ public enum Condition {
         }
     },
 
+
+    ENDS_WITH("toStr(%s).endsWith(toStr(%s))") {
+      public String expression(String key, List<String> values) {
+          return defaultExpression(key, values);
+      }
+    },
+
     LESS_THAN("toNumber(%s) < toNumber(%s)") {
         public String expression(String key, List<String> values) {
             return defaultExpression(key, values);

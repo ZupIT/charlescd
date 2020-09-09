@@ -21,5 +21,6 @@ export default [
   { value: 'LOWER_THAN', label: 'Lower than' },
   { value: 'LESS_THAN_OR_EQUAL', label: 'Lower or equal to' },
   { value: 'STARTS_WITH', label: 'Starts with' },
-  { value: 'NOT_EQUAL', label: 'Not equal' }
+  { value: 'NOT_EQUAL', label: 'Not equal' },
+  { value: 'ENDS_WITH', label: 'Ends with' }
 ];

@@ -83,6 +83,7 @@ data class NodePart(
         LOWER_THAN,
         LESS_THAN_OR_EQUAL,
         STARTS_WITH,
+        ENDS_WITH,
         NOT_EQUAL
     }
 }
