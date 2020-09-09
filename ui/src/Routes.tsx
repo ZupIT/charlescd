@@ -14,26 +14,49 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
+import { saveProfile, getProfile } from 'core/utils/profile';
+import { getAccessTokenDecoded } from 'core/utils/auth';
+import { useUser } from 'modules/Users/hooks';
+import { isMicrofrontend } from 'App';
+import isEmpty from 'lodash/isEmpty';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
 const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
-const Routes = () => (
-  <BrowserRouter>
-    <Suspense fallback="">
-      <Switch>
-        <Route path={routes.error403} component={Forbidden403} />
-        <Route path={routes.error404} component={NotFound404} />
-        <Route path={routes.auth} component={Auth} />
-        <Route path={routes.main} component={Main} />
-      </Switch>
-    </Suspense>
-  </BrowserRouter>
-);
+const Routes = () => {
+  const [profile, , getUserByEmail] = useUser();
+
+  useEffect(() => {
+    if (profile) {
+      saveProfile(profile);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    const profile = getProfile();
+    const { email } = getAccessTokenDecoded();
+    if (isEmpty(profile)) {
+      getUserByEmail(email);
+    }
+  }, [getUserByEmail]);
+
+  return (
+    <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
+      <Suspense fallback="">
+        <Switch>
+          <Route path={routes.error403} component={Forbidden403} />
+          <Route path={routes.error404} component={NotFound404} />
+          <Route path={routes.auth} component={Auth} />
+          <Route path={routes.main} component={Main} />
+        </Switch>
+      </Suspense>
+    </BrowserRouter>
+  );
+};
 
 export default Routes;

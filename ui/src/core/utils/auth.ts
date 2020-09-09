@@ -28,6 +28,7 @@ import { HTTP_STATUS } from 'core/enums/HttpStatus';
 type AccessToken = {
   id?: string;
   name?: string;
+  email?: string;
   isRoot?: boolean;
   workspaces?: {
     id: string;
