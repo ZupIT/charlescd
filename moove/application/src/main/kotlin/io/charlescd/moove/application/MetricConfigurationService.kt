@@ -49,7 +49,7 @@ class MetricConfigurationService(
     }
 
     fun findHealthyDatasourceOnCompass(workspaceId: String, health: Boolean): CompassDatasourceResponse? {
-        return compassApi.findHealthyDatasource(workspaceId, health)
+        return compassApi.findDatasource(workspaceId, health)
             .firstOrNull()
     }
 

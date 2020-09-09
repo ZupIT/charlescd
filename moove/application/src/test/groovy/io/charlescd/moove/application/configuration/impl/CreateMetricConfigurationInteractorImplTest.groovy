@@ -107,7 +107,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
         1 * userRepository.findById(author.id) >> Optional.of(author)
-        1 * compassApi.findHealthyDatasource(workspaceId, true) >> emptyList
+        1 * compassApi.findDatasource(workspaceId, true) >> emptyList
         1 * compassApi.saveHealthyDatasource(_, _) >> { arguments ->
             def workspaceRule = arguments[0]
             def datReq = arguments[1]

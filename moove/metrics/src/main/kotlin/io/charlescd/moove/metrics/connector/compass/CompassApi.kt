@@ -55,9 +55,9 @@ interface CompassApi {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun findHealthyDatasource(
+    fun findDatasource(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestParam("health") health: Boolean
+        @RequestParam("healthy") healthy: Boolean
     ): List<CompassDatasourceResponse>
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

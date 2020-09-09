@@ -26,7 +26,7 @@ data class CompassDatasourceResponse(
     val createdAt: Timestamp,
     val name: String,
     val pluginSrc: String,
-    val health: Boolean,
+    val healthy: Boolean,
     val data: DatasourceDataResponse
 )
 
