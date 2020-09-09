@@ -43,6 +43,7 @@ interface InputArtifact {
 
 interface Overrides {
     'image.tag': string
+    deploymentName: string
     component: string
     tag: string
     circleId: string

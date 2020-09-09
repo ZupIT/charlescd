@@ -18,6 +18,7 @@ import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 import {AppConstants} from '../../../../../../v1/core/constants'
+import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getRollbackDeploymentsStage = (
   component: Component,
@@ -55,7 +56,7 @@ export const getRollbackDeploymentsStage = (
         key: 'circleId',
         kind: 'EQUALS',
         values: [
-          circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
+          CommonTemplateUtils.getCircleId(circleId)
         ]
       }
     ]

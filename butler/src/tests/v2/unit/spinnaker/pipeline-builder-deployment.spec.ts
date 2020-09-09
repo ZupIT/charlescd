@@ -223,6 +223,7 @@ const deploymentWith1ComponentCircle1HostGateway: Deployment = {
 }
 
 describe('V2 Spinnaker Deployment Pipeline Builder', () => {
+
   it('should create the correct complete pipeline object with 3 new components', async() => {
 
     const activeComponents: Component[] = [

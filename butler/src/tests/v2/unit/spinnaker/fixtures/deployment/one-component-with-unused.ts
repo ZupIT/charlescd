@@ -101,6 +101,7 @@ export const oneComponentWithUnused: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
+        deploymentName: 'A-circle-id2',
         component: 'A',
         tag: 'v2',
         circleId: 'circle-id2'

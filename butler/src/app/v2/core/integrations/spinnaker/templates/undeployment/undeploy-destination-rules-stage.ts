@@ -18,6 +18,7 @@ import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurat
 import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
 import { AppConstants } from '../../../../../../v1/core/constants'
+import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getUndeploymentDestinationRulesStage = (
   component: Component,
@@ -85,8 +86,8 @@ const getSubsetObject = (component: Component, circleId: string | null): Subset 
     labels: {
       component: component.name,
       tag: component.imageTag,
-      circleId: circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
+      circleId: CommonTemplateUtils.getCircleId(circleId)
     },
-    name: circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
+    name: CommonTemplateUtils.getCircleId(circleId)
   }
 }

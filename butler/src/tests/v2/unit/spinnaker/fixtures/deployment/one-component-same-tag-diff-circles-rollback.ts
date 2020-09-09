@@ -18,7 +18,6 @@ import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/sp
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import { ConfigurationConstants } from '../../../../../../app/v1/core/constants/application/configuration.constants'
 
 export const oneComponentSameTagDiffCirclesRollback: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
@@ -102,9 +101,10 @@ export const oneComponentSameTagDiffCirclesRollback: SpinnakerPipeline = {
       outputName: 'A-v0',
       overrides: {
         'image.tag': 'https://repository.com/A:v0',
+        deploymentName: `A-${AppConstants.DEFAULT_CIRCLE_ID}`,
         component: 'A',
         tag: 'v0',
-        circleId: ConfigurationConstants.DEFAULT_CIRCLE_ID
+        circleId: AppConstants.DEFAULT_CIRCLE_ID
       },
       refId: '1',
       requisiteStageRefIds: [],

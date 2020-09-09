@@ -181,6 +181,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
+        deploymentName: 'A-circle-id',
         component: 'A',
         tag: 'v2',
         circleId: 'circle-id'
@@ -260,6 +261,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'B-v2',
       overrides: {
         'image.tag': 'https://repository.com/B:v2',
+        deploymentName: 'B-circle-id',
         component: 'B',
         tag: 'v2',
         circleId: 'circle-id'
@@ -339,6 +341,7 @@ export const completeSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'C-v2',
       overrides: {
         'image.tag': 'https://repository.com/C:v2',
+        deploymentName: 'C-circle-id',
         component: 'C',
         tag: 'v2',
         circleId: 'circle-id'
