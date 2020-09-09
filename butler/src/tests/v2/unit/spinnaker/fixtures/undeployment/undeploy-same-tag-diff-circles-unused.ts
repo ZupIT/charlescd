@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 
-export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
+export const undeploySameTagDiffCirclesUnused: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [],
@@ -43,9 +43,11 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v1',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -89,135 +91,11 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             ],
             http: [
               {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id2.*'
-                      }
-                    }
-                  }
-                ],
                 route: [
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id2'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id2'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id3.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id3'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id3'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id3'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id3'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id3'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -280,9 +158,11 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'B-v1'
+                  component: 'B',
+                  tag: 'v1',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v1'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -330,7 +210,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: 'v1'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -391,6 +271,110 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '6',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${proxyUndeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'B'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment B v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '7',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${proxyUndeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -403,7 +387,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '6',
+      refId: '8',
       requisiteStageRefIds: [
         '5'
       ],
@@ -428,7 +412,7 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '7',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
       ],
@@ -439,51 +423,6 @@ export const noRepeatedSubsetUndeploymentPipeline: SpinnakerPipeline = {
       statusUrlResolution: 'getMethod',
       type: 'webhook',
       url: 'http://localhost:8883/butler/v2/executions/execution-id/notify'
-    },
-    {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '8',
-      requisiteStageRefIds: [
-        '5'
-      ],
-      stageEnabled: {
-        expression: '${proxyUndeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
     }
   ]
 }

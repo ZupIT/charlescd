@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentHostnameGateway: SpinnakerPipeline = {
+export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -101,10 +101,10 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        deploymentName: 'A-circle-id',
-        component: 'A',
+        deploymentName: 'A-circle-id2',
+        component:'A',
         tag: 'v2',
-        circleId: 'circle-id'
+        circleId: 'circle-id2'
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -160,23 +160,31 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'host-value-1',
+            host: 'A',
             subsets: [
               {
                 labels: {
                   component: 'A',
                   tag: 'v2',
-                  circleId: 'circle-id'
+                  circleId: 'circle-id2'
                 },
-                name: 'circle-id'
+                name: 'circle-id2'
               },
               {
                 labels: {
                   component: 'A',
-                  tag: 'v1',
-                  circleId: 'circle-id2'
+                  tag: 'v0',
+                  circleId: 'circle-id3'
                 },
-                name: 'circle-id2'
+                name: 'circle-id3'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id5'
+                },
+                name: 'circle-id5'
               },
               {
                 labels: {
@@ -228,74 +236,11 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            gateways: ['gateway-name-1'],
+            gateways: [],
             hosts: [
-              'host-value-1',
               'A'
             ],
             http: [
-              {
-                match: [
-                  {
-                    headers: {
-                      cookie: {
-                        regex: '.*x-circle-id=circle-id.*'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'circle-id'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
-              {
-                match: [
-                  {
-                    headers: {
-                      'x-circle-id': {
-                        exact: 'circle-id'
-                      }
-                    }
-                  }
-                ],
-                route: [
-                  {
-                    destination: {
-                      host: 'A',
-                      subset: 'circle-id'
-                    },
-                    headers: {
-                      request: {
-                        set: {
-                          'x-circle-source': 'circle-id'
-                        }
-                      },
-                      response: {
-                        set: {
-                          'x-circle-source': 'circle-id'
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
               {
                 match: [
                   {
@@ -352,6 +297,130 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
                       response: {
                         set: {
                           'x-circle-source': 'circle-id2'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      cookie: {
+                        regex: '.*x-circle-id=circle-id3.*'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'circle-id3'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id3'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id3'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      'x-circle-id': {
+                        exact: 'circle-id3'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'circle-id3'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id3'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id3'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      cookie: {
+                        regex: '.*x-circle-id=circle-id5.*'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'circle-id5'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                match: [
+                  {
+                    headers: {
+                      'x-circle-id': {
+                        exact: 'circle-id5'
+                      }
+                    }
+                  }
+                ],
+                route: [
+                  {
+                    destination: {
+                      host: 'A',
+                      subset: 'circle-id5'
+                    },
+                    headers: {
+                      request: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
+                        }
+                      },
+                      response: {
+                        set: {
+                          'x-circle-source': 'circle-id5'
                         }
                       }
                     }
@@ -470,7 +539,7 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
             key: 'circleId',
             kind: 'EQUALS',
             values: [
-              'circle-id'
+              'circle-id2'
             ]
           }
         ]
@@ -492,6 +561,58 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
       type: 'deleteManifest'
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id2'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '8',
+      requisiteStageRefIds: [
+        '6'
+      ],
+      stageEnabled: {
+        expression: '${proxyDeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -504,7 +625,7 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '8',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
         '6'
@@ -530,7 +651,7 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '9',
+      refId: '10',
       requisiteStageRefIds: [
         '5',
         '6'

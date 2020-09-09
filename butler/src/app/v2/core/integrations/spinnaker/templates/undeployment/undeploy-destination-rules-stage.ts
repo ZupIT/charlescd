@@ -17,6 +17,8 @@
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
+import { AppConstants } from '../../../../../../v1/core/constants'
+import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getUndeploymentDestinationRulesStage = (
   component: Component,
@@ -68,22 +70,24 @@ const getActiveComponentsSubsets = (circleId: string | null, activeComponents: C
     const activeCircleId = component.deployment?.circleId
 
     if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag)) {
-      subsets.push(getSubsetObject(component))
+      subsets.push(getSubsetObject(component, activeCircleId))
     }
   })
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
   if (defaultComponent && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
-    subsets.push(getSubsetObject(defaultComponent))
+    subsets.push(getSubsetObject(defaultComponent, null))
   }
   return subsets
 }
 
-const getSubsetObject = (component: Component): Subset => {
+const getSubsetObject = (component: Component, circleId: string | null): Subset => {
   return {
     labels: {
-      version: `${component.name}-${component.imageTag}`
+      component: component.name,
+      tag: component.imageTag,
+      circleId: CommonTemplateUtils.getCircleId(circleId)
     },
-    name: `${component.imageTag}`
+    name: CommonTemplateUtils.getCircleId(circleId)
   }
 }

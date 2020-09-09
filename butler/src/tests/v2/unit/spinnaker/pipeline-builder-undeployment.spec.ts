@@ -21,8 +21,8 @@ import { CdTypeEnum } from '../../../../app/v1/api/configurations/enums'
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
 import {
   completeSpinnakerUndeploymentPipeline,
-  dummyVirtualserviceSpinnakerPipeline, hostnameGatewayUndeploymentPipeline, noRepeatedSubsetUndeploymentPipeline,
-  noUnusedSpinnakerUndeploymentPipeline, oneUnusedSpinnakerUndeploymentPipeline
+  dummyVirtualserviceSpinnakerPipeline, hostnameGatewayUndeploymentPipeline, undeployDiffSubsetsSameTag,
+  undeploySameTagDiffCirclesUnused, undeployOneSameTagDiffCirclesUnused
 } from './fixtures/undeployment'
 
 const deploymentWith2Components: Deployment = {
@@ -361,7 +361,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
     ).toEqual(dummyVirtualserviceSpinnakerPipeline)
   })
 
-  it('should create the correct pipeline object with 2 components being undeployed only in the proxy definitions', async() => {
+  it('should create the correct pipeline object with 2 components being undeployed even with same tag in diff circles', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -496,10 +496,10 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(noUnusedSpinnakerUndeploymentPipeline)
+    ).toEqual(undeploySameTagDiffCirclesUnused)
   })
 
-  it('should create the correct pipeline object with 2 components and only one undeployed', async() => {
+  it('should create the correct pipeline object with 2 components being undeployed, even with one same tag in diff circle', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -634,10 +634,10 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(oneUnusedSpinnakerUndeploymentPipeline)
+    ).toEqual(undeployOneSameTagDiffCirclesUnused)
   })
 
-  it('should create the correct pipeline without repeated destination rules subsets', async() => {
+  it('should create the correct pipeline with repeated tags in different subsets', async() => {
 
     const activeComponents: Component[] = [
       {
@@ -836,7 +836,7 @@ describe('V2 Spinnaker Undeployment Pipeline Builder', () => {
 
     expect(
       new SpinnakerPipelineBuilder().buildSpinnakerUndeploymentPipeline(deploymentWith2Components, activeComponents, { executionId: 'execution-id', incomingCircleId: 'Default' })
-    ).toEqual(noRepeatedSubsetUndeploymentPipeline)
+    ).toEqual(undeployDiffSubsetsSameTag)
   })
 
   it('should create the correct pipeline with custom host name and gateway name', async() => {

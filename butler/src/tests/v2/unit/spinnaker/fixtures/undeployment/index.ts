@@ -16,16 +16,16 @@
 
 import { completeSpinnakerUndeploymentPipeline } from './undeploy-complete-pipeline'
 import { dummyVirtualserviceSpinnakerPipeline } from './dummy-virtualservice-pipeline'
-import { noUnusedSpinnakerUndeploymentPipeline } from './undeploy-no-unused'
-import { oneUnusedSpinnakerUndeploymentPipeline } from './undeploy-one-unused'
-import { noRepeatedSubsetUndeploymentPipeline } from './undeploy-no-repeated-subset'
+import { undeploySameTagDiffCirclesUnused } from './undeploy-same-tag-diff-circles-unused'
+import { undeployOneSameTagDiffCirclesUnused } from './undeploy-one-same-tag-diff-circles-unused'
+import { undeployDiffSubsetsSameTag } from './undeploy-diff-subsets-same-tag'
 import { hostnameGatewayUndeploymentPipeline } from './undeploy-hostname-gateway'
 
 export {
   completeSpinnakerUndeploymentPipeline,
   dummyVirtualserviceSpinnakerPipeline,
-  noUnusedSpinnakerUndeploymentPipeline,
-  oneUnusedSpinnakerUndeploymentPipeline,
-  noRepeatedSubsetUndeploymentPipeline,
+  undeploySameTagDiffCirclesUnused,
+  undeployOneSameTagDiffCirclesUnused,
+  undeployDiffSubsetsSameTag,
   hostnameGatewayUndeploymentPipeline
 }

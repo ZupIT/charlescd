@@ -18,9 +18,8 @@ import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/sp
 import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
-import { ConfigurationConstants } from '../../../../../../app/v1/core/constants/application/configuration.constants'
 
-export const oneComponentNoRollbackStage: SpinnakerPipeline = {
+export const oneComponentSameTagDiffCirclesRollback: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -102,8 +101,10 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       outputName: 'A-v0',
       overrides: {
         'image.tag': 'https://repository.com/A:v0',
-        name: 'v0',
-        circleId: ConfigurationConstants.DEFAULT_CIRCLE_ID
+        deploymentName: `A-${AppConstants.DEFAULT_CIRCLE_ID}`,
+        component: 'A',
+        tag: 'v0',
+        circleId: AppConstants.DEFAULT_CIRCLE_ID
       },
       refId: '1',
       requisiteStageRefIds: [],
@@ -163,15 +164,35 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               },
               {
                 labels: {
-                  version: 'A-v1'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id3'
                 },
-                name: 'v1'
+                name: 'circle-id3'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'circle-id5'
+                },
+                name: 'circle-id5'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v1',
+                  circleId: 'circle-id2'
+                },
+                name: 'circle-id2'
               }
             ]
           }
@@ -234,7 +255,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id3'
                     },
                     headers: {
                       request: {
@@ -265,7 +286,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id3'
                     },
                     headers: {
                       request: {
@@ -296,7 +317,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id5'
                     },
                     headers: {
                       request: {
@@ -327,7 +348,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: 'circle-id5'
                     },
                     headers: {
                       request: {
@@ -358,7 +379,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v1'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -389,7 +410,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v1'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -411,7 +432,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -489,6 +510,57 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
       ]
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v0'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              AppConstants.DEFAULT_CIRCLE_ID
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Deployment A v0',
+      options: {
+        cascading: true
+      },
+      refId: '7',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${!deploymentResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -501,7 +573,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '7',
+      refId: '8',
       requisiteStageRefIds: [
         '5',
         '6'
@@ -527,7 +599,7 @@ export const oneComponentNoRollbackStage: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '8',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
         '6'

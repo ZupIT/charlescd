@@ -95,9 +95,9 @@ export class SpinnakerPipelineBuilder {
     return [
       ...this.getProxyUndeploymentStages(deployment, activeComponents),
       ...this.getProxyUndeploymentsEvaluationStage(deployment.components),
+      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents),
       ...this.getUndeploymentFailureWebhookStage(deployment, configuration),
-      ...this.getUndeploymentSuccessWebhookStage(deployment, configuration),
-      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents)
+      ...this.getUndeploymentSuccessWebhookStage(deployment, configuration)
     ]
   }
 
@@ -153,9 +153,9 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = DeploymentTemplateUtils.getDeploymentEvalStageId(deployment.components)
     deployment.components?.forEach(component => {
-      const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
-      if (!activeByName.find(activeComponent => activeComponent.imageTag === component.imageTag)) {
-        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+      const activeSameCircleSameTag = this.getActiveSameCircleTagComponent(activeComponents, component, deployment.circleId)
+      if (!activeSameCircleSameTag) {
+        stages.push(getRollbackDeploymentsStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
       }
     })
     return stages
@@ -182,7 +182,7 @@ export class SpinnakerPipelineBuilder {
     deployment.components.forEach(component => {
       const unusedComponent: Component | undefined = this.getUnusedComponent(activeComponents, component, deployment.circleId)
       if (unusedComponent) {
-        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
+        stages.push(getDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
       }
     })
     return stages
@@ -195,10 +195,7 @@ export class SpinnakerPipelineBuilder {
     const stages: Stage[] = []
     const evalStageId: number = UndeploymentTemplateUtils.getProxyEvalStageId(deployment.components)
     deployment.components.forEach(component => {
-      const unusedComponent: Component | undefined = this.getUndeploymentUnusedComponent(activeComponents, component)
-      if (unusedComponent) {
-        stages.push(getUndeploymentsDeleteUnusedStage(unusedComponent, deployment.cdConfiguration, this.currentStageId++, evalStageId))
-      }
+      stages.push(getUndeploymentsDeleteUnusedStage(component, deployment.cdConfiguration, this.currentStageId++, evalStageId, deployment.circleId))
     })
     return stages
   }
@@ -223,28 +220,31 @@ export class SpinnakerPipelineBuilder {
     return activeComponents.filter(component => component.name === name)
   }
 
-  private getUnusedComponent(activeComponents: Component[], component: Component, circleId: string | null): Component | undefined {
+  private getActiveSameCircleTagComponent(
+    activeComponents: Component[],
+    component: Component,
+    circleId: string | null
+  ): Component | undefined {
+
+    const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
+    return activeByName.find(
+      activeComponent => activeComponent.imageTag === component.imageTag && activeComponent.deployment?.circleId === circleId
+    )
+  }
+
+  private getUnusedComponent(
+    activeComponents: Component[],
+    component: Component,
+    circleId: string | null
+  ): Component | undefined {
+
     const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
     const sameCircleComponent = activeByName.find(activeComponent => activeComponent.deployment?.circleId === circleId)
-    const sameTagComponents = sameCircleComponent ?
-      activeByName.filter(activeComponent => activeComponent.imageTag === sameCircleComponent.imageTag) :
-      []
 
-    if (!sameCircleComponent || sameCircleComponent.imageTag === component.imageTag || sameTagComponents.length > 1) {
+    if (!sameCircleComponent || sameCircleComponent.imageTag === component.imageTag) {
       return undefined
     }
 
     return sameCircleComponent
-  }
-
-  private getUndeploymentUnusedComponent(activeComponents: Component[], component: Component): Component | undefined {
-    const activeByName = this.getActiveComponentsByName(activeComponents, component.name)
-    const sameTagComponents = activeByName.filter(activeComponent => activeComponent.imageTag === component.imageTag)
-
-    if (sameTagComponents.length > 1) {
-      return undefined
-    }
-
-    return component
   }
 }

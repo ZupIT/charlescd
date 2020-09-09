@@ -88,7 +88,7 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
   if (defaultComponent) {
-    rules.push(getHTTPDefaultRule(defaultComponent.name, defaultComponent.imageTag))
+    rules.push(getHTTPDefaultRule(defaultComponent.name))
   }
   return rules
 }
@@ -103,7 +103,7 @@ const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Co
     }
   })
 
-  rules.push(getHTTPDefaultRule(newComponent.name, newComponent.imageTag))
+  rules.push(getHTTPDefaultRule(newComponent.name))
 
   return rules
 }
@@ -121,18 +121,18 @@ const getHTTPCookieCircleRule = (name: string, tag: string, circle: string): Htt
   route: [
     {
       destination: {
-        host: `${name}`,
-        subset: `${tag}`
+        host: name,
+        subset: circle
       },
       headers: {
         request: {
           set: {
-            'x-circle-source': `${circle}`
+            'x-circle-source': circle
           }
         },
         response: {
           set: {
-            'x-circle-source': `${circle}`
+            'x-circle-source': circle
           }
         }
       }
@@ -145,7 +145,7 @@ const getHTTPHeaderCircleRule = (name: string, tag: string, circle: string): Htt
     {
       headers: {
         'x-circle-id': {
-          exact: `${circle}`
+          exact: circle
         }
       }
     }
@@ -153,18 +153,18 @@ const getHTTPHeaderCircleRule = (name: string, tag: string, circle: string): Htt
   route: [
     {
       destination: {
-        host: `${name}`,
-        subset: `${tag}`
+        host: name,
+        subset: circle
       },
       headers: {
         request: {
           set: {
-            'x-circle-source': `${circle}`
+            'x-circle-source': circle
           }
         },
         response: {
           set: {
-            'x-circle-source': `${circle}`
+            'x-circle-source': circle
           }
         }
       }
@@ -172,12 +172,12 @@ const getHTTPHeaderCircleRule = (name: string, tag: string, circle: string): Htt
   ]
 })
 
-const getHTTPDefaultRule = (name: string, tag: string): Http => ({
+const getHTTPDefaultRule = (name: string): Http => ({
   route: [
     {
       destination: {
-        host: `${name}`,
-        subset: `${tag}`
+        host: name,
+        subset: AppConstants.DEFAULT_CIRCLE_ID
       },
       headers: {
         request: {

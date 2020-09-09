@@ -43,7 +43,9 @@ interface InputArtifact {
 
 interface Overrides {
     'image.tag': string
-    name: string
+    deploymentName: string
+    component: string
+    tag: string
     circleId: string
 }
 
@@ -72,7 +74,9 @@ interface Metadata {
 }
 
 interface Labels {
-    version: string
+    component: string
+    tag: string
+    circleId: string
 }
 
 interface Subset {

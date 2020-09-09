@@ -244,6 +244,110 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
       ]
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '6',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${proxyUndeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'B'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v1'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment B v1',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '7',
+      requisiteStageRefIds: [
+        '5'
+      ],
+      stageEnabled: {
+        expression: '${proxyUndeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -256,7 +360,7 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '6',
+      refId: '8',
       requisiteStageRefIds: [
         '5'
       ],
@@ -281,7 +385,7 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.UNDEPLOYMENT
       },
-      refId: '7',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
       ],
@@ -292,96 +396,6 @@ export const dummyVirtualserviceSpinnakerPipeline: SpinnakerPipeline = {
       statusUrlResolution: 'getMethod',
       type: 'webhook',
       url: 'http://localhost:8883/butler/v2/executions/execution-id/notify'
-    },
-    {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'A'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'A-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment A v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '8',
-      requisiteStageRefIds: [
-        '5'
-      ],
-      stageEnabled: {
-        expression: '${proxyUndeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
-    },
-    {
-      account: 'default',
-      app: 'app-cd-configuration-id',
-      cloudProvider: 'kubernetes',
-      completeOtherBranchesThenFail: false,
-      continuePipeline: true,
-      failPipeline: false,
-      kinds: [
-        'deployment'
-      ],
-      labelSelectors: {
-        selectors: [
-          {
-            key: 'app',
-            kind: 'EQUALS',
-            values: [
-              'B'
-            ]
-          },
-          {
-            key: 'version',
-            kind: 'EQUALS',
-            values: [
-              'B-v1'
-            ]
-          }
-        ]
-      },
-      location: 'sandbox',
-      mode: 'label',
-      name: 'Delete Unused Deployment B v1',
-      nameStage: 'Delete Deployments',
-      options: {
-        cascading: true
-      },
-      refId: '9',
-      requisiteStageRefIds: [
-        '5'
-      ],
-      stageEnabled: {
-        expression: '${proxyUndeploymentsResult}',
-        type: 'expression'
-      },
-      type: 'deleteManifest'
     }
   ]
 }

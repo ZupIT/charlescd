@@ -101,7 +101,9 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2',
+        deploymentName: 'A-circle-id',
+        component: 'A',
+        tag: 'v2',
         circleId: 'circle-id'
       },
       refId: '1',
@@ -162,21 +164,27 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v2'
+                  component: 'A',
+                  tag: 'v2',
+                  circleId: 'circle-id'
                 },
-                name: 'v2'
+                name: 'circle-id'
               },
               {
                 labels: {
-                  version: 'A-v1'
+                  component: 'A',
+                  tag: 'v1',
+                  circleId: 'circle-id2'
                 },
-                name: 'v1'
+                name: 'circle-id2'
               },
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -239,7 +247,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -270,7 +278,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -301,7 +309,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v1'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -332,7 +340,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v1'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -354,7 +362,7 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -444,17 +452,24 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'A'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'A-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
             ]
           }
         ]

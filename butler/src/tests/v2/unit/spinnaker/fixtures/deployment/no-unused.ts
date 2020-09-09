@@ -181,7 +181,9 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2',
+        deploymentName: 'A-circle-id',
+        component: 'A',
+        tag: 'v2',
         circleId: 'circle-id'
       },
       refId: '1',
@@ -259,7 +261,9 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'B-v2',
       overrides: {
         'image.tag': 'https://repository.com/B:v2',
-        name: 'v2',
+        deploymentName: 'B-circle-id',
+        component: 'B',
+        tag: 'v2',
         circleId: 'circle-id'
       },
       refId: '3',
@@ -337,7 +341,9 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'C-v2',
       overrides: {
         'image.tag': 'https://repository.com/C:v2',
-        name: 'v2',
+        deploymentName: 'C-circle-id',
+        component: 'C',
+        tag: 'v2',
         circleId: 'circle-id'
       },
       refId: '5',
@@ -398,15 +404,19 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v2'
+                  component: 'A',
+                  tag: 'v2',
+                  circleId: 'circle-id'
                 },
-                name: 'v2'
+                name: 'circle-id'
               },
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -469,7 +479,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -500,7 +510,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -522,7 +532,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -585,15 +595,19 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'B-v2'
+                  component: 'B',
+                  tag: 'v2',
+                  circleId: 'circle-id'
                 },
-                name: 'v2'
+                name: 'circle-id'
               },
               {
                 labels: {
-                  version: 'B-v0'
+                  component: 'B',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -656,7 +670,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -687,7 +701,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -709,7 +723,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -772,15 +786,19 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'C-v2'
+                  component: 'C',
+                  tag: 'v2',
+                  circleId: 'circle-id'
                 },
-                name: 'v2'
+                name: 'circle-id'
               },
               {
                 labels: {
-                  version: 'C-v0'
+                  component: 'C',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -843,7 +861,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'C',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -874,7 +892,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'C',
-                      subset: 'v2'
+                      subset: 'circle-id'
                     },
                     headers: {
                       request: {
@@ -896,7 +914,7 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'C',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -990,17 +1008,24 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'A'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'A-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
             ]
           }
         ]
@@ -1034,17 +1059,24 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'B'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'B-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
             ]
           }
         ]
@@ -1078,17 +1110,24 @@ export const noUnusedSpinnakerPipeline: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'C'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'C-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id'
             ]
           }
         ]

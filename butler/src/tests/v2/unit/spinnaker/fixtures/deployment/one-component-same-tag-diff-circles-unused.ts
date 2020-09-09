@@ -19,7 +19,7 @@ import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
-export const oneComponentNoUnused: SpinnakerPipeline = {
+export const oneComponentSameTagDiffCirclesUnused: SpinnakerPipeline = {
   application: 'app-cd-configuration-id',
   name: 'deployment-id',
   expectedArtifacts: [
@@ -101,7 +101,9 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        name: 'v2',
+        deploymentName: 'A-circle-id2',
+        component: 'A',
+        tag: 'v2',
         circleId: 'circle-id2'
       },
       refId: '1',
@@ -162,15 +164,19 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
             subsets: [
               {
                 labels: {
-                  version: 'A-v2'
+                  component: 'A',
+                  tag: 'v2',
+                  circleId: 'circle-id2'
                 },
-                name: 'v2'
+                name: 'circle-id2'
               },
               {
                 labels: {
-                  version: 'A-v0'
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: AppConstants.DEFAULT_CIRCLE_ID
                 },
-                name: 'v0'
+                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -233,7 +239,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -264,7 +270,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v2'
+                      subset: 'circle-id2'
                     },
                     headers: {
                       request: {
@@ -286,7 +292,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'v0'
+                      subset: AppConstants.DEFAULT_CIRCLE_ID
                     },
                     headers: {
                       request: {
@@ -376,17 +382,24 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
       labelSelectors: {
         selectors: [
           {
-            key: 'app',
+            key: 'component',
             kind: 'EQUALS',
             values: [
               'A'
             ]
           },
           {
-            key: 'version',
+            key: 'tag',
             kind: 'EQUALS',
             values: [
-              'A-v2'
+              'v2'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id2'
             ]
           }
         ]
@@ -408,6 +421,58 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
       type: 'deleteManifest'
     },
     {
+      account: 'default',
+      app: 'app-cd-configuration-id',
+      cloudProvider: 'kubernetes',
+      completeOtherBranchesThenFail: false,
+      continuePipeline: true,
+      failPipeline: false,
+      kinds: [
+        'deployment'
+      ],
+      labelSelectors: {
+        selectors: [
+          {
+            key: 'component',
+            kind: 'EQUALS',
+            values: [
+              'A'
+            ]
+          },
+          {
+            key: 'tag',
+            kind: 'EQUALS',
+            values: [
+              'v0'
+            ]
+          },
+          {
+            key: 'circleId',
+            kind: 'EQUALS',
+            values: [
+              'circle-id2'
+            ]
+          }
+        ]
+      },
+      location: 'sandbox',
+      mode: 'label',
+      name: 'Delete Unused Deployment A v0',
+      nameStage: 'Delete Deployments',
+      options: {
+        cascading: true
+      },
+      refId: '8',
+      requisiteStageRefIds: [
+        '6'
+      ],
+      stageEnabled: {
+        expression: '${proxyDeploymentsResult}',
+        type: 'expression'
+      },
+      type: 'deleteManifest'
+    },
+    {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
       customHeaders: {
@@ -420,7 +485,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
         status: DeploymentStatusEnum.FAILED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '8',
+      refId: '9',
       requisiteStageRefIds: [
         '5',
         '6'
@@ -446,7 +511,7 @@ export const oneComponentNoUnused: SpinnakerPipeline = {
         status: DeploymentStatusEnum.SUCCEEDED,
         type: ExecutionTypeEnum.DEPLOYMENT
       },
-      refId: '9',
+      refId: '10',
       requisiteStageRefIds: [
         '5',
         '6'
