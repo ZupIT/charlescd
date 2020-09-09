@@ -77,8 +77,7 @@ export const useLogin = (): {
 
   useEffect(() => {
     if (profile) {
-      const profileBase64 = btoa(JSON.stringify(profile));
-      saveProfile(profileBase64);
+      saveProfile(profile);
       setStatus('resolved');
     }
   }, [profile]);

@@ -15,13 +15,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, logout } from 'core/utils/auth';
-import { clearWorkspace } from 'core/utils/workspace';
+import { isRoot } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 
@@ -35,11 +33,6 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const [filterWorkspace, , loading] = useWorkspace();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
-
-  useEffect(() => {
-    clearWorkspace();
-    if (isEmpty(profileName)) logout();
-  }, [profileName]);
 
   useEffect(() => {
     if (isRoot()) filterWorkspace(name);

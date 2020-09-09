@@ -20,8 +20,6 @@ const clientId = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
 const realm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const workspaceId =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
-const secret = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_SECRET;
-const clientSecret = secret ? `&client_secret=${secret}` : '';
 
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
 const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
@@ -31,7 +29,7 @@ const headers = {
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}${clientSecret}`;
+  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
