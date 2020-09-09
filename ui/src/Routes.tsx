@@ -18,7 +18,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { saveProfile, getProfile } from 'core/utils/profile';
-import { getAccessTokenDecoded } from 'core/utils/auth';
+import { getAccessToken, getAccessTokenDecoded } from 'core/utils/auth';
 import { useUser } from 'modules/Users/hooks';
 import { isMicrofrontend } from 'App';
 import isEmpty from 'lodash/isEmpty';
@@ -38,9 +38,10 @@ const Routes = () => {
   }, [profile]);
 
   useEffect(() => {
+    const accessToken = getAccessToken();
     const profile = getProfile();
     const { email } = getAccessTokenDecoded();
-    if (isEmpty(profile)) {
+    if (!isEmpty(accessToken) && isEmpty(profile)) {
       getUserByEmail(email);
     }
   }, [getUserByEmail]);
