@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import { load, remove, save } from 'react-cookies';
 import { Workspace } from 'modules/Users/interfaces/User';
-import { getCookieOptions } from './domain';
 
 const WORKSPACE_KEY = 'workspace';
 
-export const getWorkspaceId = () => load(WORKSPACE_KEY);
+export const getWorkspaceId = () => localStorage.getItem(WORKSPACE_KEY);
 
-export const clearWorkspace = () => remove(WORKSPACE_KEY, getCookieOptions());
+export const clearWorkspace = () => localStorage.removeItem(WORKSPACE_KEY);
 
 export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
-    save(WORKSPACE_KEY, workspace?.id, getCookieOptions());
+    localStorage.setItem(WORKSPACE_KEY, workspace?.id);
   }
 };
