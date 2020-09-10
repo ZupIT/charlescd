@@ -270,6 +270,11 @@ const MonitoringMetricsContent = styled.div``;
 
 const MonitoringMetricsFilter = styled.div`
   padding-top: 10px;
+  display: flex;
+
+  > * {
+    margin-right: 20px;
+  }
 `;
 
 const MonitoringMetricsPeriodFilter = styled.div`
@@ -306,6 +311,14 @@ const FieldErrorWrapper = styled.div`
 
   span {
     margin-left: 5px;
+  }
+`;
+
+const MultiSelect = styled(SelectComponent.MultiCheck)`
+  width: 115px;
+
+  div:first-child {
+    background: transparent;
   }
 `;
 
@@ -347,5 +360,6 @@ export default {
   MonitoringMetricsFilter,
   MonitoringMetricsPeriodFilter,
   ButtonIconRoundedPeriod,
-  FieldErrorWrapper
+  FieldErrorWrapper,
+  MultiSelect
 };

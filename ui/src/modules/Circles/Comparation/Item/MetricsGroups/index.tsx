@@ -24,6 +24,8 @@ import LabeledIcon from 'core/components/LabeledIcon';
 import Modal from 'core/components/Modal';
 import Dropdown from 'core/components/Dropdown';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
+import CustomOption from 'core/components/Form/Select/CustomOptions';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import { Metric, MetricsGroup } from './types';
 import {
   useCreateMetricsGroup,
@@ -60,6 +62,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
   const { deleteMetric } = useDeleteMetric();
   const { getMetricsGroups, metricsGroups, status } = useMetricsGroups();
   const {
+    control,
     register,
     handleSubmit,
     formState: { isValid }
@@ -109,6 +112,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setActiveMetricsGroup(metricsGroup);
     setShowAddMetricForm(true);
     setActiveMetric(metric);
+  };
+
+  const handleFilterSubmit = ({ metrics }: Record<string, string>) => {
+    console.log(metrics);
   };
 
   const toggleMetricGroupChart = (metricGroupId: string) => {
@@ -231,6 +238,27 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         {!isEmpty(metricGroup.metrics) && (
           <>
             <Styled.MonitoringMetricsFilter>
+              <form>
+                <LabeledIcon icon="filter">
+                  <Text.h5
+                    color="dark"
+                    onClick={handleSubmit(handleFilterSubmit)}
+                  >
+                    Filter metrics
+                  </Text.h5>
+                  <Styled.MultiSelect
+                    control={control}
+                    name="metrics"
+                    isLoading={status.isPending}
+                    customOption={CustomOption.Check}
+                    options={metricGroup.metrics}
+                    getOptionLabel={(option: Metric) => option.nickname}
+                    getOptionValue={(option: Metric) => option.id}
+                    label="Select metrics"
+                    defaultValue={[allOption]}
+                  />
+                </LabeledIcon>
+              </form>
               <LabeledIcon
                 icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
                 onClick={() => toggleMetricGroupChart(metricGroup.id)}
