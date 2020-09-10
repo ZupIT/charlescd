@@ -32,6 +32,8 @@ public class Segmentation {
 
     private Boolean isDefault;
 
+    private Boolean active;
+
     public Segmentation() {
     }
 
@@ -41,7 +43,8 @@ public class Segmentation {
                         String circleId,
                         SegmentationType type,
                         String workspaceId,
-                        Boolean isDefault) {
+                        Boolean isDefault,
+                        Boolean active) {
         this.name = name;
         this.node = node;
         this.reference = reference;
@@ -49,6 +52,7 @@ public class Segmentation {
         this.type = type;
         this.workspaceId = workspaceId;
         this.isDefault = isDefault;
+        this.active = active;
     }
 
     public static Segmentation of(KeyMetadata metadata) {
@@ -59,7 +63,8 @@ public class Segmentation {
                 metadata.getCircleId(),
                 metadata.getType(),
                 metadata.getWorkspaceId(),
-                metadata.getIsDefault());
+                metadata.getIsDefault(),
+                metadata.getActive());
     }
 
     public String getName() {
@@ -84,6 +89,14 @@ public class Segmentation {
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Boolean getIsDefault() {
