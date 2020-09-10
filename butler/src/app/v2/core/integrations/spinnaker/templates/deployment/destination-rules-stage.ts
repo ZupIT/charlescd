@@ -37,11 +37,11 @@ export const getDestinationRulesStage = (
       apiVersion: 'networking.istio.io/v1alpha3',
       kind: 'DestinationRule',
       metadata: {
-        name: `${component.name}`,
+        name: component.name,
         namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
       },
       spec: {
-        host: component.hostValue ? component.hostValue : component.name,
+        host: component.name,
         subsets: deployment?.components ? getSubsets(component, deployment.circleId, activeComponents) : []
       }
     }

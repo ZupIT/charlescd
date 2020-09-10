@@ -39,7 +39,7 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'host-value-1',
+            host: 'A',
             subsets: [
               {
                 labels: {
@@ -295,7 +295,7 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'host-value-2',
+            host: 'B',
             subsets: [
               {
                 labels: {

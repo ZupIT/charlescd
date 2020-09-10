@@ -101,7 +101,7 @@ export const oneComponentSameTagDiffCirclesRollback: SpinnakerPipeline = {
       outputName: 'A-v0',
       overrides: {
         'image.tag': 'https://repository.com/A:v0',
-        deploymentName: `A-${AppConstants.DEFAULT_CIRCLE_ID}`,
+        deploymentName: `A-v0-${AppConstants.DEFAULT_CIRCLE_ID}`,
         component: 'A',
         tag: 'v0',
         circleId: AppConstants.DEFAULT_CIRCLE_ID
