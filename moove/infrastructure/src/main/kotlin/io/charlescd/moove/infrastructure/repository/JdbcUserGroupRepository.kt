@@ -71,8 +71,8 @@ class JdbcUserGroupRepository(
         return findUserGroupById(id)
     }
 
-    override fun find(page: PageRequest): Page<UserGroup> {
-        return findPage(page)
+    override fun find(name: String?, page: PageRequest): Page<UserGroup> {
+        return findPage(name, page)
     }
 
     override fun delete(userGroup: UserGroup) {
@@ -132,44 +132,67 @@ class JdbcUserGroupRepository(
         )
     }
 
-    private fun findPage(page: PageRequest): Page<UserGroup> {
-        val result = executePageQuery(createPagedStatement(page))
+    private fun findPage(name: String?, page: PageRequest): Page<UserGroup> {
+        val result = executePageQuery(createPagedStatement(name, page), name)
 
         return Page(
             result?.toList() ?: emptyList(),
             page.page,
             page.size,
-            executeCountQuery() ?: 0
+            executeCountQuery(name) ?: 0
         )
     }
 
-    private fun getPagedInnerQueryStatement(pageRequest: PageRequest): String {
-        val innerQueryStatatement = StringBuilder("SELECT * FROM user_groups WHERE 1 = 1")
-        return innerQueryStatatement.appendln("ORDER BY user_groups.name ASC")
+    private fun getPagedInnerQueryStatement(name: String?, pageRequest: PageRequest): String {
+        val innerQueryStatement = StringBuilder("SELECT * FROM user_groups WHERE 1 = 1")
+        name?.let { innerQueryStatement.appendln("AND user_groups.name ILIKE ?") }
+        return innerQueryStatement.appendln("ORDER BY user_groups.name ASC")
             .appendln("LIMIT ${pageRequest.size}")
             .appendln("OFFSET ${pageRequest.offset()}")
             .toString()
     }
 
     private fun executePageQuery(
-        statement: String
+        statement: String,
+        name: String?
     ): Set<UserGroup>? {
+        val parameters = mutableListOf<Any>()
+        return appendParametersAndRunQuery(statement, parameters, name)
+    }
+
+    private fun appendParametersAndRunQuery(
+        statement: String,
+        parameters: MutableList<Any>,
+        name: String?
+    ): Set<UserGroup>? {
+        name?.let { parameters.add("%$it%") }
         return this.jdbcTemplate.query(
             statement,
-            arrayOf(),
+            parameters.toTypedArray(),
             userGroupExtractor
         )
     }
 
-    private fun executeCountQuery(): Int? {
+    private fun executeCountQuery(name: String?): Int? {
         val countStatement = StringBuilder(
             """
                SELECT count(*) AS total
-               FROM user_groups 
+               FROM user_groups
+               WHERE 1 = 1
                """
         )
 
-        return this.jdbcTemplate.queryForObject(countStatement.toString()) { resultSet, _ -> resultSet.getInt(1) }
+        val parameters = mutableListOf<String>()
+
+        name?.let {
+            parameters.add("%$it%")
+            countStatement.appendln("AND user_groups.name ILIKE ?")
+        }
+
+        return this.jdbcTemplate.queryForObject(
+            countStatement.toString(),
+            parameters.toTypedArray()
+        ) { resultSet, _ -> resultSet.getInt(1) }
     }
 
     private fun deleteMembersFromUserGroup(userGroup: UserGroup) {
@@ -203,8 +226,8 @@ class JdbcUserGroupRepository(
         return permissionsFromAssociation?.get(workspaceId) ?: emptyList()
     }
 
-    private fun createPagedStatement(pageRequest: PageRequest): String {
-        val innerQueryStatement = getPagedInnerQueryStatement(pageRequest)
+    private fun createPagedStatement(name: String?, pageRequest: PageRequest): String {
+        val innerQueryStatement = getPagedInnerQueryStatement(name, pageRequest)
         return """
                    SELECT user_groups.id          AS user_group_id,
                    user_groups.name               AS user_group_name,
