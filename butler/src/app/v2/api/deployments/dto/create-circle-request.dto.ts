@@ -15,9 +15,11 @@
  */
 
 import { IsUUID } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCircleDeploymentDto {
 
+  @ApiProperty()
   @IsUUID()
   public readonly headerValue: string
 

@@ -19,17 +19,21 @@ import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-va
 import { CreateComponentRequestDto } from './create-component-request.dto'
 import { ComponentUniqueProp } from '../validations/component-unique-by-name'
 import { CompositeFieldSize } from '../validations/composite-field-size'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateModuleDeploymentDto {
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   public moduleId: string
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public helmRepository: string
 
+  @ApiProperty({ type: () => [CreateComponentRequestDto] })
   @ValidateNested({ each: true })
   @Type(() => CreateComponentRequestDto)
   @Validate(ComponentUniqueProp, ['componentName'])

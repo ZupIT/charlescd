@@ -23,27 +23,33 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { CreateModuleDeploymentDto } from './create-module-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDeploymentRequestDto {
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   public deploymentId: string
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   public authorId: string
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public callbackUrl: string
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   public cdConfigurationId: string
 
   public cdConfiguration!: CdConfigurationEntity
 
+  @ApiProperty({ type: () => CreateCircleDeploymentDto })
   @ValidateIf((obj, value) => { return value })
   @ValidateNested({ each: true })
   @Type(() => CreateCircleDeploymentDto)
@@ -51,6 +57,7 @@ export class CreateDeploymentRequestDto {
 
   public status: DeploymentStatusEnum
 
+  @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => CreateModuleDeploymentDto)

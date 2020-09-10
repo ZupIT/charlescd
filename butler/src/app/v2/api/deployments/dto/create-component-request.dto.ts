@@ -16,32 +16,39 @@
 
 import { IsUUID, IsNotEmpty, IsString, Matches, Length, ValidateIf } from 'class-validator'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateComponentRequestDto {
 
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   public componentId: string
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/)
   @Length(1, 253)
   public buildImageUrl: string
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public buildImageTag: string
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   public componentName: string
 
+  @ApiProperty()
   @ValidateIf((obj, value) => { return value })
   @IsString()
   @IsNotEmpty()
   public readonly hostValue!: string | undefined
 
+  @ApiProperty()
   @ValidateIf((obj, value) => { return value })
   @IsString()
   @IsNotEmpty()
