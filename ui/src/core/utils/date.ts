@@ -19,7 +19,6 @@ import 'dayjs/locale/pt';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
-import humanizeDuration from 'humanize-duration';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
