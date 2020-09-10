@@ -32,8 +32,12 @@ public class KeyMetadata {
 
     private Boolean isDefault;
 
+    private Boolean active;
+
     public KeyMetadata() {
     }
+
+
 
     public KeyMetadata(String key, Segmentation segmentation) {
         this.reference = segmentation.getReference();
@@ -43,6 +47,7 @@ public class KeyMetadata {
         this.name = segmentation.getName();
         this.workspaceId = segmentation.getWorkspaceId();
         this.isDefault = segmentation.getIsDefault();
+        this.active = segmentation.getActive();
     }
 
     public String getReference() {
@@ -71,5 +76,13 @@ public class KeyMetadata {
 
     public Boolean getIsDefault() {
         return isDefault;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

@@ -46,6 +46,9 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean isDefault;
 
+    @NotNull
+    private Boolean active;
+
     public String getName() {
         return name;
     }
@@ -103,6 +106,16 @@ public abstract class SegmentationRequest {
     }
 
     public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault);
+        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId,
+                isDefault, active);
     }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 }
