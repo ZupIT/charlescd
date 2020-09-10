@@ -67,3 +67,4 @@ export const dateTimeFormatter = (date: string | Date) => {
     .local()
     .format('DD/MM/YYYY • HH:MM');
 };
+
