@@ -101,7 +101,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        deploymentName: 'A-circle-id',
+        deploymentName: 'A-v2-circle-id',
         component: 'A',
         tag: 'v2',
         circleId: 'circle-id'
@@ -133,6 +133,7 @@ export const oneComponentSpinnakerPipeline: SpinnakerPipeline = {
       skipExpressionEvaluation: false,
       source: 'artifact',
       stageEnabled: {
+
         expression: '${ #stage(\'Bake A v2\').status.toString() == \'SUCCEEDED\'}',
         type: 'expression'
       },

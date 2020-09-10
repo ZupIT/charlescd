@@ -101,7 +101,7 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        deploymentName: 'A-circle-id',
+        deploymentName: 'A-v2-circle-id',
         component: 'A',
         tag: 'v2',
         circleId: 'circle-id'
@@ -160,7 +160,7 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
             namespace: 'sandbox'
           },
           spec: {
-            host: 'host-value-1',
+            host: 'A',
             subsets: [
               {
                 labels: {

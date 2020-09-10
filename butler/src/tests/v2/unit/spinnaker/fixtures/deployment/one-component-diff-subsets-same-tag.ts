@@ -101,7 +101,7 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
       outputName: 'A-v2',
       overrides: {
         'image.tag': 'https://repository.com/A:v2',
-        deploymentName: 'A-circle-id2',
+        deploymentName: 'A-v2-circle-id2',
         component:'A',
         tag: 'v2',
         circleId: 'circle-id2'
