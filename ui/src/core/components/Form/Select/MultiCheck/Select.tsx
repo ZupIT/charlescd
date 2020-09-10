@@ -30,8 +30,14 @@ const Select = ({
   onChange,
   customOption,
   label,
+  getOptionLabel,
+  getOptionValue,
   ...otherProps
 }: Props) => {
+  console.log({
+    getOptionLabel: getOptionLabel([allOption, ...options]),
+    getOptionValue: getOptionValue([allOption, ...options])
+  });
   return (
     <Styled.Select
       {...otherProps}
@@ -54,6 +60,8 @@ const Select = ({
         value: ValueType<OptionTypeBase>,
         actionMeta: ActionMeta<OptionTypeBase>
       ) => handleChange(value as Option[], actionMeta, onChange, options)}
+      getOptionLabel={getOptionLabel}
+      getOptionValue={getOptionValue}
     />
   );
 };

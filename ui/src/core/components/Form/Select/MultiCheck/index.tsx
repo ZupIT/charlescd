@@ -16,13 +16,14 @@
 
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
+import { OptionTypeBase } from 'react-select';
 import { Option } from '../interfaces';
 import Select from './Select';
 
 interface Props {
   name: string;
   control: Control<unknown>;
-  options: Option[];
+  options?: OptionTypeBase[];
   rules?: Partial<{ required: boolean | string }>;
   defaultValue?: Option[];
   className?: string;
@@ -34,6 +35,8 @@ interface Props {
   customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
+  getOptionLabel?: (option: any) => string;
+  getOptionValue?: (option: any) => string;
 }
 
 const MultiCheck = ({
@@ -44,6 +47,8 @@ const MultiCheck = ({
   className,
   defaultValue,
   label,
+  getOptionLabel,
+  getOptionValue,
   isLoading
 }: Props) => (
   <Controller
@@ -56,6 +61,8 @@ const MultiCheck = ({
     defaultValue={defaultValue}
     label={label}
     isLoading={isLoading}
+    getOptionLabel={getOptionLabel}
+    getOptionValue={getOptionValue}
   />
 );
 
