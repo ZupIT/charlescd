@@ -19,6 +19,12 @@ import { ReactComponent as SortSVG } from 'core/assets/svg/sort-left.svg';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import InputTitleComponent from 'core/components/Form/InputTitle';
 import Dropdown from 'core/components/Dropdown';
+import Text from 'core/components/Text';
+
+interface NoDataThresholds {
+  colorSVG: string;
+  hasTreshold: boolean;
+}
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -97,6 +103,83 @@ const InputTitle = styled(InputTitleComponent)`
   margin-top: 1px;
 `;
 
+const MetricsGroupsHeader = styled.div`
+  display: flex;
+  padding: 15px 0 0 30px;
+  justify-content: space-between;
+
+  span {
+    padding-right: 90px;
+  }
+`;
+
+const MetricsGroupsContent = styled.div`
+  background-color: ${({ theme }) =>
+    theme.circleGroupMetrics.content.background};
+  border-radius: 5px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  width: 550px;
+`;
+
+const MetricsGroupsCountContent = styled(Text.h5)`
+  margin: auto 60px auto 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 100px;
+`;
+
+const MetricsGroupsThresholdsContent = styled.div<NoDataThresholds>`
+  margin: auto 0;
+  display: flex;
+
+  span {
+    margin-left: ${({ hasTreshold }) => (hasTreshold ? '0' : '5px')};
+    margin-top: ${({ hasTreshold }) => (hasTreshold ? '0' : '2px')};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+  }
+
+  svg {
+    color: ${({ theme, colorSVG, hasTreshold }) =>
+      hasTreshold
+        ? 'transparent'
+        : theme.circleGroupMetrics.execution.status[colorSVG]};
+  }
+`;
+
+const MetricsGroupsNameContent = styled(Text.h5)`
+  margin: auto 60px auto 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 140px;
+`;
+
+const MetricsGroupsFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 15px;
+  padding-right: 15px;
+
+  svg {
+    padding-top: 4px;
+    padding-left: 10px;
+  }
+`;
+
+const MetricsGroupsCard = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+  margin: 10px 5px 10px 15px;
+  border-radius: 5px;
+  width: 520px;
+  height: 40px;
+`;
+
 export default {
   Link,
   Actions,
@@ -110,5 +193,12 @@ export default {
   SortLeft,
   SortRight,
   MetricsTitle,
-  InputTitle
+  InputTitle,
+  MetricsGroupsContent,
+  MetricsGroupsHeader,
+  MetricsGroupsFooter,
+  MetricsGroupsCard,
+  MetricsGroupsNameContent,
+  MetricsGroupsCountContent,
+  MetricsGroupsThresholdsContent
 };
