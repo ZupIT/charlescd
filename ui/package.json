@@ -14,7 +14,6 @@
     "apexcharts": "^3.16.0",
     "cross-env": "^7.0.2",
     "http-proxy-middleware": "^1.0.4",
-    "humanize-duration": "^3.23.1",
     "jwt-decode": "^2.2.0",
     "react": "^16.12.0",
     "react-ace": "^8.1.0",
