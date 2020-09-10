@@ -17,7 +17,6 @@
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
-import { AppConstants } from '../../../../../../v1/core/constants'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getUndeploymentDestinationRulesStage = (

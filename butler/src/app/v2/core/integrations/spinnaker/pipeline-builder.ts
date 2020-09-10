@@ -95,7 +95,7 @@ export class SpinnakerPipelineBuilder {
     return [
       ...this.getProxyUndeploymentStages(deployment, activeComponents),
       ...this.getProxyUndeploymentsEvaluationStage(deployment.components),
-      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment, activeComponents),
+      ...this.getUndeploymentDeleteUnusedDeploymentsStage(deployment),
       ...this.getUndeploymentFailureWebhookStage(deployment, configuration),
       ...this.getUndeploymentSuccessWebhookStage(deployment, configuration)
     ]
@@ -188,7 +188,7 @@ export class SpinnakerPipelineBuilder {
     return stages
   }
 
-  private getUndeploymentDeleteUnusedDeploymentsStage(deployment: Deployment, activeComponents: Component[]): Stage[] {
+  private getUndeploymentDeleteUnusedDeploymentsStage(deployment: Deployment): Stage[] {
     if (!deployment?.components) {
       return []
     }
