@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import {
   useCircle,
   useDeleteCircle,

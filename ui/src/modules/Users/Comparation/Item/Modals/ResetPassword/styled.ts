@@ -14,37 +14,28 @@
  * limitations under the License.
  */
 
-export interface Workspace {
-  id: string;
-  name: string;
-}
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-interface Base {
-  name: string;
-  email: string;
-  photoUrl?: string;
-}
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    min-height: 150px;
+    width: 408px;
+  }
 
-export interface NewPassword {
-  newPassword: string;
-}
+  .modal-content {
+    overflow: unset;
 
-export interface User extends Base {
-  id: string;
-  workspaces?: Workspace;
-  createdAt?: string;
-}
+    > * {
+      margin-bottom: 15px;
+    }
+  }
 
-export interface NewUser extends Base {
-  password: string;
-  isRoot?: boolean;
-}
+  strong {
+    color: ${({ theme }) => theme.text.light};
+  }
+`;
 
-export interface Profile extends Base {
-  id?: string;
-  name: string;
-  email: string;
-  photoUrl?: string;
-  workspaces?: Workspace;
-  createdAt?: string;
-}
+export default {
+  Modal
+};
