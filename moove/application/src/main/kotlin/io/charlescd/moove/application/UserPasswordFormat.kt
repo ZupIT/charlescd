@@ -14,37 +14,12 @@
  * limitations under the License.
  */
 
-export interface Workspace {
-  id: string;
-  name: string;
-}
+package io.charlescd.moove.application
 
-interface Base {
-  name: string;
-  email: string;
-  photoUrl?: string;
-}
-
-export interface NewPassword {
-  newPassword: string;
-}
-
-export interface User extends Base {
-  id: string;
-  workspaces?: Workspace;
-  createdAt?: string;
-}
-
-export interface NewUser extends Base {
-  password: string;
-  isRoot?: boolean;
-}
-
-export interface Profile extends Base {
-  id?: string;
-  name: string;
-  email: string;
-  photoUrl?: string;
-  workspaces?: Workspace;
-  createdAt?: string;
-}
+class UserPasswordFormat(
+    val numberLowerCase: Int = 2,
+    val numberUpperCase: Int = 4,
+    val numberDigits: Int = 2,
+    val numberSpecialChars: Int = 2,
+    val passwordLength: Int = 10
+)

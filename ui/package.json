@@ -12,7 +12,6 @@
     "@types/lodash": "^4.14.149",
     "ace-builds": "^1.4.11",
     "apexcharts": "^3.16.0",
-    "clipboard-copy": "^3.1.0",
     "cross-env": "^7.0.2",
     "http-proxy-middleware": "^1.0.4",
     "jwt-decode": "^2.2.0",
