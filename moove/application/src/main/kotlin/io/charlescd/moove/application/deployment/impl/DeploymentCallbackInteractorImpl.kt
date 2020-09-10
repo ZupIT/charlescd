@@ -16,19 +16,26 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
 import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
+import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
+import io.charlescd.moove.domain.repository.WorkspaceRepository
+import io.charlescd.moove.domain.service.CircleMatcherService
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.transaction.Transactional
 
 @Named
-open class DeploymentCallbackInteractorImpl(private val deploymentRepository: DeploymentRepository) :
+open class DeploymentCallbackInteractorImpl(
+    private val deploymentRepository: DeploymentRepository,
+    private val circleMatcherService: CircleMatcherService,
+    private val workspaceService: WorkspaceService) :
     DeploymentCallbackInteractor {
 
     @Transactional
@@ -36,6 +43,7 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
         val deployment = updateDeploymentInfo(findDeployment(id), request)
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
+            updateStatusInCircleMatcher(deployment.circle)
         }
         updateDeployment(deployment)
     }
@@ -67,6 +75,11 @@ open class DeploymentCallbackInteractorImpl(private val deploymentRepository: De
                     DeploymentStatusEnum.NOT_DEPLOYED
                 )
             }
+    }
+
+    private fun updateStatusInCircleMatcher(circle: Circle) {
+        val workspace = this.workspaceService.find(circle.workspaceId)
+        this.circleMatcherService.updateStatusCircle(circle,circle.reference, workspace.circleMatcherUrl!!, true)
     }
 
     private fun findDeployment(id: String): Deployment {

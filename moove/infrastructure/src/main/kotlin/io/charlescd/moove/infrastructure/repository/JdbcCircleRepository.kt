@@ -482,4 +482,16 @@ class JdbcCircleRepository(
             rs.getInt(1)
         } ?: 0
     }
+
+    override fun findCircleIsActiveById(id: String, workspaceId: String): Optional<Circle> {
+        val parameters = mutableListOf(id,workspaceId)
+        val statement = createActiveCircleQuery(null)
+        statement.append("AND circles.id = ?")
+
+        return Optional.ofNullable(this.jdbcTemplate.query(
+            statement.toString(),
+            parameters.toTypedArray(),
+            circleExtractor
+        )?.firstOrNull())
+    }
 }

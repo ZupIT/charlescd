@@ -27,7 +27,7 @@ interface CircleMatcherService {
 
     fun create(circle: Circle, matcherUri: String)
 
-    fun update(circle: Circle, previousReference: String, matcherUri: String)
+    fun update(circle: Circle, previousReference: String, matcherUri: String, status: Boolean)
 
     fun delete(reference: String, matcherUri: String)
 
@@ -36,4 +36,5 @@ interface CircleMatcherService {
     fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String)
 
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
+
 }
