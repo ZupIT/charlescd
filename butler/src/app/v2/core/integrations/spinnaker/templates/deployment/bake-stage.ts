@@ -15,10 +15,11 @@
  */
 
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
-import { Component } from '../../../../../api/deployments/interfaces'
+import { CdConfiguration, Component } from '../../../../../api/deployments/interfaces'
 import { CommonTemplateUtils } from '../../utils/common-template.utils'
+import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 
-export const getBakeStage = (component: Component, stageId: number, circleId: string | null): Stage => ({
+export const getBakeStage = (component: Component, configuration: CdConfiguration, stageId: number, circleId: string | null): Stage => ({
   completeOtherBranchesThenFail: false,
   continuePipeline: true,
   expectedArtifacts: [
@@ -50,7 +51,7 @@ export const getBakeStage = (component: Component, stageId: number, circleId: st
     }
   ],
   name: `Bake ${component.name} ${component.imageTag}`,
-  namespace: 'sandbox',
+  namespace: (configuration.configurationData as ISpinnakerConfigurationData).namespace,
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': component.imageUrl,
