@@ -8,6 +8,7 @@ import { oneComponentDiffSubsetsSameTag } from './one-component-diff-subsets-sam
 import { oneComponentSameTagDiffCirclesRollback } from './one-component-same-tag-diff-circles-rollback'
 import { oneComponentHostnameGateway } from './one-component-hostname-gateway'
 import { oneComponentSameTagSameCircle } from './one-component-same-tag-same-circle'
+import { oneComponentCustomNamespace } from './one-component-custom-namespace'
 
 export {
   completeSpinnakerPipeline,
@@ -19,5 +20,6 @@ export {
   oneComponentDiffSubsetsSameTag,
   oneComponentSameTagDiffCirclesRollback,
   oneComponentHostnameGateway,
-  oneComponentSameTagSameCircle
+  oneComponentSameTagSameCircle,
+  oneComponentCustomNamespace
 }
