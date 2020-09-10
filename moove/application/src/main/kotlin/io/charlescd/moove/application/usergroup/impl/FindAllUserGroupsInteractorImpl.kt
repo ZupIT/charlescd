@@ -31,8 +31,8 @@ class FindAllUserGroupsInteractorImpl @Inject constructor(
     private val userGroupService: UserGroupService
 ) : FindAllUserGroupsInteractor {
 
-    override fun execute(pageRequest: PageRequest): ResourcePageResponse<UserGroupResponse> {
-        return convert(userGroupService.find(pageRequest))
+    override fun execute(name: String?, pageRequest: PageRequest): ResourcePageResponse<UserGroupResponse> {
+        return convert(userGroupService.find(name, pageRequest))
     }
 
     private fun convert(page: Page<UserGroup>): ResourcePageResponse<UserGroupResponse> {
