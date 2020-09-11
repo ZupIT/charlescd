@@ -15,22 +15,19 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useCallback } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
   setAccessToken,
-  getAccessToken,
   getAccessTokenDecoded,
   loginIDM,
   setRefreshToken
 } from 'core/utils/auth';
 import { useUser } from 'modules/Users/hooks';
-import { saveProfile, getProfile } from 'core/utils/profile';
+import { saveProfile } from 'core/utils/profile';
 import { saveCircleId } from 'core/utils/circle';
-import { codeToTokens } from 'core/providers/auth';
 import { useAuth } from 'modules/Auth/hooks';
 
 const Main = lazy(() => import('modules/Main'));
@@ -42,9 +39,13 @@ const Routes = () => {
   const { findByEmail, user } = useUser();
   const { getTokens, grants } = useAuth();
 
-  useEffect(() => {
-    if (user) saveProfile(user);
-  }, [user]);
+  const getUserByEmail = useCallback((email: string) => findByEmail(email), [
+    findByEmail
+  ]);
+
+  const getTokensByCode = useCallback((code: string) => getTokens(code), [
+    getTokens
+  ]);
 
   useEffect(() => {
     // TODO: REMOVE THIS LINE
@@ -54,52 +55,26 @@ const Routes = () => {
     const { email } = getAccessTokenDecoded();
 
     if (code) {
-      getTokens(code);
+      getTokensByCode(code);
     } else if (email) {
-      findByEmail(email);
+      getUserByEmail(email);
     } else {
       loginIDM();
     }
-  }, []);
+  }, [getUserByEmail]);
+
+  useEffect(() => {
+    if (user) saveProfile(user);
+  }, [user]);
 
   useEffect(() => {
     if (grants) {
       setAccessToken(grants['access_token']);
       setRefreshToken(grants['refresh_token']);
       const { email } = getAccessTokenDecoded();
-      findByEmail(email);
+      getUserByEmail(email);
     }
-  }, [grants]);
-
-  // useEffect(() => {
-  //   // TODO: REMOVE THIS LINE
-  //   saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
-  //   const code = getParam('code');
-  //   const { email } = getAccessTokenDecoded();
-
-  //   if (code) {
-  //     getTokens(code);
-  //     codeToTokens(code)({}).then((response: Response) => {
-  //       if (response.ok) {
-  //         response.json().then(json => {
-  //           console.log('json', json);
-  //           setAccessToken(json['access_token']);
-  //           setRefreshToken(json['refresh_token']);
-  //           const { email } = getAccessTokenDecoded();
-  //           findByEmail(email);
-  //         });
-
-  //         return response;
-  //       } else {
-  //         loginIDM();
-  //       }
-  //     });
-  //   } else if (email) {
-  //     findByEmail(email);
-  //   } else {
-  //     loginIDM();
-  //   }
-  // }, []);
+  }, [getUserByEmail, grants]);
 
   return (
     <BrowserRouter>

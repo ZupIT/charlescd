@@ -1,9 +1,5 @@
 import { useDispatch } from 'core/state/hooks';
-import {
-  useFetchData,
-  useFetchStatus,
-  FetchStatus
-} from 'core/providers/base/hooks';
+import { useFetchStatus, FetchStatus } from 'core/providers/base/hooks';
 import { useState } from 'react';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { logout } from 'core/utils/auth';

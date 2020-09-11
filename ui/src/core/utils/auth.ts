@@ -25,7 +25,6 @@ import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
 import { clearWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
-import { postRequest } from 'core/providers/base';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 
@@ -42,6 +41,13 @@ type AccessToken = {
 
 const accessTokenKey = 'access-token';
 const refreshTokenKey = 'refresh-token';
+
+const IDMUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
+const IDMRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
+const IDMClient = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT;
+const IDMUrlLogin = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGIN_URI;
+const IDMUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_LOGOUT_URI;
+const IDMUrlRedirect = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 
 export const setAccessToken = (token: string) =>
   localStorage.setItem(accessTokenKey, token);
@@ -96,36 +102,22 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 }
 
 export const loginIDM = () => {
-  console.log('loginIDM');
+  const params = `?client_id=${IDMClient}&response_type=code&redirect_uri=${IDMUrlRedirect}`;
+  const url = `${IDMUrl}${IDMRealm}${IDMUrlLogin}${params}`;
+
   clearSession();
-
-  const idmUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
-  const idmRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
-  // const idmUrlLogin = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_URI_LOGIN;
-  const idmUrlLogin =
-    '/protocol/openid-connect/auth?client_id=charlescd-client&response_type=code&redirect_uri=http%3A%2F%2Flocalhost:3000';
-  const callback = `${idmUrl}${idmRealm}${idmUrlLogin}`;
-
-  console.log('loginIDM callback', callback);
-
-  window.location.href = callback;
+  redirectTo(url);
 };
 
 export const logout = () => {
-  console.log('logoutIDM');
-
-  const idmUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
-  const idmRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
-  const idmUrlLogout = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_URI_LOGOUT;
-  const idm = `${idmUrl}${idmRealm}${idmUrlLogout}`;
-
+  const url = `${IDMUrl}${IDMRealm}${IDMUrlLogout}`;
   const refreshToken = getRefreshToken();
 
-  fetch(idm, {
+  fetch(url, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: `client_id=${window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT}&refresh_token=${refreshToken}`,
+    body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
     method: 'POST'
   }).finally(() => {
     clearSession();
@@ -134,7 +126,6 @@ export const logout = () => {
 };
 
 export const checkStatus = (status: number) => {
-  console.log('checkStatus', status);
   if (status === HTTP_STATUS.unauthorized) {
     logout();
   }
