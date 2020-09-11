@@ -29,8 +29,6 @@ type Props = {
 
 const CircleRow = ({ circle }: Props) => {
   const history = useHistory();
-  // const [activeRow, setActiveRow] = useState(false);
-  // Screen wasn't a lot of useful data
 
   return (
     <Styled.CircleRow>
@@ -55,11 +53,6 @@ const CircleRow = ({ circle }: Props) => {
           </Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
-      {/* {activeRow && (
-        <Styled.ReleasesWrapper>
-          <CircleReleasesTable circleId={circle.id} />
-        </Styled.ReleasesWrapper>
-      )} */}
     </Styled.CircleRow>
   );
 };
