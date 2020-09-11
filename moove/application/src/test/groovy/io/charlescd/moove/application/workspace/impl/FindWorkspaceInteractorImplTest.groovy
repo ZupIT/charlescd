@@ -26,6 +26,7 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.domain.service.VillagerService
+import io.charlescd.moove.metrics.connector.compass.CompassApi
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -40,6 +41,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
     private VillagerService villagerService = Mock(VillagerService)
     private DeployService deployService = Mock(DeployService)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
+    private CompassApi compassApi = Mock(CompassApi)
 
     def setup() {
         this.getWorkspaceInteractor = new FindWorkspaceInteractorImpl(
@@ -47,7 +49,7 @@ class FindWorkspaceInteractorImplTest extends Specification {
                 new GitConfigurationService(gitConfigurationRepository),
                 new RegistryConfigurationService(villagerService),
                 new CdConfigurationService(deployService),
-                new MetricConfigurationService(metricConfigurationRepository)
+                new MetricConfigurationService(metricConfigurationRepository, compassApi)
         )
     }
 

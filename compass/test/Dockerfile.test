@@ -1,0 +1,16 @@
+FROM golang:1.14-alpine as builder
+
+RUN apk update && apk add gcc libc-dev git
+
+WORKDIR /app/compass
+
+COPY ./go.mod .
+COPY ./go.sum .
+
+COPY . .
+
+RUN chmod a+rx build-plugins.sh
+RUN sh build-plugins.sh
+
+CMD CGO_ENABLED=0 go test -v -coverpkg ./... ./...
+
