@@ -35,7 +35,7 @@ interface Props {
 }
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
-  const accessToken = getAccessToken();
+  // const accessToken = getAccessToken();
   const { name: profileName } = getAccessTokenDecoded();
   // const profileName = getProfileByKey('name');
   const workspaces = getProfileByKey('workspaces');
@@ -43,13 +43,13 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
-  useEffect(() => {
-    clearWorkspace();
-    console.log('profileName', profileName);
-    if (isEmpty(profileName)) {
-      logout();
-    }
-  }, [accessToken]);
+  // useEffect(() => {
+  //   clearWorkspace();
+  //   console.log('profileName', profileName);
+  //   if (isEmpty(profileName)) {
+  //     logout();
+  //   }
+  // }, [accessToken]);
 
   useEffect(() => {
     if (isRoot()) filterWorkspace(name);

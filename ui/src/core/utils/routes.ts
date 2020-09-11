@@ -74,8 +74,14 @@ const redirectTo = (path: string) => {
   location.href = path;
 };
 
-const getParam = (param: string) => {
+const getParamByHash = (param: string) => {
   const path = new URLSearchParams(window.location.hash.replace('#', '?'));
+
+  return path.get(param);
+};
+
+const getParam = (param: string) => {
+  const path = new URLSearchParams(window.location.href);
 
   return path.get(param);
 };
@@ -89,5 +95,6 @@ export {
   replaceRoute,
   goTo,
   redirectTo,
-  getParam
+  getParam,
+  getParamByHash
 };

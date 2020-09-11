@@ -85,8 +85,6 @@ export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
   useEffect(() => {
     if (!error) {
       dispatch(loadedWorkspacesAction(response));
-    } else {
-      checkStatus(error.status);
     }
   }, [dispatch, response, error]);
 

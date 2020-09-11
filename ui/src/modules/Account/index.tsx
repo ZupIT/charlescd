@@ -41,36 +41,36 @@ import Loader from './Loaders';
 const Account = () => {
   const name = getProfileByKey('name');
   const email = getProfileByKey('email');
-  const [user, setCurrentUser] = useState<User>();
+  const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
-  const [loadedUser, , loadUser, ,] = useUser();
+  const { findByEmail, user } = useUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
   const [toggleModal, setToggleModal] = useState(false);
 
-  const refresh = useCallback(() => loadUser(email), [loadUser, email]);
+  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
 
   useEffect(() => {
-    if (loadedUser) setCurrentUser(loadedUser);
-  }, [loadedUser]);
+    if (user) setCurrentUser(user);
+  }, [user]);
 
   useEffect(() => {
     if (!loadingUpdate) {
-      loadUser(email);
+      findByEmail(email);
     }
-  }, [loadingUpdate, email, loadUser]);
+  }, [loadingUpdate, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(user.id, {
+    updateProfile(currentUser.id, {
       ...profile,
-      email: user.email,
-      photoUrl: user.photoUrl
+      email: currentUser.email,
+      photoUrl: currentUser.photoUrl
     });
   };
 
   useEffect(() => {
-    loadUser(email);
-  }, [email, loadUser]);
+    findByEmail(email);
+  }, [email, findByEmail]);
 
   const renderModal = () =>
     toggleModal && (
@@ -85,9 +85,9 @@ const Account = () => {
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
           <Avatar
-            key={user.photoUrl}
+            key={currentUser.photoUrl}
             size="68px"
-            profile={user}
+            profile={currentUser}
             onFinish={refresh}
           />
         </Styled.ContentIcon>
@@ -96,15 +96,15 @@ const Account = () => {
         <ContentIcon icon="user">
           {isRoot() ? (
             <InputTitle
-              key={user.name}
+              key={currentUser.name}
               name="name"
               resume
               ref={register({ required: true })}
-              defaultValue={loadedUser.name}
+              defaultValue={user.name}
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">{loadedUser.name}</Text.h2>
+            <Text.h2 color="light">{user.name}</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>
@@ -154,7 +154,7 @@ const Account = () => {
         <Switch>
           <Route exact path={routes.accountProfile}>
             <Styled.Scrollable>
-              {isEmpty(user) ? <Loader.Tab /> : renderPanel()}
+              {isEmpty(currentUser) ? <Loader.Tab /> : renderPanel()}
             </Styled.Scrollable>
           </Route>
           <Route>

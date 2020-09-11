@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -14,11 +15,23 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
-import { setAccessToken } from 'core/utils/auth';
+import {
+  setAccessToken,
+  getAccessToken,
+  getAccessTokenDecoded,
+  loginIDM,
+  setRefreshToken
+} from 'core/utils/auth';
+import { useUser } from 'modules/Users/hooks';
+import { saveProfile, getProfile } from 'core/utils/profile';
+import { saveCircleId } from 'core/utils/circle';
+import { codeToTokens } from 'core/providers/auth';
+import { useAuth } from 'modules/Auth/hooks';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
@@ -26,8 +39,67 @@ const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
 const Routes = () => {
-  const accessToken = getParam('access_token');
-  if (accessToken) setAccessToken(accessToken);
+  const { findByEmail, user } = useUser();
+  const { getTokens, grants } = useAuth();
+
+  useEffect(() => {
+    if (user) saveProfile(user);
+  }, [user]);
+
+  useEffect(() => {
+    // TODO: REMOVE THIS LINE
+    saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
+
+    const code = getParam('code');
+    const { email } = getAccessTokenDecoded();
+
+    if (code) {
+      getTokens(code);
+    } else if (email) {
+      findByEmail(email);
+    } else {
+      loginIDM();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (grants) {
+      setAccessToken(grants['access_token']);
+      setRefreshToken(grants['refresh_token']);
+      const { email } = getAccessTokenDecoded();
+      findByEmail(email);
+    }
+  }, [grants]);
+
+  // useEffect(() => {
+  //   // TODO: REMOVE THIS LINE
+  //   saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
+  //   const code = getParam('code');
+  //   const { email } = getAccessTokenDecoded();
+
+  //   if (code) {
+  //     getTokens(code);
+  //     codeToTokens(code)({}).then((response: Response) => {
+  //       if (response.ok) {
+  //         response.json().then(json => {
+  //           console.log('json', json);
+  //           setAccessToken(json['access_token']);
+  //           setRefreshToken(json['refresh_token']);
+  //           const { email } = getAccessTokenDecoded();
+  //           findByEmail(email);
+  //         });
+
+  //         return response;
+  //       } else {
+  //         loginIDM();
+  //       }
+  //     });
+  //   } else if (email) {
+  //     findByEmail(email);
+  //   } else {
+  //     loginIDM();
+  //   }
+  // }, []);
 
   return (
     <BrowserRouter>

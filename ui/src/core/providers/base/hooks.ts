@@ -53,7 +53,8 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
         if (!isLoginRequest) {
-          await renewToken(getRefreshToken())({});
+          console.log('previously renewToken, but no more');
+          // await renewToken(getRefreshToken())({});
         }
         return fn();
       } catch (error) {
@@ -81,13 +82,15 @@ export const useFetchData = <T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: (...args: any) => (options: RequestInit) => Promise<Response>
 ): ((...args: unknown[]) => Promise<T>) => {
-  const isLoginRequest = login === req;
+  // const isLoginRequest = login === req;
 
   return async (...args: unknown[]) => {
-    const response = await renewTokenByCb(
-      () => req(...args)({}),
-      isLoginRequest
-    );
+    // const response = await renewTokenByCb(
+    //   () => req(...args)({}),
+    //   isLoginRequest
+    // );
+    console.log('useFetchData');
+    const response = await req(...args)({});
     const data = await getResponse(response);
     return data;
   };
@@ -110,10 +113,11 @@ export const useFetch = <T>(
 
   const promise = async (...args: unknown[]) => {
     setLoading(true);
-    const response = await renewTokenByCb(
-      () => req(...args)({}),
-      isLoginRequest
-    );
+    // const response = await renewTokenByCb(
+    //   () => req(...args)({}),
+    //   isLoginRequest
+    // );
+    const response = await req(...args)({});
     const data = await getResponse(response);
     setLoading(false);
     return data;
@@ -123,10 +127,11 @@ export const useFetch = <T>(
     async (...args: unknown[]) => {
       setLoading(true);
       try {
-        const response = await renewTokenByCb(
-          () => req(...args)({}),
-          isLoginRequest
-        );
+        // const response = await renewTokenByCb(
+        //   () => req(...args)({}),
+        //   isLoginRequest
+        // );
+        const response = await req(...args)({});
         const data = await getResponse(response);
 
         if (mounted.current) setResponse(data);

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { User } from 'modules/Users/interfaces/User';
+
 const profileKey = 'profile';
 
 export const getProfile = () => {
@@ -33,5 +35,7 @@ export const getProfileByKey = (key: string) => {
 
 export const clearProfile = () => localStorage.removeItem(profileKey);
 
-export const saveProfile = (profile: string) =>
-  localStorage.setItem(profileKey, profile);
+export const saveProfile = (profile: User) => {
+  const profileBase64 = btoa(JSON.stringify(profile));
+  localStorage.setItem(profileKey, profileBase64);
+};
