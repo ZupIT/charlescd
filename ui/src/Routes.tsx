@@ -39,13 +39,13 @@ const Routes = () => {
   const { findByEmail, user } = useUser();
   const { getTokens, grants } = useAuth();
 
-  const getUserByEmail = useCallback((email: string) => findByEmail(email), [
-    findByEmail
-  ]);
+  // const getUserByEmail = useCallback((email: string) => findByEmail(email), [
+  //   findByEmail
+  // ]);
 
-  const getTokensByCode = useCallback((code: string) => getTokens(code), [
-    getTokens
-  ]);
+  // const getTokensByCode = useCallback((code: string) => getTokens(code), [
+  //   getTokens
+  // ]);
 
   useEffect(() => {
     // TODO: REMOVE THIS LINE
@@ -55,13 +55,13 @@ const Routes = () => {
     const { email } = getAccessTokenDecoded();
 
     if (code) {
-      getTokensByCode(code);
+      getTokens(code);
     } else if (email) {
-      getUserByEmail(email);
+      findByEmail(email);
     } else {
       loginIDM();
     }
-  }, [getUserByEmail]);
+  }, []);
 
   useEffect(() => {
     if (user) saveProfile(user);
@@ -72,9 +72,9 @@ const Routes = () => {
       setAccessToken(grants['access_token']);
       setRefreshToken(grants['refresh_token']);
       const { email } = getAccessTokenDecoded();
-      getUserByEmail(email);
+      findByEmail(email);
     }
-  }, [getUserByEmail, grants]);
+  }, [grants]);
 
   return (
     <BrowserRouter>
