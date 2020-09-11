@@ -72,7 +72,7 @@ class CircleMatcherClientServiceTest extends Specification {
         def matcherUri = "http://circle-matcher.com"
 
         when:
-        this.circleMatcherService.update(circle, previousReference, matcherUri)
+        this.circleMatcherService.update(circle, previousReference, matcherUri, false)
 
         then:
         1 * circleMatcherClient.update(_, _, _) >> { arguments ->
