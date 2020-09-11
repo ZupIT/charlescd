@@ -41,11 +41,11 @@ class CircleMatcherClientService(
         this.circleMatcherClient.create(URI(matcherUri), createMatcherRequest(circle, false))
     }
 
-    override fun update(circle: Circle, previousReference: String, matcherUri: String, status: Boolean) {
+    override fun update(circle: Circle, previousReference: String, matcherUri: String, isActive: Boolean) {
         this.circleMatcherClient.update(
             URI(matcherUri),
             previousReference,
-            createMatcherRequest(circle, status, previousReference)
+            createMatcherRequest(circle, isActive, previousReference)
         )
     }
 
@@ -93,7 +93,8 @@ class CircleMatcherClientService(
             circleId = circle.id,
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
-            isDefault = circle.defaultCircle
+            isDefault = circle.defaultCircle,
+            active = false
         )
 
     private fun createMatcherRequest(circle: Circle, isActive:Boolean, previousReference: String? = null): CircleMatcherRequest =
@@ -111,7 +112,7 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
-            status = isActive
+            active = isActive
         )
 
 }
