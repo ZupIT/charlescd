@@ -18,8 +18,7 @@ import React, { useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { isRoot } from 'core/utils/auth';
-import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { isRoot, hasPermission } from 'core/utils/auth';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
@@ -43,21 +42,22 @@ const PrivateRoute = ({
 
   useEffect(() => {
     if (
-      status === 'idle' ||
-      (status !== 'pending' && workspaceId !== workspace?.id)
+      hasPermission('maintenance_write') &&
+      (status === 'idle' ||
+        (status !== 'pending' && workspaceId !== workspace?.id))
     ) {
       loadWorkspace(workspaceId);
     }
   }, [workspaceId, loadWorkspace, status, workspace]);
 
   const isAuthorizedByUser =
-    (isAllowed(allowedRoles) || isRoot()) && allowedRoute;
+    allowedRoute || isAllowed(allowedRoles) || isRoot();
 
   return (
     <Route
       {...rest}
       render={props =>
-        workspace.status === WORKSPACE_STATUS.COMPLETE || isAuthorizedByUser ? (
+        isAuthorizedByUser ? (
           <Component {...props} />
         ) : (
           <Redirect to={routes.error403} />
