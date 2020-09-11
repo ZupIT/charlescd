@@ -24,14 +24,17 @@ import Loader from '../Loaders/index';
 
 type Props = {
   metricsGroupId: string;
+  selectMetrics?: any;
 };
 
-const MonitoringMetrics = ({ metricsGroupId }: Props) => {
+const MonitoringMetrics = ({ metricsGroupId, selectMetrics }: Props) => {
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
   const [interval, setInterval] = useState('5m');
   const { getMetricByQuery } = useMetricQuery();
+
+  // console.log(selectMetrics);
 
   useEffect(() => {
     setChartDataLoading(true);

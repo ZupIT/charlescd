@@ -22,7 +22,7 @@ export type Option = {
 
 export interface Props {
   placeholder?: string;
-  options?: OptionTypeBase[];
+  options?: Option[];
   defaultValue?: Option | Option[];
   isDisabled?: boolean;
   isLoading?: boolean;
@@ -36,6 +36,4 @@ export interface Props {
   components?: SelectComponentsConfig<OptionTypeBase>;
   label?: string;
   hasError?: boolean;
-  getOptionLabel?: (option: any) => string;
-  getOptionValue?: (option: any) => string;
 }

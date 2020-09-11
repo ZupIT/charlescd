@@ -47,8 +47,7 @@ const MultiCheck = ({
   className,
   defaultValue,
   label,
-  getOptionLabel,
-  getOptionValue,
+  onChange,
   isLoading
 }: Props) => (
   <Controller
@@ -61,8 +60,10 @@ const MultiCheck = ({
     defaultValue={defaultValue}
     label={label}
     isLoading={isLoading}
-    getOptionLabel={getOptionLabel}
-    getOptionValue={getOptionValue}
+    onChange={([selected]) => {
+      onChange && onChange(selected);
+      return selected?.value;
+    }}
   />
 );
 
