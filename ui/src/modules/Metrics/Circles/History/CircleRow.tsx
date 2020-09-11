@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import { getStatus } from '../../helpers';
-import CircleReleasesTable from './CircleReleasesTable';
 import { CircleHistory } from '../interfaces';
+import routes from 'core/constants/routes';
 import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
+import { addParam } from 'core/utils/path';
 
 type Props = {
   circle: CircleHistory;
 };
 
 const CircleRow = ({ circle }: Props) => {
-  const [activeRow, setActiveRow] = useState(false);
+  const history = useHistory();
 
   return (
     <Styled.CircleRow>
       <Styled.StatusLine status={getStatus(circle?.status)} />
       <Styled.TableRow
-        onClick={() => setActiveRow(!activeRow)}
         data-testid={`circle-row-${circle.id}`}
+        onClick={() =>
+          addParam('circle', routes.circlesComparation, history, circle.id)
+        }
       >
         <Styled.TableColumn>
           <Text.h5 color="light">{circle.name}</Text.h5>
@@ -50,11 +54,6 @@ const CircleRow = ({ circle }: Props) => {
           </Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
-      {activeRow && (
-        <Styled.ReleasesWrapper>
-          <CircleReleasesTable circleId={circle.id} />
-        </Styled.ReleasesWrapper>
-      )}
     </Styled.CircleRow>
   );
 };
