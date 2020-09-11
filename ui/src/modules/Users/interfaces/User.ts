@@ -25,6 +25,10 @@ interface Base {
   photoUrl?: string;
 }
 
+export interface NewPassword {
+  newPassword: string;
+}
+
 export interface User extends Base {
   id: string;
   workspaces?: Workspace;
