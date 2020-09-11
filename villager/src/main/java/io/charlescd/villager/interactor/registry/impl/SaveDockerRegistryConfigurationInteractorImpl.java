@@ -18,7 +18,11 @@ package io.charlescd.villager.interactor.registry.impl;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
-import io.charlescd.villager.interactor.registry.*;
+import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

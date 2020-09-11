@@ -78,6 +78,10 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         var gcpRequest = (GCPCreateDockerRegistryRequest) request;
         inputBuilder
                 .withRegistryType(RegistryType.GCP)
-                .withAuth(new GCPDockerRegistryAuth(gcpRequest.getOrganization(), gcpRequest.getUsername(), gcpRequest.getJsonKey()));
+                .withAuth(new GCPDockerRegistryAuth(
+                        gcpRequest.getOrganization(),
+                        gcpRequest.getUsername(),
+                        gcpRequest.getJsonKey()
+                ));
     }
 }
