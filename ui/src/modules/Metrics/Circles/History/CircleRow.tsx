@@ -56,11 +56,11 @@ const CircleRow = ({ circle }: Props) => {
           </Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
-      {false && (
+      {/* {activeRow && (
         <Styled.ReleasesWrapper>
           <CircleReleasesTable circleId={circle.id} />
         </Styled.ReleasesWrapper>
-      )}
+      )} */}
     </Styled.CircleRow>
   );
 };
