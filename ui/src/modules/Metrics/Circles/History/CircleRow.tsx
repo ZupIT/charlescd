@@ -19,7 +19,7 @@ import { useHistory } from 'react-router-dom';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import { getStatus } from '../../helpers';
-import CircleReleasesTable from './CircleReleasesTable';
+// import CircleReleasesTable from './CircleReleasesTable';
 import { CircleHistory } from '../interfaces';
 import routes from 'core/constants/routes';
 import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
