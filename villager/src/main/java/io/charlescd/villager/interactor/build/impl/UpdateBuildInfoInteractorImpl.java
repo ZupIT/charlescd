@@ -139,8 +139,8 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
     }
 
     private boolean componentIsPresent(ComponentEntity component, String registryConfigurationId) {
-        var optionalEntity = this.dockerRegistryConfigurationRepository.findById(registryConfigurationId);
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
