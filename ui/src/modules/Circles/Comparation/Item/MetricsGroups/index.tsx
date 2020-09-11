@@ -18,6 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactTooltip from 'react-tooltip';
 import isEmpty from 'lodash/isEmpty';
+import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -48,8 +49,13 @@ type ChartOpen = {
   [key: string]: boolean;
 };
 
+type ChartFilter = {
+  [key: string]: string[];
+};
+
 const MetricsGroups = ({ onGoBack, id }: Props) => {
   const [groupChartOpen, setGroupChartOpen] = useState<ChartOpen>({});
+  const [selectMetric, setSelectMetric] = useState<ChartFilter>({});
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [activeMetricsGroup, setActiveMetricsGroup] = useState<MetricsGroup>();
@@ -114,15 +120,25 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     setActiveMetric(metric);
   };
 
-  const handleFilterSubmit = ({ metrics }: Record<string, string>) => {
-    console.log(metrics);
-  };
-
   const toggleMetricGroupChart = (metricGroupId: string) => {
     setGroupChartOpen(previous => ({
       ...previous,
       [metricGroupId]: !groupChartOpen[metricGroupId]
     }));
+  };
+
+  const toggleMetricGroupFilter = (metricGroupId: string, filters: any) => {
+    const filterLabels: any[] = [];
+    filters.map((filter: any) => filterLabels.concat(filter.value));
+    console.log(filterLabels);
+    // console.log(map(filters, filter => ({ filter })));
+
+    // setSelectMetric(previous => ({
+    //   ...previous,
+    //   [metricGroupId]: filters
+    // }));
+
+    // console.log(filters, selectMetric);
   };
 
   const getMetricCondition = (condition: string) => {
@@ -238,33 +254,28 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         {!isEmpty(metricGroup.metrics) && (
           <>
             <Styled.MonitoringMetricsFilter>
-              <form>
-                <LabeledIcon icon="filter">
-                  <Text.h5
-                    color="dark"
-                    onClick={handleSubmit(handleFilterSubmit)}
-                  >
-                    Filter metrics
-                  </Text.h5>
-                  <Styled.MultiSelect
-                    control={control}
-                    name="metrics"
-                    isLoading={status.isPending}
-                    customOption={CustomOption.Check}
-                    options={metricGroup.metrics}
-                    getOptionLabel={(option: Metric) => option.nickname}
-                    getOptionValue={(option: Metric) => option.id}
-                    label="Select metrics"
-                    defaultValue={[allOption]}
-                  />
-                </LabeledIcon>
-              </form>
               <LabeledIcon
                 icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
                 onClick={() => toggleMetricGroupChart(metricGroup.id)}
               >
                 <Text.h5 color="dark">View Chart</Text.h5>
               </LabeledIcon>
+              {groupChartOpen[metricGroup.id] && (
+                <LabeledIcon icon="filter">
+                  <Styled.MultiSelect
+                    control={control}
+                    name="metrics"
+                    isLoading={status.isPending}
+                    customOption={CustomOption.Check}
+                    options={normalizeSelectOptionsNickname(
+                      metricGroup.metrics
+                    )}
+                    label="Select metrics"
+                    defaultValue={[allOption]}
+                    onChange={e => toggleMetricGroupFilter(metricGroup.id, e)}
+                  />
+                </LabeledIcon>
+              )}
             </Styled.MonitoringMetricsFilter>
             {groupChartOpen[metricGroup.id] && (
               <MonitoringMetrics metricsGroupId={metricGroup.id} />
