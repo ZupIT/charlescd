@@ -42,19 +42,19 @@ test('render default ReleaseRow', () => {
   expect(screen.getByText('7 days')).toBeInTheDocument();
 });
 
-test('render active ReleaseRow and show releases table', async () => {
-  (fetch as FetchMock).mockResponseOnce(
-    JSON.stringify(circlesReleasesMock)
-  );
+// test('render active ReleaseRow and show releases table', async () => {
+//   (fetch as FetchMock).mockResponseOnce(
+//     JSON.stringify(circlesReleasesMock)
+//   );
 
-  render(
-    <CircleRow circle={{ ...circleHistoryMock, status: 'ACTIVE' }} />
-  );
+//   render(
+//     <CircleRow circle={{ ...circleHistoryMock, status: 'ACTIVE' }} />
+//   );
 
-  const tableRow = screen.getByTestId('circle-row-1');
-  fireEvent.click(tableRow);
+//   const tableRow = screen.getByTestId('circle-row-1');
+//   fireEvent.click(tableRow);
 
-  await wait();
+//   await wait();
 
-  expect(screen.getAllByText(/release /)).toHaveLength(2);
-});
+//   expect(screen.getAllByText(/release /)).toHaveLength(2);
+// });
