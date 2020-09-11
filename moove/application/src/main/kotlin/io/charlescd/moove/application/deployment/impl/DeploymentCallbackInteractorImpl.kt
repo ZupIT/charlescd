@@ -43,8 +43,8 @@ open class DeploymentCallbackInteractorImpl(
         val deployment = updateDeploymentInfo(findDeployment(id), request)
         if (request.isCallbackStatusSuccessful() && !deployment.circle.isDefaultCircle()) {
             updateStatusOfPreviousDeployment(deployment.circle.id)
-            updateStatusInCircleMatcher(deployment.circle)
         }
+        updateStatusInCircleMatcher(deployment.circle, request)
         updateDeployment(deployment)
     }
 
@@ -77,9 +77,16 @@ open class DeploymentCallbackInteractorImpl(
             }
     }
 
-    private fun updateStatusInCircleMatcher(circle: Circle) {
-        val workspace = this.workspaceService.find(circle.workspaceId)
-        this.circleMatcherService.updateStatusCircle(circle,circle.reference, workspace.circleMatcherUrl!!, true)
+    private fun updateStatusInCircleMatcher(circle: Circle, request: DeploymentCallbackRequest) {
+        if (callbackNotFailed(request.deploymentStatus) && !circle.defaultCircle) {
+            val workspace = this.workspaceService.find(circle.workspaceId)
+            val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
+            this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
+        }
+    }
+
+    private fun callbackNotFailed(deploymentStatus: DeploymentRequestStatus): Boolean {
+        return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
     }
 
     private fun findDeployment(id: String): Deployment {
