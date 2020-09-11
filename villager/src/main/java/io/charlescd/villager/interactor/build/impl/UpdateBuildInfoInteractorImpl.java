@@ -148,7 +148,8 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
 
         // TODO: Verificar necessidade de serializacao
         return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
-                && registryClient.getImage(component.name, component.tagName, entity.connectionData).get().getStatus() == 200;
+                && registryClient.getImage(component.name, component.tagName, entity.connectionData)
+                .get().getStatus() == 200;
     }
 
 }
