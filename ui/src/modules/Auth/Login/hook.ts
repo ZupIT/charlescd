@@ -69,19 +69,19 @@ export const useLogin = (): {
   status: string;
   error: string;
 } => {
+  console.log('useLogin');
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
-  const [profile, , getUserByEmail] = useUser();
+  const { findByEmail, user } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (profile) {
-      const profileBase64 = btoa(JSON.stringify(profile));
-      saveProfile(profileBase64);
+    if (user) {
+      saveProfile(user);
       setStatus('resolved');
     }
-  }, [profile]);
+  }, [user]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -91,14 +91,14 @@ export const useLogin = (): {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
         await getCircleId({ username: email });
-        getUserByEmail(email);
+        findByEmail(email);
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, getUserByEmail]
+    [getSession, getCircleId, findByEmail]
   );
 
   return {

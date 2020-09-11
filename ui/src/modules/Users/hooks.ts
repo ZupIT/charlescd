@@ -33,19 +33,52 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, Profile, NewUser } from './interfaces/User';
+import { logout } from 'core/utils/auth';
 
-export const useUser = (): [User, boolean, Function] => {
-  const [userData, getUser] = useFetch<User>(findUserByEmail);
-  const { response, loading } = userData;
+export const useUser = (): {
+  findByEmail: Function;
+  user: User;
+  status: FetchStatus;
+} => {
+  const dispatch = useDispatch();
+  const getUserByEmail = useFetchData<User>(findUserByEmail);
+  const status = useFetchStatus();
+  const [user, setUser] = useState(null);
 
-  const loadUser = useCallback(
-    (email: string) => {
-      getUser(email);
-    },
-    [getUser]
-  );
+  const findByEmail = async (email: Pick<User, 'email'>) => {
+    try {
+      if (email) {
+        status.pending();
+        const res = await getUserByEmail(email);
 
-  return [response, loading, loadUser];
+        setUser(res);
+        status.resolved();
+
+        return res;
+      }
+    } catch (e) {
+      const error = await e.json();
+
+      if (error.error === 'invalid_token') {
+        logout();
+      } else {
+        dispatch(
+          toogleNotification({
+            text: `${error.error} when trying to fetch the User for ${email}`,
+            status: 'error'
+          })
+        );
+      }
+
+      status.rejected();
+    }
+  };
+
+  return {
+    findByEmail,
+    user,
+    status
+  };
 };
 
 export const useCreateUser = (): {
@@ -134,7 +167,7 @@ export const useUpdateProfile = (): [
   User,
   string
 ] => {
-  const [, profileLoading] = useUser();
+  const { status: profileLoading } = useUser();
   const [status, setStatus] = useState<string>('');
   const [dataUpdate, , update] = useFetch<User>(updateProfileById);
   const { response, loading: updateLoading } = dataUpdate;
@@ -147,7 +180,13 @@ export const useUpdateProfile = (): [
     [update]
   );
 
-  return [profileLoading, updateLoading, updateProfile, response, status];
+  return [
+    profileLoading.isPending,
+    updateLoading,
+    updateProfile,
+    response,
+    status
+  ];
 };
 
 export const useUsers = (): [Function, Function, boolean] => {

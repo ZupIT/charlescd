@@ -42,37 +42,37 @@ interface Props {
 const UsersComparationItem = ({ email, onChange }: Props) => {
   const history = useHistory();
   const [action, setAction] = useState('');
-  const [user, setCurrentUser] = useState<User>();
+  const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
-  const [loadedUser, , loadUser, ,] = useUser();
+  const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
 
-  const refresh = useCallback(() => loadUser(email), [loadUser, email]);
+  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
 
   useEffect(() => {
-    if (loadedUser) setCurrentUser(loadedUser);
-  }, [loadedUser]);
+    if (user) setCurrentUser(user);
+  }, [user]);
 
   useEffect(() => {
     onChange(delUserResponse);
     if (delUserResponse === 'Deleted') {
-      delParam('user', routes.usersComparation, history, user.email);
+      delParam('user', routes.usersComparation, history, currentUser.email);
     }
   });
 
   useEffect(() => {
     if (!loadingUpdate) {
-      loadUser(email);
+      findByEmail(email);
     }
-  }, [loadingUpdate, email, loadUser]);
+  }, [loadingUpdate, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(user.id, {
+    updateProfile(currentUser.id, {
       ...profile,
-      email: user.email,
-      photoUrl: user.photoUrl
+      email: currentUser.email,
+      photoUrl: currentUser.photoUrl
     });
   };
 
@@ -86,7 +86,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       title="Do you want to delete this user?"
       dismissLabel="Cancel, keep user"
       continueLabel="Yes, delete user"
-      onContinue={() => handleDelete(user.id, user.name)}
+      onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
       By deleting this user, his information will be also deleted. Do you wish
@@ -99,7 +99,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Dropdown.Item
         icon="copy"
         name="Copy link"
-        onClick={() => copyToClipboard(getUserPathByEmail(user.email))}
+        onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
       <Dropdown.Item
         icon="delete"
@@ -115,7 +115,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
 
   const renderPanel = () => (
     <TabPanel
-      title={user.name}
+      title={currentUser.name}
       onClose={() => delParam('user', routes.usersComparation, history, email)}
       actions={renderActions()}
       name="user"
@@ -125,9 +125,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
           <Avatar
-            key={user.photoUrl}
+            key={currentUser.photoUrl}
             size="68px"
-            profile={user}
+            profile={currentUser}
             onFinish={refresh}
           />
         </Styled.ContentIcon>
@@ -136,22 +136,22 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         <ContentIcon icon="user">
           {isRoot() ? (
             <InputTitle
-              key={user.name}
+              key={currentUser.name}
               name="name"
               resume
               ref={register({ required: true })}
-              defaultValue={user.name}
+              defaultValue={currentUser.name}
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">user.name</Text.h2>
+            <Text.h2 color="light">currentUser.name</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
           <Text.h2 color="light">Email</Text.h2>
-          <Text.h4 color="dark">{user.email}</Text.h4>
+          <Text.h4 color="dark">{currentUser.email}</Text.h4>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
@@ -164,7 +164,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
 
   return (
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
-      {!user ? <Loader.Tab /> : renderPanel()}
+      {!currentUser ? <Loader.Tab /> : renderPanel()}
     </Styled.Wrapper>
   );
 };

@@ -36,12 +36,12 @@ export const buildHeaders = (isFormData = false) => ({
 export interface EnvVariables {
   REACT_APP_API_URI: string;
   REACT_APP_AUTH_URI: string;
-  REACT_APP_AUTH_CLIENT_ID: string;
   REACT_APP_AUTH_REALM: string;
-  REACT_APP_IDM_URI: string;
-  REACT_APP_IDM_CLIENT_ID: string;
-  REACT_APP_IDM_RESPONSE_TYPE: string;
-  REACT_APP_WORKSPACE_ID: string;
+  REACT_APP_AUTH_CLIENT: string;
+  REACT_APP_IDM_URI_LOGIN?: string;
+  REACT_APP_IDM_URI_LOGOUT?: string;
+  REACT_APP_IDM: string;
+  REACT_APP_WORKSPACE_ID?: string;
 }
 
 type GlobalApexCharts = {
@@ -57,6 +57,7 @@ declare global {
 
 export const basePath =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI || '/api';
+
 export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
@@ -127,7 +128,7 @@ export const baseRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
-          checkStatus(response.status);
+          // checkStatus(response.status);
           return Promise.reject(response);
         } else {
           return response;

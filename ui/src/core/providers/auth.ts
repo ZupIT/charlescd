@@ -16,20 +16,20 @@
 
 import { authRequest, unauthenticatedRequest } from './base';
 
-const clientId = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
+const client = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT;
 const realm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const workspaceId =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
 const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
-const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
+const endpoint = `${realm}/protocol/openid-connect/token`;
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
 
 export const login = (username: string, password: string) => {
   const grantType = 'password';
-  const data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+  const data = `grant_type=${grantType}&client_id=${client}&username=${username}&password=${password}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
@@ -44,9 +44,16 @@ export const circleMatcher = (payload: unknown) => {
   });
 };
 
+export const codeToTokens = (code: string) => {
+  const grantType = 'authorization_code';
+  const data = `grant_type=${grantType}&client_id=${client}&code=${code}&redirect_uri=http%3A%2F%2Flocalhost:3000`;
+
+  return authRequest(endpoint, data, { method: 'POST', headers });
+};
+
 export const renewToken = (refreshToken: string) => {
   const grantType = 'refresh_token';
-  const data = `grant_type=${grantType}&client_id=${clientId}&refresh_token=${refreshToken}`;
+  const data = `grant_type=${grantType}&client_id=${client}&refresh_token=${refreshToken}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
