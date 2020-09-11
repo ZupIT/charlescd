@@ -26,7 +26,7 @@ import Styled from './styled';
 import CircleFilter from './CircleFilter';
 import ChartMenu from './ChartMenu';
 import { getDeploySeries, getPlotOption } from './helpers';
-import { humanizeDateFromSeconds } from 'core/utils/date';
+import { humanizeDurationFromSeconds } from 'core/utils/date';
 import isUndefined from 'lodash/isUndefined';
 import ReleasesHistoryComponent from './Release';
 import { ReleaseHistoryRequest } from './interfaces';
@@ -108,7 +108,7 @@ const Deploys = () => {
             {loading ? (
               <Loader.Card />
             ) : (
-              humanizeDateFromSeconds(
+              humanizeDurationFromSeconds(
                 response?.successfulDeploymentsAverageTime
               )
             )}

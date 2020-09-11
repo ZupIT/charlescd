@@ -20,8 +20,11 @@ import Text from 'core/components/Text';
 import Styled from './styled';
 import { getStatus } from '../../helpers';
 import { CircleHistory } from '../interfaces';
+import {
+  humanizeDurationFromSeconds,
+  dateTimeFormatter
+} from 'core/utils/date';
 import routes from 'core/constants/routes';
-import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
 import { addParam } from 'core/utils/path';
 
 type Props = {
@@ -50,7 +53,7 @@ const CircleRow = ({ circle }: Props) => {
         </Styled.TableColumn>
         <Styled.TableColumn>
           <Text.h5 color="light">
-            {humanizeDateFromSeconds(circle.lifeTime)}
+            {humanizeDurationFromSeconds(circle.lifeTime)}
           </Text.h5>
         </Styled.TableColumn>
       </Styled.TableRow>
