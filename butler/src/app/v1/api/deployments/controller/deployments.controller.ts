@@ -23,16 +23,17 @@ import { DeploymentUniquenessPipe } from '../pipes'
 import { DeploymentsService } from '../services'
 import { CreateCircleDeploymentRequestUsecase, CreateDefaultDeploymentRequestUsecase, CreateUndeploymentRequestUsecase } from '../use-cases'
 import { ComponentDeploymentUniquenessPipe } from '../pipes/component-deployment-uniqueness.pipe'
+import { BaseController } from '../../base.controller'
 
 @Controller('deployments')
-export class DeploymentsController {
+export class DeploymentsController extends BaseController {
 
   constructor(
     private readonly deploymentsService: DeploymentsService,
     private readonly createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase,
     private readonly createCircleDeploymentRequestUsecase: CreateCircleDeploymentRequestUsecase,
     private readonly createDefaultDeploymentRequestUsecase: CreateDefaultDeploymentRequestUsecase
-  ) {}
+  ) { super() }
 
   @UsePipes(DeploymentUniquenessPipe,  ComponentDeploymentUniquenessPipe)
   @Post()

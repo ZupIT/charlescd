@@ -59,7 +59,7 @@ export class ModulesService {
   private async updateModuleComponents(newComponent: ComponentEntity, module: ModuleEntity): Promise<void> {
     module.components.map(async oldComponent => {
       if (newComponent.id === oldComponent.id) {
-        await this.componentEntityRepository.save({...newComponent, pipelineOptions: oldComponent.pipelineOptions})
+        await this.componentEntityRepository.save({ ...newComponent, pipelineOptions: oldComponent.pipelineOptions })
       }
     })
   }
