@@ -15,11 +15,10 @@
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { HTTP_STATUS } from 'core/enums/HttpStatus';
-import { renewToken, login } from '../auth';
-import { getRefreshToken } from 'core/utils/auth';
-import { redirectTo } from 'core/utils/routes';
-import routes from 'core/constants/routes';
+// import { HTTP_STATUS } from 'core/enums/HttpStatus';
+// import { login } from '../auth';
+// import { redirectTo } from 'core/utils/routes';
+// import routes from 'core/constants/routes';
 
 interface FetchData<T> {
   response: T;
@@ -48,23 +47,23 @@ export interface FetchProps {
   remove?: Function;
 }
 
-const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
-  fn().catch(async (error: Response) => {
-    if (HTTP_STATUS.unauthorized === error.status) {
-      try {
-        if (!isLoginRequest) {
-          console.log('previously renewToken, but no more');
-          // await renewToken(getRefreshToken())({});
-        }
-        return fn();
-      } catch (error) {
-        redirectTo(routes.login);
-        return error;
-      }
-    } else {
-      return Promise.reject(error);
-    }
-  });
+// const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
+//   fn().catch(async (error: Response) => {
+//     if (HTTP_STATUS.unauthorized === error.status) {
+//       try {
+//         if (!isLoginRequest) {
+//           console.log('previously renewToken, but no more');
+//           // await renewToken(getRefreshToken())({});
+//         }
+//         return fn();
+//       } catch (error) {
+//         redirectTo(routes.login);
+//         return error;
+//       }
+//     } else {
+//       return Promise.reject(error);
+//     }
+//   });
 
 const getResponse = async (response: Response) => {
   try {
@@ -109,7 +108,7 @@ export const useFetch = <T>(
   const [loading, setLoading] = useState(false);
   const mounted = useRef(true);
 
-  const isLoginRequest = login === req;
+  // const isLoginRequest = login === req;
 
   const promise = async (...args: unknown[]) => {
     setLoading(true);
@@ -141,7 +140,7 @@ export const useFetch = <T>(
         if (mounted.current) setLoading(false);
       }
     },
-    [req, mounted, isLoginRequest]
+    [req, mounted]
   );
 
   useEffect(() => {

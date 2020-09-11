@@ -18,6 +18,7 @@ import { authRequest, unauthenticatedRequest } from './base';
 
 const client = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT;
 const realm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
+const redirectUri = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 const workspaceId =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
@@ -46,7 +47,7 @@ export const circleMatcher = (payload: unknown) => {
 
 export const codeToTokens = (code: string) => {
   const grantType = 'authorization_code';
-  const data = `grant_type=${grantType}&client_id=${client}&code=${code}&redirect_uri=http%3A%2F%2Flocalhost:3000`;
+  const data = `grant_type=${grantType}&client_id=${client}&code=${code}&redirect_uri=${redirectUri}`;
 
   return authRequest(endpoint, data, { method: 'POST', headers });
 };
