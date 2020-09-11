@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:11.8-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=charlescd_compass
+      - POSTGRES_USER=charlescd_compass
+      - POSTGRES_PASSWORD=compass
+      - MAX_CONNECTIONS=300
+    networks:
+      - development
+
+  provider:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
+  app:
+    build:
+      dockerfile: ./test/Dockerfile.test
+      context: ../
+    image: compass
+    ports:
+      - 8080:8080
+    environment:
+      - DB_NAME=charlescd_compass
+      - DB_USER=charlescd_compass
+      - DB_PASSWORD=compass
+      - DB_HOST=db
+      - ENV=PROD
+    networks:
+      - development
+    depends_on:
+      - "db"
+      - "provider"
+
+networks:
+  development:
+    driver: bridge
