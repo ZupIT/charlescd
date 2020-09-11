@@ -15,10 +15,11 @@
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-// import { HTTP_STATUS } from 'core/enums/HttpStatus';
-// import { login } from '../auth';
-// import { redirectTo } from 'core/utils/routes';
-// import routes from 'core/constants/routes';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
+import { login, renewToken } from '../auth';
+import { redirectTo } from 'core/utils/routes';
+import routes from 'core/constants/routes';
+import { getRefreshToken } from 'core/utils/auth';
 
 interface FetchData<T> {
   response: T;
@@ -47,23 +48,23 @@ export interface FetchProps {
   remove?: Function;
 }
 
-// const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
-//   fn().catch(async (error: Response) => {
-//     if (HTTP_STATUS.unauthorized === error.status) {
-//       try {
-//         if (!isLoginRequest) {
-//           console.log('previously renewToken, but no more');
-//           // await renewToken(getRefreshToken())({});
-//         }
-//         return fn();
-//       } catch (error) {
-//         redirectTo(routes.login);
-//         return error;
-//       }
-//     } else {
-//       return Promise.reject(error);
-//     }
-//   });
+const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
+  fn().catch(async (error: Response) => {
+    if (HTTP_STATUS.unauthorized === error.status) {
+      try {
+        if (!isLoginRequest) {
+          console.log('previously renewToken, but no more');
+          await renewToken(getRefreshToken())({});
+        }
+        return fn();
+      } catch (error) {
+        redirectTo(routes.login);
+        return error;
+      }
+    } else {
+      return Promise.reject(error);
+    }
+  });
 
 const getResponse = async (response: Response) => {
   try {
@@ -81,15 +82,15 @@ export const useFetchData = <T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: (...args: any) => (options: RequestInit) => Promise<Response>
 ): ((...args: unknown[]) => Promise<T>) => {
-  // const isLoginRequest = login === req;
+  const isLoginRequest = login === req;
 
   return async (...args: unknown[]) => {
-    // const response = await renewTokenByCb(
-    //   () => req(...args)({}),
-    //   isLoginRequest
-    // );
+    const response = await renewTokenByCb(
+      () => req(...args)({}),
+      isLoginRequest
+    );
     console.log('useFetchData');
-    const response = await req(...args)({});
+    // const response = await req(...args)({});
     const data = await getResponse(response);
     return data;
   };
@@ -108,15 +109,15 @@ export const useFetch = <T>(
   const [loading, setLoading] = useState(false);
   const mounted = useRef(true);
 
-  // const isLoginRequest = login === req;
+  const isLoginRequest = login === req;
 
   const promise = async (...args: unknown[]) => {
     setLoading(true);
-    // const response = await renewTokenByCb(
-    //   () => req(...args)({}),
-    //   isLoginRequest
-    // );
-    const response = await req(...args)({});
+    const response = await renewTokenByCb(
+      () => req(...args)({}),
+      isLoginRequest
+    );
+    // const response = await req(...args)({});
     const data = await getResponse(response);
     setLoading(false);
     return data;
@@ -126,11 +127,11 @@ export const useFetch = <T>(
     async (...args: unknown[]) => {
       setLoading(true);
       try {
-        // const response = await renewTokenByCb(
-        //   () => req(...args)({}),
-        //   isLoginRequest
-        // );
-        const response = await req(...args)({});
+        const response = await renewTokenByCb(
+          () => req(...args)({}),
+          isLoginRequest
+        );
+        // const response = await req(...args)({});
         const data = await getResponse(response);
 
         if (mounted.current) setResponse(data);
