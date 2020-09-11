@@ -155,7 +155,7 @@ describe('CallbackController v2', () => {
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'SUCCEEDED', type: 'DEPLOYMENT' })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
@@ -252,7 +252,7 @@ describe('CallbackController v2', () => {
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'FAILED', type: 'DEPLOYMENT' })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
@@ -349,7 +349,7 @@ describe('CallbackController v2', () => {
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'SUCCEEDED', type: 'UNDEPLOYMENT' })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
@@ -446,7 +446,7 @@ describe('CallbackController v2', () => {
     await request(app.getHttpServer())
       .post(`/v2/executions/${execution.id}/notify`)
       .send({ status: 'FAILED', type: 'UNDEPLOYMENT' })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)

@@ -112,7 +112,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
       .expect(response => {
         expect(response.body).toEqual(expectedResponse)
@@ -146,7 +146,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(404)
       .expect(response => {
         expect(response.body).toEqual(
@@ -174,7 +174,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
         expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
@@ -213,7 +213,10 @@ describe('DeploymentController v2', () => {
       cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
-    const response = await request(app.getHttpServer()).post('/v2/deployments').send(createDeploymentRequest).set('x-circle-id', '12345')
+    const response = await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
 
     const executionsCount = await manager.findAndCount(Execution)
     expect(executionsCount[1]).toEqual(1)
@@ -292,7 +295,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
         expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
@@ -336,7 +339,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
 
     const componentsCount = await manager.findAndCount(ComponentEntity, { where: { deployment: createDeploymentRequest.deploymentId } })
     expect(componentsCount[1]).toEqual(1)
@@ -387,7 +390,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
         expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })

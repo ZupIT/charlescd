@@ -186,7 +186,7 @@ const createDeployment = async(params: any, cdConfiguration: CdConfigurationEnti
     new Execution(
       deployment,
       ExecutionTypeEnum.DEPLOYMENT,
-      'incoming',
+      params.incomingCircleId,
       DeploymentStatusEnum.CREATED
     )
   )

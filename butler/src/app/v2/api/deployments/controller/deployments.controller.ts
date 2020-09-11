@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Headers, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Headers, Param, Post, UnprocessableEntityException, UsePipes, ValidationPipe } from '@nestjs/common'
+import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
@@ -38,6 +39,7 @@ export class DeploymentsController {
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') incomingCircleId: string | null,
   ): Promise<ReadDeploymentDto> {
+    this.validateCircleIdHeader(incomingCircleId)
     return this.createDeploymentUseCase.execute(createDeploymentRequestDto, incomingCircleId)
   }
 
@@ -47,6 +49,15 @@ export class DeploymentsController {
     @Param('id') deploymentId: string,
     @Headers('x-circle-id') incomingCircleId: string | null
   ): Promise<ReadUndeploymentDto> {
+    this.validateCircleIdHeader(incomingCircleId)
     return this.createUndeploymentUseCase.execute(deploymentId, incomingCircleId)
+  }
+
+  private validateCircleIdHeader(incomingCircleId: string | null) {
+    if (incomingCircleId) {
+      if (!uuidValidate(incomingCircleId)) {
+        throw new UnprocessableEntityException('x-circle-id must be UUID')
+      }
+    }
   }
 }

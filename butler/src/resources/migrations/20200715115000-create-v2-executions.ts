@@ -24,7 +24,7 @@ export class CreateV2Executions20200715115000 implements MigrationInterface {
         "id" uuid DEFAULT gen_random_uuid () NOT NULL,
         "type" Character Varying NOT NULL,
         "deployment_id" uuid NOT NULL,
-        "incoming_circle_id" Character Varying,
+        "incoming_circle_id" uuid,
         "status" Character Varying DEFAULT 'CREATED' NOT NULL,
         "notification_status" Character Varying DEFAULT 'NOT_SENT' NOT NULL,
         "created_at" timestamp without time zone DEFAULT now() NOT NULL,

@@ -83,7 +83,7 @@ describe('DeploymentController v2', () => {
 
     await request(app.getHttpServer())
       .get('/v2/executions').query({ active: false, size: 1, page: 0 })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
         expect(response.body.executions.length).toEqual(1)
@@ -98,7 +98,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .get('/v2/executions')
       .query({ active: false, size: 1, page: 1 })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
         expect(response.body.executions.length).toEqual(1)
@@ -113,7 +113,7 @@ describe('DeploymentController v2', () => {
     await request(app.getHttpServer())
       .get('/v2/executions')
       .query({ active: false, size: 1, page: 2 })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
         expect(response.body.executions.length).toEqual(1)
@@ -136,7 +136,7 @@ describe('DeploymentController v2', () => {
     }
     await request(app.getHttpServer())
       .get('/v2/executions').query({ active: false, size: 0, page: -1 })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(response => {
         expect(response.body).toEqual(errorMessages)
       })
@@ -206,7 +206,7 @@ describe('DeploymentController v2', () => {
 
     await request(app.getHttpServer())
       .get('/v2/executions').query({ active: false, size: 1, page: 0 })
-      .set('x-circle-id', '12345')
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
         expect(response.body.executions[0]).toEqual(expectedBody)
