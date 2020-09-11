@@ -18,15 +18,7 @@ package io.charlescd.villager.interactor.build.impl;
 
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
-import io.charlescd.villager.infrastructure.persistence.BuildEntity;
-import io.charlescd.villager.infrastructure.persistence.BuildRepository;
-import io.charlescd.villager.infrastructure.persistence.BuildStatus;
-import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
-import io.charlescd.villager.infrastructure.persistence.ComponentRepository;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
-import io.charlescd.villager.infrastructure.persistence.ModuleBuildStatus;
-import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
-import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
+import io.charlescd.villager.infrastructure.persistence.*;
 import io.charlescd.villager.interactor.build.UpdateBuildInfoInteractor;
 import io.charlescd.villager.service.BuildNotificationService;
 import java.time.LocalDateTime;
@@ -147,8 +139,8 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
         this.registryClient.configureAuthentication(entity.type, entity.connectionData);
 
         // TODO: Verificar necessidade de serializacao
-        return registryClient.getImage(component.name, component.tagName).isPresent()
-                && registryClient.getImage(component.name, component.tagName).get().getStatus() == 200;
+        return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
+                && registryClient.getImage(component.name, component.tagName, entity.connectionData).get().getStatus() == 200;
     }
 
 }

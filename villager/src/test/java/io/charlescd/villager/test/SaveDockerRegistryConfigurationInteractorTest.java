@@ -16,25 +16,14 @@
 
 package io.charlescd.villager.test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +31,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SaveDockerRegistryConfigurationInteractorTest {
@@ -154,6 +152,59 @@ public class SaveDockerRegistryConfigurationInteractorTest {
                 is("regiontest"));
 
         verify(dockerRegistryConfigurationRepository, times(1)).save(any());
+
+    }
+
+    @Test
+    public void testSaveGCPWithSuccess() {
+
+        // Mock
+        var id = UUID.randomUUID().toString();
+        var createdAt = LocalDateTime.now();
+
+        doAnswer(invocation -> {
+            var arg0 = (DockerRegistryConfigurationEntity) invocation.getArgument(0);
+            arg0.id = id;
+            arg0.createdAt = createdAt;
+            return null;
+        }).when(dockerRegistryConfigurationRepository).save(any(DockerRegistryConfigurationEntity.class));
+
+        // Call
+        var interactor = new SaveDockerRegistryConfigurationInteractorImpl(dockerRegistryConfigurationRepository);
+
+        var input = DockerRegistryConfigurationInput.builder()
+                .withName("Test")
+                .withAddress("http://test.io")
+                .withRegistryType(RegistryType.GCP)
+                .withAuth(new GCPDockerRegistryAuth("organization", "_json_key", "jsonKey"))
+                .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
+                .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
+                .build();
+
+        interactor.execute(input);
+
+        // Check
+        verify(dockerRegistryConfigurationRepository).save(captor.capture());
+
+        var entityCaptured = captor.getValue();
+
+        assertThat(entityCaptured.id, is(id));
+        assertThat(entityCaptured.name, is("Test"));
+        assertThat(entityCaptured.type, is(RegistryType.GCP));
+        assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
+        assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
+        assertThat(entityCaptured.createdAt, is(createdAt));
+        assertThat(entityCaptured.connectionData.address, is("http://test.io"));
+        assertThat(entityCaptured.connectionData.host, is("test.io"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).organization,
+                is("organization"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).username,
+                is("_json_key"));
+        assertThat(
+                ((DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) entityCaptured.connectionData).jsonKey,
+                is("jsonKey"));
 
     }
 

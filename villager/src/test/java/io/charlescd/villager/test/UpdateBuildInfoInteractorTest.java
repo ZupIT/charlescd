@@ -145,7 +145,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.of(Response.ok().build()));
+        when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.of(Response.ok().build()));
 
         // Execute
         var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
@@ -155,7 +155,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(4)).findById(registryConfigurationId);
 
-        verify(registryClient, times(8)).getImage(anyString(), anyString());
+        verify(registryClient, times(8)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
         verify(componentRepository, times(1)).findByModuleId(module2.id);
@@ -272,7 +272,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenAnswer(invocationOnMock -> {
+        when(registryClient.getImage(anyString(), anyString(), any())).thenAnswer(invocationOnMock -> {
             var name = invocationOnMock.getArgument(0);
             var tagName = invocationOnMock.getArgument(1);
             if (componentEntity1.name.equals(name) && componentEntity1.tagName.equals(tagName) ||
@@ -291,7 +291,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(2)).findById(registryConfigurationId);
 
-        verify(registryClient, times(4)).getImage(anyString(), anyString());
+        verify(registryClient, times(4)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
 
@@ -386,7 +386,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.empty());
+        when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.empty());
 
         // Execute
         var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
@@ -396,7 +396,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(2)).findById(registryConfigurationId);
 
-        verify(registryClient, times(2)).getImage(anyString(), anyString());
+        verify(registryClient, times(2)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
         verify(componentRepository, times(1)).findByModuleId(module2.id);
