@@ -24,7 +24,6 @@ import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.charlescd.villager.util.Constants;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
