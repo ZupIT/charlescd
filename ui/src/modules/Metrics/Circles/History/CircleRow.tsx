@@ -22,6 +22,7 @@ import { getStatus } from '../../helpers';
 import { CircleHistory } from '../interfaces';
 import routes from 'core/constants/routes';
 import { humanizeDateFromSeconds, dateTimeFormatter } from 'core/utils/date';
+import { addParam } from 'core/utils/path';
 
 type Props = {
   circle: CircleHistory;
@@ -36,7 +37,7 @@ const CircleRow = ({ circle }: Props) => {
       <Styled.TableRow
         data-testid={`circle-row-${circle.id}`}
         onClick={() =>
-          history.push(`${routes.circlesComparation}?circle=${circle.id}`)
+          addParam('circle', routes.circlesComparation, history, circle.id)
         }
       >
         <Styled.TableColumn>
