@@ -21,12 +21,13 @@ import { ReadUndeploymentDto } from '../dto/read-undeployment'
 import {
   CreateUndeploymentRequestUsecase
 } from '../use-cases'
+import { BaseController } from '../../base.controller'
 
 @Controller('undeployments')
-export class UndeploymentsController {
+export class UndeploymentsController extends BaseController{
   constructor(
     private readonly createUndeploymentRequestUsecase: CreateUndeploymentRequestUsecase,
-  ) {}
+  ) { super() }
 
   @Post()
   public async createUndeployment(

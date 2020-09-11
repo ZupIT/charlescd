@@ -22,6 +22,7 @@ import { Observable } from 'rxjs'
 import { AxiosResponse } from 'axios'
 import { IBaseSpinnakerPipeline, IUpdateSpinnakerPipeline } from './connector/interfaces'
 import { ICreateSpinnakerApplication } from './interfaces'
+import { SpinnakerPipeline } from '../../../../../v2/core/integrations/spinnaker/interfaces'
 
 @Injectable()
 export class SpinnakerApiService {
@@ -42,7 +43,7 @@ export class SpinnakerApiService {
     )
   }
 
-  public createPipeline(spinnakerPipeline: IBaseSpinnakerPipeline, url: string): Observable<AxiosResponse> {
+  public createPipeline(spinnakerPipeline: IBaseSpinnakerPipeline | SpinnakerPipeline, url: string): Observable<AxiosResponse> {
     return this.httpService.post(
       `${url}/pipelines`,
       spinnakerPipeline,
@@ -54,7 +55,7 @@ export class SpinnakerApiService {
     )
   }
 
-  public updatePipeline(updatedPipeline: IUpdateSpinnakerPipeline, url: string): Observable<AxiosResponse> {
+  public updatePipeline(updatedPipeline: IUpdateSpinnakerPipeline | SpinnakerPipeline, url: string): Observable<AxiosResponse> {
     return this.httpService.post(
       `${url}/pipelines`,
       updatedPipeline,

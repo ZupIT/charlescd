@@ -21,16 +21,17 @@ import {
   ReceiveIstioDeploymentCallbackUsecase,
   ReceiveUndeploymentCallbackUsecase
 } from '../use-cases'
+import { BaseController } from '../../base.controller'
 import { CallbackTypeEnum } from '../enums/callback-type.enum'
 
 @Controller('notifications')
-export class NotificationsController {
+export class NotificationsController extends BaseController{
 
   constructor(
     private readonly receiveDeploymentCallbackUsecase: ReceiveDeploymentCallbackUsecase,
     private readonly receiveIstioDeploymentCallbackUsecase: ReceiveIstioDeploymentCallbackUsecase,
     private readonly receiveUndeploymentCallbackUsecase: ReceiveUndeploymentCallbackUsecase
-  ) {}
+  ) { super() }
 
   @Post()
   @HttpCode(204)
