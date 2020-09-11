@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/deployments"],
+        value = ["/v2/deployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -38,7 +38,7 @@ interface DeployClient {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/deployments"],
+        value = ["/v2/deployments"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -46,11 +46,11 @@ interface DeployClient {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/undeployments"],
+        value = ["/v2/deployments/{deploymentId}/undeploy"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun undeploy(@RequestBody request: UndeployRequest): UndeployResponse
+    fun undeploy(@PathVariable("deploymentId") deploymentId: String, @RequestBody request: UndeployRequest): UndeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(
