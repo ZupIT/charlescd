@@ -28,7 +28,7 @@ class CircleMatcherRequest(
     val workspaceId: String,
     @get:JsonProperty("isDefault")
     val isDefault: Boolean,
-    val status: Boolean? = null
+    val active: Boolean
 )
 
 data class Node(

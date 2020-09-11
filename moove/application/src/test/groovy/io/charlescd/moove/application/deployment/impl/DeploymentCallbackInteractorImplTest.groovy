@@ -353,7 +353,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
             assert circleMatcherRequest instanceof CircleMatcherRequest
             assert matcherUrl.toString() == workspace.circleMatcherUrl
             assert reference == circle.reference
-            assert circleMatcherRequest.status == true
+            assert circleMatcherRequest.active == true
         }
 
     }
@@ -395,7 +395,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
             assert circleMatcherRequest instanceof CircleMatcherRequest
             assert matcherUrl.toString() == workspace.circleMatcherUrl
             assert reference == circle.reference
-            assert circleMatcherRequest.status == false
+            assert circleMatcherRequest.active == false
         }
     }
     def 'when callback of deploy is FAILED should not update status in circle matcher'() {
