@@ -18,8 +18,6 @@ import { IsEnum, IsNotEmpty } from 'class-validator'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../enums'
 import { ApiProperty } from '@nestjs/swagger'
-import { CreateComponentRequestDto } from './create-component-request.dto'
-import { CreateModuleDeploymentDto } from './create-module-request.dto'
 
 export class DeploymentNotificationRequestDto {
 
