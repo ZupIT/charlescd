@@ -19,13 +19,19 @@ package io.charlescd.villager.interactor.registry.impl;
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
 import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
+import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+
+import java.util.Arrays;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +55,8 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     @Override
     public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
-        var optionalEntity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
@@ -62,7 +67,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
 
         this.registryClient.configureAuthentication(entity.type, entity.connectionData);
 
-        var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
+        var response = this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
 
         if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
             return Optional.empty();

@@ -25,6 +25,5 @@ public interface RegistryClient {
     void configureAuthentication(RegistryType type,
                                  DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
 
-    Optional<Response> getImage(String name, String tagName);
-
+    Optional<Response> getImage(String name, String tagName, DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
 }

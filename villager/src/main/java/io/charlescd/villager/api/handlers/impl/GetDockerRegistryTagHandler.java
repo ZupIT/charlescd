@@ -26,8 +26,7 @@ public class GetDockerRegistryTagHandler implements RequestHandler<GetDockerRegi
     private String componentName;
     private String name;
 
-    public GetDockerRegistryTagHandler(String workspaceId, String registryConfigurationId,
-                                       String componentName, String name) {
+    public GetDockerRegistryTagHandler(String workspaceId, String registryConfigurationId, String componentName, String name) {
         this.workspaceId = workspaceId;
         this.registryConfigurationId = registryConfigurationId;
         this.componentName = componentName;

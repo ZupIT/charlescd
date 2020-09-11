@@ -17,6 +17,7 @@
 package io.charlescd.villager.test;
 
 import io.charlescd.villager.exceptions.IllegalAccessResourceException;
+import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.integration.registry.TagsResponse;
@@ -61,7 +62,7 @@ public class GetDockerRegistryTagInteractorTest {
 
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
-        when(registryClient.getImage("name", "test")).then(invocationOnMock -> {
+        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> {
 
             var tagsResponse = new TagsResponse();
             Annotation[] annotations = new Annotation[1];
@@ -94,7 +95,7 @@ public class GetDockerRegistryTagInteractorTest {
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("test.org/name:test"));
         verify(registryClient, times(1)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(1)).getImage("name", "test");
+        verify(registryClient, times(1)).getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
@@ -106,7 +107,7 @@ public class GetDockerRegistryTagInteractorTest {
 
         when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.of(entity));
 
-        when(registryClient.getImage("name", "test")).then(invocationOnMock -> Optional.empty());
+        when(registryClient.getImage("name", "test", entity.connectionData)).then(invocationOnMock -> Optional.empty());
 
         var interactor =
                 new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
@@ -120,7 +121,7 @@ public class GetDockerRegistryTagInteractorTest {
 
         assertTrue(interactor.execute(input).isEmpty());
         verify(registryClient, times(1)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(1)).getImage("name", "test");
+        verify(registryClient, times(1)).getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
     }
 
@@ -147,7 +148,35 @@ public class GetDockerRegistryTagInteractorTest {
 
         assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));
         verify(registryClient, times(0)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(0)).getImage("name", "test");
+        verify(registryClient, times(0)).getImage("name", "test", entity.connectionData);
+        verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
+
+    }
+
+    @Test
+    public void testDockerRegistryNotFound() throws ResourceNotFoundException {
+
+        var entity = generateDockerRegistryConfigurationEntity();
+
+        when(dockerRegistryConfigurationRepository.findById("123")).thenReturn(Optional.empty());
+
+        var interactor =
+                new GetDockerRegistryTagInteractorImpl(dockerRegistryConfigurationRepository, registryClient);
+
+        GetDockerRegistryTagInput input = GetDockerRegistryTagInput.builder()
+                .withArtifactName("name")
+                .withWorkspaceId("123")
+                .withArtifactRepositoryConfigurationId("123")
+                .withName("test")
+                .build();
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            ComponentTagDTO component = interactor.execute(input).get();
+        });
+
+        assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
+        verify(registryClient, times(0)).configureAuthentication(entity.type, entity.connectionData);
+        verify(registryClient, times(0)).getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }

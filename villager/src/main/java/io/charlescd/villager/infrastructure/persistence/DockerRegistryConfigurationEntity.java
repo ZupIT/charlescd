@@ -17,8 +17,9 @@
 package io.charlescd.villager.infrastructure.persistence;
 
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import java.time.LocalDateTime;
 import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
 
 public class DockerRegistryConfigurationEntity {
 
@@ -33,11 +34,13 @@ public class DockerRegistryConfigurationEntity {
     public abstract static class DockerRegistryConnectionData {
         public String address;
         public String host;
+        public String organization;
 
-        DockerRegistryConnectionData(String address) {
+        DockerRegistryConnectionData(String address, String organization) {
             this.address = address;
             // Removing protocol :(
             this.host = StringUtils.substringAfter(address, "//");
+            this.organization = organization;
         }
     }
 
@@ -47,7 +50,7 @@ public class DockerRegistryConfigurationEntity {
         public String region;
 
         public AWSDockerRegistryConnectionData(String address, String accessKey, String secretKey, String region) {
-            super(address);
+            super(address, "");
             this.accessKey = accessKey;
             this.secretKey = secretKey;
             this.region = region;
@@ -59,10 +62,20 @@ public class DockerRegistryConfigurationEntity {
         public String password;
 
         public AzureDockerRegistryConnectionData(String address, String username, String password) {
-            super(address);
+            super(address, "");
             this.username = username;
             this.password = password;
         }
     }
 
+    public static class GCPDockerRegistryConnectionData extends DockerRegistryConnectionData {
+        public String username;
+        public String jsonKey;
+
+        public GCPDockerRegistryConnectionData(String address, String organization, String username, String jsonKey) {
+            super(address, organization);
+            this.username = username;
+            this.jsonKey = jsonKey;
+        }
+    }
 }

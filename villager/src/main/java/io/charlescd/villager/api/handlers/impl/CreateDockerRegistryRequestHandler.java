@@ -20,10 +20,12 @@ import io.charlescd.villager.api.handlers.RequestHandler;
 import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
+import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
@@ -48,6 +50,8 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
             toAzure(inputBuilder);
         } else if (this.request instanceof AWSCreateDockerRegistryRequest) {
             toAWS(inputBuilder);
+        } else if (this.request instanceof GCPCreateDockerRegistryRequest) {
+            toGCP(inputBuilder);
         } else {
             throw new IllegalArgumentException("The request has a invalid format.");
         }
@@ -68,5 +72,12 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         inputBuilder
                 .withRegistryType(RegistryType.AZURE)
                 .withAuth(new AzureDockerRegistryAuth(azureRequest.getUsername(), azureRequest.getPassword()));
+    }
+
+    private void toGCP(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
+        var gcpRequest = (GCPCreateDockerRegistryRequest) request;
+        inputBuilder
+                .withRegistryType(RegistryType.GCP)
+                .withAuth(new GCPDockerRegistryAuth(gcpRequest.getOrganization(), gcpRequest.getUsername(), gcpRequest.getJsonKey()));
     }
 }

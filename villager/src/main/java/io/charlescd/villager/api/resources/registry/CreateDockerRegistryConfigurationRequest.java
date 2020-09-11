@@ -28,13 +28,15 @@ import org.hibernate.validator.constraints.URL;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AzureCreateDockerRegistryRequest.class, name = "Azure"),
-        @JsonSubTypes.Type(value = AWSCreateDockerRegistryRequest.class, name = "AWS")
+        @JsonSubTypes.Type(value = AWSCreateDockerRegistryRequest.class, name = "AWS"),
+        @JsonSubTypes.Type(value = GCPCreateDockerRegistryRequest.class, name = "GCP")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CreateDockerRegistryConfigurationRequest {
 
     @NotEmpty
     protected String name;
+
     @URL
     @NotEmpty
     protected String address;
