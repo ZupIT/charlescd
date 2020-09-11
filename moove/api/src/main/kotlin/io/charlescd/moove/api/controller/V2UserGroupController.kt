@@ -44,7 +44,12 @@ class V2UserGroupController(
 ) {
 
     @ApiOperation(value = "Create a new User Group")
-    @ApiImplicitParam(name = "request", value = "User Group Details", required = true, dataType = "CreateUserGroupRequest")
+    @ApiImplicitParam(
+        name = "request",
+        value = "User Group Details",
+        required = true,
+        dataType = "CreateUserGroupRequest"
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Valid @RequestBody request: CreateUserGroupRequest): UserGroupResponse {
@@ -52,7 +57,12 @@ class V2UserGroupController(
     }
 
     @ApiOperation(value = "Update a existing User Group")
-    @ApiImplicitParam(name = "request", value = "User Group Details", required = true, dataType = "UpdateUserGroupRequest")
+    @ApiImplicitParam(
+        name = "request",
+        value = "User Group Details",
+        required = true,
+        dataType = "UpdateUserGroupRequest"
+    )
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(@PathVariable id: String, @Valid @RequestBody request: UpdateUserGroupRequest): UserGroupResponse {
@@ -68,8 +78,11 @@ class V2UserGroupController(
 
     @ApiOperation(value = "Find all User Groups")
     @GetMapping
-    fun findAll(pageable: PageRequest): ResourcePageResponse<UserGroupResponse> {
-        return this.findAllUserGroupsInteractor.execute(pageable)
+    fun findAll(
+        @RequestParam("name", required = false) name: String?,
+        pageable: PageRequest
+    ): ResourcePageResponse<UserGroupResponse> {
+        return this.findAllUserGroupsInteractor.execute(name, pageable)
     }
 
     @ApiOperation(value = "Delete User Group By Id")
@@ -81,7 +94,12 @@ class V2UserGroupController(
     }
 
     @ApiOperation(value = "Add member to a User Group")
-    @ApiImplicitParam(name = "request", value = "Add Member to User Group Details", required = true, dataType = "AddMemberUserGroupRequest")
+    @ApiImplicitParam(
+        name = "request",
+        value = "Add Member to User Group Details",
+        required = true,
+        dataType = "AddMemberUserGroupRequest"
+    )
     @PostMapping("/{id}/members")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun addMemberToUserGroup(@PathVariable id: String, @Valid @RequestBody request: AddMemberToUserGroupRequest) {

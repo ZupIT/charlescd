@@ -68,5 +68,8 @@ export const dark = {
   error: {
     borderColor: COLOR_RED_ORANGE,
     color: COLOR_RED_ORANGE
+  },
+  action: {
+    background: COLOR_BLACK_MARLIN
   }
 };
