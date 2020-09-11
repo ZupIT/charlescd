@@ -26,7 +26,6 @@ import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Optional;

@@ -19,7 +19,6 @@ package io.charlescd.villager.interactor.registry.impl;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.*;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
