@@ -24,6 +24,7 @@ import {
   statusWorkspaceAction,
   loadedWorkspaceAction
 } from 'modules/Workspaces/state/actions';
+import { hasPermission } from 'core/utils/auth';
 import { WORKSPACE_STATUS } from '../enums';
 import Styled from './styled';
 
@@ -47,9 +48,10 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
     dispatch(loadedWorkspaceAction({ ...workspace, id, name, status }));
     history.push({
       pathname:
-        status === WORKSPACE_STATUS.COMPLETE
-          ? routes.circles
-          : routes.credentials
+        status === WORKSPACE_STATUS.INCOMPLETE &&
+        hasPermission('maintenance_write')
+          ? routes.credentials
+          : routes.circles
     });
   };
 

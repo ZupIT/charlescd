@@ -47,13 +47,14 @@ type GlobalApexCharts = {
 
 declare global {
   interface Window {
-    ENVIRONMENT: EnvVariables;
+    CHARLESCD_ENVIRONMENT: EnvVariables;
     ApexCharts: GlobalApexCharts;
   }
 }
 
-export const basePath = window.ENVIRONMENT?.REACT_APP_API_URI || '/api';
-export const authPath = window.ENVIRONMENT?.REACT_APP_AUTH_URI;
+export const basePath =
+  window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI || '/api';
+export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
   url: string,

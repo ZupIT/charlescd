@@ -23,6 +23,8 @@ import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
 import { useGlobalState } from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { hasPermission } from 'core/utils/auth';
+import { includes } from 'lodash';
 
 interface Props {
   I: Actions;
@@ -84,13 +86,23 @@ const Element = ({
     </>
   );
 
+  const checkWorkspaceStatus = (role: string) => {
+    const ignoreStatusIf = ['maintenance_write'];
+
+    const status =
+      hasPermission('maintenance_write') && !includes(ignoreStatusIf, role)
+        ? workspace?.status
+        : WORKSPACE_STATUS.COMPLETE;
+
+    return status === WORKSPACE_STATUS.COMPLETE;
+  };
+
   return (
     <Can I={I} a={a} passThrough={passThrough} data-testid="Can">
       {(allowed: boolean) => {
-        const isAllowed =
-          (allowed && workspace?.status === WORKSPACE_STATUS.COMPLETE) ||
-          (allowed && allowedRoutes);
-        return renderChildren(isAllowed);
+        return renderChildren(
+          allowed && allowedRoutes && checkWorkspaceStatus(`${a}_${I}`)
+        );
       }}
     </Can>
   );
