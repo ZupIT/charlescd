@@ -28,21 +28,11 @@ interface Props {
 }
 
 const Workspaces = ({ selectedWorkspace }: Props) => {
-  // const accessToken = getAccessToken();
   const { name: profileName } = getAccessTokenDecoded();
-  // const profileName = getProfileByKey('name');
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
-
-  // useEffect(() => {
-  //   clearWorkspace();
-  //   console.log('profileName', profileName);
-  //   if (isEmpty(profileName)) {
-  //     logout();
-  //   }
-  // }, [accessToken]);
 
   useEffect(() => {
     if (isRoot()) filterWorkspace(name);

@@ -53,7 +53,6 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
         if (!isLoginRequest) {
-          console.log('previously renewToken, but no more');
           await renewToken(getRefreshToken())({});
         }
         return fn();
@@ -142,7 +141,7 @@ export const useFetch = <T>(
         if (mounted.current) setLoading(false);
       }
     },
-    [req, mounted]
+    [req, mounted, isLoginRequest]
   );
 
   useEffect(() => {

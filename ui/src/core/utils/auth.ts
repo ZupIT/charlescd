@@ -96,12 +96,18 @@ export const clearSession = () => {
   clearWorkspace();
 };
 
+export const isIDMAuthFlow = (): boolean => {
+  const IDMEnabled = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM;
+
+  return Boolean(parseInt(IDMEnabled));
+};
+
 export function saveSessionData(accessToken: string, refreshToken: string) {
   localStorage.setItem(accessTokenKey, accessToken);
   localStorage.setItem(refreshTokenKey, refreshToken);
 }
 
-export const loginIDM = () => {
+export const redirectToIDM = () => {
   const params = `?client_id=${IDMClient}&response_type=code&redirect_uri=${IDMUrlRedirect}`;
   const url = `${IDMUrl}${IDMRealm}${IDMUrlLogin}${params}`;
 
@@ -110,19 +116,24 @@ export const loginIDM = () => {
 };
 
 export const logout = () => {
-  const url = `${IDMUrl}${IDMRealm}${IDMUrlLogout}`;
-  const refreshToken = getRefreshToken();
+  if (isIDMAuthFlow()) {
+    const refreshToken = getRefreshToken();
+    const url = `${IDMUrl}${IDMRealm}${IDMUrlLogout}`;
 
-  fetch(url, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
-    method: 'POST'
-  }).finally(() => {
+    fetch(url, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `client_id=${IDMClient}&refresh_token=${refreshToken}`,
+      method: 'POST'
+    }).finally(() => {
+      clearSession();
+      redirectTo(routes.main);
+    });
+  } else {
     clearSession();
-    redirectTo(routes.main);
-  });
+    redirectTo(routes.login);
+  }
 };
 
 export const checkStatus = (status: number) => {

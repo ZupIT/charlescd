@@ -1,24 +1,18 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Switch, Route } from 'react-router';
 import routes from 'core/constants/routes';
 import { ReactComponent as AuthSVG } from 'core/assets/svg/circle-login.svg';
-import { loginIDM } from 'core/utils/auth';
+import { isIDMAuthFlow, redirectToIDM } from 'core/utils/auth';
 import Styled from './styled';
 
 const Login = lazy(() => import('modules/Auth/Login'));
 
 const Auth = () => {
-  useEffect(() => {
-    const isIdm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM;
-    console.log('isIdm', isIdm);
+  const renderIDMLogin = () => {
+    return <>{redirectToIDM()}</>;
+  };
 
-    if (parseInt(isIdm)) {
-      console.log('loginIDM');
-      loginIDM();
-    }
-  });
-
-  return (
+  const renderLogin = () => (
     <Styled.Wrapper>
       <Styled.Container>
         <Styled.Background>
@@ -40,6 +34,8 @@ const Auth = () => {
       </Styled.Container>
     </Styled.Wrapper>
   );
+
+  return isIDMAuthFlow() ? renderIDMLogin() : renderLogin();
 };
 
 export default Auth;
