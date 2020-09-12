@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy, useEffect, useCallback } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
   setAccessToken,
   getAccessTokenDecoded,
-  loginIDM,
-  setRefreshToken
+  redirectToIDM,
+  setRefreshToken,
+  isIDMAuthFlow
 } from 'core/utils/auth';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
@@ -39,27 +40,21 @@ const Routes = () => {
   const { findByEmail, user } = useUser();
   const { getTokens, grants } = useAuth();
 
-  // const getUserByEmail = useCallback((email: string) => findByEmail(email), [
-  //   findByEmail
-  // ]);
-
-  // const getTokensByCode = useCallback((code: string) => getTokens(code), [
-  //   getTokens
-  // ]);
-
   useEffect(() => {
-    // TODO: REMOVE THIS LINE
-    saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
+    if (isIDMAuthFlow()) {
+      // TODO: REMOVE THIS LINE
+      saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
 
-    const code = getParam('code');
-    const { email } = getAccessTokenDecoded();
+      const code = getParam('code');
+      const { email } = getAccessTokenDecoded();
 
-    if (code) {
-      getTokens(code);
-    } else if (email) {
-      findByEmail(email);
-    } else {
-      loginIDM();
+      if (code) {
+        getTokens(code);
+      } else if (email) {
+        findByEmail(email);
+      } else {
+        redirectToIDM();
+      }
     }
   }, []);
 

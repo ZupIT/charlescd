@@ -69,7 +69,6 @@ export const useLogin = (): {
   status: string;
   error: string;
 } => {
-  console.log('useLogin');
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
   const { findByEmail, user } = useUser();
