@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
