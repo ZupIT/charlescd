@@ -94,7 +94,8 @@ public class DockerRegistryResource {
                                                           @PathParam("componentName") String componentName,
                                                           @QueryParam("name") String name) {
 
-        var requestHandler = new GetDockerRegistryTagHandler(workspaceId, registryConfigId, componentName, name);
+        var requestHandler =
+                new GetDockerRegistryTagHandler(workspaceId, registryConfigId, componentName, name);
 
         var response = this.getDockerRegistryTagInteractor.execute(requestHandler.handle());
         var componentTagList = new ArrayList<ComponentTagRepresentation>();
