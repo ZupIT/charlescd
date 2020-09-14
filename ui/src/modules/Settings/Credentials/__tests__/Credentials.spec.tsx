@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, fireEvent, wait, screen } from 'unit-test/testUtils';
+import { render, fireEvent, wait, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
@@ -65,10 +65,15 @@ test('render User Group credentials', async () => {
   render(<Credentials />);
   const content = screen.queryByTestId('contentIcon-users');
   const buttonOpenUsersGroup = content.nextElementSibling.querySelector('button');
-  await wait(() => fireEvent.click(buttonOpenUsersGroup));
+  fireEvent.click(buttonOpenUsersGroup);
+
+  await wait(() => screen.getByTestId('icon-arrow-left'));
   const buttonBack = screen.queryByTestId('icon-arrow-left');
 
   expect(buttonBack).toBeInTheDocument();
+  fireEvent.click(buttonBack);
+  const arrow = screen.queryByTestId('icon-arrow-left');
+  await wait(() => expect(arrow).not.toBeInTheDocument());
 });
 
 test('render Git Credentials', async () => {
@@ -114,6 +119,24 @@ test('render Circle Matcher Credentials', async () => {
     status: 'resolved'
   }));
   render(<Credentials />);
+  const content = screen.queryByTestId('contentIcon-circle-matcher');
+  const button = content.nextElementSibling.querySelector('button');
+  await wait(() => fireEvent.click(button));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+
+  expect(buttonBack).toBeInTheDocument();
+});
+
+test('click to copy to clipboard', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  
   const content = screen.queryByTestId('contentIcon-circle-matcher');
   const button = content.nextElementSibling.querySelector('button');
   await wait(() => fireEvent.click(button));
