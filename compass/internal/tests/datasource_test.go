@@ -24,22 +24,28 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	var err error
 
 	os.Setenv("ENV", "TEST")
 
-	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.NoError(s.T(), err)
-
-	s.DB.LogMode(dbLog)
-
-	var pluginMain = plugin.NewMain()
-
-	s.repository = datasource2.NewMain(s.DB, pluginMain)
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {
+	var err error
+
+	//if s.DB.Close() != nil {
+	s.DB, err = configuration.GetDBConnection("../../migrations")
+	require.NoError(s.T(), err)
+	s.DB.LogMode(dbLog)
+
+	var pluginMain = plugin.NewMain()
+	s.repository = datasource2.NewMain(s.DB, pluginMain)
+	//}
+
 	s.DB.Exec("DELETE FROM data_sources")
+}
+
+func (s *Suite) AfterTest(suiteName, testName string) {
+	s.DB.Close()
 }
 
 func TestInit(t *testing.T) {
@@ -119,6 +125,13 @@ func (s *Suite) TestFindAllByWorkspace() {
 	require.Equal(s.T(), true, res[0].Health)
 }
 
+func (s *Suite) TestFindAllByWorkspaceError() {
+	s.DB.Close()
+	_, err := s.repository.FindAllByWorkspace(uuid.New().String(), "true")
+
+	require.Error(s.T(), err)
+}
+
 func (s *Suite) TestFindAllByWorkspaceWithHealth() {
 	dataSourceStruct := datasource2.DataSource{
 		Name:        "DataTest",
@@ -153,6 +166,21 @@ func (s *Suite) TestSaveDatasource() {
 
 	dataSourceStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), dataSourceStruct, res)
+}
+
+func (s *Suite) TestSaveDatasourceError() {
+	dataSourceStruct := datasource2.DataSource{
+		Name:        "DataTest",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
+		WorkspaceID: uuid.New(),
+		DeletedAt:   nil,
+	}
+
+	s.DB.Close()
+	_, err := s.repository.Save(dataSourceStruct)
+	require.Error(s.T(), err)
 }
 
 func (s *Suite) TestSaveDatasourceWithHealthInserted() {
@@ -204,6 +232,7 @@ func (s *Suite) TestFindByIdNotFoundError() {
 }
 
 func (s *Suite) TestDeleteError() {
+	s.DB.Close()
 	err := s.repository.Delete("any-id")
 	require.Error(s.T(), err)
 }
@@ -392,10 +421,6 @@ func (s *Suite) TestDeleteError() {
 //		`UPDATE "ERROR"`)).WillReturnResult(sqlmock.NewResult(1, 1))
 //	s.mock.ExpectCommit()
 //
-//	err := s.repository.Delete(id.String())
-//
-//	require.Error(s.T(), err)
-//}
 //
 //func (s *Suite) TestDeleteFindError() {
 //	var id = uuid.New()
