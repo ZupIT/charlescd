@@ -30,7 +30,7 @@ test('render default Release Row', async () => {
  expect(screen.getByTestId('release-table-row-1')).toBeInTheDocument();
  expect(screen.getByText('release 1')).toBeInTheDocument();
  expect(screen.getByText('circle 1')).toBeInTheDocument();
- expect(screen.getByText('1:13m')).toBeInTheDocument();
+ expect(screen.getByText('1:13 m')).toBeInTheDocument();
  expect(screen.getByText('Jhon Doe')).toBeInTheDocument();
 });
 

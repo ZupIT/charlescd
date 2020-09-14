@@ -16,9 +16,13 @@
 
 import React from 'react';
 import { Loader as LoaderTab } from './tab';
+import { Loader as LoaderMetricsGroupsLayer } from './metricsGroupsLayer';
+import { Loader as LoaderMetricsGroupsChart } from './metricsGroupsChart';
 
 const Loader = {
-  Tab: () => <LoaderTab />
+  Tab: () => <LoaderTab />,
+  MetricsGroupsLayer: () => <LoaderMetricsGroupsLayer />,
+  MetricsGroupsChart: () => <LoaderMetricsGroupsChart />
 };
 
 export default Loader;
