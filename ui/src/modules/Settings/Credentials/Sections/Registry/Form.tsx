@@ -28,12 +28,14 @@ import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
+import AceEditor from 'core/components/AceEditor';
+
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const { register, unregister, handleSubmit, reset } = useForm<Registry>();
+  const { register, handleSubmit, reset } = useForm<Registry>();
   const profileId = getProfileByKey('id');
 
   useEffect(() => {
@@ -56,11 +58,13 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const renderAwsFields = () => {
-    unregister('username');
-    unregister('password');
-
     return (
       <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="address"
+          label="Enter the registry url"
+        />
         <Form.Input
           ref={register({ required: true })}
           name="region"
@@ -91,15 +95,56 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const renderAzureFields = () => {
-    unregister('accessKey');
-    unregister('secretKey');
-    unregister('region');
-
     return (
       <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="address"
+          label="Enter the registry url"
+        />
         <Form.Input ref={register} name="username" label="Enter the username" />
         <Form.Password
-          ref={register}
+          ref={register({ required: true })}
+          name="password"
+          label="Enter the password"
+        />
+      </>
+    );
+  };
+
+  const renderGCPFields = () => {
+    return (
+      <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="address"
+          label="Enter the registry url"
+        />
+        <Form.Input
+          ref={register({ required: true })}
+          name="organization"
+          label="Enter the project id"
+        />
+        <AceEditor mode="json" value="" />
+        <Form.Password
+          ref={register({ required: true })}
+          name="jsonKey"
+          label="Enter the jsonKey"
+        />
+      </>
+    );
+  };
+
+  const renderDockerHubFields = () => {
+    return (
+      <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="username"
+          label="Enter the username"
+        />
+        <Form.Password
+          ref={register({ required: true })}
           name="password"
           label="Enter the password"
         />
@@ -110,6 +155,12 @@ const FormRegistry = ({ onFinish }: Props) => {
   const handleFields = () => {
     if (registryType === 'AWS') {
       return renderAwsFields();
+    }
+    if (registryType === 'GCR') {
+      return renderGCPFields();
+    }
+    if (registryType === 'DOCKER_HUB') {
+      return renderDockerHubFields();
     }
     return renderAzureFields();
   };
@@ -124,11 +175,6 @@ const FormRegistry = ({ onFinish }: Props) => {
           ref={register({ required: true })}
           name="name"
           label="Type a name for Registry"
-        />
-        <Form.Input
-          ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
         />
         {handleFields()}
       </Styled.Fields>

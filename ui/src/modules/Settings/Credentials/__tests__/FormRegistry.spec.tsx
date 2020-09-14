@@ -97,6 +97,31 @@ test('render Registry form without AWS values and secret input', async () => {
     expect(container.innerHTML).not.toMatch("Enter the access key");
 });
 
+test('render Registry form with GCR form', async () => {
+  const { container, getByTestId } = render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  await wait();
+  const radioButton = getByTestId("radio-group-registry-item-GCR");
+  fireEvent.click(radioButton)
+  await wait();
+  expect(container.innerHTML).toMatch("Enter the jsonKey");
+});
+
+test('render Registry form with Docker Hub form', async () => {
+  const { container, getByTestId } = render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
+
+  await wait();
+  const radioButton = getByTestId("radio-group-registry-item-DOCKER_HUB");
+  fireEvent.click(radioButton)
+  await wait();
+  expect(container.innerHTML).toMatch("Enter the username");
+  expect(container.innerHTML).not.toMatch("Enter the address");
+});
+
 test('execute onSubmit', async () => {
   const { container, getByTestId } = render(
     <FormRegistry onFinish={mockOnFinish}/>
