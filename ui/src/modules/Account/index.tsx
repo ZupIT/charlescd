@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
@@ -46,8 +46,6 @@ const Account = () => {
   const { findByEmail, user } = useUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
   const [toggleModal, setToggleModal] = useState(false);
-
-  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
 
   useEffect(() => {
     if (user) setCurrentUser(user);
@@ -88,7 +86,7 @@ const Account = () => {
             key={currentUser.photoUrl}
             size="68px"
             profile={currentUser}
-            onFinish={refresh}
+            onFinish={() => findByEmail(email)}
           />
         </Styled.ContentIcon>
       </Styled.Layer>

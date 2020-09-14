@@ -17,7 +17,7 @@
 import defaultsDeep from 'lodash/defaultsDeep';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
-import { getAccessToken } from 'core/utils/auth';
+import { checkStatus, getAccessToken } from 'core/utils/auth';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { getCircleId } from 'core/utils/circle';
 
@@ -129,7 +129,7 @@ export const baseRequest = (
     fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
-          // checkStatus(response.status);
+          checkStatus(response.status);
           return Promise.reject(response);
         } else {
           return response;

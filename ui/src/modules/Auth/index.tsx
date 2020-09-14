@@ -9,6 +9,8 @@ const Login = lazy(() => import('modules/Auth/Login'));
 
 const Auth = () => {
   const renderIDMLogin = () => {
+    console.log('renderIDMLogin');
+
     return <>{redirectToIDM()}</>;
   };
 

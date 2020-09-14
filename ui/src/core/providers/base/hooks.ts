@@ -17,9 +17,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { login, renewToken } from '../auth';
-import { redirectTo } from 'core/utils/routes';
-import routes from 'core/constants/routes';
-import { getRefreshToken } from 'core/utils/auth';
+import { getRefreshToken, isIDMAuthFlow } from 'core/utils/auth';
 
 interface FetchData<T> {
   response: T;
@@ -52,12 +50,11 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
   fn().catch(async (error: Response) => {
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
-        if (!isLoginRequest) {
+        if (!isLoginRequest && !isIDMAuthFlow()) {
           await renewToken(getRefreshToken())({});
         }
         return fn();
       } catch (error) {
-        redirectTo(routes.login);
         return error;
       }
     } else {
@@ -85,10 +82,11 @@ export const useFetchData = <T>(
 
   return useCallback(
     async (...args: unknown[]) => {
-      const response = await renewTokenByCb(
-        () => req(...args)({}),
-        isLoginRequest
-      );
+      // const response = await renewTokenByCb(
+      //   () => req(...args)({}),
+      //   isLoginRequest
+      // );
+      const response = await req(...args)({});
       const data = await getResponse(response);
       return data;
     },
@@ -113,11 +111,11 @@ export const useFetch = <T>(
 
   const promise = async (...args: unknown[]) => {
     setLoading(true);
-    const response = await renewTokenByCb(
-      () => req(...args)({}),
-      isLoginRequest
-    );
-    // const response = await req(...args)({});
+    // const response = await renewTokenByCb(
+    //   () => req(...args)({}),
+    //   isLoginRequest
+    // );
+    const response = await req(...args)({});
     const data = await getResponse(response);
     setLoading(false);
     return data;
@@ -131,7 +129,6 @@ export const useFetch = <T>(
           () => req(...args)({}),
           isLoginRequest
         );
-        // const response = await req(...args)({});
         const data = await getResponse(response);
 
         if (mounted.current) setResponse(data);
@@ -141,7 +138,7 @@ export const useFetch = <T>(
         if (mounted.current) setLoading(false);
       }
     },
-    [req, mounted, isLoginRequest]
+    [req, mounted]
   );
 
   useEffect(() => {

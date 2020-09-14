@@ -53,7 +53,7 @@ const Routes = () => {
       } else if (email) {
         findByEmail(email);
       } else {
-        redirectToIDM();
+        // redirectToIDM();
       }
     }
   }, []);
