@@ -63,15 +63,21 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
         var awsRequest = (AWSCreateDockerRegistryRequest) request;
         inputBuilder
                 .withRegistryType(RegistryType.AWS)
-                .withAuth(new AWSDockerRegistryAuth(awsRequest.getAccessKey(), awsRequest.getSecretKey(),
-                        awsRequest.getRegion()));
+                .withAuth(new AWSDockerRegistryAuth(
+                        awsRequest.getAccessKey(),
+                        awsRequest.getSecretKey(),
+                        awsRequest.getRegion()
+                ));
     }
 
     private void toAzure(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
         var azureRequest = (AzureCreateDockerRegistryRequest) request;
         inputBuilder
                 .withRegistryType(RegistryType.AZURE)
-                .withAuth(new AzureDockerRegistryAuth(azureRequest.getUsername(), azureRequest.getPassword()));
+                .withAuth(new AzureDockerRegistryAuth(
+                        azureRequest.getUsername(),
+                        azureRequest.getPassword()
+                ));
     }
 
     private void toGCP(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
