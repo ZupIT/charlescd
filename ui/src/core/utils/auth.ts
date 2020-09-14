@@ -19,7 +19,6 @@ import JwtDecode from 'jwt-decode';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import includes from 'lodash/includes';
-// import routes from 'core/constants/routes';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
@@ -108,8 +107,9 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 }
 
 export const redirectToIDM = () => {
+  console.log('redirectToIDM');
   const params = `?client_id=${IDMClient}&response_type=code&redirect_uri=${IDMUrlRedirect}`;
-  const url = `${IDMUrl}${IDMRealm}${IDMUrlLogin}${params}`;
+  const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogin}${params}`;
 
   clearSession();
   redirectTo(url);
@@ -118,7 +118,7 @@ export const redirectToIDM = () => {
 export const logout = () => {
   if (isIDMAuthFlow()) {
     const refreshToken = getRefreshToken();
-    const url = `${IDMUrl}${IDMRealm}${IDMUrlLogout}`;
+    const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogout}`;
 
     fetch(url, {
       headers: {

@@ -61,7 +61,7 @@ export const useUser = (): {
       const error = await e.json();
 
       if (error.error === 'invalid_token') {
-        logout();
+        // logout();
       } else {
         dispatch(
           toogleNotification({

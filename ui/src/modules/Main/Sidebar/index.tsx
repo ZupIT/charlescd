@@ -57,7 +57,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     pathname === routes.groups;
 
   useEffect(() => {
-    loadWorkspaces();
+    isRoot() && loadWorkspaces();
   }, [loadWorkspaces]);
 
   useEffect(() => {

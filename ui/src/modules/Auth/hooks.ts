@@ -36,14 +36,10 @@ export const useAuth = (): {
   const [grants, setGrants] = useState(null);
 
   const getTokens = async (code: string) => {
-    console.log('getTokens');
     try {
       if (code) {
-        console.log('getTokens (code)', code);
         status.pending();
         const res = await codeToTokens(code);
-
-        console.log('res', res);
 
         res({}).then((response: Response) => {
           if (response.ok) {
