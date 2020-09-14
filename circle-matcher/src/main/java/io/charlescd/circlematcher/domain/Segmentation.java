@@ -102,4 +102,8 @@ public class Segmentation {
     public Boolean getIsDefault() {
         return isDefault;
     }
+
+    public boolean isActive() {
+        return this.active == null || this.active;
+    }
 }

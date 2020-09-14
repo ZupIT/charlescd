@@ -49,7 +49,8 @@ class TestUtils {
                 type,
                 "78094351-7f16-4571-ac7a-7681db81e146",
                 true,
-                true)
+                true
+        )
     }
 
     static createSegmentationRequest(Node node, SegmentationType type) {
