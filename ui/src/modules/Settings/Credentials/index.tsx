@@ -35,7 +35,7 @@ import Dropdown from 'core/components/Dropdown';
 const Credentials = () => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
-  const [, loadWorkspace, , , updateWorkspace] = useWorkspace();
+  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );

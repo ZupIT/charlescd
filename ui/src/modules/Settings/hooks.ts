@@ -15,12 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  useFetch,
-  useFetchData,
-  useFetchStatus,
-  FetchStatus
-} from 'core/providers/base/hooks';
+import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { findAll, findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
@@ -33,32 +28,22 @@ import {
   statusWorkspaceAction
 } from 'modules/Workspaces/state/actions';
 
-export const useWorkspace = (): [
-  Workspace,
-  Function,
-  Function,
-  FetchStatus,
-  Function
-] => {
+export const useWorkspace = (): [Workspace, Function, Function, Function] => {
   const getWorkspaceById = useFetchData<Workspace>(findById);
   const [workspace, setWorkspace] = useState(null);
-  const status = useFetchStatus();
   const [, , updateWorkspace] = useFetch(updateName);
   const dispatch = useDispatch();
 
   const loadWorkspace = useCallback(
     async (id: string) => {
       try {
-        status.pending();
         dispatch(statusWorkspaceAction('pending'));
         const response = await getWorkspaceById({ id });
         dispatch(loadedWorkspaceAction(response));
         dispatch(statusWorkspaceAction('resolved'));
         setWorkspace(response);
-        status.resolved();
       } catch (error) {
         if (error.status !== 403) {
-          status.rejected();
           dispatch(statusWorkspaceAction('rejected'));
           dispatch(
             toogleNotification({
@@ -69,7 +54,7 @@ export const useWorkspace = (): [
         }
       }
     },
-    [getWorkspaceById, dispatch, status]
+    [getWorkspaceById, dispatch]
   );
 
   const update = useCallback(
@@ -89,7 +74,7 @@ export const useWorkspace = (): [
     [updateWorkspace, workspace, dispatch]
   );
 
-  return [workspace, loadWorkspace, getWorkspaceById, status, update];
+  return [workspace, loadWorkspace, getWorkspaceById, update];
 };
 
 export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
