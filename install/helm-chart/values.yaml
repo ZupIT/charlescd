@@ -203,3 +203,46 @@ octopipe:
       value: "IN_CLUSTER"
     - name: TIMEOUT_RESOURCE_VERIFICATION
       value: "300"
+
+compass:
+  enabled: true
+  name: compass
+  replicaCount: 1
+  envVars:
+    - name: DB_HOST
+      value: "charlescd-sandbox-postgresql"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_USER
+      value: "charlescd_compass"
+    - name: DB_PASSWORD
+      value: "C1UinUu6N0vc"
+    - name: DB_NAME
+      value: "charlescd_compass"
+    - name: DB_SSL
+      value: "disable"
+    - name: PLUGINS_DIR
+      value: "./plugins"
+    - name: ENV
+      value: "DEV"
+    - name: DISPATCHER_INTERVAL
+      value: "15s"
+  image:
+    repository: compass
+    tag: latest
+    pullPolicy: Always
+  service:
+    name: compass
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 8080
+  resources:
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
+  sidecarIstio:
+    enabled: true

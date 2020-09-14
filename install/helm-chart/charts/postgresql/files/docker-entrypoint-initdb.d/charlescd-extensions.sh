@@ -16,3 +16,8 @@ psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 psql -c "CREATE DATABASE keycloak"
 psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
 psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+
+psql -c "CREATE DATABASE charlescd_compass"
+psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+psql -d charles_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
