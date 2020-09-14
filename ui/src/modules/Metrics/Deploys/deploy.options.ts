@@ -15,7 +15,7 @@
  */
 
 import { chartDateFormatter as formatter } from './helpers';
-import { humanizeDateFromSeconds } from 'core/utils/date';
+import { humanizeDurationFromSeconds } from 'core/utils/date';
 import { getTheme } from 'core/utils/themes';
 
 const theme = getTheme();
@@ -99,7 +99,7 @@ export default {
       '',
       {
         formatter: function(value: number) {
-          return humanizeDateFromSeconds(value);
+          return humanizeDurationFromSeconds(value);
         }
       }
     ]
@@ -145,7 +145,7 @@ export default {
           colors: theme.metrics.dashboard.chart.label
         },
         formatter: function(value: number) {
-          return humanizeDateFromSeconds(value);
+          return humanizeDurationFromSeconds(value);
         }
       }
     }
