@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: default
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: default
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -42,7 +64,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: charlescd-mongodb
-  namespace: charles
+  namespace: default
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -281,7 +303,7 @@ metadata:
     release: "charlescd"
     heritage: "Helm"
 data:
-  charlescd-extensions.sh: |-
+  charlescd-extensions.sh: |
     #!/bin/bash
     export PGUSER=postgres
     export PGPASSWORD=firstpassword
@@ -300,6 +322,11 @@ data:
     psql -c "CREATE DATABASE keycloak"
     psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
     psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+  
+    psql -c "CREATE DATABASE charlescd_compass"
+    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+    psql -d charles_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
 # Source: Charles-CD/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -414,35 +441,13 @@ metadata:
     heritage: Helm
     release: charlescd
   name: charlescd-mongodb
-  namespace: charles
+  namespace: default
 spec:
   accessModes:
     - "ReadWriteOnce"
   resources:
     requests:
       storage: "8Gi"
----
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -556,7 +561,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: charlescd-octopipe
-  namespace: charles
+  namespace: default
 ---
 # Source: Charles-CD/charts/keycloak/templates/service-headless.yaml
 apiVersion: v1
@@ -616,7 +621,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: charlescd-mongodb
-  namespace: charles
+  namespace: default
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -661,7 +666,7 @@ metadata:
     app: charlescd-octopipe
     service: charlescd-octopipe
   name: charlescd-octopipe
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -785,7 +790,7 @@ metadata:
     app: charlescd-butler
     service: charlescd-butler
   name: charlescd-butler
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -804,7 +809,7 @@ metadata:
     app: charlescd-circle-matcher
     service: charlescd-circle-matcher
   name: charlescd-circle-matcher
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -815,6 +820,25 @@ spec:
     app: charlescd-circle-matcher
   type: ClusterIP
 ---
+# Source: Charles-CD/templates/charlescd-compass-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: compass
+    service: compass
+  name: compass
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: compass
+  type: ClusterIP
+---
 # Source: Charles-CD/templates/charlescd-moove-service.yaml
 apiVersion: v1
 kind: Service
@@ -823,7 +847,7 @@ metadata:
     app: charlescd-moove
     service: charlescd-moove
   name: charlescd-moove
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -842,7 +866,7 @@ metadata:
     app: charlescd-ui
     service: charlescd-ui
   name: charlescd-ui
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -861,7 +885,7 @@ metadata:
     app: charlescd-villager
     service: charlescd-villager
   name: charlescd-villager
-  namespace: charles
+  namespace: default
 spec:
   ports:
     - name: http
@@ -877,7 +901,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-mongodb
-  namespace: charles
+  namespace: default
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -1005,7 +1029,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-octopipe
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-octopipe
     version: charlescd-octopipe
@@ -1084,7 +1108,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-butler
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-butler
     version: charlescd-butler
@@ -1141,9 +1165,9 @@ spec:
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
+              value: "http://charlescd-butler.default.svc.cluster.local:3000/notifications"
             - name: DARWIN_CALLBACK
-              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
+              value: "http://charlescd-butler.default.svc.cluster.local:3000/notifications"
             - name: OCTOPIPE_URL
               value: "http://charlescd-octopipe:8080"
             - name: ENCRYPTION_KEY
@@ -1164,7 +1188,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-circle-matcher
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-circle-matcher
     version: charlescd-circle-matcher
@@ -1227,12 +1251,92 @@ spec:
               cpu: 128m
               memory: 128Mi
 ---
+# Source: Charles-CD/templates/charlescd-compass-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd
+  namespace: default
+  labels:
+    app: compass
+    version: compass
+    circleId: 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compass
+      version: charlescd
+      circleId: 
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: compass
+        version: charlescd
+        circleId: 
+    spec:
+      containers:
+        - name: compass
+          image: latest
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1 
+          imagePullPolicy: Always
+          env:
+          - name: DB_HOST
+            value: "charlescd-sandbox-postgresql"
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: "charlescd_compass"
+          - name: DB_PASSWORD
+            value: "C1UinUu6N0vc"
+          - name: DB_NAME
+            value: "charlescd_compass"
+          - name: DB_SSL
+            value: "disable"
+          - name: PLUGINS_DIR
+            value: "./plugins"
+          - name: ENV
+            value: "DEV"
+          - name: DISPATCHER_INTERVAL
+            value: "15s"
+          
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
+      imagePullSecrets:
+        - name: realwavelab-registry
+---
 # Source: Charles-CD/templates/charlescd-moove-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-moove
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-moove
     version: charlescd-moove
@@ -1287,6 +1391,8 @@ spec:
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
               value: "http://charlescd-keycloak-http/keycloak/auth"
+            - name: KEYCLOAK_PUBLIC_CLIENT_ID
+              value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
@@ -1311,7 +1417,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-ui
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-ui
     version: charlescd-ui
@@ -1375,7 +1481,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-villager
-  namespace: charles
+  namespace: default
   labels:
     app: charlescd-villager
     version: charlescd-villager
@@ -1926,7 +2032,7 @@ spec:
         - name: REDIS_REPLICATION_MODE
           value: slave
         - name: REDIS_MASTER_HOST
-          value: charlescd-redis-master-0.charlescd-redis-headless.charles.svc.cluster.local
+          value: charlescd-redis-master-0.charlescd-redis-headless.default.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
         - name: REDIS_MASTER_PORT_NUMBER
