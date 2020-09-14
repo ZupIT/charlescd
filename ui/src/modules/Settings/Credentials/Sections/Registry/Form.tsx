@@ -28,15 +28,17 @@ import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
-import AceEditor from 'core/components/AceEditor';
-
+import AceEditorForm from 'core/components/Form/AceEditor';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const { register, handleSubmit, reset } = useForm<Registry>();
+  const { register, handleSubmit, reset, control } = useForm<Registry>();
   const profileId = getProfileByKey('id');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -53,7 +55,19 @@ const FormRegistry = ({ onFinish }: Props) => {
       authorId: profileId,
       provider: registryType
     };
-
+    if (registryType === 'GCR') {
+      try {
+        JSON.parse(registry.jsonKey);
+      } catch (error) {
+        dispatch(
+          toogleNotification({
+            text: 'Error when validating json file: ' + error.message,
+            status: 'error'
+          })
+        );
+        return;
+      }
+    }
     save(registry);
   };
 
@@ -125,11 +139,12 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="organization"
           label="Enter the project id"
         />
-        <AceEditor mode="json" value="" />
-        <Form.Password
-          ref={register({ required: true })}
+        <AceEditorForm
+          width={'270px'}
+          mode="json"
           name="jsonKey"
-          label="Enter the jsonKey"
+          rules={{ required: true }}
+          control={control}
         />
       </>
     );
