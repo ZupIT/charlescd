@@ -4,7 +4,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: charlescd-mongodb
-  namespace: default
+  namespace: charles
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -19,7 +19,7 @@ kind: ServiceAccount
 metadata:
   annotations:
   name: charlescd-octopipe
-  namespace: default
+  namespace: charles
 ---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
@@ -64,7 +64,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: charlescd-mongodb
-  namespace: default
+  namespace: charles
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -211,11 +211,6 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
         server {
             listen 80;
             
@@ -441,7 +436,7 @@ metadata:
     heritage: Helm
     release: charlescd
   name: charlescd-mongodb
-  namespace: default
+  namespace: charles
 spec:
   accessModes:
     - "ReadWriteOnce"
@@ -561,7 +556,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: charlescd-octopipe
-  namespace: default
+  namespace: charles
 ---
 # Source: Charles-CD/charts/keycloak/templates/service-headless.yaml
 apiVersion: v1
@@ -621,7 +616,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: charlescd-mongodb
-  namespace: default
+  namespace: charles
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -666,7 +661,7 @@ metadata:
     app: charlescd-octopipe
     service: charlescd-octopipe
   name: charlescd-octopipe
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -790,7 +785,7 @@ metadata:
     app: charlescd-butler
     service: charlescd-butler
   name: charlescd-butler
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -809,7 +804,7 @@ metadata:
     app: charlescd-circle-matcher
     service: charlescd-circle-matcher
   name: charlescd-circle-matcher
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -828,7 +823,7 @@ metadata:
     app: compass
     service: compass
   name: compass
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -847,7 +842,7 @@ metadata:
     app: charlescd-moove
     service: charlescd-moove
   name: charlescd-moove
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -866,7 +861,7 @@ metadata:
     app: charlescd-ui
     service: charlescd-ui
   name: charlescd-ui
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -885,7 +880,7 @@ metadata:
     app: charlescd-villager
     service: charlescd-villager
   name: charlescd-villager
-  namespace: default
+  namespace: charles
 spec:
   ports:
     - name: http
@@ -901,7 +896,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-mongodb
-  namespace: default
+  namespace: charles
   labels:
     app: mongodb
     chart: mongodb-7.14.2
@@ -1029,7 +1024,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-octopipe
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-octopipe
     version: charlescd-octopipe
@@ -1108,7 +1103,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-butler
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-butler
     version: charlescd-butler
@@ -1165,9 +1160,9 @@ spec:
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
-              value: "http://charlescd-butler.default.svc.cluster.local:3000/notifications"
+              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
             - name: DARWIN_CALLBACK
-              value: "http://charlescd-butler.default.svc.cluster.local:3000/notifications"
+              value: "http://charlescd-butler.charles.svc.cluster.local:3000/notifications"
             - name: OCTOPIPE_URL
               value: "http://charlescd-octopipe:8080"
             - name: ENCRYPTION_KEY
@@ -1188,7 +1183,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-circle-matcher
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-circle-matcher
     version: charlescd-circle-matcher
@@ -1256,7 +1251,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd
-  namespace: default
+  namespace: charles
   labels:
     app: compass
     version: compass
@@ -1336,7 +1331,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-moove
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-moove
     version: charlescd-moove
@@ -1417,7 +1412,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-ui
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-ui
     version: charlescd-ui
@@ -1481,7 +1476,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: charlescd-villager
-  namespace: default
+  namespace: charles
   labels:
     app: charlescd-villager
     version: charlescd-villager
@@ -2032,7 +2027,7 @@ spec:
         - name: REDIS_REPLICATION_MODE
           value: slave
         - name: REDIS_MASTER_HOST
-          value: charlescd-redis-master-0.charlescd-redis-headless.default.svc.cluster.local
+          value: charlescd-redis-master-0.charlescd-redis-headless.charles.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
         - name: REDIS_MASTER_PORT_NUMBER
