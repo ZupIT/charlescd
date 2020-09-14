@@ -15,64 +15,93 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import MutationObserver from 'mutation-observer';
+import { render, fireEvent, screen } from 'unit-test/testUtils';
 import Segments from '..';
 
-(global as any).MutationObserver = MutationObserver
+(global as any).MutationObserver = MutationObserver;
 
-test('render Segments default component', async () => {
-  const { getByTestId, queryByTestId } = render(
-    <Segments />
-  );
+test('render Segments default component', () => {
+  render(<Segments />);
 
-  expect(queryByTestId('segments-rules')).not.toBeInTheDocument();
-  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
-  expect(queryByTestId('input-hidden-type')).toBeInTheDocument();
-  expect(queryByTestId('button-default-save')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('segments-rules')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('input-text-logicalOperator')).not.toBeInTheDocument();
+  expect(screen.getByTestId('input-hidden-type')).toBeInTheDocument();
+  expect(screen.queryByTestId('button-default-save')).not.toBeInTheDocument();
 });
 
-test('render Segments default component with viewMode off', async () => {
-  const { getByTestId } = render(
-    <Segments viewMode={false} />
-  );
+test('render Segments default component, add new group and change group logical operator', () => {
+  render(<Segments viewMode={false} />);
 
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
-  expect(getByTestId('input-text-logicalOperator')).toBeInTheDocument();
-  expect(getByTestId('button-default-save')).toBeInTheDocument();
+  const buttonAddGroup = screen.getByText('Group');
+  fireEvent.click(buttonAddGroup);
+
+  expect(screen.getByDisplayValue('OR')).toBeInTheDocument();
+
+  const operator = screen.getByTestId('input-text-logicalOperator');
+  fireEvent.click(operator);
+  
+  expect(screen.getByDisplayValue('AND')).toBeInTheDocument();
 });
 
-test('render Segments default component and Rules', async () => {
-  const { getByTestId } = render(
-    <Segments viewMode={false} />
-  );
-
-  const InputType = getByTestId('input-hidden-clauses[0].type')
-  const InputKey = getByTestId('input-text-clauses[0].content.key')
-  const WrapperCondition = getByTestId('select-clauses[0].content.condition')
-  const InputValue = getByTestId('input-text-clauses[0].content.value[0]')
-
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
-  expect(InputType).toHaveAttribute('type', 'hidden');
-  expect(InputKey).toBeInTheDocument();
-  expect(InputKey).toHaveAttribute('type', 'text');
-  expect(WrapperCondition).toBeInTheDocument();
-  expect(InputValue).toBeInTheDocument();
+test('render Segments default component with viewMode off', () => {
+  render(<Segments viewMode={false} />);
+    
+  expect(screen.getByTestId('segments-rules')).toBeInTheDocument();
+  expect(screen.getByTestId('input-text-logicalOperator')).toBeInTheDocument();
+  expect(screen.getByTestId('button-default-save')).toBeInTheDocument();
 });
 
-test('render Segments default component and adding new rule', async () => {
-  const { getByTestId } = render(
-    <Segments viewMode={false} />
-  );
+test('render Segments default component and Rules', () => {
+  render(<Segments viewMode={false} />);
+    
+  const inputTypeText = 'input-hidden-clauses[0].type';
+  const inputKeyText = 'input-text-clauses[0].content.key';
+  const wrapperConditionText = 'select-clauses[0].content.condition';
+  const inputValueText = 'input-text-clauses[0].content.value[0]';
+  
+  expect(screen.getByTestId('segments-rules')).toBeInTheDocument();
+  expect(screen.getByTestId(inputTypeText)).toHaveAttribute('type', 'hidden');
+  expect(screen.getByTestId(inputKeyText)).toBeInTheDocument();
+  expect(screen.getByTestId(inputKeyText)).toHaveAttribute('type', 'text');
+  expect(screen.getByTestId(wrapperConditionText)).toBeInTheDocument();
+  expect(screen.getByTestId(inputValueText)).toBeInTheDocument();
+});
 
-  const ButtonAddClause = getByTestId('button-default-add-clause');
-  expect(ButtonAddClause).toBeInTheDocument();
-
-  const KeyInput0 = getByTestId('input-text-clauses[0].content.key');
+test('render Segments default component and add new rule', () => {
+  render(<Segments viewMode={false} />);
+    
+  const KeyInput0 = screen.getByTestId('input-text-clauses[0].content.key');
   expect(KeyInput0).toBeInTheDocument();
-
-  fireEvent.click(ButtonAddClause);
-
-  const KeyInput1 = getByTestId('input-text-clauses[0].clauses[1].content.key');
+  
+  const ButtonAddRule = screen.getByTestId('button-default-add-clause');
+  expect(ButtonAddRule).toBeInTheDocument();
+  fireEvent.click(ButtonAddRule);
+  
+  const KeyInput1 = screen.getByTestId('input-text-clauses[0].clauses[1].content.key');
   expect(KeyInput1).toBeInTheDocument();
+});
+
+test('render Segments default component, add new rule and shows logical operator OR', () => {
+  render(<Segments viewMode={false} />);
+  
+  const buttonAddRule = screen.getByTestId('button-default-add-clause');
+  expect(buttonAddRule).toBeInTheDocument();
+  fireEvent.click(buttonAddRule);
+
+  const operator = screen.getByTestId('input-text-clauses[0].logicalOperator');
+  expect(operator).toHaveAttribute('value', 'OR');
+});
+
+test('render Segments default component, add new rule and change logical operator', () => {
+  render(<Segments viewMode={false} />);
+
+  const buttonAddRule = screen.getByTestId('button-default-add-clause');
+  fireEvent.click(buttonAddRule);
+
+  const operator = screen.getByTestId('input-text-clauses[0].logicalOperator');
+  expect(operator).toHaveAttribute('value', 'OR');
+  fireEvent.click(operator);
+
+  expect(screen.getByDisplayValue('AND')).toBeInTheDocument();
 });
