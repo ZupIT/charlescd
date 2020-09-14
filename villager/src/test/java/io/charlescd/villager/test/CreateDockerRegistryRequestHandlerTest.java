@@ -3,7 +3,6 @@ package io.charlescd.villager.test;
 import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
-import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
 import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import org.junit.jupiter.api.Test;
