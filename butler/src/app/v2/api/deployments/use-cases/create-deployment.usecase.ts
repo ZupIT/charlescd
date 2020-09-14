@@ -17,16 +17,17 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { flatten } from 'lodash'
-import { Repository } from 'typeorm'
+import { EntityManager, getConnection, Repository } from 'typeorm'
+import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { ConsoleLoggerService } from '../../../../v1/core/logs/console'
+import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
+import { ReadDeploymentDto } from '../dto/read-deployment.dto'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
-import { PgBossWorker } from '../jobs/pgboss.worker'
-import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
-import { ComponentsRepositoryV2 } from '../repository'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ExecutionTypeEnum } from '../enums'
-import { ReadDeploymentDto } from '../dto/read-deployment.dto'
+import { PgBossWorker } from '../jobs/pgboss.worker'
+import { ComponentsRepositoryV2 } from '../repository'
 
 @Injectable()
 export class CreateDeploymentUseCase {
@@ -44,24 +45,27 @@ export class CreateDeploymentUseCase {
 
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
-    const deployment = createDeploymentDto.circle ?
-      await this.createCircleDeployment(createDeploymentDto) :
-      await this.createDefaultDeployment(createDeploymentDto)
-    const execution = await this.createExecution(deployment, incomingCircleId)
+    const { deployment, execution } = await getConnection().transaction(async transactionManager => {
+      const deployment = createDeploymentDto.circle ?
+        await this.createCircleDeployment(createDeploymentDto, transactionManager) :
+        await this.createDefaultDeployment(createDeploymentDto, transactionManager)
+      const execution = await this.createExecution(deployment, incomingCircleId, transactionManager)
+      return { deployment, execution }
+    })
     const jobId = await this.publishExecutionJob(execution)
     this.consoleLoggerService.log('FINISH:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: deployment.id, execution: execution.id, jobId: jobId })
     const reloadedDeployment = await this.deploymentsRepository.findOneOrFail(deployment.id, { relations: ['components', 'executions', 'cdConfiguration'] })
     return reloadedDeployment.toReadDto() // BUG typeorm https://github.com/typeorm/typeorm/issues/4090
   }
 
-  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
+  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const deployment = await this.deploymentsRepository.save(createDeploymentDto.toCircleEntity())
+    const deployment = await manager.save(createDeploymentDto.toCircleEntity())
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
   }
 
-  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
+  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto, manager: EntityManager): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
     const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents()
     const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
@@ -70,7 +74,7 @@ export class CreateDeploymentUseCase {
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
 
-    const deployment = await this.deploymentsRepository.save(
+    const deployment = await manager.save(
       createDeploymentDto.toDefaultEntity(unchangedComponents)
     )
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
@@ -84,9 +88,10 @@ export class CreateDeploymentUseCase {
     return jobId
   }
 
-  private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null): Promise<Execution> {
+  private async createExecution(deployment: DeploymentEntity, incomingCircleId: string | null, manager: EntityManager): Promise<Execution> {
     this.consoleLoggerService.log('START:CREATE_DEPLOYMENT_EXECUTION', { deployment: deployment.id })
-    const execution = await this.executionRepository.save({ deployment, type: ExecutionTypeEnum.DEPLOYMENT, incomingCircleId })
+    const executionEntity = new Execution(deployment, ExecutionTypeEnum.DEPLOYMENT, incomingCircleId, DeploymentStatusEnum.CREATED )
+    const execution = await manager.save(executionEntity)
     this.consoleLoggerService.log('FINISH:CREATE_DEPLOYMENT_EXECUTION', { execution: execution.id })
     return execution
   }
