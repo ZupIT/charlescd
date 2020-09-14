@@ -103,7 +103,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     );
 
   const redirectToDocumentation = () => {
-    goTo('https://docs.charlescd.io/v/v0.2.1/');
+    goTo('https://docs.charlescd.io');
   };
 
   return (
