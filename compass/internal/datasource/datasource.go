@@ -90,10 +90,6 @@ func (main Main) FindById(id string) (DataSource, error) {
 }
 
 func (main Main) Delete(id string) error {
-	if _, err := main.FindById(id); err != nil {
-		return err
-	}
-
 	db := main.db.Model(&DataSource{}).Where("id = ?", id).Delete(&DataSource{})
 	if db.Error != nil {
 		logger.Error(util.DeleteDatasourceError, "Delete", db.Error, "Id = "+id)
