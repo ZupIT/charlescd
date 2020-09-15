@@ -37,8 +37,6 @@ public class KeyMetadata {
     public KeyMetadata() {
     }
 
-
-
     public KeyMetadata(String key, Segmentation segmentation) {
         this.reference = segmentation.getReference();
         this.key = key;
