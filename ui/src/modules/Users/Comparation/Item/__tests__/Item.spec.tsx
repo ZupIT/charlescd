@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait, fireEvent, screen } from 'unit-test/testUtils';
 import UsersComparationItem from '..';
 import { FetchMock } from 'jest-fetch-mock/types';
 
@@ -111,6 +111,8 @@ test('render UsersComparationItem component and trigger ModalResetPassword', asy
   );
 
   await wait(() => expect(getByTestId(`users-comparation-item-${props.email}`)).toBeInTheDocument());
+
+  await wait();
 
   const buttonResetPassword = queryByTestId('labeledIcon-shield');
   fireEvent.click(buttonResetPassword);
