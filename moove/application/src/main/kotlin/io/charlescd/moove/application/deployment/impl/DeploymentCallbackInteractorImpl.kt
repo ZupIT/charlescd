@@ -25,7 +25,6 @@ import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentRepository
-import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import java.time.LocalDateTime
 import javax.inject.Named
@@ -35,8 +34,8 @@ import javax.transaction.Transactional
 open class DeploymentCallbackInteractorImpl(
     private val deploymentRepository: DeploymentRepository,
     private val circleMatcherService: CircleMatcherService,
-    private val workspaceService: WorkspaceService) :
-    DeploymentCallbackInteractor {
+    private val workspaceService: WorkspaceService
+) : DeploymentCallbackInteractor {
 
     @Transactional
     override fun execute(id: String, request: DeploymentCallbackRequest) {
@@ -78,14 +77,14 @@ open class DeploymentCallbackInteractorImpl(
     }
 
     private fun updateStatusInCircleMatcher(circle: Circle, request: DeploymentCallbackRequest) {
-        if (callbackNotFailed(request.deploymentStatus) && !circle.defaultCircle) {
+        if (isSuccessCallback(request.deploymentStatus) && !circle.defaultCircle) {
             val workspace = this.workspaceService.find(circle.workspaceId)
             val isActive = request.deploymentStatus === DeploymentRequestStatus.SUCCEEDED
             this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, isActive)
         }
     }
 
-    private fun callbackNotFailed(deploymentStatus: DeploymentRequestStatus): Boolean {
+    private fun isSuccessCallback(deploymentStatus: DeploymentRequestStatus): Boolean {
         return deploymentStatus === DeploymentRequestStatus.SUCCEEDED || deploymentStatus === DeploymentRequestStatus.UNDEPLOYED
     }
 

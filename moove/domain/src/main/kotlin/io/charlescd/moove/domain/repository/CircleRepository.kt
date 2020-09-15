@@ -50,5 +50,4 @@ interface CircleRepository {
 
     fun count(workspaceId: String, name: String?): Int
 
-    fun findCircleIsActiveById(id: String, workspaceId: String): Optional<Circle>
 }
