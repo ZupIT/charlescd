@@ -95,6 +95,4 @@ test('render add metrics group modal', async () => {
   fireEvent.click(addMetricsGroup);
 
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
-  
-  screen.debug();
 });
