@@ -26,7 +26,7 @@ import Routes from './Routes';
 const currentTheme = 'dark';
 setUserAbilities();
 
-const setIsMicrofrontend = (isMicrofrontend?: boolean) => {
+export const setIsMicrofrontend = (isMicrofrontend?: boolean) => {
   localStorage.setItem('isMicrofrontend', isMicrofrontend?.toString());
 };
 

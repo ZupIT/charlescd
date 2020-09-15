@@ -19,26 +19,18 @@ import { FetchMock } from 'jest-fetch-mock';
 import { render, wait, screen } from 'unit-test/testUtils';
 import { MemoryRouter } from 'react-router-dom';
 import { setAccessToken } from 'core/utils/auth';
-import { saveProfile } from 'core/utils/profile';
 import Routes from '../Routes';
-
-jest.mock('core/constants/routes', () => {
-  return {
-    routes: {
-      baseName: '/',
-      workspaces: '/workspaces',
-      error403: '/error/403',
-      error404: '/error/404'
-    }
-  };
-});
+import { setIsMicrofrontend } from 'App';
 
 test('render default route', async () => {
-  const { container } = render(<Routes />);
+  render(
+    <MemoryRouter>
+      <Routes />
+    </MemoryRouter>
+  );
 
-  await wait(() => expect(container.innerHTML).toMatch('Error 403.'));
+  await wait(() => screen.getByTestId('menu-workspaces'));
 });
-
 
 test('should save profile', async () => {
   setAccessToken(
@@ -50,13 +42,30 @@ test('should save profile', async () => {
     email: "charles@admin",
     isRoot: true
   };
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(profile));
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({}))
+    .mockResponseOnce(JSON.stringify({}))
+    .mockResponseOnce(JSON.stringify(profile));
+
   render(
-    <MemoryRouter initialEntries={['/workspaces']}>
+    <MemoryRouter>
       <Routes />
     </MemoryRouter>
   );
 
   const profileBase64 = btoa(JSON.stringify(profile));
   await wait(() => expect(localStorage.getItem('profile')).toEqual(profileBase64));
-})
+});
+
+test('render main in microfrontend mode', async () => {
+  setIsMicrofrontend(true);
+  const { container } = render(
+    <MemoryRouter>
+      <Routes />
+    </MemoryRouter>
+  );
+
+  await wait(() => expect(
+    screen.getByTestId('menu-workspaces').getAttribute('href')).toContain('/charlescd')
+  );
+});
