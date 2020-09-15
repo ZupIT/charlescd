@@ -77,8 +77,9 @@ open class UpdateCircleWithCsvFileInteractorImpl(
         previousReference: String
     ) {
         val workspace = workspaceService.find(workspaceId)
+        val deployment = deploymentService.findActiveList(circle.id)
         nodeList.chunked(100).map {
-            circleMatcherService.updateImport(circle, previousReference, it, workspace.circleMatcherUrl!!)
+            circleMatcherService.updateImport(circle, previousReference, it, workspace.circleMatcherUrl!!, deployment.isNotEmpty())
         }
     }
 

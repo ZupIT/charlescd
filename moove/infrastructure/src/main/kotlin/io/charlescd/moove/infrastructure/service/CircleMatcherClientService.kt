@@ -56,12 +56,12 @@ class CircleMatcherClientService(
     override fun createImport(circle: Circle, nodes: List<JsonNode>, matcherUri: String) {
         this.circleMatcherClient.createImport(
             URI(matcherUri),
-            createImportRequest(nodes, circle)
+            createImportRequest(nodes, circle, false)
         )
     }
 
-    override fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String) {
-        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle))
+    override fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean) {
+        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle, active))
     }
 
     override fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle> {
@@ -77,12 +77,13 @@ class CircleMatcherClientService(
 
     private fun createImportRequest(
         nodes: List<JsonNode>,
-        circle: Circle
+        circle: Circle,
+        active: Boolean
     ): List<CircleMatcherRequest> {
-        return nodes.map { createImportMatcherRequest(circle, it) }
+        return nodes.map { createImportMatcherRequest(circle, it, active) }
     }
 
-    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode) =
+    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode, isActive: Boolean) =
         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
@@ -94,7 +95,7 @@ class CircleMatcherClientService(
             type = circle.matcherType.name,
             workspaceId = circle.workspaceId,
             isDefault = circle.defaultCircle,
-            active = false
+            active = isActive
         )
 
     private fun createMatcherRequest(circle: Circle, isActive:Boolean, previousReference: String? = null): CircleMatcherRequest =
