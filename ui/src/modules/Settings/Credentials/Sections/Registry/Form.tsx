@@ -150,22 +150,22 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
-  const renderDockerHubFields = () => {
-    return (
-      <>
-        <Form.Input
-          ref={register({ required: true })}
-          name="username"
-          label="Enter the username"
-        />
-        <Form.Password
-          ref={register({ required: true })}
-          name="password"
-          label="Enter the password"
-        />
-      </>
-    );
-  };
+  // const renderDockerHubFields = () => {
+  //   return (
+  //     <>
+  //       <Form.Input
+  //         ref={register({ required: true })}
+  //         name="username"
+  //         label="Enter the username"
+  //       />
+  //       <Form.Password
+  //         ref={register({ required: true })}
+  //         name="password"
+  //         label="Enter the password"
+  //       />
+  //     </>
+  //   );
+  // };
 
   const handleFields = () => {
     if (registryType === 'AWS') {
@@ -174,9 +174,9 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'GCR') {
       return renderGCPFields();
     }
-    if (registryType === 'DOCKER_HUB') {
-      return renderDockerHubFields();
-    }
+    // if (registryType === 'DOCKER_HUB') {
+    //   return renderDockerHubFields();
+    // }
     return renderAzureFields();
   };
 
