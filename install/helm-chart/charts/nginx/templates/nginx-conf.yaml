@@ -38,8 +38,8 @@ data:
 
                 access_by_lua '
                     local opts = {
-                      discovery = "{{ Values.idm.endpoint }}",
-                      token_signing_alg_values_expected = { {{ Values.idm.alg }} }
+                      discovery = "{{ .Values.idm.endpoint }}",
+                      token_signing_alg_values_expected = { {{ .Values.idm.alg }} }
                     }
 
                     -- call bearer_jwt_verify for OAuth 2.0 JWT validation

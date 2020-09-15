@@ -1,5 +1,5 @@
 butler:
-  enabled: false
+  enabled: true
   name: "charlescd-butler"
   octopipeHost: "http://charlescd-octopipe:8080"
   database:
@@ -28,7 +28,7 @@ butler:
     memory: 128Mi
 
 moove:
-  enabled: false
+  enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
@@ -55,12 +55,12 @@ moove:
    requests:
     cpu: 128m
     memory: 128Mi
-  
+
 sidecarIstio:
   enabled: true
 
 villager:
-  enabled: false
+  enabled: true
   name: "charlescd-villager"
   database:
     name: charlescd_villager
@@ -111,7 +111,7 @@ ui:
     memory: 64Mi
 
 circlematcher:
-  enabled: false
+  enabled: true
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -138,7 +138,7 @@ circlematcher:
     memory: 128Mi
 
 keycloak:
-  enabled: false
+  enabled: true
   keycloak:
     extraEnv: |
         - name: PROXY_ADDRESS_FORWARDING
@@ -167,6 +167,7 @@ keycloak:
         /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
 
 
+
 postgresql:
   enabled: true
   postgresqlUsername: "postgres"
@@ -181,7 +182,7 @@ mongodb:
   mongodbRootPassword: "octopipe"
 
 nginx:
-  enabled: false
+  enabled: true
   ui:
     enabled: true
   moove:
@@ -206,7 +207,7 @@ octopipe:
       value: "300"
 
 compass:
-  enabled: false
+  enabled: true
   name: compass
   replicaCount: 1
   envVars:
