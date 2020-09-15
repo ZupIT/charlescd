@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -189,11 +211,6 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
         server {
             listen 80;
             
@@ -264,6 +281,50 @@ data:
                 proxy_set_header Host $host;
                 proxy_pass      http://charlescd-keycloak-http;
             }
+            
+            location /compass/ {
+                proxy_http_version 1.1;
+                proxy_pass http://compass:8080/;
+                if ($request_method = 'OPTIONS') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Max-Age' 1728000;
+                    add_header 'Content-Type' 'text/plain; charset=utf-8';
+                    add_header 'Content-Length' 0;
+                    return 204;
+                }
+                if ($request_method = 'POST') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'GET') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PUT') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PATCH') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'DELETE') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+            }
         }
     }
 kind: ConfigMap
@@ -281,7 +342,7 @@ metadata:
     release: "charlescd"
     heritage: "Helm"
 data:
-  charlescd-extensions.sh: |-
+  charlescd-extensions.sh: |
     #!/bin/bash
     export PGUSER=postgres
     export PGPASSWORD=firstpassword
@@ -300,6 +361,11 @@ data:
     psql -c "CREATE DATABASE keycloak"
     psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
     psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+  
+    psql -c "CREATE DATABASE charlescd_compass"
+    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+    psql -d charles_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
 # Source: Charles-CD/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -421,28 +487,6 @@ spec:
   resources:
     requests:
       storage: "8Gi"
----
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -813,6 +857,25 @@ spec:
     
   selector:
     app: charlescd-circle-matcher
+  type: ClusterIP
+---
+# Source: Charles-CD/templates/charlescd-compass-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: compass
+    service: compass
+  name: compass
+  namespace: charles
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: compass
   type: ClusterIP
 ---
 # Source: Charles-CD/templates/charlescd-moove-service.yaml
@@ -1226,6 +1289,86 @@ spec:
             requests:
               cpu: 128m
               memory: 128Mi
+---
+# Source: Charles-CD/templates/charlescd-compass-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd
+  namespace: charles
+  labels:
+    app: compass
+    version: compass
+    circleId: 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compass
+      version: charlescd
+      circleId: 
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: compass
+        version: charlescd
+        circleId: 
+    spec:
+      containers:
+        - name: compass
+          image: latest
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP  
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1 
+          imagePullPolicy: Always
+          env:
+          - name: DB_HOST
+            value: "charlescd-sandbox-postgresql"
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            value: "charlescd_compass"
+          - name: DB_PASSWORD
+            value: "C1UinUu6N0vc"
+          - name: DB_NAME
+            value: "charlescd_compass"
+          - name: DB_SSL
+            value: "disable"
+          - name: PLUGINS_DIR
+            value: "./plugins"
+          - name: ENV
+            value: "DEV"
+          - name: DISPATCHER_INTERVAL
+            value: "15s"
+          
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
+      imagePullSecrets:
+        - name: realwavelab-registry
 ---
 # Source: Charles-CD/templates/charlescd-moove-deployment.yaml
 apiVersion: apps/v1
