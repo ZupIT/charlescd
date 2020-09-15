@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen, fireEvent, wait } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupData } from './fixtures';
+import { MetricsGroupData, MetricsGroupWithoutMetricData } from './fixtures';
 import MetricsGroups from '../index';
 
 beforeEach(() => {
@@ -93,6 +93,58 @@ test('render add metrics group modal', async () => {
 
   const addMetricsGroup = screen.getByText('Add metrics group');
   fireEvent.click(addMetricsGroup);
-
+  
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
+  
+  const closeAddMetricsGroup = screen.getByTestId('icon-cancel');
+  fireEvent.click(closeAddMetricsGroup);
+
+  expect(screen.queryByTestId('modal-default')).not.toBeInTheDocument();
+});
+
+test('render default Metrics Groups and refresh screen', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const refresh = screen.getByText('Refresh');
+  fireEvent.click(refresh);
+  
+  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+});
+
+test('render default Add metric to the group', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+  
+  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
+  fireEvent.click(metricsGroupMenu);
+  fireEvent.click(screen.getByText('Add metric'));
+  
+  expect(screen.getByTestId('add-metric')).toBeInTheDocument();
+});
+
+test('render metrics groups and delete a metrics group', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupWithoutMetricData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const metricsGroupMenu = screen.getByTestId('icon-vertical-dots');
+  fireEvent.click(metricsGroupMenu);
+  fireEvent.click(screen.getByText('Delete'));
+
+  expect(screen.queryByText('test 1a')).not.toBeInTheDocument();
 });
