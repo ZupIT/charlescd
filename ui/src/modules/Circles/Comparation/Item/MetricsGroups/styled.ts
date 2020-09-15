@@ -34,6 +34,10 @@ interface ButtonIconProps {
   isActive: boolean;
 }
 
+interface FilterOpenProps {
+  isOpen: boolean;
+}
+
 interface ThresholdIconProps {
   color: string;
   hasTreshold: boolean;
@@ -268,8 +272,8 @@ const MetricLastValue = styled.div<ThresholdIconProps>`
 
 const MonitoringMetricsContent = styled.div``;
 
-const MonitoringMetricsFilter = styled.div`
-  padding-top: 10px;
+const MonitoringMetricsFilter = styled.div<FilterOpenProps>`
+  padding-top: ${({ isOpen }) => isOpen && '10px'};
   display: flex;
 
   > * {
@@ -316,9 +320,15 @@ const FieldErrorWrapper = styled.div`
 
 const MultiSelect = styled(SelectComponent.MultiCheck)`
   width: 115px;
+  padding: 0 0 15px 0;
 
   div:first-child {
     background: transparent;
+    border-bottom: none;
+  }
+
+  svg > * + * {
+    display: none;
   }
 `;
 

@@ -85,10 +85,15 @@ export type DataSourceData = {
 export type ChartDataByQuery = {
   id: string;
   metric: string;
-  result: ChartData[];
+  result: Data[];
 }[];
 
 export type ChartData = {
+  name: string;
+  data: Data[];
+};
+
+export type Data = {
   total: number;
   period: number;
 };
