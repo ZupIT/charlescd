@@ -484,7 +484,7 @@ class JdbcCircleRepository(
     }
 
     override fun findCircleIsActiveById(id: String, workspaceId: String): Optional<Circle> {
-        val parameters = mutableListOf(id,workspaceId)
+        val parameters = mutableListOf(id, workspaceId)
         val statement = createActiveCircleQuery(null)
         statement.append("AND circles.id = ?")
 
