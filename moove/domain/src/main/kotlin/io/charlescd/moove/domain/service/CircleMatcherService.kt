@@ -36,5 +36,4 @@ interface CircleMatcherService {
     fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String, active: Boolean)
 
     fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle>
-
 }
