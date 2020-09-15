@@ -18,6 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactTooltip from 'react-tooltip';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
@@ -50,7 +51,7 @@ type ChartOpen = {
 };
 
 type ChartFilter = {
-  [key: string]: string[];
+  [key: string]: object[];
 };
 
 const MetricsGroups = ({ onGoBack, id }: Props) => {
@@ -127,18 +128,14 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     }));
   };
 
-  const toggleMetricGroupFilter = (metricGroupId: string, filters: any) => {
-    const filterLabels: any[] = [];
-    filters.map((filter: any) => filterLabels.concat(filter.value));
-    console.log(filterLabels);
-    // console.log(map(filters, filter => ({ filter })));
-
-    // setSelectMetric(previous => ({
-    //   ...previous,
-    //   [metricGroupId]: filters
-    // }));
-
-    // console.log(filters, selectMetric);
+  const toggleMetricGroupFilter = (
+    metricGroupId: string,
+    filters: object[]
+  ) => {
+    setSelectMetric(previous => ({
+      ...previous,
+      [metricGroupId]: filters
+    }));
   };
 
   const getMetricCondition = (condition: string) => {
@@ -149,6 +146,13 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     } as Record<string, string>;
 
     return textByCondition[condition] ?? 'Not configured';
+  };
+
+  const renderLabelText = (metricGroupId: string) => {
+    if (isUndefined(selectMetric[metricGroupId])) return false;
+    if (isEmpty(selectMetric[metricGroupId])) return true;
+
+    return false;
   };
 
   const renderModal = () =>
@@ -253,7 +257,9 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         </Styled.MetricsGroupsCardHeader>
         {!isEmpty(metricGroup.metrics) && (
           <>
-            <Styled.MonitoringMetricsFilter>
+            <Styled.MonitoringMetricsFilter
+              isOpen={!groupChartOpen[metricGroup.id]}
+            >
               <LabeledIcon
                 icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
                 onClick={() => toggleMetricGroupChart(metricGroup.id)}
@@ -270,7 +276,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
                     options={normalizeSelectOptionsNickname(
                       metricGroup.metrics
                     )}
-                    label="Select metrics"
+                    label={renderLabelText(metricGroup.id) && 'Select metrics'}
                     defaultValue={[allOption]}
                     onChange={e => toggleMetricGroupFilter(metricGroup.id, e)}
                   />
@@ -278,7 +284,10 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               )}
             </Styled.MonitoringMetricsFilter>
             {groupChartOpen[metricGroup.id] && (
-              <MonitoringMetrics metricsGroupId={metricGroup.id} />
+              <MonitoringMetrics
+                metricsGroupId={metricGroup.id}
+                selectFilters={selectMetric[metricGroup.id]}
+              />
             )}
             <Styled.MetricCardTableHead>
               <Text.h5 color="dark">Nickname</Text.h5>
