@@ -232,3 +232,28 @@ func (s *Suite) TestDeleteError() {
 	err := s.repository.Delete("any-id")
 	require.Error(s.T(), err)
 }
+
+func (s *Suite) TestGetMetricsNotFoundError() {
+	datasourceId := uuid.New().String()
+	_, err := s.repository.GetMetrics(datasourceId, "")
+
+	require.Error(s.T(), err)
+}
+
+func (s *Suite) TestGetMetricsError() {
+	workspaceId := uuid.New()
+	dataSource := datasource2.DataSource{
+		Name:        "DataTest2",
+		PluginSrc:   "prometheus",
+		Health:      true,
+		Data:        json.RawMessage(`{"url": "localhost:8090"}`),
+		WorkspaceID: workspaceId,
+		DeletedAt:   nil,
+	}
+
+	s.DB.Create(&dataSource)
+
+	_, err := s.repository.GetMetrics(dataSource.ID.String(), "")
+
+	require.Error(s.T(), err)
+}
