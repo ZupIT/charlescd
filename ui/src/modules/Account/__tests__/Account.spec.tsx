@@ -15,15 +15,24 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait, fireEvent, waitForElement } from 'unit-test/testUtils';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import routes from 'core/constants/routes';
 import { FetchMock } from 'jest-fetch-mock';
 import MutationObserver from 'mutation-observer';
 import Account from '../';
+import { saveProfile } from 'core/utils/profile';
 
 (global as any).MutationObserver = MutationObserver
+
+beforeEach(() => {
+  (fetch as FetchMock).resetMocks();
+});
+
+beforeAll(() => {
+  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
+});
 
 test('render account tab profile', async () => {
   const history = createMemoryHistory();
@@ -36,6 +45,7 @@ test('render account tab profile', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
+
   const { queryByTestId } = render(<Router history={history}><Account /></Router>);
 
   await wait(() => expect(queryByTestId('tabpanel-Account')).toBeInTheDocument());
@@ -52,11 +62,13 @@ test('show change password modal', async () => {
     email: 'user@zup.com.br',
     photoUrl: ''
   }));
+
   const { queryByTestId, getByTestId } = render(<Router history={history}><Account /></Router>);
 
   await wait(() => expect(queryByTestId('tabpanel-Account')).toBeInTheDocument());
+  
   const changePassButton = getByTestId('labeledIcon-account');
   fireEvent.click(changePassButton);
-  
+
   await wait(() => expect(queryByTestId('modal-default')).toBeInTheDocument());
 });
