@@ -120,17 +120,19 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
 
         1 * this.workspaceRepository.find(workspaceId) >> Optional.of(workspace)
 
-        1 * circleMatcherService.updateImport(_, _, _, _) >> { arguments ->
+        1 * circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
             def updatedCircle = arguments[0]
             def previousReference = arguments[1]
             def nodes = arguments[2]
             def matcherUri = arguments[3]
+            def active = arguments[4]
 
             assert updatedCircle instanceof Circle
             assert nodes instanceof List<JsonNode>
 
             matcherUri == workspace.circleMatcherUrl
             previousReference == circle.reference
+            active == true
 
             def node = objectMapper.treeToValue(updatedCircle.rules, NodePart.class)
             assert node.clauses[0].clauses[0].content.value.contains("ce532f07-3bcf-40f8-9a39-289fb527ed54")
@@ -139,7 +141,7 @@ class UpdateCircleWithCsvFileInteractorImplTest extends Specification {
             assert node.clauses[0].clauses[3].content.value.contains("2dd5fd08-c23a-494a-80b6-66db39c73630")
         }
 
-        1 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
+        2 * deploymentRepository.findActiveByCircleId(circleId) >> [deployment]
         1 * buildRepository.findById(deployment.buildId) >> Optional.of(build)
 
         assert response != null
