@@ -22,7 +22,7 @@ import Icon from 'core/components/Icon';
 import routes from 'core/constants/routes';
 import { updateParam } from 'core/utils/path';
 import ContentIcon from 'core/components/ContentIcon';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { Component } from 'modules/Modules/interfaces/Component';
 import { useDeleteComponent } from 'modules/Modules/hooks/component';
