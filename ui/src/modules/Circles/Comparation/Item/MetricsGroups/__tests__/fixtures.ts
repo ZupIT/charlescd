@@ -38,6 +38,14 @@ export const MetricsGroupData = [{
   status: "ACTIVE"
 }];
 
+export const MetricsGroupWithoutMetricData = [{
+  id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
+  circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
+  name: "test 1",
+  metrics: [],
+  status: "ACTIVE"
+}];
+
 export const OptionsValues = [
   {
     "label": "1",
