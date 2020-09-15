@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: monicaribeiro/openresty:alpinefat-openidc
           ports:
           - containerPort: 80        
           volumeMounts:

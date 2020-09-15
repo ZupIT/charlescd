@@ -6,7 +6,8 @@ circlematcher:
   enabled: true
 keycloak:
   enabled: true
-octopipe:
-  enabled: true
 compass:
   enabled: true
+idm:
+  endpoint: http://charlescd-keycloak-http/auth/realms/master/.well-known/openid-configuration
+  alg: "RS256"

@@ -9,6 +9,14 @@ data:
     }
 
     http {
+
+        lua_package_path '/usr/local/openresty/site/?.lua;;';
+        resolver 8.8.8.8;
+        # cache for discovery metadata documents
+        lua_shared_dict discovery 1m;
+        # cache for JWKs
+        lua_shared_dict jwks 1m;
+
         index    index.html index.htm index.php;
         default_type application/octet-stream;
         log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
@@ -27,6 +35,23 @@ data:
             {{- end}}
             {{ if .Values.moove.enabled}}
             location /moove/ {
+
+                access_by_lua '
+                    local opts = {
+                      discovery = "{{ Values.idm.endpoint }}",
+                      token_signing_alg_values_expected = { {{ Values.idm.alg }} }
+                    }
+
+                    -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                    local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+
+                    if err or not res then
+                      ngx.status = 401
+                      ngx.say(err and err or "no access_token provided")
+                      ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                    end
+                ';
+
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
                 if ($request_method = 'OPTIONS') {
@@ -48,12 +73,6 @@ data:
                     add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
                     add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
                  }
-            }
-            {{- end}}
-            {{ if .Values.octopipe.enabled}}
-            location /octopipe/ {
-                proxy_http_version 1.1;
-                proxy_pass http://charlescd-octopipe:8080/;
             }
             {{- end}}
             {{ if .Values.circlematcher.enabled}}
