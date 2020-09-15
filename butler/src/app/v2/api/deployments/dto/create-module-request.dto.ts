@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
+import { Optional } from '@nestjs/common'
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, IsUUID, Validate, ValidateNested } from 'class-validator'
-import { CreateComponentRequestDto } from './create-component-request.dto'
 import { ComponentUniqueProp } from '../validations/component-unique-by-name'
 import { CompositeFieldSize } from '../validations/composite-field-size'
-import { ApiProperty } from '@nestjs/swagger'
+import { CreateComponentRequestDto } from './create-component-request.dto'
 
 export class CreateModuleDeploymentDto {
 
   @ApiProperty()
   @IsUUID()
-  @IsNotEmpty()
+  @Optional()
   public moduleId: string
 
   @ApiProperty()

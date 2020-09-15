@@ -16,7 +16,7 @@
 
 import { InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { UpdateResult } from 'typeorm'
+import { getConnection, UpdateResult } from 'typeorm'
 import { DeploymentStatusEnum } from '../../../../v1/api/deployments/enums'
 import { NotificationStatusEnum } from '../../../../v1/api/notifications/enums'
 import { QueuedDeploymentsConstraints } from '../../../../v1/core/integrations/databases/constraints'
@@ -77,25 +77,28 @@ export class ReceiveNotificationUseCase {
       execution.deployment.active = false
     }
 
-    try {
-      if (currentActiveDeployment) {
-        await this.deploymentRepository.save(currentActiveDeployment)
+    const savedExecution = await getConnection().transaction(async transactionManager => {
+      try {
+        if (currentActiveDeployment) {
+          await transactionManager.save(currentActiveDeployment)
+        }
+        await transactionManager.save(execution.deployment.components)
+        await transactionManager.save(execution.deployment)
+        return await transactionManager.save(execution)
       }
-      await this.componentRepository.save(execution.deployment.components)
-      await this.deploymentRepository.save(execution.deployment)
-      const savedExecution = await this.executionRepository.save(execution)
-      await this.notifyMooveAndUpdateDeployment(savedExecution)
-      return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
-    }
-    catch (error) {
-      if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
-        this.consoleLoggerService.log('ERROR:Can only have one deployment active per circle')
-        throw new InternalServerErrorException('Can only have one deployment active per circle')
-      } else {
-        this.consoleLoggerService.log('ERROR:Failed to save deployment ')
-        throw new InternalServerErrorException
+      catch (error) {
+        if (error.constraint === QueuedDeploymentsConstraints.ONLY_ONE_ACTIVE_PER_CIRCLE_AND_CONFIG) {
+          this.consoleLoggerService.log('ERROR:Can only have one deployment active per circle')
+          throw new InternalServerErrorException('Can only have one deployment active per circle')
+        } else {
+          this.consoleLoggerService.log('ERROR:Failed to save deployment ')
+          throw new InternalServerErrorException
+        }
       }
-    }
+    })
+
+    await this.notifyMooveAndUpdateDeployment(savedExecution)
+    return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
   }
 
   private async notifyMooveAndUpdateDeployment(execution: Execution): Promise<UpdateResult> {
