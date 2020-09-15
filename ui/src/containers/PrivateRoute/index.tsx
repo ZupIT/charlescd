@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
+import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { isRoot } from 'core/utils/auth';
+import { isRoot, hasPermission } from 'core/utils/auth';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
-import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 
 export interface Props extends RouteProps {
   allowedRoles: string[];
@@ -35,31 +35,29 @@ const PrivateRoute = ({
   ...rest
 }: Props) => {
   const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace] = useWorkspace();
-  const [isAuthorizedByWorkspace, setIsAuthorizedByWorkspace] = useState(true);
+  const [, loadWorkspace] = useWorkspace();
+  const { item: workspace, status } = useGlobalState(
+    ({ workspaces }) => workspaces
+  );
 
   useEffect(() => {
-    loadWorkspace(workspaceId);
-  }, [workspaceId, loadWorkspace]);
-
-  useEffect(() => {
-    if (workspace) {
-      setIsAuthorizedByWorkspace(
-        workspace?.status === WORKSPACE_STATUS.COMPLETE
-      );
+    if (
+      hasPermission('maintenance_write') &&
+      (status === 'idle' ||
+        (status !== 'pending' && workspaceId !== workspace?.id))
+    ) {
+      loadWorkspace(workspaceId);
     }
-  }, [workspace]);
+  }, [workspaceId, loadWorkspace, status, workspace]);
 
   const isAuthorizedByUser =
-    (isRoot() || isAllowed(allowedRoles)) && allowedRoute;
+    allowedRoute || isAllowed(allowedRoles) || isRoot();
 
   return (
     <Route
       {...rest}
       render={props =>
-        isAuthorizedByWorkspace ? (
-          <Component {...props} />
-        ) : isAuthorizedByUser ? (
+        isAuthorizedByUser ? (
           <Component {...props} />
         ) : (
           <Redirect to={routes.error403} />
