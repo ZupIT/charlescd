@@ -61,6 +61,7 @@ class TestUtils {
         createSegmentationRequest.circleId = "52eb5b4b-59ac-4361-a6eb-cb9f70eb6a85"
         createSegmentationRequest.type = type
         createSegmentationRequest.isDefault = false
+        createSegmentationRequest.active = true
         return createSegmentationRequest
     }
 
@@ -73,6 +74,7 @@ class TestUtils {
         request.node = node
         request.type = type
         request.isDefault = false
+        request.active = true
         return request
     }
 }

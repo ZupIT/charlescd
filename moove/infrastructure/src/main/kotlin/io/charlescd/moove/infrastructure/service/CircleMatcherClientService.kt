@@ -97,7 +97,7 @@ class CircleMatcherClientService(
             active = isActive
         )
 
-    private fun createMatcherRequest(circle: Circle, isActive:Boolean, previousReference: String? = null): CircleMatcherRequest =
+    private fun createMatcherRequest(circle: Circle, isActive: Boolean, previousReference: String? = null): CircleMatcherRequest =
         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
@@ -114,5 +114,4 @@ class CircleMatcherClientService(
             isDefault = circle.defaultCircle,
             active = isActive
         )
-
 }
