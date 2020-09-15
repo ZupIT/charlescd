@@ -21,7 +21,7 @@ import { copyToClipboard } from 'core/utils/clipboard';
 import TabPanel from 'core/components/TabPanel';
 import routes from 'core/constants/routes';
 import Dropdown from 'core/components/Dropdown';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { delParam, updateParam } from 'core/utils/path';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { Module } from '../interfaces/Module';
