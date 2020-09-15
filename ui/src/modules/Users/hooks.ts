@@ -34,51 +34,40 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, Profile, NewUser, NewPassword } from './interfaces/User';
-import { logout } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
   user: User;
-  status: FetchStatus;
 } => {
   const dispatch = useDispatch();
   const getUserByEmail = useFetchData<User>(findUserByEmail);
-  const status = useFetchStatus();
   const [user, setUser] = useState(null);
 
-  const findByEmail = async (email: Pick<User, 'email'>) => {
-    try {
-      if (email) {
-        status.pending();
-        const res = await getUserByEmail(email);
+  const findByEmail = useCallback(
+    async (email: Pick<User, 'email'>) => {
+      try {
+        if (email) {
+          const res = await getUserByEmail(email);
 
-        setUser(res);
-        status.resolved();
+          setUser(res);
 
-        return res;
-      }
-    } catch (e) {
-      const error = await e.json();
-
-      if (error.error === 'invalid_token') {
-        // logout();
-      } else {
+          return res;
+        }
+      } catch (e) {
         dispatch(
           toogleNotification({
-            text: `${error.error} when trying to fetch the User for ${email}`,
+            text: `Error when trying to fetch the User for ${email}`,
             status: 'error'
           })
         );
       }
-
-      status.rejected();
-    }
-  };
+    },
+    [dispatch, getUserByEmail]
+  );
 
   return {
     findByEmail,
-    user,
-    status
+    user
   };
 };
 
@@ -161,14 +150,7 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): [
-  boolean,
-  boolean,
-  Function,
-  User,
-  string
-] => {
-  const { status: profileLoading } = useUser();
+export const useUpdateProfile = (): [boolean, Function, User, string] => {
   const [status, setStatus] = useState<string>('');
   const [dataUpdate, , update] = useFetch<User>(updateProfileById);
   const { response, loading: updateLoading } = dataUpdate;
@@ -181,13 +163,7 @@ export const useUpdateProfile = (): [
     [update]
   );
 
-  return [
-    profileLoading.isPending,
-    updateLoading,
-    updateProfile,
-    response,
-    status
-  ];
+  return [updateLoading, updateProfile, response, status];
 };
 
 export const useResetPassword = (): {
