@@ -31,6 +31,7 @@ import Switch from 'core/components/Switch';
 import AceEditorForm from 'core/components/Form/AceEditor';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
@@ -139,12 +140,16 @@ const FormRegistry = ({ onFinish }: Props) => {
           name="organization"
           label="Enter the project id"
         />
+        <Styled.Subtitle fontSize={HEADINGS_FONT_SIZE.h4} color="dark">
+          Enter the json key below:
+        </Styled.Subtitle>
         <AceEditorForm
           width={'270px'}
           mode="json"
           name="jsonKey"
           rules={{ required: true }}
           control={control}
+          theme="monokai"
         />
       </>
     );

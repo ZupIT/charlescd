@@ -25,6 +25,7 @@ export interface Props extends AceEditorProps {
   mode: string;
   defaultValue?: string;
   rules?: Partial<{ required: boolean | string }>;
+  placeholder?: string;
 }
 
 const AceEditorForm = ({
@@ -37,7 +38,8 @@ const AceEditorForm = ({
   onChange,
   height,
   width,
-  rules
+  rules,
+  placeholder
 }: Props) => (
   <Controller
     as={
@@ -48,6 +50,7 @@ const AceEditorForm = ({
         readOnly={false}
         height={height}
         width={width}
+        placeholder={placeholder}
       />
     }
     rules={rules}
