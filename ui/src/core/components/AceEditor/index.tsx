@@ -29,6 +29,7 @@ export interface Props {
   readOnly?: boolean;
   height?: string;
   width?: string;
+  placeholder?: string;
 }
 
 const AceEditor = ({
@@ -38,7 +39,8 @@ const AceEditor = ({
   mode,
   readOnly = true,
   height = '150px',
-  width = '500px'
+  width = '500px',
+  placeholder = ''
 }: Props) => {
   return (
     <Styled.Wrapper>
@@ -55,6 +57,7 @@ const AceEditor = ({
         height={height}
         highlightActiveLine={false}
         readOnly={readOnly}
+        placeholder={placeholder}
       />
     </Styled.Wrapper>
   );
