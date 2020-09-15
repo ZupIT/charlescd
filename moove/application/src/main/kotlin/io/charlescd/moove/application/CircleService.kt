@@ -71,7 +71,4 @@ class CircleService(private val circleRepository: CircleRepository) {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
     }
 
-    fun verifyCircleIsActiveById(id: String, workspaceId: String): Optional<Circle> {
-        return  this.circleRepository.findCircleIsActiveById(id, workspaceId);
-    }
 }
