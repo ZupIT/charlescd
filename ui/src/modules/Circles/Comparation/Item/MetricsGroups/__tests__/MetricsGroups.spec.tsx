@@ -24,7 +24,7 @@ beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-test('render Metrics Groups without data', async () => {
+test('render default Metrics Groups', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(MetricsGroupData)
   );
@@ -43,4 +43,41 @@ test('render Metrics Groups without data', async () => {
 
   fireEvent.click(goBack);
   expect(handleClick).toHaveBeenCalled();
+});
+
+test('render default Metrics Groups and toogle Chart', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const toogleChart = screen.getByTestId('labeledIcon-no-view');
+  fireEvent.click(toogleChart);
+
+  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+  expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
+  expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
+});
+
+test('render default Metrics Groups and filter Chart', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const toogleChart = screen.getByTestId('labeledIcon-no-view');
+  fireEvent.click(toogleChart);
+
+  const openFilterSelect = screen.getByTestId('labeledIcon-filter');
+  fireEvent.click(openFilterSelect);
+
+  expect(screen.getByText('Metrics groups')).toBeInTheDocument();
+  expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
+  expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
 });
