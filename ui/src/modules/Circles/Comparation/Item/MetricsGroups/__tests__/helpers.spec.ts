@@ -26,7 +26,7 @@ import {
   getOperator,
   getSelectDefaultValue,
   getThresholdStatus,
-  getDeploySeries
+  getMetricSeries
 } from '../helpers';
 
 test('must normalized metrics options', () => {
@@ -57,5 +57,5 @@ test('must get Threshold Status text', () => {
 });
 
 test('must format Deploy Series', () => {
-  expect(getDeploySeries(dataForMetricsSeriesTests)).toEqual(dataFormatted);
+  expect(getMetricSeries(dataForMetricsSeriesTests)).toEqual(dataFormatted);
 });
