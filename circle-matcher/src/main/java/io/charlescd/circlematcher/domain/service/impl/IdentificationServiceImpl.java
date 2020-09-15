@@ -108,7 +108,6 @@ public class IdentificationServiceImpl implements IdentificationService {
         return matched;
     }
 
-
     private void verifyRequestFormat(IdentificationRequest request) {
         for (var entry : request.getRequestData().entrySet()) {
             if (entry.getValue() instanceof Map || entry.getValue() instanceof List) {
@@ -137,7 +136,6 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .findFirst()
                 .map(m -> new Circle(m.getCircleId(), m.getName()))
                 .orElseThrow(() -> new NoSuchElementException("Default circle metadata not found."));
-
     }
 
     private boolean isActive(Segmentation segmentation) {
