@@ -81,3 +81,20 @@ test('render default Metrics Groups and filter Chart', async () => {
   expect(screen.getByTestId('labeledIcon-filter')).toBeInTheDocument();
   expect(screen.getByTestId('labeledIcon-view')).toBeInTheDocument();
 });
+
+test('render add metrics group modal', async () => {
+  (fetch as FetchMock).mockResponseOnce(
+    JSON.stringify(MetricsGroupData)
+  );
+
+  render(<MetricsGroups id={'1'} onGoBack={() => { }}/>);
+
+  await wait();
+
+  const addMetricsGroup = screen.getByText('Add metrics group');
+  fireEvent.click(addMetricsGroup);
+
+  expect(screen.getByTestId('modal-default')).toBeInTheDocument();
+  
+  screen.debug();
+});
