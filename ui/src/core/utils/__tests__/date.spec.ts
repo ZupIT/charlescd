@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { humanizeDateFromSeconds } from '../date';
+import { humanizeDurationFromSeconds } from '../date';
 
 test('should return time formated correctly', async () => {
-  expect(humanizeDateFromSeconds(0)).toEqual('0s');
-  expect(humanizeDateFromSeconds(72)).toEqual('1:12m');
-  expect(humanizeDateFromSeconds(53)).toEqual('53s');
-  expect(humanizeDateFromSeconds(4365)).toEqual('1:12:45h');
+  expect(humanizeDurationFromSeconds(0)).toEqual('0 s');
+  expect(humanizeDurationFromSeconds(72)).toEqual('1:12 m');
+  expect(humanizeDurationFromSeconds(53)).toEqual('53 s');
+  expect(humanizeDurationFromSeconds(4365)).toEqual('1:12:45 h');
+  expect(humanizeDurationFromSeconds(588291)).toEqual('6 days');
+  expect(humanizeDurationFromSeconds(7485343)).toEqual('86 days');
 })
