@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import React, { ReactElement, cloneElement, useEffect } from 'react';
+import React, { ReactElement, cloneElement } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { createCanBoundTo } from '@casl/react';
 import uniqueId from 'lodash/uniqueId';
 import omit from 'lodash/omit';
 import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
+import { useGlobalState } from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { hasPermission } from 'core/utils/auth';
+import { includes } from 'lodash';
 
 interface Props {
   I: Actions;
@@ -44,13 +45,8 @@ const Element = ({
   isDisabled = false,
   allowedRoutes = true
 }: Props) => {
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = uniqueId();
-  const workspaceId = getWorkspaceId();
-  const [workspace, loadWorkspace] = useWorkspace();
-
-  useEffect(() => {
-    loadWorkspace(workspaceId);
-  }, [workspaceId, loadWorkspace]);
 
   const renderTooltip = () => (
     <ReactTooltip id={id} place="right" effect="solid">
@@ -90,13 +86,23 @@ const Element = ({
     </>
   );
 
+  const checkWorkspaceStatus = (role: string) => {
+    const ignoreStatusIf = ['maintenance_write'];
+
+    const status =
+      hasPermission('maintenance_write') && !includes(ignoreStatusIf, role)
+        ? workspace?.status
+        : WORKSPACE_STATUS.COMPLETE;
+
+    return status === WORKSPACE_STATUS.COMPLETE;
+  };
+
   return (
     <Can I={I} a={a} passThrough={passThrough} data-testid="Can">
       {(allowed: boolean) => {
-        const isAllowed =
-          (allowed && workspace?.status === WORKSPACE_STATUS.COMPLETE) ||
-          (allowed && allowedRoutes);
-        return renderChildren(isAllowed);
+        return renderChildren(
+          allowed && allowedRoutes && checkWorkspaceStatus(`${a}_${I}`)
+        );
       }}
     </Can>
   );
