@@ -48,7 +48,11 @@ const Dropdown = ({
   };
 
   const renderItems = () => (
-    <Styled.Dropdown data-testid="dropdown-actions" className={className}>
+    <Styled.Dropdown
+      isBase
+      data-testid="dropdown-actions"
+      className={className}
+    >
       {children}
     </Styled.Dropdown>
   );
