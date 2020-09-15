@@ -69,7 +69,6 @@ export class CreateComponentRequestDto {
     gatewayName: string | undefined,
     namespace: string | undefined,
   ) {
-
     this.componentId = componentId
     this.buildImageUrl = buildImageUrl
     this.buildImageTag = buildImageTag

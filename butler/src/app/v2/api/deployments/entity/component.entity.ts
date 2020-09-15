@@ -1,6 +1,7 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Component } from '../interfaces'
+
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
 
