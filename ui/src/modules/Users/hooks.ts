@@ -56,7 +56,7 @@ export const useUser = (): {
       } catch (e) {
         dispatch(
           toogleNotification({
-            text: `Error when trying to fetch the User for ${email}`,
+            text: `Error when trying to fetch the user info for ${email}`,
             status: 'error'
           })
         );
