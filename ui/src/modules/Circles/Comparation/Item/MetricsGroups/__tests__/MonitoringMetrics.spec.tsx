@@ -27,7 +27,7 @@ beforeEach(() => {
 test('render Monitoring Metrics with data', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
   
-  render(<MonitoringMetrics metricsGroupId={'1'} />);
+  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]}/>);
 
   await wait();
 

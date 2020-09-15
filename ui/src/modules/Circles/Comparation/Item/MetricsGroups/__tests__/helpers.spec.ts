@@ -18,7 +18,10 @@ import {
   OptionsValues,
   ThresholdStatusResponse,
   dataForMetricsSeriesTests,
-  dataFormatted
+  dataFormatted,
+  allSelect, 
+  someIsSelect,
+  dataFormattedAndFilter
 } from './fixtures'; 
 import { 
   normalizeMetricOptions,
@@ -26,7 +29,8 @@ import {
   getOperator,
   getSelectDefaultValue,
   getThresholdStatus,
-  getMetricSeries
+  getMetricSeries,
+  filterMetricsSeries
 } from '../helpers';
 
 test('must normalized metrics options', () => {
@@ -56,6 +60,13 @@ test('must get Threshold Status text', () => {
   expect(getThresholdStatus(' ')).toEqual(ThresholdStatusResponse[2]);
 });
 
-test('must format Deploy Series', () => {
+test('must format Metric Series', () => {
   expect(getMetricSeries(dataForMetricsSeriesTests)).toEqual(dataFormatted);
+});
+
+test('must filter Metric Series', () => {
+  expect(filterMetricsSeries(dataFormatted, [])).toEqual([]);
+  expect(filterMetricsSeries(dataFormatted, undefined)).toEqual(dataFormatted);
+  expect(filterMetricsSeries(dataFormatted, allSelect)).toEqual(dataFormatted);
+  expect(filterMetricsSeries(dataFormatted, someIsSelect)).toEqual(dataFormattedAndFilter);
 });
