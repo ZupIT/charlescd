@@ -112,7 +112,6 @@ export function saveSessionData(accessToken: string, refreshToken: string) {
 }
 
 export const redirectToIDM = () => {
-  console.log('redirectToIDM');
   const params = `?client_id=${IDMClient}&response_type=code&redirect_uri=${IDMUrlRedirect}`;
   const url = `${IDMUrl}/auth/realms/${IDMRealm}${IDMUrlLogin}${params}`;
 

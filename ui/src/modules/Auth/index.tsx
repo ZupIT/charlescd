@@ -9,13 +9,11 @@ const Login = lazy(() => import('modules/Auth/Login'));
 
 const Auth = () => {
   const renderIDMLogin = () => {
-    console.log('renderIDMLogin');
-
     return <>{redirectToIDM()}</>;
   };
 
   const renderLogin = () => (
-    <Styled.Wrapper>
+    <Styled.Wrapper data-testid="auth">
       <Styled.Container>
         <Styled.Background>
           <AuthSVG />
