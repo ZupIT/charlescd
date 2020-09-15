@@ -35,13 +35,15 @@ interface GroupProps {
   verticalLine?: number;
   top?: number;
   hasGroup?: boolean;
+  viewMode?: boolean;
 }
+
 const Group = styled.div<GroupProps>`
   position: relative;
 
-  ${({ verticalLine, top, theme, hasGroup }) =>
+  ${({ verticalLine, top, theme, hasGroup, viewMode }) =>
+    !viewMode &&
     hasGroup &&
-    verticalLine &&
     css`
       ::before {
         position: absolute;

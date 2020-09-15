@@ -39,8 +39,10 @@ export default {
   }),
   placeholder: (style: CSSProperties, state: SelectComponentsProps) => {
     const { selectProps, hasValue } = state;
+    const { hasError } = selectProps;
     const labelPos =
       selectProps.menuIsOpen || selectProps.inputValue || hasValue;
+    const color = hasError ? theme.input.error.color : theme.select.placeholder;
 
     return {
       ...style,
@@ -48,7 +50,7 @@ export default {
       top: labelPos ? '7px' : '27px',
       transition: 'top 0.1s, font-size 0.1s',
       fontSize: labelPos ? '12px' : '14px',
-      color: theme.select.placeholder
+      color
     };
   },
   loadingIndicator: (style: CSSProperties) => ({
@@ -64,12 +66,17 @@ export default {
     right: 0
   }),
   control: (style: CSSProperties, state: SelectComponentsProps) => {
-    let borderBottom = theme.select.borderColor;
+    const { hasError } = state.selectProps;
 
+    let borderBottom = '';
     if (state.isDisabled) {
       borderBottom = theme.select.disabled.borderColor;
+    } else if (hasError) {
+      borderBottom = theme.input.error.borderColor;
     } else if (state.isFocused) {
       borderBottom = theme.select.focus.borderColor;
+    } else {
+      borderBottom = theme.select.borderColor;
     }
 
     return {
@@ -81,7 +88,7 @@ export default {
       borderBottom: `1px solid ${borderBottom}`,
       boxShadow: '0',
       '&:hover': {
-        borderBottom: `1px solid ${theme.select.focus.borderColor}`
+        borderBottom: `1px solid ${borderBottom}`
       }
     };
   },

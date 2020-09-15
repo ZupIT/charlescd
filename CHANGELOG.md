@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.3.4-rc.3 (04/09/2020)
+- [#462](https://github.com/ZupIT/charlescd/pull/462) Refinement UI
+- [#460](https://github.com/ZupIT/charlescd/pull/460) Butler stabilization version concat validation
+- [#459](https://github.com/ZupIT/charlescd/pull/459) validate componentName + imageTag cannot be greater than 63
+- [#456](https://github.com/ZupIT/charlescd/pull/456) Fix spinnaker tests, return hostValue and gatewayName on executions index
+- [#454](https://github.com/ZupIT/charlescd/pull/454) Add component name v2
+- [#453](https://github.com/ZupIT/charlescd/pull/453) Index pagination by 0, validate query string params
+- [#407](https://github.com/ZupIT/charlescd/pull/407) remove module controller
+- [#393](https://github.com/ZupIT/charlescd/pull/393) add label circleId
+- [#451](https://github.com/ZupIT/charlescd/pull/451) Fix ingress options v2
+- [#450](https://github.com/ZupIT/charlescd/pull/450) Add page indication on paginated response
+- [#443](https://github.com/ZupIT/charlescd/pull/443) Codecov upgrade 1.0.7 to 1.0.13
+- [#441](https://github.com/ZupIT/charlescd/pull/441) Butler stabilization execution list
+- [#437](https://github.com/ZupIT/charlescd/pull/437) Add circle label on deployment
+- [#439](https://github.com/ZupIT/charlescd/pull/439) Add new ingress options butler v2
+- [#434](https://github.com/ZupIT/charlescd/pull/434) use pgcrypto to generate uuid
+- [#429](https://github.com/ZupIT/charlescd/pull/429) No rollback when pod is shared
+- [#347](https://github.com/ZupIT/charlescd/pull/347) Change user password
+- [#433](https://github.com/ZupIT/charlescd/pull/433) create pg extension in case the database cant run uuid_generate_v4
+- [#432](https://github.com/ZupIT/charlescd/pull/432) dont run cleanup query if no expired executions are found
+- [#427](https://github.com/ZupIT/charlescd/pull/427) Butler stabilization fix undeployment callback
+- [#431](https://github.com/ZupIT/charlescd/pull/431) dont log entire objects on deploy
+- [#405](https://github.com/ZupIT/charlescd/pull/405) Hotfix: user can not edit profile picture.
+- [#375](https://github.com/ZupIT/charlescd/pull/375) Validating if email is already registered.
+- [#420](https://github.com/ZupIT/charlescd/pull/420) Update execution status and notify moove on undeployment
+- [#417](https://github.com/ZupIT/charlescd/pull/417) CI Update of charts and changelog
+- [#415](https://github.com/ZupIT/charlescd/pull/415) alter migrations and entities
+- [#419](https://github.com/ZupIT/charlescd/pull/419) Fix repeated drules v2
+- [#416](https://github.com/ZupIT/charlescd/pull/416) Fix incomingCircleId for callbacks
+- [#398](https://github.com/ZupIT/charlescd/pull/398) Hotfix: moove was allowing post and delete requests without token
+
+---
+
 ## 0.3.4-rc.2 (21/08/2020)
 - [#387](https://github.com/ZupIT/charlescd/pull/387) Add link that opens Charles Documentation
 - [#408](https://github.com/ZupIT/charlescd/pull/408) Set components running to false on cleanup
