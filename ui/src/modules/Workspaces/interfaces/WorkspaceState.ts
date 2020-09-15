@@ -16,8 +16,10 @@
 
 import { WorkspacePagination } from './WorkspacePagination';
 import { Workspace } from './Workspace';
+import { FetchStatuses } from 'core/providers/base/hooks';
 
 export interface WorkspaceState {
   list: WorkspacePagination;
   item: Workspace;
+  status: FetchStatuses;
 }
