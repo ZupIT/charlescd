@@ -18,6 +18,8 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { login, renewToken } from '../auth';
 import { getRefreshToken, isIDMAuthFlow } from 'core/utils/auth';
+import { redirectTo } from 'core/utils/routes';
+import routes from 'core/constants/routes';
 
 interface FetchData<T> {
   response: T;
@@ -55,6 +57,7 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
         }
         return fn();
       } catch (error) {
+        redirectTo(routes.login);
         return error;
       }
     } else {
@@ -82,11 +85,10 @@ export const useFetchData = <T>(
 
   return useCallback(
     async (...args: unknown[]) => {
-      // const response = await renewTokenByCb(
-      //   () => req(...args)({}),
-      //   isLoginRequest
-      // );
-      const response = await req(...args)({});
+      const response = await renewTokenByCb(
+        () => req(...args)({}),
+        isLoginRequest
+      );
       const data = await getResponse(response);
       return data;
     },
@@ -111,11 +113,10 @@ export const useFetch = <T>(
 
   const promise = async (...args: unknown[]) => {
     setLoading(true);
-    // const response = await renewTokenByCb(
-    //   () => req(...args)({}),
-    //   isLoginRequest
-    // );
-    const response = await req(...args)({});
+    const response = await renewTokenByCb(
+      () => req(...args)({}),
+      isLoginRequest
+    );
     const data = await getResponse(response);
     setLoading(false);
     return data;
