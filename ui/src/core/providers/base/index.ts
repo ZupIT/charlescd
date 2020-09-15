@@ -56,9 +56,7 @@ declare global {
   }
 }
 
-export const basePath =
-  window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI || '/api';
-
+export const basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
 export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 
 export const authRequest = (
