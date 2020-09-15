@@ -56,7 +56,7 @@ const Routes = () => {
         redirectToIDM();
       }
     }
-  }, []);
+  }, [getTokens, findByEmail]);
 
   useEffect(() => {
     if (user) saveProfile(user);
@@ -69,7 +69,7 @@ const Routes = () => {
       const { email } = getAccessTokenDecoded();
       findByEmail(email);
     }
-  }, [grants]);
+  }, [grants, findByEmail]);
 
   return (
     <BrowserRouter>

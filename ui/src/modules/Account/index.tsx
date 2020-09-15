@@ -44,7 +44,7 @@ const Account = () => {
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const { findByEmail, user } = useUser();
-  const [, loadingUpdate, updateProfile] = useUpdateProfile();
+  const [loadingUpdate, updateProfile] = useUpdateProfile();
   const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {

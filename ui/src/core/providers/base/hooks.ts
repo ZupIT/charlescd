@@ -139,7 +139,7 @@ export const useFetch = <T>(
         if (mounted.current) setLoading(false);
       }
     },
-    [req, mounted]
+    [req, mounted, isLoginRequest]
   );
 
   useEffect(() => {

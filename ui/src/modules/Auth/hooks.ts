@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
+import { useState, useCallback } from 'react';
 import { useDispatch } from 'core/state/hooks';
-import { useFetchStatus, FetchStatus } from 'core/providers/base/hooks';
-import { useState } from 'react';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { logout } from 'core/utils/auth';
 import { codeToTokens } from 'core/providers/auth';
@@ -29,47 +28,46 @@ type Grants = {
 export const useAuth = (): {
   getTokens: Function;
   grants: Grants;
-  status: FetchStatus;
 } => {
   const dispatch = useDispatch();
-  const status = useFetchStatus();
   const [grants, setGrants] = useState(null);
 
-  const getTokens = async (code: string) => {
-    try {
-      if (code) {
-        status.pending();
-        const res = await codeToTokens(code);
+  const getTokens = useCallback(
+    async (code: string) => {
+      try {
+        if (code) {
+          const res = await codeToTokens(code);
 
-        res({}).then((response: Response) => {
-          if (response.ok) {
-            response.json().then(json => {
-              setGrants(json);
-            });
-          }
-        });
+          res({}).then((response: Response) => {
+            if (response.ok) {
+              response.json().then(json => {
+                setGrants(json);
+              });
+            }
+          });
 
-        return res;
+          return res;
+        }
+      } catch (e) {
+        const error = await e.json();
+
+        if (error.error === 'invalid_token') {
+          logout();
+        } else {
+          dispatch(
+            toogleNotification({
+              text: `${error.error} when trying to fetch`,
+              status: 'error'
+            })
+          );
+        }
       }
-    } catch (e) {
-      const error = await e.json();
-
-      if (error.error === 'invalid_token') {
-        logout();
-      } else {
-        dispatch(
-          toogleNotification({
-            text: `${error.error} when trying to fetch`,
-            status: 'error'
-          })
-        );
-      }
-    }
-  };
+    },
+    [dispatch]
+  );
 
   return {
     getTokens,
-    grants,
-    status
+    grants
   };
 };
