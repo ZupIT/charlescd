@@ -63,9 +63,9 @@ class FindAllUsersInteractorImplTest extends Specification {
         given:
         def pageRequest = new PageRequest()
         def author = new User("author-id", "charles-author", "author@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
-        def workspace = new Workspace("workspace-id", "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.COMPLETE, "registry-configuration-id",
-                "circle-matcher-url", "git-configuration-id", "cd-configuration-id", "metric-configuration-id")
-        def user = new User("user-id", "charles-user", "user@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspace], false, LocalDateTime.now())
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def user = new User("user-id", "charles-user", "user@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
         def page = new Page([user], 0, 20, 1)
 
         when:
@@ -90,8 +90,10 @@ class FindAllUsersInteractorImplTest extends Specification {
         assert response.content[0].photoUrl == user.photoUrl
         assert response.content[0].createdAt == user.createdAt
         assert response.content[0].workspaces.size() == user.workspaces.size()
-        assert response.content[0].workspaces[0].id == workspace.id
-        assert response.content[0].workspaces[0].name == workspace.name
+        assert response.content[0].workspaces[0].id == workspacePermission.id
+        assert response.content[0].workspaces[0].name == workspacePermission.name
+        assert response.content[0].workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.content[0].workspaces[0].permissions[0] == workspacePermission.permissions[0].name
 
         assert response.totalPages == 1
         assert response.isLast
