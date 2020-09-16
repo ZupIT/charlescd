@@ -48,21 +48,23 @@ const MultiCheck = ({
   onChange,
   isLoading
 }: Props) => (
-  <Controller
-    as={Select}
-    options={options}
-    name={name}
-    control={control}
-    customOption={customOption}
-    className={className}
-    defaultValue={defaultValue}
-    label={label}
-    isLoading={isLoading}
-    onChange={([selected]) => {
-      onChange && onChange(selected);
-      return selected?.value;
-    }}
-  />
+  <div data-testid={`select-${name}`}>
+    <Controller
+      as={Select}
+      options={options}
+      name={name}
+      control={control}
+      customOption={customOption}
+      className={className}
+      defaultValue={defaultValue}
+      label={label}
+      isLoading={isLoading}
+      onChange={([selected]) => {
+        onChange && onChange(selected);
+        return selected?.value;
+      }}
+    />
+  </div>
 );
 
 export default MultiCheck;
