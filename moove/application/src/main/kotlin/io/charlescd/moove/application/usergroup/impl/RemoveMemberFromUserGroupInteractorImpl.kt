@@ -30,8 +30,7 @@ import javax.inject.Named
 @Named
 class RemoveMemberFromUserGroupInteractorImpl @Inject constructor(
     private val userGroupService: UserGroupService,
-    private val userService: UserService,
-    private val keycloakService: KeycloakService
+    private val userService: UserService
 ) : RemoveMemberFromUserGroupInteractor {
 
     override fun execute(id: String, memberId: String) {
@@ -41,9 +40,5 @@ class RemoveMemberFromUserGroupInteractorImpl @Inject constructor(
             throw BusinessException.of(MooveErrorCode.USER_ALREADY_DISASSOCIATED)
         }
         userGroupService.removeMember(userGroup, member)
-        val workspaceAndPermissionsMapping = userGroupService.findPermissionsFromUserGroupAssociations(userGroup)
-        if (workspaceAndPermissionsMapping.isNotEmpty()) {
-            keycloakService.disassociatePermissionsFromNewUsers(member, workspaceAndPermissionsMapping)
-        }
     }
 }
