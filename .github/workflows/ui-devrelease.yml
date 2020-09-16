@@ -1,4 +1,4 @@
-name: new-ui dev-release
+jj26jname: new-ui dev-release
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
 
     - run: yarn install
       working-directory: ./ui
-    - run: yarn build:all
+    - run: yarn build
       working-directory: ./ui
     - run: yarn test
       working-directory: ./ui
