@@ -21,6 +21,8 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import org.keycloak.TokenVerifier
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.AccessToken
@@ -28,8 +30,6 @@ import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @Service
 class KeycloakClientService(

@@ -24,7 +24,6 @@ import io.charlescd.moove.application.usergroup.AddMemberToUserGroupInteractor
 import io.charlescd.moove.application.usergroup.request.AddMemberToUserGroupRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 

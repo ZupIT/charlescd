@@ -23,7 +23,6 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.DisassociateUserGroupFromWorkspaceInteractor
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 

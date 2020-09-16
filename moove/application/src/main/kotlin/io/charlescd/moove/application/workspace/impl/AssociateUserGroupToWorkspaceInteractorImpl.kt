@@ -25,7 +25,6 @@ import io.charlescd.moove.application.workspace.AssociateUserGroupToWorkspaceInt
 import io.charlescd.moove.application.workspace.request.AssociateUserGroupToWorkspaceRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 
