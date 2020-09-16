@@ -22,9 +22,9 @@ const Main = styled.main<{ isSidebarExpanded: boolean }>`
   grid-template-areas:
     'nav content'
     'footer footer';
-  grid-template-rows: ${isMicrofrontend()
-    ? 'calc(100vh - 83px)'
-    : 'calc(100vh - 35px)'};
+  grid-template-rows: ${() => {
+    return isMicrofrontend() ? 'calc(100vh - 83px)' : 'calc(100vh - 35px)';
+  }};
   transition: all 0.2s;
   grid-template-columns: ${({ isSidebarExpanded }) =>
     isSidebarExpanded ? '140px' : '60px'};

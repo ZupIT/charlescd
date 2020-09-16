@@ -59,13 +59,14 @@ test('should save profile', async () => {
 
 test('render main in microfrontend mode', async () => {
   setIsMicrofrontend(true);
-  const { container } = render(
+
+  const { getByTestId } = render(
     <MemoryRouter>
       <Routes />
     </MemoryRouter>
   );
 
   await wait(() => expect(
-    screen.getByTestId('menu-workspaces').getAttribute('href')).toContain('/charlescd')
+    getByTestId('menu-workspaces').getAttribute('href')).toContain('/charlescd')
   );
 });
