@@ -16,7 +16,7 @@
 
 import { User } from 'modules/Users/interfaces/User';
 
-const profileKey = 'profile';
+export const profileKey = 'profile';
 
 export const getProfile = () => {
   try {
