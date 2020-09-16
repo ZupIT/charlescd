@@ -30,9 +30,11 @@ type SuiteMetricGroup struct {
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
-	var err error
-
 	os.Setenv("ENV", "TEST")
+}
+
+func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
+	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
@@ -42,13 +44,14 @@ func (s *SuiteMetricGroup) SetupSuite() {
 	pluginMain := plugin.NewMain()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
-
 	s.repository = metricsgroup.NewMain(s.DB, metricMain, datasourceMain, pluginMain)
-}
 
-func (s *SuiteMetricGroup) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM metrics_groups")
 	s.DB.Exec("DELETE FROM data_sources")
+}
+
+func (s *SuiteMetricGroup) AfterTest(suiteName, testName string) {
+	s.DB.Close()
 }
 
 func TestInitMetricGroup(t *testing.T) {
@@ -158,6 +161,13 @@ func (s *SuiteMetricGroup) TestFindAll() {
 	}
 }
 
+func (s *SuiteMetricGroup) TestFindAllError() {
+	s.DB.Close()
+
+	_, err := s.repository.FindAll()
+	require.Error(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestFindById() {
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
@@ -240,6 +250,10 @@ func (s *SuiteMetricGroup) TestFindByIdError() {
 	require.Error(s.T(), err)
 }
 
+//func (s *SuiteMetricGroup) TestResumeByCircleError() {
+//
+//}
+
 func (s *SuiteMetricGroup) TestResumeByCircle() {
 	circleID := uuid.New()
 	datasource := datasource.DataSource{
@@ -287,11 +301,11 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 
 	expectedGroupResume := []metricsgroup.MetricGroupResume{
 		{
-			Name: metricgroup.Name,
-			Thresholds: 2,
+			Name:              metricgroup.Name,
+			Thresholds:        2,
 			ThresholdsReached: 0,
-			Metrics: 2,
-			Status: "ACTIVE",
+			Metrics:           2,
+			Status:            "ACTIVE",
 		},
 	}
 
