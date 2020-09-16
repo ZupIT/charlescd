@@ -38,8 +38,8 @@ type AccessToken = {
   }[];
 };
 
-const accessTokenKey = 'access-token';
-const refreshTokenKey = 'refresh-token';
+export const accessTokenKey = 'access-token';
+export const refreshTokenKey = 'refresh-token';
 
 const IDMUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 const IDMRealm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
