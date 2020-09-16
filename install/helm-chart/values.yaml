@@ -207,18 +207,14 @@ octopipe:
 compass:
   enabled: true
   name: "charlescd-compass"
+  database:
+    name: charlescd_compass
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_compass
+    password: C1UinUu6N0vc
   replicaCount: 1
   envVars:
-    - name: DB_HOST
-      value: "charlescd-postgresql"
-    - name: DB_PORT
-      value: "5432"
-    - name: DB_USER
-      value: "charlescd_compass"
-    - name: DB_PASSWORD
-      value: "C1UinUu6N0vc"
-    - name: DB_NAME
-      value: "charlescd_compass"
     - name: DB_SSL
       value: "disable"
     - name: PLUGINS_DIR
@@ -228,7 +224,7 @@ compass:
     - name: DISPATCHER_INTERVAL
       value: "15s"
   image:
-    name: zupcharles/charlescd-compass:0.3.4-rc.3
+    name: zupcharles/charlescd-compass:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-compass
