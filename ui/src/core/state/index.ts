@@ -23,7 +23,7 @@ import {
 import {
   workspaceReducer,
   workspaceInitialState
-} from 'modules/Settings/state/reducer';
+} from 'modules/Workspaces/state/reducer';
 import { userReducer, userInitialState } from 'modules/Users/state/reducer';
 import {
   notificationReducer,
@@ -42,7 +42,7 @@ import {
   hypothesisInitialState
 } from 'modules/Hypotheses/state/reducer';
 import { CirclesActionTypes } from 'modules/Circles/state/actions';
-import { WorkspacesActionTypes } from 'modules/Settings/state/actions';
+import { WorkspacesActionTypes } from 'modules/Workspaces/state/actions';
 import { UsersActionTypes } from 'modules/Users/state/actions';
 import { NotificationActionTypes } from 'core/components/Notification/state/actions';
 import { Reducer } from './interfaces/Reducer';

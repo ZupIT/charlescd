@@ -23,7 +23,7 @@ import keys from 'lodash/keys';
 import isEqual from 'lodash/isEqual';
 import { Component as IComponent } from 'modules/Modules/interfaces/Component';
 import { Module } from 'modules/Modules/interfaces/Module';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import {
   useSaveComponent,
   useUpdateComponent
