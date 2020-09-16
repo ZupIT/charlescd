@@ -18,7 +18,7 @@ import React, { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import PrivateRoute from 'core/components/PrivateRoute';
+import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import Menu from './Menu';
@@ -40,7 +40,6 @@ const Settings = () => {
             path={routes.credentials}
             component={Credentials}
             allowedRoles={['maintenance_write']}
-            allowedRoute
           />
           <Route>
             <Placeholder
