@@ -56,6 +56,12 @@ const (
 	ResultByGroupMetricError = "RESULT_BY_GROUP_METRIC_ERROR"
 )
 
+const (
+	FindActionError   = "FIND_ACTION_ERROR"
+	SaveActionError   = "SAVE_ACTION_ERROR"
+	DeleteActionError = "DELETE_ACTION_ERROR"
+)
+
 type ErrorUtil struct {
 	Field string `json:"field"`
 	Error string `json:"error"`
