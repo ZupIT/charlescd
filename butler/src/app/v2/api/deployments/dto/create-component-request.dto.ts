@@ -35,6 +35,7 @@ export class CreateComponentRequestDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9]*$/)
   public buildImageTag: string
 
   @ApiProperty()

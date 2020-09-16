@@ -246,37 +246,37 @@ describe('DeploymentController v2', () => {
             {
               componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
+              buildImageTag: '1.2.3',
               componentName: 'component-name'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
+              buildImageTag: '@123',
               componentName: 'component-name'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl.com2 ',
-              buildImageTag: 'tag1',
+              buildImageTag: 'aaAaaAAa',
               componentName: 'component-name'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'imageurl-ends-with-dash.com3-',
-              buildImageTag: 'tag1',
+              buildImageTag: '1-2-3',
               componentName: 'component-name'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: `very-long-url${'4'.repeat(237)}.com`, // max is 253 because of kubernetes
-              buildImageTag: 'tag1',
+              buildImageTag: '-a',
               componentName: 'component-name'
             },
             {
               componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
               buildImageUrl: 'quiz-app-backend',
-              buildImageTag: 'tag1',
+              buildImageTag: 'b-',
               componentName: 'component-name'
             }
           ]
@@ -287,9 +287,14 @@ describe('DeploymentController v2', () => {
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment'
     }
     const errorMessages = [
+      '0.buildImageTag must match /^[a-zA-Z0-9]*$/ regular expression',
+      '1.buildImageTag must match /^[a-zA-Z0-9]*$/ regular expression',
       '2.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
       '3.buildImageUrl must match /^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/ regular expression',
+      '3.buildImageTag must match /^[a-zA-Z0-9]*$/ regular expression',
       '4.buildImageUrl must be shorter than or equal to 253 characters',
+      '4.buildImageTag must match /^[a-zA-Z0-9]*$/ regular expression',
+      '5.buildImageTag must match /^[a-zA-Z0-9]*$/ regular expression',
       '0.Duplicated components with the property \'componentName\''
     ]
     await request(app.getHttpServer())
