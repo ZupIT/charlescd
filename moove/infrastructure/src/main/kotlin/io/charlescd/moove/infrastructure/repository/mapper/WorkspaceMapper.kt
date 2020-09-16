@@ -18,14 +18,18 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import java.sql.ResultSet
 import org.springframework.stereotype.Component
 
 @Component
-class WorkspaceMapper {
+class WorkspaceMapper(private val objectMapper: ObjectMapper) {
+
     fun map(resultSet: ResultSet) = Workspace(
         id = resultSet.getString("workspace_id"),
         name = resultSet.getString("workspace_name"),
@@ -37,6 +41,15 @@ class WorkspaceMapper {
         cdConfigurationId = resultSet.getString("workspace_cd_configuration_id"),
         circleMatcherUrl = resultSet.getString("workspace_circle_matcher_url"),
         metricConfigurationId = resultSet.getString("workspace_metric_configuration_id")
+    )
+
+    fun mapWorkspacePermissions(resultSet: ResultSet) = WorkspacePermissions(
+        id = resultSet.getString("workspace_id"),
+        name = resultSet.getString("workspace_name"),
+        permissions = objectMapper.readValue(resultSet.getString("workspace_user_group_permissions")),
+        author = mapWorkspaceAuthor(resultSet),
+        createdAt = resultSet.getTimestamp("workspace_created_at").toLocalDateTime(),
+        status = WorkspaceStatusEnum.valueOf(resultSet.getString("workspace_status"))
     )
 
     private fun mapWorkspaceAuthor(resultSet: ResultSet) = User(

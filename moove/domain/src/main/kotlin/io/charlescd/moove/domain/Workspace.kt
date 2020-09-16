@@ -41,8 +41,3 @@ data class Workspace(
         }
     }
 }
-
-enum class WorkspaceStatusEnum {
-    INCOMPLETE,
-    COMPLETE
-}

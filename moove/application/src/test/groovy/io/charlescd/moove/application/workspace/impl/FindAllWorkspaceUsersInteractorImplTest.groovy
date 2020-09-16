@@ -68,10 +68,10 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
         def pageRequest = new PageRequest()
         def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
         def workspaceId = "workspace-id"
-        def workspace = new Workspace(workspaceId, "workspace-name", author, LocalDateTime.now(), [], WorkspaceStatusEnum.INCOMPLETE, "registry-configuration-id",
-                "circle-matcher-url", "git-configuration-id", "cd-configuration-id", null)
-        def member1 = new User("member1", "charles", "member1@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspace], false, LocalDateTime.now())
-        def member2 = new User("member2", "charles", "member2@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspace], false, LocalDateTime.now())
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
+        def member1 = new User("member1", "charles", "member1@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
+        def member2 = new User("member2", "charles", "member2@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
         def page = new Page([member1, member2], 0, 20, 1)
 
         when:
@@ -95,15 +95,19 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
         assert response.content[0].email == member1.email
         assert response.content[0].photoUrl == member1.photoUrl
         assert response.content[0].root == member1.root
-        assert response.content[0].workspaces[0].id == workspace.id
-        assert response.content[0].workspaces[0].name == workspace.name
+        assert response.content[0].workspaces[0].id == workspacePermission.id
+        assert response.content[0].workspaces[0].name == workspacePermission.name
+        assert response.content[0].workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.content[0].workspaces[0].permissions[0] == workspacePermission.permissions[0].name
         assert response.content[1].id == member2.id
         assert response.content[1].name == member2.name
         assert response.content[1].email == member2.email
         assert response.content[1].photoUrl == member2.photoUrl
         assert response.content[1].root == member2.root
-        assert response.content[1].workspaces[0].id == workspace.id
-        assert response.content[1].workspaces[0].name == workspace.name
+        assert response.content[1].workspaces[0].id == workspacePermission.id
+        assert response.content[1].workspaces[0].name == workspacePermission.name
+        assert response.content[1].workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.content[1].workspaces[0].permissions[0] == workspacePermission.permissions[0].name
         assert response.totalPages == 1
         assert response.isLast
     }
