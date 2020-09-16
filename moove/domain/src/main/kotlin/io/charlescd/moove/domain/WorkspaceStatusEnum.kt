@@ -16,14 +16,7 @@
 
 package io.charlescd.moove.domain
 
-import java.time.LocalDateTime
-
-data class User(
-    val id: String,
-    val name: String,
-    val email: String,
-    val photoUrl: String?,
-    val workspaces: List<WorkspacePermissions> = listOf(),
-    val root: Boolean = false,
-    val createdAt: LocalDateTime
-)
+enum class WorkspaceStatusEnum {
+    INCOMPLETE,
+    COMPLETE
+}

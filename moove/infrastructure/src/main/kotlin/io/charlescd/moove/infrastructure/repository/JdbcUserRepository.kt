@@ -52,7 +52,8 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
                    workspace_user.name                  AS workspace_author_name,
                    workspace_user.created_at            AS workspace_author_created_at,
                    workspace_user.email                 AS workspace_author_email,
-                   workspace_user.photo_url             AS workspace_author_photo_url
+                   workspace_user.photo_url             AS workspace_author_photo_url,
+                   workspaces_user_groups.permissions   AS workspace_user_group_permissions
             FROM users
                      LEFT JOIN user_groups_users ON users.id = user_groups_users.user_id
                      LEFT JOIN user_groups ON user_groups_users.user_group_id = user_groups.id
@@ -216,7 +217,8 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
                workspace_user.name                  AS workspace_author_name,
                workspace_user.created_at            AS workspace_author_created_at,
                workspace_user.email                 AS workspace_author_email,
-               workspace_user.photo_url             AS workspace_author_photo_url
+               workspace_user.photo_url             AS workspace_author_photo_url,
+               workspaces_user_groups.permissions   AS workspace_user_group_permissions
         FROM ( $innerQueryStatement ) users
                  LEFT JOIN user_groups_users ON users.id = user_groups_users.user_id
                  LEFT JOIN user_groups ON user_groups_users.user_group_id = user_groups.id
