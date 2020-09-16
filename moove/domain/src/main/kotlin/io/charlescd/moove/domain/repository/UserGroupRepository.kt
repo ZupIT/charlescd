@@ -36,5 +36,4 @@ interface UserGroupRepository {
     fun addMember(userGroup: UserGroup, member: User)
 
     fun removeMember(userGroup: UserGroup, member: User)
-
 }

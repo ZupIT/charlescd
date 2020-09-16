@@ -54,5 +54,4 @@ class UserGroupService(private val userGroupRepository: UserGroupRepository) {
     fun removeMember(userGroup: UserGroup, member: User) {
         this.userGroupRepository.removeMember(userGroup, member)
     }
-
 }

@@ -64,5 +64,4 @@ class WorkspaceService(
     fun findAllUsers(workspaceId: String, name: String?, email: String?, pageRequest: PageRequest): Page<User> {
         return this.userRepository.findByWorkspace(workspaceId, name, email, pageRequest)
     }
-
 }

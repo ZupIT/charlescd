@@ -25,6 +25,11 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.utils.FileUtils
+import javax.servlet.FilterChain
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import org.keycloak.TokenVerifier
 import org.keycloak.representations.AccessToken
 import org.springframework.context.annotation.Profile
@@ -34,11 +39,6 @@ import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.GenericFilterBean
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Component
 @Profile("!local")
