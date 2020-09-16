@@ -22,7 +22,9 @@ const Page = styled.div`
   display: grid;
   grid-template-areas: 'menu content';
   grid-template-columns: 300px;
-  grid-template-rows: ${isMicrofrontend() ? 'calc(100vh - 83px)' : '100vh'};
+  grid-template-rows: ${() => {
+    return isMicrofrontend() ? 'calc(100vh - 83px)' : '100vh';
+  }};
 `;
 
 const Menu = styled.div`
