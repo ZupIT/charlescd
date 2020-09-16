@@ -17,11 +17,7 @@
 package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
-import io.charlescd.moove.application.user.CreateUserInteractor
-import io.charlescd.moove.application.user.FindAllUsersInteractor
-import io.charlescd.moove.application.user.FindUserByEmailInteractor
-import io.charlescd.moove.application.user.ResetUserPasswordInteractor
+import io.charlescd.moove.application.user.*
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.response.UserResponse
@@ -77,8 +73,8 @@ class V2UserController(
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest): UserResponse {
-        return this.createUserInteractor.execute(createUserRequest)
+    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest, @RequestHeader(value = "Authorization") authorization: String): UserResponse {
+        return this.createUserInteractor.execute(createUserRequest, authorization)
     }
 
     @ApiOperation(value = "Change users' password")
