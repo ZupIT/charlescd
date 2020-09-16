@@ -12,18 +12,18 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.compass.name }}
-      version: {{ .Release.Name }}
+      version: {{ .Values.compass.name }}
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: '{{ .Values.compass.sidecarIstio.enabled }}' 
+        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
       labels:
         app: {{ .Values.compass.name }}
-        version: {{ .Release.Name }}
+        version: {{ .Values.compass.name }}
     spec:
       containers:
         - name: {{ .Values.compass.name }}
-          image: {{ .Values.compass.image.tag }}
+          image: {{ .Values.compass.image.name }}
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -46,14 +46,22 @@ spec:
             timeoutSeconds: 1 
           imagePullPolicy: {{ .Values.compass.image.pullPolicy }}
           env:
+          - name: DB_HOST
+            value: "{{ .Values.compass.database.host}}"
+          - name: DB_PORT
+            value: "{{ .Values.compass.database.port}}"
+          - name: DB_USER
+            value: "{{ .Values.compass.database.user}}"
+          - name: DB_PASSWORD
+            value: "{{ .Values.compass.database.password}}"
+          - name: DB_NAME
+            value: "{{ .Values.compass.database.name}}"
           {{ range $i, $var := .Values.compass.envVars -}}
           - name: {{ $var.name | upper}}
             value: {{ $var.value | quote}}
           {{ end }}
           resources:
 {{ toYaml .Values.compass.resources | indent 12 }}
-      imagePullSecrets:
-        - name: realwavelab-registry
     {{- with .Values.compass.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
