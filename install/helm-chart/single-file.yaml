@@ -284,7 +284,7 @@ data:
             
             location /compass/ {
                 proxy_http_version 1.1;
-                proxy_pass http://compass:8080/;
+                proxy_pass http://charlescd-compass:8080/;
                 if ($request_method = 'OPTIONS') {
                     add_header 'Access-Control-Allow-Origin' '*';
                     add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
@@ -365,7 +365,7 @@ data:
     psql -c "CREATE DATABASE charlescd_compass"
     psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
     psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
-    psql -d charles_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
 # Source: Charles-CD/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -864,9 +864,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: compass
-    service: compass
-  name: compass
+    app: charlescd-compass
+    service: charlescd-compass
+  name: charlescd-compass
   namespace: charles
 spec:
   ports:
@@ -875,7 +875,7 @@ spec:
       targetPort: 8080
     
   selector:
-    app: compass
+    app: charlescd-compass
   type: ClusterIP
 ---
 # Source: Charles-CD/templates/charlescd-moove-service.yaml
@@ -1294,31 +1294,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: charlescd
+  name: charlescd-compass
   namespace: charles
   labels:
-    app: compass
-    version: compass
-    circleId: 
+    app: charlescd-compass
+    version: charlescd-compass
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: compass
-      version: charlescd
-      circleId: 
+      app: charlescd-compass
+      version: charlescd-compass
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: 'true' 
       labels:
-        app: compass
-        version: charlescd
-        circleId: 
+        app: charlescd-compass
+        version: charlescd-compass
     spec:
       containers:
-        - name: compass
-          image: latest
+        - name: charlescd-compass
+          image: zupcharles/charlescd-compass:0.3.4
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1342,7 +1339,7 @@ spec:
           imagePullPolicy: Always
           env:
           - name: DB_HOST
-            value: "charlescd-sandbox-postgresql"
+            value: "charlescd-postgresql"
           - name: DB_PORT
             value: "5432"
           - name: DB_USER
@@ -1367,8 +1364,6 @@ spec:
             requests:
               cpu: 64m
               memory: 64Mi
-      imagePullSecrets:
-        - name: realwavelab-registry
 ---
 # Source: Charles-CD/templates/charlescd-moove-deployment.yaml
 apiVersion: apps/v1
