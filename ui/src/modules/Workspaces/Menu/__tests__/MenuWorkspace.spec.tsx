@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { fireEvent, render, screen } from 'unit-test/testUtils';
 import Menu from '../index';
 import workspaces from '../../../../../stub/workspaces/mock';
 
@@ -51,4 +51,20 @@ test('renders Workspace menu on loading', () => {
     />
   );
   expect(getByText('Loading...')).toBeInTheDocument();
+});
+
+test('should click Workspace item', () => {
+  const selectedWorkspace = jest.fn();
+  render(
+    <Menu
+      items={props.items}
+      onSearch={props.onSearch}
+      selectedWorkspace={selectedWorkspace}
+    />
+  );
+
+  const items = screen.getAllByTestId('labeledIcon-workspace');
+  fireEvent.click(items[0]);
+
+  expect(selectedWorkspace).toHaveBeenCalled();
 });

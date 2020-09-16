@@ -20,6 +20,8 @@ package io.charlescd.moove.domain.service
 
 interface KeycloakService {
 
+    fun resetPassword(id: String, newPassword: String)
+
     fun createUser(email: String, name: String, password: String)
 
     fun getEmailByAccessToken(authorization: String): String

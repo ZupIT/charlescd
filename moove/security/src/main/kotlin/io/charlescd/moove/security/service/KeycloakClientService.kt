@@ -120,4 +120,14 @@ class KeycloakClientService(
             .firstOrNull() ?: throw NotFoundException("user", email)
     }
 
+    override fun resetPassword(email: String, newPassword: String) {
+        val keycloakUser = loadKeycloakUser(email)
+        val credentialRepresentation = CredentialRepresentation()
+        credentialRepresentation.type = CredentialRepresentation.PASSWORD
+        credentialRepresentation.value = newPassword
+        keycloak.realm(this.realm)
+            .users()
+            .get(keycloakUser.id)
+            .resetPassword(credentialRepresentation)
+    }
 }
