@@ -16,7 +16,7 @@
 
 import { authRequest, unauthenticatedRequest } from './base';
 
-const client = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID_ID;
+const client = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_CLIENT_ID;
 const realm = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_REALM;
 const redirectUri = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 const workspaceId =
