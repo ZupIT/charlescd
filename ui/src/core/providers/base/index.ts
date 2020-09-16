@@ -37,7 +37,7 @@ export interface EnvVariables {
   REACT_APP_API_URI: string;
   REACT_APP_AUTH_URI: string;
   REACT_APP_AUTH_REALM: string;
-  REACT_APP_AUTH_CLIENT_ID: string;
+  REACT_APP_AUTH_CLIENT_ID_ID: string;
   REACT_APP_IDM_LOGIN_URI?: string;
   REACT_APP_IDM_LOGOUT_URI?: string;
   REACT_APP_IDM_REDIRECT_URI?: string;
