@@ -41,7 +41,7 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
-  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 1): Promise<[Execution[], number]> {
+  public async listExecutionsAndRelations(active: boolean, pageSize = 20, page = 0): Promise<[Execution[], number]> {
     const baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
