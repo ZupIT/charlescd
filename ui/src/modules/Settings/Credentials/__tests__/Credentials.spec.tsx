@@ -16,8 +16,10 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, fireEvent, wait } from 'unit-test/testUtils';
+import { render, fireEvent, wait, screen, waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock/types';
+import * as StateHooks from 'core/state/hooks';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '..';
 
 (global as any).MutationObserver = MutationObserver
@@ -33,19 +35,112 @@ test('render Credentials default component', async () => {
   expect(getByTestId("credentials")).toBeInTheDocument();
 });
 
-test('render Credentials with inner form', async () => {
+test('render Credentials items', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  const { getByTestId, getAllByTestId } = render(
-    <Credentials />
-  );
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  expect(screen.queryByTestId('contentIcon-workspace'));
+  expect(screen.queryByTestId('contentIcon-users'));
+  expect(screen.queryByTestId('contentIcon-git'));
+  expect(screen.queryByTestId('contentIcon-server'));
+  expect(screen.queryByTestId('contentIcon-cd-configuration'));
+  expect(screen.queryByTestId('contentIcon-circle-matcher'));
+  expect(screen.queryByTestId('contentIcon-metrics'));
+});
 
-  await wait();
+test('render User Group credentials', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  const content = screen.queryByTestId('contentIcon-users');
+  const buttonOpenUsersGroup = content.nextElementSibling.querySelector('button');
+  fireEvent.click(buttonOpenUsersGroup);
 
-  const addButtons = getAllByTestId("button-iconRounded-add");
-  expect(addButtons.length).toBe(6);
+  await wait(() => screen.getByTestId('icon-arrow-left'));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
 
-  fireEvent.click(addButtons[0]);
+  expect(buttonBack).toBeInTheDocument();
+  fireEvent.click(buttonBack);
+  const arrow = screen.queryByTestId('icon-arrow-left');
+  await wait(() => expect(arrow).not.toBeInTheDocument());
+});
 
-  expect(getByTestId("credentials")).toBeInTheDocument();
-  wait(() => expect(getByTestId("icon-arrow-left")).toBeInTheDocument());
+test('render Git Credentials', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  const content = screen.queryByTestId('contentIcon-git');
+  const button = content.nextElementSibling.querySelector('button');
+  await wait(() => fireEvent.click(button));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+
+  expect(buttonBack).toBeInTheDocument();
+});
+
+test('render CD Configuration Credentials', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  const content = screen.queryByTestId('contentIcon-cd-configuration');
+  const button = content.nextElementSibling.querySelector('button');
+  await wait(() => fireEvent.click(button));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+
+  expect(buttonBack).toBeInTheDocument();
+});
+
+test('render Circle Matcher Credentials', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  const content = screen.queryByTestId('contentIcon-circle-matcher');
+  const button = content.nextElementSibling.querySelector('button');
+  await wait(() => fireEvent.click(button));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+
+  expect(buttonBack).toBeInTheDocument();
+});
+
+test('click to copy to clipboard', async () => {
+  jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
+    item: {
+      id: '123',
+      status: WORKSPACE_STATUS.COMPLETE
+    },
+    status: 'resolved'
+  }));
+  render(<Credentials />);
+  
+  const content = screen.queryByTestId('contentIcon-circle-matcher');
+  const button = content.nextElementSibling.querySelector('button');
+  await wait(() => fireEvent.click(button));
+  const buttonBack = screen.queryByTestId('icon-arrow-left');
+
+  expect(buttonBack).toBeInTheDocument();
 });

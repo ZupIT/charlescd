@@ -73,6 +73,11 @@ export const getRoles = () => {
   }
 };
 
+export const hasPermission = (role: string) => {
+  const roles = getRoles();
+  return isRoot() || includes(roles, role);
+};
+
 export const getRefreshToken = () => localStorage.getItem(refreshTokenKey);
 
 export const isLogged = () => getAccessToken() && getRefreshToken();
