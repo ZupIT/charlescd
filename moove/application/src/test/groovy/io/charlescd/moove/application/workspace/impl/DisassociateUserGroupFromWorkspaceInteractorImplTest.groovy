@@ -37,17 +37,15 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
     private UserRepository userRepository = Mock(UserRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserGroupRepository userGroupRepository = Mock(UserGroupRepository)
-    private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
         disassociateUserGroupFromWorkspaceInteractor = new DisassociateUserGroupFromWorkspaceInteractorImpl(
                 new WorkspaceService(workspaceRepository, userRepository),
-                new UserGroupService(userGroupRepository),
-                keycloakService
+                new UserGroupService(userGroupRepository)
         )
     }
 
-    def 'should unlink user group from workspace and remove 1 permission on keycloak'() {
+    def 'should unlink user group from workspace'() {
         given:
         def authorId = "author-id"
         def author = getDummyUser(authorId)
@@ -67,37 +65,6 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userGroupRepository.findById(userGroupId) >> Optional.of(userGroup)
         1 * workspaceRepository.disassociateUserGroupAndPermissions(workspaceId, userGroupId)
-        1 * workspaceRepository.findPermissions(workspaceId, member) >> [:]
-        1 * userGroupRepository.findPermissions(workspaceId, userGroup) >> permissions
-        1 * keycloakService.removePermissionsFromUser(workspace.id, member, permissions)
-
-        notThrown()
-
-    }
-
-    def 'should unlink user group from workspace and remove 0 permissions on keycloak (user have the same permissions from other user groups)'() {
-        given:
-        def authorId = "author-id"
-        def author = getDummyUser(authorId)
-        def workspaceId = "workspace-id"
-        def userGroupId = "user-group-id"
-        def memberId = "member-id"
-        def member = getDummyUser(memberId)
-        def userGroup = new UserGroup(userGroupId, "user-group-name", author, LocalDateTime.now(), [member])
-        def workspace = getDummyWorkspace(workspaceId, author, [userGroup])
-        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
-        def permissions = [permission]
-
-        when:
-        disassociateUserGroupFromWorkspaceInteractor.execute(workspaceId, userGroupId)
-
-        then:
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userGroupRepository.findById(userGroupId) >> Optional.of(userGroup)
-        1 * workspaceRepository.disassociateUserGroupAndPermissions(workspaceId, userGroupId)
-        1 * workspaceRepository.findPermissions(workspaceId, member) >> [userGroupId:[permission]]
-        1 * userGroupRepository.findPermissions(workspaceId, userGroup) >> permissions
-        0 * keycloakService.removePermissionsFromUser(workspace.id, member, permissions)
 
         notThrown()
 
@@ -115,7 +82,6 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
         1 * workspaceRepository.find(workspaceId) >> Optional.empty()
         0 * userGroupRepository.findById(_)
         0 * workspaceRepository.disassociateUserGroupAndPermissions(_, _)
-        0 * keycloakService.removePermissionsFromUser(_, _)
 
         def exception = thrown(NotFoundException)
 
@@ -139,7 +105,6 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         0 * userGroupRepository.findById(_)
         0 * workspaceRepository.disassociateUserGroupAndPermissions(_, _)
-        0 * keycloakService.removePermissionsFromUser(_, _)
 
         def exception = thrown(BusinessException)
 
@@ -165,7 +130,6 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userGroupRepository.findById(userGroupId) >> Optional.empty()
         0 * workspaceRepository.disassociateUserGroupAndPermissions(_, _)
-        0 * keycloakService.removePermissionsFromUser(_, _)
 
         def exception = thrown(NotFoundException)
 
