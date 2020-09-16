@@ -33,8 +33,7 @@ import javax.inject.Named
 class AssociateUserGroupToWorkspaceInteractorImpl @Inject constructor(
     private val workspaceService: WorkspaceService,
     private val userGroupService: UserGroupService,
-    private val roleService: RoleService,
-    private val keycloakService: KeycloakService
+    private val roleService: RoleService
 ) : AssociateUserGroupToWorkspaceInteractor {
 
     override fun execute(workspaceId: String, request: AssociateUserGroupToWorkspaceRequest) {
@@ -45,12 +44,6 @@ class AssociateUserGroupToWorkspaceInteractorImpl @Inject constructor(
         val userGroup = userGroupService.find(request.userGroupId)
         val role = roleService.find(request.roleId)
         val permissionsToBeAdded = role.permissions
-        userGroup.users.forEach { user ->
-            val userPermissionsFlatten = workspaceService.findUserPermissions(workspaceId, user).values.flatten().distinct()
-            if (!userPermissionsFlatten.containsAll(permissionsToBeAdded)) {
-                keycloakService.addPermissionsToUser(workspace.id, user, permissionsToBeAdded.minus(userPermissionsFlatten))
-            }
-        }
         workspaceService.associateUserGroupAndPermissions(workspaceId, userGroup.id, permissionsToBeAdded)
     }
 }
