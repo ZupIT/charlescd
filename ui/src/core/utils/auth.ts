@@ -67,10 +67,11 @@ export const getRoles = () => {
     const id = getWorkspaceId();
     const token = getAccessTokenDecoded();
     const workspaces = get(token, 'workspaces', []);
-    const { permissions } = find(workspaces, ['id', id]);
-    return permissions || [];
+    const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
+
+    return permissions;
   } catch (e) {
-    return '';
+    return [];
   }
 };
 
