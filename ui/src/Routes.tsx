@@ -28,7 +28,6 @@ import {
 } from 'core/utils/auth';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
-import { saveCircleId } from 'core/utils/circle';
 import { useAuth } from 'modules/Auth/hooks';
 
 const Main = lazy(() => import('modules/Main'));
@@ -42,9 +41,6 @@ const Routes = () => {
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
-      // TODO: REMOVE THIS LINE
-      saveCircleId('abf9665c-1642-4ba3-a2f3-c06f10cc0929');
-
       const code = getParam('code');
       const { email } = getAccessTokenDecoded();
 
