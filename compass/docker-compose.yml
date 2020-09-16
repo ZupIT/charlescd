@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    postgres:
+        image: postgres:11.8-alpine
+        ports:
+        - 5432:5432
+        environment:
+        - POSTGRES_DB=charlescd_compass
+        - POSTGRES_USER=charlescd_compass
+        - POSTGRES_PASSWORD=compass
+        - MAX_CONNECTIONS=300

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="10px" viewBox="0 0 12 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M12.4749333,7.13833333 C12.3416,7.265 12.1749333,7.33166667 12.0016,7.33166667 C11.8282667,7.33166667 11.6616,7.265 11.5282667,7.13833333 L8.66826667,4.27166667 L8.66826667,13.3316667 C8.66826667,13.6983333 8.36826667,13.9983333 8.0016,13.9983333 C7.63493333,13.9983333 7.33493333,13.6983333 7.33493333,13.3316667 L7.33493333,4.27166667 L4.47493333,7.13833333 C4.21493333,7.39833333 3.78826667,7.39833333 3.52826667,7.13833333 C3.26826667,6.87833333 3.26826667,6.45166667 3.52826667,6.19166667 L7.52826667,2.19166667 C7.58826667,2.13166667 7.6616,2.085 7.7416,2.05166667 C7.77493333,2.03833333 7.8016,2.025 7.83493333,2.025 C7.9416,1.99166667 8.0616,1.99166667 8.16826667,2.025 C8.2016,2.025 8.22826667,2.03833333 8.2616,2.05166667 C8.3416,2.085 8.41493333,2.13166667 8.47493333,2.19166667 L12.4749333,6.19166667 C12.7349333,6.45166667 12.7349333,6.87833333 12.4749333,7.13833333" id="path-arrow-right"></path>
+    </defs>
+    <g id="Circles---Group-metrics" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Circles---2.0---Expand---0.1-circle---Metric-group-added" transform="translate(-989.000000, -721.000000)">
+            <g id="group/circles/active" transform="translate(438.000000, 0.000000)">
+                <g id="Release" transform="translate(31.000000, 402.000000)">
+                    <g id="Group-8" transform="translate(44.000000, 196.000000)">
+                        <g id="Group-6-Copy-3" transform="translate(20.000000, 70.000000)">
+                            <g id="Icon/Link/External-Link" transform="translate(454.000000, 50.000000)">
+                                <mask id="mask-arrow-right" fill="white">
+                                    <use xlink:href="#path-arrow-right"></use>
+                                </mask>
+                                <use id="Icon-Arrow-Right" fill="currentColor" transform="translate(8.001600, 7.999167) rotate(90.000000) translate(-8.001600, -7.999167) " xlink:href="#path-arrow-right"></use>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

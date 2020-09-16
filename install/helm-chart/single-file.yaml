@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -50,8 +72,8 @@ metadata:
     heritage: "Helm"
 type: Opaque
 data:
-  mongodb-root-password:  "b2N0b3BpcGU="
-  mongodb-password:  "Zmlyc3RwYXNzd29yZA=="
+  mongodb-root-password: "b2N0b3BpcGU="
+  mongodb-password: "Zmlyc3RwYXNzd29yZA=="
 ---
 # Source: Charles-CD/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
@@ -134,37 +156,37 @@ data:
     batch
     # Changes the base path to be /keycloak.basepath instead of /auth
     /subsystem=keycloak-server:write-attribute(name=web-context,value=keycloak/auth)
-  
+
     ## Sets the node identifier to the node name (= pod name). Node identifiers have to be unique. They can have a
     ## maximum length of 23 characters. Thus, the chart's fullname template truncates its length accordingly.
     /subsystem=transactions:write-attribute(name=node-identifier, value=${jboss.node.name})
-    
-    
+
+
     # Allow log level to be configured via environment variable
     /subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=${env.WILDFLY_LOGLEVEL:INFO})
     /subsystem=logging/root-logger=ROOT:write-attribute(name=level, value=${env.WILDFLY_LOGLEVEL:INFO})
-    
+
     # Add dedicated eventsListener config element to allow configuring elements.
     /subsystem=keycloak-server/spi=eventsListener:add()
     /subsystem=keycloak-server/spi=eventsListener/provider=jboss-logging:add(enabled=true)
-    
+
     # Propagate success events to INFO instead of DEBUG, to expose successful logins for log analysis
     /subsystem=keycloak-server/spi=eventsListener/provider=jboss-logging:write-attribute(name=properties.success-level,value=info)
     /subsystem=keycloak-server/spi=eventsListener/provider=jboss-logging:write-attribute(name=properties.error-level,value=warn)
-    
-    
+
+
     # Configure datasource to use explicit query timeout in seconds
     /subsystem=datasources/data-source=KeycloakDS/:write-attribute(name=query-timeout,value=${env.DB_QUERY_TIMEOUT:300})
-    
+
     # Configure datasource to connection before use
     /subsystem=datasources/data-source=KeycloakDS/:write-attribute(name=validate-on-match,value=${env.DB_VALIDATE_ON_MATCH:true})
-    
+
     # Configure datasource to try all other connections before failing
     /subsystem=datasources/data-source=KeycloakDS/:write-attribute(name=use-fast-fail,value=${env.DB_USE_CAST_FAIL:false})
-    
-    
+
+
     /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
-    
+
 
     run-batch
     stop-embedded-server
@@ -189,11 +211,6 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
-        # server {
-        #     listen 80;
-        #     server_name charles-prod.continuousplatform.com;
-        #     return 301 https://charles-prod.continuousplatform.com$request_uri;
-        # }
         server {
             listen 80;
             
@@ -264,6 +281,50 @@ data:
                 proxy_set_header Host $host;
                 proxy_pass      http://charlescd-keycloak-http;
             }
+            
+            location /compass/ {
+                proxy_http_version 1.1;
+                proxy_pass http://charlescd-compass:8080/;
+                if ($request_method = 'OPTIONS') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Max-Age' 1728000;
+                    add_header 'Content-Type' 'text/plain; charset=utf-8';
+                    add_header 'Content-Length' 0;
+                    return 204;
+                }
+                if ($request_method = 'POST') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'GET') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PUT') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'PATCH') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+                if ($request_method = 'DELETE') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'Authorization,x-circle-id,x-workspace-id,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+                }
+            }
         }
     }
 kind: ConfigMap
@@ -281,7 +342,7 @@ metadata:
     release: "charlescd"
     heritage: "Helm"
 data:
-  charlescd-extensions.sh: |-
+  charlescd-extensions.sh: |
     #!/bin/bash
     export PGUSER=postgres
     export PGPASSWORD=firstpassword
@@ -300,6 +361,11 @@ data:
     psql -c "CREATE DATABASE keycloak"
     psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
     psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
+
+    psql -c "CREATE DATABASE charlescd_compass"
+    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
 ---
 # Source: Charles-CD/charts/redis/templates/configmap.yaml
 apiVersion: v1
@@ -422,126 +488,104 @@ spec:
     requests:
       storage: "8Gi"
 ---
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
----
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: charlescd-octopipe-role
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  - configmaps
-  - events
-  - replicationcontrollers
-  - serviceaccounts
-  - pods/log
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - services
-  - secrets
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - list
-  - get
-- apiGroups:
-  - apps
-  resources:
-  - controllerrevisions
-  - statefulsets
-  verbs:
-  - list
-- apiGroups:
-  - extensions
-  - apps
-  resources:
-  - deployments
-  - replicasets
-  - ingresses
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services/proxy
-  - pods/portforward
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - '*'
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - configmaps
+      - events
+      - replicationcontrollers
+      - serviceaccounts
+      - pods/log
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - secrets
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - controllerrevisions
+      - statefulsets
+    verbs:
+      - list
+  - apiGroups:
+      - extensions
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - ingresses
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services/proxy
+      - pods/portforward
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - "*"
+    verbs:
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - create
+      - delete
+      - deletecollection
+      - get
+      - list
+      - patch
+      - update
+      - watch
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role-binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -554,9 +598,9 @@ roleRef:
   kind: ClusterRole
   name: charlescd-octopipe-role
 subjects:
-- kind: ServiceAccount
-  name: charlescd-octopipe
-  namespace: charles
+  - kind: ServiceAccount
+    name: charlescd-octopipe
+    namespace: charles
 ---
 # Source: Charles-CD/charts/keycloak/templates/service-headless.yaml
 apiVersion: v1
@@ -642,10 +686,10 @@ metadata:
 spec:
   externalTrafficPolicy: Cluster
   ports:
-  - nodePort: 30803
-    port: 80
-    protocol: TCP
-    targetPort: 80
+    - nodePort: 30803
+      port: 80
+      protocol: TCP
+      targetPort: 80
   selector:
     app: nginx
   sessionAffinity: None
@@ -667,7 +711,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-octopipe
 ---
@@ -728,9 +772,9 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
+    - name: redis
+      port: 6379
+      targetPort: redis
   selector:
     app: charlescd-redis
     release: charlescd
@@ -748,9 +792,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
+    - name: redis
+      port: 6379
+      targetPort: redis
   selector:
     app: charlescd-redis
     release: charlescd
@@ -769,9 +813,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
+    - name: redis
+      port: 6379
+      targetPort: redis
   selector:
     app: charlescd-redis
     release: charlescd
@@ -791,7 +835,7 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
-    
+
   type: ClusterIP
   selector:
     app: charlescd-butler
@@ -810,9 +854,28 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-circle-matcher
+  type: ClusterIP
+---
+# Source: Charles-CD/templates/charlescd-compass-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: charlescd-compass
+    service: charlescd-compass
+  name: charlescd-compass
+  namespace: charles
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
+  selector:
+    app: charlescd-compass
   type: ClusterIP
 ---
 # Source: Charles-CD/templates/charlescd-moove-service.yaml
@@ -829,7 +892,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   selector:
     app: charlescd-moove
   type: ClusterIP
@@ -848,7 +911,7 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
-    
+
   selector:
     app: charlescd-ui
   type: ClusterIP
@@ -867,7 +930,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-    
+
   type: ClusterIP
   selector:
     app: charlescd-villager
@@ -899,7 +962,7 @@ spec:
     spec:
       serviceAccountName: charlescd-mongodb
       securityContext:
-        fsGroup: 1001      
+        fsGroup: 1001
       initContainers:
       containers:
         - name: charlescd-mongodb
@@ -959,9 +1022,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /bitnami/mongodb
-              subPath: 
-          resources:
-            {}
+              subPath:
+          resources: {}
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -973,7 +1035,7 @@ kind: Deployment
 metadata:
   name: nginx
   labels:
-    app: nginx     
+    app: nginx
 spec:
   selector:
     matchLabels:
@@ -984,13 +1046,13 @@ spec:
       # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
       # generated from the deployment name
       labels:
-        app: nginx     
+        app: nginx
     spec:
       containers:
         - name: nginx
           image: nginx:alpine
           ports:
-          - containerPort: 80        
+            - containerPort: 80
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
@@ -1010,7 +1072,7 @@ metadata:
     app: charlescd-octopipe
     version: charlescd-octopipe
 spec:
-  replicas: 
+  replicas:
   selector:
     matchLabels:
       app: charlescd-octopipe
@@ -1018,17 +1080,17 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-octopipe
         version: charlescd-octopipe
     spec:
       serviceAccountName: charlescd-octopipe
-      
+
       containers:
         - name: octopipe
           image: "zupcharles/charlescd-octopipe:latest"
-          
+
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1049,22 +1111,19 @@ spec:
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 1
-          
+
           imagePullPolicy: Always
-          
+
           env:
-          - name: APP_PORT
-            value: "8080"
-          - name: DB_URL
-            value: "mongodb://root:octopipe@charlescd-mongodb:27017"
-          - name: KUBECONFIG
-            value: "IN_CLUSTER"
-          - name: TIMEOUT_RESOURCE_VERIFICATION
-            value: "300"
-          
-          
-          
-                    
+            - name: APP_PORT
+              value: "8080"
+            - name: DB_URL
+              value: "mongodb://root:octopipe@charlescd-mongodb:27017"
+            - name: KUBECONFIG
+              value: "IN_CLUSTER"
+            - name: TIMEOUT_RESOURCE_VERIFICATION
+              value: "300"
+
           resources:
             limits:
               cpu: 256m
@@ -1072,12 +1131,9 @@ spec:
             requests:
               cpu: 128m
               memory: 128Mi
-     
-     
-     
-     
+
       imagePullSecrets:
-      - name: realwavelab-registry
+        - name: realwavelab-registry
 ---
 # Source: Charles-CD/templates/charlescd-butler-deployment.yaml
 apiVersion: apps/v1
@@ -1097,14 +1153,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-butler
         version: charlescd-butler
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.4-rc.2
+          image: zupcharles/charlescd-butler:0.3.4-rc.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1120,11 +1176,11 @@ spec:
             httpGet:
               path: /healthcheck
               port: 3000
-              scheme: HTTP  
+              scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 20
             successThreshold: 1
-            timeoutSeconds: 1   
+            timeoutSeconds: 1
           imagePullPolicy: Always
           env:
             - name: DATABASE_HOST
@@ -1137,7 +1193,7 @@ spec:
               value: 3f2Yq8R4HhDCnefR
             - name: DATABASE_NAME
               value: charlescd_butler
-            
+
             - name: MOOVE_URL
               value: "http://charlescd-moove:8080"
             - name: DARWIN_NOTIFICATION_URL
@@ -1177,14 +1233,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-circle-matcher
         version: charlescd-circle-matcher
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.4-rc.2
+          image: zupcharles/charlescd-circle-matcher:0.3.4-rc.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1200,11 +1256,11 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8080
-              scheme: HTTP  
+              scheme: HTTP
             initialDelaySeconds: 120
             periodSeconds: 20
             successThreshold: 1
-            timeoutSeconds: 1   
+            timeoutSeconds: 1
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -1227,6 +1283,81 @@ spec:
               cpu: 128m
               memory: 128Mi
 ---
+# Source: Charles-CD/templates/charlescd-compass-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd-compass
+  namespace: charles
+  labels:
+    app: charlescd-compass
+    version: charlescd-compass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-compass
+      version: charlescd-compass
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: charlescd-compass
+        version: charlescd-compass
+    spec:
+      containers:
+        - name: charlescd-compass
+          image: zupcharles/charlescd-compass:0.3.4
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          imagePullPolicy: Always
+          env:
+            - name: DB_HOST
+              value: "charlescd-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "charlescd_compass"
+            - name: DB_PASSWORD
+              value: "C1UinUu6N0vc"
+            - name: DB_NAME
+              value: "charlescd_compass"
+            - name: DB_SSL
+              value: "disable"
+            - name: PLUGINS_DIR
+              value: "./plugins"
+            - name: ENV
+              value: "DEV"
+            - name: DISPATCHER_INTERVAL
+              value: "15s"
+
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
+---
 # Source: Charles-CD/templates/charlescd-moove-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1245,14 +1376,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-moove
         version: charlescd-moove
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.4-rc.2
+          image: zupcharles/charlescd-moove:0.3.4-rc.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1268,11 +1399,11 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8080
-              scheme: HTTP  
+              scheme: HTTP
             initialDelaySeconds: 120
             periodSeconds: 20
             successThreshold: 1
-            timeoutSeconds: 1   
+            timeoutSeconds: 1
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -1287,6 +1418,8 @@ spec:
               value: "charlescd"
             - name: KEYCLOAK_SERVER_URL
               value: "http://charlescd-keycloak-http/keycloak/auth"
+            - name: KEYCLOAK_PUBLIC_CLIENT_ID
+              value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_ID
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
@@ -1324,14 +1457,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-ui
         version: charlescd-ui
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.4-rc.2
+          image: zupcharles/charlescd-ui:0.3.4-rc.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1347,11 +1480,11 @@ spec:
             httpGet:
               path: /
               port: 3000
-              scheme: HTTP  
+              scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 20
             successThreshold: 1
-            timeoutSeconds: 1 
+            timeoutSeconds: 1
           imagePullPolicy: Always
           env:
             - name: REACT_APP_API_URI
@@ -1388,14 +1521,14 @@ spec:
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: 'true' 
+        sidecar.istio.io/inject: "true"
       labels:
         app: charlescd-villager
         version: charlescd-villager
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.4-rc.2
+          image: zupcharles/charlescd-villager:0.3.4-rc.3
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1411,11 +1544,11 @@ spec:
             httpGet:
               path: /health
               port: 8080
-              scheme: HTTP  
+              scheme: HTTP
             initialDelaySeconds: 120
             periodSeconds: 20
             successThreshold: 1
-            timeoutSeconds: 1   
+            timeoutSeconds: 1
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -1492,7 +1625,7 @@ spec:
               value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=50.0"
             - name: PROXY_ADDRESS_FORWARDING
               value: "true"
-            
+
             - name: DB_VENDOR
               value: "postgres"
             - name: DB_ADDR
@@ -1527,7 +1660,7 @@ spec:
               value: "keycloak"
             - name: DB_SCHEMA
               value: "public"
-            
+
           volumeMounts:
             - name: sh
               mountPath: /scripts
@@ -1541,7 +1674,7 @@ spec:
             - name: realm-secret
               mountPath: "/realm/"
               readOnly: true
-            
+
           ports:
             - name: http
               containerPort: 8080
@@ -1555,16 +1688,15 @@ spec:
               port: http
             initialDelaySeconds: 300
             timeoutSeconds: 5
-            
+
           readinessProbe:
             httpGet:
               path: /keycloak/auth/realms/master
               port: http
             initialDelaySeconds: 30
             timeoutSeconds: 1
-            
-          resources:
-            {}
+
+          resources: {}
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -1591,7 +1723,7 @@ spec:
                       values:
                         - test
                 topologyKey: failure-domain.beta.kubernetes.io/zone
-        
+
       terminationGracePeriodSeconds: 60
       volumes:
         - name: sh
@@ -1639,7 +1771,7 @@ spec:
         release: "charlescd"
         heritage: "Helm"
         role: master
-    spec:      
+    spec:
       securityContext:
         fsGroup: 1001
       containers:
@@ -1705,7 +1837,7 @@ spec:
               mountPath: /dev/shm
             - name: data
               mountPath: /bitnami/postgresql
-              subPath: 
+              subPath:
       volumes:
         - name: custom-init-scripts
           configMap:
@@ -1752,93 +1884,92 @@ spec:
         checksum/health: c53d81a64fd6672631bf377b386ec051f153e768dcf8511dcf8d32b091e54f7a
         checksum/configmap: c408d6e1d0275ae8659f14cc03bf4420031e7bee98a378c0d58e079af186da3b
         checksum/secret: c5c84be62517872da3e6470a44b51995810c924205771a4ca50bf21ce2650b56
-    spec:      
+    spec:
       securityContext:
         fsGroup: 1001
       serviceAccountName: "default"
       containers:
-      - name: charlescd-redis
-        image: "docker.io/bitnami/redis:5.0.8-debian-10-r7"
-        imagePullPolicy: "IfNotPresent"
-        securityContext:
-          runAsUser: 1001
-        command:
-        - /bin/bash
-        - -c
-        - |
-          if [[ -n $REDIS_PASSWORD_FILE ]]; then
-            password_aux=`cat ${REDIS_PASSWORD_FILE}`
-            export REDIS_PASSWORD=$password_aux
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
-          fi
-          ARGS=("--port" "${REDIS_PORT}")
-          ARGS+=("--requirepass" "${REDIS_PASSWORD}")
-          ARGS+=("--masterauth" "${REDIS_PASSWORD}")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
-          /run.sh ${ARGS[@]}
-        env:
-        - name: REDIS_REPLICATION_MODE
-          value: master
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: charlescd-redis
-              key: redis-password
-        - name: REDIS_PORT
-          value: "6379"
-        ports:
-        - name: redis
-          containerPort: 6379
-        livenessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
+        - name: charlescd-redis
+          image: "docker.io/bitnami/redis:5.0.8-debian-10-r7"
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
             - -c
-            - /health/ping_liveness_local.sh 5
-        readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_readiness_local.sh 5
-        resources:
-          null
-        volumeMounts:
-        - name: health
-          mountPath: /health
-        - name: redis-data
-          mountPath: /data
-          subPath: 
-        - name: config
-          mountPath: /opt/bitnami/redis/mounted-etc
-        - name: redis-tmp-conf
-          mountPath: /opt/bitnami/redis/etc/
+            - |
+              if [[ -n $REDIS_PASSWORD_FILE ]]; then
+                password_aux=`cat ${REDIS_PASSWORD_FILE}`
+                export REDIS_PASSWORD=$password_aux
+              fi
+              if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
+                cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
+              fi
+              if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+                cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+              fi
+              ARGS=("--port" "${REDIS_PORT}")
+              ARGS+=("--requirepass" "${REDIS_PASSWORD}")
+              ARGS+=("--masterauth" "${REDIS_PASSWORD}")
+              ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+              ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
+              /run.sh ${ARGS[@]}
+          env:
+            - name: REDIS_REPLICATION_MODE
+              value: master
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-redis
+                  key: redis-password
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 5
+          resources: null
+          volumeMounts:
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+              subPath:
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc/
       volumes:
-      - name: health
-        configMap:
-          name: charlescd-redis-health
-          defaultMode: 0755
-      - name: config
-        configMap:
-          name: charlescd-redis
-      - name: redis-tmp-conf
-        emptyDir: {}
+        - name: health
+          configMap:
+            name: charlescd-redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: charlescd-redis
+        - name: redis-tmp-conf
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: redis-data
@@ -1853,7 +1984,7 @@ spec:
         resources:
           requests:
             storage: "2Gi"
-        
+
         selector:
   updateStrategy:
     type: RollingUpdate
@@ -1887,108 +2018,107 @@ spec:
         checksum/health: c53d81a64fd6672631bf377b386ec051f153e768dcf8511dcf8d32b091e54f7a
         checksum/configmap: c408d6e1d0275ae8659f14cc03bf4420031e7bee98a378c0d58e079af186da3b
         checksum/secret: c5c84be62517872da3e6470a44b51995810c924205771a4ca50bf21ce2650b56
-    spec:      
+    spec:
       securityContext:
         fsGroup: 1001
       serviceAccountName: "default"
       containers:
-      - name: charlescd-redis
-        image: docker.io/bitnami/redis:5.0.8-debian-10-r7
-        imagePullPolicy: "IfNotPresent"
-        securityContext:
-          runAsUser: 1001
-        command:
-        - /bin/bash
-        - -c
-        - |
-          if [[ -n $REDIS_PASSWORD_FILE ]]; then
-            password_aux=`cat ${REDIS_PASSWORD_FILE}`
-            export REDIS_PASSWORD=$password_aux
-          fi
-          if [[ -n $REDIS_MASTER_PASSWORD_FILE ]]; then
-            password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
-            export REDIS_MASTER_PASSWORD=$password_aux
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/replica.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
-          fi
-          ARGS=("--port" "${REDIS_PORT}")
-          ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
-          ARGS+=("--requirepass" "${REDIS_PASSWORD}")
-          ARGS+=("--masterauth" "${REDIS_MASTER_PASSWORD}")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/replica.conf")
-          /run.sh "${ARGS[@]}"
-        env:
-        - name: REDIS_REPLICATION_MODE
-          value: slave
-        - name: REDIS_MASTER_HOST
-          value: charlescd-redis-master-0.charlescd-redis-headless.charles.svc.cluster.local
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_MASTER_PORT_NUMBER
-          value: "6379"
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: charlescd-redis
-              key: redis-password
-        - name: REDIS_MASTER_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: charlescd-redis
-              key: redis-password
-        ports:
-        - name: redis
-          containerPort: 6379
-        livenessProbe:
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
+        - name: charlescd-redis
+          image: docker.io/bitnami/redis:5.0.8-debian-10-r7
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
             - -c
-            - /health/ping_liveness_local_and_master.sh 5
-        readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 10
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_readiness_local_and_master.sh 5
-        resources:
-          null
-        volumeMounts:
-        - name: health
-          mountPath: /health
-        - name: redis-data
-          mountPath: /data
-        - name: config
-          mountPath: /opt/bitnami/redis/mounted-etc
-        - name: redis-tmp-conf
-          mountPath: /opt/bitnami/redis/etc
+            - |
+              if [[ -n $REDIS_PASSWORD_FILE ]]; then
+                password_aux=`cat ${REDIS_PASSWORD_FILE}`
+                export REDIS_PASSWORD=$password_aux
+              fi
+              if [[ -n $REDIS_MASTER_PASSWORD_FILE ]]; then
+                password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
+                export REDIS_MASTER_PASSWORD=$password_aux
+              fi
+              if [[ ! -f /opt/bitnami/redis/etc/replica.conf ]];then
+                cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
+              fi
+              if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+                cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+              fi
+              ARGS=("--port" "${REDIS_PORT}")
+              ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
+              ARGS+=("--requirepass" "${REDIS_PASSWORD}")
+              ARGS+=("--masterauth" "${REDIS_MASTER_PASSWORD}")
+              ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+              ARGS+=("--include" "/opt/bitnami/redis/etc/replica.conf")
+              /run.sh "${ARGS[@]}"
+          env:
+            - name: REDIS_REPLICATION_MODE
+              value: slave
+            - name: REDIS_MASTER_HOST
+              value: charlescd-redis-master-0.charlescd-redis-headless.charles.svc.cluster.local
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_MASTER_PORT_NUMBER
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-redis
+                  key: redis-password
+            - name: REDIS_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-redis
+                  key: redis-password
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local_and_master.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local_and_master.sh 5
+          resources: null
+          volumeMounts:
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc
       volumes:
-      - name: health
-        configMap:
-          name: charlescd-redis-health
-          defaultMode: 0755
-      - name: config
-        configMap:
-          name: charlescd-redis
-      - name: sentinel-tmp-conf
-        emptyDir: {}
-      - name: redis-tmp-conf
-        emptyDir: {}
+        - name: health
+          configMap:
+            name: charlescd-redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: charlescd-redis
+        - name: sentinel-tmp-conf
+          emptyDir: {}
+        - name: redis-tmp-conf
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: redis-data
@@ -2003,7 +2133,7 @@ spec:
         resources:
           requests:
             storage: "8Gi"
-        
+
         selector:
   updateStrategy:
     type: RollingUpdate
