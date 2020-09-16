@@ -55,11 +55,4 @@ class UserGroupService(private val userGroupRepository: UserGroupRepository) {
         this.userGroupRepository.removeMember(userGroup, member)
     }
 
-    fun findPermissionsFromUserGroupAssociations(userGroup: UserGroup): Map<String, List<Permission>> {
-        return userGroupRepository.findPermissionsFromUserGroupAssociations(userGroup)
-    }
-
-    fun findPermissionsFromWorkspaceAndUserGroupAssociation(workspaceId: String, userGroup: UserGroup): List<Permission> {
-        return userGroupRepository.findPermissions(workspaceId, userGroup)
-    }
 }
