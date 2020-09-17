@@ -22,7 +22,7 @@ export class AddDefaultFieldToDeployment20200917141900 implements MigrationInter
     await queryRunner.addColumn('v2deployments', new TableColumn({
       name: 'default',
       type: 'boolean',
-      isNullable: false,
+      isNullable: true,
     }))
   }
 
