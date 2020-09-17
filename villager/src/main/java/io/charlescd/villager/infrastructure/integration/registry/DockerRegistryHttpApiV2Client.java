@@ -20,15 +20,17 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Optional;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 
-@ApplicationScoped
+@RequestScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
 
     private Client client;
@@ -77,5 +79,20 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{name}/manifests/{tagName}");
 
         return builder.build(name, tagName).toString();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (this.client != null) {
+            this.client.close();
+        }
+    }
+
+    public void closeQuietly() {
+        try {
+            close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
