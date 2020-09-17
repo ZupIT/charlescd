@@ -19,7 +19,7 @@ class CreateUserInteractorImplTest extends Specification {
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), keycloakService)
+        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), keycloakService, false)
     }
 
     def "when trying to create user should do it successfully"() {
