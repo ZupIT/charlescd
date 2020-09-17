@@ -20,7 +20,6 @@ import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
 import io.charlescd.moove.security.config.Constants
@@ -92,7 +91,7 @@ class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterB
 
         val userEmail = getEmailFromAccessToken(authorization).orEmpty()
 
-        val user = userRepository.findByEmail(userEmail).orElseThrow { NotFoundException("user", userEmail) }
+        val user = userRepository.findByEmail(userEmail).orElseThrow { Exception("User not found based on Authorization header") }
 
         if (user.root) {
             return
