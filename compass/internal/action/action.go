@@ -10,11 +10,11 @@ import (
 
 type Action struct {
 	util.BaseModel
-	Nickname            string          `json:"nickname"`
-	Type                string          `json:"type"`
-	Configuration       json.RawMessage `json:"configuration"`
-	ExecutionParameters json.RawMessage `json:"executionParameters" gorm:"type:jsonb"`
-	DeletedAt           *time.Time      `json:"-"`
+	Nickname      string          `json:"nickname"`
+	Type          string          `json:"type"`
+	Configuration json.RawMessage `json:"configuration"`
+	WorkspaceId   string          `json:"workspaceId"`
+	DeletedAt     *time.Time      `json:"-"`
 }
 
 func (main Main) Parse(action io.ReadCloser) (Action, error) {
