@@ -17,15 +17,9 @@
 package io.charlescd.villager.api.handlers.impl;
 
 import io.charlescd.villager.api.handlers.RequestHandler;
-import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
-import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
-import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
-import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.*;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
-import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
-import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
-import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.*;
 
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
@@ -52,6 +46,8 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
             toAWS(inputBuilder);
         } else if (this.request instanceof GCPCreateDockerRegistryRequest) {
             toGCP(inputBuilder);
+        } else if (this.request instanceof DockerHubCreateDockerRegistryRequest) {
+            toDockerHub(inputBuilder);
         } else {
             throw new IllegalArgumentException("The request has a invalid format.");
         }
@@ -88,6 +84,17 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
                         gcpRequest.getOrganization(),
                         gcpRequest.getUsername(),
                         gcpRequest.getJsonKey()
+                ));
+    }
+
+    private void toDockerHub(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
+        var gcpRequest = (DockerHubCreateDockerRegistryRequest) request;
+        inputBuilder
+                .withRegistryType(RegistryType.DOCKERHUB)
+                .withAuth(new DockerHubDockerRegistryAuth(
+                        gcpRequest.getOrganization(),
+                        gcpRequest.getUsername(),
+                        gcpRequest.getPassword()
                 ));
     }
 }

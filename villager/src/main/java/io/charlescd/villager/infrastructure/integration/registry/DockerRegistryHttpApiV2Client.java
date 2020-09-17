@@ -61,6 +61,10 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
                 this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
                 break;
+            case DOCKERHUB:
+                var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
+                this.client.register(new CommonBasicAuthenticator(dockerHubConfig.username, dockerHubConfig.password));
+                break;
             default:
                 throw new IllegalArgumentException("Registry type is not supported!");
         }

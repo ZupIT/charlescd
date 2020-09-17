@@ -237,6 +237,14 @@ public class DockerRegistryConfigurationRepository {
                         gcpRegistryAuth.get("username"),
                         gcpRegistryAuth.get("jsonKey"));
                 break;
+            case DOCKERHUB:
+                var dockerHubRegistryAuth = deserializeConnectionData(rs);
+                entity.connectionData = new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(
+                        dockerHubRegistryAuth.get("address"),
+                        dockerHubRegistryAuth.get("organization"),
+                        dockerHubRegistryAuth.get("username"),
+                        dockerHubRegistryAuth.get("password"));
+                break;
             default:
                 entity.connectionData = null;
         }
