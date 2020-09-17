@@ -31,7 +31,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.active = true')
-      .andWhere('deployment.circle_id is null')
+      .andWhere('deployment.defaultCircle is true')
       .getMany()
   }
 
@@ -46,7 +46,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   public async findDefaultRunningComponents(): Promise<ComponentEntityV2[]> {
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .andWhere('deployment.circle_id is null')
+      .andWhere('deployment.defaultCircle is true')
       .andWhere('v2components.running = true')
       .getMany()
   }
