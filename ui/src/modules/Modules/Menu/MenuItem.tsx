@@ -17,7 +17,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Text from 'core/components/Text';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { addParam, delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import useQueryString from 'core/utils/query';
