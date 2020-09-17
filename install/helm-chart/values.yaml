@@ -20,12 +20,12 @@ butler:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 128m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 moove:
   enabled: true
@@ -46,15 +46,15 @@ moove:
     name: charlescd-moove
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 1
-    memory: 1024Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 1
+      memory: 1024Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 sidecarIstio:
   enabled: true
@@ -77,15 +77,15 @@ villager:
     name: charlescd-villager
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 512Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi   
+    limits:
+      cpu: 256m
+      memory: 512Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 ui:
   enabled: true
@@ -103,12 +103,12 @@ ui:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 128Mi
-   requests:
-    cpu: 64m
-    memory: 64Mi
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
 
 circlematcher:
   enabled: false
@@ -130,33 +130,33 @@ circlematcher:
       - name: http
         port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 256m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 keycloak:
   enabled: true
   keycloak:
     extraEnv: |
-        - name: PROXY_ADDRESS_FORWARDING
-          value: "true"
-        - name: DB_USER
-          value: "keycloak"
-        - name: DB_PASSWORD
-          value: "DCWYW66Mq2ca6w8u"
-        - name: DB_VENDOR
-          value: "POSTGRES"
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_ADDR
-          value: "charlescd-postgresql"
-        - name: DB_DATABASE
-          value: "keycloak"
-        - name: DB_SCHEMA
-          value: "public"
+      - name: PROXY_ADDRESS_FORWARDING
+        value: "true"
+      - name: DB_USER
+        value: "keycloak"
+      - name: DB_PASSWORD
+        value: "DCWYW66Mq2ca6w8u"
+      - name: DB_VENDOR
+        value: "POSTGRES"
+      - name: DB_PORT
+        value: "5432"
+      - name: DB_ADDR
+        value: "charlescd-postgresql"
+      - name: DB_DATABASE
+        value: "keycloak"
+      - name: DB_SCHEMA
+        value: "public"
 
     replicas: 1
     persistence:
@@ -208,20 +208,16 @@ octopipe:
       value: "300"
 
 compass:
-  enabled: false
-  name: compass
+  enabled: true
+  name: "charlescd-compass"
+  database:
+    name: charlescd_compass
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_compass
+    password: C1UinUu6N0vc
   replicaCount: 1
   envVars:
-    - name: DB_HOST
-      value: "charlescd-sandbox-postgresql"
-    - name: DB_PORT
-      value: "5432"
-    - name: DB_USER
-      value: "charlescd_compass"
-    - name: DB_PASSWORD
-      value: "C1UinUu6N0vc"
-    - name: DB_NAME
-      value: "charlescd_compass"
     - name: DB_SSL
       value: "disable"
     - name: PLUGINS_DIR
@@ -232,11 +228,10 @@ compass:
       value: "15s"
   circleId: example
   image:
-    repository: compass
-    tag: latest
+    name: zupcharles/charlescd-compass:0.3.4
     pullPolicy: Always
   service:
-    name: compass
+    name: charlescd-compass
     type: ClusterIP
     ports:
       - name: http
@@ -248,5 +243,3 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
-  sidecarIstio:
-    enabled: true
