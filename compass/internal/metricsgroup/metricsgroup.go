@@ -2,7 +2,6 @@ package metricsgroup
 
 import (
 	"compass/internal/metric"
-	"compass/internal/metricsgroupaction"
 	"compass/internal/util"
 	"compass/pkg/datasource"
 	"compass/pkg/logger"
@@ -18,11 +17,11 @@ import (
 
 type MetricsGroup struct {
 	util.BaseModel
-	Name        string                                  `json:"name"`
-	Metrics     []metric.Metric                         `json:"metrics"`
-	WorkspaceID uuid.UUID                               `json:"-"`
-	CircleID    uuid.UUID                               `json:"circleId"`
-	Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`
+	Name        string          `json:"name"`
+	Metrics     []metric.Metric `json:"metrics"`
+	WorkspaceID uuid.UUID       `json:"-"`
+	CircleID    uuid.UUID       `json:"circleId"`
+	//Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricGroupResume struct {
