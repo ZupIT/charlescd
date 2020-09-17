@@ -17,14 +17,17 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import java.io.Closeable;
 import java.util.Optional;
 import javax.ws.rs.core.Response;
 
-public interface RegistryClient {
+public interface RegistryClient extends Closeable {
 
     void configureAuthentication(RegistryType type,
                                  DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
 
     Optional<Response> getImage(String name, String tagName);
+
+    void closeQuietly();
 
 }
