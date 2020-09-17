@@ -1,11 +1,13 @@
 package main
 
 import (
+	"compass/internal/action"
 	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"log"
 
@@ -32,6 +34,8 @@ func main() {
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
+	actionMain := action.NewMain(db)
+	metricsGroupActionMain := metricsgroupaction.NewMain(db)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
 	stopChan := make(chan bool, 0)
@@ -43,5 +47,7 @@ func main() {
 	v1.NewMetricApi(metricMain, metricsgroupMain)
 	v1.NewDataSourceApi(datasourceMain)
 	v1.NewCircleApi(metricsgroupMain)
+	v1.NewActionApi(actionMain)
+	v1.NewMetricsGroupActionApi(metricsGroupActionMain)
 	v1.Start()
 }
