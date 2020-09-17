@@ -217,7 +217,7 @@ managementConstraints:
     methods:
       - PUT
 
-  - pattern: /users
+  - pattern: /v2/users
     methods:
       - POST
 
