@@ -38,7 +38,7 @@ const FormUser = ({ onFinish }: Props) => {
     handleSubmit,
     formState: { isValid }
   } = useForm<NewUser>({ mode: 'onChange' });
-  const { create, newUser, status } = useCreateUser();
+  const { create, newUser } = useCreateUser();
 
   useEffect(() => {
     if (newUser) {
@@ -85,7 +85,7 @@ const FormUser = ({ onFinish }: Props) => {
         size="EXTRA_SMALL"
         type="submit"
         isDisabled={!isValid}
-        isLoading={status.isPending}
+        isLoading={!newUser}
       >
         Create User
       </Button.Default>

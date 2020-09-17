@@ -26,8 +26,9 @@ import {
   setRefreshToken,
   isIDMAuthFlow
 } from 'core/utils/auth';
-import { useUser } from 'modules/Users/hooks';
+import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { useAuth } from 'modules/Auth/hooks';
 
 const Main = lazy(() => import('modules/Main'));
@@ -36,8 +37,9 @@ const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
 const Routes = () => {
-  const { findByEmail, user } = useUser();
+  const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
+  const { create, newUser } = useCreateUser();
 
   useEffect(() => {
     if (isIDMAuthFlow()) {
@@ -55,7 +57,23 @@ const Routes = () => {
   }, [getTokens, findByEmail]);
 
   useEffect(() => {
-    if (user) saveProfile(user);
+    if (error && error.status === HTTP_STATUS.notFound) {
+      const { name, email } = getAccessTokenDecoded();
+      create({ name, email });
+    }
+  }, [error, create]);
+
+  useEffect(() => {
+    if (newUser) {
+      const { email } = getAccessTokenDecoded();
+      findByEmail(email);
+    }
+  }, [newUser, findByEmail]);
+
+  useEffect(() => {
+    if (user) {
+      saveProfile(user);
+    }
   }, [user]);
 
   useEffect(() => {
