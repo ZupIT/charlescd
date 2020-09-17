@@ -1,5 +1,5 @@
 butler:
-  enabled: true
+  enabled: false
   name: "charlescd-butler"
   octopipeHost: "http://charlescd-octopipe:8080"
   database:
@@ -60,7 +60,7 @@ sidecarIstio:
   enabled: true
 
 villager:
-  enabled: true
+  enabled: false
   name: "charlescd-villager"
   database:
     name: charlescd_villager
@@ -111,7 +111,7 @@ ui:
     memory: 64Mi
 
 circlematcher:
-  enabled: true
+  enabled: false
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -168,6 +168,7 @@ keycloak:
 
 
 
+
 postgresql:
   enabled: true
   postgresqlUsername: "postgres"
@@ -195,7 +196,7 @@ nginx:
     enabled: true
 
 octopipe:
-  enabled: true
+  enabled: false
   envVars:
     - name: APP_PORT
       value: "8080"
@@ -207,7 +208,7 @@ octopipe:
       value: "300"
 
 compass:
-  enabled: true
+  enabled: false
   name: compass
   replicaCount: 1
   envVars:
