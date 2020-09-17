@@ -22,9 +22,10 @@ data class DeployRequest(
     val modules: List<DeployModuleRequest>,
     val authorId: String,
     val description: String,
-    val circle: DeployCircleRequest? = null,
+    val circle: DeployCircleRequest,
     val callbackUrl: String,
-    val cdConfigurationId: String
+    val cdConfigurationId: String,
+    val defaultCircle: Boolean
 )
 
 data class DeployModuleRequest(
