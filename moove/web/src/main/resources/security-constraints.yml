@@ -217,6 +217,10 @@ managementConstraints:
     methods:
       - PUT
 
+  - pattern: /users
+    methods:
+      - POST
+
 publicConstraints:
   - pattern: /credentials/{service}/{id}
     methods:
