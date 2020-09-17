@@ -1,5 +1,5 @@
 butler:
-  enabled: false
+  enabled: true
   name: "charlescd-butler"
   octopipeHost: "http://charlescd-octopipe:8080"
   database:
@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.3.4-rc.3
+    name: zupcharles/charlescd-butler:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -40,7 +40,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.3.4-rc.3
+    name: zupcharles/charlescd-moove:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -60,7 +60,7 @@ sidecarIstio:
   enabled: true
 
 villager:
-  enabled: false
+  enabled: true
   name: "charlescd-villager"
   database:
     name: charlescd_villager
@@ -71,7 +71,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.3.4-rc.3
+    name: zupcharles/charlescd-villager:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -94,7 +94,7 @@ ui:
   keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.4-rc.3
+    name: zupcharles/charlescd-ui:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -111,7 +111,7 @@ ui:
       memory: 64Mi
 
 circlematcher:
-  enabled: false
+  enabled: true
   name: charlescd-circle-matcher
   redis:
     host: charlescd-redis-master
@@ -121,7 +121,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.3.4-rc.3
+    name: zupcharles/charlescd-circle-matcher:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -168,7 +168,6 @@ keycloak:
 
 
 
-
 postgresql:
   enabled: true
   postgresqlUsername: "postgres"
@@ -179,7 +178,7 @@ redis:
   password: "hb2Fj9MGKjBkZ6zV"
 
 mongodb:
-  enabled: false
+  enabled: true
   mongodbRootPassword: "octopipe"
 
 nginx:
@@ -196,7 +195,7 @@ nginx:
     enabled: true
 
 octopipe:
-  enabled: false
+  enabled: true
   envVars:
     - name: APP_PORT
       value: "8080"

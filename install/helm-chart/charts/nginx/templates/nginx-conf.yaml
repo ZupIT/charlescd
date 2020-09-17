@@ -8,7 +8,7 @@ data:
     }
 
     http {
-
+        resolver kube-dns.kube-system.svc.cluster.local;
         lua_package_path '/usr/local/openresty/site/?.lua;;';
         # cache for discovery metadata documents
         lua_shared_dict discovery 1m;
@@ -25,7 +25,7 @@ data:
 
         server {
             listen 80;
-            resolver kube-dns.kube-system.svc.cluster.local;
+            
 
             {{ if .Values.ui.enabled}}
             location / {

@@ -21,6 +21,12 @@ spec:
         app: {{ .Values.butler.name }}
         version: {{ .Values.butler.name }}
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h {{ .Values.butler.database.host}} -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: {{ .Values.butler.name }}
           image: {{ .Values.butler.image.name }}

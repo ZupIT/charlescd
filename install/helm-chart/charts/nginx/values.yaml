@@ -9,5 +9,5 @@ keycloak:
 compass:
   enabled: true
 idm:
-  endpoint: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+  endpoint: example
   alg: \"RS256\"
