@@ -19,7 +19,7 @@ class CreateUserInteractorImplTest extends Specification {
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), keycloakService, false)
+        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), userRepository, keycloakService, true)
     }
 
     def "when trying to create user should do it successfully"() {
@@ -123,7 +123,7 @@ class CreateUserInteractorImplTest extends Specification {
         createUserInteractor.execute(createUserRequest, authorization)
 
         then:
-        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
+        1 * userRepository.findByEmail(userEmail) >> Optional.empty()
         1 * userRepository.findByEmail(user.email) >> Optional.empty()
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
         1 * userRepository.save(_) >> user
