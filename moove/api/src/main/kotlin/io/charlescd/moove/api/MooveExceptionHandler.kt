@@ -24,10 +24,6 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.exceptions.UnauthorizedException
-import java.util.LinkedList
-import java.util.Locale
-import javax.servlet.http.HttpServletRequest
-import kotlin.collections.LinkedHashMap
 import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -41,6 +37,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import java.util.*
+import javax.servlet.http.HttpServletRequest
+import kotlin.collections.LinkedHashMap
 
 @ControllerAdvice
 class MooveExceptionHandler(private val messageSource: MessageSource) {
@@ -110,7 +109,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     }
 
     @ExceptionHandler(UnauthorizedException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     fun unauthorizedException(request: HttpServletRequest, ex: UnauthorizedException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
