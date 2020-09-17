@@ -35,7 +35,7 @@ func main() {
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
 	actionMain := action.NewMain(db)
-	metricsGroupActionMain := metricsgroupaction.NewMain(db)
+	metricsGroupActionMain := metricsgroupaction.NewMain(db, metricsgroupMain, actionMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
 	stopChan := make(chan bool, 0)
