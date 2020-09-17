@@ -319,8 +319,9 @@ const FieldErrorWrapper = styled.div`
 `;
 
 const MultiSelect = styled(SelectComponent.MultiCheck)`
-  width: 115px;
-  padding: 0 0 15px 0;
+  width: 130px;
+  height: 35px;
+  bottom: 10px;
 
   div:first-child {
     background: transparent;

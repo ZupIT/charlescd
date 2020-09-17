@@ -261,13 +261,18 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
               isOpen={!groupChartOpen[metricGroup.id]}
             >
               <LabeledIcon
+                isActive={groupChartOpen[metricGroup.id]}
                 icon={groupChartOpen[metricGroup.id] ? 'view' : 'no-view'}
                 onClick={() => toggleMetricGroupChart(metricGroup.id)}
               >
-                <Text.h5 color="dark">View Chart</Text.h5>
+                <Text.h5
+                  color={groupChartOpen[metricGroup.id] ? 'light' : 'dark'}
+                >
+                  View Chart
+                </Text.h5>
               </LabeledIcon>
               {groupChartOpen[metricGroup.id] && (
-                <LabeledIcon icon="filter">
+                <LabeledIcon icon="filter" isActive={true}>
                   <Styled.MultiSelect
                     control={control}
                     name="metrics"
