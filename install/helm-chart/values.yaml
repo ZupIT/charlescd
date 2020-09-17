@@ -39,6 +39,7 @@ moove:
     user: charlescd_moove
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
+  internalIdmEnabled: true
   image:
     name: zupcharles/charlescd-moove:0.3.4
     pullPolicy: Always
