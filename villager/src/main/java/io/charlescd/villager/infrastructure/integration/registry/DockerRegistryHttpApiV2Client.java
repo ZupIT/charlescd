@@ -20,6 +20,8 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.integration.registry.authentication.AWSCustomProviderChainAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.client.Client;
@@ -101,5 +103,20 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{organization}/{name}/manifests/{tagName}");
 
         return builder.build(organization, name, tagName).toString();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (this.client != null) {
+            this.client.close();
+        }
+    }
+
+    public void closeQuietly() {
+        try {
+            close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
