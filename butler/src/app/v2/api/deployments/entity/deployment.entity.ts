@@ -48,7 +48,7 @@ export class DeploymentEntityV2 implements Deployment {
   public executions!: Execution[]
 
   @Column({ name: 'circle_id', nullable: true, type: 'varchar' })
-  public circleId!: string | null
+  public circleId!: string
 
   @Column({ name: 'active' })
   public active!: boolean
@@ -56,13 +56,17 @@ export class DeploymentEntityV2 implements Deployment {
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
 
+  @Column({ name: 'default' })
+  public defaultCircle!: boolean
+
   constructor(
     deploymentId: string,
     authorId: string,
-    circleId: string | null,
+    circleId: string,
     cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
-    components: ComponentEntity[]
+    components: ComponentEntity[],
+    defaultCircle: boolean
   ) {
     this.id = deploymentId
     this.authorId = authorId
@@ -70,6 +74,7 @@ export class DeploymentEntityV2 implements Deployment {
     this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
+    this.defaultCircle = defaultCircle
   }
 
   public toReadDto(): ReadDeploymentDto {
@@ -102,7 +107,7 @@ export class DeploymentEntityV2 implements Deployment {
       createdAt: this.createdAt,
       description: '',
       modulesDeployments: [this.componentsToModules()],
-      defaultCircle: false
+      defaultCircle: true
     }
   }
 
