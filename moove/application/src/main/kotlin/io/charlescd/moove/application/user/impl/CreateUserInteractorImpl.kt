@@ -4,9 +4,8 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.CreateUserInteractor
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.response.UserResponse
-import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.UnauthorizedException
 import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
@@ -34,11 +33,12 @@ class CreateUserInteractorImpl @Inject constructor(
         return UserResponse.from(user)
     }
 
-    private fun verifyPermissionToCreate(user: User, authorization: String) {
+    private fun verifyPermissionToCreate(newUser: User, authorization: String) {
+        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
+        val user = userService.findByEmail(parsedEmail)
         if (!user.root) {
-            val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-            if (parsedEmail != user.email) {
-                throw BusinessException.of(MooveErrorCode.NOT_AUTHORIZED)
+            if (parsedEmail != newUser.email) {
+                throw UnauthorizedException()
             }
         }
     }

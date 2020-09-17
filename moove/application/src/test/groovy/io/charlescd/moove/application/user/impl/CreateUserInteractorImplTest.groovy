@@ -4,9 +4,12 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.CreateUserInteractor
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.UnauthorizedException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
+import java.time.LocalDateTime
 import spock.lang.Specification
 
 class CreateUserInteractorImplTest extends Specification {
@@ -21,8 +24,9 @@ class CreateUserInteractorImplTest extends Specification {
 
     def "when trying to create user should do it successfully"() {
         given:
-        def userEmail = "email@test.com.br"
-        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", userEmail, "https://www.photos.com/johndoe", false)
+        def userEmail = "manager@test.com.br"
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
+        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "newuser@teste.com", "https://www.photos.com/johndoe", false)
         def authorization = "Bearer "
 
         when:
@@ -30,6 +34,7 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
         1 * userRepository.save(_) >> _
         1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
@@ -41,8 +46,9 @@ class CreateUserInteractorImplTest extends Specification {
 
     def "when trying to create a user should trim and lowercase the email"() {
         given:
-        def userEmail = "  email@TEst.com.br      "
-        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", userEmail, "https://www.photos.com/johndoe", false)
+        def userEmail = "teste@teste.com"
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
+        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "  email@TEst.com.br      ", "https://www.photos.com/johndoe", false)
         def authorization = "Bearer "
 
         when:
@@ -50,6 +56,7 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findByEmail(createUserRequest.email.toLowerCase().trim()) >> Optional.empty()
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
         1 * userRepository.save(_) >> _
         1 * keycloakService.createUser(createUserRequest.email.toLowerCase().trim(), createUserRequest.name, createUserRequest.password, false)
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
@@ -63,7 +70,8 @@ class CreateUserInteractorImplTest extends Specification {
     def "when trying to create user, if email already exists should throw exception"(){
         given:
         def userEmail = "email@test.com.br"
-        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", userEmail, "https://www.photos.com/johndoe", false)
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
+        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "newuser@teste.com", "https://www.photos.com/johndoe", false)
         def user = createUserRequest.toUser()
         def authorization = "Bearer "
 
@@ -72,6 +80,7 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findByEmail(user.email) >> Optional.of(user)
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
         0 * userRepository.save(_) >> user
         0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
@@ -83,7 +92,8 @@ class CreateUserInteractorImplTest extends Specification {
     def "when trying to create user, if its not root and its not own user throw exception"(){
         given:
         def userEmail = "email@test.com.br"
-        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "teste@teste.com", "https://www.photos.com/johndoe", false)
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], false, LocalDateTime.now())
+        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "newuser@teste.com", "https://www.photos.com/johndoe", false)
         def user = createUserRequest.toUser()
         def authorization = "Bearer "
 
@@ -92,17 +102,19 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         0 * userRepository.findByEmail(user.email) >> Optional.empty()
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
         0 * userRepository.save(_) >> user
         0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
 
-        def exception = thrown(BusinessException)
-        exception.errorCode == MooveErrorCode.NOT_AUTHORIZED
+        def exception = thrown(UnauthorizedException)
+        "Access denied!" == exception.getMessage()
     }
 
     def "when trying to create user, if its not root but its own user do it successfully"(){
         given:
         def userEmail = "email@test.com.br"
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], false, LocalDateTime.now())
         def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", userEmail, "https://www.photos.com/johndoe", false)
         def user = createUserRequest.toUser()
         def authorization = "Bearer "
@@ -111,6 +123,7 @@ class CreateUserInteractorImplTest extends Specification {
         createUserInteractor.execute(createUserRequest, authorization)
 
         then:
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
         1 * userRepository.findByEmail(user.email) >> Optional.empty()
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
         1 * userRepository.save(_) >> user
@@ -120,6 +133,7 @@ class CreateUserInteractorImplTest extends Specification {
     def "when trying to create user, if its root but its not own user do it successfully"(){
         given:
         def userEmail = "email@test.com.br"
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
         def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "teste@teste.com", "https://www.photos.com/johndoe", true)
         def user = createUserRequest.toUser()
         def authorization = "Bearer "
@@ -129,7 +143,8 @@ class CreateUserInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findByEmail(user.email) >> Optional.empty()
-        0 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
+        1 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
+        1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
         1 * userRepository.save(_) >> user
         1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, true)
     }
