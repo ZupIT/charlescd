@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import { FetchStatuses } from 'core/providers/base/hooks';
 import { WorkspacePagination } from '../interfaces/WorkspacePagination';
 import { Workspace } from '../interfaces/Workspace';
 
 export enum ACTION_TYPES {
   loadedWorkspaces = 'WORKSPACES/LOADED_WORKSPACES',
-  loadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE'
+  loadedWorkspace = 'WORKSPACES/LOADED_WORKSPACE',
+  statusWorkspace = 'WORKSPACES/STATUS'
 }
 
 interface LoadedWorkspacesActionType {
@@ -30,6 +32,11 @@ interface LoadedWorkspacesActionType {
 interface LoadedWorkspaceActionType {
   type: typeof ACTION_TYPES.loadedWorkspace;
   payload: Workspace;
+}
+
+interface StatusWorkspaceActionType {
+  type: typeof ACTION_TYPES.statusWorkspace;
+  payload: FetchStatuses;
 }
 
 export const loadedWorkspacesAction = (
@@ -46,6 +53,14 @@ export const loadedWorkspaceAction = (
   payload
 });
 
+export const statusWorkspaceAction = (
+  payload: FetchStatuses
+): WorkspacesActionTypes => ({
+  type: ACTION_TYPES.statusWorkspace,
+  payload
+});
+
 export type WorkspacesActionTypes =
   | LoadedWorkspacesActionType
-  | LoadedWorkspaceActionType;
+  | LoadedWorkspaceActionType
+  | StatusWorkspaceActionType;
