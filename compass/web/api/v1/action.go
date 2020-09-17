@@ -17,8 +17,8 @@ func (v1 V1) NewActionApi(actionMain action.UseCases) ActionApi {
 
 	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.List))
 	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.FindById))
-	v1.Router.POST(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.Create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.Create))
+	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.Create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.Delete))
 	return actionApi
 }
 
