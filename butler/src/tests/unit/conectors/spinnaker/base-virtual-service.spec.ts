@@ -20,6 +20,7 @@ import {
   createVirtualService
 } from '../../../../app/v1/core/integrations/cd/spinnaker/connector/utils/manifests/base-virtual-service'
 import expectedBaseVirtualService from './fixtures/expected-base-virtual-service'
+import expectedBaseVirtualServiceFormattedSubsets from './fixtures/expected-base-virtual-service-formatted-subsets'
 import expectedEmptyVirtualService from './fixtures/expected-empty-virtual-service'
 
 it('creates the virtual service when there is no header on the circle', () => {
@@ -32,6 +33,18 @@ it('creates the virtual service when there is no header on the circle', () => {
   const virtualService = createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
 
   expect(virtualService).toEqual(expectedBaseVirtualService)
+})
+
+it('creates the virtual service and format subset labels', () => {
+  const appName = 'app-name'
+  const appNamespace = 'app-namespace'
+  const circles = [{ destination: { version: '1.3' }, header: { headerValue: 'header-value', headerName: 'header-name' } }]
+  const hosts = undefined
+  const hostValue = undefined
+  const gatewayName = undefined
+  const virtualService = createVirtualService(appName, appNamespace, circles, hosts, hostValue, gatewayName)
+
+  expect(virtualService).toEqual(expectedBaseVirtualServiceFormattedSubsets)
 })
 
 it('creates empty virtual service when there is no versions', () => {
