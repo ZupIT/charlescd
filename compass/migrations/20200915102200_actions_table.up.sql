@@ -6,18 +6,19 @@ CREATE TABLE IF NOT EXISTS ACTIONS
     TYPE          VARCHAR(100),
     CONFIGURATION JSONB                               NOT NULL,
     CREATED_AT    TIMESTAMP DEFAULT clock_timestamp() NOT NULL,
-    DELETED_AT    TIMESTAMP                           NOT NULL
+    DELETED_AT    TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS METRIC_GROUP_ACTION
+CREATE TABLE IF NOT EXISTS METRICS_GROUP_ACTION
 (
     ID                   VARCHAR(36) PRIMARY KEY,
-    METRICS_GROUP_ID     VARCHAR(36),
-    ACTIONS_ID           VARCHAR(36),
-    NICKNAME             VARCHAR(100),
+    METRICS_GROUP_ID     VARCHAR(36)                         NOT NULL,
+    ACTIONS_ID           VARCHAR(36)                         NOT NULL,
+    NICKNAME             VARCHAR(100)                        NOT NULL,
     EXECUTION_PARAMETERS JSONB                               NOT NULL,
     CREATED_AT           TIMESTAMP DEFAULT clock_timestamp() NOT NULL,
+    DELETED_AT           TIMESTAMP,
     CONSTRAINT fk_metric_group_action FOREIGN KEY (METRICS_GROUP_ID) REFERENCES METRICS_GROUPS (id) ON DELETE CASCADE,
-    CONSTRAINT fk_action_metric_group_action FOREIGN KEY (ACTIONS_ID) REFERENCES ACTIONS (id)
+    CONSTRAINT fk_action_metric_group_action FOREIGN KEY (ACTIONS_ID) REFERENCES ACTIONS (id) ON DELETE CASCADE
 );
 

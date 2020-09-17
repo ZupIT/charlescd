@@ -4,6 +4,7 @@ import (
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"encoding/json"
+	"errors"
 	"io"
 	"time"
 )
@@ -30,7 +31,25 @@ func (main Main) Parse(action io.ReadCloser) (Action, error) {
 }
 
 func (main Main) Validate(action Action) []util.ErrorUtil {
-	return nil
+	ers := make([]util.ErrorUtil, 0)
+
+	if action.Nickname == "" {
+		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("Action nickname is required").Error()})
+	}
+
+	if action.Type == "" {
+		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("Action type is required").Error()})
+	}
+
+	if action.Configuration == nil || len(action.Configuration) == 0 {
+		ers = append(ers, util.ErrorUtil{Field: "configuration", Error: errors.New("Action configuration is required").Error()})
+	}
+
+	if action.WorkspaceId == "" {
+		ers = append(ers, util.ErrorUtil{Field: "workspaceId", Error: errors.New("WorkspaceId is required").Error()})
+	}
+
+	return ers
 }
 
 func (main Main) FindById(id string) (Action, error) {

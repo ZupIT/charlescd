@@ -4,8 +4,10 @@ import (
 	"compass/internal/util"
 	"compass/pkg/logger"
 	"encoding/json"
+	"errors"
 	"github.com/google/uuid"
 	"io"
+	"time"
 )
 
 type MetricsGroupAction struct {
@@ -14,6 +16,7 @@ type MetricsGroupAction struct {
 	MetricsGroupID      uuid.UUID       `json:"metricsGroupId"`
 	ActionID            uuid.UUID       `json:"actionId"`
 	ExecutionParameters json.RawMessage `json:"executionParameters"`
+	DeletedAt           *time.Time      `json:"-"`
 }
 
 func (main Main) Parse(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error) {
@@ -28,8 +31,24 @@ func (main Main) Parse(metricsGroupAction io.ReadCloser) (MetricsGroupAction, er
 	return *mgAct, nil
 }
 
-func (main Main) Validate(action MetricsGroupAction) []util.ErrorUtil {
-	return nil
+func (main Main) Validate(metricsGroupAction MetricsGroupAction) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
+
+	if metricsGroupAction.Nickname == "" {
+		ers = append(ers, util.ErrorUtil{
+			Field: "nickname",
+			Error: errors.New("Action nickname is required").Error(),
+		})
+	}
+
+	if metricsGroupAction.ExecutionParameters == nil || len(metricsGroupAction.ExecutionParameters) == 0 {
+		ers = append(ers, util.ErrorUtil{
+			Field: "executionParameters",
+			Error: errors.New("Execution parameters is required").Error(),
+		})
+	}
+
+	return ers
 }
 
 func (main Main) Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
