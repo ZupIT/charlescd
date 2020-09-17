@@ -71,7 +71,7 @@ class DeploymentServiceLegacy(
         return deploymentRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("deployment", id) }
             .let { it.updateDeploymentStatus() }
-            .let { deployApi.undeploy(UndeployRequest(it.author.id, id)) }
+            .let { deployApi.undeploy(id, UndeployRequest(it.author.id)) }
     }
 
     private fun Deployment.updateDeploymentStatus(): Deployment {
