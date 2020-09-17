@@ -34,15 +34,7 @@ interface DeployClient {
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun deployInSegmentedCircle(@RequestBody request: DeployRequest): DeployResponse
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(
-        value = ["/deployments"],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-        consumes = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    fun deployInDefaultCircle(@RequestBody request: DeployRequest): DeployResponse
+    fun deploy(@RequestBody request: DeployRequest): DeployResponse
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
