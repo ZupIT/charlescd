@@ -49,11 +49,19 @@ spec:
             - name: REACT_APP_API_URI
               value: {{ .Values.ui.apiHost }}
             - name: REACT_APP_AUTH_URI
-              value: {{ .Values.ui.keycloakHost }}
+              value: {{ .Values.ui.authUri }}
             - name: REACT_APP_AUTH_REALM
               value: charlescd
             - name: REACT_APP_AUTH_CLIENT_ID
               value: charlescd-client
+            - name: REACT_APP_IDM
+              value: {{ .Values.ui.isIdmEnabled }}
+            - name: REACT_APP_IDM_LOGIN_URI
+              value: {{ .Values.ui.idmLoginUri }}
+            - name: REACT_APP_IDM_LOGOUT_URI
+              value: {{ .Values.ui.idmLogoutUri }}
+            - name: REACT_APP_IDM_REDIRECT_URI
+              value: {{ .Values.ui.idmRedirectHost }}
           resources:
 {{ toYaml .Values.ui.resources | indent 12 }}
     {{- with .Values.ui.nodeSelector }}

@@ -56,7 +56,11 @@ This installation is recommended for who has already setup your infrastructure d
 | ui.enabled                                   | enable UI installation                                                      | true                                              |
 | ui.name                                      | deployment name for UI                                                      | charlescd-ui                                      |
 | ui.apiHost                                   | Api host                                                                    | http://charles-example-ui.com                     |
-| ui.keycloakHost                              | keycloak host                                                               | http://charles-example-keycloak.com/keycloak/auth |
+| ui.isIdmEnables                              | Setting if UI should authenticate with external IDM (0 = false, 1 = true)   | 0                                                 |
+| ui.idmLoginUri                               | IDM Login URI                                                               | /protocol/openid-connect/auth                     |
+| ui.idmLogoutUri                              | IDM Logout URI                                                              | /protocol/openid-connect/logout                   |
+| ui.idmRedirectHost                           | Host that the IDM should redirect after login                               | http://charles.info.example                       |
+| ui.authUri                                   | Keycloak or IDM host                                                        | http://charles-example-keycloak.com/keycloak/auth |
 | ui.replicaCount                              | number of pods to run                                                       | 1                                                 |
 | ui.image.name                                | name of UI image                                                            | zupcharles/charlescd-ui:0.2.2                     |
 | ui.image.pullPolicy                          | [See documentation](https://kubernetes.io/docs/concepts/containers/images/) | Always                                            |

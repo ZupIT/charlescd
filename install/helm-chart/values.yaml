@@ -91,7 +91,11 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  keycloakHost: http://charles.info.example/keycloak
+  authUri: http://charles.info.example/keycloak
+  isIdmEnabled: 0
+  idmLoginUri: /protocol/openid-connect/auth
+  idmLogoutUri: /protocol/openid-connect/logout
+  idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
     name: zupcharles/charlescd-ui:0.3.4
