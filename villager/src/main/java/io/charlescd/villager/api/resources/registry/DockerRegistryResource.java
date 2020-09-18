@@ -24,6 +24,7 @@ import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
 import io.charlescd.villager.interactor.registry.ListDockerRegistryInteractor;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
 import io.charlescd.villager.util.Constants;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -92,7 +93,7 @@ public class DockerRegistryResource {
     public RegistryTagsListRepresentation getComponentTag(@HeaderParam(Constants.X_WORKSPACE_ID) String workspaceId,
                                                           @PathParam("registryConfigurationId") String registryConfigId,
                                                           @PathParam("componentName") String componentName,
-                                                          @QueryParam("name") String name) {
+                                                          @QueryParam("name") String name) throws IOException {
 
         var requestHandler =
                 new GetDockerRegistryTagHandler(workspaceId, registryConfigId, componentName, name);

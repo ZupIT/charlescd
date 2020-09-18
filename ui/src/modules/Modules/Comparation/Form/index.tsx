@@ -21,7 +21,7 @@ import { useForm, useFieldArray, FormContext } from 'react-hook-form';
 import { useSaveModule, useUpdateModule } from 'modules/Modules/hooks/module';
 import { Module } from 'modules/Modules/interfaces/Module';
 import { getProfileByKey } from 'core/utils/profile';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { updateParam } from 'core/utils/path';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import routes from 'core/constants/routes';
