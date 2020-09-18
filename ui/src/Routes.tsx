@@ -48,7 +48,6 @@ const Routes = () => {
       const { email } = getAccessTokenDecoded();
 
       if (code) {
-        console.log('getTokens');
         getTokens(code);
       } else if (email) {
         findByEmail(email);
@@ -60,7 +59,6 @@ const Routes = () => {
 
   useEffect(() => {
     if (error && error.status === HTTP_STATUS.notFound) {
-      console.log('errr', error);
       const { name, email } = getAccessTokenDecoded();
       create({ name, email });
     }
@@ -68,7 +66,6 @@ const Routes = () => {
 
   useEffect(() => {
     if (newUser) {
-      console.log('newUser', newUser);
       const { email } = getAccessTokenDecoded();
       findByEmail(email);
     }
@@ -83,7 +80,6 @@ const Routes = () => {
 
   useEffect(() => {
     if (grants) {
-      console.log('grants');
       setAccessToken(grants['access_token']);
       setRefreshToken(grants['refresh_token']);
       const { email } = getAccessTokenDecoded();
