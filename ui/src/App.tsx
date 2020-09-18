@@ -26,8 +26,20 @@ import Routes from './Routes';
 const currentTheme = 'dark';
 setUserAbilities();
 
-function App() {
+export const setIsMicrofrontend = (isMicrofrontend?: boolean) => {
+  localStorage.setItem('isMicrofrontend', isMicrofrontend?.toString());
+};
+
+export const isMicrofrontend = () =>
+  localStorage.getItem('isMicrofrontend') === 'true';
+
+interface Props {
+  isMicrofrontend?: boolean;
+}
+
+function App({ isMicrofrontend }: Props) {
   const globalState = useReducer(rootReducer, rootState);
+  setIsMicrofrontend(isMicrofrontend);
 
   return (
     <ContextProvider value={globalState}>
