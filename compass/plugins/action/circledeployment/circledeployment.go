@@ -19,23 +19,80 @@
 package main
 
 import (
+	"compass/pkg/action"
+	"compass/pkg/logger"
 	"encoding/json"
+	"errors"
+	"fmt"
 )
 
+const adminEmail = "charlesadmin@admin"
+
 type executionConfiguration struct {
-	destinationCircleID string `json:"destinationCircleID"`
+	DestinationCircleID string `json:"destinationCircleId"`
 }
 
-func Do(actionConfig []byte, executionConfig []byte) {
-	var config executionConfiguration
-	_ = json.Unmarshal(executionConfig, &config)
-
+type actionConfiguration struct {
+	MooveURL string `json:"mooveUrl"`
 }
 
-func GetActionConfigTemplate() string {
-	return ""
+func Do(actionConfig []byte, executionConfig []byte, parameters action.DataParameters) error {
+	var ac *actionConfiguration
+	err := json.Unmarshal(actionConfig, &ac)
+	if err != nil {
+		logger.Error("ACTION_PARSE_ERROR", "DoDeploymentAction", err, nil)
+		return err
+	}
+
+	var ec *executionConfiguration
+	err = json.Unmarshal(executionConfig, &ec)
+	if err != nil {
+		logger.Error("EXECUTION_PARSE_ERROR", "DoDeploymentAction", err, nil)
+		return err
+	}
+
+	var workspaceID = parameters.Group.WorkspaceID.String()
+	deployment, err := getCurrentDeploymentAtCircle(parameters.Group.CircleID.String(), workspaceID, ac.MooveURL)
+	if err != nil {
+		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, parameters.Group.CircleID.String(), workspaceID)
+		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
+		return err
+	}
+
+	if deployment.BuildId == "" {
+		err = errors.New("circle has no active build")
+		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", parameters.Group.CircleID.String(), workspaceID)
+		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
+		return err
+	}
+
+	user, err := getUserByEmail(adminEmail, ac.MooveURL)
+	if err != nil {
+		logger.Error("DO_USER_FIND", "DoDeploymentAction", err, ac.MooveURL)
+		return err
+	}
+
+	request := DeploymentRequest{
+		AuthorID: user.Id,
+		CircleID: ec.DestinationCircleID,
+		BuildID:  deployment.BuildId,
+	}
+
+	err = deployBuildAtCircle(request, workspaceID, ac.MooveURL)
+	if err != nil {
+		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleId: %s, BuildId: %s, AuthorId: %s",
+			ac.MooveURL, workspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
+		logger.Error("DO_CIRCLE_DEPLOYMENT", "DoDeploymentAction", err, dataErr)
+		return err
+	}
+
+	return nil
 }
 
-func GetExecutionConfigTemplate() string {
-	return ""
+func GetActionConfigTemplate() ([]byte, error) {
+	return json.Marshal("")
+}
+
+func GetExecutionConfigTemplate() ([]byte, error) {
+	return json.Marshal("")
 }
