@@ -54,7 +54,7 @@ func (main Main) Validate(action Action) []util.ErrorUtil {
 
 func (main Main) FindById(id string) (Action, error) {
 	action := Action{}
-	db := main.db.Set("gorm:auto_preload", true).First(&action, id)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindById", db.Error, "Id = "+id)
 		return Action{}, db.Error
