@@ -34,6 +34,7 @@ export const useAuth = (): {
 
   const getTokens = useCallback(
     async (code: string) => {
+      // console.log('getTokens', code);
       try {
         if (code) {
           const res = await codeToTokens(code);

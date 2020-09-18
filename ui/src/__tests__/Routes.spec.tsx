@@ -16,9 +16,9 @@
 
 import React from 'react';
 import { render, wait, waitForElement } from 'unit-test/testUtils';
-import { accessTokenKey, refreshTokenKey, setAccessToken } from 'core/utils/auth';
-import { getProfileByKey, profileKey } from 'core/utils/profile';
-import { FetchMock } from 'jest-fetch-mock/types';
+import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
+import { getProfileByKey } from 'core/utils/profile';
+import { FetchMock } from 'jest-fetch-mock';
 import Routes from '../Routes';
 
 const originalWindow = { ...window };
@@ -53,6 +53,10 @@ jest.mock('react-cookies', () => {
   };
 });
 
+beforeEach(() => {
+  clearSession();
+})
+
 afterEach(() => {
   window = originalWindow;
 });
@@ -63,40 +67,12 @@ test('render default route', async () => {
   await wait(() => expect(container.innerHTML).toMatch('Error 403.'));
 });
 
-test('render and valid login saving the session', async () => {
-  delete window.location;
-
-  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
-
-  window.location = {
-    ...window.location,
-    href: '?code=321',
-    pathname: '',
-  };
-
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    access_token: token,
-    refresh_token: 'opqrstuvwxyz'
-  }));
-
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(user));
-
-  await waitForElement(() => render(<Routes />));
-  
-  const accessToken = localStorage.getItem(accessTokenKey);
-  expect(accessToken).toContain(token);
-  
-  const refreshToken = localStorage.getItem(refreshTokenKey);
-  expect(refreshToken).toContain('opqrstuvwxyz');
-
-  const email = getProfileByKey('email');
-  expect(email).toMatch(user.email);
-});
-
 test('render with a valid session', async () => {
   delete window.location;
 
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  await wait(() => setAccessToken(token));
 
   window.location = {
     ...window.location,
@@ -104,14 +80,12 @@ test('render with a valid session', async () => {
     pathname: '',
   };
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+  (fetch as FetchMock).mockResponse(JSON.stringify({
     id: '1',
     name: 'charlescd',
     email: 'charlescd@zup.com.br',
     workspaces: [{ id: '1', name: 'workspace' }]
   }));
-
-  setAccessToken(token);
 
   await waitForElement(() => render(<Routes />));
   
@@ -127,7 +101,7 @@ test('render with an invalid session', async () => {
 
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
-  setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0');
+  await wait(() => setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0'));
 
   window.location = {
     ...window.location,
@@ -136,7 +110,42 @@ test('render with an invalid session', async () => {
   };
 
   await waitForElement(() => render(<Routes />));
-  
+
   const name = getProfileByKey('name');
   expect(name).toBeUndefined();
+});
+
+test('render and valid login saving the session', async () => {
+  delete window.location;
+
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  window.location = {
+    ...window.location,
+    href: '?code=321',
+    pathname: '',
+  };
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+    'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIn0.-FFlThOUdBvFBV36CaUxkzjGujyrF7mViuPhgdURe_k',
+    'refresh_token': 'opqrstuvwxyz'
+  }));
+
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
+    id: '1',
+    name: 'charlescd',
+    email: 'charlescd@zup.com.br',
+    workspaces: [{ id: '1', name: 'workspace' }]
+  }));
+
+  await waitForElement(() => render(<Routes />));
+  
+  const accessToken = localStorage.getItem(accessTokenKey);
+  expect(accessToken).toContain(token);
+  
+  const refreshToken = localStorage.getItem(refreshTokenKey);
+  expect(refreshToken).toContain('opqrstuvwxyz');
+
+  const email = getProfileByKey('email');
+  expect(email).toMatch(user.email);
 });
