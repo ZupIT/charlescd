@@ -1,8 +1,6 @@
 package metricsgroupaction
 
 import (
-	"compass/internal/action"
-	"compass/internal/metricsgroup"
 	"compass/internal/util"
 	"github.com/jinzhu/gorm"
 	"io"
@@ -18,11 +16,9 @@ type UseCases interface {
 }
 
 type Main struct {
-	db               *gorm.DB
-	metricsGroupMain metricsgroup.UseCases
-	actionMain       action.UseCases
+	db *gorm.DB
 }
 
-func NewMain(db *gorm.DB, metricsGroupMain metricsgroup.UseCases, actionMain action.UseCases) UseCases {
-	return Main{db, metricsGroupMain, actionMain}
+func NewMain(db *gorm.DB) UseCases {
+	return Main{db}
 }
