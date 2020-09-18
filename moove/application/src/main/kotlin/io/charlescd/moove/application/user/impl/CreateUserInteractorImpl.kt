@@ -24,40 +24,50 @@ class CreateUserInteractorImpl @Inject constructor(
 
     override fun execute(createUserRequest: CreateUserRequest, authorization: String): UserResponse {
         val newUser = createUserRequest.toUser()
-        val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
-        val userFromToken = userRepository.findByEmail(parsedEmail)
+        val password = createUserRequest.password
+        val emailFromToken = keycloakService.getEmailByAccessToken(authorization)
+        val userFromToken = userRepository.findByEmail(emailFromToken)
 
-        if (userFromToken.isPresent) {
-            if (userFromToken.get().root) {
-                saveUser(newUser, createUserRequest)
-            } else {
-                throw UnauthorizedException()
-            }
-        } else {
-            if (parsedEmail == newUser.email) {
-                saveUser(newUser.copy(root = false), createUserRequest)
-            } else {
-                throw UnauthorizedException()
-            }
-        }
+        userFromToken.ifPresentOrElse({
+            createUserWhenUserFromTokenExists(it, newUser, password)
+        }, {
+            createOwnUser(emailFromToken, newUser, password)
+        })
+
         return UserResponse.from(newUser)
     }
 
-    private fun saveUser(newUser: User, createUserRequest: CreateUserRequest) {
+    private fun createOwnUser(emailFromToken: String, newUser: User, password: String?) {
+        if (emailFromToken == newUser.email) {
+            saveUser(newUser.copy(root = false), password)
+        } else {
+            throw UnauthorizedException()
+        }
+    }
+
+    private fun createUserWhenUserFromTokenExists(it: User, newUser: User, password: String?) {
+        if (it.root) {
+            saveUser(newUser, password)
+        } else {
+            throw UnauthorizedException()
+        }
+    }
+
+    private fun saveUser(newUser: User, password: String?) {
         userService.checkIfEmailAlreadyExists(newUser)
         userService.save(newUser)
 
         if (internalIdmEnabled) {
-            saveUserOnKeycloak(createUserRequest, newUser)
+            saveUserOnKeycloak(newUser, password)
         }
     }
 
-    private fun saveUserOnKeycloak(createUserRequest: CreateUserRequest, user: User) {
-        val password = createUserRequest.password ?: throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER)
+    private fun saveUserOnKeycloak(user: User, password: String?) {
+        val validPassword = password ?: throw BusinessException.of(MooveErrorCode.MISSING_PARAMETER)
         this.keycloakService.createUser(
             user.email,
             user.name,
-            password,
+            validPassword,
             user.root
         )
     }
