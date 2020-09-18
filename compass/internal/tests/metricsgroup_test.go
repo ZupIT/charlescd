@@ -5,6 +5,7 @@ import (
 	"compass/internal/datasource"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/internal/util"
 	"encoding/json"
@@ -138,12 +139,14 @@ func (s *SuiteMetricGroup) TestFindAll() {
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
+			Actions:     []metricsgroupaction.MetricsGroupAction{},
 		},
 		{
 			Name:        "group 2",
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
+			Actions:     []metricsgroupaction.MetricsGroupAction{},
 		},
 	}
 
@@ -174,6 +177,7 @@ func (s *SuiteMetricGroup) TestFindById() {
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
+		Actions:     []metricsgroupaction.MetricsGroupAction{},
 	}
 
 	s.DB.Create(&metricgroup)
