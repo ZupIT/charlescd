@@ -228,7 +228,6 @@ compass:
       value: "DEV"
     - name: DISPATCHER_INTERVAL
       value: "15s"
-  circleId: example
   image:
     name: zupcharles/charlescd-compass:0.3.4
     pullPolicy: Always
