@@ -16,7 +16,6 @@
  */
 
 import JwtDecode from 'jwt-decode';
-import get from 'lodash/get';
 import find from 'lodash/find';
 import includes from 'lodash/includes';
 import { getWorkspaceId } from 'core/utils/workspace';
@@ -26,6 +25,7 @@ import { clearWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
+import { getProfileByKey } from 'core/utils/profile';
 
 type AccessToken = {
   id?: string;
@@ -74,8 +74,7 @@ export const isRootRoute = (route: string) => includes(route, 'root');
 export const getRoles = () => {
   try {
     const id = getWorkspaceId();
-    const token = getAccessTokenDecoded();
-    const workspaces = get(token, 'workspaces', []);
+    const workspaces = getProfileByKey('workspaces');
     const { permissions } = find(workspaces, ['id', id]);
     return permissions || [];
   } catch (e) {
