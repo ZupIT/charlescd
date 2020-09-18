@@ -27,6 +27,8 @@ spec:
         command: ['sh', '-c', 
           'until pg_isready -h {{ .Values.moove.database.host}} -p 5432; 
           do echo waiting for database; sleep 2; done;']
+      imagePullSecrets:
+        - name: realwavelab-registry
       containers:
         - name: {{ .Values.moove.name }}
           image: {{ .Values.moove.image.name }}
@@ -61,15 +63,15 @@ spec:
             - name: DB_PASSWORD
               value: "{{ .Values.moove.database.password}}"
             - name: KEYCLOCK_REALM
-              value: "charlescd"
+              value: "ZupDev"
             - name: KEYCLOAK_SERVER_URL
               value: "{{ .Values.moove.keycloakHost}}"
             - name: KEYCLOAK_PUBLIC_CLIENT_ID
               value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_ID
-              value: "realm-charlescd"
+              value: "charlescd-client"
             - name: KEYCLOAK_CLIENT_SECRET
-              value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
+              value: "718462e0-e3ba-4e7e-90e3-8bf78cca7dbf"
             - name: INTERNAL_IDM_ENABLED
               value: "{{ .Values.moove.internalIdmEnabled }}"
             - name: ORIGIN_HOSTS

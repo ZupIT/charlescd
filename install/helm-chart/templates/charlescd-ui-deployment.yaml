@@ -21,6 +21,8 @@ spec:
         app: {{ .Values.ui.name }}
         version: {{ .Values.ui.name }}
     spec:
+      imagePullSecrets:
+        - name: realwavelab-registry
       containers:
         - name: {{ .Values.ui.name }}
           image: {{ .Values.ui.image.name }}
@@ -51,11 +53,11 @@ spec:
             - name: REACT_APP_AUTH_URI
               value: {{ .Values.ui.authUri }}
             - name: REACT_APP_AUTH_REALM
-              value: charlescd
+              value: ZupDev
             - name: REACT_APP_AUTH_CLIENT_ID
               value: charlescd-client
             - name: REACT_APP_IDM
-              value: {{ .Values.ui.isIdmEnabled }}
+              value: "{{ .Values.ui.isIdmEnabled }}"
             - name: REACT_APP_IDM_LOGIN_URI
               value: {{ .Values.ui.idmLoginUri }}
             - name: REACT_APP_IDM_LOGOUT_URI
