@@ -19,7 +19,7 @@
 package io.charlescd.moove.infrastructure.repository.mapper
 
 import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.WorkspacePermissions
 import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
@@ -29,30 +29,30 @@ class UserExtractor(private val workspaceMapper: WorkspaceMapper) : ResultSetExt
 
     override fun extractData(resultSet: ResultSet): Set<User> {
         val users = HashSet<User>()
-        val workspaceUserMap = HashMap<String, HashSet<Workspace>>()
+        val workspacePermissions = HashMap<String, HashSet<WorkspacePermissions>>()
 
         while (resultSet.next()) {
             users.add(mapUser(resultSet))
             if (resultSet.getString("workspace_id") != null) {
-                mapWorkspaces(resultSet, workspaceUserMap)
+                mapWorkspacesPermissions(resultSet, workspacePermissions)
             }
         }
 
-        return users.map { it.copy(workspaces = workspaceUserMap[it.id]?.toList() ?: emptyList()) }
+        return users.map { it.copy(workspaces = workspacePermissions[it.id]?.toList() ?: emptyList()) }
             .sortedBy { it.name }
             .toSet()
     }
 
-    private fun mapWorkspaces(
+    private fun mapWorkspacesPermissions(
         resultSet: ResultSet,
-        workspaceUserMap: HashMap<String, HashSet<Workspace>>
+        workspaceUserMap: HashMap<String, HashSet<WorkspacePermissions>>
     ) {
         val userId = resultSet.getString("id")
 
         if (workspaceUserMap.containsKey(userId)) {
-            workspaceUserMap[userId]!!.add(workspaceMapper.map(resultSet))
+            workspaceUserMap[userId]!!.add(workspaceMapper.mapWorkspacePermissions(resultSet))
         } else {
-            workspaceUserMap[userId] = hashSetOf(workspaceMapper.map(resultSet))
+            workspaceUserMap[userId] = hashSetOf(workspaceMapper.mapWorkspacePermissions(resultSet))
         }
     }
 

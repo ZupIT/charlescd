@@ -42,7 +42,12 @@ data class UserResponse(
             email = user.email,
             photoUrl = user.photoUrl,
             createdAt = user.createdAt,
-            workspaces = user.workspaces.map { SimpleWorkspaceResponse(it.id, it.name) },
+            workspaces = user.workspaces.map { workspace ->
+                SimpleWorkspaceResponse(
+                    workspace.id,
+                    workspace.name,
+                    workspace.permissions.map { permission -> permission.name })
+            },
             isRoot = user.root
         )
     }
