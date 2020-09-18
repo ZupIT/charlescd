@@ -1,97 +1,97 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: {{ .Release.Name }}-octopipe-role
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  - configmaps
-  - events
-  - replicationcontrollers
-  - serviceaccounts
-  - pods/log
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - services
-  - secrets
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - list
-  - get
-- apiGroups:
-  - apps
-  resources:
-  - controllerrevisions
-  - statefulsets
-  verbs:
-  - list
-- apiGroups:
-  - extensions
-  - apps
-  resources:
-  - deployments
-  - replicasets
-  - ingresses
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services/proxy
-  - pods/portforward
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - '*'
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: {{ .Release.Name }}-octopipe-role
+# rules:
+# - apiGroups:
+#   - ""
+#   resources:
+#   - namespaces
+#   - configmaps
+#   - events
+#   - replicationcontrollers
+#   - serviceaccounts
+#   - pods/log
+#   verbs:
+#   - get
+#   - list
+# - apiGroups:
+#   - ""
+#   resources:
+#   - pods
+#   - services
+#   - secrets
+#   verbs:
+#   - create
+#   - delete
+#   - deletecollection
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch
+# - apiGroups:
+#   - autoscaling
+#   resources:
+#   - horizontalpodautoscalers
+#   verbs:
+#   - list
+#   - get
+# - apiGroups:
+#   - apps
+#   resources:
+#   - controllerrevisions
+#   - statefulsets
+#   verbs:
+#   - list
+# - apiGroups:
+#   - extensions
+#   - apps
+#   resources:
+#   - deployments
+#   - replicasets
+#   - ingresses
+#   verbs:
+#   - create
+#   - delete
+#   - deletecollection
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch
+# - apiGroups:
+#   - ""
+#   resources:
+#   - services/proxy
+#   - pods/portforward
+#   verbs:
+#   - create
+#   - delete
+#   - deletecollection
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch
+# - apiGroups:
+#   - networking.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - create
+#   - delete
+#   - deletecollection
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch
+#   - create
+#   - delete
+#   - deletecollection
+#   - get
+#   - list
+#   - patch
+#   - update
+#   - watch

@@ -31,7 +31,7 @@ moove:
   enabled: true
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
-  keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
+  keycloakHost: "https://idm-dev.continuousplatform.com/auth"
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -39,9 +39,9 @@ moove:
     user: charlescd_moove
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
-  internalIdmEnabled: true
+  internalIdmEnabled: false
   image:
-    name: zupcharles/charlescd-moove:0.3.4
+    name: realwavelab.azurecr.io/charlescd-moove:release-darwin-devcraft-v-4
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -92,14 +92,14 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  authUri: http://charles.info.example/keycloak
-  isIdmEnabled: "0"
+  authUri: https://idm-dev.continuousplatform.com
+  isIdmEnabled: "1"
   idmLoginUri: /protocol/openid-connect/auth
   idmLogoutUri: /protocol/openid-connect/logout
   idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.4
+    name: realwavelab.azurecr.io/charlescd-ui:release-darwin-front-livepass-rc-7
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -196,6 +196,8 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
+  idm:
+    endpoint: https://idm-dev.continuousplatform.com/auth/realms/ZupDev/.well-known/openid-configuration
 
 octopipe:
   enabled: true
