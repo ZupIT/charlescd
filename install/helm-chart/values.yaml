@@ -93,7 +93,7 @@ ui:
   name: charlescd-ui
   apiHost: http://charles.info.example
   authUri: http://charles.info.example/keycloak
-  isIdmEnabled: 0
+  isIdmEnabled: "0"
   idmLoginUri: /protocol/openid-connect/auth
   idmLogoutUri: /protocol/openid-connect/logout
   idmRedirectHost: http://charles.info.example
@@ -170,8 +170,6 @@ keycloak:
     cli:
       custom: |
         /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="http://charles.info.example/keycloak/auth")
-
-
 
 postgresql:
   enabled: true
