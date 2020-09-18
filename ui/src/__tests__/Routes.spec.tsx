@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, wait, screen } from 'unit-test/testUtils';
 import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
-import { getProfileByKey } from 'core/utils/profile';
+import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
 import { MemoryRouter } from 'react-router-dom';
 import { setIsMicrofrontend } from 'App';
@@ -141,43 +141,24 @@ test('create user in charles base', async () => {
     pathname: '/workspaces',
   };
 
+  const profile = {
+    id: '1',
+    name: 'charlescd',
+    email: 'charlescd@zup.com.br',
+    workspaces: [{}],
+  };
+
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify({
-      'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIn0.-FFlThOUdBvFBV36CaUxkzjGujyrF7mViuPhgdURe_k',
+      'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIiwibmFtZSI6ImNoYXJsZXMifQ.ejWaLlL7rbM3nDCyhXOERSwh-aCftvnw4Ag0oDYWQjM',
       'refresh_token': 'opqrstuvwxyz'
     }))
-    .mockRejectedValue({ status: 404, json: () => ({ message: 'Error' })})
-    // .mockResponseOnce(JSON.stringify({}))
-    .mockResponseOnce(JSON.stringify({
-      id: '1',
-      name: 'charlescd',
-      email: 'charlescd@zup.com.br',
-      workspaces: [{ id: '1', name: 'workspace' }]
-    }))
-    .mockResponseOnce(JSON.stringify({
-      id: '1',
-      name: 'charlescd',
-      email: 'charlescd@zup.com.br',
-      workspaces: [{ id: '1', name: 'workspace' }]
-    }))
-    // .mockResponseOnce(JSON.stringify({
-    //   id: '1',
-    //   name: 'charlescd',
-    //   email: 'charlescd@zup.com.br',
-    //   workspaces: [{ id: '1', name: 'workspace' }]
-    // }));
+    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' })})
+    .mockResponse(JSON.stringify({    }));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
   await wait();
-  await wait();
   await wait(() => expect(screen.queryByTestId('icon-error-403')).toBeInTheDocument());
-  
-  // const accessToken = localStorage.getItem(accessTokenKey);
-  // expect(accessToken).toContain(token);
-  
-  // const refreshToken = localStorage.getItem(refreshTokenKey);
-  // expect(refreshToken).toContain('opqrstuvwxyz');
-
-  // const email = getProfileByKey('email');
-  // expect(email).toMatch(user.email);
+  const profileBase64 = btoa(JSON.stringify(profile));
+  await wait(() => expect(localStorage.getItem(profileKey)).toEqual(profileBase64));
 });

@@ -92,10 +92,8 @@ export const useCreateUser = (): {
     async (user: NewUser) => {
       try {
         if (user) {
-          console.log('create:', user);
           const res = await createUser(user);
 
-          console.log('res', res);
           setNewUser(res);
 
           return res;
