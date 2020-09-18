@@ -25,7 +25,6 @@ data:
 
         server {
             listen 80;
-            
 
             {{ if .Values.ui.enabled}}
             location / {
