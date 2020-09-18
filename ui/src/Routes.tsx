@@ -73,7 +73,6 @@ const Routes = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('user', user);
       saveProfile(user);
     }
   }, [user]);
