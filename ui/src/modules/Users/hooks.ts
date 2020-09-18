@@ -35,6 +35,7 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, Profile, NewUser, NewPassword } from './interfaces/User';
+import { isIDMAuthFlow } from 'core/utils/auth';
 
 export const useUser = (): {
   findByEmail: Function;
@@ -59,12 +60,14 @@ export const useUser = (): {
       } catch (e) {
         setError(e);
 
-        dispatch(
-          toogleNotification({
-            text: `Error when trying to fetch the user info for ${email}`,
-            status: 'error'
-          })
-        );
+        if (isIDMAuthFlow()) {
+          dispatch(
+            toogleNotification({
+              text: `Error when trying to fetch the user info for ${email}`,
+              status: 'error'
+            })
+          );
+        }
       }
     },
     [dispatch, getUserByEmail]
