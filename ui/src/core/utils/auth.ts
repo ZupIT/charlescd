@@ -75,10 +75,10 @@ export const getRoles = () => {
   try {
     const id = getWorkspaceId();
     const workspaces = getProfileByKey('workspaces');
-    const { permissions } = find(workspaces, ['id', id]);
-    return permissions || [];
+    const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
+    return permissions;
   } catch (e) {
-    return '';
+    return [];
   }
 };
 

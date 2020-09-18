@@ -15,20 +15,20 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
-import App from '../App';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
 
-jest.mock('../Routes', () => {
-  return {
-    __esModule: true,
-    default: () => {
-      return <div>App</div>;
-    }
-  };
+setPublicPath('@devcraft/charlescd');
+
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
 });
 
-test('Test routes render', async () => {
-  const { container } = render(<App />);
-
-  expect(container.innerHTML).toMatch('App');
-});
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;

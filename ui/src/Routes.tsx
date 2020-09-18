@@ -30,6 +30,7 @@ import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { useAuth } from 'modules/Auth/hooks';
+import { isMicrofrontend } from 'App';
 
 const Main = lazy(() => import('modules/Main'));
 const Auth = lazy(() => import('modules/Auth'));
@@ -86,7 +87,7 @@ const Routes = () => {
   }, [grants, findByEmail]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
       <Suspense fallback="">
         <Switch>
           <Route path={routes.error403} component={Forbidden403} />
