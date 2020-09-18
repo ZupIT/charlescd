@@ -18,4 +18,4 @@
 
 package io.charlescd.moove.domain.exceptions
 
-class UnauthorizedException : RuntimeException("Access denied!")
+class ForbiddenException : RuntimeException("Forbidden!")

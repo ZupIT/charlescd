@@ -6,7 +6,7 @@ import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.UnauthorizedException
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import java.time.LocalDateTime
@@ -107,8 +107,8 @@ class CreateUserInteractorImplTest extends Specification {
         0 * userRepository.save(_) >> user
         0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
 
-        def exception = thrown(UnauthorizedException)
-        "Access denied!" == exception.getMessage()
+        def exception = thrown(ForbiddenException)
+        "Forbidden!" == exception.getMessage()
     }
 
     def "when trying to create user, if its not root but its own user do it successfully"(){

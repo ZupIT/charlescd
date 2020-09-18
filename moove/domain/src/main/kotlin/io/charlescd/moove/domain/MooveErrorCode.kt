@@ -57,5 +57,5 @@ enum class MooveErrorCode(val key: String) {
     CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS("create.user.error.email.already.exists"),
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
     CANNOT_RESET_YOUR_OWN_PASSWORD("cannot.reset.your.own.password"),
-    NOT_AUTHORIZED("not.authorized")
+    forbidden("forbidden")
 }

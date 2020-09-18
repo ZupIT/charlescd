@@ -7,7 +7,7 @@ import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.UnauthorizedException
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class CreateUserInteractorImpl @Inject constructor(
         if (emailFromToken == newUser.email) {
             saveUser(newUser.copy(root = false), password)
         } else {
-            throw UnauthorizedException()
+            throw ForbiddenException()
         }
     }
 
@@ -49,7 +49,7 @@ class CreateUserInteractorImpl @Inject constructor(
         if (it.root) {
             saveUser(newUser, password)
         } else {
-            throw UnauthorizedException()
+            throw ForbiddenException()
         }
     }
 
