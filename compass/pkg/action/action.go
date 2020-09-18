@@ -18,8 +18,16 @@
 
 package action
 
+import (
+	"compass/internal/metricsgroup"
+)
+
+type DataParameters struct {
+	Group metricsgroup.MetricsGroup
+}
+
 type UseCases interface {
-	Do(actionConfig []byte, executionConfig []byte)
-	GetExecutionConfigTemplate() []byte
-	GetActionConfigTemplate() []byte
+	Do(actionConfig []byte, executionConfig []byte, parameters DataParameters) error
+	GetExecutionConfigTemplate() ([]byte, error)
+	GetActionConfigTemplate() ([]byte, error)
 }
