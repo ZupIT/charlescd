@@ -14,7 +14,7 @@ type MetricsGroupAction struct {
 	util.BaseModel
 	Nickname            string          `json:"nickname"`
 	MetricsGroupID      uuid.UUID       `json:"metricsGroupId"`
-	ActionID            uuid.UUID       `json:"actionId"`
+	ActionsID           uuid.UUID       `json:"actionsId"`
 	ExecutionParameters json.RawMessage `json:"executionParameters"`
 	DeletedAt           *time.Time      `json:"-"`
 }
@@ -62,7 +62,7 @@ func (main Main) Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction
 
 func (main Main) FindById(id string) (MetricsGroupAction, error) {
 	metricsGroupAction := MetricsGroupAction{}
-	db := main.db.Set("gorm:auto_preload", true).First(&metricsGroupAction, id)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindById", db.Error, "Id = "+id)
 		return MetricsGroupAction{}, db.Error
