@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -39,6 +39,7 @@ const FormUser = ({ onFinish }: Props) => {
     formState: { isValid }
   } = useForm<NewUser>({ mode: 'onChange' });
   const { create, newUser } = useCreateUser();
+  const [status, setStatus] = useState<string>('');
 
   useEffect(() => {
     if (newUser) {
@@ -53,8 +54,10 @@ const FormUser = ({ onFinish }: Props) => {
     }
   }, [newUser, history, onFinish]);
 
-  const onSubmit = (user: NewUser) => {
-    create({ ...user, isRoot: false });
+  const onSubmit = async (user: NewUser) => {
+    setStatus('idle');
+    await create({ ...user, isRoot: false });
+    setStatus('completed');
   };
 
   const renderForm = () => (
@@ -85,7 +88,7 @@ const FormUser = ({ onFinish }: Props) => {
         size="EXTRA_SMALL"
         type="submit"
         isDisabled={!isValid}
-        isLoading={!newUser}
+        isLoading={status === 'idle'}
       >
         Create User
       </Button.Default>
