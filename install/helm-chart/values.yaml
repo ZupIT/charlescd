@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.3.4-rc.3
+    name: zupcharles/charlescd-butler:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -20,12 +20,12 @@ butler:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 128m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 moove:
   enabled: true
@@ -40,22 +40,22 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.3.4-rc.3
+    name: zupcharles/charlescd-moove:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-moove
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 1
-    memory: 1024Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
-  
+    limits:
+      cpu: 1
+      memory: 1024Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
+
 sidecarIstio:
   enabled: true
 
@@ -71,21 +71,21 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.3.4-rc.3
+    name: zupcharles/charlescd-villager:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-villager
     type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+      - name: http
+        port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 512Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi   
+    limits:
+      cpu: 256m
+      memory: 512Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 ui:
   enabled: true
@@ -94,7 +94,7 @@ ui:
   keycloakHost: http://charles.info.example/keycloak
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.4-rc.3
+    name: zupcharles/charlescd-ui:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -103,12 +103,12 @@ ui:
       - name: http
         port: 3000
   resources:
-   limits:
-    cpu: 128m
-    memory: 128Mi
-   requests:
-    cpu: 64m
-    memory: 64Mi
+    limits:
+      cpu: 128m
+      memory: 128Mi
+    requests:
+      cpu: 64m
+      memory: 64Mi
 
 circlematcher:
   enabled: true
@@ -121,7 +121,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.3.4-rc.3
+    name: zupcharles/charlescd-circle-matcher:0.3.4
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -130,33 +130,33 @@ circlematcher:
       - name: http
         port: 8080
   resources:
-   limits:
-    cpu: 256m
-    memory: 256Mi
-   requests:
-    cpu: 128m
-    memory: 128Mi
+    limits:
+      cpu: 256m
+      memory: 256Mi
+    requests:
+      cpu: 128m
+      memory: 128Mi
 
 keycloak:
   enabled: true
   keycloak:
     extraEnv: |
-        - name: PROXY_ADDRESS_FORWARDING
-          value: "true"
-        - name: DB_USER
-          value: "keycloak"
-        - name: DB_PASSWORD
-          value: "DCWYW66Mq2ca6w8u"
-        - name: DB_VENDOR
-          value: "POSTGRES"
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_ADDR
-          value: "charlescd-postgresql"
-        - name: DB_DATABASE
-          value: "keycloak"
-        - name: DB_SCHEMA
-          value: "public"
+      - name: PROXY_ADDRESS_FORWARDING
+        value: "true"
+      - name: DB_USER
+        value: "keycloak"
+      - name: DB_PASSWORD
+        value: "DCWYW66Mq2ca6w8u"
+      - name: DB_VENDOR
+        value: "POSTGRES"
+      - name: DB_PORT
+        value: "5432"
+      - name: DB_ADDR
+        value: "charlescd-postgresql"
+      - name: DB_DATABASE
+        value: "keycloak"
+      - name: DB_SCHEMA
+        value: "public"
 
     replicas: 1
     persistence:
@@ -206,19 +206,15 @@ octopipe:
 
 compass:
   enabled: true
-  name: compass
+  name: "charlescd-compass"
+  database:
+    name: charlescd_compass
+    host: charlescd-postgresql
+    port: 5432
+    user: charlescd_compass
+    password: C1UinUu6N0vc
   replicaCount: 1
   envVars:
-    - name: DB_HOST
-      value: "charlescd-sandbox-postgresql"
-    - name: DB_PORT
-      value: "5432"
-    - name: DB_USER
-      value: "charlescd_compass"
-    - name: DB_PASSWORD
-      value: "C1UinUu6N0vc"
-    - name: DB_NAME
-      value: "charlescd_compass"
     - name: DB_SSL
       value: "disable"
     - name: PLUGINS_DIR
@@ -228,11 +224,10 @@ compass:
     - name: DISPATCHER_INTERVAL
       value: "15s"
   image:
-    repository: compass
-    tag: latest
+    name: zupcharles/charlescd-compass:0.3.4
     pullPolicy: Always
   service:
-    name: compass
+    name: charlescd-compass
     type: ClusterIP
     ports:
       - name: http
@@ -244,5 +239,3 @@ compass:
     requests:
       cpu: 64m
       memory: 64Mi
-  sidecarIstio:
-    enabled: true

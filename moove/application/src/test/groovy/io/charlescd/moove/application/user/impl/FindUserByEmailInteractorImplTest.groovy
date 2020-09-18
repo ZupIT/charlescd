@@ -18,8 +18,10 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
+import io.charlescd.moove.domain.Permission
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.repository.UserRepository
 import spock.lang.Specification
@@ -43,11 +45,11 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
                 [], false, LocalDateTime.now())
 
-        def workspace = new Workspace("90e0c89e-c9b4-45f8-9467-f2495c435fc6", "CharleCD", author, LocalDateTime.now(), [], WorkspaceStatusEnum.COMPLETE,
-                null, null, null, null, null)
+        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
+        def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspace], false, LocalDateTime.now())
+                [workspacePermission], false, LocalDateTime.now())
 
         when:
         def response = findUserByEmailInteractor.execute(base64Email)
@@ -61,8 +63,10 @@ class FindUserByEmailInteractorImplTest extends Specification {
         assert response.createdAt == user.createdAt
         assert response.photoUrl == user.photoUrl
         assert response.workspaces.size() == 1
-        assert response.workspaces[0].id == workspace.id
-        assert response.workspaces[0].name == workspace.name
+        assert response.workspaces[0].id == workspacePermission.id
+        assert response.workspaces[0].name == workspacePermission.name
+        assert response.workspaces[0].permissions.size() == workspacePermission.permissions.size()
+        assert response.workspaces[0].permissions[0] == workspacePermission.permissions[0].name
     }
 
     def "should return an user with an empty workspace when no workspaces where found"() {
