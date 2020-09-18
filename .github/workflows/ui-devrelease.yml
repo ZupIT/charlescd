@@ -1,4 +1,4 @@
-jj26jname: new-ui dev-release
+name: new-ui dev-release
 
 on:
   push:
