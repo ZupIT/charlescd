@@ -89,9 +89,10 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	id := ps.ByName("id")
 
 	period := r.URL.Query().Get("period")
-	if period == "" {
+	interval := r.URL.Query().Get("interval")
+	if period == "" || interval == "" {
 		api.NewRestError(w, http.StatusInternalServerError, []error{
-			errors.New("Query param period is empty"),
+			errors.New("Query param period or interval is empty"),
 		})
 		return
 	}
@@ -100,15 +101,6 @@ func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
-	}
-
-	interval := r.URL.Query().Get("interval")
-	if interval != "" {
-		err := metricsGroupApi.metricsGroupMain.PeriodValidate(interval)
-		if err != nil {
-			api.NewRestError(w, http.StatusInternalServerError, []error{err})
-			return
-		}
 	}
 
 	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, period, interval)

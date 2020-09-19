@@ -72,26 +72,28 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main Main) PeriodValidate(currentPeriod string) error {
+func (main Main) PeriodValidate(currentPeriod string) (datasource.Period, error) {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		logger.Error(util.PeriodValidateRegexError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval")
+		return datasource.Period{}, errors.New("Invalid period or interval")
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found number")
+		return datasource.Period{}, errors.New("Invalid period or interval: not found number")
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
 		logger.Error(util.PeriodValidateError, "PeriodValidate", err, currentPeriod)
-		return errors.New("Invalid period or interval: not found unit")
+		return datasource.Period{}, errors.New("Invalid period or interval: not found unit")
 	}
 
-	return nil
+	return datasource.Period{
+		Value: ,
+	}, nil
 }
 
 func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
