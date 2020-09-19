@@ -91,6 +91,8 @@ func (deployment *Deployment) updateResource(
 	manifest *unstructured.Unstructured,
 	resourceInterface dynamic.ResourceInterface,
 ) error {
+	log.WithFields(log.Fields{"resource": resource.GetName(), "kind": resource.GetKind()}).Info("Start update")
+
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		err := mergo.Merge(&resource.Object, manifest.Object, mergo.WithOverride)
 		if err != nil {
@@ -102,7 +104,7 @@ func (deployment *Deployment) updateResource(
 			return deployment.getDeploymentError("Failed to update resource in cluster", err, manifest)
 		}
 
-		log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry update...")
+		log.WithFields(log.Fields{"resource": resource.GetName()}).Info("Retry update... " + resource.GetKind())
 
 		return nil
 	})
@@ -135,11 +137,11 @@ func (deployment *Deployment) deploy() error {
 		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
 	}
 
-	if isCreatedOrUpdatedResourceController(resourceInCluster) {
-		return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
+	if isResourController(resourceInCluster) && isCreatedOrUpdatedResourceController(resourceInCluster) {
+		return nil
 	}
 
-	return nil
+	return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
 }
 
 func (deployment *Deployment) undeploy() error {
