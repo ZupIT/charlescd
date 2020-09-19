@@ -135,7 +135,11 @@ func (deployment *Deployment) deploy() error {
 		return deployment.getDeploymentError("Failed to get resource in deploy", err, manifest)
 	}
 
-	return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
+	if isCreatedOrUpdatedResourceController(resourceInCluster) {
+		return deployment.updateResource(resourceInCluster, manifest, resourceInterface)
+	}
+
+	return nil
 }
 
 func (deployment *Deployment) undeploy() error {
