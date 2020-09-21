@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@casl/ability": "^4.0.7",
-    "@casl/react": "^2.1.0",
+    "@casl/ability": "4.0.7",
+    "@casl/react": "2.1.0",
     "@popperjs/core": "^2.4.4",
     "@types/jwt-decode": "^2.2.1",
     "@types/lodash": "^4.14.149",
