@@ -60,7 +60,7 @@ export const useUser = (): {
       } catch (e) {
         setError(e);
 
-        if (isIDMAuthFlow()) {
+        if (!isIDMAuthFlow()) {
           dispatch(
             toogleNotification({
               text: `Error when trying to fetch the user info for ${email}`,

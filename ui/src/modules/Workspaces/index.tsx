@@ -19,7 +19,7 @@ import { getProfileByKey, saveProfile } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, getAccessTokenDecoded } from 'core/utils/auth';
+import { isRoot, getAccessTokenDecoded, isIDMAuthFlow } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
 import { useUser } from 'modules/Users/hooks';
@@ -41,8 +41,10 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   }, [name, filterWorkspace]);
 
   useEffect(() => {
-    const { email } = getAccessTokenDecoded();
-    findByEmail(email);
+    if (!isIDMAuthFlow()) {
+      const { email } = getAccessTokenDecoded();
+      findByEmail(email);
+    }
   }, [findByEmail]);
 
   useEffect(() => {
