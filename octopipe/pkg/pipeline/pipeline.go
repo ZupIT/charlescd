@@ -77,6 +77,20 @@ type Pipeline struct {
 	Config    cloudprovider.Cloudprovider `json:"config"`
 }
 
+type V2Deployment struct {
+	ComponentName		 string					`json:"componentName"`
+	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
+	OverrideValues  	 map[string]string		`json:"helmOverrideValues"`
+}
+
+type V2Pipeline struct {
+	Namespace 		 string						 `json:"namespace"`
+	Deployments 	 []V2Deployment				 `json:"deployments"`
+	ProxyDeployments []map[string]interface{}    `json:"proxyDeployments"`
+	CallbackUrl   	 string           			 `json:"callbackUrl"`
+	ClusterConfig    cloudprovider.Cloudprovider `json:"clusterConfig"`
+}
+
 func (main PipelineMain) NewPipeline() Pipeline {
 	return Pipeline{}
 }

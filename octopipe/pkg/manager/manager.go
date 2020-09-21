@@ -47,6 +47,13 @@ func (manager Manager) Start(pipeline pipelinePKG.Pipeline) {
 	go manager.executeStages(pipeline)
 }
 
+func (manager Manager) executeV2Deployment(v2Pipeline pipelinePKG.V2Pipeline) {
+	log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("START:EXECUTE_V2_DEPLOYMENT")
+	for _, deployment := range v2Pipeline.Deployments {
+
+	}
+}
+
 func (manager Manager) executeStages(pipeline pipelinePKG.Pipeline) {
 	var err error
 

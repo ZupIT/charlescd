@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1
+package api
 
 import (
 	"octopipe/pkg/manager"
@@ -35,12 +35,29 @@ func (api *API) NewPipelineAPI(managerMain manager.MainUseCases) {
 	api.v1.POST(path, controller.CreateOrUpdatePipeline)
 }
 
+func (api *API) NewV2PipelineAPI(managerMain manager.MainUseCases) {
+	path := "/pipelines"
+	manager := managerMain.NewManager()
+	controller := PipelineAPI{manager}
+
+	api.v2.POST(path, controller.executeV2Deployment)
+}
+
 func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
 	var deprecatedPipeline pipeline.NonAdjustablePipeline
 	ctx.Bind(&deprecatedPipeline)
 
 	pipeline := deprecatedPipeline.ToPipeline()
 	api.manager.Start(pipeline)
+
+	ctx.JSON(204, nil)
+}
+
+func (api *PipelineAPI) executeV2Deployment(ctx *gin.Context) {
+	var v2Pipeline pipeline.V2Pipeline
+	ctx.Bind(&v2Pipeline)
+
+	api.manager.executeV2Deployment(v2Pipeline)
 
 	ctx.JSON(204, nil)
 }

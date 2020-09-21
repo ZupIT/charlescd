@@ -64,3 +64,4 @@ export interface IOctopipePayload {
   circleId: string,
   callbackType: CallbackTypeEnum
 }
+

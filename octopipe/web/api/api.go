@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1
+package api
 
 import (
 	"github.com/gin-gonic/gin"
@@ -23,10 +23,12 @@ import (
 type API struct {
 	router *gin.Engine
 	v1     *gin.RouterGroup
+	v2     *gin.RouterGroup
 }
 
 const (
 	v1Path = "/api/v1"
+	v2Path = "/api/v2"
 )
 
 func NewAPI() *API {
@@ -34,7 +36,10 @@ func NewAPI() *API {
 
 	v1 := router.Group(v1Path)
 	v1.GET("/health", health)
-	return &API{router, v1}
+
+	v2 := router.Group(v2Path)
+
+	return &API{router, v1, v2}
 }
 
 func health(context *gin.Context) {
