@@ -90,9 +90,67 @@ func Do(actionConfig []byte, executionConfig []byte, parameters action.DataParam
 }
 
 func GetActionConfigTemplate() ([]byte, error) {
-	return json.Marshal("")
+	template, err := json.Marshal(`{
+    "fields": [
+        {
+            "name": "destinationCircleId",
+            "type": "string",
+            "label": "",
+            "tooltip": "If there is any release deployed at circle, it will be overwritten"
+        }
+    ]
+	}`)
+	if err != nil {
+		return nil, err
+	}
+
+	return template, nil
 }
 
 func GetExecutionConfigTemplate() ([]byte, error) {
-	return json.Marshal("")
+	template, err := json.Marshal(`"fields": [
+        {
+            "name": "mooveUrl",
+            "type": "string",
+            "label": "",
+            "tooltip": "Could be a service name, or a http url"
+        }
+    ]
+	}`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return template, nil
+}
+
+func ValidateExecutionConfiguration(executionConfig []byte) error {
+	var config executionConfiguration
+	err := json.Unmarshal(executionConfig, &config)
+	if err != nil {
+		logger.Error("VALIDATE_CIRCLE_ACTION_EXECUTION_CONFIG", "ValidateExecutionConfiguration", err, nil)
+		return errors.New("error validating execution configuration")
+	}
+
+	if config.DestinationCircleID == "" {
+		return errors.New("destination circle id is required")
+	}
+
+	return nil
+}
+
+func ValidateActionConfiguration(actionConfig []byte) error {
+	var config actionConfiguration
+	err := json.Unmarshal(actionConfig, &config)
+	if err != nil {
+		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, nil)
+		return errors.New("error validating action configuration")
+	}
+
+	if config.MooveURL == "" {
+		return errors.New("moove url is required")
+	}
+
+	return nil
 }

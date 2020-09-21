@@ -30,4 +30,6 @@ type UseCases interface {
 	Do(actionConfig []byte, executionConfig []byte, parameters DataParameters) error
 	GetExecutionConfigTemplate() ([]byte, error)
 	GetActionConfigTemplate() ([]byte, error)
+	ValidateExecutionConfiguration(executionConfig []byte) error
+	ValidateActionConfiguration(actionConfig []byte) error
 }
