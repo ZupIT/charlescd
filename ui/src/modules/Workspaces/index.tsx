@@ -15,14 +15,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getProfileByKey, saveProfile } from 'core/utils/profile';
+import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { useGlobalState } from 'core/state/hooks';
-import { isRoot, getAccessTokenDecoded, isIDMAuthFlow } from 'core/utils/auth';
+import { isRoot, getAccessTokenDecoded } from 'core/utils/auth';
 import { useWorkspace } from './hooks';
 import Menu from './Menu';
-import { useUser } from 'modules/Users/hooks';
 
 interface Props {
   selectedWorkspace: (name: string) => void;
@@ -32,24 +31,12 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
   const { name: profileName } = getAccessTokenDecoded();
   const workspaces = getProfileByKey('workspaces');
   const [filterWorkspace, , loading] = useWorkspace();
-  const { findByEmail, user } = useUser();
   const [name, setName] = useState('');
   const { list } = useGlobalState(({ workspaces }) => workspaces);
 
   useEffect(() => {
     if (isRoot()) filterWorkspace(name);
   }, [name, filterWorkspace]);
-
-  useEffect(() => {
-    if (!isIDMAuthFlow()) {
-      const { email } = getAccessTokenDecoded();
-      findByEmail(email);
-    }
-  }, [findByEmail]);
-
-  useEffect(() => {
-    if (user) saveProfile(user);
-  }, [user]);
 
   return (
     <Page>
