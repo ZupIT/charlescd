@@ -30,12 +30,14 @@ import io.charlescd.moove.legacy.repository.entity.User
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class UserServiceLegacy(
     private val userRepository: UserRepository,
-    private val keycloakService: KeycloakService
+    private val keycloakService: KeycloakService,
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) {
 
     fun addGroupsToUser(userId: String, addGroupsRequest: AddGroupsRequest) {
@@ -62,9 +64,16 @@ class UserServiceLegacy(
     fun delete(id: String): UserRepresentation {
         return userRepository.findById(id)
             .map(this::deleteUser)
-            .map { keycloakService.deleteUserByEmail(it.email); it }
+            .map(this::deleteOnKeycloak)
             .map(this::toRepresentation)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
+    }
+
+    private fun deleteOnKeycloak(it: User): User {
+        if (internalIdmEnabled) {
+            keycloakService.deleteUserByEmail(it.email)
+        }
+        return it
     }
 
     private fun updateUserData(updateUserRequest: UpdateUserRequest): (User) -> User = { user ->
