@@ -61,7 +61,7 @@ const fakeModule: Module = {
 
 const mockOnChange = jest.fn()
 
-jest.mock('core/components/Can', () => {
+jest.mock('containers/Can', () => {
   return {
     __esModule: true,
     default:  ({children}: fakeCanProps) => {
