@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.6 (21/09/2020)
+- [#511](https://github.com/ZupIT/charlescd/pull/511) Fix import csv bug
+
+---
+
+## 0.3.5 (19/09/2020)
+- [#509](https://github.com/ZupIT/charlescd/pull/509) Change Octopipe to not update deployed resources
+- [#508](https://github.com/ZupIT/charlescd/pull/508) Updating java version of moove dev release
+- [#495](https://github.com/ZupIT/charlescd/pull/495) CI Update of charts and changelog
+- [#442](https://github.com/ZupIT/charlescd/pull/442) Fix multiple registry auth bug
+
+---
+
 ## 0.3.4 (16/09/2020)
 - [#502](https://github.com/ZupIT/charlescd/pull/502) Update application-k8s.properties
 - [#501](https://github.com/ZupIT/charlescd/pull/501) Fix chart error
