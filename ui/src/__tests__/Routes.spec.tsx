@@ -49,6 +49,7 @@ beforeEach(() => {
 
 test('render default route', async () => {
   render(<MemoryRouter><Routes /></MemoryRouter>);
+
   await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 });
 
@@ -74,18 +75,27 @@ test('render with a valid session', async () => {
   expect(email).toMatch(user.email);
 });
 
-test('render with an invalid session', async () => {
+test.only('render with an invalid session', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  delete window.location;
+  window.location = {
+    ...window.location,
+    href: '',
+    pathname: ''
+  };
 
   setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0');
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  screen.debug();
+
   await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 
   const name = getProfileByKey('name');
   expect(name).toBeUndefined();
 });
-
 
 test('render main in microfrontend mode', async () => {
   setIsMicrofrontend(true);

@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState, Fragment } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
   setAccessToken,
   getAccessTokenDecoded,
-  redirectToIDM,
   setRefreshToken,
-  isIDMAuthFlow
+  isIDMAuthFlow,
+  redirectToIDM
 } from 'core/utils/auth';
 import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
@@ -39,14 +39,16 @@ const NotFound404 = lazy(() => import('modules/Error/404'));
 
 const Routes = () => {
   const [enabledRoutes, setEnabledRoutes] = useState(false);
+  const isEnabledRoutes = enabledRoutes || !isIDMAuthFlow();
   const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
   const { create, newUser } = useCreateUser();
 
   useEffect(() => {
+    const { email } = getAccessTokenDecoded();
+
     if (isIDMAuthFlow()) {
       const code = getParam('code');
-      const { email } = getAccessTokenDecoded();
 
       if (code) {
         getTokens(code);
@@ -89,17 +91,21 @@ const Routes = () => {
   }, [grants, findByEmail]);
 
   const renderRoutes = () => (
-    <Switch>
+    <Fragment>
       <Route path={routes.error403} component={Forbidden403} />
       <Route path={routes.error404} component={NotFound404} />
-      <Route path={routes.auth} component={Auth} />
       <Route path={routes.main} component={Main} />
-    </Switch>
+    </Fragment>
   );
 
   return (
     <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
-      <Suspense fallback="">{enabledRoutes && renderRoutes()}</Suspense>
+      <Suspense fallback="">
+        <Switch>
+          <Route path={routes.auth} component={Auth} />
+          {isEnabledRoutes && renderRoutes()}
+        </Switch>
+      </Suspense>
     </BrowserRouter>
   );
 };
