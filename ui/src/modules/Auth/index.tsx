@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router';
 import routes from 'core/constants/routes';
 import { ReactComponent as AuthSVG } from 'core/assets/svg/circle-login.svg';
@@ -8,9 +8,15 @@ import Styled from './styled';
 const Login = lazy(() => import('modules/Auth/Login'));
 
 const Auth = () => {
-  const renderIDMLogin = () => {
-    return <>{redirectToIDM()}</>;
-  };
+  const [enableRoute, setEnableRoute] = useState(false);
+
+  useEffect(() => {
+    if (isIDMAuthFlow()) {
+      redirectToIDM();
+    } else {
+      setEnableRoute(true);
+    }
+  }, []);
 
   const renderLogin = () => (
     <Styled.Wrapper data-testid="auth">
@@ -35,7 +41,7 @@ const Auth = () => {
     </Styled.Wrapper>
   );
 
-  return isIDMAuthFlow() ? renderIDMLogin() : renderLogin();
+  return enableRoute && renderLogin();
 };
 
 export default Auth;
