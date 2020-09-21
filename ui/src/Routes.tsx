@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
@@ -38,6 +38,7 @@ const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
 const Routes = () => {
+  const [enabledRoutes, setEnabledRoutes] = useState(false);
   const { findByEmail, user, error } = useUser();
   const { getTokens, grants } = useAuth();
   const { create, newUser } = useCreateUser();
@@ -74,6 +75,7 @@ const Routes = () => {
   useEffect(() => {
     if (user) {
       saveProfile(user);
+      setEnabledRoutes(true);
     }
   }, [user]);
 
@@ -86,16 +88,18 @@ const Routes = () => {
     }
   }, [grants, findByEmail]);
 
+  const renderRoutes = () => (
+    <Switch>
+      <Route path={routes.error403} component={Forbidden403} />
+      <Route path={routes.error404} component={NotFound404} />
+      <Route path={routes.auth} component={Auth} />
+      <Route path={routes.main} component={Main} />
+    </Switch>
+  );
+
   return (
     <BrowserRouter basename={isMicrofrontend() ? '/charlescd' : '/'}>
-      <Suspense fallback="">
-        <Switch>
-          <Route path={routes.error403} component={Forbidden403} />
-          <Route path={routes.error404} component={NotFound404} />
-          <Route path={routes.auth} component={Auth} />
-          <Route path={routes.main} component={Main} />
-        </Switch>
-      </Suspense>
+      <Suspense fallback="">{enabledRoutes && renderRoutes()}</Suspense>
     </BrowserRouter>
   );
 };

@@ -65,8 +65,8 @@ export const getAccessTokenDecoded = (): AccessToken => {
 };
 
 export const isRoot = () => {
-  const token = getAccessTokenDecoded();
-  return token?.isRoot || false;
+  const isRoot = getProfileByKey('isRoot');
+  return isRoot || false;
 };
 
 export const isRootRoute = (route: string) => includes(route, 'root');
