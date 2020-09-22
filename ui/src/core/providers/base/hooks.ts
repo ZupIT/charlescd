@@ -42,6 +42,7 @@ export interface FetchProps {
   loadingUpdate?: boolean;
   loading?: boolean;
   getAll?: Function;
+  getUserGroupByName?: Function;
   getById?: Function;
   save?: Function;
   update?: Function;

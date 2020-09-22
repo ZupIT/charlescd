@@ -17,6 +17,9 @@
 import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
+import debounce from 'lodash/debounce';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Card from 'core/components/Card';
@@ -40,7 +43,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     loadingSave,
     loadingAdd,
     loadingAll,
-    getAll
+    getUserGroupByName
   } = useUserGroup();
   const {
     getAll: getAllRoles,
@@ -54,6 +57,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   const [form, setForm] = useState(false);
   const [roleOptions, setRoleOptions] = useState(null);
   const [group, setGroup] = useState(null);
+  const [userGroupNameParam, setUserGroupNameParam] = useState('');
 
   useEffect(() => {
     const options = map(rolesAll as Role[], (role: Role) => ({
@@ -65,7 +69,9 @@ const FormUserGroup = ({ onFinish }: Props) => {
     setRoleOptions(options);
   }, [rolesAll]);
 
-  useEffect(() => getAll(), [getAll]);
+  useEffect(() => {
+    getUserGroupByName(userGroupNameParam);
+  }, [getUserGroupByName, userGroupNameParam]);
 
   useEffect(() => {
     if (responseSave) onFinish();
@@ -78,6 +84,17 @@ const FormUserGroup = ({ onFinish }: Props) => {
   useEffect(() => {
     setIsDisableSave(isEmpty(watchedRoleId));
   }, [watchedRoleId]);
+
+  const searchUserGroup = (name: string) => {
+    const userGroups = responseAll as UserGroup[];
+    const usersGroup = find(userGroups, userGroup =>
+      includes(userGroup.name, name)
+    );
+
+    if (!usersGroup || isEmpty(name)) {
+      setUserGroupNameParam(name);
+    }
+  };
 
   const onSelectGoup = (option: Option) => {
     setIsDisableAdd(!option);
@@ -149,6 +166,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         label="Select a user group"
         isDisabled={loadingAll}
         onChange={group => onSelectGoup(group)}
+        onInputChange={debounce(searchUserGroup, 500)}
       />
       <Button.Default
         isLoading={loadingAll}

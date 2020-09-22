@@ -15,7 +15,7 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { create, detach, findAll } from 'core/providers/userGroup';
+import { create, detach, findByName } from 'core/providers/userGroup';
 import { findAll as findAllRoles } from 'core/providers/roles';
 import { addConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
@@ -27,7 +27,7 @@ export const useUserGroup = (): FetchProps => {
   const dispatch = useDispatch();
   const [createData, createUserGroup] = useFetch<GroupRoles>(create);
   const [userGroupsData, getUserGroups] = useFetch<{ content: UserGroup[] }>(
-    findAll
+    findByName
   );
   const [addData] = useFetch(addConfig);
   const [delData, detachGroup] = useFetch(detach);
@@ -62,9 +62,12 @@ export const useUserGroup = (): FetchProps => {
     }
   }, [errorSave, dispatch]);
 
-  const getAll = useCallback(() => {
-    getUserGroups();
-  }, [getUserGroups]);
+  const getUserGroupByName = useCallback(
+    (name: string) => {
+      getUserGroups(name);
+    },
+    [getUserGroups]
+  );
 
   useEffect(() => {
     if (error) {
@@ -96,7 +99,7 @@ export const useUserGroup = (): FetchProps => {
   }, [errorRemove, dispatch]);
 
   return {
-    getAll,
+    getUserGroupByName,
     save,
     remove,
     responseAdd,
