@@ -791,6 +791,58 @@
 							"response": []
 						},
 						{
+							"name": "update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "61b62b78-e117-4152-a274-38fef7ffba13",
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "x-circle-id",
+										"type": "text",
+										"value": "{{circleId}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nickname\": \"ExecutionName\",\n    \"metricsGroupId\": \"{{metricsGroupsId}}\",\n    \"actionsId\": \"{{actionId}}\",\n    \"executionParameters\": {\n        \"circleId\": \"1234567891234567890\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v1/actions-execution/{{actionExecutionId}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"actions-execution",
+										"{{actionExecutionId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "find all",
 							"event": [
 								{
@@ -968,6 +1020,58 @@
 							"path": [
 								"v1",
 								"actions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b7988dd8-169e-47df-b9e7-b6fca2db4d9e",
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "{{workspaceId}}"
+							},
+							{
+								"key": "x-circle-id",
+								"type": "text",
+								"value": "{{circleId}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nickname\": \"Open-sea up\",\n    \"type\": \"CircleUpstream\",\n    \"configuration\": {\n        \"authorId\": \"123456789\",\n        \"destinyCircle\": \"open-ronaldo\"\n    },\n    \"workspaceId\": \"5b17f1ec-41ab-472a-b307-f0495e480a1c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/actions/{{actionId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"actions",
+								"{{actionId}}"
 							]
 						}
 					},

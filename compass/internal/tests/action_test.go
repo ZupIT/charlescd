@@ -171,3 +171,38 @@ func (s *ActionSuite) TestDeleteActionError() {
 	err := s.repository.Delete(uuid.New().String())
 	require.Error(s.T(), err)
 }
+
+func (s *ActionSuite) TestUpdateAction() {
+	actionStruct := action.Action{
+		Nickname:      "ActionName",
+		Type:          "CircleUp",
+		Configuration: json.RawMessage(`{"config": "some-config"}`),
+		WorkspaceId:   uuid.New().String(),
+		DeletedAt:     nil,
+	}
+
+	s.DB.Create(&actionStruct)
+
+	actionStruct.Type = "CircleDown"
+	res, err := s.repository.Update(actionStruct.ID.String(), actionStruct)
+
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), actionStruct.Type, res.Type)
+}
+
+func (s *ActionSuite) TestUpdateActionError() {
+	actionStruct := action.Action{
+		Nickname:      "ActionName",
+		Type:          "CircleUp",
+		Configuration: json.RawMessage(`{"config": "some-config"}`),
+		WorkspaceId:   uuid.New().String(),
+		DeletedAt:     nil,
+	}
+
+	s.DB.Create(&actionStruct)
+	actionStruct.Nickname = ""
+	s.DB.Close()
+	_, err := s.repository.Update(actionStruct.ID.String(), actionStruct)
+
+	require.Error(s.T(), err)
+}
