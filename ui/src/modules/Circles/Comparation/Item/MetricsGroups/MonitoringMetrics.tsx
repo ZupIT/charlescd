@@ -82,7 +82,7 @@ const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
         isActive={period === '1m'}
         isDisabled={chartDataLoading}
       >
-        Mouth
+        Month
       </Styled.ButtonIconRoundedPeriod>
     </Styled.MonitoringMetricsPeriodFilter>
   );

@@ -50,7 +50,7 @@ const MultiCheck = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={Select}
+      as={<Select />}
       options={options}
       name={name}
       control={control}
