@@ -35,4 +35,5 @@ export interface Props {
   hideSelectedOptions?: boolean;
   components?: SelectComponentsConfig<OptionTypeBase>;
   label?: string;
+  hasError?: boolean;
 }

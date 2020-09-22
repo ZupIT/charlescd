@@ -103,8 +103,8 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     );
 
   const redirectToDocumentation = () => {
-    goTo('https://docs.charlescd.io/v/v0.2.1/')
-  }
+    goTo('https://docs.charlescd.io');
+  };
 
   return (
     <Styled.Nav data-testid="sidebar">
@@ -125,10 +125,15 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
           )}
         </Styled.Item>
         <Styled.Item>
-          <Icon name="help" color="dark" size="15px" onClick={redirectToDocumentation}
-            data-tip data-for="docTooltip"
+          <Icon
+            name="help"
+            color="dark"
+            size="15px"
+            onClick={redirectToDocumentation}
+            data-tip
+            data-for="docTooltip"
           />
-          <ReactTooltip id='docTooltip'>Documentation</ReactTooltip>
+          <ReactTooltip id="docTooltip">Documentation</ReactTooltip>
         </Styled.Item>
         <Styled.Item>
           <Icon name="logout" color="dark" size="15px" onClick={logout} />

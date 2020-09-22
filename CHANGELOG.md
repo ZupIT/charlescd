@@ -1,5 +1,68 @@
 # Changelog
 
+## 0.3.4 (16/09/2020)
+- [#502](https://github.com/ZupIT/charlescd/pull/502) Update application-k8s.properties
+- [#501](https://github.com/ZupIT/charlescd/pull/501) Fix chart error
+- [#500](https://github.com/ZupIT/charlescd/pull/500) Update Nginx Chart.yaml
+- [#499](https://github.com/ZupIT/charlescd/pull/499) Compass copyright
+- [#452](https://github.com/ZupIT/charlescd/pull/452) Removing authorization from keycloak
+- [#496](https://github.com/ZupIT/charlescd/pull/496) Fix compass installation
+- [#491](https://github.com/ZupIT/charlescd/pull/491) lock Casl version
+- [#494](https://github.com/ZupIT/charlescd/pull/494) fix compass chart
+- [#414](https://github.com/ZupIT/charlescd/pull/414) Fixing workspace permissions.
+- [#486](https://github.com/ZupIT/charlescd/pull/486) Notification transaction
+- [#488](https://github.com/ZupIT/charlescd/pull/488) Fix compass job
+- [#485](https://github.com/ZupIT/charlescd/pull/485) Adding compass chart
+- [#483](https://github.com/ZupIT/charlescd/pull/483) Transaction on create deployment use-case
+- [#463](https://github.com/ZupIT/charlescd/pull/463) CI Update of charts and changelog
+- [#473](https://github.com/ZupIT/charlescd/pull/473) Fix average time
+- [#476](https://github.com/ZupIT/charlescd/pull/476) Change on click expand for a redirect to that circle
+- [#474](https://github.com/ZupIT/charlescd/pull/474) fix hardcoded sandbox namespace
+- [#472](https://github.com/ZupIT/charlescd/pull/472) fix one deployment issues
+- [#470](https://github.com/ZupIT/charlescd/pull/470) Update link to documentation
+- [#428](https://github.com/ZupIT/charlescd/pull/428) Adding filter to UserGroup findAll
+- [#438](https://github.com/ZupIT/charlescd/pull/438) Circle segments validation on PATCH
+- [#348](https://github.com/ZupIT/charlescd/pull/348) Reset password - Root View
+- [#423](https://github.com/ZupIT/charlescd/pull/423) Segmentation view - Hide logical operator and vertical line
+- [#418](https://github.com/ZupIT/charlescd/pull/418) Create metrics groups
+- [#468](https://github.com/ZupIT/charlescd/pull/468) V2 one deployment circle
+- [#467](https://github.com/ZupIT/charlescd/pull/467) Removing comments on nginx-conf.yaml
+
+---
+
+## 0.3.4-rc.3 (04/09/2020)
+- [#462](https://github.com/ZupIT/charlescd/pull/462) Refinement UI
+- [#460](https://github.com/ZupIT/charlescd/pull/460) Butler stabilization version concat validation
+- [#459](https://github.com/ZupIT/charlescd/pull/459) validate componentName + imageTag cannot be greater than 63
+- [#456](https://github.com/ZupIT/charlescd/pull/456) Fix spinnaker tests, return hostValue and gatewayName on executions index
+- [#454](https://github.com/ZupIT/charlescd/pull/454) Add component name v2
+- [#453](https://github.com/ZupIT/charlescd/pull/453) Index pagination by 0, validate query string params
+- [#407](https://github.com/ZupIT/charlescd/pull/407) remove module controller
+- [#393](https://github.com/ZupIT/charlescd/pull/393) add label circleId
+- [#451](https://github.com/ZupIT/charlescd/pull/451) Fix ingress options v2
+- [#450](https://github.com/ZupIT/charlescd/pull/450) Add page indication on paginated response
+- [#443](https://github.com/ZupIT/charlescd/pull/443) Codecov upgrade 1.0.7 to 1.0.13
+- [#441](https://github.com/ZupIT/charlescd/pull/441) Butler stabilization execution list
+- [#437](https://github.com/ZupIT/charlescd/pull/437) Add circle label on deployment
+- [#439](https://github.com/ZupIT/charlescd/pull/439) Add new ingress options butler v2
+- [#434](https://github.com/ZupIT/charlescd/pull/434) use pgcrypto to generate uuid
+- [#429](https://github.com/ZupIT/charlescd/pull/429) No rollback when pod is shared
+- [#347](https://github.com/ZupIT/charlescd/pull/347) Change user password
+- [#433](https://github.com/ZupIT/charlescd/pull/433) create pg extension in case the database cant run uuid_generate_v4
+- [#432](https://github.com/ZupIT/charlescd/pull/432) dont run cleanup query if no expired executions are found
+- [#427](https://github.com/ZupIT/charlescd/pull/427) Butler stabilization fix undeployment callback
+- [#431](https://github.com/ZupIT/charlescd/pull/431) dont log entire objects on deploy
+- [#405](https://github.com/ZupIT/charlescd/pull/405) Hotfix: user can not edit profile picture.
+- [#375](https://github.com/ZupIT/charlescd/pull/375) Validating if email is already registered.
+- [#420](https://github.com/ZupIT/charlescd/pull/420) Update execution status and notify moove on undeployment
+- [#417](https://github.com/ZupIT/charlescd/pull/417) CI Update of charts and changelog
+- [#415](https://github.com/ZupIT/charlescd/pull/415) alter migrations and entities
+- [#419](https://github.com/ZupIT/charlescd/pull/419) Fix repeated drules v2
+- [#416](https://github.com/ZupIT/charlescd/pull/416) Fix incomingCircleId for callbacks
+- [#398](https://github.com/ZupIT/charlescd/pull/398) Hotfix: moove was allowing post and delete requests without token
+
+---
+
 ## 0.3.4-rc.2 (21/08/2020)
 - [#387](https://github.com/ZupIT/charlescd/pull/387) Add link that opens Charles Documentation
 - [#408](https://github.com/ZupIT/charlescd/pull/408) Set components running to false on cleanup

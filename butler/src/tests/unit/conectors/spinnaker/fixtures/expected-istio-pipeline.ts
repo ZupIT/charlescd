@@ -281,7 +281,6 @@ const istioPipeline = {
   updateTs: '1573212638000'
 }
 
-
 export const istioPipelineHostValueAndGateway = {
   appConfig: {},
   application: 'application-name',

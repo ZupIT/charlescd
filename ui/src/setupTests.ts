@@ -22,6 +22,7 @@ import '@testing-library/jest-dom/extend-expect';
 import fetch, { FetchMock } from 'jest-fetch-mock';
 import storageMock from 'unit-test/local-storage';
 import { mockCookie } from './unit-test/cookie';
+import 'mutationobserver-shim';
 
 interface CustomDocument {
   cookie?: string;

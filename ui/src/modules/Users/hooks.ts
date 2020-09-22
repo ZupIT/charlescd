@@ -23,6 +23,7 @@ import {
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
+  resetPasswordById,
   updateProfileById,
   findUserByEmail,
   createNewUser,
@@ -32,7 +33,7 @@ import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
-import { User, Profile, NewUser } from './interfaces/User';
+import { User, Profile, NewUser, NewPassword } from './interfaces/User';
 
 export const useUser = (): [User, boolean, Function] => {
   const [userData, getUser] = useFetch<User>(findUserByEmail);
@@ -148,6 +149,37 @@ export const useUpdateProfile = (): [
   );
 
   return [profileLoading, updateLoading, updateProfile, response, status];
+};
+
+export const useResetPassword = (): {
+  resetPassword: (id: string) => void;
+  response: NewPassword;
+  status: FetchStatus;
+} => {
+  const dispatch = useDispatch();
+  const status = useFetchStatus();
+  const [response, setResponse] = useState<NewPassword>();
+  const putResetPassword = useFetchData<NewPassword>(resetPasswordById);
+
+  const resetPassword = async (id: string) => {
+    try {
+      status.pending();
+      const putResponse = await putResetPassword(id);
+      setResponse(putResponse);
+      status.resolved();
+    } catch (e) {
+      dispatch(
+        toogleNotification({
+          text: 'The password could not be reset.',
+          status: 'error'
+        })
+      );
+
+      status.rejected();
+    }
+  };
+
+  return { resetPassword, response, status };
 };
 
 export const useUsers = (): [Function, Function, boolean] => {

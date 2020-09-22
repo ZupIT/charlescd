@@ -24,6 +24,8 @@ jobs:
 
     - run: yarn install
       working-directory: ./ui
+    - run: yarn test
+      working-directory: ./ui
     - run: yarn build
       working-directory: ./ui
       env:

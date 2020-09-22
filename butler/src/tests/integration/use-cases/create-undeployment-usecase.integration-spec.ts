@@ -619,11 +619,11 @@ describe('CreateUnDeploymentUsecase Integration Test', () => {
 
     await request(app.getHttpServer()).post('/undeployments').send(createUndeploymentRequest).expect(500)
 
-    const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deploymentId: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
+    const undeployment: UndeploymentEntity = await undeploymentsRepository.findOneOrFail({ where: { deployment: createUndeploymentRequest.deploymentId, status: UndeploymentStatusEnum.FAILED } })
 
     const moduleUndeployment: ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find(
       { where :
-          { undeploymentId: undeployment.id },
+          { undeployment: undeployment.id },
       relations: ['componentUndeployments'],
       order : { status: 'ASC' }
       })

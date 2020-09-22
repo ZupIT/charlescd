@@ -235,8 +235,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(componentsUpdated.length).toBe(2)
     expect(componentsUpdated[0].id).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
     expect(componentsUpdated[1].id).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
-    expect(deployment.modules[0].components[0].componentId).toEqual(createDeploymentRequest.modules[0].components[0].componentId)
-    expect(deployment.modules[0].components[1].componentId).toEqual(createDeploymentRequest.modules[0].components[1].componentId)
+    expect(deployment.modules[0].components[0].componentId).toEqual(componentsUpdated[0].id)
+    expect(deployment.modules[0].components[1].componentId).toEqual(componentsUpdated[1].id)
   })
 
   it('/POST /deployments in circle should fail when deployment already exists', async() => {
@@ -583,7 +583,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(component1.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag' } }],
-        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url' }],
+        pipelineVersions: [{ version: 'image-tag', versionUrl: 'image-url', versionCircle: 'circle-header' }],
         pipelineUnusedVersions: []
       }
     )
@@ -591,7 +591,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     expect(component2.pipelineOptions).toEqual(
       {
         pipelineCircles: [{ header: { headerName: 'x-circle-id', headerValue: 'circle-header' }, destination: { version: 'image-tag2' } }],
-        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2' }],
+        pipelineVersions: [{ version: 'image-tag2', versionUrl: 'image-url2', versionCircle: 'circle-header' }],
         pipelineUnusedVersions: []
       }
     )
@@ -700,7 +700,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       versions: [
         {
           versionUrl: 'image-url',
-          version: 'component-name-image-tag'
+          version: 'component-name-image-tag',
+          versionCircle: 'circle-header',
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -730,7 +731,8 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
       versions: [
         {
           versionUrl: 'image-url2',
-          version: 'component-name2-image-tag2'
+          version: 'component-name2-image-tag2',
+          versionCircle: 'circle-header',
         }
       ],
       callbackType: CallbackTypeEnum.DEPLOYMENT,
@@ -833,7 +835,7 @@ describe('CreateCircleDeploymentUsecase Integration Test', () => {
     )
 
     const modulesDeployment: ModuleDeploymentEntity[] = await moduleDeploymentRepository.find(
-      { where: { deploymentId: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
+      { where: { deployment: deployment.id }, relations: ['components'], order: { status: 'ASC' } }
     )
 
     expect(deployment.status).toBe(DeploymentStatusEnum.FAILED)

@@ -50,11 +50,11 @@ const Modal = ({
     >
       <Styled.Background className="modal-background" />
       <Styled.Dialog className="modal-dialog" ref={modalRef}>
-        <Styled.Container className="modal-content">
+        <Styled.Container className="modal-container">
           <Styled.Button>
             <Icon name="cancel" color="dark" size="22px" onClick={onClose} />
           </Styled.Button>
-          <Styled.Content>{children}</Styled.Content>
+          <Styled.Content className="modal-content">{children}</Styled.Content>
         </Styled.Container>
       </Styled.Dialog>
     </Styled.Wrapper>

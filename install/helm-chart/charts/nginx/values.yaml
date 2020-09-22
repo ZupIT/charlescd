@@ -8,3 +8,5 @@ keycloak:
   enabled: true
 octopipe:
   enabled: true
+compass:
+  enabled: true

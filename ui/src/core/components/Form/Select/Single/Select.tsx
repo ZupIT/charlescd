@@ -32,7 +32,8 @@ const Select = ({
   isLoading = false,
   onChange,
   onInputChange,
-  customOption
+  customOption,
+  hasError
 }: Props) => (
   <div data-testid="react-select">
     <Styled.Select
@@ -41,6 +42,7 @@ const Select = ({
       placeholder={placeholder}
       isDisabled={isDisabled}
       isLoading={isLoading}
+      hasError={hasError}
       components={{
         ValueContainer: FloatingLabel,
         Option: customOption ? customOption : components.Option,
