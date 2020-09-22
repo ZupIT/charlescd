@@ -59,7 +59,7 @@ interface CircleMatcherClient {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(
+    @PutMapping(
         path = ["/segmentation/import"],
         produces = [(MediaType.APPLICATION_JSON_UTF8_VALUE)],
         consumes = [(MediaType.APPLICATION_JSON_UTF8_VALUE)]
