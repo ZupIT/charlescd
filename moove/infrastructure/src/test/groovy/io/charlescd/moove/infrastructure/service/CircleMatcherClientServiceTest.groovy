@@ -62,6 +62,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
             assert request.previousReference == null
+            assert !request.active
         }
     }
 
@@ -94,6 +95,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
             assert request.previousReference == reference
+            assert !request.active
         }
     }
 
