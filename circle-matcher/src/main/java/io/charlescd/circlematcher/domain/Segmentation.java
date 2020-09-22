@@ -92,7 +92,7 @@ public class Segmentation {
     }
 
     public Boolean getActive() {
-        return active;
+        return this.active == null || this.active;
     }
 
     public void setActive(Boolean active) {
@@ -103,7 +103,4 @@ public class Segmentation {
         return isDefault;
     }
 
-    public boolean isActive() {
-        return this.active == null || this.active;
-    }
 }

@@ -139,6 +139,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private boolean isActive(Segmentation segmentation) {
-        return segmentation.isActive();
+        return segmentation.getActive();
     }
 }
