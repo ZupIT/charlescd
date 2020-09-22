@@ -88,22 +88,28 @@ func (metricsGroupApi MetricsGroupApi) show(w http.ResponseWriter, r *http.Reque
 func (metricsGroupApi MetricsGroupApi) query(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 
-	period := r.URL.Query().Get("period")
-	interval := r.URL.Query().Get("interval")
-	if period == "" || interval == "" {
+	periodParameter := r.URL.Query().Get("period")
+	intervalParameter := r.URL.Query().Get("interval")
+	if periodParameter == "" || intervalParameter == "" {
 		api.NewRestError(w, http.StatusInternalServerError, []error{
 			errors.New("Query param period or interval is empty"),
 		})
 		return
 	}
 
-	err := metricsGroupApi.metricsGroupMain.PeriodValidate(period)
+	ragePeriod, err := metricsGroupApi.metricsGroupMain.PeriodValidate(periodParameter)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, period, interval)
+	interval, err := metricsGroupApi.metricsGroupMain.PeriodValidate(intervalParameter)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+
+	queryResult, err := metricsGroupApi.metricsGroupMain.QueryByGroupID(id, ragePeriod, interval)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

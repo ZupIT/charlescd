@@ -4,7 +4,10 @@ import (
 	"compass/pkg/datasource"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"strconv"
+	"time"
 
 	"google.golang.org/api/analytics/v3"
 	"google.golang.org/api/analyticsreporting/v4"
@@ -12,37 +15,29 @@ import (
 )
 
 type Configuration struct {
-	ServiceAccount string `json:"serviceAccount"`
+	ViewId         string          `json:"viewId"`
+	ServiceAccount json.RawMessage `json:"serviceAccount"`
 }
 
-var Periods = map[string]string{
-	"s":   "s",
-	"m":   "m",
-	"h":   "h",
-	"d":   "d",
-	"w":   "w",
-	"y":   "y",
-	"MAX": "MAX",
-}
-
-func getServices(datasourceConfiguration []byte) (analytics.Service, analyticsreporting.Service, error) {
-	ctx := context.Background()
-
+func parseDatasourceConfiguration(datasourceConfiguration []byte) (Configuration, error) {
 	configuration := Configuration{}
 	err := json.Unmarshal(datasourceConfiguration, &configuration)
 	if err != nil {
-		return analytics.Service{}, analyticsreporting.Service{}, err
+		return Configuration{}, err
 	}
 
-	serviceAccountJSON := `
-	`
+	return configuration, nil
+}
+
+func getServices(configuration Configuration) (analytics.Service, analyticsreporting.Service, error) {
+	ctx := context.Background()
 
 	analyticsService, err := analytics.NewService(ctx, option.WithCredentialsJSON([]byte(configuration.ServiceAccount)))
 	if err != nil {
 		return analytics.Service{}, analyticsreporting.Service{}, err
 	}
 
-	analyticsReportingService, err := analyticsreporting.NewService(ctx, option.WithCredentialsJSON([]byte(serviceAccountJSON)))
+	analyticsReportingService, err := analyticsreporting.NewService(ctx, option.WithCredentialsJSON(configuration.ServiceAccount))
 	if err != nil {
 		return analytics.Service{}, analyticsreporting.Service{}, err
 	}
@@ -51,8 +46,12 @@ func getServices(datasourceConfiguration []byte) (analytics.Service, analyticsre
 }
 
 func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
+	configuration, err := parseDatasourceConfiguration(datasourceConfiguration)
+	if err != nil {
+		return nil, err
+	}
 
-	analyticsService, _, err := getServices(datasourceConfiguration)
+	analyticsService, _, err := getServices(configuration)
 	if err != nil {
 		return nil, err
 	}
@@ -72,48 +71,84 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 	return metrics, nil
 }
 
-func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
-	_, analyticsReportingService, err := getServices(request.DatasourceConfiguration)
+func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsResponse, error) {
+	configuration, err := parseDatasourceConfiguration(request.DatasourceConfiguration)
 	if err != nil {
-		return nil, err
+		return analyticsreporting.GetReportsResponse{}, err
+	}
+
+	_, analyticsReportingService, err := getServices(configuration)
+	if err != nil {
+		return analyticsreporting.GetReportsResponse{}, err
 	}
 
 	reportRequestData := &analyticsreporting.GetReportsRequest{
 		ReportRequests: []*analyticsreporting.ReportRequest{
 			{
-				ViewId: "228901918",
-				DateRanges: []*analyticsreporting.DateRange{
-					{
-						StartDate: "2020-09-16",
-						EndDate:   "2020-09-18",
-					},
-				},
-				Dimensions: []*analyticsreporting.Dimension{
-					{
-						Name: "ga:day",
-					},
-				},
+				ViewId: configuration.ViewId,
 				Metrics: []*analyticsreporting.Metric{
 					{
-						Expression: "ga:pageviews",
+						Expression: request.Query,
 					},
 				},
 			},
 		},
 	}
 
+	if request.RangePeriod.Value != 0 && request.RangePeriod.Unit != "" {
+		currentPeriod, ok := Periods[request.RangePeriod.Unit]
+		if !ok {
+			return analyticsreporting.GetReportsResponse{}, errors.New("This period not supported...")
+		}
+
+		analyticsPeriod := currentPeriod(request.RangePeriod)
+
+		reportRequestData.ReportRequests[0].DateRanges = []*analyticsreporting.DateRange{
+			{
+				StartDate: analyticsPeriod.StartDate,
+				EndDate:   analyticsPeriod.EndDate,
+			},
+		}
+
+		reportRequestData.ReportRequests[0].Dimensions = analyticsPeriod.Dimensions
+		reportRequestData.ReportRequests[0].FiltersExpression = analyticsPeriod.Filters
+	}
+
 	batchGetCall := analyticsReportingService.Reports.BatchGet(reportRequestData)
 	if err != nil {
-		return nil, err
+		return analyticsreporting.GetReportsResponse{}, err
 	}
 
 	res, err := batchGetCall.Do()
+	if err != nil {
+		return analyticsreporting.GetReportsResponse{}, err
+	}
+
+	return *res, nil
+}
+
+func getUnixTimestampByDimension(dimension string) (string, error) {
+	year := dimension[0:4]
+	month := dimension[4:6]
+	day := dimension[6:8]
+	hour := dimension[8:10]
+	minute := dimension[10:12]
+
+	date, err := time.Parse(time.RFC3339, fmt.Sprintf("%s-%s-%sT%s:%s:00+00:00", year, month, day, hour, minute))
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%d", date.Unix()), nil
+}
+
+func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
+	res, err := doRequest(request)
 	if err != nil {
 		return nil, err
 	}
 
 	values := []datasource.Value{}
-
 	if len(res.Reports) <= 0 {
 		return []datasource.Value{}, nil
 	}
@@ -126,9 +161,14 @@ func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 			return nil, err
 		}
 
+		unixTimestamp, err := getUnixTimestampByDimension(dimension)
+		if err != nil {
+			return nil, err
+		}
+
 		values = append(values, datasource.Value{
 			Total:  float64(total),
-			Period: dimension,
+			Period: unixTimestamp,
 		})
 	}
 
@@ -136,5 +176,20 @@ func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 }
 
 func Result(request datasource.ResultRequest) (float64, error) {
-	return 0, nil
+	res, err := doRequest(datasource.QueryRequest{
+		ResultRequest: request,
+		RangePeriod:   datasource.Period{},
+		Interval:      datasource.Period{},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	row := res.Reports[0].Data.Rows[0]
+	value, err := strconv.Atoi(row.Metrics[0].Values[0])
+	if err != nil {
+		return 0, nil
+	}
+
+	return float64(value), nil
 }

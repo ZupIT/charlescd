@@ -12,7 +12,7 @@ import (
 )
 
 type UseCases interface {
-	PeriodValidate(currentPeriod string) error
+	PeriodValidate(currentPeriod string) (datasourcePKG.Period, error)
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, error)
 	FindAll() ([]MetricsGroup, error)
 	ResumeByCircle(circleId string) ([]MetricGroupResume, error)
@@ -20,7 +20,7 @@ type UseCases interface {
 	FindById(id string) (MetricsGroup, error)
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
 	Remove(id string) error
-	QueryByGroupID(id, period, interval string) ([]datasourcePKG.MetricValues, error)
+	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, error)
 	FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)

@@ -7,6 +7,7 @@ import (
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
 	"compass/internal/util"
+	datasource2 "compass/pkg/datasource"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -91,18 +92,18 @@ func (s *SuiteMetricGroup) TestValidateNameLength() {
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidate() {
-	err := s.repository.PeriodValidate("1d")
+	_, err := s.repository.PeriodValidate("1d")
 	require.Nil(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundNumber() {
-	err := s.repository.PeriodValidate("d")
+	_, err := s.repository.PeriodValidate("d")
 
 	require.Equal(s.T(), "Invalid period or interval: not found number", err.Error())
 }
 
 func (s *SuiteMetricGroup) TestPeriodValidateNotFoundUnit() {
-	err := s.repository.PeriodValidate("1")
+	_, err := s.repository.PeriodValidate("1")
 
 	require.Equal(s.T(), "Invalid period or interval: not found unit", err.Error())
 }
@@ -287,11 +288,11 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 
 	expectedGroupResume := []metricsgroup.MetricGroupResume{
 		{
-			Name: metricgroup.Name,
-			Thresholds: 2,
+			Name:              metricgroup.Name,
+			Thresholds:        2,
 			ThresholdsReached: 0,
-			Metrics: 2,
-			Status: "ACTIVE",
+			Metrics:           2,
+			Status:            "ACTIVE",
 		},
 	}
 
@@ -349,7 +350,7 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 	s.DB.Create(&metric1)
 	s.DB.Create(&metric2)
 
-	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), "5d", "30m")
+	_, err := s.repository.QueryByGroupID(metricgroup.ID.String(), datasource2.Period{Value: 5, Unit: "d"}, datasource2.Period{Value: 30, Unit: "m"})
 	require.Error(s.T(), err)
 }
 
