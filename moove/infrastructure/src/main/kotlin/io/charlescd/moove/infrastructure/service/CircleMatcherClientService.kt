@@ -83,7 +83,6 @@ class CircleMatcherClientService(
         return nodes.map { createImportMatcherRequest(circle, it, previousReference, active) }
     }
 
-
     private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode, previousReference: String? = null, isActive: Boolean) =
         CircleMatcherRequest(
             name = circle.name,

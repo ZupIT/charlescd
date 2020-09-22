@@ -61,6 +61,7 @@ class CircleMatcherClientServiceTest extends Specification {
             assert request.workspaceId == circle.workspaceId
             assert request.reference == circle.reference
             assert request.type == circle.matcherType.name()
+            assert request.previousReference == null
         }
     }
 
