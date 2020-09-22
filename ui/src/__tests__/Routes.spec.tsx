@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, wait, screen, act, waitForElement } from 'unit-test/testUtils';
 import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
 import { getProfileByKey, profileKey } from 'core/utils/profile';
 import { FetchMock } from 'jest-fetch-mock';
@@ -23,7 +23,9 @@ import { MemoryRouter } from 'react-router-dom';
 import { setIsMicrofrontend } from 'App';
 import Routes from '../Routes';
 
+const originalWindow = window;
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIn0.-FFlThOUdBvFBV36CaUxkzjGujyrF7mViuPhgdURe_k';
+const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0';
 const user = {
   id: '1',
   name: 'charlescd',
@@ -44,6 +46,11 @@ jest.mock('react-cookies', () => {
 });
 
 beforeEach(() => {
+  Object.assign(window, originalWindow);
+  const location = window.location
+  delete global.window.location
+  global.window.location = Object.assign({}, location)
+
   clearSession();
 })
 
@@ -53,7 +60,7 @@ test('render default route', async () => {
   await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 });
 
-test('render with a valid session', async () => {
+test('render with a valid session token', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
   setAccessToken(token);
@@ -66,8 +73,9 @@ test('render with a valid session', async () => {
   }));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
-  await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
-  
+  const sidebar = await waitForElement(() => screen.queryByTestId('sidebar'));
+  expect(sidebar).toBeInTheDocument();
+
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
 
@@ -75,50 +83,40 @@ test('render with a valid session', async () => {
   expect(email).toMatch(user.email);
 });
 
-test.only('render with an invalid session', async () => {
+test('render with an invalid session token', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
-  delete window.location;
-  window.location = {
-    ...window.location,
-    href: '',
-    pathname: ''
-  };
-
-  setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0');
+  setAccessToken(invalidToken);
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
-
-  screen.debug();
-
-  await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
 
   const name = getProfileByKey('name');
   expect(name).toBeUndefined();
 });
 
 test('render main in microfrontend mode', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '0' } });
+
   setIsMicrofrontend(true);
 
-  const { getByTestId } = render(<MemoryRouter><Routes /></MemoryRouter>);
-  await wait(() => expect(
-    getByTestId('menu-workspaces').getAttribute('href')).toContain('/charlescd')
-  );
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  const menuWorkspaces = await waitForElement(() => screen.getByTestId('menu-workspaces'));
+  expect(menuWorkspaces.getAttribute('href')).toContain('/charlescd');
 });
 
 test('render and valid login saving the session', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
-  delete window.location;
   window.location = {
     ...window.location,
     href: '?code=321',
-    pathname: '/workspaces',
+    pathname: '/charlescd/workspaces',
   };
 
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify({
-      'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIn0.-FFlThOUdBvFBV36CaUxkzjGujyrF7mViuPhgdURe_k',
+      'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
     .mockResponseOnce(JSON.stringify({
@@ -129,7 +127,9 @@ test('render and valid login saving the session', async () => {
     }));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
-  await wait(() => expect(screen.queryByTestId('icon-error-403')).toBeInTheDocument());
+
+  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  expect(iconError403).toBeInTheDocument();
   
   const accessToken = localStorage.getItem(accessTokenKey);
   expect(accessToken).toContain(token);
@@ -144,11 +144,10 @@ test('render and valid login saving the session', async () => {
 test('create user in charles base', async () => {
   Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
 
-  delete window.location;
   window.location = {
     ...window.location,
     href: '?code=321',
-    pathname: '/workspaces',
+    pathname: '/charlescd/workspaces',
   };
 
   const profile = {
@@ -160,14 +159,16 @@ test('create user in charles base', async () => {
 
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify({
-      'access_token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIiwibmFtZSI6ImNoYXJsZXMifQ.ejWaLlL7rbM3nDCyhXOERSwh-aCftvnw4Ag0oDYWQjM',
+      'access_token': token,
       'refresh_token': 'opqrstuvwxyz'
     }))
     .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' })})
     .mockResponse(JSON.stringify(profile));
 
   render(<MemoryRouter><Routes /></MemoryRouter>);
-  await wait(() => expect(screen.queryByTestId('icon-error-403')).toBeInTheDocument());
+
+  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  expect(iconError403).toBeInTheDocument();
 
   const profileBase64 = btoa(JSON.stringify(profile));
   await wait(() => expect(localStorage.getItem(profileKey)).toEqual(profileBase64));
