@@ -48,7 +48,7 @@ func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
 	ctx.Bind(&deprecatedPipeline)
 
 	pipeline := deprecatedPipeline.ToPipeline()
-	api.manager.Start(pipeline)
+	api.manager.ExecuteV1Pipeline(pipeline)
 
 	ctx.JSON(204, nil)
 }
@@ -57,7 +57,7 @@ func (api *PipelineAPI) executeV2Deployment(ctx *gin.Context) {
 	var v2Pipeline pipeline.V2Pipeline
 	ctx.Bind(&v2Pipeline)
 
-	api.manager.executeV2Deployment(v2Pipeline)
+	api.manager.ExecuteV2DeploymentPipeline(v2Pipeline)
 
 	ctx.JSON(204, nil)
 }

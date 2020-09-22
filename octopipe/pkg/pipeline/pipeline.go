@@ -80,7 +80,7 @@ type Pipeline struct {
 type V2Deployment struct {
 	ComponentName		 string					`json:"componentName"`
 	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
-	OverrideValues  	 map[string]string		`json:"helmOverrideValues"`
+	HelmConfig   	     helm.HelmTemplate		`json:"helmConfig"`
 }
 
 type V2Pipeline struct {
