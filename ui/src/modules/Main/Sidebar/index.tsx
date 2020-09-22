@@ -93,7 +93,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
       <Styled.Dropdown icon="workspace">
         {map(workspaces, workspace => (
           <Styled.DropdownItem
-            key={workspace.name}
+            key={`${workspace.id}-${workspace.name}`}
             name={workspace.name}
             icon={getIcon(workspace.id)}
             onSelect={onSelect}
