@@ -12,6 +12,7 @@ type UseCases interface {
 	FindById(id string) (MetricsGroupAction, error)
 	FindAll() ([]MetricsGroupAction, error)
 	Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
+	Update(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
 	Delete(id string) error
 }
 

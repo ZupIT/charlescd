@@ -59,6 +59,7 @@ const (
 const (
 	FindActionError   = "FIND_ACTION_ERROR"
 	SaveActionError   = "SAVE_ACTION_ERROR"
+	UpdateActionError = "UPDATE_ACTION_ERROR"
 	DeleteActionError = "DELETE_ACTION_ERROR"
 )
 

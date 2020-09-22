@@ -12,6 +12,7 @@ type UseCases interface {
 	FindById(id string) (Action, error)
 	FindAll() ([]Action, error)
 	Save(action Action) (Action, error)
+	Update(id string, action Action) (Action, error)
 	Delete(id string) error
 }
 
