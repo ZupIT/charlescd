@@ -43,7 +43,8 @@ const FormUserGroup = ({ onFinish }: Props) => {
     loadingSave,
     loadingAdd,
     loadingAll,
-    getUserGroupByName
+    getUserGroupByName,
+    findUserGroupByName
   } = useUserGroup();
   const {
     getAll: getAllRoles,
@@ -90,6 +91,8 @@ const FormUserGroup = ({ onFinish }: Props) => {
     const usersGroup = find(userGroups, userGroup =>
       includes(userGroup.name, name)
     );
+
+    console.log('searchUserGroup');
 
     if (!usersGroup || isEmpty(name)) {
       setUserGroupNameParam(name);
@@ -158,15 +161,18 @@ const FormUserGroup = ({ onFinish }: Props) => {
 
   const renderFields = () => (
     <Styled.Fields>
-      <Styled.Select
+      <Styled.SelectAsync
         control={control}
         name="userGroup"
         customOption={CustomOption.Icon}
         options={reduce(responseAll as UserGroup[])}
         label="Select a user group"
         isDisabled={loadingAll}
-        onChange={group => onSelectGoup(group)}
-        onInputChange={debounce(searchUserGroup, 500)}
+        loadOptions={(value: string) => {
+          return findUserGroupByName(value).then((resp: any) =>
+            reduce(resp.content as UserGroup[])
+          );
+        }}
       />
       <Button.Default
         isLoading={loadingAll}
