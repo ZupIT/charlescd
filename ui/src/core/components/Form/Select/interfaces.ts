@@ -26,6 +26,7 @@ export interface Props {
   defaultValue?: Option | Option[];
   isDisabled?: boolean;
   isLoading?: boolean;
+  loadOptions?: Function;
   className?: string;
   onChange?: (event: unknown) => void;
   onInputChange?: (value: string) => void;

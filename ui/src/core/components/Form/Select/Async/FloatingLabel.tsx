@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import Single from './Single';
-import MultiCheck from './MultiCheck';
-import Async from './Async';
+import React, { ReactElement } from 'react';
+import { components, OptionTypeBase, ValueContainerProps } from 'react-select';
 
-export default {
-  Single,
-  MultiCheck,
-  Async
-};
+const { Placeholder } = components;
+
+const FloatingLabel = ({
+  children,
+  ...props
+}: ValueContainerProps<OptionTypeBase>) => (
+  <components.ValueContainer {...props}>
+    <Placeholder {...props} innerProps={null}>
+      {props.selectProps.placeholder}
+    </Placeholder>
+    {React.Children.map(children as ReactElement[], child => {
+      return child && child.type !== Placeholder ? child : null;
+    })}
+  </components.ValueContainer>
+);
+
+export default FloatingLabel;

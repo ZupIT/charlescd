@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-import Single from './Single';
-import MultiCheck from './MultiCheck';
-import Async from './Async';
+import React, { useEffect, useRef } from 'react';
+import { components, SingleValueProps, OptionTypeBase } from 'react-select';
 
-export default {
-  Single,
-  MultiCheck,
-  Async
+const SingleValue = ({
+  children,
+  ...props
+}: SingleValueProps<OptionTypeBase>) => {
+  const { options, clearValue } = props;
+  const started = useRef(false);
+
+  useEffect(() => {
+    if (options && started.current) {
+      clearValue();
+    } else {
+      started.current = true;
+    }
+  }, [options, clearValue]);
+
+  return <components.SingleValue {...props}>{children}</components.SingleValue>;
 };
+
+export default SingleValue;
