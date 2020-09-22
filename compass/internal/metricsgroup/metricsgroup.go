@@ -10,6 +10,7 @@ import (
 	"io"
 	"regexp"
 	"sort"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -91,8 +92,16 @@ func (main Main) PeriodValidate(currentPeriod string) (datasource.Period, error)
 		return datasource.Period{}, errors.New("Invalid period or interval: not found unit")
 	}
 
+	valueReg := regexp.MustCompile("[A-Za-z]").Split(currentPeriod, -1)
+
+	value, err := strconv.Atoi(valueReg[0])
+	if err != nil {
+		return datasource.Period{}, err
+	}
+
 	return datasource.Period{
-		Value: ,
+		Value: int64(value),
+		Unit:  unit,
 	}, nil
 }
 
@@ -254,7 +263,7 @@ func (main Main) Remove(id string) error {
 	return nil
 }
 
-func (main Main) QueryByGroupID(id, period, interval string) ([]datasource.MetricValues, error) {
+func (main Main) QueryByGroupID(id string, period, interval datasource.Period) ([]datasource.MetricValues, error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {

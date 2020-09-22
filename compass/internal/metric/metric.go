@@ -263,7 +263,7 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 	})
 }
 
-func (main Main) Query(metric Metric, period, interval string) (interface{}, error) {
+func (main Main) Query(metric Metric, period, interval datasource.Period) (interface{}, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		notFoundErr := errors.New("Not found data source: " + metric.DataSourceID.String())
@@ -300,5 +300,7 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 			query,
 			metric.Filters,
 		},
+		period,
+		interval,
 	})
 }
