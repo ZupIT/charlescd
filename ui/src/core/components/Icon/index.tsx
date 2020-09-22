@@ -31,7 +31,7 @@ export interface Props {
 
 const Icon = React.forwardRef(
   (
-    { name, color, size, className, onClick, isActive, title }: Props,
+    { name, color, size, className, onClick, isActive, title, ...rest }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
     const iRef = useRef<HTMLDivElement>(null);
@@ -48,6 +48,7 @@ const Icon = React.forwardRef(
         size={size}
         onClick={onClick}
         title={title}
+        {...rest}
       >
         {uri ? <ReactSVG src={uri} /> : ''}
       </Styled.Icon>

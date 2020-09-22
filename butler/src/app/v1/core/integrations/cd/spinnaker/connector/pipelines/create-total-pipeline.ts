@@ -35,6 +35,7 @@ export default class TotalPipeline {
   deploymentsIds: string[]
   contract: ISpinnakerPipelineConfiguration
   basePipeline: IBaseSpinnakerPipeline
+
   constructor(contract: ISpinnakerPipelineConfiguration) {
     this.refId = 1
     this.previousStage = ''
@@ -98,7 +99,8 @@ export default class TotalPipeline {
         version.versionUrl,
         String(this.refId),
         [],
-        undefined
+        undefined,
+        version.versionCircle
       )
       this.basePipeline.stages.push(helmStage)
       this.increaseRefId()
@@ -223,4 +225,5 @@ export default class TotalPipeline {
       deploymentsIds: this.deploymentsIds
     }
   }
+
 }

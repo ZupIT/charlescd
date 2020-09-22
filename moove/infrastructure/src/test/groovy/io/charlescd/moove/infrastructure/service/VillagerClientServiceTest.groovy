@@ -19,6 +19,10 @@ package io.charlescd.moove.infrastructure.service
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.VillagerService
 import io.charlescd.moove.infrastructure.service.client.*
+import io.charlescd.moove.infrastructure.service.client.request.CreateVillagerRegistryConfigurationRequest
+import io.charlescd.moove.infrastructure.service.client.response.CreateVillagerRegistryConfigurationResponse
+import io.charlescd.moove.infrastructure.service.client.response.FindComponentTagsResponse
+import io.charlescd.moove.infrastructure.service.client.response.FindVillagerRegistryConfigurationsResponse
 import spock.lang.Specification
 
 import java.time.LocalDateTime

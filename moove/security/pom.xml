@@ -23,6 +23,10 @@
             <artifactId>domain</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.charlescd.moove</groupId>
+            <artifactId>infrastructure</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
         </dependency>

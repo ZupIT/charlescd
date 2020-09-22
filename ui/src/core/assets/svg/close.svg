@@ -10,6 +10,6 @@
         <mask id="mask-close" fill="white">
             <use xlink:href="#path-close"></use>
         </mask>
-        <use id="Icon-close" fill="white" transform="translate(12.000000, 12.000000) rotate(45.000000) translate(-12.000000, -12.000000) " xlink:href="#path-close"></use>
+        <use id="Icon-close" fill="currentColor" transform="translate(12.000000, 12.000000) rotate(45.000000) translate(-12.000000, -12.000000) " xlink:href="#path-close"></use>
     </g>
 </svg>

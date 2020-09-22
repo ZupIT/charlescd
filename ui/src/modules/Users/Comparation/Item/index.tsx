@@ -17,7 +17,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
@@ -25,13 +25,16 @@ import TabPanel from 'core/components/TabPanel';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
+import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
 import { isRoot } from 'core/utils/auth';
+import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
+import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 
 interface Props {
@@ -40,13 +43,16 @@ interface Props {
 }
 
 const UsersComparationItem = ({ email, onChange }: Props) => {
+  const loggedUserId = getProfileByKey('id');
   const history = useHistory();
+  const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
   const [user, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
   const [loadedUser, , loadUser, ,] = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
+  const isAbleToReset = loggedUserId !== user?.id;
 
   const refresh = useCallback(() => loadUser(email), [loadUser, email]);
 
@@ -109,8 +115,22 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     </Dropdown>
   );
 
+  const renderResetPassword = () =>
+    isAbleToReset && (
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text.h5 color="dark">Reset password</Text.h5>
+      </LabeledIcon>
+    );
+
   const renderActions = () => (
-    <Styled.Actions>{renderDropdown()}</Styled.Actions>
+    <Styled.Actions>
+      {renderResetPassword()}
+      {renderDropdown()}
+    </Styled.Actions>
   );
 
   const renderPanel = () => (
@@ -165,6 +185,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   return (
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
       {!user ? <Loader.Tab /> : renderPanel()}
+      {isOpenModalPassword && (
+        <ModalResetPassword user={user} onClose={toggleModalPassword} />
+      )}
     </Styled.Wrapper>
   );
 };

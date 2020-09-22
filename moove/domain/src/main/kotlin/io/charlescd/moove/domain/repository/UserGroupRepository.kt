@@ -29,7 +29,7 @@ interface UserGroupRepository {
 
     fun findById(id: String): Optional<UserGroup>
 
-    fun find(page: PageRequest): Page<UserGroup>
+    fun find(name: String?, page: PageRequest): Page<UserGroup>
 
     fun delete(userGroup: UserGroup)
 

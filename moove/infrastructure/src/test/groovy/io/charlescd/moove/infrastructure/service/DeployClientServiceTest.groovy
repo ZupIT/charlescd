@@ -19,9 +19,9 @@ package io.charlescd.moove.infrastructure.service
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.DeployClient
-import io.charlescd.moove.infrastructure.service.client.DeployRequest
-import io.charlescd.moove.infrastructure.service.client.GetDeployCdConfigurationsResponse
-import io.charlescd.moove.infrastructure.service.client.UndeployRequest
+import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
+import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
+import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 

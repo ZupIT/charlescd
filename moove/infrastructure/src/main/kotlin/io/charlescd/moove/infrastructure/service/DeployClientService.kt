@@ -19,6 +19,7 @@ package io.charlescd.moove.infrastructure.service
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.infrastructure.service.client.*
+import io.charlescd.moove.infrastructure.service.client.request.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -69,7 +70,12 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     }
 
     override fun undeploy(deploymentId: String, authorId: String) {
-        deployClient.undeploy(UndeployRequest(authorId, deploymentId))
+        deployClient.undeploy(
+            UndeployRequest(
+                authorId,
+                deploymentId
+            )
+        )
     }
 
     override fun getCdConfiguration(workspaceId: String, cdConfigurationId: String): CdConfiguration? {

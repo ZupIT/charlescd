@@ -33,42 +33,67 @@ interface Props {
 
 const FormUser = ({ onFinish }: Props) => {
   const history = useHistory();
-  const { register, handleSubmit } = useForm<NewUser>();
-  const [save, createdUser, loading] = useCreateUser();
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid }
+  } = useForm<NewUser>({ mode: 'onChange' });
+  const { create, newUser, status } = useCreateUser();
 
   useEffect(() => {
-    if (createdUser) {
+    if (newUser) {
       onFinish('Created');
       updateParam(
         'user',
         routes.usersComparation,
         history,
         'create',
-        createdUser.email
+        newUser.email
       );
     }
-  }, [createdUser, history, onFinish]);
+  }, [newUser, history, onFinish]);
 
   const onSubmit = (user: NewUser) => {
-    save({ ...user, isRoot: false });
+    create({ ...user, isRoot: false });
   };
 
   const renderForm = () => (
-    <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+    <Styled.Form
+      data-testid="form-create-user"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Styled.Fields>
-        <Form.Input ref={register} name="name" label="User name" />
-        <Form.Input ref={register} name="email" label="E-mail" />
+        <Form.Input
+          ref={register({ required: true })}
+          name="name"
+          label="User name"
+        />
+        <Form.Input
+          ref={register({ required: true })}
+          name="email"
+          label="E-mail"
+        />
         <Form.Input ref={register} name="photoUrl" label="Avatar URL" />
-        <Form.Password ref={register} name="password" label="Create password" />
+        <Form.Password
+          ref={register({ required: true })}
+          name="password"
+          label="Create password"
+        />
       </Styled.Fields>
-      <Button.Default size="EXTRA_SMALL" type="submit" isLoading={loading}>
+      <Button.Default
+        data-testid="button-create-user"
+        size="EXTRA_SMALL"
+        type="submit"
+        isDisabled={!isValid}
+        isLoading={status.isPending}
+      >
         Create User
       </Button.Default>
     </Styled.Form>
   );
 
   return (
-    <Styled.Content>
+    <Styled.Content data-testid="content-create-user">
       <Styled.Title>
         <Text.h2 weight="bold" color="light">
           Create User

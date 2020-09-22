@@ -16,6 +16,11 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
+import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
+import io.charlescd.moove.infrastructure.service.client.response.DeployResponse
+import io.charlescd.moove.infrastructure.service.client.response.GetDeployCdConfigurationsResponse
+import io.charlescd.moove.infrastructure.service.client.response.UndeployResponse
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

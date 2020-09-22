@@ -18,9 +18,11 @@
 
 package io.charlescd.moove.application
 
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import javax.inject.Named
@@ -46,5 +48,16 @@ class UserService(private val userRepository: UserRepository) {
         ).orElseThrow {
             NotFoundException("user", email)
         }
+    }
+
+    fun checkIfEmailAlreadyExists(user: User) {
+        if (userRepository.findByEmail(user.email).isPresent) {
+            throw BusinessException.of(MooveErrorCode.CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS)
+                .withParameters(user.email)
+        }
+    }
+
+    fun save(user: User): User {
+        return this.userRepository.save(user)
     }
 }

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, waitForElement, screen, fireEvent } from 'unit-test/testUtils';
 import routes from 'core/constants/routes';
 import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
@@ -23,6 +23,7 @@ import { FetchMock } from 'jest-fetch-mock/types';
 import * as utilsAuth from 'core/utils/auth';
 
 const originalWindow = { ...window };
+const openDocumentation = jest.fn();
 
 beforeEach(() => {
   delete window.location;
@@ -31,6 +32,8 @@ beforeEach(() => {
     ...window.location,
     pathname: routes.workspaces
   };
+
+  window.open = openDocumentation;
 });
 
 afterEach(() => {
@@ -41,17 +44,18 @@ test('renders sidebar component', async () => {
   const { getByTestId } = render(
     <Sidebar isExpanded={true} onClickExpand={null} />
   );
-  const links = getByTestId('sidebar-links');
+
+  const links = await waitForElement(() => getByTestId('sidebar-links'));
 
   const workspacesId = genMenuId(routes.workspaces);
   const accountId = genMenuId(routes.account);
 
   await wait(() => expect(getByTestId(workspacesId)).toBeInTheDocument());
-  expect(getByTestId(accountId)).toBeInTheDocument();
+  await wait(() => expect(getByTestId(accountId)).toBeInTheDocument());
   expect(links.children.length).toBe(3);
 });
 
-test('renders sidebar componen( with selected workspace', async () => {
+test('renders sidebar component with selected workspace', async () => {
   delete window.location;
 
   window.location = {
@@ -82,4 +86,37 @@ test('renders sidebar componen( with selected workspace', async () => {
   );
 
   await wait(() => expect(queryByTestId('dropdown')).toBeInTheDocument());
+});
+
+test('renders help icon in the sidebar', async () => {
+  const { getByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} />
+  );
+
+  const helpIcon = await waitForElement(() => getByTestId('icon-help'));
+  expect(helpIcon).toBeInTheDocument();
+});
+
+test('renders tooltip with text equal to "Documentation"', async () => {
+  const { queryByTestId, getByText } = render(
+    <Sidebar isExpanded={true} onClickExpand={null} />
+  );
+
+  const helpIcon = await waitForElement(() => queryByTestId('icon-help'));
+  expect(helpIcon).toBeInTheDocument();
+
+  const tooltipText = await waitForElement(() => getByText('Documentation'));
+  expect(tooltipText).toBeInTheDocument();
+});
+
+test('opens documentation link once', async () => {
+  const { queryByTestId } = render(
+    <Sidebar isExpanded={true} onClickExpand={() => {}} />
+  );
+
+  const helpIcon = await waitForElement(() => queryByTestId('icon-help'));
+  expect(helpIcon).toBeInTheDocument();
+
+  fireEvent.click(helpIcon);
+  expect(openDocumentation).toHaveBeenCalledTimes(1);
 });

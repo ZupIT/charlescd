@@ -83,14 +83,17 @@ export const useFetchData = <T>(
 ): ((...args: unknown[]) => Promise<T>) => {
   const isLoginRequest = login === req;
 
-  return async (...args: unknown[]) => {
-    const response = await renewTokenByCb(
-      () => req(...args)({}),
-      isLoginRequest
-    );
-    const data = await getResponse(response);
-    return data;
-  };
+  return useCallback(
+    async (...args: unknown[]) => {
+      const response = await renewTokenByCb(
+        () => req(...args)({}),
+        isLoginRequest
+      );
+      const data = await getResponse(response);
+      return data;
+    },
+    [isLoginRequest, req]
+  );
 };
 
 export const useFetch = <T>(
@@ -161,10 +164,10 @@ export type FetchStatuses = 'idle' | 'pending' | 'resolved' | 'rejected';
 export const useFetchStatus = (): FetchStatus => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
 
-  const idle = () => setStatus('idle');
-  const pending = () => setStatus('pending');
-  const resolved = () => setStatus('resolved');
-  const rejected = () => setStatus('rejected');
+  const idle = useCallback(() => setStatus('idle'), []);
+  const pending = useCallback(() => setStatus('pending'), []);
+  const resolved = useCallback(() => setStatus('resolved'), []);
+  const rejected = useCallback(() => setStatus('rejected'), []);
 
   const isIdle = status === 'idle';
   const isPending = status === 'pending';

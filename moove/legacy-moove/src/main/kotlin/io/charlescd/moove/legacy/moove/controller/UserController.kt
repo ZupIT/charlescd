@@ -17,9 +17,7 @@
 package io.charlescd.moove.legacy.moove.controller
 
 import io.charlescd.moove.commons.representation.GroupsRepresentation
-import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.CreateUserRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.KeycloakService
@@ -43,18 +41,6 @@ class UserController(
     @GetMapping("/{id}/groups")
     @ResponseStatus(HttpStatus.OK)
     fun findUserGroups(@PathVariable id: String): GroupsRepresentation = keycloakService.findUserGroups(id)
-
-    @ApiOperation(value = "Create User")
-    @ApiImplicitParam(
-        name = "createUserRequest",
-        value = "Create User",
-        required = true,
-        dataType = "CreateUserRequest"
-    )
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody createUserRequest: CreateUserRequest): UserRepresentation =
-        userService.create(createUserRequest)
 
     @ApiOperation(value = "Update User")
     @ApiImplicitParam(

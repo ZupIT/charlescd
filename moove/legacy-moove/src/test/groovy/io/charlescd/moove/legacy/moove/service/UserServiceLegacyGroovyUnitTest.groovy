@@ -19,13 +19,10 @@ package io.charlescd.moove.legacy.moove.service
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.CreateUserRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -49,55 +46,12 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             false,
             LocalDateTime.now()
     )
-    private Pageable pageable = PageRequest.of(0, 5)
     private UserRepository repository = Mock(UserRepository)
     private KeycloakService keycloakService = Mock(KeycloakService)
     private UserServiceLegacy service
 
     def setup() {
         service = new UserServiceLegacy(repository, keycloakService)
-    }
-
-    def "should create user"() {
-        given:
-        def request = new CreateUserRequest("John Doe", "123fakepassword", "email", "https://www.photos.com/johndoe", false)
-
-        when:
-        def response = service.create(request)
-
-        then:
-        1 * repository.saveAndFlush(_) >> user
-        1 * keycloakService.createUser(request.email, request.name, request.password, false)
-        response.id == representation.id
-        response.name == request.name
-        response.photoUrl == request.photoUrl
-        notThrown()
-    }
-
-    def "should create user with email trim and lowercased"() {
-        given:
-        def request = new CreateUserRequest("John Doe", "123fakepassword", "   EmAiL   ", "https://www.photos.com/johndoe", false)
-
-        when:
-        def response = service.create(request)
-
-        then:
-        1 * repository.saveAndFlush(_) >> { arguments ->
-            def actualUser = arguments[0]
-
-            assert actualUser instanceof User
-
-            assert request.email != actualUser.email
-            assert actualUser.email == request.email.toLowerCase().trim()
-
-            return user
-        }
-        1 * keycloakService.createUser(request.email.toLowerCase().trim(), request.name, request.password, false)
-        response.id == representation.id
-        response.name == request.name
-        response.photoUrl == request.photoUrl
-        response.email == request.email.toLowerCase().trim()
-        notThrown()
     }
 
     def "should update user by id"() {
@@ -120,13 +74,13 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
 
         when:
-        service.update("batatinha", request)
+        service.update("test", request)
 
         then:
-        1 * repository.findById("batatinha") >> Optional.empty()
+        1 * repository.findById("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
-        ex.id == "batatinha"
+        ex.id == "test"
     }
 
     def "should delete by id"() {
@@ -145,13 +99,13 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "should throw exception on delete if user id do not exist"() {
         when:
-        service.delete("batatinha")
+        service.delete("test")
 
         then:
-        1 * repository.findById("batatinha") >> Optional.empty()
+        1 * repository.findById("test") >> Optional.empty()
         def ex = thrown(NotFoundExceptionLegacy)
         ex.resourceName == "user"
-        ex.id == "batatinha"
+        ex.id == "test"
     }
 
     def "should add groups to an user"() {

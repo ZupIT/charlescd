@@ -25,7 +25,7 @@ export interface Props {
   isLoading?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   className?: string;
-  name: string;
+  name?: string;
   icon?: string;
   color?: PrimaryColors;
   isDisabled?: boolean;
@@ -54,6 +54,7 @@ const ButtonRounded = ({
     className={className}
     backgroundColor={backgroundColor}
     size={size}
+    type="button"
   >
     {isLoading ? (
       <Icon name="loading" size="15px" color={color} />

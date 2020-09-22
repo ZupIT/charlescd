@@ -20,6 +20,11 @@ constraints:
       modules_read:
         - GET
 
+managementConstraints:
+  - pattern: /api/user
+    methods:
+      - GET
+
 publicConstraints:
   - pattern: /api/rectangle
     methods:

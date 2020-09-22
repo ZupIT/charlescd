@@ -39,16 +39,18 @@ class FindAllUserGroupsInteractorImplTest extends Specification {
 
     def "when there is no user group should return an empty page"() {
         given:
+        def name = null
         def pageRequest = new PageRequest()
         def emptyPage = new Page([], 0, 20, 0)
 
         when:
-        def response = this.findAllUserGroupsInteractor.execute(pageRequest)
+        def response = this.findAllUserGroupsInteractor.execute(name, pageRequest)
 
         then:
-        1 * this.userGroupRepository.find(_) >> { arguments ->
-            def argPageRequest = arguments[0]
+        1 * this.userGroupRepository.find(_, _) >> { arguments ->
+            def argPageRequest = arguments[1]
 
+            assert arguments[0] == name
             assert argPageRequest instanceof PageRequest
 
             return emptyPage
@@ -64,6 +66,7 @@ class FindAllUserGroupsInteractorImplTest extends Specification {
 
     def "when there are user groups, should list them"() {
         given:
+        def name = "group-name"
         def pageRequest = new PageRequest()
         def authorId = "0a859e6c-3cdf-4b34-84d0-f9038576ac58"
         def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
@@ -72,12 +75,13 @@ class FindAllUserGroupsInteractorImplTest extends Specification {
         def page = new Page([userGroup], 0, 20, 1)
 
         when:
-        def response = this.findAllUserGroupsInteractor.execute(pageRequest)
+        def response = this.findAllUserGroupsInteractor.execute(name, pageRequest)
 
         then:
-        1 * this.userGroupRepository.find(_) >> { arguments ->
-            def argPageRequest = arguments[0]
+        1 * this.userGroupRepository.find(_, _) >> { arguments ->
+            def argPageRequest = arguments[1]
 
+            assert arguments[0] == name
             assert argPageRequest instanceof PageRequest
 
             return page

@@ -20,6 +20,7 @@ import { CallbackTypeEnum } from '../../../../api/notifications/enums/callback-t
 export interface IOctopipeVersion {
   version?: string
   versionUrl?: string
+  versionCircle?: string
 }
 
 export enum ClusterProviderEnum {

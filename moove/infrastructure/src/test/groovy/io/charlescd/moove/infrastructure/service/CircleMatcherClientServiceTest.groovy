@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
-import io.charlescd.moove.infrastructure.service.client.CircleMatcherRequest
-import io.charlescd.moove.infrastructure.service.client.IdentifyRequest
-import io.charlescd.moove.infrastructure.service.client.IdentifyResponse
+import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
+import io.charlescd.moove.infrastructure.service.client.request.IdentifyRequest
+import io.charlescd.moove.infrastructure.service.client.response.IdentifyResponse
 import spock.lang.Specification
 
 import java.time.LocalDateTime

@@ -16,6 +16,12 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.service.client.request.CreateVillagerRegistryConfigurationRequest
+import io.charlescd.moove.infrastructure.service.client.request.VillagerBuildRequest
+import io.charlescd.moove.infrastructure.service.client.response.CreateVillagerRegistryConfigurationResponse
+import io.charlescd.moove.infrastructure.service.client.response.FindComponentTagsResponse
+import io.charlescd.moove.infrastructure.service.client.response.FindVillagerRegistryConfigurationsResponse
+import io.charlescd.moove.infrastructure.service.client.response.VillagerBuildResponse
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

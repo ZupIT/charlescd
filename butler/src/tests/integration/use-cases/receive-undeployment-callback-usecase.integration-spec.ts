@@ -190,7 +190,7 @@ describe('UndeploymentCallbackUsecase Integration Test', () => {
 
     const moduleUndeploymentEntities : ModuleUndeploymentEntity[] = await moduleUndeploymentsRepository.find({
       where: {
-        undeploymentId : componentUndeploymentEntity.moduleUndeployment.undeployment.id,
+        undeployment : componentUndeploymentEntity.moduleUndeployment.undeployment.id,
       },
       relations: ['componentUndeployments']
     })

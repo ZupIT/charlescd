@@ -22,6 +22,7 @@ import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import TabPanel from 'core/components/TabPanel';
 import Text from 'core/components/Text';
+import LabeledIcon from 'core/components/LabeledIcon';
 import Placeholder from 'core/components/Placeholder';
 import { getProfileByKey } from 'core/utils/profile';
 import Page from 'core/components/Page';
@@ -30,10 +31,12 @@ import { isRoot } from 'core/utils/auth';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateProfile } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
-import Loader from './Loaders';
-import Menu from './Menu';
+import Modal from 'core/components/Modal';
 import { AccountMenu } from './constants';
+import ChangePassword from './ChangePassword';
 import Styled from './styled';
+import Menu from './Menu';
+import Loader from './Loaders';
 
 const Account = () => {
   const name = getProfileByKey('name');
@@ -42,6 +45,7 @@ const Account = () => {
   const { register, handleSubmit } = useForm<User>();
   const [loadedUser, , loadUser, ,] = useUser();
   const [, loadingUpdate, updateProfile] = useUpdateProfile();
+  const [toggleModal, setToggleModal] = useState(false);
 
   const refresh = useCallback(() => loadUser(email), [loadUser, email]);
 
@@ -68,8 +72,16 @@ const Account = () => {
     loadUser(email);
   }, [email, loadUser]);
 
+  const renderModal = () =>
+    toggleModal && (
+      <Modal.Default onClose={() => setToggleModal(false)}>
+        <ChangePassword onSubmit={() => setToggleModal(false)} />
+      </Modal.Default>
+    );
+
   const renderContent = () => (
     <>
+      {renderModal()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
           <Avatar
@@ -110,8 +122,25 @@ const Account = () => {
     </>
   );
 
+  const renderTabActions = () => (
+    <Styled.Actions>
+      <LabeledIcon
+        icon="account"
+        marginContent="5px"
+        onClick={() => setToggleModal(true)}
+      >
+        <Text.h5 color="dark">Change password</Text.h5>
+      </LabeledIcon>
+    </Styled.Actions>
+  );
+
   const renderPanel = () => (
-    <TabPanel title="Account" name="user" size="15px">
+    <TabPanel
+      title="Account"
+      name="user"
+      size="15px"
+      actions={renderTabActions()}
+    >
       {renderContent()}
     </TabPanel>
   );

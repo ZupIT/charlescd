@@ -21,14 +21,23 @@ import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-dracula';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   onChange?: (value: string) => void;
   theme?: string;
   mode: string;
   value?: string;
+  readOnly?: boolean;
+  height?: string;
 }
 
-const AceEditor = ({ onChange, value, theme = 'dracula', mode }: Props) => {
+const AceEditor = ({
+  onChange,
+  value,
+  theme = 'dracula',
+  mode,
+  readOnly = true,
+  height = '150px'
+}: Props) => {
   return (
     <Styled.Wrapper>
       <AceEditorComponent
@@ -40,9 +49,9 @@ const AceEditor = ({ onChange, value, theme = 'dracula', mode }: Props) => {
         showPrintMargin={false}
         setOptions={{ useWorker: false }}
         editorProps={{ $blockScrolling: true }}
-        height="150px"
+        height={height}
         highlightActiveLine={false}
-        readOnly
+        readOnly={readOnly}
       />
     </Styled.Wrapper>
   );

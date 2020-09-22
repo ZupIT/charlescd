@@ -28,7 +28,7 @@ import ConnectionStatus from './ConnectionStatus';
 import { MetricProvider } from './interfaces';
 import { Props } from '../interfaces';
 import { useMetricProvider, useFromTestConnection } from './hooks';
-import { metricProviders } from './constants';
+import { metricProviders } from 'core/constants/metrics-providers';
 import Styled from './styled';
 
 const FormMetricProvider = ({ onFinish }: Props) => {

@@ -18,7 +18,6 @@ package io.charlescd.moove.legacy.moove.controller
 
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.CreateUserRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.moove.service.KeycloakService
@@ -46,20 +45,6 @@ class UserControllerUnitTest extends Specification {
 
     def "setup"() {
         controller = new UserController(service, keycloakService)
-    }
-
-    def "should create user"() {
-        given:
-        def request = new CreateUserRequest("John Doe", "123fakepassword", "email", "https://www.photos.com/johndoe", false)
-
-        when:
-        def response = controller.create(request)
-
-        then:
-        1 * service.create(request) >> representation
-        response.id == "81861b6f-2b6e-44a1-a745-83e298a550c9"
-        response.name == request.name
-        response.photoUrl == request.photoUrl
     }
 
     def "should update user"() {

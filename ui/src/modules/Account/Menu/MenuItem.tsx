@@ -34,7 +34,11 @@ const MenuItem = ({ id, icon, name, path }: Props) => {
   const isActive = (id: string) => startsWith(activeMenuId, id);
 
   return (
-    <Styled.Link onClick={() => history.push(path)} isActive={isActive(id)}>
+    <Styled.Link
+      onClick={() => history.push(path)}
+      isActive={isActive(id)}
+      data-testid={`menu-${name}`}
+    >
       <Styled.ListItem icon={icon} marginContent="8px">
         <Text.h4 color="light">{name}</Text.h4>
       </Styled.ListItem>

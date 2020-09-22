@@ -35,7 +35,7 @@ test('render Password component with default properties', () => {
     <Password type={textProps.type} name={textProps.name} autoComplete="off" />
   );
 
-  const PasswordElement = getByTestId('password-text-name');
+  const PasswordElement = getByTestId('input-text-name');
   expect(PasswordElement).toBeInTheDocument();
 });
 
@@ -48,7 +48,7 @@ test('render Password component as a resume', () => {
         autoComplete="off"
     />);
 
-  const PasswordElement = getByTestId('password-text-keyName');
+  const PasswordElement = getByTestId('input-text-keyName');
   expect(PasswordElement).toBeInTheDocument();
   expect(PasswordElement).toHaveStyle('background: transparent;');
   expect(PasswordElement).toHaveStyle('border: none;');
@@ -90,7 +90,7 @@ test('render Password with type password', () => {
   );
 
   const PasswordElement = getByTestId(
-    `password-${passwordProps.type}-${passwordProps.name}`
+    `input-${passwordProps.type}-${passwordProps.name}`
   );
   expect(PasswordElement).toBeInTheDocument();
 });
@@ -105,7 +105,7 @@ test('render Password with type password toggle hidden value', () => {
   );
 
   const PasswordElement = queryByTestId(
-    `password-${passwordProps.type}-${passwordProps.name}`
+    `input-${passwordProps.type}-${passwordProps.name}`
   );
   const showButtonElement = queryByTestId('icon-no-view');
   expect(showButtonElement).toBeInTheDocument();

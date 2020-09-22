@@ -45,7 +45,12 @@ const Rule = ({
   const { register, control } = useFormContext();
 
   return (
-    <Styled.Rule data-testid="segments-rules" isGroup={isGroup} hasGroups={hasGroup} viewMode={viewMode}>
+    <Styled.Rule
+      data-testid="segments-rules"
+      isGroup={isGroup}
+      hasGroups={hasGroup}
+      viewMode={viewMode}
+    >
       <Styled.RuleTrash>
         {hasGroup && (
           <Styled.Button.Icon

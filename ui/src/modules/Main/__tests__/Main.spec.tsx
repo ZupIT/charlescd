@@ -71,7 +71,17 @@ test('render menu component', () => {
   expect(footer.tagName).toBe('FOOTER');
 });
 
-test('render and collapse sidebar', () => {
+test('render menu in expanded mode with the workspaces screen active', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
+  const { getByTestId } = render(<Main />);
+
+  const icon = getByTestId('icon-workspaces');
+  const iconStyle = window.getComputedStyle(icon);
+  
+  expect(iconStyle.color).toBe(dark.menuIconActive);
+});
+
+test('render and collapse sidebar', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
   const menuId = genMenuId(window.location.pathname);
   const { getByTestId } = render(<Main />);
@@ -80,26 +90,9 @@ test('render and collapse sidebar', () => {
 
   expect(getByTestId(menuId)).toHaveTextContent(/\w+/gi);
 
-  expandButton.click();
+  act(() => expandButton.click());
 
   expect(getByTestId(menuId).textContent).toBe('');
-});
-
-test('render menu in expanded mode with the workspaces screen active', () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-  const icon = getByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-  expect(iconStyle.color).toBe(dark.menuIconActive);
-});
-
-test('render menu in expanded mode with the workspaces screen active', () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'use fetch' }));
-  const { getByTestId } = render(<Main />);
-
-  const icon = getByTestId('icon-workspaces');
-  const iconStyle = window.getComputedStyle(icon);
-  expect(iconStyle.color).toBe(dark.menuIconActive);
 });
 
 test('lazy loading', async () => {

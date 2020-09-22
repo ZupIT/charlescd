@@ -35,8 +35,8 @@ class UserGroupService(private val userGroupRepository: UserGroupRepository) {
             .orElseThrow { NotFoundException("user_group", id) }
     }
 
-    fun find(pageRequest: PageRequest): Page<UserGroup> {
-        return this.userGroupRepository.find(pageRequest)
+    fun find(name: String?, pageRequest: PageRequest): Page<UserGroup> {
+        return this.userGroupRepository.find(name, pageRequest)
     }
 
     fun delete(userGroup: UserGroup) {
