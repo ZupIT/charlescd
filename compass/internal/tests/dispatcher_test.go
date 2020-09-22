@@ -1,3 +1,21 @@
+/*
+ *
+ *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package tests
 
 import (
@@ -21,7 +39,7 @@ type SuiteDispatcher struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository   dispatcher.UseCases
+	repository dispatcher.UseCases
 	metricMain metric.UseCases
 }
 
@@ -47,7 +65,6 @@ func (s *SuiteDispatcher) BeforeTest(suiteName, testName string) {
 	s.DB.Exec("DELETE FROM data_sources")
 	s.DB.Exec("DELETE FROM metric_executions")
 }
-
 
 func TestInitDispatcher(t *testing.T) {
 	suite.Run(t, new(SuiteDispatcher))
@@ -92,7 +109,7 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	require.NoError(s.T(), err)
 
 	time.Sleep(2 * time.Second)
-	stopChan<-true
+	stopChan <- true
 
 	execution, err := s.metricMain.FindAllMetricExecutions()
 	require.NoError(s.T(), err)
