@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
-import Settings from '..';
+package io.charlescd.moove.domain
 
-(global as any).MutationObserver = MutationObserver
-
-test('render Settings default component', async () => {
-  const { getByTestId } = render(
-    <Settings />
-  );
-
-  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
-});
+enum class WorkspaceStatusEnum {
+    INCOMPLETE,
+    COMPLETE
+}
