@@ -16,11 +16,12 @@
 
 package io.charlescd.villager.interactor.registry;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @FunctionalInterface
 public interface GetDockerRegistryTagInteractor {
 
-    Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input);
+    Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) throws IOException;
 
 }
