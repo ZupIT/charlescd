@@ -20,7 +20,10 @@ import Styled from './styled';
 import { getStatus } from '../../helpers';
 import { ReleaseHistory } from '../interfaces';
 import ReleaseComponentsTable from './ReleaseComponentsTable';
-import { dateTimeFormatter, humanizeDateFromSeconds } from 'core/utils/date';
+import {
+  dateTimeFormatter,
+  humanizeDurationFromSeconds
+} from 'core/utils/date';
 
 type Props = {
   release: ReleaseHistory;
@@ -52,7 +55,7 @@ const ReleaseRow = ({ release }: Props) => {
         <Styled.TableColumn>
           <Text.h5 color="light">
             {release.deployDuration
-              ? humanizeDateFromSeconds(release.deployDuration)
+              ? humanizeDurationFromSeconds(release.deployDuration)
               : '-'}
           </Text.h5>
         </Styled.TableColumn>

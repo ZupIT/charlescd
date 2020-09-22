@@ -61,7 +61,7 @@ class CircleMatcherClientService(
     }
 
     override fun updateImport(circle: Circle, previousReference: String, nodes: List<JsonNode>, matcherUri: String) {
-        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle))
+        this.circleMatcherClient.updateImport(URI(matcherUri), createImportRequest(nodes, circle, previousReference))
     }
 
     override fun identify(workspace: Workspace, request: Map<String, Any>): List<SimpleCircle> {
@@ -76,15 +76,17 @@ class CircleMatcherClientService(
 
     private fun createImportRequest(
         nodes: List<JsonNode>,
-        circle: Circle
+        circle: Circle,
+        previousReference: String? = null
     ): List<CircleMatcherRequest> {
-        return nodes.map { createImportMatcherRequest(circle, it) }
+        return nodes.map { createImportMatcherRequest(circle, it, previousReference) }
     }
 
-    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode) =
+    private fun createImportMatcherRequest(circle: Circle, jsonNode: JsonNode, previousReference: String? = null) =
         CircleMatcherRequest(
             name = circle.name,
             reference = circle.reference,
+            previousReference = previousReference,
             node = objectMapper.treeToValue(
                 jsonNode,
                 Node::class.java

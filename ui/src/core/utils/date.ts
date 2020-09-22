@@ -38,9 +38,9 @@ export const dateFrom = (date: string) => {
   return dayjs(currentDate).fromNow();
 };
 
-export const humanizeDateFromSeconds = (timeInSeconds: number) => {
+export const humanizeDurationFromSeconds = (timeInSeconds: number) => {
   if (!timeInSeconds) {
-    return `0s`;
+    return `0 s`;
   }
 
   const seconds = dayjs.duration(timeInSeconds, 'seconds').seconds();
@@ -49,16 +49,18 @@ export const humanizeDateFromSeconds = (timeInSeconds: number) => {
   const days = dayjs.duration(timeInSeconds, 'seconds').days();
 
   if (days) {
-    return `${days} days`;
+    const daysToFormat = dayjs.duration(timeInSeconds, 'seconds').asDays();
+
+    return `${Math.trunc(daysToFormat)} days`;
   }
   if (hours) {
-    return `${hours}:${minutes}:${seconds}h`;
+    return `${hours}:${minutes}:${seconds} h`;
   }
   if (minutes) {
-    return `${minutes}:${seconds}m`;
+    return `${minutes}:${seconds} m`;
   }
 
-  return `${seconds}s`;
+  return `${seconds} s`;
 };
 
 export const dateTimeFormatter = (date: string | Date) => {
@@ -67,4 +69,3 @@ export const dateTimeFormatter = (date: string | Date) => {
     .local()
     .format('DD/MM/YYYY • HH:MM');
 };
-
