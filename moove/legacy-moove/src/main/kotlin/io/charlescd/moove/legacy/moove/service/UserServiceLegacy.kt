@@ -22,16 +22,13 @@ import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
-import io.charlescd.moove.legacy.moove.request.user.CreateUserRequest
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
 import io.charlescd.moove.legacy.moove.request.user.UpdateUserRequest
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
-import java.time.LocalDateTime
-import java.util.*
-import javax.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserServiceLegacy(
@@ -91,15 +88,6 @@ class UserServiceLegacy(
         user.also { userRepository.delete(it) }
 
     private fun toRepresentation(user: User): UserRepresentation = user.toRepresentation()
-
-    private fun CreateUserRequest.toModel() = User(
-        id = UUID.randomUUID().toString(),
-        name = this.name,
-        email = this.email.toLowerCase().trim(),
-        photoUrl = this.photoUrl,
-        isRoot = this.isRoot ?: false,
-        createdAt = LocalDateTime.now()
-    )
 
     fun resetPassword(email: String, request: ResetPasswordRequest) {
 
