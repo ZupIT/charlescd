@@ -36,6 +36,9 @@ const user = {
 jest.mock('react-cookies', () => {
   return {
     __esModule: true,
+    save: () => {
+      return '';
+    },
     load: () => {
       return '';
     },

@@ -20,16 +20,16 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
 import {
-  setAccessToken,
   getAccessTokenDecoded,
-  setRefreshToken,
   isIDMAuthFlow,
-  redirectToIDM
+  redirectToIDM,
+  saveSessionData
 } from 'core/utils/auth';
-import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
+import { useCreateUser, useUser } from 'modules/Users/hooks';
 import { useAuth } from 'modules/Auth/hooks';
+import { useCircleMatcher } from 'modules/Auth/Login/hook';
 import { isMicrofrontend } from 'App';
 
 const Main = lazy(() => import('modules/Main'));
@@ -38,6 +38,7 @@ const Forbidden403 = lazy(() => import('modules/Error/403'));
 const NotFound404 = lazy(() => import('modules/Error/404'));
 
 const Routes = () => {
+  const { getCircleId } = useCircleMatcher();
   const [enabledRoutes, setEnabledRoutes] = useState(false);
   const isEnabledRoutes = enabledRoutes || !isIDMAuthFlow();
   const { findByEmail, user, error } = useUser();
@@ -83,12 +84,14 @@ const Routes = () => {
 
   useEffect(() => {
     if (grants) {
-      setAccessToken(grants['access_token']);
-      setRefreshToken(grants['refresh_token']);
-      const { email } = getAccessTokenDecoded();
-      findByEmail(email);
+      (async () => {
+        saveSessionData(grants['access_token'], grants['refresh_token']);
+        const { email } = getAccessTokenDecoded();
+        await getCircleId({ username: email });
+        await findByEmail(email);
+      })();
     }
-  }, [grants, findByEmail]);
+  }, [grants, findByEmail, getCircleId]);
 
   const renderRoutes = () => (
     <Fragment>
