@@ -82,6 +82,15 @@ func (main Main) Save(action Action) (Action, error) {
 	return action, nil
 }
 
+func (main Main) Update(id string, action Action) (Action, error) {
+	db := main.db.Table("actions").Where("id = ?", id).Update(&action)
+	if db.Error != nil {
+		logger.Error(util.UpdateActionError, "Update", db.Error, action)
+		return Action{}, db.Error
+	}
+	return action, nil
+}
+
 func (main Main) Delete(id string) error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {

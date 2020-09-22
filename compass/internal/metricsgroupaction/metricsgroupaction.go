@@ -60,6 +60,15 @@ func (main Main) Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction
 	return metricsGroupAction, nil
 }
 
+func (main Main) Update(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
+	db := main.db.Table("metrics_group_actions").Where("id = ?", id).Update(&metricsGroupAction)
+	if db.Error != nil {
+		logger.Error(util.UpdateActionError, "Update", db.Error, metricsGroupAction)
+		return MetricsGroupAction{}, db.Error
+	}
+	return metricsGroupAction, nil
+}
+
 func (main Main) FindById(id string) (MetricsGroupAction, error) {
 	metricsGroupAction := MetricsGroupAction{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)

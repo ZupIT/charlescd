@@ -256,3 +256,46 @@ func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupActionError() {
 	err := s.repository.Delete(uuid.New().String())
 	require.Error(s.T(), err)
 }
+
+func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
+	metricGroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		Metrics:     []metric2.Metric{},
+		CircleID:    uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+	s.DB.Create(&metricGroup)
+
+	actionStruct := action.Action{
+		Nickname:      "ActionName",
+		Type:          "CircleUp",
+		Configuration: json.RawMessage(`{"config": "some-config"}`),
+		WorkspaceId:   uuid.New().String(),
+		DeletedAt:     nil,
+	}
+	s.DB.Create(&actionStruct)
+
+	mgaStruct := metricsgroupaction.MetricsGroupAction{
+		BaseModel:           util.BaseModel{},
+		Nickname:            "ActionNickname",
+		MetricsGroupID:      metricGroup.ID,
+		ActionsID:           actionStruct.ID,
+		ExecutionParameters: json.RawMessage(`{"exec": "some-param"}`),
+		DeletedAt:           nil,
+	}
+	s.DB.Create(&mgaStruct)
+
+	mgaStruct.ExecutionParameters = json.RawMessage(`{"update": "eoq"}`)
+
+	res, err := s.repository.Update(mgaStruct.ID.String(), mgaStruct)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), mgaStruct.ExecutionParameters, res.ExecutionParameters)
+}
+
+func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionError() {
+	mgaStruct := metricsgroupaction.MetricsGroupAction{}
+	s.DB.Close()
+
+	_, err := s.repository.Update("12345", mgaStruct)
+	require.Error(s.T(), err)
+}
