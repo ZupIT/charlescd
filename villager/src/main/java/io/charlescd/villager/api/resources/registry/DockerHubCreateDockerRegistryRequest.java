@@ -2,7 +2,6 @@ package io.charlescd.villager.api.resources.registry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotEmpty;
 
 public class DockerHubCreateDockerRegistryRequest extends CreateDockerRegistryConfigurationRequest {

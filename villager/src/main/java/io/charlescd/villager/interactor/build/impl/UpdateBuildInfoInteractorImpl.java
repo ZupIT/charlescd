@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -146,7 +147,7 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
         try {
-            this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, component.tagName);
 
             // TODO: Verificar necessidade de serializacao
             return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()

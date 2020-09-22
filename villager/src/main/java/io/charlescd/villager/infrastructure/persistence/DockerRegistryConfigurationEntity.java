@@ -82,7 +82,8 @@ public class DockerRegistryConfigurationEntity {
         public String username;
         public String password;
 
-        public DockerHubDockerRegistryConnectionData(String address, String organization, String username, String password) {
+        public DockerHubDockerRegistryConnectionData(String address,
+                                                     String organization, String username, String password) {
             super(address, organization);
             this.username = username;
             this.password = password;

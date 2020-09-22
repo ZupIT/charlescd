@@ -17,9 +17,17 @@
 package io.charlescd.villager.api.handlers.impl;
 
 import io.charlescd.villager.api.handlers.RequestHandler;
-import io.charlescd.villager.api.resources.registry.*;
+import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.CreateDockerRegistryConfigurationRequest;
+import io.charlescd.villager.api.resources.registry.DockerHubCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.interactor.registry.*;
+import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
+import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 
 public class CreateDockerRegistryRequestHandler implements RequestHandler<DockerRegistryConfigurationInput> {
 
@@ -88,13 +96,13 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
     }
 
     private void toDockerHub(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
-        var gcpRequest = (DockerHubCreateDockerRegistryRequest) request;
+        var dockerHubRequest = (DockerHubCreateDockerRegistryRequest) request;
         inputBuilder
                 .withRegistryType(RegistryType.DOCKERHUB)
                 .withAuth(new DockerHubDockerRegistryAuth(
-                        gcpRequest.getOrganization(),
-                        gcpRequest.getUsername(),
-                        gcpRequest.getPassword()
+                        dockerHubRequest.getOrganization(),
+                        dockerHubRequest.getUsername(),
+                        dockerHubRequest.getPassword()
                 ));
     }
 }
