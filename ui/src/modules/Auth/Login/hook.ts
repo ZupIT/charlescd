@@ -15,7 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
@@ -31,14 +31,11 @@ interface CircleMatcherResponse {
 
 export const useCircleMatcher = (): {
   getCircleId: Function;
-  loading: boolean;
 } => {
-  const [, , getCircleMatcher] = useFetch<CircleMatcherResponse>(circleMatcher);
-  const [loading, setLoading] = useState(null);
+  const getCircleMatcher = useFetchData<CircleMatcherResponse>(circleMatcher);
 
   const getCircleId = useCallback(
     async (data: unknown) => {
-      setLoading(true);
       try {
         const response = await getCircleMatcher(data);
         if (response) {
@@ -47,15 +44,13 @@ export const useCircleMatcher = (): {
         }
       } catch (e) {
         saveCircleId(CIRCLE_UNMATCHED);
-        setLoading(false);
       }
     },
     [getCircleMatcher]
   );
 
   return {
-    getCircleId,
-    loading
+    getCircleId
   };
 };
 
