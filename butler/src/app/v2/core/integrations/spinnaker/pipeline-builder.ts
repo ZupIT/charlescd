@@ -102,6 +102,7 @@ export class SpinnakerPipelineBuilder {
   }
 
   private getDeploymentStages(deployment: Deployment): Stage[] {
+    console.log(deployment.defaultCircle)
     const deploymentStages: Stage[] = []
     deployment.components?.forEach(component => {
       deploymentStages.push(getBakeStage(component, deployment.cdConfiguration, this.currentStageId++, deployment.circleId))

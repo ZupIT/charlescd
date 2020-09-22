@@ -42,9 +42,9 @@ export const getVirtualServiceStage = (
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
         hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: !deployment.defaultCircle ?
-          getCircleHTTPRules(component, deployment.circleId, activeComponents) :
-          getDefaultCircleHTTPRules(component, activeComponents)
+        http: deployment.defaultCircle ?
+          getDefaultCircleHTTPRules(component, activeComponents, deployment.circleId) :
+          getCircleHTTPRules(component, deployment.circleId, activeComponents)
       }
     }
   ],
@@ -86,15 +86,16 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
     }
   })
 
-  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
   if (defaultComponent && defaultComponent.deployment) {
     rules.push(getHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment?.circleId))
   }
   return rules
 }
 
-const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Component[]): Http[] => {
+const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Component[], circleId: string): Http[] => {
   const rules: Http[] = []
+  console.log('here default')
 
   activeComponents.forEach(component => {
     if (component.deployment && !component.deployment?.defaultCircle) {
@@ -102,12 +103,7 @@ const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Co
       rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, component.deployment?.circleId))
     }
   })
-
-  if (newComponent.deployment) {
-    rules.push(getHTTPDefaultRule(newComponent.name, newComponent.deployment?.circleId))
-  }
-
-
+  rules.push(getHTTPDefaultRule(newComponent.name, circleId))
   return rules
 }
 
