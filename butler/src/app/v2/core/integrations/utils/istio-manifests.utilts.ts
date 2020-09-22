@@ -96,22 +96,22 @@ const IstioManifestsUtils = {
     ]
   }),
 
-  getVirtualServiceHTTPDefaultRule: (name: string): Http => ({
+  getVirtualServiceHTTPDefaultRule: (name: string, circleId: string): Http => ({
     route: [
       {
         destination: {
           host: name,
-          subset: AppConstants.DEFAULT_CIRCLE_ID
+          subset: circleId
         },
         headers: {
           request: {
             set: {
-              'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+              'x-circle-source': circleId
             }
           },
           response: {
             set: {
-              'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+              'x-circle-source': circleId
             }
           }
         }
