@@ -87,13 +87,13 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getActiveComponentsSubsets: (circleId: string | null, activeByName: Component[]): Subset[] => {
+  getActiveComponentsSubsets: (circleId: string, activeByName: Component[]): Subset[] => {
     const subsets: Subset[] = []
 
     activeByName.forEach(component => {
       const activeCircleId = component.deployment?.circleId
 
-      if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag)) {
+      if (activeCircleId && IstioUndeploymentManifestsUtils.canPushSubset(component, activeCircleId, subsets)) {
         subsets.push(IstioManifestsUtils.getDestinationRulesSubsetObject(component, activeCircleId))
       }
     })
@@ -121,6 +121,11 @@ const IstioUndeploymentManifestsUtils = {
       rules.push(IstioManifestsUtils.getVirtualServiceHTTPDefaultRule(defaultComponent.name, defaultComponent.deployment.circleId))
     }
     return rules
+  },
+  canPushSubset(component: Component, activeCircleId: string | undefined, subsets: Subset[]) {
+    return !component.deployment?.defaultCircle &&
+      activeCircleId !== component.deployment?.circleId
+      && !subsets.find(subset => subset.name === component.imageTag)
   }
 }
 
