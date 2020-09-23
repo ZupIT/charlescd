@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.3.6 (21/09/2020)
+- [#511](https://github.com/ZupIT/charlescd/pull/511) Fix import csv bug
+
+---
+
+## 0.3.5 (19/09/2020)
+- [#509](https://github.com/ZupIT/charlescd/pull/509) Change Octopipe to not update deployed resources
+- [#508](https://github.com/ZupIT/charlescd/pull/508) Updating java version of moove dev release
+- [#495](https://github.com/ZupIT/charlescd/pull/495) CI Update of charts and changelog
+- [#442](https://github.com/ZupIT/charlescd/pull/442) Fix multiple registry auth bug
+
+---
+
+## 0.3.4 (16/09/2020)
+- [#502](https://github.com/ZupIT/charlescd/pull/502) Update application-k8s.properties
+- [#501](https://github.com/ZupIT/charlescd/pull/501) Fix chart error
+- [#500](https://github.com/ZupIT/charlescd/pull/500) Update Nginx Chart.yaml
+- [#499](https://github.com/ZupIT/charlescd/pull/499) Compass copyright
+- [#452](https://github.com/ZupIT/charlescd/pull/452) Removing authorization from keycloak
+- [#496](https://github.com/ZupIT/charlescd/pull/496) Fix compass installation
+- [#491](https://github.com/ZupIT/charlescd/pull/491) lock Casl version
+- [#494](https://github.com/ZupIT/charlescd/pull/494) fix compass chart
+- [#414](https://github.com/ZupIT/charlescd/pull/414) Fixing workspace permissions.
+- [#486](https://github.com/ZupIT/charlescd/pull/486) Notification transaction
+- [#488](https://github.com/ZupIT/charlescd/pull/488) Fix compass job
+- [#485](https://github.com/ZupIT/charlescd/pull/485) Adding compass chart
+- [#483](https://github.com/ZupIT/charlescd/pull/483) Transaction on create deployment use-case
+- [#463](https://github.com/ZupIT/charlescd/pull/463) CI Update of charts and changelog
+- [#473](https://github.com/ZupIT/charlescd/pull/473) Fix average time
+- [#476](https://github.com/ZupIT/charlescd/pull/476) Change on click expand for a redirect to that circle
+- [#474](https://github.com/ZupIT/charlescd/pull/474) fix hardcoded sandbox namespace
+- [#472](https://github.com/ZupIT/charlescd/pull/472) fix one deployment issues
+- [#470](https://github.com/ZupIT/charlescd/pull/470) Update link to documentation
+- [#428](https://github.com/ZupIT/charlescd/pull/428) Adding filter to UserGroup findAll
+- [#438](https://github.com/ZupIT/charlescd/pull/438) Circle segments validation on PATCH
+- [#348](https://github.com/ZupIT/charlescd/pull/348) Reset password - Root View
+- [#423](https://github.com/ZupIT/charlescd/pull/423) Segmentation view - Hide logical operator and vertical line
+- [#418](https://github.com/ZupIT/charlescd/pull/418) Create metrics groups
+- [#468](https://github.com/ZupIT/charlescd/pull/468) V2 one deployment circle
+- [#467](https://github.com/ZupIT/charlescd/pull/467) Removing comments on nginx-conf.yaml
+
+---
+
 ## 0.3.4-rc.3 (04/09/2020)
 - [#462](https://github.com/ZupIT/charlescd/pull/462) Refinement UI
 - [#460](https://github.com/ZupIT/charlescd/pull/460) Butler stabilization version concat validation

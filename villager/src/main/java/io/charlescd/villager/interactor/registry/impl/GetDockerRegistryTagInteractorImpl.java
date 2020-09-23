@@ -23,6 +23,7 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import java.io.IOException;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -60,17 +61,22 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
                     "This docker registry does not belongs to the request application id.");
         }
 
-        this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+        try {
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData);
 
-        var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
+            var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
 
-        if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
-            return Optional.empty();
+            if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new ComponentTagDTO(
+                    input.getName(),
+                    entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
+            ));
+        } finally {
+            this.registryClient.closeQuietly();
         }
 
-        return Optional.of(new ComponentTagDTO(
-                input.getName(),
-                entity.connectionData.host + "/" + input.getArtifactName() + ":" + input.getName()
-        ));
     }
 }
