@@ -18,6 +18,7 @@ import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 import Select from './Select';
 import { Option } from '../interfaces';
+import { OptionsType } from 'react-select';
 
 interface Props {
   name: string;
@@ -35,7 +36,10 @@ interface Props {
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
   hasError?: boolean;
-  loadOptions: Function;
+  loadOptions?: (
+    inputValue: string,
+    callback: (options: OptionsType<any>) => void
+  ) => Promise<any> | void;
 }
 
 const AsyncSelect = ({
