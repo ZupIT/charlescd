@@ -26,22 +26,22 @@ import Styled from '../styled';
 const Select = ({
   placeholder,
   options,
-  // defaultValue,
+  defaultValue,
   className,
-  // isDisabled = false,
-  // onChange,
+  isDisabled = false,
+  onChange,
   onInputChange,
   customOption,
-  loadOptions
-}: // hasError
-Props) => (
+  loadOptions,
+  hasError
+}: Props) => (
   <div data-testid="react-select">
     <Styled.AsyncSelect
       className={className}
-      // defaultValue={defaultValue}
+      defaultValue={defaultValue}
+      isDisabled={isDisabled}
       placholder={placeholder}
-      // isDisabled={isDisabled}
-      // hasError={hasError}
+      hasError={hasError}
       components={{
         ValueContainer: FloatingLabel,
         Option: customOption ? customOption : components.Option,
@@ -50,17 +50,12 @@ Props) => (
         DropdownIndicator: () => <DownSVG />
       }}
       styles={customStyles}
-      // cacheOptions
+      cacheOptions
       options={options}
       defaultOptions
       loadOptions={loadOptions}
       onInputChange={onInputChange}
-      // onChange={(option: Option) => onChange(option)}
-      // onInputChange={(value: string, actions: { action: string }) => {
-      //   if (actions.action === 'input-change' && onInputChange) {
-      //     onInputChange(value);
-      //   }
-      // }}
+      onChange={(option: Option) => onChange(option)}
     />
   </div>
 );

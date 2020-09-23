@@ -17,9 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
-import debounce from 'lodash/debounce';
-import includes from 'lodash/includes';
-import find from 'lodash/find';
+import debounce from 'debounce-promise';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
 import Card from 'core/components/Card';
@@ -43,7 +41,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     loadingSave,
     loadingAdd,
     loadingAll,
-    getUserGroupByName,
+    getAll,
     findUserGroupByName
   } = useUserGroup();
   const {
@@ -58,7 +56,6 @@ const FormUserGroup = ({ onFinish }: Props) => {
   const [form, setForm] = useState(false);
   const [roleOptions, setRoleOptions] = useState(null);
   const [group, setGroup] = useState(null);
-  const [userGroupNameParam, setUserGroupNameParam] = useState('');
 
   useEffect(() => {
     const options = map(rolesAll as Role[], (role: Role) => ({
@@ -71,8 +68,8 @@ const FormUserGroup = ({ onFinish }: Props) => {
   }, [rolesAll]);
 
   useEffect(() => {
-    getUserGroupByName(userGroupNameParam);
-  }, [getUserGroupByName, userGroupNameParam]);
+    getAll();
+  }, [getAll]);
 
   useEffect(() => {
     if (responseSave) onFinish();
@@ -86,20 +83,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
     setIsDisableSave(isEmpty(watchedRoleId));
   }, [watchedRoleId]);
 
-  const searchUserGroup = (name: string) => {
-    const userGroups = responseAll as UserGroup[];
-    const usersGroup = find(userGroups, userGroup =>
-      includes(userGroup.name, name)
-    );
-
-    console.log('searchUserGroup');
-
-    if (!usersGroup || isEmpty(name)) {
-      setUserGroupNameParam(name);
-    }
-  };
-
-  const onSelectGoup = (option: Option) => {
+  const onSelectGroup = (option: Option) => {
     setIsDisableAdd(!option);
     setGroup(option);
   };
@@ -159,6 +143,14 @@ const FormUserGroup = ({ onFinish }: Props) => {
     </>
   );
 
+  const loadUserGroups = debounce(
+    name =>
+      findUserGroupByName(name).then(({ content }: { content: UserGroup[] }) =>
+        reduce(content)
+      ),
+    500
+  );
+
   const renderFields = () => (
     <Styled.Fields>
       <Styled.SelectAsync
@@ -168,11 +160,8 @@ const FormUserGroup = ({ onFinish }: Props) => {
         options={reduce(responseAll as UserGroup[])}
         label="Select a user group"
         isDisabled={loadingAll}
-        loadOptions={(value: string) => {
-          return findUserGroupByName(value).then((resp: any) =>
-            reduce(resp.content as UserGroup[])
-          );
-        }}
+        loadOptions={loadUserGroups}
+        onChange={group => onSelectGroup(group)}
       />
       <Button.Default
         isLoading={loadingAll}
