@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
 
-import com.fasterxml.jackson.annotation.JsonProperty
+setPublicPath('@devcraft/charlescd');
 
-data class WorkspacePermissionsMapping(
-    @JsonProperty("id")
-    val id: String,
-    @JsonProperty("permissions")
-    val permissions: List<String>
-)
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
+});
+
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;
