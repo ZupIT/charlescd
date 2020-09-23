@@ -16,10 +16,14 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
-import { renewToken, login } from '../auth';
-import { getRefreshToken } from 'core/utils/auth';
-import { redirectToLegacy } from 'core/utils/routes';
+import { login, renewToken } from '../auth';
+import { getRefreshToken, isIDMAuthFlow } from 'core/utils/auth';
+import { redirectTo } from 'core/utils/routes';
 import routes from 'core/constants/routes';
+
+export interface ResponseError extends Error {
+  status?: number;
+}
 
 interface FetchData<T> {
   response: T;
@@ -49,15 +53,16 @@ export interface FetchProps {
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
-  fn().catch(async (error: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn().catch(async (error: any) => {
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
-        if (!isLoginRequest) {
+        if (!isLoginRequest && !isIDMAuthFlow()) {
           await renewToken(getRefreshToken())({});
         }
         return fn();
       } catch (error) {
-        redirectToLegacy(routes.login);
+        redirectTo(routes.login);
         return error;
       }
     } else {
