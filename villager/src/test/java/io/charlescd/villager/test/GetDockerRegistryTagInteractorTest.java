@@ -73,6 +73,9 @@ public class GetDockerRegistryTagInteractorTest {
             tags.add("tag_2");
             tagsResponse.setTags(tags);
 
+            assertThat(tagsResponse.getName(), is("name"));
+            assertThat(tagsResponse.getTags(), is(tags));
+
             var builtResponse = new BuiltResponse(200, new Headers<>(), tagsResponse, annotations);
             var response = new ServerResponse(builtResponse);
 
