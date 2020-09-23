@@ -16,20 +16,16 @@
 
 package io.charlescd.moove.security.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.charlescd.moove.domain.MooveErrorCode
-import io.charlescd.moove.domain.Permission
-import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.infrastructure.service.client.KeycloakFormEncodedClient
-import io.charlescd.moove.security.CharlesAccessToken
-import io.charlescd.moove.security.WorkspacePermissionsMapping
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import org.keycloak.TokenVerifier
 import org.keycloak.admin.client.Keycloak
+import org.keycloak.representations.AccessToken
 import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Value
@@ -47,110 +43,9 @@ class KeycloakClientService(
     @Value("\${charlescd.keycloak.public.clientId}")
     lateinit var publicClientId: String
 
-    private val objectMapper = jacksonObjectMapper()
-
-    override fun addPermissionsToUser(workspaceId: String, user: User, permissions: List<Permission>) {
-        val keycloakUser = loadKeycloakUser(user.email)
-        val keycloakWorkspaceAttribute = keycloakUser.attributes["workspaces"]
-        val actualPermissionsMapping = keycloakWorkspaceAttribute?.map { objectMapper.readValue(it, WorkspacePermissionsMapping::class.java) }?.toMutableList()
-        val workspaceAndPermissionsMapping = actualPermissionsMapping?.firstOrNull { it.id == workspaceId }
-        val permissionsToBeAddedMapping = WorkspacePermissionsMapping(
-            id = workspaceId,
-            permissions = permissions.map { it.name })
-
-        if (workspaceAndPermissionsMapping != null) {
-            actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
-
-            actualPermissionsMapping.add(
-                workspaceAndPermissionsMapping.copy(
-                    permissions = workspaceAndPermissionsMapping.permissions.union(permissionsToBeAddedMapping.permissions).toList()
-                )
-            )
-        } else {
-            actualPermissionsMapping?.add(permissionsToBeAddedMapping)
-        }
-
-        val workspaceAndPermissionsJson = actualPermissionsMapping?.map { objectMapper.writeValueAsString(it) }
-
-        keycloakUser.attributes["workspaces"] = workspaceAndPermissionsJson ?: listOf(objectMapper.writeValueAsString(permissionsToBeAddedMapping))
-
-        updateKeycloakUser(keycloakUser)
-    }
-
-    override fun removePermissionsFromUser(workspaceId: String, user: User, permissions: List<Permission>) {
-        val keycloakUser = loadKeycloakUser(user.email)
-
-        val keycloakWorkspaceAttribute = keycloakUser.attributes["workspaces"]
-
-        val actualPermissionsMapping = keycloakWorkspaceAttribute?.map { objectMapper.readValue(it, WorkspacePermissionsMapping::class.java) }?.toMutableList()
-
-        val permissionsToBeRemovedMapping = WorkspacePermissionsMapping(
-            id = workspaceId,
-            permissions = permissions.map { it.name })
-
-        val workspaceAndPermissionsMapping = actualPermissionsMapping?.firstOrNull { it.id == workspaceId }
-
-        if (workspaceAndPermissionsMapping != null) {
-            actualPermissionsMapping.remove(workspaceAndPermissionsMapping)
-            val updatedWorkspaceAndPermissionsMapping = workspaceAndPermissionsMapping.copy(
-                permissions = workspaceAndPermissionsMapping.permissions.subtract(permissionsToBeRemovedMapping.permissions).toList()
-            )
-            actualPermissionsMapping.takeIf { updatedWorkspaceAndPermissionsMapping.permissions.isNotEmpty() }?.add(updatedWorkspaceAndPermissionsMapping)
-        } else {
-            actualPermissionsMapping?.add(permissionsToBeRemovedMapping)
-        }
-
-        val workspaceAndPermissionsJson = actualPermissionsMapping?.map { objectMapper.writeValueAsString(it) }
-
-        keycloakUser.attributes["workspaces"] = workspaceAndPermissionsJson ?: listOf()
-
-        updateKeycloakUser(keycloakUser)
-    }
-
-    override fun associatePermissionsToNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>) {
-        val keycloakUser = loadKeycloakUser(user.email)
-
-        val userWorkspaces = keycloakUser.attributes["workspaces"]
-
-        val workspaceAndPermissions = workspacePermissionsMapping.map { entry ->
-            mapOf(
-                "id" to entry.key,
-                "permissions" to entry.value.map { permission -> permission.name }
-            )
-        }
-
-        if (userWorkspaces != null) {
-            workspaceAndPermissions.forEach { userWorkspaces.add(objectMapper.writeValueAsString(it)) }
-        }
-
-        keycloakUser.attributes["workspaces"] = userWorkspaces ?: workspaceAndPermissions.map { objectMapper.writeValueAsString(it) }
-
-        updateKeycloakUser(keycloakUser)
-    }
-
-    override fun disassociatePermissionsFromNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>) {
-        val keycloakUser = loadKeycloakUser(user.email)
-
-        val keycloakWorkspaceAndPermissions = keycloakUser.attributes["workspaces"]?.map { objectMapper.readValue(it, WorkspacePermissionsMapping::class.java) }
-
-        val workspaceAndPermissionsToBeRemoved = workspacePermissionsMapping.map { entry ->
-            WorkspacePermissionsMapping(
-                id = entry.key,
-                permissions = entry.value.map { permission -> permission.name })
-        }
-
-        val updatedWorkspaceAndPermissions = keycloakWorkspaceAndPermissions?.minus(workspaceAndPermissionsToBeRemoved)
-
-        val workspaceAndPermissionsJson = updatedWorkspaceAndPermissions?.map { objectMapper.writeValueAsString(it) }
-
-        keycloakUser.attributes["workspaces"] = workspaceAndPermissionsJson
-
-        updateKeycloakUser(keycloakUser)
-    }
-
     override fun getEmailByAccessToken(authorization: String): String {
         val token = authorization.substringAfter("Bearer").trim()
-        return TokenVerifier.create(token, CharlesAccessToken::class.java).token.email
+        return TokenVerifier.create(token, AccessToken::class.java).token.email
     }
 
     override fun changeUserPassword(email: String, oldPassword: String, newPassword: String) {
@@ -181,11 +76,11 @@ class KeycloakClientService(
             .resetPassword(credentialRepresentation)
     }
 
-    override fun createUser(email: String, name: String, password: String, isRoot: Boolean) {
+    override fun createUser(email: String, name: String, password: String) {
         this.keycloak
             .realm(this.realm)
             .users()
-            .create(createUserRepresentation(email, name, password, isRoot))
+            .create(createUserRepresentation(email, name, password))
             .takeIf { it.status == 201 }
             ?: throw RuntimeException("Could not create user on keycloak.")
     }
@@ -193,8 +88,7 @@ class KeycloakClientService(
     private fun createUserRepresentation(
         email: String,
         name: String,
-        password: String,
-        isRoot: Boolean
+        password: String
     ): UserRepresentation {
         val userRepresentation = UserRepresentation()
 
@@ -208,7 +102,6 @@ class KeycloakClientService(
         userRepresentation.username = email
         userRepresentation.createdTimestamp = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
         userRepresentation.credentials = listOf(createCredentialRepresentation(password))
-        userRepresentation.singleAttribute("isRoot", isRoot.toString())
 
         return userRepresentation
     }
@@ -225,13 +118,6 @@ class KeycloakClientService(
             .users()
             .search(email)
             .firstOrNull() ?: throw NotFoundException("user", email)
-    }
-
-    private fun updateKeycloakUser(keycloakUser: UserRepresentation) {
-        keycloak.realm(this.realm)
-            .users()
-            .get(keycloakUser.id)
-            .update(keycloakUser)
     }
 
     override fun resetPassword(email: String, newPassword: String) {
