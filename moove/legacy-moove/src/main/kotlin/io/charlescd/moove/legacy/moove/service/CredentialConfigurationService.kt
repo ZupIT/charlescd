@@ -131,6 +131,7 @@ class CredentialConfigurationService(
         return when (createRegistryConfigRequest) {
             is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest)
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest)
+            is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }
@@ -154,6 +155,17 @@ class CredentialConfigurationService(
             provider = CreateVillagerRegistryConfigurationProvider.Azure,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
+            authorId = createRegistryConfigRequest.authorId
+        )
+    }
+
+    private fun buildGCPRegistryRequest(createRegistryConfigRequest: CreateGCPRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+        return CreateVillagerRegistryConfigurationRequest(
+            name = createRegistryConfigRequest.name,
+            address = createRegistryConfigRequest.address,
+            provider = CreateVillagerRegistryConfigurationProvider.GCP,
+            organization = createRegistryConfigRequest.organization,
+            jsonKey = createRegistryConfigRequest.jsonKey,
             authorId = createRegistryConfigRequest.authorId
         )
     }

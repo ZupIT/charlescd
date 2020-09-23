@@ -25,9 +25,11 @@ data class CreateVillagerRegistryConfigurationRequest(
     val accessKey: String? = null,
     val secretKey: String? = null,
     val region: String? = null,
-    val authorId: String
+    val authorId: String,
+    val organization: String? = null,
+    val jsonKey: String? = null
 )
 
 enum class CreateVillagerRegistryConfigurationProvider {
-    AWS, Azure
+    AWS, Azure, GCP
 }
