@@ -25,63 +25,63 @@ import (
 )
 
 func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("START:EXECUTE_V2_PIPELINE")
+	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("START:EXECUTE_V2_PIPELINE")
 
 	err := manager.runV2Deployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("ERROR:EXECUTE_V2_DEPLOYMENT") // TODO log info
+		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("ERROR:EXECUTE_V2_DEPLOYMENT") // TODO log info
 		// TODO rollback deployments
+		// TODO webhook failure
 		return err
 	}
 
 	err = manager.runV2ProxyDeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("ERROR:EXECUTE_V2_PROXY_DEPLOYMENT") // TODO log info
+		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("ERROR:EXECUTE_V2_PROXY_DEPLOYMENT") // TODO log info
+		// TODO webhook failure
 		return err
 	}
 
-	log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("FINISH:EXECUTE_V2_PIPELINE")
+	// TODO webhook success
+	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_PIPELINE")
 	return nil
 }
 
-func (manager Manager) executeSteps(pipeline pipelinePKG.Pipeline, stage []pipelinePKG.Step) error {
-	errs, _ := errgroup.WithContext(context.Background())
-	for _, step := range stage {
-		currentStep := step
-		errs.Go(func() error {
-			return manager.executeStep(pipeline, currentStep)
-		})
-	}
-	return errs.Wait()
-}
-
 func (manager Manager) runV2Deployments(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("START:RUN_V2_DEPLOYMENT")
+	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("START:RUN_V2_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, deployment := range v2Pipeline.Deployments {
 		errs.Go(func() error {
-			// GET DEPLOYMENT MANIFESTS
-			manifests, err := manager.getManifestsFromV2Deployment(deployment)
-			if err != nil {
-				log.WithFields(log.Fields{"function": "executeStep", "error": err}).Error("ERROR:GET_DEPLOYMENT_MANIFESTS")
-				return err
-			}
-			// EXECUTE DEPLOYMENT
-			if err := manager.executeV2DeploymentManifests(v2Pipeline, manifests); err != nil {
-				log.WithFields(log.Fields{"function": "executeStep", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
-				return err
-			}
-			return nil
+			return manager.executeV2Deployment(v2Pipeline, deployment)
 		})
 	}
 	return errs.Wait()
 }
 
-func (manager Manager) runV2ProxyDeployments(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "executeV2Deployment"}).Info("START:RUN_V2_DEPLOYMENT")
-	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
-
+func (manager Manager) executeV2Deployment(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment) error {
+	// GET DEPLOYMENT MANIFESTS
+	manifests, err := manager.getManifestsFromV2Deployment(deployment)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err}).Error("ERROR:GET_DEPLOYMENT_MANIFESTS")
+		return err
 	}
+	// EXECUTE DEPLOYMENT
+	if err := manager.executeV2DeploymentManifests(v2Pipeline, manifests); err != nil {
+		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
+		return err
+	}
+	return nil
+}
+
+func (manager Manager) runV2ProxyDeployments(v2Pipeline pipelinePKG.V2Pipeline) error {
+	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("START:RUN_V2_PROXY_DEPLOYMENTS")
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+		errs.Go(func() error {
+			return manager.executeV2DeploymentManifests(v2Pipeline, proxyDeployment)
+		})
+	}
+	return errs.Wait()
 }
 
 func (manager Manager) getManifestsFromV2Deployment(deployment pipelinePKG.V2Deployment) (map[string]interface{}, error) {
@@ -151,5 +151,6 @@ func (manager Manager) executeV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, mani
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
