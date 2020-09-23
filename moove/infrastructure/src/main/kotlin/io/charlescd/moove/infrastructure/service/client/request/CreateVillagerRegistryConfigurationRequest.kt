@@ -16,9 +16,6 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
-import com.fasterxml.jackson.annotation.JsonInclude
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class CreateVillagerRegistryConfigurationRequest(
     val name: String,
     val address: String,

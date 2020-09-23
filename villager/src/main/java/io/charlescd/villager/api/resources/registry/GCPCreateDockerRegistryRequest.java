@@ -29,11 +29,12 @@ public class GCPCreateDockerRegistryRequest extends CreateDockerRegistryConfigur
     public GCPCreateDockerRegistryRequest(@JsonProperty("name") String name,
                                           @JsonProperty("address") String address,
                                           @JsonProperty("organization") String organization,
+                                          @JsonProperty("username") String username,
                                           @JsonProperty("jsonKey") String jsonKey) {
         this.name = name;
         this.address = address;
         this.organization = organization;
-        this.username = "_json_key";
+        this.username = username;
         this.jsonKey = jsonKey;
     }
 
