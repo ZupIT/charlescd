@@ -15,7 +15,7 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
+
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 
@@ -45,6 +45,14 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                 labels: {
                   component: 'A',
                   tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
                   circleId: 'circle-id2'
                 },
                 name: 'circle-id2'
@@ -56,14 +64,6 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                   circleId: 'circle-id3'
                 },
                 name: 'circle-id3'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: AppConstants.DEFAULT_CIRCLE_ID
-                },
-                name: AppConstants.DEFAULT_CIRCLE_ID
               }
             ]
           }
@@ -236,17 +236,17 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: AppConstants.DEFAULT_CIRCLE_ID
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }
@@ -301,9 +301,9 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                 labels: {
                   component: 'B',
                   tag: 'v1',
-                  circleId: AppConstants.DEFAULT_CIRCLE_ID
+                  circleId: 'default-circle-id'
                 },
-                name: AppConstants.DEFAULT_CIRCLE_ID
+                name: 'default-circle-id'
               }
             ]
           }
@@ -352,17 +352,17 @@ export const hostnameGatewayUndeploymentPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: AppConstants.DEFAULT_CIRCLE_ID
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }

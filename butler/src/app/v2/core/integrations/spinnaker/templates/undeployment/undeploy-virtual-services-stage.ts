@@ -75,13 +75,13 @@ const getActiveComponentsCircleHTTPRules = (circleId: string | null, activeCompo
 
   activeComponents.forEach(component => {
     const activeCircleId = component.deployment?.circleId
-    if (activeCircleId && activeCircleId !== circleId) {
+    if (activeCircleId && activeCircleId !== circleId && !component.deployment?.defaultCircle) {
       rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
       rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
     }
   })
 
-  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
   if (defaultComponent) {
     rules.push(getHTTPDefaultRule(defaultComponent.name))
   }
@@ -157,17 +157,17 @@ const getHTTPDefaultRule = (name: string): Http => ({
     {
       destination: {
         host: `${name}`,
-        subset: AppConstants.DEFAULT_CIRCLE_ID
+        subset: 'default-circle-id'
       },
       headers: {
         request: {
           set: {
-            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+            'x-circle-source': 'default-circle-id'
           }
         },
         response: {
           set: {
-            'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+            'x-circle-source': 'default-circle-id'
           }
         }
       }
