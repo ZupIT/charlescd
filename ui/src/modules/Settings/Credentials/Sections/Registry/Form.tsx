@@ -56,7 +56,7 @@ const FormRegistry = ({ onFinish }: Props) => {
       authorId: profileId,
       provider: registryType
     };
-    if (registryType === 'GCR') {
+    if (registryType === 'GCP') {
       try {
         JSON.parse(registry.jsonKey);
       } catch (error) {
@@ -176,7 +176,7 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'AWS') {
       return renderAwsFields();
     }
-    if (registryType === 'GCR') {
+    if (registryType === 'GCP') {
       return renderGCPFields();
     }
     // if (registryType === 'DOCKER_HUB') {
