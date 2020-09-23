@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, wait, screen } from 'unit-test/testUtils';
+import { render, wait, screen, waitForElement } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import PrivateRoute from '../index';
 import { MemoryRouter } from 'react-router-dom';
@@ -107,9 +107,12 @@ test('render PrivateRoute without role', async () => {
 });
 
 test('render PrivateRoute by refresh', async () => {
+  setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpc1Jvb3QiOmZhbHNlfQ.sEZZKPx1eyELnP_aI3Ethc5O9iwLRKAW6lZdXUtv_Jg');
   const workspaceID = '1234-workspace';
   jest.spyOn(workspaceUtils, 'getWorkspaceId').mockReturnValue(workspaceID);
+
   (fetch as FetchMock).mockRejectedValue(JSON.stringify({ name: 'login' }));
+
   jest.spyOn(StateHooks, 'useGlobalState')
     .mockReturnValueOnce({
       item: {
@@ -136,7 +139,6 @@ test('render PrivateRoute by refresh', async () => {
     </MemoryRouter>
   );
 
-  await wait(() => 
-    expect(screen.queryByTestId('mock-component')).toBeInTheDocument()
-  );
+  const body = screen.queryByTestId('mock-component');
+  await wait(() => expect(body).not.toBeInTheDocument());
 });
