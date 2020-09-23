@@ -164,14 +164,6 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
               {
                 labels: {
                   component: 'A',
-                  tag: 'v2',
-                  circleId: 'circle-id'
-                },
-                name: 'circle-id'
-              },
-              {
-                labels: {
-                  component: 'A',
                   tag: 'v0',
                   circleId: 'default-circle-id'
                 },
@@ -180,12 +172,19 @@ export const oneComponentVSSpinnakerPipeline: SpinnakerPipeline = {
               {
                 labels: {
                   component: 'A',
+                  tag: 'v2',
+                  circleId: 'circle-id'
+                },
+                name: 'circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
                   tag: 'v1',
                   circleId: 'circle-id2'
                 },
                 name: 'circle-id2'
-              },
-
+              }
             ]
           }
         }
