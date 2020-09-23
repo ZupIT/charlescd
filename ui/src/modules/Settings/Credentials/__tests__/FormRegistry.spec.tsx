@@ -193,18 +193,18 @@ test('Trigger submit on json parse success with GCR form', async () => {
   expect(mockSave).toBeCalledTimes(1);
 });
 
-// test('render Registry form with Docker Hub form', async () => {
-//   const { container, getByTestId } = render(
-//     <FormRegistry onFinish={mockOnFinish}/>
-//   );
+test('render Registry form with Docker Hub form', async () => {
+  const { container, getByTestId } = render(
+    <FormRegistry onFinish={mockOnFinish}/>
+  );
 
-//   await wait();
-//   const radioButton = getByTestId('radio-group-registry-item-DOCKER_HUB');
-//   fireEvent.click(radioButton)
-//   await wait();
-//   expect(container.innerHTML).toMatch('Enter the username');
-//   expect(container.innerHTML).not.toMatch('Enter the address');
-// });
+  await wait();
+  const radioButton = getByTestId('radio-group-registry-item-DOCKER_HUB');
+  fireEvent.click(radioButton)
+  await wait();
+  expect(container.innerHTML).toMatch('Enter the username');
+  expect(container.innerHTML).not.toMatch('Enter the address');
+});
 
 test('execute onSubmit', async () => {
   const { container, getByTestId } = render(

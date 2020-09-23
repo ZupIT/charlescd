@@ -77,11 +77,6 @@ const FormRegistry = ({ onFinish }: Props) => {
       <>
         <Form.Input
           ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
-        <Form.Input
-          ref={register({ required: true })}
           name="region"
           label="Enter the region"
         />
@@ -112,11 +107,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const renderAzureFields = () => {
     return (
       <>
-        <Form.Input
-          ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
         <Form.Input ref={register} name="username" label="Enter the username" />
         <Form.Password
           ref={register({ required: true })}
@@ -130,11 +120,6 @@ const FormRegistry = ({ onFinish }: Props) => {
   const renderGCPFields = () => {
     return (
       <>
-        <Form.Input
-          ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
         <Form.Input
           ref={register({ required: true })}
           name="organization"
@@ -155,22 +140,22 @@ const FormRegistry = ({ onFinish }: Props) => {
     );
   };
 
-  // const renderDockerHubFields = () => {
-  //   return (
-  //     <>
-  //       <Form.Input
-  //         ref={register({ required: true })}
-  //         name="username"
-  //         label="Enter the username"
-  //       />
-  //       <Form.Password
-  //         ref={register({ required: true })}
-  //         name="password"
-  //         label="Enter the password"
-  //       />
-  //     </>
-  //   );
-  // };
+  const renderDockerHubFields = () => {
+    return (
+      <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="username"
+          label="Enter the username"
+        />
+        <Form.Password
+          ref={register({ required: true })}
+          name="password"
+          label="Enter the password"
+        />
+      </>
+    );
+  };
 
   const handleFields = () => {
     if (registryType === 'AWS') {
@@ -179,9 +164,9 @@ const FormRegistry = ({ onFinish }: Props) => {
     if (registryType === 'GCR') {
       return renderGCPFields();
     }
-    // if (registryType === 'DOCKER_HUB') {
-    //   return renderDockerHubFields();
-    // }
+    if (registryType === 'DOCKER_HUB') {
+      return renderDockerHubFields();
+    }
     return renderAzureFields();
   };
 
@@ -195,6 +180,11 @@ const FormRegistry = ({ onFinish }: Props) => {
           ref={register({ required: true })}
           name="name"
           label="Type a name for Registry"
+        />
+        <Form.Input
+          ref={register({ required: true })}
+          name="address"
+          label="Enter the registry url"
         />
         {handleFields()}
       </Styled.Fields>
