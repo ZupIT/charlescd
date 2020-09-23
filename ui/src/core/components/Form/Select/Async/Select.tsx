@@ -40,7 +40,7 @@ const Select = ({
       className={className}
       defaultValue={defaultValue}
       isDisabled={isDisabled}
-      placholder={placeholder}
+      placeholder={placeholder}
       hasError={hasError}
       components={{
         ValueContainer: FloatingLabel,
