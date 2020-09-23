@@ -22,8 +22,7 @@ class CreateUserInteractorImpl @Inject constructor(
         this.keycloakService.createUser(
             user.email,
             user.name,
-            createUserRequest.password,
-            user.root
+            createUserRequest.password
         )
 
         return UserResponse.from(user)
