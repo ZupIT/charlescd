@@ -173,14 +173,6 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                 labels: {
                   component: 'A',
                   tag: 'v0',
-                  circleId: 'default-circle-id'
-                },
-                name: 'default-circle-id'
-              },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
                   circleId: 'circle-id3'
                 },
                 name: 'circle-id3'
@@ -192,7 +184,15 @@ export const oneComponentDiffSubsetsSameTag: SpinnakerPipeline = {
                   circleId: 'circle-id5'
                 },
                 name: 'circle-id5'
-              }
+              },
+              {
+                labels: {
+                  component: 'A',
+                  tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
             ]
           }
         }

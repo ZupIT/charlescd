@@ -74,8 +74,8 @@ const getActiveComponentsSubsets = (circleId: string, activeComponents: Componen
   })
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
-  if (defaultComponent && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
-    subsets.push(getSubsetObject(defaultComponent, circleId))
+  if (defaultComponent && defaultComponent.deployment && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
+    subsets.push(getSubsetObject(defaultComponent, defaultComponent.deployment.circleId))
   }
   return subsets
 }

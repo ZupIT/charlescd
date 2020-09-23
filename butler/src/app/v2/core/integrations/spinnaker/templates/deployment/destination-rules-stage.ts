@@ -80,8 +80,8 @@ const getSubsets = (newComponent: Component, circleId: string, activeComponents:
   })
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
-  if (defaultComponent) {
-    subsets.push(getSubsetObject(defaultComponent, circleId))
+  if (defaultComponent && defaultComponent.deployment) {
+    subsets.push(getSubsetObject(defaultComponent, defaultComponent.deployment?.circleId))
   }
   return subsets
 }
