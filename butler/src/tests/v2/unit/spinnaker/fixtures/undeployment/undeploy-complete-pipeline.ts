@@ -95,17 +95,17 @@ export const completeSpinnakerUndeploymentPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: 'circle-id'
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }
@@ -160,9 +160,9 @@ export const completeSpinnakerUndeploymentPipeline: SpinnakerPipeline = {
                 labels: {
                   component: 'B',
                   tag: 'v0',
-                  circleId: 'circle-id'
+                  circleId: 'default-circle-id'
                 },
-                name: 'circle-id'
+                name: 'default-circle-id'
               }
             ]
           }
@@ -210,17 +210,17 @@ export const completeSpinnakerUndeploymentPipeline: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'B',
-                      subset: 'circle-id'
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': 'circle-id'
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }
