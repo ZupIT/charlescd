@@ -84,7 +84,7 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
                                 gcpRegistryAuth.getUsername(),
                                 gcpRegistryAuth.getJsonKey());
                 break;
-            case DOCKERHUB:
+            case DOCKER_HUB:
                 var dockerHubRegistryAuth = ((DockerHubDockerRegistryAuth) input.getAuth());
                 connectionData =
                         new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(

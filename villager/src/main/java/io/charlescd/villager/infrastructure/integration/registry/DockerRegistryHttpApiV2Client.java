@@ -64,7 +64,7 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
                 this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
                 break;
-            case DOCKERHUB:
+            case DOCKER_HUB:
                 var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
                 this.client.register(new DockerBearerAuthenticator(dockerHubConfig, tagName, "https://auth.docker.io/token", "registry.docker.io"));
                 break;

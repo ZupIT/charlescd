@@ -127,7 +127,7 @@ public class CreateDockerRegistryRequestHandlerTest {
         var result = handler.handle();
         assertThat(result.getName(), is(name));
         assertThat(result.getAddress(), is(address));
-        assertThat(result.getRegistryType(), is(RegistryType.DOCKERHUB));
+        assertThat(result.getRegistryType(), is(RegistryType.DOCKER_HUB));
         assertThat(result.getWorkspaceId(), is(workspaceId));
     }
 }

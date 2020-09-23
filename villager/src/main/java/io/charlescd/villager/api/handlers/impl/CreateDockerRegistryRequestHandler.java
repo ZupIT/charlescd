@@ -98,7 +98,7 @@ public class CreateDockerRegistryRequestHandler implements RequestHandler<Docker
     private void toDockerHub(DockerRegistryConfigurationInput.RegistryConfigurationInputBuilder inputBuilder) {
         var dockerHubRequest = (DockerHubCreateDockerRegistryRequest) request;
         inputBuilder
-                .withRegistryType(RegistryType.DOCKERHUB)
+                .withRegistryType(RegistryType.DOCKER_HUB)
                 .withAuth(new DockerHubDockerRegistryAuth(
                         dockerHubRequest.getOrganization(),
                         dockerHubRequest.getUsername(),

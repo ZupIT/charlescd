@@ -224,7 +224,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
         var input = DockerRegistryConfigurationInput.builder()
                 .withName("Test")
                 .withAddress("http://test.org")
-                .withRegistryType(RegistryType.DOCKERHUB)
+                .withRegistryType(RegistryType.DOCKER_HUB)
                 .withAuth(new DockerHubDockerRegistryAuth("org", "usertest", "userpass"))
                 .withWorkspaceId("6eef9a19-f83e-43d1-8f00-eb8f12d4f116")
                 .withAuthorId("456337ed-7af2-4f0d-9dfb-6e285ad00ee0")
@@ -239,7 +239,7 @@ public class SaveDockerRegistryConfigurationInteractorTest {
 
         assertThat(entityCaptured.id, is(id));
         assertThat(entityCaptured.name, is("Test"));
-        assertThat(entityCaptured.type, is(RegistryType.DOCKERHUB));
+        assertThat(entityCaptured.type, is(RegistryType.DOCKER_HUB));
         assertThat(entityCaptured.authorId, is("456337ed-7af2-4f0d-9dfb-6e285ad00ee0"));
         assertThat(entityCaptured.workspaceId, is("6eef9a19-f83e-43d1-8f00-eb8f12d4f116"));
         assertThat(entityCaptured.createdAt, is(createdAt));
