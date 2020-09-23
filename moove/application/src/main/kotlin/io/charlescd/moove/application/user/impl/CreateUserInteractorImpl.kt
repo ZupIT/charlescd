@@ -67,8 +67,7 @@ class CreateUserInteractorImpl @Inject constructor(
         this.keycloakService.createUser(
             user.email,
             user.name,
-            validPassword,
-            user.root
+            validPassword
         )
     }
 }
