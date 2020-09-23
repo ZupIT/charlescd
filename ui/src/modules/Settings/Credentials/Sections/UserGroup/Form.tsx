@@ -68,6 +68,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   }, [rolesAll]);
 
   useEffect(() => {
+    console.log('getAll');
     getAll();
   }, [getAll]);
 
@@ -76,6 +77,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
   }, [onFinish, responseSave]);
 
   useEffect(() => {
+    console.log('getAllRoles');
     if (form) getAllRoles();
   }, [getAllRoles, form]);
 
@@ -143,13 +145,12 @@ const FormUserGroup = ({ onFinish }: Props) => {
     </>
   );
 
-  const loadUserGroups = debounce(
-    name =>
-      findUserGroupByName(name).then(({ content }: { content: UserGroup[] }) =>
-        reduce(content)
-      ),
-    500
-  );
+  const loadUserGroups = debounce(name => {
+    console.log('name', name);
+    return findUserGroupByName(
+      name
+    ).then(({ content }: { content: UserGroup[] }) => reduce(content));
+  }, 500);
 
   const renderFields = () => (
     <Styled.Fields>

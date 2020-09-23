@@ -15,12 +15,12 @@
  */
 
 import React from 'react';
-import { render, screen, wait, act } from 'unit-test/testUtils';
+import { render, screen, wait, act, fireEvent } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import selectEvent from 'react-select-event';
 import FormUserGroup from '../Form';
 
-test('render Form User Group', async () => {
+test('should select form user group', async () => {
   (fetch as FetchMock)
     .mockResponse(JSON.stringify({
       content: [
@@ -40,3 +40,29 @@ test('render Form User Group', async () => {
 
   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
 });
+
+// test('should find user group by name', async () => {
+//   (fetch as FetchMock)
+//     .mockResponseOnce(JSON.stringify({
+//       content: [
+//         { id: '1', name: 'Maintainer' }
+//       ]
+//     }));
+
+//   const { container } = render(
+//     <FormUserGroup onFinish={jest.fn()} />
+//   );
+  
+//   await wait(() => expect(screen.getByTestId('button-default-add')).toHaveTextContent('Add')); 
+  
+//   const selectInput = container.getElementsByTagName('input')[0];
+//   fireEvent.change(selectInput, { target: { value: "Dev" } });
+
+//   await wait();
+//   screen.debug();
+  
+//   const selectUserGroup = screen.getByText('Select a user group');
+//   await act(async() => selectEvent.select(selectUserGroup, 'Maintainer'));
+
+//   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
+// });
