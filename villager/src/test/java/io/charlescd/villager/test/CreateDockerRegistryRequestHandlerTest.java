@@ -86,13 +86,14 @@ public class CreateDockerRegistryRequestHandlerTest {
         var name = "gcp-registry";
         var address = "https://url";
         var organization = "org";
+        var username = "_json_key";
         var jsonKey = "key";
 
-        var config = new GCPCreateDockerRegistryRequest(name, address, organization, jsonKey);
+        var config = new GCPCreateDockerRegistryRequest(name, address, organization, username, jsonKey);
         assertThat(config.getName(), is(name));
         assertThat(config.getAddress(), is(address));
         assertThat(config.getOrganization(), is(organization));
-        assertThat(config.getUsername(), is("_json_key"));
+        assertThat(config.getUsername(), is(username));
         assertThat(config.getJsonKey(), is(jsonKey));
 
         var workspaceId = "03232654-a863-4e87-b4d0-5536ad0d119f";
