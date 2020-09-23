@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -14,13 +15,4 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
-
-import com.fasterxml.jackson.annotation.JsonProperty
-import org.keycloak.representations.AccessToken
-
-data class CharlesAccessToken(
-    val workspaces: List<WorkspacePermissionsMapping>? = null,
-    @field:[JsonProperty(value = "isRoot")]
-    val isRoot: Boolean? = null
-) : AccessToken()
+export const microfrontendKey = 'isMicrofrontend';

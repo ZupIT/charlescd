@@ -16,24 +16,6 @@
  *
  */
 
-package io.charlescd.moove.domain.repository
+package io.charlescd.moove.domain.exceptions
 
-import io.charlescd.moove.domain.*
-import java.util.*
-
-interface WorkspaceRepository {
-
-    fun save(workspace: Workspace): Workspace
-
-    fun find(id: String): Optional<Workspace>
-
-    fun find(pageRequest: PageRequest, name: String?): Page<Workspace>
-
-    fun update(workspace: Workspace): Workspace
-
-    fun exists(id: String): Boolean
-
-    fun associateUserGroupAndPermissions(workspaceId: String, userGroupId: String, permissions: List<Permission>)
-
-    fun disassociateUserGroupAndPermissions(workspaceId: String, userGroupId: String)
-}
+class ForbiddenException : RuntimeException("Forbidden!")
