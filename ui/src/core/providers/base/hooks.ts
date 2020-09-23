@@ -16,10 +16,14 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
-import { renewToken, login } from '../auth';
-import { getRefreshToken } from 'core/utils/auth';
-import { redirectToLegacy } from 'core/utils/routes';
+import { login, renewToken } from '../auth';
+import { getRefreshToken, isIDMAuthFlow } from 'core/utils/auth';
+import { redirectTo } from 'core/utils/routes';
 import routes from 'core/constants/routes';
+
+export interface ResponseError extends Error {
+  status?: number;
+}
 
 interface FetchData<T> {
   response: T;
@@ -49,15 +53,16 @@ export interface FetchProps {
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
-  fn().catch(async (error: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn().catch(async (error: any) => {
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
-        if (!isLoginRequest) {
+        if (!isLoginRequest && !isIDMAuthFlow()) {
           await renewToken(getRefreshToken())({});
         }
         return fn();
       } catch (error) {
-        redirectToLegacy(routes.login);
+        redirectTo(routes.login);
         return error;
       }
     } else {
@@ -83,14 +88,17 @@ export const useFetchData = <T>(
 ): ((...args: unknown[]) => Promise<T>) => {
   const isLoginRequest = login === req;
 
-  return async (...args: unknown[]) => {
-    const response = await renewTokenByCb(
-      () => req(...args)({}),
-      isLoginRequest
-    );
-    const data = await getResponse(response);
-    return data;
-  };
+  return useCallback(
+    async (...args: unknown[]) => {
+      const response = await renewTokenByCb(
+        () => req(...args)({}),
+        isLoginRequest
+      );
+      const data = await getResponse(response);
+      return data;
+    },
+    [isLoginRequest, req]
+  );
 };
 
 export const useFetch = <T>(
@@ -161,10 +169,10 @@ export type FetchStatuses = 'idle' | 'pending' | 'resolved' | 'rejected';
 export const useFetchStatus = (): FetchStatus => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
 
-  const idle = () => setStatus('idle');
-  const pending = () => setStatus('pending');
-  const resolved = () => setStatus('resolved');
-  const rejected = () => setStatus('rejected');
+  const idle = useCallback(() => setStatus('idle'), []);
+  const pending = useCallback(() => setStatus('pending'), []);
+  const resolved = useCallback(() => setStatus('resolved'), []);
+  const rejected = useCallback(() => setStatus('rejected'), []);
 
   const isIdle = status === 'idle';
   const isPending = status === 'pending';

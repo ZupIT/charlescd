@@ -20,7 +20,7 @@ import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Menu from 'core/components/Menu';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { Link as LinkRouter } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { CirclePaginationItem } from '../interfaces/CirclesPagination';

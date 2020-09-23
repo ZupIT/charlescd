@@ -66,7 +66,7 @@ const Clause = ({
             ref={register}
             name={logicalOperatorName}
             onClick={() => changeOperatorValue(logicalOperatorName, form)}
-            defaultValue={clauses?.logicalOperator.toString()}
+            defaultValue={clauses?.logicalOperator?.toString()}
           />
         </Styled.Operator>
       )}

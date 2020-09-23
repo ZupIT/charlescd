@@ -21,6 +21,7 @@ import { ISpinnakerPipelineConfiguration } from '../../../../app/v1/core/integra
 import expectedPipelineWithoutDeployments from './fixtures/expected-total-pipeline-without-deploy'
 import { CallbackTypeEnum } from '../../../../app/v1/api/notifications/enums/callback-type.enum'
 import istioPipeline, { istioPipelineHostValueAndGateway } from './fixtures/expected-istio-pipeline'
+import { AppConstants } from '../../../../app/v1/core/constants'
 
 it('compiles the pipeline', () => {
   const contract: ISpinnakerPipelineConfiguration = {
@@ -30,9 +31,9 @@ it('compiles the pipeline', () => {
     appName: 'app-name',
     appNamespace: 'app-namespace',
     webhookUri: 'webhook.uri',
-    versions: [{ version: 'v1', versionUrl: '/v1' }],
-    unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
-    circles: [{ destination: { version: 'v3' } }],
+    versions: [{ version: 'v1', versionUrl: '/v1', versionCircle: AppConstants.DEFAULT_CIRCLE_ID }],
+    unusedVersions: [{ version: 'v2', versionUrl: '/v2', versionCircle: AppConstants.DEFAULT_CIRCLE_ID }],
+    circles: [{ destination: { version: 'v1' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
     circleId: 'circle-id',
@@ -53,7 +54,7 @@ it('compiles the pipeline with only undeployment', () => {
     appNamespace: 'app-namespace',
     webhookUri: 'webhook.uri',
     versions: [],
-    unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
+    unusedVersions: [{ version: 'v2', versionUrl: '/v2', versionCircle: 'dummy,circle' }],
     circles: [{ destination: { version: 'v3' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
@@ -75,8 +76,8 @@ it('builds istio pipeline', () => {
     appName: 'app-name',
     appNamespace: 'app-namespace',
     webhookUri: 'webhook.uri',
-    versions: [{ version: 'v1', versionUrl: '/v1' }],
-    unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
+    versions: [{ version: 'v1', versionUrl: '/v1', versionCircle: 'dummy,circle' }],
+    unusedVersions: [{ version: 'v2', versionUrl: '/v2', versionCircle: 'dummy,circle' }],
     circles: [{ destination: { version: 'v3' } }, { destination: { version: 'v4' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',
@@ -97,8 +98,8 @@ it('build istio pipeline by hostValue and gatewayName', () => {
     appName: 'app-name',
     appNamespace: 'app-namespace',
     webhookUri: 'webhook.uri',
-    versions: [{ version: 'v1', versionUrl: '/v1' }],
-    unusedVersions: [{ version: 'v2', versionUrl: '/v2' }],
+    versions: [{ version: 'v1', versionUrl: '/v1', versionCircle: 'dummy,circle' }],
+    unusedVersions: [{ version: 'v2', versionUrl: '/v2', versionCircle: 'dummy,circle' }],
     circles: [{ destination: { version: 'v3' } }, { destination: { version: 'v4' } }],
     githubAccount: 'github-acc',
     helmRepository: 'https://api.github.com/repos/org/repo/contents/',

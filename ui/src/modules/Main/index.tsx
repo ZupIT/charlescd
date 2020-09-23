@@ -20,7 +20,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import Sidebar from 'modules/Main/Sidebar';
 import Footer from 'modules/Main/Footer';
 import { setExpandMode, getExpandMode } from 'core/utils/sidebar';
-import PrivateRoute from 'core/components/PrivateRoute';
+import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { ExpandClick } from './Sidebar/Types';
 import Styled from './styled';
@@ -96,7 +96,6 @@ const Main = () => {
               path={routes.settings}
               component={Settings}
               allowedRoles={['maintenance_write']}
-              allowedRoute
             />
             <PrivateRoute
               path={routes.metrics}

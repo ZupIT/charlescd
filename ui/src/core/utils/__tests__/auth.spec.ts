@@ -23,13 +23,15 @@ test('is logged', () => {
   expect(isLogged()).toBeTruthy();
 });
 
-test('set access-token in cookie ', () => {
+test('set access-token in localstorage', () => {
   setAccessToken('accessToken');
+  const accessToken = localStorage.getItem('access-token');
 
-  expect(document.cookie).toContain('access-token=accessToken');
+  expect(accessToken).toContain('accessToken');
 });
 
 test('set refresh-token in cookie ', () => {
   setRefreshToken('refreshToken');
-  expect(document.cookie).toContain('refresh-token=refreshToken');
+  const refreshToken = localStorage.getItem('refresh-token');
+  expect(refreshToken).toContain('refreshToken');
 });

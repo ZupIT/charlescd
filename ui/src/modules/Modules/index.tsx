@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import PrivateRoute from 'core/components/PrivateRoute';
+import PrivateRoute from 'containers/PrivateRoute';
 import Page from 'core/components/Page';
 import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';

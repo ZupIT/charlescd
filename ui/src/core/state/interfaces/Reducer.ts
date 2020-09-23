@@ -17,7 +17,7 @@
 import { CircleState } from 'modules/Circles/interfaces/CircleState';
 import { CirclesActionTypes } from 'modules/Circles/state/actions';
 import { WorkspaceState } from 'modules/Workspaces/interfaces/WorkspaceState';
-import { WorkspacesActionTypes } from 'modules/Settings/state/actions';
+import { WorkspacesActionTypes } from 'modules/Workspaces/state/actions';
 import { UserState } from 'modules/Users/interfaces/UserState';
 import { UsersActionTypes } from 'modules/Users/state/actions';
 import { NotificationState } from 'core/components/Notification/interfaces/NotificationState';

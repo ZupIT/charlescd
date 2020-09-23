@@ -17,7 +17,7 @@
 import React from 'react';
 import MutationObserver from 'mutation-observer';
 import { FormContext, useForm } from 'react-hook-form';
-import { render, fireEvent } from 'unit-test/testUtils';
+import { render, fireEvent, screen } from 'unit-test/testUtils';
 import Rule, { Props } from '../Rule';
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -35,23 +35,22 @@ const props: Props = {
   }
 }
 
-test('render Rule default component', async () => {
+test('render Rule default component', () => {
   const { result } = renderHook(() => useForm());
   const methods = result.current;
 
-  const { getByTestId, debug } = render(
+  render(
     <FormContext { ...methods }>
       <Rule { ...props } />
     </FormContext>
   );
 
-  expect(getByTestId('segments-rules')).toBeInTheDocument();
-
-  const InputType = getByTestId('input-hidden-input-rule.type')
-  const InputKey = getByTestId('input-text-input-rule.content.key')
-  const WrapperCondition = getByTestId('select-input-rule.content.condition')
-  const InputValue = getByTestId('input-text-input-rule.content.value[0]')
-
+  const InputType = screen.getByTestId('input-hidden-input-rule.type');
+  const InputKey = screen.getByTestId('input-text-input-rule.content.key');
+  const WrapperCondition = screen.getByTestId('select-input-rule.content.condition');
+  const InputValue = screen.getByTestId('input-text-input-rule.content.value[0]');
+  
+  expect(screen.getByTestId('segments-rules')).toBeInTheDocument();
   expect(InputType).toHaveAttribute('type', 'hidden');
   expect(InputKey).toBeInTheDocument();
   expect(InputKey).toHaveAttribute('type', 'text');
@@ -64,13 +63,13 @@ test('render Rule default component with group', async () => {
   const onRemoveRule = jest.fn();
   const methods = result.current;
 
-  const { getByTestId, debug } = render(
+  render(
     <FormContext { ...methods }>
       <Rule { ...props } hasGroup onRemoveRule={onRemoveRule} />
     </FormContext>
   );
 
-  const InputTrash = getByTestId('icon-trash');
+  const InputTrash = await screen.findByTestId('icon-trash');
   expect(InputTrash).toBeInTheDocument();
 
   fireEvent.click(InputTrash);

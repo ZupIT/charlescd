@@ -18,6 +18,7 @@ import Input from './Input';
 import Password from './Password';
 import SearchInput from './SearchInput';
 import Select from './Select';
+import InputAction from './InputAction';
 import InputTitle from './InputTitle';
 import InputGroup from './InputGroup';
 import InputPhoto from './InputPhoto';
@@ -31,6 +32,7 @@ export default {
   Password,
   SearchInput,
   Select,
+  InputAction,
   InputTitle,
   InputGroup,
   InputPhoto,

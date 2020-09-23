@@ -18,5 +18,6 @@ package io.charlescd.moove.application.workspace.response
 
 data class SimpleWorkspaceResponse(
     val id: String,
-    val name: String
+    val name: String,
+    val permissions: List<String>
 )
