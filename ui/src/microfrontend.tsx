@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import org.keycloak.representations.AccessToken
+setPublicPath('@devcraft/charlescd');
 
-data class CharlesAccessToken(
-    val workspaces: List<WorkspacePermissionsMapping>? = null,
-    @field:[JsonProperty(value = "isRoot")]
-    val isRoot: Boolean? = null
-) : AccessToken()
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
+});
+
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;

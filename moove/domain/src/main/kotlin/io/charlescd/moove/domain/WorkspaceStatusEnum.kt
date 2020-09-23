@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+package io.charlescd.moove.domain
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
-data class WorkspacePermissionsMapping(
-    @JsonProperty("id")
-    val id: String,
-    @JsonProperty("permissions")
-    val permissions: List<String>
-)
+enum class WorkspaceStatusEnum {
+    INCOMPLETE,
+    COMPLETE
+}

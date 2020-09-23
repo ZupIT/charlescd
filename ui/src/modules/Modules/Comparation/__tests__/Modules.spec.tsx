@@ -16,15 +16,33 @@
 
 import React from 'react';
 import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
-import Settings from '..';
+import { render, wait, screen } from 'unit-test/testUtils';
+import { FetchMock } from 'jest-fetch-mock/types';
+import ModulesComparation  from '..';
 
 (global as any).MutationObserver = MutationObserver
 
-test('render Settings default component', async () => {
-  const { getByTestId } = render(
-    <Settings />
-  );
+const originalWindow = { ...window };
 
-  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
+beforeEach(() => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: '/modules/compare',
+    search: '?module=3f126d1b-c776-4c26-831d-b9ca148be910' 
+  };
+});
+
+afterEach(() => {
+  window = originalWindow;
+
+});
+
+test('render Modules comparation', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
+  render(<ModulesComparation />);
+  await wait();
+  const tabpanel = screen.queryByTestId('tabpanel-workspace');
+  expect(tabpanel).toBeInTheDocument();
 });
