@@ -1167,7 +1167,7 @@ spec:
     spec:
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.4
+          image: zupcharles/charlescd-butler:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1247,7 +1247,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.4
+          image: zupcharles/charlescd-circle-matcher:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1315,7 +1315,7 @@ spec:
     spec:
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.3.4
+          image: zupcharles/charlescd-compass:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1390,7 +1390,7 @@ spec:
     spec:
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.4
+          image: zupcharles/charlescd-moove:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1471,7 +1471,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.4
+          image: zupcharles/charlescd-ui:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1535,7 +1535,7 @@ spec:
     spec:
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.4
+          image: zupcharles/charlescd-villager:0.3.6
           livenessProbe:
             failureThreshold: 3
             httpGet:
