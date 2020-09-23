@@ -31,6 +31,7 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipe
 	if err != nil {
 		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("ERROR:EXECUTE_V2_DEPLOYMENT") // TODO log info
 		// TODO rollback deployments
+		err := manager.runV2Undeployments(v2Pipeline)
 		// TODO webhook failure
 		return err
 	}
@@ -58,6 +59,17 @@ func (manager Manager) runV2Deployments(v2Pipeline pipelinePKG.V2Pipeline) error
 	return errs.Wait()
 }
 
+func (manager Manager) runV2Undeployments(v2Pipeline pipelinePKG.V2Pipeline) error {
+	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("START:RUN_V2_DEPLOYMENTS")
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, deployment := range v2Pipeline.Deployments {
+		errs.Go(func() error {
+			return manager.executeV2Undeployment(v2Pipeline, deployment)
+		})
+	}
+	return errs.Wait()
+}
+
 func (manager Manager) executeV2Deployment(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment) error {
 	// GET DEPLOYMENT MANIFESTS
 	manifests, err := manager.getManifestsFromV2Deployment(deployment)
@@ -67,6 +79,21 @@ func (manager Manager) executeV2Deployment(v2Pipeline pipelinePKG.V2Pipeline, de
 	}
 	// EXECUTE DEPLOYMENT
 	if err := manager.executeV2DeploymentManifests(v2Pipeline, manifests); err != nil {
+		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
+		return err
+	}
+	return nil
+}
+
+func (manager Manager) executeV2Undeployment(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment) error {
+	// GET DEPLOYMENT MANIFESTS
+	manifests, err := manager.getManifestsFromV2Deployment(deployment)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err}).Error("ERROR:GET_DEPLOYMENT_MANIFESTS")
+		return err
+	}
+	// EXECUTE DEPLOYMENT
+	if err := manager.executeV2UndeploymentManifests(v2Pipeline, manifests); err != nil {
 		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
 		return err
 	}
@@ -133,13 +160,13 @@ func (manager Manager) executeV2DeploymentManifests(v2Pipeline pipelinePKG.V2Pip
 	for _, manifest := range manifests {
 		currentManifest := manifest
 		errs.Go(func() error {
-			return manager.executeV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}))
+			return manager.deployV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}))
 		})
 	}
 	return errs.Wait()
 }
 
-func (manager Manager) executeV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}) error {
+func (manager Manager) deployV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}) error {
 	cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
 	config, err := cloudprovider.GetClient()
 	if err != nil {
@@ -147,6 +174,33 @@ func (manager Manager) executeV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, mani
 	}
 
 	deployment := manager.deploymentMain.NewDeployment("DEPLOY", false, v2Pipeline.Namespace, manifest, config)
+	err = deployment.Do()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (manager Manager) executeV2UndeploymentManifests(v2Pipeline pipelinePKG.V2Pipeline, manifests map[string]interface{}) error {
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, manifest := range manifests {
+		currentManifest := manifest
+		errs.Go(func() error {
+			return manager.undeployV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}))
+		})
+	}
+	return errs.Wait()
+}
+
+func (manager Manager) undeployV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}) error {
+	cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
+	config, err := cloudprovider.GetClient()
+	if err != nil {
+		return err
+	}
+
+	deployment := manager.deploymentMain.NewDeployment("UNDEPLOY", false, v2Pipeline.Namespace, manifest, config)
 	err = deployment.Do()
 	if err != nil {
 		return err
