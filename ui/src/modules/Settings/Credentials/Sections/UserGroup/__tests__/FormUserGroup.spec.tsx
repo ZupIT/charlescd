@@ -43,9 +43,15 @@ test('should select form user group', async () => {
 
 // test('should find user group by name', async () => {
 //   (fetch as FetchMock)
-//     .mockResponseOnce(JSON.stringify({
+//     .mockResponseOnce(JSON.stringify({ // getAll
 //       content: [
 //         { id: '1', name: 'Maintainer' }
+//       ]
+//     }))
+//     .mockResponseOnce(JSON.stringify({})) // getAllRoles
+//     .mockResponseOnce(JSON.stringify({ // loadOptions
+//       content: [
+//         { id: '2', name: 'Developer' }
 //       ]
 //     }));
 
@@ -57,12 +63,11 @@ test('should select form user group', async () => {
   
 //   const selectInput = container.getElementsByTagName('input')[0];
 //   fireEvent.change(selectInput, { target: { value: "Dev" } });
-
-//   await wait();
+//   await wait(() => expect(screen.getByText('Loading...')).not.toBeInTheDocument());
 //   screen.debug();
   
 //   const selectUserGroup = screen.getByText('Select a user group');
-//   await act(async() => selectEvent.select(selectUserGroup, 'Maintainer'));
+//   await act(async() => selectEvent.select(selectUserGroup, 'Developer'));
 
 //   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
 // });
