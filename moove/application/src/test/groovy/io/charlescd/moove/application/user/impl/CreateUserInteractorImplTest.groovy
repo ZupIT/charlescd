@@ -29,7 +29,7 @@ class CreateUserInteractorImplTest extends Specification {
         then:
         1 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
         1 * userRepository.save(_) >> _
-        1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
+        1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
 
         userResponse.name == createUserRequest.name
         userResponse.photoUrl == createUserRequest.photoUrl
@@ -46,7 +46,7 @@ class CreateUserInteractorImplTest extends Specification {
         then:
         1 * userRepository.findByEmail(createUserRequest.email.toLowerCase().trim()) >> Optional.empty()
         1 * userRepository.save(_) >> _
-        1 * keycloakService.createUser(createUserRequest.email.toLowerCase().trim(), createUserRequest.name, createUserRequest.password, false)
+        1 * keycloakService.createUser(createUserRequest.email.toLowerCase().trim(), createUserRequest.name, createUserRequest.password)
 
         userResponse.name == createUserRequest.name
         userResponse.photoUrl == createUserRequest.photoUrl
@@ -65,7 +65,7 @@ class CreateUserInteractorImplTest extends Specification {
         then:
         1 * userRepository.findByEmail(user.email) >> Optional.of(user)
         0 * userRepository.save(_) >> user
-        0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password, false)
+        0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
 
         def exception = thrown(BusinessException)
         exception.errorCode == MooveErrorCode.CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS
