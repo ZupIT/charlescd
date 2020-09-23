@@ -15,22 +15,164 @@
  */
 
 import React from 'react';
-import { render, wait } from 'unit-test/testUtils';
+import { render, wait, screen, act, waitForElement } from 'unit-test/testUtils';
+import { accessTokenKey, clearSession, refreshTokenKey, setAccessToken } from 'core/utils/auth';
+import { getProfileByKey, profileKey } from 'core/utils/profile';
+import { FetchMock } from 'jest-fetch-mock';
+import { MemoryRouter } from 'react-router-dom';
+import { setIsMicrofrontend } from 'App';
 import Routes from '../Routes';
 
-jest.mock('core/constants/routes', () => {
+const originalWindow = window;
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoYXJsZXNjZEB6dXAuY29tLmJyIn0.-FFlThOUdBvFBV36CaUxkzjGujyrF7mViuPhgdURe_k';
+const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY2hhcmxlc2NkIn0.YmbNSxCZZldr6pH1l3q_4SImIYeDaIgJazVEhy134T0';
+const user = {
+  id: '1',
+  name: 'charlescd',
+  email: 'charlescd@zup.com.br',
+  workspaces: [{ id: '1', name: 'workspace' }]
+}
+
+jest.mock('react-cookies', () => {
   return {
-    routes: {
-      baseName: '/',
-      workspaces: '/workspaces',
-      error403: '/error/403',
-      error404: '/error/404'
+    __esModule: true,
+    save: () => {
+      return '';
+    },
+    load: () => {
+      return '';
+    },
+    remove:  (key: string, options: object) => {
+      return `mock remove ${key}`;
     }
   };
 });
 
-test('render default route', async () => {
-  const { container } = render(<Routes />);
+beforeEach(() => {
+  Object.assign(window, originalWindow);
+  const location = window.location
+  delete global.window.location
+  global.window.location = Object.assign({}, location)
 
-  await wait(() => expect(container.innerHTML).toMatch('Error 403.'));
+  clearSession();
+})
+
+test('render default route', async () => {
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  await wait(() => expect(screen.queryByTestId('sidebar')).toBeInTheDocument());
+});
+
+test('render with a valid session token', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  setAccessToken(token);
+
+  (fetch as FetchMock).mockResponse(JSON.stringify({
+    id: '1',
+    name: 'charlescd',
+    email: 'charlescd@zup.com.br',
+    workspaces: [{ id: '1', name: 'workspace' }]
+  }));
+
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+  const sidebar = await waitForElement(() => screen.queryByTestId('sidebar'));
+  expect(sidebar).toBeInTheDocument();
+
+  const accessToken = localStorage.getItem(accessTokenKey);
+  expect(accessToken).toContain(token);
+
+  const email = getProfileByKey('email');
+  expect(email).toMatch(user.email);
+});
+
+test('render with an invalid session token', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  setAccessToken(invalidToken);
+
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  const name = getProfileByKey('name');
+  expect(name).toBeUndefined();
+});
+
+test('render main in microfrontend mode', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '0' } });
+
+  setIsMicrofrontend(true);
+
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  const menuWorkspaces = await waitForElement(() => screen.getByTestId('menu-workspaces'));
+  expect(menuWorkspaces.getAttribute('href')).toContain('/charlescd');
+});
+
+test('render and valid login saving the session', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  window.location = {
+    ...window.location,
+    href: '?code=321',
+    pathname: '/charlescd/workspaces',
+  };
+
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      'access_token': token,
+      'refresh_token': 'opqrstuvwxyz'
+    }))
+    .mockResponseOnce(JSON.stringify({
+      id: '1',
+      name: 'charlescd',
+      email: 'charlescd@zup.com.br',
+      workspaces: [{ id: '1', name: 'workspace' }]
+    }));
+
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  expect(iconError403).toBeInTheDocument();
+  
+  const accessToken = localStorage.getItem(accessTokenKey);
+  expect(accessToken).toContain(token);
+  
+  const refreshToken = localStorage.getItem(refreshTokenKey);
+  expect(refreshToken).toContain('opqrstuvwxyz');
+
+  const email = getProfileByKey('email');
+  expect(email).toMatch(user.email);
+});
+
+test('create user in charles base', async () => {
+  Object.assign(window, { CHARLESCD_ENVIRONMENT: { REACT_APP_IDM: '1' } });
+
+  window.location = {
+    ...window.location,
+    href: '?code=321',
+    pathname: '/charlescd/workspaces',
+  };
+
+  const profile = {
+    id: '1',
+    name: 'charlescd',
+    email: 'charlescd@zup.com.br',
+    workspaces: [{}],
+  };
+
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      'access_token': token,
+      'refresh_token': 'opqrstuvwxyz'
+    }))
+    .mockRejectedValueOnce({ status: 404, json: () => ({ message: 'Error' })})
+    .mockResponse(JSON.stringify(profile));
+
+  render(<MemoryRouter><Routes /></MemoryRouter>);
+
+  const iconError403 = await waitForElement(() => screen.queryByTestId('icon-error-403'));
+  expect(iconError403).toBeInTheDocument();
+
+  const profileBase64 = btoa(JSON.stringify(profile));
+  await wait(() => expect(localStorage.getItem(profileKey)).toEqual(profileBase64));
 });
