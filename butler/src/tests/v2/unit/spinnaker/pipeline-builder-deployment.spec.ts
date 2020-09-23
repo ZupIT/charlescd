@@ -179,7 +179,7 @@ const deploymentWith1ComponentOpenSea: Deployment = {
     createdAt: new Date(),
     deployments: null
   },
-  circleId: 'default-circle',
+  circleId: 'default-circle-id',
   defaultCircle: true,
   createdAt: new Date(),
   components: [
@@ -352,7 +352,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -385,7 +385,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -418,7 +418,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -461,7 +461,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -494,7 +494,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -527,7 +527,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -570,7 +570,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -603,7 +603,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -636,7 +636,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -679,7 +679,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -745,7 +745,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -778,7 +778,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -821,7 +821,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -854,7 +854,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -887,7 +887,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -963,7 +963,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -996,7 +996,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1029,7 +1029,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1105,7 +1105,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1204,7 +1204,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1238,7 +1238,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1380,7 +1380,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1413,7 +1413,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1489,7 +1489,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -1555,7 +1555,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -1588,7 +1588,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -1677,8 +1677,8 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id6',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
-          circleId: 'circle-id',
-          defaultCircle: false,
+          circleId: 'default-circle-id',
+          defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
             id: 'cd-configuration-id',
@@ -1710,7 +1710,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id7',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {
@@ -1743,7 +1743,7 @@ describe('V2 Spinnaker Deployment Pipeline Builder', () => {
           id: 'deployment-id8',
           authorId: 'user-1',
           callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
-          circleId: 'default-circle',
+          circleId: 'default-circle-id',
           defaultCircle: true,
           createdAt: new Date(),
           cdConfiguration: {

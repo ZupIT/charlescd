@@ -15,7 +15,6 @@
  */
 
 import { SpinnakerPipeline } from '../../../../../../app/v2/core/integrations/spinnaker/interfaces'
-import { AppConstants } from '../../../../../../app/v1/core/constants'
 import { DeploymentStatusEnum } from '../../../../../../app/v1/api/deployments/enums'
 import { ExecutionTypeEnum } from '../../../../../../app/v2/api/deployments/enums'
 
@@ -173,19 +172,19 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
               {
                 labels: {
                   component: 'A',
+                  tag: 'v0',
+                  circleId: 'default-circle-id'
+                },
+                name: 'default-circle-id'
+              },
+              {
+                labels: {
+                  component: 'A',
                   tag: 'v1',
                   circleId: 'circle-id2'
                 },
                 name: 'circle-id2'
               },
-              {
-                labels: {
-                  component: 'A',
-                  tag: 'v0',
-                  circleId: AppConstants.DEFAULT_CIRCLE_ID
-                },
-                name: AppConstants.DEFAULT_CIRCLE_ID
-              }
             ]
           }
         }
@@ -363,17 +362,17 @@ export const oneComponentHostnameGateway: SpinnakerPipeline = {
                   {
                     destination: {
                       host: 'A',
-                      subset: AppConstants.DEFAULT_CIRCLE_ID
+                      subset: 'default-circle-id'
                     },
                     headers: {
                       request: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       },
                       response: {
                         set: {
-                          'x-circle-source': AppConstants.DEFAULT_CIRCLE_ID
+                          'x-circle-source': 'default-circle-id'
                         }
                       }
                     }

@@ -21,14 +21,14 @@ import { AppConstants } from '../../../../v1/core/constants'
 
 const IstioManifestsUtils = {
 
-  getDestinationRulesSubsetObject: (component: Component, circleId: string | null): Subset => {
+  getDestinationRulesSubsetObject: (component: Component, circleId: string): Subset => {
     return {
       labels: {
         component: component.name,
         tag: component.imageTag,
-        circleId: CommonTemplateUtils.getCircleId(circleId)
+        circleId: circleId
       },
-      name: CommonTemplateUtils.getCircleId(circleId)
+      name: circleId
     }
   },
 
