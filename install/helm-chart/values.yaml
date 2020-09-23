@@ -7,7 +7,7 @@ butler:
     host: charlescd-postgresql
     port: "5432"
     user: charlescd_butler
-    password: 3f2Yq8R4HhDCnefR
+    password: CHANGEME
     ssl: false
   replicaCount: 1
   image:
@@ -37,7 +37,7 @@ moove:
     host: charlescd-postgresql
     port: 5432
     user: charlescd_moove
-    password: 7Qs2KuM9gYzw48BS
+    password: CHANGEME
   replicaCount: 1
   image:
     name: zupcharles/charlescd-moove:0.3.6
@@ -67,7 +67,7 @@ villager:
     host: charlescd-postgresql
     port: 5432
     user: charlescd_villager
-    password: ZkQ67Lnhs2bM3MPN
+    password: CHANGEME
 
   replicaCount: 1
   image:
@@ -116,7 +116,7 @@ circlematcher:
   redis:
     host: charlescd-redis-master
     port: 6379
-    password: hb2Fj9MGKjBkZ6zV
+    password: CHANGEME
     ssl: false
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
@@ -146,7 +146,7 @@ keycloak:
       - name: DB_USER
         value: "keycloak"
       - name: DB_PASSWORD
-        value: "DCWYW66Mq2ca6w8u"
+        value: "CHANGEME"
       - name: DB_VENDOR
         value: "POSTGRES"
       - name: DB_PORT
@@ -169,15 +169,15 @@ keycloak:
 postgresql:
   enabled: true
   postgresqlUsername: "postgres"
-  postgresqlPassword: "firstpassword"
+  postgresqlPassword: "CHANGEME"
 
 redis:
   enabled: true
-  password: "hb2Fj9MGKjBkZ6zV"
+  password: "CHANGEME"
 
 mongodb:
   enabled: true
-  mongodbRootPassword: "octopipe"
+  mongodbRootPassword: "CHANGEME"
 
 nginx:
   enabled: true
@@ -212,7 +212,7 @@ compass:
     host: charlescd-postgresql
     port: 5432
     user: charlescd_compass
-    password: C1UinUu6N0vc
+    password: CHANGEME
   replicaCount: 1
   envVars:
     - name: DB_SSL

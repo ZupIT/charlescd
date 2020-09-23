@@ -1,6 +1,6 @@
 keycloak:
   replicas: 2
-  password: keycloak
+  password: CHANGEME
 
   podLabels:
     test-label: test-label-value
@@ -28,7 +28,7 @@ keycloak:
     dbVendor: postgres
 
 postgresql:
-  postgresqlPassword: keycloak
+  postgresqlPassword: CHANGEME
   persistence:
     enabled: true
     storageClass: local-path

@@ -84,7 +84,7 @@ keycloak:
 
   ## Password for the initial Keycloak admin user. Applicable only if existingSecret is not set.
   ## If not set, a random 10 characters password will be used
-  password: "firstpassword"
+  password: "CHANGEME"
 
   # Specifies an existing secret to be used for the admin password
   existingSecret: ""
@@ -111,7 +111,7 @@ keycloak:
       - name: DB_USER
         value: "keycloak"
       - name: DB_PASSWORD
-        value: "DCWYW66Mq2ca6w8u"
+        value: "CHANGEME"
       - name: DB_VENDOR
         value: "POSTGRES"
       - name: DB_PORT

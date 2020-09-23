@@ -53,7 +53,7 @@ affinity: {}
 imageCredentials:
   registry: realwavelab.azurecr.io
   username: realwavelab
-  password: /uU7PBzXFzMlvlbQZWTHPAPqj38jfLV1
+  password: CHANGEME
 livenessProbe:
   enabled: true
   failureThreshold: 3
