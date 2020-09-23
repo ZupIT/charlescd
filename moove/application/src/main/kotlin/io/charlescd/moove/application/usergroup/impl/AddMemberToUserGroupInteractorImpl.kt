@@ -24,15 +24,13 @@ import io.charlescd.moove.application.usergroup.AddMemberToUserGroupInteractor
 import io.charlescd.moove.application.usergroup.request.AddMemberToUserGroupRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakService
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class AddMemberToUserGroupInteractorImpl @Inject constructor(
     private val userGroupService: UserGroupService,
-    private val userService: UserService,
-    private val keycloakService: KeycloakService
+    private val userService: UserService
 ) : AddMemberToUserGroupInteractor {
 
     override fun execute(id: String, request: AddMemberToUserGroupRequest) {
@@ -42,9 +40,5 @@ class AddMemberToUserGroupInteractorImpl @Inject constructor(
             throw BusinessException.of(MooveErrorCode.USER_ALREADY_ASSOCIATED)
         }
         userGroupService.addMember(userGroup, member)
-        val workspaceAndPermissionsMapping = userGroupService.findPermissionsFromUserGroupAssociations(userGroup)
-        if (workspaceAndPermissionsMapping.isNotEmpty()) {
-            keycloakService.associatePermissionsToNewUsers(member, workspaceAndPermissionsMapping)
-        }
     }
 }
