@@ -164,6 +164,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         onChange={group => onSelectGroup(group)}
       />
       <Button.Default
+        id="add"
         isLoading={loadingAll}
         isDisabled={isDisableAdd}
         size="EXTRA_SMALL"
@@ -190,6 +191,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
       </Styled.Title>
       {form ? renderForm() : renderFields()}
       <Button.Default
+        id="save"
         type="submit"
         onClick={onSubmit}
         isDisabled={isDisableSave}
