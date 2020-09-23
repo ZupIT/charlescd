@@ -24,7 +24,7 @@ export const getRollbackDeploymentsStage = (
   configuration: CdConfiguration,
   stageId: number,
   evalStageId: number,
-  circleId: string | null
+  circleId: string
 ): Stage => ({
   account: (configuration.configurationData as ISpinnakerConfigurationData).account,
   app: `app-${configuration.id}`,
@@ -55,7 +55,7 @@ export const getRollbackDeploymentsStage = (
         key: 'circleId',
         kind: 'EQUALS',
         values: [
-          CommonTemplateUtils.getCircleId(circleId)
+          circleId
         ]
       }
     ]

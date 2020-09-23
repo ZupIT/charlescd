@@ -62,31 +62,31 @@ export const getUndeploymentDestinationRulesStage = (
   type: 'deployManifest'
 })
 
-const getActiveComponentsSubsets = (circleId: string | null, activeComponents: Component[]): Subset[] => {
+const getActiveComponentsSubsets = (circleId: string, activeComponents: Component[]): Subset[] => {
   const subsets: Subset[] = []
 
   activeComponents.forEach(component => {
     const activeCircleId = component.deployment?.circleId
 
-    if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag)) {
+    if (activeCircleId && activeCircleId !== circleId && !subsets.find(subset => subset.name === component.imageTag) && !component.deployment?.defaultCircle) {
       subsets.push(getSubsetObject(component, activeCircleId))
     }
   })
 
-  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
+  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
   if (defaultComponent && !subsets.find(subset => subset.name === defaultComponent.imageTag)) {
-    subsets.push(getSubsetObject(defaultComponent, null))
+    subsets.push(getSubsetObject(defaultComponent, circleId))
   }
   return subsets
 }
 
-const getSubsetObject = (component: Component, circleId: string | null): Subset => {
+const getSubsetObject = (component: Component, circleId: string): Subset => {
   return {
     labels: {
       component: component.name,
       tag: component.imageTag,
-      circleId: CommonTemplateUtils.getCircleId(circleId)
+      circleId: circleId
     },
-    name: CommonTemplateUtils.getCircleId(circleId)
+    name: circleId
   }
 }

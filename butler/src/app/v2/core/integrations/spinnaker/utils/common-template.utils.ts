@@ -19,12 +19,8 @@ import { AppConstants } from '../../../../../v1/core/constants'
 
 const CommonTemplateUtils = {
   getDeploymentName: (component: Component, circleId: string): string => {
-    return `${component.name}-${component.imageTag}-${CommonTemplateUtils.getCircleId(circleId)}`
+    return `${component.name}-${component.imageTag}-${circleId}`
   },
-
-  getCircleId: (circleId: string): string => {
-    return circleId
-  }
 }
 
 export { CommonTemplateUtils }
