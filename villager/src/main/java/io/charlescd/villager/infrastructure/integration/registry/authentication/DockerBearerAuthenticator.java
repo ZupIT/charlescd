@@ -11,16 +11,16 @@ import javax.ws.rs.client.ClientRequestFilter;
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
     private final DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData config;
-    private final String tagName;
+    private final String imageName;
     private final String authUrl;
     private final String service;
 
     public DockerBearerAuthenticator(DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData config,
-                                     String tagName,
+                                     String imageName,
                                      String authUrl,
                                      String service) {
         this.config = config;
-        this.tagName = tagName;
+        this.imageName = imageName;
         this.authUrl = authUrl;
         this.service = service;
     }
@@ -32,7 +32,7 @@ public final class DockerBearerAuthenticator implements ClientRequestFilter {
                 .append("&scope=repository:")
                 .append(config.organization)
                 .append("/")
-                .append(tagName)
+                .append(imageName)
                 .append(":pull")
                 .toString();
 
