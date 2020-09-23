@@ -158,7 +158,7 @@ const FormUserGroup = ({ onFinish }: Props) => {
         name="userGroup"
         customOption={CustomOption.Icon}
         options={reduce(responseAll as UserGroup[])}
-        label="Select a user group..."
+        label="Select a user group"
         isDisabled={loadingAll}
         loadOptions={loadUserGroups}
         onChange={group => onSelectGroup(group)}
