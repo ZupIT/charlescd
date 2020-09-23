@@ -18,12 +18,12 @@ import { Component } from '../../../../api/deployments/interfaces'
 import { AppConstants } from '../../../../../v1/core/constants'
 
 const CommonTemplateUtils = {
-  getDeploymentName: (component: Component, circleId: string | null): string => {
+  getDeploymentName: (component: Component, circleId: string): string => {
     return `${component.name}-${component.imageTag}-${CommonTemplateUtils.getCircleId(circleId)}`
   },
 
-  getCircleId: (circleId: string | null): string => {
-    return circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
+  getCircleId: (circleId: string): string => {
+    return circleId
   }
 }
 

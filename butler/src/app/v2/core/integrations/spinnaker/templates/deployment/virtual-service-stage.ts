@@ -74,13 +74,12 @@ export const getVirtualServiceStage = (
 
 const getCircleHTTPRules = (newComponent: Component, circleId: string, activeComponents: Component[]): Http[] => {
   const rules: Http[] = []
-
   rules.push(getHTTPCookieCircleRule(newComponent.name, newComponent.imageTag, circleId))
   rules.push(getHTTPHeaderCircleRule(newComponent.name, newComponent.imageTag, circleId))
 
   activeComponents.forEach(component => {
     const activeCircleId = component.deployment?.circleId
-    if (activeCircleId && activeCircleId !== circleId) {
+    if (activeCircleId && activeCircleId !== circleId && !component.deployment?.defaultCircle) {
       rules.push(getHTTPCookieCircleRule(component.name, component.imageTag, activeCircleId))
       rules.push(getHTTPHeaderCircleRule(component.name, component.imageTag, activeCircleId))
     }
@@ -95,7 +94,6 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
 
 const getDefaultCircleHTTPRules = (newComponent: Component, activeComponents: Component[], circleId: string): Http[] => {
   const rules: Http[] = []
-  console.log('here default')
 
   activeComponents.forEach(component => {
     if (component.deployment && !component.deployment?.defaultCircle) {
