@@ -28,7 +28,6 @@ import io.charlescd.moove.domain.repository.RoleRepository
 import io.charlescd.moove.domain.repository.UserGroupRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
-import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -41,18 +40,16 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserGroupRepository userGroupRepository = Mock(UserGroupRepository)
     private RoleRepository roleRepository = Mock(RoleRepository)
-    private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
         associateUserGroupToWorkspaceInteractor = new AssociateUserGroupToWorkspaceInteractorImpl(
                 new WorkspaceService(workspaceRepository, userRepository),
                 new UserGroupService(userGroupRepository),
-                new RoleService(roleRepository),
-                keycloakService
+                new RoleService(roleRepository)
         )
     }
 
-    def 'should link user group to workspace and add 1 permissions on keycloak'() {
+    def 'should link user group to workspace'() {
         given:
         def authorId = "author-id"
         def author = getDummyUser(authorId)
@@ -75,39 +72,6 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userGroupRepository.findById(userGroupId) >> Optional.of(userGroup)
         1 * roleRepository.findById(roleId) >> Optional.of(role)
-        1 * workspaceRepository.findPermissions(workspaceId, member) >> [:]
-        1 * keycloakService.addPermissionsToUser(workspace.id, member, role.permissions)
-        1 * workspaceRepository.associateUserGroupAndPermissions(workspace.id, userGroup.id, role.permissions)
-
-        notThrown()
-
-    }
-
-    def 'should link user group to workspace and add 0 permissions on keycloak (user have the same permissions from other user groups)'() {
-        given:
-        def authorId = "author-id"
-        def author = getDummyUser(authorId)
-        def workspaceId = "workspace-id"
-        def userGroupId = "user-group-id"
-        def roleId = "role-id"
-        def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
-        def role = new Role(roleId, "role-name", "role-description", [permission], LocalDateTime.now())
-        def userId = "user-id"
-        def member = getDummyUser(userId)
-        def userGroup = new UserGroup(userGroupId, "user-group-name", author, LocalDateTime.now(), [member])
-        def workspace = getDummyWorkspace(workspaceId, author, [])
-
-        def associateUserGroupToWorkspaceRequest = new AssociateUserGroupToWorkspaceRequest(userGroupId, roleId)
-
-        when:
-        associateUserGroupToWorkspaceInteractor.execute(workspaceId, associateUserGroupToWorkspaceRequest)
-
-        then:
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
-        1 * userGroupRepository.findById(userGroupId) >> Optional.of(userGroup)
-        1 * roleRepository.findById(roleId) >> Optional.of(role)
-        1 * workspaceRepository.findPermissions(workspaceId, member) >> [userGroupId:[permission]]
-        0 * keycloakService.addPermissionsToUser(workspace.id, member, role.permissions)
         1 * workspaceRepository.associateUserGroupAndPermissions(workspace.id, userGroup.id, role.permissions)
 
         notThrown()
@@ -129,7 +93,6 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.empty()
         0 * userGroupRepository.findById(_)
         0 * roleRepository.findByIds(_)
-        0 * keycloakService.addPermissionsToUser(_, _, _)
         0 * workspaceRepository.associateUserGroupAndPermissions(_, _, _)
 
         def exception = thrown(NotFoundException)
@@ -160,7 +123,6 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         0 * userGroupRepository.findById(_)
         0 * roleRepository.findByIds(_)
-        0 * keycloakService.addPermissionsToUser(_, _, _)
         0 * workspaceRepository.associateUserGroupAndPermissions(_, _, _)
 
         def exception = thrown(BusinessException)
@@ -186,7 +148,6 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * userGroupRepository.findById(userGroupId) >> Optional.empty()
         0 * roleRepository.findByIds(_)
-        0 * keycloakService.addPermissionsToUser(_, _, _)
         0 * workspaceRepository.associateUserGroupAndPermissions(_, _, _)
 
         def exception = thrown(NotFoundException)
