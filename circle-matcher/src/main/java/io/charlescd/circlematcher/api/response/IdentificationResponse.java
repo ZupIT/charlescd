@@ -19,6 +19,7 @@ package io.charlescd.circlematcher.api.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.charlescd.circlematcher.domain.Circle;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,7 +31,7 @@ public class IdentificationResponse {
         this.circles = circles;
     }
 
-    public static IdentificationResponse of(LinkedHashSet<Circle> circles) {
+    public static IdentificationResponse of(Set<Circle> circles) {
         return new IdentificationResponse(from(circles));
     }
 
@@ -38,7 +39,7 @@ public class IdentificationResponse {
         return circles;
     }
 
-    private static LinkedHashSet<CircleResponse> from(LinkedHashSet<Circle> circles) {
+    private static LinkedHashSet<CircleResponse> from(Set<Circle> circles) {
         return circles.stream().map(
                 item -> new CircleResponse(item.getId(), item.getName())
         ).collect(Collectors.toCollection(LinkedHashSet::new));
