@@ -23,6 +23,7 @@ This installation is recommended for who has already setup your infrastructure d
 | moove.enabled                                | enable moove installation                                                   | true                                              |
 | moove.name                                   | name of deployment                                                          | charlescd-moove                                   |
 | moove.allowedOriginHost                      | host of frontend (cors use)                                                 | http://charlescd.example.com                      |
+| moove.internalIdmEnabled                      | enable internal idm (keycloak)                                                 | true                      |
 | moove.database.name                          | database name                                                               | charlescd_moove                                   |
 | moove.database.host                          | host of database                                                            | charlescd-postgresql                              |
 | moove.database.port                          | port of database                                                            | 5432                                              |
