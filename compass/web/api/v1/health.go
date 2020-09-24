@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"compass/internal/plugin"
+	healthPKG "compass/internal/health"
 	"compass/web/api"
 	"net/http"
 
@@ -9,22 +9,24 @@ import (
 )
 
 type HealthApi struct {
-	healthMain plugin.UseCases
+	healthMain healthPKG.UseCases
 }
 
-func (v1 V1) NewHealthApi(healthMain plugin.UseCases) HealthApi {
+func (v1 V1) NewHealthApi(healthMain healthPKG.UseCases) HealthApi {
 	apiPath := "/application-health"
 	healthApi := HealthApi{healthMain}
 	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components", api.HttpValidator(healthApi.components))
-	v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", api.HttpValidator(healthApi.list))
+	// v1.Router.GET(v1.getCompletePath(apiPath)+"/:circleId/components/health", api.HttpValidator(healthApi.com))
 	return healthApi
 }
 
-func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+func (healthApi HealthApi) components(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	projectionType := r.URL.Query().Get("projectionType")
 	metricType := r.URL.Query().Get("metricType")
+	workspaceID := r.Header.Get("x-workspace-id")
+	circleId := ps.ByName("circleId")
 
-	circles, err := healthApi.healthMain.FindAll(category)
+	circles, err := healthApi.healthMain.Components(workspaceID, circleId, projectionType, metricType)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
