@@ -26,9 +26,7 @@ public interface RegistryClient extends Closeable {
     void configureAuthentication(RegistryType type,
                                  DockerRegistryConfigurationEntity.DockerRegistryConnectionData config);
 
-    Optional<Response> getImage(String name,
-                                String tagName,
-                                DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData);
+    Optional<Response> getImage(String name, String tagName);
 
     void closeQuietly();
 
