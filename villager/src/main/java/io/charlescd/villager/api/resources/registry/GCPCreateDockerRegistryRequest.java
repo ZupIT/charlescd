@@ -20,19 +20,27 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotEmpty;
 
-public class AzureCreateDockerRegistryRequest extends CreateDockerRegistryConfigurationRequest {
+public class GCPCreateDockerRegistryRequest extends CreateDockerRegistryConfigurationRequest {
+    private String organization;
     private String username;
-    private String password;
+    private String jsonKey;
 
     @JsonCreator
-    public AzureCreateDockerRegistryRequest(@JsonProperty("name") String name,
-                                            @JsonProperty("address") String address,
-                                            @JsonProperty("username") String username,
-                                            @JsonProperty("password") String password) {
+    public GCPCreateDockerRegistryRequest(@JsonProperty("name") String name,
+                                          @JsonProperty("address") String address,
+                                          @JsonProperty("organization") String organization,
+                                          @JsonProperty("username") String username,
+                                          @JsonProperty("jsonKey") String jsonKey) {
         this.name = name;
         this.address = address;
+        this.organization = organization;
         this.username = username;
-        this.password = password;
+        this.jsonKey = jsonKey;
+    }
+
+    @NotEmpty
+    public String getOrganization() {
+        return organization;
     }
 
     @NotEmpty
@@ -41,7 +49,7 @@ public class AzureCreateDockerRegistryRequest extends CreateDockerRegistryConfig
     }
 
     @NotEmpty
-    public String getPassword() {
-        return password;
+    public String getJsonKey() {
+        return jsonKey;
     }
 }
