@@ -124,11 +124,6 @@ const FormRegistry = ({ onFinish }: Props) => {
       <>
         <Form.Input
           ref={register({ required: true })}
-          name="address"
-          label="Enter the registry url"
-        />
-        <Form.Input
-          ref={register({ required: true })}
           name="organization"
           label="Enter the project id"
         />
