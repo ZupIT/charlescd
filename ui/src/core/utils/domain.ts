@@ -16,6 +16,5 @@
 
 export const getCookieOptions = () => ({
   path: '/',
-  domain: window.location.hostname,
-  secure: true
+  domain: window.location.hostname
 });

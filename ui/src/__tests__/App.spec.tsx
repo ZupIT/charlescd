@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'unit-test/testUtils';
+import { render } from '@testing-library/react';
 import App from '../App';
 
 jest.mock('../Routes', () => {

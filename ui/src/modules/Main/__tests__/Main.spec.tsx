@@ -16,11 +16,10 @@
 
 import React, { Suspense } from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, wait, act, screen } from 'unit-test/testUtils';
+import { render, wait, act } from 'unit-test/testUtils';
 import { dark } from 'core/assets/themes/sidebar';
 import { genMenuId } from 'core/utils/menu';
 import routes from 'core/constants/routes';
-import { renderHook } from "@testing-library/react-hooks";
 import Main, {
   Workspaces,
   Users,
@@ -114,4 +113,14 @@ test('lazy loading', async () => {
   const lazyLoading = getByText('loading...');
 
   expect(lazyLoading).toBeInTheDocument();
+});
+
+test('selecting workspace', async () => {
+  const setState = jest.fn();
+  const useStateMock: any = (state: string) => [state, setState];
+  jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+
+  const wrapper = render(<Main />);
+
+  await wait(() => expect(setState).toHaveBeenCalledTimes(3));
 });

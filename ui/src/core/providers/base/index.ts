@@ -17,7 +17,7 @@
 import defaultsDeep from 'lodash/defaultsDeep';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
-import { checkStatus, getAccessToken } from 'core/utils/auth';
+import { getAccessToken, checkStatus } from 'core/utils/auth';
 import { getWorkspaceId } from 'core/utils/workspace';
 import { getCircleId } from 'core/utils/circle';
 
@@ -36,13 +36,9 @@ export const buildHeaders = (isFormData = false) => ({
 export interface EnvVariables {
   REACT_APP_API_URI: string;
   REACT_APP_AUTH_URI: string;
-  REACT_APP_AUTH_REALM: string;
   REACT_APP_AUTH_CLIENT_ID: string;
-  REACT_APP_IDM_LOGIN_URI?: string;
-  REACT_APP_IDM_LOGOUT_URI?: string;
-  REACT_APP_IDM_REDIRECT_URI?: string;
-  REACT_APP_IDM: string;
-  REACT_APP_WORKSPACE_ID?: string;
+  REACT_APP_AUTH_REALM: string;
+  REACT_APP_WORKSPACE_ID: string;
 }
 
 type GlobalApexCharts = {
