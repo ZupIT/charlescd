@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import { render, screen, wait, act, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
 import selectEvent from 'react-select-event';
 import FormUserGroup from '../Form';
@@ -32,16 +33,16 @@ test('should select form user group', async () => {
     <FormUserGroup onFinish={jest.fn()} />
   );
   
-  await wait(() => expect(screen.getByTestId('button-default-add'))
-    .toHaveTextContent('Add'));
+  const addButton = await screen.findByText('Add');
+  expect(addButton).toBeInTheDocument();
     
   const selectUserGroup = screen.getByText('Select a user group');
-  await act(async() => selectEvent.select(selectUserGroup, 'Maintainer'));
+  await selectEvent.select(selectUserGroup, 'Maintainer');
 
   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
 });
 
-test('should find user group by name', async () => {
+test('should find a user group by name', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify({ // getAll
       content: [
@@ -59,13 +60,14 @@ test('should find user group by name', async () => {
     <FormUserGroup onFinish={jest.fn()} />
   );
   
-  await wait(() => expect(screen.getByTestId('button-default-add')).toHaveTextContent('Add')); 
+  const addButton = await screen.findByText('Add');
+  expect(addButton).toBeInTheDocument();
   
   const selectInput = container.getElementsByTagName('input')[0];
-  fireEvent.change(selectInput, { target: { value: "Dev" } });
-  
-  const selectUserGroup = screen.getByText('Select a user group');
-  await act(async() => selectEvent.select(selectUserGroup, 'Developer'));
+  userEvent.type(selectInput, 'Dev');
+
+  const selectUserGroup = await screen.findByText('Select a user group');
+  await selectEvent.select(selectUserGroup, 'Developer');
 
   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
 });
