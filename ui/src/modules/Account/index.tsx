@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
@@ -41,34 +41,36 @@ import Loader from './Loaders';
 const Account = () => {
   const name = getProfileByKey('name');
   const email = getProfileByKey('email');
-  const [currentUser, setCurrentUser] = useState<User>();
+  const [user, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
-  const { findByEmail, user } = useUser();
-  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const [loadedUser, , loadUser, ,] = useUser();
+  const [, loadingUpdate, updateProfile] = useUpdateProfile();
   const [toggleModal, setToggleModal] = useState(false);
 
+  const refresh = useCallback(() => loadUser(email), [loadUser, email]);
+
   useEffect(() => {
-    if (user) setCurrentUser(user);
-  }, [user]);
+    if (loadedUser) setCurrentUser(loadedUser);
+  }, [loadedUser]);
 
   useEffect(() => {
     if (!loadingUpdate) {
-      findByEmail(email);
+      loadUser(email);
     }
-  }, [loadingUpdate, email, findByEmail]);
+  }, [loadingUpdate, email, loadUser]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(currentUser.id, {
+    updateProfile(user.id, {
       ...profile,
-      email: currentUser.email,
-      photoUrl: currentUser.photoUrl
+      email: user.email,
+      photoUrl: user.photoUrl
     });
   };
 
   useEffect(() => {
-    findByEmail(email);
-  }, [email, findByEmail]);
+    loadUser(email);
+  }, [email, loadUser]);
 
   const renderModal = () =>
     toggleModal && (
@@ -83,10 +85,10 @@ const Account = () => {
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
           <Avatar
-            key={currentUser.photoUrl}
+            key={user.photoUrl}
             size="68px"
-            profile={currentUser}
-            onFinish={() => findByEmail(email)}
+            profile={user}
+            onFinish={refresh}
           />
         </Styled.ContentIcon>
       </Styled.Layer>
@@ -94,15 +96,15 @@ const Account = () => {
         <ContentIcon icon="user">
           {isRoot() ? (
             <InputTitle
-              key={currentUser.name}
+              key={user.name}
               name="name"
               resume
               ref={register({ required: true })}
-              defaultValue={user.name}
+              defaultValue={loadedUser.name}
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">{user.name}</Text.h2>
+            <Text.h2 color="light">{loadedUser.name}</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>
@@ -152,7 +154,7 @@ const Account = () => {
         <Switch>
           <Route exact path={routes.accountProfile}>
             <Styled.Scrollable>
-              {isEmpty(currentUser) ? <Loader.Tab /> : renderPanel()}
+              {isEmpty(user) ? <Loader.Tab /> : renderPanel()}
             </Styled.Scrollable>
           </Route>
           <Route>
