@@ -21,13 +21,26 @@ import THEME from 'core/assets/themes';
 import { Provider as ContextProvider } from 'core/state/store';
 import { rootState, rootReducer } from 'core/state';
 import { setUserAbilities } from 'core/utils/abilities';
+import { microfrontendKey } from 'core/utils/microfrontend';
 import Routes from './Routes';
 
 const currentTheme = 'dark';
 setUserAbilities();
 
-function App() {
+export const setIsMicrofrontend = (isMicrofrontend?: boolean) => {
+  localStorage.setItem(microfrontendKey, isMicrofrontend?.toString());
+};
+
+export const isMicrofrontend = () =>
+  localStorage.getItem(microfrontendKey) === 'true';
+
+interface Props {
+  isMicrofrontend?: boolean;
+}
+
+function App({ isMicrofrontend }: Props) {
   const globalState = useReducer(rootReducer, rootState);
+  setIsMicrofrontend(isMicrofrontend);
 
   return (
     <ContextProvider value={globalState}>
