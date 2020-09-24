@@ -28,11 +28,11 @@ class CreateUserInteractorImpl @Inject constructor(
         val emailFromToken = keycloakService.getEmailByAccessToken(authorization)
         val userFromToken = userRepository.findByEmail(emailFromToken)
 
-        userFromToken.ifPresentOrElse({
-            createUserWhenUserFromTokenExists(it, newUser, password)
-        }, {
+        if (userFromToken.isPresent) {
+            createUserWhenUserFromTokenExists(userFromToken.get(), newUser, password)
+        } else {
             createOwnUser(emailFromToken, newUser, password)
-        })
+        }
 
         return UserResponse.from(newUser)
     }
