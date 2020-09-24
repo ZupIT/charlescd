@@ -58,7 +58,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     includes(pathname, routes.groups);
 
   useEffect(() => {
-    isRoot() && loadWorkspaces();
+    loadWorkspaces();
   }, [loadWorkspaces]);
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
       <Styled.Dropdown icon="workspace">
         {map(workspaces, workspace => (
           <Styled.DropdownItem
-            key={`${workspace.id}-${workspace.name}`}
+            key={workspace.name}
             name={workspace.name}
             icon={getIcon(workspace.id)}
             onSelect={onSelect}

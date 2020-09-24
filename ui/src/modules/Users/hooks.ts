@@ -19,8 +19,7 @@ import {
   useFetch,
   useFetchData,
   useFetchStatus,
-  FetchStatus,
-  ResponseError
+  FetchStatus
 } from 'core/providers/base/hooks';
 import {
   findAllUsers,
@@ -35,86 +34,60 @@ import { toogleNotification } from 'core/components/Notification/state/actions';
 import { LoadedUsersAction } from './state/actions';
 import { UserPagination } from './interfaces/UserPagination';
 import { User, Profile, NewUser, NewPassword } from './interfaces/User';
-import { isIDMAuthFlow } from 'core/utils/auth';
 
-export const useUser = (): {
-  findByEmail: Function;
-  user: User;
-  error: ResponseError;
-} => {
-  const dispatch = useDispatch();
-  const getUserByEmail = useFetchData<User>(findUserByEmail);
-  const [user, setUser] = useState<User>(null);
-  const [error, setError] = useState<ResponseError>(null);
+export const useUser = (): [User, boolean, Function] => {
+  const [userData, getUser] = useFetch<User>(findUserByEmail);
+  const { response, loading } = userData;
 
-  const findByEmail = useCallback(
-    async (email: Pick<User, 'email'>) => {
-      try {
-        if (email) {
-          const res = await getUserByEmail(email);
-
-          setUser(res);
-
-          return res;
-        }
-      } catch (e) {
-        setError(e);
-
-        if (!isIDMAuthFlow()) {
-          dispatch(
-            toogleNotification({
-              text: `Error when trying to fetch the user info for ${email}`,
-              status: 'error'
-            })
-          );
-        }
-      }
+  const loadUser = useCallback(
+    (email: string) => {
+      getUser(email);
     },
-    [dispatch, getUserByEmail]
+    [getUser]
   );
 
-  return {
-    findByEmail,
-    user,
-    error
-  };
+  return [response, loading, loadUser];
 };
 
 export const useCreateUser = (): {
   create: Function;
   newUser: User;
+  status: FetchStatus;
 } => {
   const dispatch = useDispatch();
   const createUser = useFetchData<NewUser>(createNewUser);
+  const status = useFetchStatus();
   const [newUser, setNewUser] = useState(null);
 
-  const create = useCallback(
-    async (user: NewUser) => {
-      try {
-        if (user) {
-          const res = await createUser(user);
+  const create = async (user: NewUser) => {
+    try {
+      if (user) {
+        status.pending();
+        const res = await createUser(user);
 
-          setNewUser(res);
+        setNewUser(res);
+        status.resolved();
 
-          return res;
-        }
-      } catch (e) {
-        const error = await e.json();
-
-        dispatch(
-          toogleNotification({
-            text: error.message,
-            status: 'error'
-          })
-        );
+        return res;
       }
-    },
-    [createUser, dispatch]
-  );
+    } catch (e) {
+      const error = await e.json();
+
+      dispatch(
+        toogleNotification({
+          text: error.message,
+          status: 'error'
+        })
+      );
+
+      status.rejected();
+    }
+  };
 
   return {
     create,
-    newUser
+    newUser,
+    status
   };
 };
 
@@ -155,7 +128,14 @@ export const useDeleteUser = (): [Function, string] => {
   return [delUser, userStatus];
 };
 
-export const useUpdateProfile = (): [boolean, Function, User, string] => {
+export const useUpdateProfile = (): [
+  boolean,
+  boolean,
+  Function,
+  User,
+  string
+] => {
+  const [, profileLoading] = useUser();
   const [status, setStatus] = useState<string>('');
   const [dataUpdate, , update] = useFetch<User>(updateProfileById);
   const { response, loading: updateLoading } = dataUpdate;
@@ -168,7 +148,7 @@ export const useUpdateProfile = (): [boolean, Function, User, string] => {
     [update]
   );
 
-  return [updateLoading, updateProfile, response, status];
+  return [profileLoading, updateLoading, updateProfile, response, status];
 };
 
 export const useResetPassword = (): {

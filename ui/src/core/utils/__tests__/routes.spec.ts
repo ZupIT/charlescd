@@ -15,7 +15,7 @@
  */
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useRouter, getPath, redirectTo } from '../routes';
+import { useRouter, getPath, redirectToLegacy } from '../routes';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockPush = jest.fn();
@@ -68,7 +68,7 @@ test('redirect to legacy', () => {
     pathname: ''
   };
 
-  redirectTo('/test');
+  redirectToLegacy('/test');
 
   expect(window.location.href).toEqual('/test');
 

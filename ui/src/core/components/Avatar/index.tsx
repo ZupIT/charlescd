@@ -32,7 +32,13 @@ export interface Props {
 
 const Avatar = ({ size, profile, onFinish }: Props) => {
   const [url, setUrl] = useState<string>();
-  const [loadingUpdate, updateProfile, , status] = useUpdateProfile();
+  const [
+    loadingProfile,
+    loadingUpdate,
+    updateProfile,
+    ,
+    status
+  ] = useUpdateProfile();
   const { register, handleSubmit } = useForm<Profile>();
   const [editAvatar, setEditAvatar] = useState(false);
 
@@ -90,7 +96,7 @@ const Avatar = ({ size, profile, onFinish }: Props) => {
 
   const renderAvatar = () => (
     <Styled.Wrapper>
-      {status === 'idle' || loadingUpdate
+      {loadingProfile || loadingUpdate
         ? renderLoader()
         : renderProfilePicture()}
     </Styled.Wrapper>
