@@ -25,8 +25,7 @@ public class AzureCreateDockerRegistryRequest extends CreateDockerRegistryConfig
     private String password;
 
     @JsonCreator
-    public AzureCreateDockerRegistryRequest(@JsonProperty("name") String name,
-                                            @JsonProperty("address") String address,
+    public AzureCreateDockerRegistryRequest(@JsonProperty("name") String name, @JsonProperty("address") String address,
                                             @JsonProperty("username") String username,
                                             @JsonProperty("password") String password) {
         this.name = name;

@@ -52,4 +52,3 @@ flags:
 ignore:
   - ".github/**/*"
   - "moove/infrastructure/src/main/kotlin/io/charlescd/moove/infrastructure/repository/**/*"
-  - "villager/src/main/java/io/charlescd/villager/infrastructure/persistence/**/*"

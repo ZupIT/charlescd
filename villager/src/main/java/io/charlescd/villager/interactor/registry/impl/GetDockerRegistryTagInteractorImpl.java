@@ -23,13 +23,18 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.interactor.registry.ComponentTagDTO;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInput;
 import io.charlescd.villager.interactor.registry.GetDockerRegistryTagInteractor;
+import java.io.IOException;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagInteractor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetDockerRegistryTagInteractorImpl.class);
 
     private DockerRegistryConfigurationRepository dockerRegistryConfigurationRepository;
     private RegistryClient registryClient;
@@ -45,8 +50,9 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
     @Override
     public Optional<ComponentTagDTO> execute(GetDockerRegistryTagInput input) {
 
-        var entity =
-                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId())
+        var optionalEntity =
+                this.dockerRegistryConfigurationRepository.findById(input.getArtifactRepositoryConfigurationId());
+        var entity = optionalEntity
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
@@ -58,8 +64,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
         try {
             this.registryClient.configureAuthentication(entity.type, entity.connectionData);
 
-            var response =
-                    this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
+            var response = this.registryClient.getImage(input.getArtifactName(), input.getName());
 
             if (response.isEmpty() || response.get().getStatus() != HttpStatus.SC_OK) {
                 return Optional.empty();
