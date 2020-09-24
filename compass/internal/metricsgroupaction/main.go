@@ -14,6 +14,7 @@ type UseCases interface {
 	Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
 	Update(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error)
 	Delete(id string) error
+	SaveExecution(actionExecution ActionsExecutions) (ActionsExecutions, error)
 }
 
 type Main struct {

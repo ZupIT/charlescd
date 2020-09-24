@@ -51,7 +51,7 @@ func (main Main) FindAll() ([]Plugin, error) {
 
 	files, err := ioutil.ReadDir(configuration.GetConfiguration("PLUGINS_DIR"))
 	if err != nil {
-		logger.Error(util.FindPluginError, "FindAll", err, plugins)
+		logger.Error(util.FindPluginError, "FindAllActions", err, plugins)
 		return []Plugin{}, err
 	}
 

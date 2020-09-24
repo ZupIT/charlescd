@@ -12,11 +12,21 @@ import (
 
 type MetricsGroupAction struct {
 	util.BaseModel
-	Nickname            string          `json:"nickname"`
-	MetricsGroupID      uuid.UUID       `json:"metricsGroupId"`
-	ActionsID           uuid.UUID       `json:"actionsId"`
-	ExecutionParameters json.RawMessage `json:"executionParameters"`
-	DeletedAt           *time.Time      `json:"-"`
+	Nickname            string                `json:"nickname"`
+	MetricsGroupID      uuid.UUID             `json:"metricsGroupId"`
+	ActionsID           uuid.UUID             `json:"actionsId"`
+	ExecutionParameters json.RawMessage       `json:"executionParameters"`
+	DeletedAt           *time.Time            `json:"-"`
+	Configuration       ActionsConfigurations `json:"configuration"`
+	Executions          []ActionsExecutions   `json:"executions"`
+}
+
+type ActionsConfigurations struct {
+	util.BaseModel
+	MetricActionId string     `json:"metricActionId"`
+	Repeatable     bool       `json:"repeatable"`
+	NumberOfCycles int8       `json:"numberOfCycles"`
+	DeletedAt      *time.Time `json:"-"`
 }
 
 func (main Main) Parse(metricsGroupAction io.ReadCloser) (MetricsGroupAction, error) {
@@ -37,14 +47,14 @@ func (main Main) Validate(metricsGroupAction MetricsGroupAction) []util.ErrorUti
 	if metricsGroupAction.Nickname == "" {
 		ers = append(ers, util.ErrorUtil{
 			Field: "nickname",
-			Error: errors.New("Action nickname is required").Error(),
+			Error: errors.New("action nickname is required").Error(),
 		})
 	}
 
 	if metricsGroupAction.ExecutionParameters == nil || len(metricsGroupAction.ExecutionParameters) == 0 {
 		ers = append(ers, util.ErrorUtil{
 			Field: "executionParameters",
-			Error: errors.New("Execution parameters is required").Error(),
+			Error: errors.New("execution parameters is required").Error(),
 		})
 	}
 
@@ -54,7 +64,7 @@ func (main Main) Validate(metricsGroupAction MetricsGroupAction) []util.ErrorUti
 func (main Main) Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
 	db := main.db.Create(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.SaveActionError, "Save", db.Error, metricsGroupAction)
+		logger.Error(util.SaveActionError, "SaveAction", db.Error, metricsGroupAction)
 		return MetricsGroupAction{}, db.Error
 	}
 	return metricsGroupAction, nil
@@ -63,7 +73,7 @@ func (main Main) Save(metricsGroupAction MetricsGroupAction) (MetricsGroupAction
 func (main Main) Update(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, error) {
 	db := main.db.Table("metrics_group_actions").Where("id = ?", id).Update(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.UpdateActionError, "Update", db.Error, metricsGroupAction)
+		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, metricsGroupAction)
 		return MetricsGroupAction{}, db.Error
 	}
 	return metricsGroupAction, nil
@@ -73,7 +83,7 @@ func (main Main) FindById(id string) (MetricsGroupAction, error) {
 	metricsGroupAction := MetricsGroupAction{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindById", db.Error, "Id = "+id)
+		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return MetricsGroupAction{}, db.Error
 	}
 	return metricsGroupAction, nil
@@ -84,7 +94,7 @@ func (main Main) FindAll() ([]MetricsGroupAction, error) {
 
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroupAction)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindAll", db.Error, metricsGroupAction)
+		logger.Error(util.FindActionError, "FindAllActions", db.Error, metricsGroupAction)
 		return []MetricsGroupAction{}, db.Error
 	}
 	return metricsGroupAction, nil
@@ -93,7 +103,7 @@ func (main Main) FindAll() ([]MetricsGroupAction, error) {
 func (main Main) Delete(id string) error {
 	db := main.db.Model(&MetricsGroupAction{}).Where("id = ?", id).Delete(&MetricsGroupAction{})
 	if db.Error != nil {
-		logger.Error(util.DeleteActionError, "Delete", db.Error, "Id = "+id)
+		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
 	return nil
