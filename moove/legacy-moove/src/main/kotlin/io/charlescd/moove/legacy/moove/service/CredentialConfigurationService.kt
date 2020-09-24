@@ -166,6 +166,7 @@ class CredentialConfigurationService(
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = createRegistryConfigRequest.organization,
             jsonKey = createRegistryConfigRequest.jsonKey,
+            username = "_json_key",
             authorId = createRegistryConfigRequest.authorId
         )
     }
@@ -174,9 +175,9 @@ class CredentialConfigurationService(
         createCdConfigRequest: CreateCdConfigurationRequest
     ): CreateDeployCdConfigurationRequest {
 
-        return when {
-            createCdConfigRequest is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
-            createCdConfigRequest is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
+        return when (createCdConfigRequest) {
+            is CreateSpinnakerCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
+            is CreateOctopipeCdConfigurationRequest -> createCdConfigRequest.toDeployRequest()
             else -> throw IllegalArgumentException("Invalid cd configuration type")
         }
     }

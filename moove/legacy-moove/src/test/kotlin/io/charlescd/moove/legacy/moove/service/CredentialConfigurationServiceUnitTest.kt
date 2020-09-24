@@ -344,6 +344,7 @@ class CredentialConfigurationServiceUnitTest {
             address = "address",
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = "organization",
+            username = "_json_key",
             jsonKey = "jsonKey",
             authorId = "authorId"
         )
