@@ -44,13 +44,13 @@ test('should select form user group', async () => {
 
 test('should find a user group by name', async () => {
   (fetch as FetchMock)
-    .mockResponseOnce(JSON.stringify({ // getAll
+    .mockResponseOnce(JSON.stringify({
       content: [
         { id: '1', name: 'Maintainer' }
       ]
     }))
-    .mockResponseOnce(JSON.stringify({})) // getAllRoles
-    .mockResponseOnce(JSON.stringify({ // loadOptions
+    .mockResponseOnce(JSON.stringify({}))
+    .mockResponseOnce(JSON.stringify({
       content: [
         { id: '2', name: 'Developer' }
       ]
