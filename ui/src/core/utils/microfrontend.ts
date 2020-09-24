@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -14,8 +15,4 @@
  * limitations under the License.
  */
 
-export const getCookieOptions = () => ({
-  path: '/',
-  domain: window.location.hostname,
-  secure: true
-});
+export const microfrontendKey = 'isMicrofrontend';
