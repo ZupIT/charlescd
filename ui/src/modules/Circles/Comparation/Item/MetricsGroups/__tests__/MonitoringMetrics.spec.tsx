@@ -50,6 +50,6 @@ test('render Monitoring Metrics with data and toogle chart period', async () => 
   fireEvent.click(screen.getByText('Hour'));
   fireEvent.click(screen.getByText('Day'));
   fireEvent.click(screen.getByText('Week'));
-  fireEvent.click(screen.getByText('Mouth'));
+  fireEvent.click(screen.getByText('Month'));
 
 });
