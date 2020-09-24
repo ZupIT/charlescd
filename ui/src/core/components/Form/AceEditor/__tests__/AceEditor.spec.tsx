@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -15,4 +14,27 @@
  * limitations under the License.
  */
 
-export const microfrontendKey = 'isMicrofrontend';
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import AceEditorForm from '..';
+import {Control, useForm} from 'react-hook-form'
+
+jest.mock('react-hook-form', () => {
+  return {
+    __esModule: true,
+    Controller: ({as}: any) => (
+      <>
+        {as}
+      </>
+    )
+  };
+});
+
+test('renders AceEditor component inside Controller', () => {
+  const controlMock:Control = null;
+  const { container } = render(
+    <AceEditorForm control={controlMock} name="keyName" mode="json" />
+  );
+
+  expect(container.innerHTML).toMatch('ace-editor');
+});

@@ -15,40 +15,24 @@
  */
 
 import React from 'react';
-import { fireEvent, render, screen } from 'unit-test/testUtils';
+import { render } from 'unit-test/testUtils';
 import Avatar from '../';
 
-const profile = {
+const props = {
   size: '10px',
   profile: {
     name: 'Charles',
     email: 'charles@zup.com.br',
+    photoUrl: 'https://photo.png'
   }
 }
 
-test('render Avatar with photo', () => {
-  const props = { ...profile, photoUrl: 'https://photo.png' };
+test('render Avatar', () => {
 
-  render(<Avatar { ...props } />);
+  const { getByTestId } = render(
+    <Avatar {...props} />
+  );
 
-  const element = screen.getByTestId('avatar')
-  expect(element).toHaveStyle(`width: ${profile.size};`);
-});
-
-test('render Avatar with initial name as "profile photo"', () => {
-  render(<Avatar { ...profile } />);
-
-  const element = screen.getByTestId('avatar')
-  expect(element.firstChild.textContent).toBe('C');
-});
-
-test('render Avatar and click to edit', () => {
-  render(<Avatar {...profile} />);
-
-  const element = screen.getByTestId('avatar')
-  expect(element).toHaveStyle(`width: ${profile.size};`);
-
-  const editIcon = screen.getByTestId('icon-edit-avatar');
-  fireEvent.click(editIcon);
-  expect(screen.getByTestId('input-text-photoUrl')).toBeInTheDocument();
+  const element = getByTestId('avatar')
+  expect(element).toHaveStyle(`width: ${props.size};`);
 });
