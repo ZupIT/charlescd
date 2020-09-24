@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.3.7 (24/09/2020)
+- [#524](https://github.com/ZupIT/charlescd/pull/524) Add gcr support
+- [#526](https://github.com/ZupIT/charlescd/pull/526) Fixing variables at workflows.
+- [#525](https://github.com/ZupIT/charlescd/pull/525) Fix cd configuration eks form names
+- [#435](https://github.com/ZupIT/charlescd/pull/435) Building villager native
+- [#455](https://github.com/ZupIT/charlescd/pull/455) Upgrade Quarkus 1.2.1 to 1.7.1 and fix Test for new version of Quarkus
+- [#516](https://github.com/ZupIT/charlescd/pull/516) Issue workspace switch
+- [#522](https://github.com/ZupIT/charlescd/pull/522) Revert "Support to Google Cloud Registry"
+- [#477](https://github.com/ZupIT/charlescd/pull/477) Support to Google Cloud Registry
+- [#481](https://github.com/ZupIT/charlescd/pull/481) Bump node-fetch from 2.6.0 to 2.6.1 in /ui
+- [#506](https://github.com/ZupIT/charlescd/pull/506) Feature change login process
+- [#497](https://github.com/ZupIT/charlescd/pull/497) Using database permissions on moove filter
+- [#466](https://github.com/ZupIT/charlescd/pull/466) Charlescd adapter to work with devcraft
+- [#507](https://github.com/ZupIT/charlescd/pull/507) [DevCraft] IDM and microfrontend feature
+- [#487](https://github.com/ZupIT/charlescd/pull/487) Remove proxy
+- [#480](https://github.com/ZupIT/charlescd/pull/480) Bump node-fetch from 2.6.0 to 2.6.1 in /butler
+- [#510](https://github.com/ZupIT/charlescd/pull/510) CI Update of charts and changelog
+- [#512](https://github.com/ZupIT/charlescd/pull/512) fix-villager-swagger-path
+- [#503](https://github.com/ZupIT/charlescd/pull/503) fix users load workspace
+
+---
+
 ## 0.3.6 (21/09/2020)
 - [#511](https://github.com/ZupIT/charlescd/pull/511) Fix import csv bug
 
