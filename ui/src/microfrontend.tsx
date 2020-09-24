@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-export const getCookieOptions = () => ({
-  path: '/',
-  domain: window.location.hostname,
-  secure: true
+import React from 'react';
+import ReactDOM from 'react-dom';
+import SingleSpaReact from 'single-spa-react';
+import { setPublicPath } from 'systemjs-webpack-interop';
+import App from './App';
+
+setPublicPath('@devcraft/charlescd');
+
+const lifeCycle = SingleSpaReact({
+  React,
+  ReactDOM,
+  rootComponent: App,
+  domElementGetter: () => document.getElementById('content')
 });
+
+export const bootstrap = lifeCycle.bootstrap;
+export const mount = lifeCycle.mount;
+export const unmount = lifeCycle.unmount;
