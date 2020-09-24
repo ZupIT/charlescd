@@ -89,6 +89,16 @@ func (main Main) FindById(id string) (DataSource, error) {
 	return dataSource, nil
 }
 
+func (main Main) FindHealthByWorkspaceId(workspaceID string) (DataSource, error) {
+	dataSource := DataSource{}
+	result := main.db.Where("workspace_id = ? AND health = ?", workspaceID, true).First(&dataSource)
+	if result.Error != nil {
+		logger.Error(util.FindDatasourceError, "FindHealthByWorkspaceId", result.Error, "workspaceID = "+workspaceID)
+		return DataSource{}, result.Error
+	}
+	return dataSource, nil
+}
+
 func (main Main) Delete(id string) error {
 	if _, err := main.FindById(id); err != nil {
 		return err
