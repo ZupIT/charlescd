@@ -177,6 +177,7 @@ class CredentialConfigurationService(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
+            organization = createRegistryConfigRequest.username,
             username = createRegistryConfigRequest.username,
             password = createRegistryConfigRequest.password,
             authorId = createRegistryConfigRequest.authorId

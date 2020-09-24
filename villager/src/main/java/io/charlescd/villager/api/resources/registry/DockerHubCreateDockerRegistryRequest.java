@@ -12,11 +12,12 @@ public class DockerHubCreateDockerRegistryRequest extends CreateDockerRegistryCo
     @JsonCreator
     public DockerHubCreateDockerRegistryRequest(@JsonProperty("name") String name,
                                                 @JsonProperty("address") String address,
+                                                @JsonProperty("organization") String organization,
                                                 @JsonProperty("username") String username,
                                                 @JsonProperty("password") String password) {
         this.name = name;
         this.address = address;
-        this.organization = username;
+        this.organization = organization;
         this.username = username;
         this.password = password;
     }

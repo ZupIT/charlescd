@@ -112,12 +112,14 @@ public class CreateDockerRegistryRequestHandlerTest {
     public void createDockerHubRegistry() {
         var name = "dockerhub-registry";
         var address = "https://url";
+        var organization = "user";
         var username = "user";
         var password = "pass";
 
-        var config = new DockerHubCreateDockerRegistryRequest(name, address, username, password);
+        var config = new DockerHubCreateDockerRegistryRequest(name, address, organization, username, password);
         assertThat(config.getName(), is(name));
         assertThat(config.getAddress(), is(address));
+        assertThat(config.getOrganization(), is(organization));
         assertThat(config.getUsername(), is(username));
         assertThat(config.getPassword(), is(password));
 

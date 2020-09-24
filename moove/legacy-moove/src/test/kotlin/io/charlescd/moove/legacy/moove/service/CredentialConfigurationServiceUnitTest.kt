@@ -395,6 +395,7 @@ class CredentialConfigurationServiceUnitTest {
             name = "name",
             address = "address",
             provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
+            organization = "username",
             username = "username",
             password = "password",
             authorId = "authorId"
