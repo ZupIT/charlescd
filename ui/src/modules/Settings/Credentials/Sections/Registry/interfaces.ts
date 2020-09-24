@@ -34,8 +34,6 @@ export interface Registry {
   username?: string;
   region?: string;
   password?: string;
-  jsonKey?: string;
-  organization?: string;
 }
 
 export interface Response {
