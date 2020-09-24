@@ -18,6 +18,8 @@ package io.charlescd.circlematcher.infrastructure.repository
 
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.charlescd.circlematcher.domain.SegmentationType
 import io.charlescd.circlematcher.utils.TestUtils
 import org.springframework.data.redis.core.Cursor
@@ -35,6 +37,8 @@ class SegmentationRepositoryTest extends Specification {
     private Cursor cursor = Mock(Cursor)
 
     void setup() {
+        objectMapper.registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
         segmentationRepository = new SegmentationRepository(redisTemplate, objectMapper)
     }
 
