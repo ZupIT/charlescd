@@ -1116,17 +1116,17 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@casl/ability@^4.0.7":
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/@casl/ability/-/ability-4.1.5.tgz#c34fedc1fd7e631f9f70309eecd5c8a2a7550ead"
-  integrity sha512-9nY2ear3CfCi0ckRZ4V6dRiy+f0wxj/aUPkelmGrZuEJusXfhROKahRHFGxXf5xLi3oA10SS/vbSLK4RAy7ttA==
+"@casl/ability@4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@casl/ability/-/ability-4.0.7.tgz#b06984ffcbcc5006f7c6327a85746e8200b7c6ff"
+  integrity sha512-VHp9LUnVAxoIf3IXpFes6aoypeW6jmFUPIXR+S9NND1ZPCdOs+XkPaUZIgMVhWcDJBbWcEkrce/nqPjXgjWAFQ==
   dependencies:
-    sift "^13.0.0"
+    sift "^12.0.0"
 
-"@casl/react@^2.1.0":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@casl/react/-/react-2.1.1.tgz#8c2d886e3147a25b99a2cb84860c8cb4f2564dd3"
-  integrity sha512-DD0j40OZ+dcQopRdt1tsFaAZ79a1+HGCuMWvExdRcqrbjXFVnFi2kN26KMtwQuzL5FFiH4fmCADCxW3Xjxhs9A==
+"@casl/react@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@casl/react/-/react-2.1.0.tgz#b1768dd0051256b1416d45b28c0b473270641811"
+  integrity sha512-jm93iDZ6Uc00eyvrjZn8HNs3D4h8kdg0bqer9ZSnMtoP8tWAkyonxK/5F++nvTbpwtxY1DoSVt/xmLTM0YPR9g==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -1913,6 +1913,14 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+
+"@types/single-spa-react@^2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-2.12.0.tgz#3c0968a80bd61c22d506953257a32fa2401f41a3"
+  integrity sha512-FISPO51Cq961trYHVFr30iazZHuGyAJ0ZH38wpxhJdZUZcAwfR7UG19sHGWRtTip1kv3xRshS3L9tzaYcKbPVg==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-dom" "*"
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -8014,10 +8022,15 @@ no-case@^3.0.3:
     lower-case "^2.0.1"
     tslib "^1.10.0"
 
-node-fetch@2.6.0, node-fetch@^2.6.0:
+node-fetch@2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
+
+node-fetch@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-forge@0.9.0:
   version "0.9.0"
@@ -9768,6 +9781,13 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
+react-app-rewired@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-2.1.6.tgz#33ee3076a7f34d6a7c94e649cac67e7c8c580de8"
+  integrity sha512-06flj0kK5tf/RN4naRv/sn6j3sQd7rsURoRLKLpffXDzJeNiAaTNic+0I8Basojy5WDwREkTqrMLewSAjcb13w==
+  dependencies:
+    semver "^5.6.0"
+
 react-beautiful-dnd@^13.0.0:
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.0.0.tgz#f70cc8ff82b84bc718f8af157c9f95757a6c3b40"
@@ -10791,10 +10811,10 @@ side-channel@^1.0.2:
     es-abstract "^1.17.0-next.1"
     object-inspect "^1.7.0"
 
-sift@^13.0.0:
-  version "13.1.10"
-  resolved "https://registry.yarnpkg.com/sift/-/sift-13.1.10.tgz#53cd1052c0214dc5d28a931e154191cce5cba942"
-  integrity sha512-Z+7ZMTbnmbuVCwER+8jNerXpuJNYsxFSZf1er8VUqF/qYdgTrG5o5TQ7C6nWDycQY/TA1pczVCj58y5RvrUtrA==
+sift@^12.0.0:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/sift/-/sift-12.0.1.tgz#ec3b5fda13c569138a71cbeda6acb4395cc7f4be"
+  integrity sha512-TVJzYmDLSSK2Qmps/SG16y1UfgQJAB5urJ6iIYNO7Ok+EHnQu/Mh5p31gCLkFMubtOSqWZk7fycRVcsrupQF+w==
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.3"
@@ -10807,6 +10827,11 @@ simple-swizzle@^0.2.2:
   integrity sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
   dependencies:
     is-arrayish "^0.3.1"
+
+single-spa-react@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.0.1.tgz#7e67eaec47bc15b5716d6af6f83f5fbf1a1c05df"
+  integrity sha512-/toJWeG0UgJuN2CnvP5CewDR5IsH3GYXsFuOQgqkjY3BPUNDFYy4NiEAZE3OWpW+FjTbziGlrqy/u67WtE7tCw==
 
 sisteransi@^1.0.4:
   version "1.0.5"
@@ -11434,6 +11459,11 @@ symbol-tree@^3.2.2:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
+
+systemjs-webpack-interop@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/systemjs-webpack-interop/-/systemjs-webpack-interop-2.1.2.tgz#b575afa4bf3b62c5cb7b49d4ef69eaf7064aacdc"
+  integrity sha512-ddoBSbZUfMxKoaS/JqCv4EHrildEfHrmwYF8R/Co/NqDxdvT6uYIrdHwBvY4PuYk+p9/BwQEtN5M5Aw2IHZdHQ==
 
 table@^5.2.3:
   version "5.4.6"
