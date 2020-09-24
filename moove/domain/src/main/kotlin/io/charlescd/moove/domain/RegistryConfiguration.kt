@@ -46,6 +46,16 @@ data class AWSRegistryConfiguration(
     val region: String
 ) : RegistryConfiguration(name, address, RegistryConfigurationProviderEnum.AWS, hostname, author, workspace)
 
+data class GCPRegistryConfiguration(
+    override val name: String,
+    override val address: String,
+    override val author: User,
+    override val hostname: String,
+    override val workspace: Workspace,
+    val organization: String,
+    val jsonKey: String
+) : RegistryConfiguration(name, address, RegistryConfigurationProviderEnum.GCP, hostname, author, workspace)
+
 enum class RegistryConfigurationProviderEnum {
-    AWS, Azure
+    AWS, Azure, GCP
 }
