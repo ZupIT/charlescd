@@ -22,6 +22,7 @@ import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
 import { WorkspacePagination } from './Workspaces/interfaces/WorkspacePagination';
 import { Workspace } from './Workspaces/interfaces/Workspace';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import { checkStatus } from 'core/utils/auth';
 import {
   loadedWorkspaceAction,
   statusWorkspaceAction
@@ -91,6 +92,8 @@ export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
   useEffect(() => {
     if (!error) {
       dispatch(loadedWorkspacesAction(response));
+    } else {
+      checkStatus(error.status);
     }
   }, [dispatch, response, error]);
 
