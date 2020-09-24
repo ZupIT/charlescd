@@ -16,20 +16,17 @@
 
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { isMicrofrontend } from 'App';
 
 const Page = styled.div`
   display: grid;
   grid-template-areas: 'menu content';
   grid-template-columns: 300px;
-  grid-template-rows: ${() => {
-    return isMicrofrontend() ? 'calc(100vh - 83px)' : '100vh';
-  }};
+  grid-template-rows: 100vh;
 `;
 
 const Menu = styled.div`
   grid-area: menu;
-  padding-top: 63px;
+  padding-top: 70px;
   background-color: ${({ theme }) => theme.menuPage.background};
 `;
 

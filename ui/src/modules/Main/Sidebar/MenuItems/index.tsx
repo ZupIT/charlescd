@@ -33,9 +33,7 @@ interface Props {
 export const MenuItems = ({ isExpanded, expandMenu }: Props) => {
   const subMenuRef = useRef<HTMLDivElement>();
   const activeMenuId = getActiveMenuId();
-  const isActive = (id: string) => {
-    return startsWith(activeMenuId?.replace('-charlescd', ''), id);
-  };
+  const isActive = (id: string) => startsWith(activeMenuId, id);
 
   useOutsideClick(subMenuRef, () => {
     expandMenu({ status: getExpandMode(), persist: false });

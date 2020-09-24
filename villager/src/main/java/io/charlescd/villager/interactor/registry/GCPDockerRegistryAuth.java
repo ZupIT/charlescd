@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import SingleSpaReact from 'single-spa-react';
-import { setPublicPath } from 'systemjs-webpack-interop';
-import App from './App';
+package io.charlescd.villager.interactor.registry;
 
-setPublicPath('@devcraft/charlescd');
+public class GCPDockerRegistryAuth implements DockerRegistryAuth {
+    private String organization;
+    private String username;
+    private String jsonKey;
 
-const lifeCycle = SingleSpaReact({
-  React,
-  ReactDOM,
-  rootComponent: App,
-  domElementGetter: () => document.getElementById('content')
-});
+    public GCPDockerRegistryAuth(String organization, String username, String jsonKey) {
+        this.organization = organization;
+        this.username = username;
+        this.jsonKey = jsonKey;
+    }
 
-export const bootstrap = lifeCycle.bootstrap;
-export const mount = lifeCycle.mount;
-export const unmount = lifeCycle.unmount;
+    public String getOrganization() {
+        return organization;
+    }
+
+    public String getUsername() {
+        return  username;
+    }
+
+    public String getJsonKey() {
+        return jsonKey;
+    }
+}

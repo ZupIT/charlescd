@@ -89,22 +89,22 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
       <>
         <Form.Input
           ref={register({ required: true })}
-          name="configurationData.aswSID"
-          label="ASW SID"
+          name="configurationData.awsSID"
+          label="AWS SID"
         />
         <Form.Input
           ref={register({ required: true })}
-          name="configurationData.aswSecret"
+          name="configurationData.awsSecret"
           label="AWS Secret"
         />
         <Form.Input
           ref={register({ required: true })}
-          name="configurationData.aswRegion"
+          name="configurationData.awsRegion"
           label="AWS Region"
         />
         <Form.Input
           ref={register({ required: true })}
-          name="configurationData.aswClusterName"
+          name="configurationData.awsClusterName"
           label="AWS Cluster Name"
         />
       </>

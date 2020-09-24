@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-export const getCookieOptions = () => ({
-  path: '/',
-  domain: window.location.hostname
+import React from 'react';
+import { render } from 'unit-test/testUtils';
+import AceEditor from '..';
+
+const props = {
+  mode: "json",
+}
+
+test('render Ace Editor', () => {
+
+  const { container } = render(
+    <AceEditor {...props} />
+  );
+
+  expect(container.innerHTML).toMatch("ace-editor")
 });
