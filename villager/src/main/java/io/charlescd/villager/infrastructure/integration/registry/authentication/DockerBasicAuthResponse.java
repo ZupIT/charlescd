@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
-public enum RegistryType {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
+public class DockerBasicAuthResponse {
+    public String token;
+    @JsonProperty("access_token")
+    public String accessToken;
+    @JsonProperty("expires_in")
+    public Integer expiresIn;
+    @JsonProperty("issued_at")
+    public String issuedAt;
 
+    public DockerBasicAuthResponse() { }
 }

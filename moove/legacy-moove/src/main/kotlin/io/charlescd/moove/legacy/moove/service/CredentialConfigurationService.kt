@@ -132,6 +132,7 @@ class CredentialConfigurationService(
             is CreateAzureRegistryConfigurationRequest -> buildAzureRegistryRequest(createRegistryConfigRequest)
             is CreateAWSRegistryConfigurationRequest -> buildAWSRegistryRequest(createRegistryConfigRequest)
             is CreateGCPRegistryConfigurationRequest -> buildGCPRegistryRequest(createRegistryConfigRequest)
+            is CreateDockerHubRegistryConfigurationRequest -> buildDockerHubRegistryRequest(createRegistryConfigRequest)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }
@@ -167,6 +168,18 @@ class CredentialConfigurationService(
             organization = createRegistryConfigRequest.organization,
             jsonKey = createRegistryConfigRequest.jsonKey,
             username = "_json_key",
+            authorId = createRegistryConfigRequest.authorId
+        )
+    }
+
+    private fun buildDockerHubRegistryRequest(createRegistryConfigRequest: CreateDockerHubRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+        return CreateVillagerRegistryConfigurationRequest(
+            name = createRegistryConfigRequest.name,
+            address = createRegistryConfigRequest.address,
+            provider = CreateVillagerRegistryConfigurationProvider.DOCKER_HUB,
+            organization = createRegistryConfigRequest.username,
+            username = createRegistryConfigRequest.username,
+            password = createRegistryConfigRequest.password,
             authorId = createRegistryConfigRequest.authorId
         )
     }
