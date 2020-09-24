@@ -14,10 +14,28 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+package io.charlescd.villager.interactor.registry;
 
-public enum RegistryType {
+public class DockerHubDockerRegistryAuth implements DockerRegistryAuth {
+    private String organization;
+    private String username;
+    private String password;
 
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
+    public DockerHubDockerRegistryAuth(String organization, String username, String password) {
+        this.organization = organization;
+        this.username = username;
+        this.password = password;
+    }
 
+    public String getOrganization() {
+        return organization;
+    }
+
+    public String getUsername() {
+        return  username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
