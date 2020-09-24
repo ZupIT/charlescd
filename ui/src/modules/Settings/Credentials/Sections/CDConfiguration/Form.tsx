@@ -90,7 +90,7 @@ const FormCDConfiguration = ({ onFinish }: Props) => {
         <Form.Input
           ref={register({ required: true })}
           name="configurationData.awsSID"
-          label="ASW SID"
+          label="AWS SID"
         />
         <Form.Input
           ref={register({ required: true })}
