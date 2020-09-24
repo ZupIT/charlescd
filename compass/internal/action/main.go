@@ -7,13 +7,13 @@ import (
 )
 
 type UseCases interface {
-	Validate(action Action) []util.ErrorUtil
-	Parse(action io.ReadCloser) (Action, error)
-	FindById(id string) (Action, error)
-	FindAll() ([]Action, error)
-	Save(action Action) (Action, error)
-	Update(id string, action Action) (Action, error)
-	Delete(id string) error
+	ValidateAction(action Action) []util.ErrorUtil
+	ParseAction(action io.ReadCloser) (Action, error)
+	FindActionById(id string) (Action, error)
+	FindAllActions() ([]Action, error)
+	SaveAction(action Action) (Action, error)
+	UpdateAction(id string, action Action) (Action, error)
+	DeleteAction(id string) error
 }
 
 type Main struct {

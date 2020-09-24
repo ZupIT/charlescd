@@ -72,7 +72,7 @@ func (main Main) Parse(dataSource io.ReadCloser) (DataSource, error) {
 	var newDataSource *DataSource
 	err := json.NewDecoder(dataSource).Decode(&newDataSource)
 	if err != nil {
-		logger.Error(util.GeneralParseError, "Parse", err, dataSource)
+		logger.Error(util.GeneralParseError, "ParseAction", err, dataSource)
 		return DataSource{}, err
 	}
 	return *newDataSource, nil
@@ -101,7 +101,7 @@ func (main Main) FindById(id string) (DataSource, error) {
 	dataSource := DataSource{}
 	result := main.db.Where("id = ?", id).First(&dataSource)
 	if result.Error != nil {
-		logger.Error(util.FindDatasourceError, "FindById", result.Error, "Id = "+id)
+		logger.Error(util.FindDatasourceError, "FindActionById", result.Error, "Id = "+id)
 		return DataSource{}, result.Error
 	}
 	return dataSource, nil
@@ -110,7 +110,7 @@ func (main Main) FindById(id string) (DataSource, error) {
 func (main Main) Delete(id string) error {
 	db := main.db.Model(&DataSource{}).Where("id = ?", id).Delete(&DataSource{})
 	if db.Error != nil {
-		logger.Error(util.DeleteDatasourceError, "Delete", db.Error, "Id = "+id)
+		logger.Error(util.DeleteDatasourceError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
 
@@ -159,14 +159,14 @@ func (main Main) VerifyHealthAtWorkspace(workspaceId string) (bool, error) {
 func (main Main) Save(dataSource DataSource) (DataSource, error) {
 	if dataSource.Health == true {
 		if hasHealth, err := main.VerifyHealthAtWorkspace(dataSource.WorkspaceID.String()); err != nil || hasHealth {
-			logger.Error(util.ExistingDatasourceHealthError, "Save", err, "Health=true")
+			logger.Error(util.ExistingDatasourceHealthError, "SaveAction", err, "Health=true")
 			return DataSource{}, errors.New("Cannot set as Health")
 		}
 	}
 
 	db := main.db.Create(&dataSource)
 	if db.Error != nil {
-		logger.Error(util.DatasourceSaveError, "Save", db.Error, dataSource)
+		logger.Error(util.DatasourceSaveError, "SaveAction", db.Error, dataSource)
 		return DataSource{}, db.Error
 	}
 	return dataSource, nil

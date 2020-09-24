@@ -18,7 +18,7 @@ type Action struct {
 	DeletedAt     *time.Time      `json:"-"`
 }
 
-func (main Main) Parse(action io.ReadCloser) (Action, error) {
+func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
 	var nAction *Action
 
 	err := json.NewDecoder(action).Decode(&nAction)
@@ -30,7 +30,7 @@ func (main Main) Parse(action io.ReadCloser) (Action, error) {
 	return *nAction, nil
 }
 
-func (main Main) Validate(action Action) []util.ErrorUtil {
+func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if action.Nickname == "" {
@@ -52,49 +52,49 @@ func (main Main) Validate(action Action) []util.ErrorUtil {
 	return ers
 }
 
-func (main Main) FindById(id string) (Action, error) {
+func (main Main) FindActionById(id string) (Action, error) {
 	action := Action{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindById", db.Error, "Id = "+id)
+		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
 	}
 	return action, nil
 }
 
-func (main Main) FindAll() ([]Action, error) {
+func (main Main) FindAllActions() ([]Action, error) {
 	var actions []Action
 
 	db := main.db.Set("gorm:auto_preload", true).Find(&actions)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindAll", db.Error, actions)
+		logger.Error(util.FindActionError, "FindAllActions", db.Error, actions)
 		return []Action{}, db.Error
 	}
 	return actions, nil
 }
 
-func (main Main) Save(action Action) (Action, error) {
+func (main Main) SaveAction(action Action) (Action, error) {
 	db := main.db.Create(&action)
 	if db.Error != nil {
-		logger.Error(util.SaveActionError, "Save", db.Error, action)
+		logger.Error(util.SaveActionError, "SaveAction", db.Error, action)
 		return Action{}, db.Error
 	}
 	return action, nil
 }
 
-func (main Main) Update(id string, action Action) (Action, error) {
+func (main Main) UpdateAction(id string, action Action) (Action, error) {
 	db := main.db.Table("actions").Where("id = ?", id).Update(&action)
 	if db.Error != nil {
-		logger.Error(util.UpdateActionError, "Update", db.Error, action)
+		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, action)
 		return Action{}, db.Error
 	}
 	return action, nil
 }
 
-func (main Main) Delete(id string) error {
+func (main Main) DeleteAction(id string) error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {
-		logger.Error(util.DeleteActionError, "Delete", db.Error, "Id = "+id)
+		logger.Error(util.DeleteActionError, "DeleteAction", db.Error, "Id = "+id)
 		return db.Error
 	}
 	return nil

@@ -59,7 +59,7 @@ func (s *ActionSuite) TestParseAction() {
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	res, err := s.repository.Parse(stringReadCloser)
+	res, err := s.repository.ParseAction(stringReadCloser)
 
 	require.NoError(s.T(), err)
 	require.NotNil(s.T(), res)
@@ -69,7 +69,7 @@ func (s *ActionSuite) TestParseActionError() {
 	stringReader := strings.NewReader(``)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	_, err := s.repository.Parse(stringReadCloser)
+	_, err := s.repository.ParseAction(stringReadCloser)
 
 	require.Error(s.T(), err)
 }
@@ -79,7 +79,7 @@ func (s *ActionSuite) TestValidateAction() {
 		BaseModel: util.BaseModel{},
 		DeletedAt: nil,
 	}
-	res := s.repository.Validate(action)
+	res := s.repository.ValidateAction(action)
 
 	require.NotEmpty(s.T(), res)
 }
@@ -94,7 +94,7 @@ func (s *ActionSuite) TestFindByIdAction() {
 	}
 
 	s.DB.Create(&actionStruct)
-	res, err := s.repository.FindById(actionStruct.ID.String())
+	res, err := s.repository.FindActionById(actionStruct.ID.String())
 
 	require.NoError(s.T(), err)
 	actionStruct.BaseModel = res.BaseModel
@@ -102,7 +102,7 @@ func (s *ActionSuite) TestFindByIdAction() {
 }
 
 func (s *ActionSuite) TestFindByIdActionError() {
-	_, err := s.repository.FindById(uuid.New().String())
+	_, err := s.repository.FindActionById(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
@@ -116,7 +116,7 @@ func (s *ActionSuite) TestFindByAllAction() {
 	}
 
 	s.DB.Create(&actionStruct)
-	res, err := s.repository.FindAll()
+	res, err := s.repository.FindAllActions()
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
@@ -124,7 +124,7 @@ func (s *ActionSuite) TestFindByAllAction() {
 
 func (s *ActionSuite) TestFindByAllActionError() {
 	s.DB.Close()
-	_, err := s.repository.FindAll()
+	_, err := s.repository.FindAllActions()
 
 	require.Error(s.T(), err)
 }
@@ -138,7 +138,7 @@ func (s *ActionSuite) TestSaveAction() {
 		DeletedAt:     nil,
 	}
 
-	res, err := s.repository.Save(actionStruct)
+	res, err := s.repository.SaveAction(actionStruct)
 
 	require.NoError(s.T(), err)
 	actionStruct.BaseModel = res.BaseModel
@@ -147,7 +147,7 @@ func (s *ActionSuite) TestSaveAction() {
 
 func (s *ActionSuite) TestSaveActionError() {
 	actionStruct := action.Action{}
-	_, err := s.repository.Save(actionStruct)
+	_, err := s.repository.SaveAction(actionStruct)
 
 	require.Error(s.T(), err)
 }
@@ -162,13 +162,13 @@ func (s *ActionSuite) TestDeleteAction() {
 	}
 
 	s.DB.Create(&actionStruct)
-	err := s.repository.Delete(actionStruct.ID.String())
+	err := s.repository.DeleteAction(actionStruct.ID.String())
 	require.NoError(s.T(), err)
 }
 
 func (s *ActionSuite) TestDeleteActionError() {
 	s.DB.Close()
-	err := s.repository.Delete(uuid.New().String())
+	err := s.repository.DeleteAction(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
@@ -184,7 +184,7 @@ func (s *ActionSuite) TestUpdateAction() {
 	s.DB.Create(&actionStruct)
 
 	actionStruct.Type = "CircleDown"
-	res, err := s.repository.Update(actionStruct.ID.String(), actionStruct)
+	res, err := s.repository.UpdateAction(actionStruct.ID.String(), actionStruct)
 
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), actionStruct.Type, res.Type)
@@ -202,7 +202,7 @@ func (s *ActionSuite) TestUpdateActionError() {
 	s.DB.Create(&actionStruct)
 	actionStruct.Nickname = ""
 	s.DB.Close()
-	_, err := s.repository.Update(actionStruct.ID.String(), actionStruct)
+	_, err := s.repository.UpdateAction(actionStruct.ID.String(), actionStruct)
 
 	require.Error(s.T(), err)
 }

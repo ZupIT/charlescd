@@ -56,7 +56,7 @@ func (main Main) Validate(metricsGroup MetricsGroup) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if metricsGroup.Name == "" {
-		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("Name is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "name", Error: errors.New("name is required").Error()})
 	}
 
 	if metricsGroup.CircleID == uuid.Nil {
@@ -118,7 +118,7 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, error) {
 	var newMetricsGroup *MetricsGroup
 	err := json.NewDecoder(metricsGroup).Decode(&newMetricsGroup)
 	if err != nil {
-		logger.Error(util.GeneralParseError, "Parse", err, metricsGroup)
+		logger.Error(util.GeneralParseError, "ParseAction", err, metricsGroup)
 		return MetricsGroup{}, err
 	}
 	return *newMetricsGroup, nil
@@ -128,7 +128,7 @@ func (main Main) FindAll() ([]MetricsGroup, error) {
 	var metricsGroups []MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
-		logger.Error(util.FindMetricsGroupError, "FindAll", db.Error, metricsGroups)
+		logger.Error(util.FindMetricsGroupError, "FindAllActions", db.Error, metricsGroups)
 		return []MetricsGroup{}, db.Error
 	}
 	return metricsGroups, nil
@@ -228,7 +228,7 @@ func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, error) {
 	db := main.db.Create(&metricsGroup)
 	if db.Error != nil {
-		logger.Error(util.SaveMetricsGroupError, "Save", db.Error, metricsGroup)
+		logger.Error(util.SaveMetricsGroupError, "SaveAction", db.Error, metricsGroup)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
@@ -238,7 +238,7 @@ func (main Main) FindById(id string) (MetricsGroup, error) {
 	metricsGroup := MetricsGroup{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
-		logger.Error(util.FindMetricsGroupError, "FindById", db.Error, "Id = "+id)
+		logger.Error(util.FindMetricsGroupError, "FindActionById", db.Error, "Id = "+id)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil
@@ -257,7 +257,7 @@ func (main Main) FindCircleMetricGroups(circleId string) ([]MetricsGroup, error)
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
 	if db.Error != nil {
-		logger.Error(util.UpdateMetricsGroupError, "Update", db.Error, metricsGroup)
+		logger.Error(util.UpdateMetricsGroupError, "UpdateAction", db.Error, metricsGroup)
 		return MetricsGroup{}, db.Error
 	}
 	return metricsGroup, nil

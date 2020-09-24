@@ -24,18 +24,18 @@ func (v1 V1) NewActionApi(actionMain action.UseCases) ActionApi {
 }
 
 func (actionApi ActionApi) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
-	act, err := actionApi.actionMain.Parse(r.Body)
+	act, err := actionApi.actionMain.ParseAction(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	if err := actionApi.actionMain.Validate(act); len(err) > 0 {
+	if err := actionApi.actionMain.ValidateAction(act); len(err) > 0 {
 		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save action")
 		return
 	}
 
-	createdCircle, err := actionApi.actionMain.Save(act)
+	createdCircle, err := actionApi.actionMain.SaveAction(act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -46,18 +46,18 @@ func (actionApi ActionApi) Create(w http.ResponseWriter, r *http.Request, _ http
 
 func (actionApi ActionApi) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
-	act, err := actionApi.actionMain.Parse(r.Body)
+	act, err := actionApi.actionMain.ParseAction(r.Body)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	if err := actionApi.actionMain.Validate(act); len(err) > 0 {
+	if err := actionApi.actionMain.ValidateAction(act); len(err) > 0 {
 		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not update action")
 		return
 	}
 
-	updatedAction, err := actionApi.actionMain.Update(id, act)
+	updatedAction, err := actionApi.actionMain.UpdateAction(id, act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -67,7 +67,7 @@ func (actionApi ActionApi) Update(w http.ResponseWriter, r *http.Request, ps htt
 }
 
 func (actionApi ActionApi) List(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, workspaceId string) {
-	actions, err := actionApi.actionMain.FindAll()
+	actions, err := actionApi.actionMain.FindAllActions()
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -79,7 +79,7 @@ func (actionApi ActionApi) List(w http.ResponseWriter, _ *http.Request, _ httpro
 func (actionApi ActionApi) FindById(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
 
-	act, err := actionApi.actionMain.FindById(id)
+	act, err := actionApi.actionMain.FindActionById(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -89,7 +89,7 @@ func (actionApi ActionApi) FindById(w http.ResponseWriter, r *http.Request, ps h
 }
 
 func (actionApi ActionApi) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	err := actionApi.actionMain.Delete(ps.ByName("id"))
+	err := actionApi.actionMain.DeleteAction(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return

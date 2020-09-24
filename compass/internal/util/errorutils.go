@@ -81,6 +81,10 @@ const (
 	DeleteActionError = "DELETE_ACTION_ERROR"
 )
 
+const (
+	SaveActionExecutionError = "SAVE_ACTION_EXECUTION_ERROR"
+)
+
 type ErrorUtil struct {
 	Field string `json:"field"`
 	Error string `json:"error"`
