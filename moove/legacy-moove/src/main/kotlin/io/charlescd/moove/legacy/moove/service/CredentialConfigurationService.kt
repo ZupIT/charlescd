@@ -172,7 +172,9 @@ class CredentialConfigurationService(
         )
     }
 
-    private fun buildDockerHubRegistryRequest(createRegistryConfigRequest: CreateDockerHubRegistryConfigurationRequest): CreateVillagerRegistryConfigurationRequest {
+    private fun buildDockerHubRegistryRequest(
+        createRegistryConfigRequest: CreateDockerHubRegistryConfigurationRequest
+    ): CreateVillagerRegistryConfigurationRequest {
         return CreateVillagerRegistryConfigurationRequest(
             name = createRegistryConfigRequest.name,
             address = createRegistryConfigRequest.address,
