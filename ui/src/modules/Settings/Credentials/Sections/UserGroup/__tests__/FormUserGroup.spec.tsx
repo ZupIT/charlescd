@@ -41,33 +41,31 @@ test('should select form user group', async () => {
   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
 });
 
-// test('should find user group by name', async () => {
-//   (fetch as FetchMock)
-//     .mockResponseOnce(JSON.stringify({ // getAll
-//       content: [
-//         { id: '1', name: 'Maintainer' }
-//       ]
-//     }))
-//     .mockResponseOnce(JSON.stringify({})) // getAllRoles
-//     .mockResponseOnce(JSON.stringify({ // loadOptions
-//       content: [
-//         { id: '2', name: 'Developer' }
-//       ]
-//     }));
+test('should find user group by name', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({ // getAll
+      content: [
+        { id: '1', name: 'Maintainer' }
+      ]
+    }))
+    .mockResponseOnce(JSON.stringify({})) // getAllRoles
+    .mockResponseOnce(JSON.stringify({ // loadOptions
+      content: [
+        { id: '2', name: 'Developer' }
+      ]
+    }));
 
-//   const { container } = render(
-//     <FormUserGroup onFinish={jest.fn()} />
-//   );
+  const { container } = render(
+    <FormUserGroup onFinish={jest.fn()} />
+  );
   
-//   await wait(() => expect(screen.getByTestId('button-default-add')).toHaveTextContent('Add')); 
+  await wait(() => expect(screen.getByTestId('button-default-add')).toHaveTextContent('Add')); 
   
-//   const selectInput = container.getElementsByTagName('input')[0];
-//   fireEvent.change(selectInput, { target: { value: "Dev" } });
-//   await wait(() => expect(screen.getByText('Loading...')).not.toBeInTheDocument());
-//   screen.debug();
+  const selectInput = container.getElementsByTagName('input')[0];
+  fireEvent.change(selectInput, { target: { value: "Dev" } });
   
-//   const selectUserGroup = screen.getByText('Select a user group');
-//   await act(async() => selectEvent.select(selectUserGroup, 'Developer'));
+  const selectUserGroup = screen.getByText('Select a user group');
+  await act(async() => selectEvent.select(selectUserGroup, 'Developer'));
 
-//   expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
-// });
+  expect(screen.getByTestId('button-default-add')).not.toBeDisabled();
+});

@@ -145,8 +145,10 @@ const FormUserGroup = ({ onFinish }: Props) => {
 
   const loadUserGroups = debounce(
     name =>
-      findUserGroupByName(name).then(({ content }: { content: UserGroup[] }) =>
-        reduce(content)
+      findUserGroupByName(name).then(
+        ({ content }: { content: UserGroup[] }) => {
+          return reduce(content);
+        }
       ),
     500
   );
