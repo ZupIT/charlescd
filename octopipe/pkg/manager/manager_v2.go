@@ -17,111 +17,118 @@
 package manager
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
+	"net/http"
 	pipelinePKG "octopipe/pkg/pipeline"
 )
 
-func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("START:EXECUTE_V2_PIPELINE")
+type V2CallbackData struct {
+	Type	string `json:"type"`
+	Status	string `json:"status"`
+}
 
+const (
+	DEPLOYMENT_CALLBACK = "DEPLOYMENT"
+	UNDEPLOYMENT_CALLBACK = "UNDEPLOYMENT"
+	SUCCEEDED_STATUS = "SUCCEEDED"
+	FAILED_STATUS = "FAILED"
+	DEPLOY_ACTION = "DEPLOY"
+	UNDEPLOY_ACTION = "UNDEPLOY"
+)
+
+func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipeline, incomingCircleId string) {
 	err := manager.runV2Deployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("ERROR:EXECUTE_V2_DEPLOYMENT") // TODO log info
-		// TODO rollback deployments
-		err := manager.runV2Undeployments(v2Pipeline)
-		// TODO webhook failure
-		return err
+		manager.runV2Rollbacks(v2Pipeline)
+		manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 	}
-
 	err = manager.runV2ProxyDeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("ERROR:EXECUTE_V2_PROXY_DEPLOYMENT") // TODO log info
-		// TODO webhook failure
-		return err
+		manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
 	}
-
-	// TODO webhook success
-	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_PIPELINE")
-	return nil
+	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
 }
 
 func (manager Manager) runV2Deployments(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("START:RUN_V2_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, deployment := range v2Pipeline.Deployments {
 		errs.Go(func() error {
-			return manager.executeV2Deployment(v2Pipeline, deployment)
+			return manager.executeV2HelmManifests(v2Pipeline, deployment, DEPLOY_ACTION)
 		})
 	}
 	return errs.Wait()
 }
 
-func (manager Manager) runV2Undeployments(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("START:RUN_V2_DEPLOYMENTS")
+func (manager Manager) runV2Rollbacks(v2Pipeline pipelinePKG.V2Pipeline) error {
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, deployment := range v2Pipeline.Deployments {
+	for _, rollbackDeployment := range v2Pipeline.RollbackDeployments {
 		errs.Go(func() error {
-			return manager.executeV2Undeployment(v2Pipeline, deployment)
+			return manager.executeV2HelmManifests(v2Pipeline, rollbackDeployment, UNDEPLOY_ACTION)
 		})
 	}
 	return errs.Wait()
-}
-
-func (manager Manager) executeV2Deployment(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment) error {
-	// GET DEPLOYMENT MANIFESTS
-	manifests, err := manager.getManifestsFromV2Deployment(deployment)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err}).Error("ERROR:GET_DEPLOYMENT_MANIFESTS")
-		return err
-	}
-	// EXECUTE DEPLOYMENT
-	if err := manager.executeV2DeploymentManifests(v2Pipeline, manifests); err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
-		return err
-	}
-	return nil
-}
-
-func (manager Manager) executeV2Undeployment(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment) error {
-	// GET DEPLOYMENT MANIFESTS
-	manifests, err := manager.getManifestsFromV2Deployment(deployment)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err}).Error("ERROR:GET_DEPLOYMENT_MANIFESTS")
-		return err
-	}
-	// EXECUTE DEPLOYMENT
-	if err := manager.executeV2UndeploymentManifests(v2Pipeline, manifests); err != nil {
-		log.WithFields(log.Fields{"function": "executeV2Deployment", "error": err.Error()}).Error("ERROR:EXECUTE_DEPLOYMENT_MANIFEST")
-		return err
-	}
-	return nil
 }
 
 func (manager Manager) runV2ProxyDeployments(v2Pipeline pipelinePKG.V2Pipeline) error {
-	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("START:RUN_V2_PROXY_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		errs.Go(func() error {
-			return manager.executeV2DeploymentManifests(v2Pipeline, proxyDeployment)
+			return manager.executeV2Manifests(v2Pipeline, proxyDeployment, "DEPLOY")
 		})
 	}
 	return errs.Wait()
 }
 
-func (manager Manager) getManifestsFromV2Deployment(deployment pipelinePKG.V2Deployment) (map[string]interface{}, error) {
-	manifests := map[string]interface{}{}
+func (manager Manager) executeV2HelmManifests(v2Pipeline pipelinePKG.V2Pipeline, deployment pipelinePKG.V2Deployment, action string) error {
+	manifests, err := manager.getV2HelmManifests(deployment)
+	if err != nil {
+		return err
+	}
+	err = manager.executeV2Manifests(v2Pipeline, manifests, action)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
-	log.WithFields(log.Fields{"function": "executeStep"}).Info("Step has a template")
+func (manager Manager) executeV2Manifests(v2Pipeline pipelinePKG.V2Pipeline, manifests map[string]interface{}, action string) error {
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, manifest := range manifests {
+		currentManifest := manifest
+		errs.Go(func() error {
+			return manager.applyV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}), action)
+		})
+	}
+	return errs.Wait()
+}
+
+func (manager Manager) applyV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}, action string) error {
+	cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
+	config, err := cloudprovider.GetClient()
+	if err != nil {
+		return err
+	}
+
+	deployment := manager.deploymentMain.NewDeployment(action, false, v2Pipeline.Namespace, manifest, config)
+	err = deployment.Do()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (manager Manager) getV2HelmManifests(deployment pipelinePKG.V2Deployment) (map[string]interface{}, error) {
+	manifests := map[string]interface{}{}
 	manifests, err := manager.getManifestsbyV2Template(deployment)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(manifests) <= 0 {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Not found manifests for execution")
 		return nil, errors.New("Not found manifests for execution")
 	}
 
@@ -135,7 +142,6 @@ func (manager *Manager) getManifestsbyV2Template(deployment pipelinePKG.V2Deploy
 	}
 	manifests, err := deployment.HelmConfig.GetManifests(templateContent, valueContent)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot render manifest by template. Error: " + err.Error())
 		return nil, err
 	}
 	return manifests, nil
@@ -144,67 +150,37 @@ func (manager *Manager) getManifestsbyV2Template(deployment pipelinePKG.V2Deploy
 func (manager Manager) getFilesFromV2Repository(deployment pipelinePKG.V2Deployment) (string, string, error) {
 	repository, err := manager.repositoryMain.NewRepository(deployment.HelmRepositoryConfig)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error(err.Error())
 		return "", "", err
 	}
 	templateContent, valueContent, err := repository.GetTemplateAndValueByName(deployment.ComponentName)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
 		return "", "", err
 	}
 	return templateContent, valueContent, nil
 }
 
-func (manager Manager) executeV2DeploymentManifests(v2Pipeline pipelinePKG.V2Pipeline, manifests map[string]interface{}) error {
-	errs, _ := errgroup.WithContext(context.Background())
-	for _, manifest := range manifests {
-		currentManifest := manifest
-		errs.Go(func() error {
-			return manager.deployV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}))
-		})
+func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string, status string, incomingCircleId string) {
+	client := http.Client{}
+	callbackData := V2CallbackData{ callbackType, status }
+	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId)
+	if err != nil {
+		return
 	}
-	return errs.Wait()
+	_, err = client.Do(request)
+	if err != nil {
+		return
+	}
 }
 
-func (manager Manager) deployV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}) error {
-	cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
-	config, err := cloudprovider.GetClient()
+func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2CallbackData, incomingCircleId string) (*http.Request, error) {
+	data, err := json.Marshal(payload)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	deployment := manager.deploymentMain.NewDeployment("DEPLOY", false, v2Pipeline.Namespace, manifest, config)
-	err = deployment.Do()
+	request, err := http.NewRequest("POST", callbackUrl, bytes.NewBuffer(data))
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return nil
-}
-
-func (manager Manager) executeV2UndeploymentManifests(v2Pipeline pipelinePKG.V2Pipeline, manifests map[string]interface{}) error {
-	errs, _ := errgroup.WithContext(context.Background())
-	for _, manifest := range manifests {
-		currentManifest := manifest
-		errs.Go(func() error {
-			return manager.undeployV2Manifest(v2Pipeline, currentManifest.(map[string]interface{}))
-		})
-	}
-	return errs.Wait()
-}
-
-func (manager Manager) undeployV2Manifest(v2Pipeline pipelinePKG.V2Pipeline, manifest map[string]interface{}) error {
-	cloudprovider := manager.cloudproviderMain.NewCloudProvider(v2Pipeline.ClusterConfig)
-	config, err := cloudprovider.GetClient()
-	if err != nil {
-		return err
-	}
-
-	deployment := manager.deploymentMain.NewDeployment("UNDEPLOY", false, v2Pipeline.Namespace, manifest, config)
-	err = deployment.Do()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	request.Header.Set("x-circle-id", incomingCircleId)
+	return request, nil
 }

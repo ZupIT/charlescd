@@ -56,8 +56,7 @@ func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
 func (api *PipelineAPI) executeV2Deployment(ctx *gin.Context) {
 	var v2Pipeline pipeline.V2Pipeline
 	ctx.Bind(&v2Pipeline)
-
-	api.manager.ExecuteV2DeploymentPipeline(v2Pipeline)
-
+	incomingCircleId := ctx.GetHeader("x-circle-id")
+	api.manager.ExecuteV2DeploymentPipeline(v2Pipeline, incomingCircleId)
 	ctx.JSON(204, nil)
 }

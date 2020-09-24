@@ -84,11 +84,12 @@ type V2Deployment struct {
 }
 
 type V2Pipeline struct {
-	Namespace 		 string						 `json:"namespace"`
-	Deployments 	 []V2Deployment				 `json:"deployments"`
-	ProxyDeployments []map[string]interface{}    `json:"proxyDeployments"`
-	CallbackUrl   	 string           			 `json:"callbackUrl"`
-	ClusterConfig    cloudprovider.Cloudprovider `json:"clusterConfig"`
+	Namespace 		 	string						`json:"namespace"`
+	Deployments 	 	[]V2Deployment				`json:"deployments"`
+	RollbackDeployments	[]V2Deployment				`json:"rollbackDeployments"`
+	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
+	CallbackUrl   		string           			`json:"callbackUrl"`
+	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
 }
 
 func (main PipelineMain) NewPipeline() Pipeline {

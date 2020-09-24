@@ -33,7 +33,7 @@ type Payload struct {
 
 type UseCases interface {
 	ExecuteV1Pipeline(pipeline pipelinePKG.Pipeline)
-	ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipeline) error
+	ExecuteV2DeploymentPipeline(v2Pipeline pipelinePKG.V2Pipeline, incomingCircleId string)
 }
 
 type Manager struct {
