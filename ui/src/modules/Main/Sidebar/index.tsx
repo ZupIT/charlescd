@@ -18,6 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import find from 'lodash/find';
 import map from 'lodash/map';
+import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 import { logout, isRoot } from 'core/utils/auth';
 import routes from 'core/constants/routes';
@@ -50,11 +51,11 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const [workspaces, setWorkspaces] = useState<Workspace[]>();
   const navigate = useHistory();
   const pathname = navigate.location.pathname;
-  const menu =
-    pathname === routes.workspaces ||
-    pathname === routes.users ||
-    pathname === routes.account ||
-    pathname === routes.groups;
+  const isRootMenu =
+    includes(pathname, routes.workspaces) ||
+    includes(pathname, routes.users) ||
+    includes(pathname, routes.account) ||
+    includes(pathname, routes.groups);
 
   useEffect(() => {
     isRoot() && loadWorkspaces();
@@ -89,7 +90,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
     getWorkspaceId() === workspaceId && 'checkmark';
 
   const renderDropdown = () =>
-    !menu && (
+    !isRootMenu && (
       <Styled.Dropdown icon="workspace">
         {map(workspaces, workspace => (
           <Styled.DropdownItem
@@ -120,7 +121,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
           {!isEmpty(workspaces) && renderDropdown()}
           {isExpanded && (
             <Text.h5 color="light">
-              {!menu && (workspace?.name || selectedWorkspace)}
+              {!isRootMenu && (workspace?.name || selectedWorkspace)}
             </Text.h5>
           )}
         </Styled.Item>
