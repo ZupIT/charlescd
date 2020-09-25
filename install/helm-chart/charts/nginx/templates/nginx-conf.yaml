@@ -1,7 +1,6 @@
 apiVersion: v1
 data:
   nginx.conf: |-
-    user       nginx;
     worker_processes  5;
     worker_rlimit_nofile 8192;
     events {
@@ -9,7 +8,13 @@ data:
     }
 
     http {
-        index    index.html index.htm index.php;
+        resolver kube-dns.kube-system.svc.cluster.local;
+        lua_package_path '/usr/local/openresty/site/?.lua;;';
+        # cache for discovery metadata documents
+        lua_shared_dict discovery 1m;
+        # cache for JWKs
+        lua_shared_dict jwks 1m;    
+
         default_type application/octet-stream;
         log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
                         '$status $body_bytes_sent "$http_referer" '
@@ -17,8 +22,10 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
+
         server {
             listen 80;
+
             {{ if .Values.ui.enabled}}
             location / {
                 proxy_http_version 1.1;
@@ -27,6 +34,22 @@ data:
             {{- end}}
             {{ if .Values.moove.enabled}}
             location /moove/ {
+
+                access_by_lua '
+                    local opts = {
+                      discovery = "{{ .Values.idm.endpoint }}",
+                      token_signing_alg_values_expected = { {{ .Values.idm.alg }} },
+                      ssl_verify = "no"
+                    }
+                    -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                    local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+                    if err or not res then
+                      ngx.status = 401
+                      ngx.say(err and err or "no access_token provided")
+                      ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                    end
+                ';
+
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
                 if ($request_method = 'OPTIONS') {

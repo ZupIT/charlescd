@@ -32,6 +32,7 @@ moove:
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
+  internalIdmEnabled: true
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -91,7 +92,11 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  keycloakHost: http://charles.info.example/keycloak
+  authUri: http://charles.info.example/keycloak
+  isIdmEnabled: "0"
+  idmLoginUri: /protocol/openid-connect/auth
+  idmLogoutUri: /protocol/openid-connect/logout
+  idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
     name: zupcharles/charlescd-ui:0.3.7
@@ -191,6 +196,8 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
+  idm:
+    endpoint: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration
 
 octopipe:
   enabled: true
