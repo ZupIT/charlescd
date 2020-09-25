@@ -21,14 +21,15 @@ import io.charlescd.villager.infrastructure.integration.registry.authentication.
 import io.charlescd.villager.infrastructure.integration.registry.authentication.CommonBasicAuthenticator;
 import io.charlescd.villager.infrastructure.integration.registry.authentication.DockerBearerAuthenticator;
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.io.IOException;
-import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
+
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.commons.lang.StringUtils;
+import java.io.IOException;
+import java.util.Optional;
 
 @RequestScoped
 public class DockerRegistryHttpApiV2Client implements RegistryClient {
@@ -66,7 +67,13 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 break;
             case DOCKER_HUB:
                 var dockerHubConfig = (DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData) config;
-                this.client.register(new DockerBearerAuthenticator(dockerHubConfig, tagName, "https://auth.docker.io/token", "registry.docker.io"));
+                this.client.register(
+                        new DockerBearerAuthenticator(dockerHubConfig.organization,
+                                dockerHubConfig.username,
+                                dockerHubConfig.password,
+                                tagName,
+                                "https://auth.docker.io/token",
+                                "registry.docker.io"));
                 break;
             default:
                 throw new IllegalArgumentException("Registry type is not supported!");

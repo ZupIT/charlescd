@@ -16,52 +16,61 @@
 
 package io.charlescd.villager.infrastructure.integration.registry.authentication;
 
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import java.util.Arrays;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import java.util.Arrays;
 
 public final class DockerBearerAuthenticator implements ClientRequestFilter {
 
-    private final DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData config;
+    private final String organization;
+    private final String username;
+    private final String password;
     private final String imageName;
     private final String authUrl;
     private final String service;
 
-    public DockerBearerAuthenticator(DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData config,
+    public DockerBearerAuthenticator(String organization,
+                                     String username,
+                                     String password,
                                      String imageName,
                                      String authUrl,
                                      String service) {
-        this.config = config;
+        this.organization = organization;
+        this.username = username;
+        this.password = password;
         this.imageName = imageName;
         this.authUrl = authUrl;
         this.service = service;
     }
 
     public String dockerBearerAuthorization() {
-        String url = new StringBuilder(authUrl)
-                .append("?service=")
-                .append(service)
-                .append("&scope=repository:")
-                .append(config.organization)
-                .append("/")
-                .append(imageName)
-                .append(":pull")
-                .toString();
+        String url = createAuthUrl();
 
         Client client = ClientBuilder.newClient();
 
-        client.register(new CommonBasicAuthenticator(this.config.username, this.config.password));
+        client.register(new CommonBasicAuthenticator(this.username, this.password));
 
         DockerBasicAuthResponse response = client.target(url).request().get().readEntity(DockerBasicAuthResponse.class);
 
-        return String.format("Bearer %s", response.token);
+        return String.format("Bearer %s", response.getToken());
     }
 
     @Override
     public void filter(ClientRequestContext clientRequestContext) {
         clientRequestContext.getHeaders().put("Authorization", Arrays.asList(dockerBearerAuthorization()));
+    }
+
+    public String createAuthUrl() {
+        return new StringBuilder(authUrl)
+                .append("?service=")
+                .append(service)
+                .append("&scope=repository:")
+                .append(organization)
+                .append("/")
+                .append(imageName)
+                .append(":pull")
+                .toString();
     }
 }

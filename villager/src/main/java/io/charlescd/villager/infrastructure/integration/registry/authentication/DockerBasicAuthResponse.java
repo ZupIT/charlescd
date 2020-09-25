@@ -19,13 +19,34 @@ package io.charlescd.villager.infrastructure.integration.registry.authentication
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DockerBasicAuthResponse {
-    public String token;
+    private String token;
     @JsonProperty("access_token")
-    public String accessToken;
+    private String accessToken;
     @JsonProperty("expires_in")
-    public Integer expiresIn;
+    private Integer expiresIn;
     @JsonProperty("issued_at")
-    public String issuedAt;
+    private String issuedAt;
 
-    public DockerBasicAuthResponse() { }
+    public DockerBasicAuthResponse(String token, String accessToken, Integer expiresIn, String issuedAt) {
+        this.token = token;
+        this.accessToken = accessToken;
+        this.expiresIn = expiresIn;
+        this.issuedAt = issuedAt;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
+    }
+
+    public String getIssuedAt() {
+        return issuedAt;
+    }
 }
