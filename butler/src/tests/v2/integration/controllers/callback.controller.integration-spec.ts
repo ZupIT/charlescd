@@ -151,8 +151,7 @@ describe('CallbackController v2', () => {
       notificationStatus: 'SENT',
       deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
       createdAt: expect.anything(),
-      finishedAt: expect.anything(),
-
+      finishedAt: expect.anything()
     }
 
     await request(app.getHttpServer())
@@ -251,8 +250,7 @@ describe('CallbackController v2', () => {
       notificationStatus: 'SENT',
       deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
       createdAt: expect.anything(),
-      finishedAt: expect.anything(),
-
+      finishedAt: expect.anything()
     }
 
     await request(app.getHttpServer())
@@ -450,8 +448,7 @@ describe('CallbackController v2', () => {
       notificationStatus: 'SENT',
       deploymentId: '70faf7b3-5fad-4073-bd9c-da46e60c5d1f',
       createdAt: expect.anything(),
-      finishedAt: expect.anything(),
-
+      finishedAt: expect.anything()
     }
 
     await request(app.getHttpServer())
