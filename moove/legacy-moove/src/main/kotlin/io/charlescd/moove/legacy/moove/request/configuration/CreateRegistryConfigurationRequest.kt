@@ -24,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = CreateAzureRegistryConfigurationRequest::class, name = "AZURE"),
-    JsonSubTypes.Type(value = CreateAWSRegistryConfigurationRequest::class, name = "AWS")
+    JsonSubTypes.Type(value = CreateAWSRegistryConfigurationRequest::class, name = "AWS"),
+    JsonSubTypes.Type(value = CreateGCPRegistryConfigurationRequest::class, name = "GCP")
 )
 abstract class CreateRegistryConfigurationRequest(
     open val name: String,
@@ -50,6 +51,14 @@ data class CreateAWSRegistryConfigurationRequest(
     val region: String
 ) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.AWS, authorId)
 
+data class CreateGCPRegistryConfigurationRequest(
+    override val name: String,
+    override val address: String,
+    override val authorId: String,
+    val organization: String,
+    val jsonKey: String
+) : CreateRegistryConfigurationRequest(name, address, CreateRegistryConfigurationProvider.GCP, authorId)
+
 enum class CreateRegistryConfigurationProvider {
-    AWS, Azure
+    AWS, Azure, GCP
 }
