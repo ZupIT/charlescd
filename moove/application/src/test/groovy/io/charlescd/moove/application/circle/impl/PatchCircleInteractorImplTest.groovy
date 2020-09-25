@@ -330,24 +330,6 @@ class PatchCircleInteractorImplTest extends Specification {
         exception.message == "Clauses cannot be null."
     }
 
-    def "should throw an exception when clause is null"() {
-        given:
-        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
-
-        def rules = new NodePart(NodePart.NodeTypeRequest.CLAUSE, null, null, null)
-        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rules], null)
-
-        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
-        def request = new PatchCircleRequest(patches)
-
-        when:
-        this.patchCircleInteractor.execute(circleId, request)
-
-        then:
-        def exception = thrown(IllegalArgumentException)
-        exception.message == "Clause cannot be null."
-    }
-
     def "should throw an exception when key is null"() {
         given:
         def circleId = "3de80951-94b1-4894-b784-c0b069994640"
