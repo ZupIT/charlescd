@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import AceEditorForm from '..';
+import {Control, useForm} from 'react-hook-form'
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import org.keycloak.representations.AccessToken
+jest.mock('react-hook-form', () => {
+  return {
+    __esModule: true,
+    Controller: ({as}: any) => (
+      <>
+        {as}
+      </>
+    )
+  };
+});
 
-data class CharlesAccessToken(
-    val workspaces: List<WorkspacePermissionsMapping>? = null,
-    @field:[JsonProperty(value = "isRoot")]
-    val isRoot: Boolean? = null
-) : AccessToken()
+test('renders AceEditor component inside Controller', () => {
+  const controlMock:Control = null;
+  const { container } = render(
+    <AceEditorForm control={controlMock} name="keyName" mode="json" />
+  );
+
+  expect(container.innerHTML).toMatch('ace-editor');
+});

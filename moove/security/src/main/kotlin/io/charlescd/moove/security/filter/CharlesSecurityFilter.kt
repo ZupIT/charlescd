@@ -18,11 +18,10 @@ package io.charlescd.moove.security.filter
 
 import feign.FeignException
 import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.WorkspacePermissions
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.service.KeycloakCustomService
-import io.charlescd.moove.security.CharlesAccessToken
+import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.security.SecurityConstraints
-import io.charlescd.moove.security.WorkspacePermissionsMapping
 import io.charlescd.moove.security.config.Constants
 import io.charlescd.moove.security.utils.FileUtils
 import javax.servlet.FilterChain
@@ -31,6 +30,7 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.keycloak.TokenVerifier
+import org.keycloak.representations.AccessToken
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -41,7 +41,7 @@ import org.yaml.snakeyaml.constructor.Constructor
 
 @Component
 @Profile("!local")
-class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : GenericFilterBean() {
+class CharlesSecurityFilter(val userRepository: UserRepository) : GenericFilterBean() {
 
     private lateinit var constraints: SecurityConstraints
 
@@ -85,19 +85,19 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
             return
         }
 
-        val parsedAccessToken = parseAccessToken(authorization)
-
-        authorization?.let { this.keycloakCustomService.hitUserInfo(authorization) } ?: throw Exception("Missing Authorization header")
-
-        if (checkIfIsUserPath(constraints, path, method)) {
+        if (checkIfIsManagementPath(constraints, path, method) && authorization != null) {
             return
         }
 
-        if (parsedAccessToken?.isRoot == true) {
+        val userEmail = getEmailFromAccessToken(authorization).orEmpty()
+
+        val user = userRepository.findByEmail(userEmail).orElseThrow { Exception("User not found based on Authorization header") }
+
+        if (user.root) {
             return
         }
 
-        val workspace = parsedAccessToken?.workspaces?.firstOrNull { it.id == workspaceId }
+        val workspace = user.workspaces.firstOrNull { it.id == workspaceId }
 
         workspace?.let {
             if (!isValidToken(constraints, path, workspace, method)) {
@@ -109,7 +109,7 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
     private fun isValidToken(
         constraints: SecurityConstraints,
         path: String,
-        workspace: WorkspacePermissionsMapping,
+        workspace: WorkspacePermissions,
         method: String
     ): Boolean {
         return constraints.constraints.filter {
@@ -129,13 +129,13 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
     }
 
     private fun checkIfContainsRole(
-        workspace: WorkspacePermissionsMapping,
+        workspace: WorkspacePermissions,
         permission: Map.Entry<String, List<String>>
     ): Boolean {
-        return workspace.permissions.any { workspacePermission -> permission.key == workspacePermission }
+        return workspace.permissions.any { workspacePermission -> permission.key == workspacePermission.name }
     }
 
-    private fun checkIfIsUserPath(
+    private fun checkIfIsManagementPath(
         constraints: SecurityConstraints,
         path: String,
         method: String
@@ -163,10 +163,10 @@ class CharlesSecurityFilter(val keycloakCustomService: KeycloakCustomService) : 
         }
     }
 
-    private fun parseAccessToken(authorization: String?): CharlesAccessToken? {
+    private fun getEmailFromAccessToken(authorization: String?): String? {
         return authorization?.let {
             val token = authorization.substringAfter("Bearer").trim()
-            return TokenVerifier.create(token, CharlesAccessToken::class.java).token
+            return TokenVerifier.create(token, AccessToken::class.java).token.email
         }
     }
 
