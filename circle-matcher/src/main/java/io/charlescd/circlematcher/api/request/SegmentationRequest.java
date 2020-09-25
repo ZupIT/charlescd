@@ -107,8 +107,9 @@ public abstract class SegmentationRequest {
     }
 
     public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type,
-            workspaceId, isDefault, this.createdAt);
+        return new Segmentation(
+            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, this.createdAt
+        );
     }
 
     public LocalDateTime getCreatedAt() {
