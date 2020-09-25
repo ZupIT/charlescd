@@ -47,6 +47,7 @@ public abstract class SegmentationRequest {
     @NotNull
     private Boolean isDefault;
 
+    @NotNull
     private LocalDateTime createdAt;
 
     public String getName() {
@@ -107,7 +108,7 @@ public abstract class SegmentationRequest {
 
     public Segmentation toSegmentation() {
         return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type,
-            workspaceId, isDefault, createdAt);
+            workspaceId, isDefault, this.createdAt);
     }
 
     public LocalDateTime getCreatedAt() {
