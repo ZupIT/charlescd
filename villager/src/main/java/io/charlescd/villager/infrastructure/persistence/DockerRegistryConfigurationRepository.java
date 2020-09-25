@@ -105,9 +105,6 @@ public class DockerRegistryConfigurationRepository {
                         return Optional.of(resultSetExtractor(rs));
                     }
 
-                } catch (JsonMappingException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
                 } catch (JsonProcessingException e) {
                     LOGGER.error(e.getMessage(), e);
                     throw new RuntimeException(e);
@@ -187,9 +184,6 @@ public class DockerRegistryConfigurationRepository {
                         result.add(resultSetExtractor(rs));
                     }
 
-                } catch (JsonMappingException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
                 } catch (JsonProcessingException e) {
                     LOGGER.error(e.getMessage(), e);
                     throw new RuntimeException(e);
