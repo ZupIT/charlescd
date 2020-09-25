@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IdentificationResponse {
 
-    private LinkedHashSet<CircleResponse> circles;
+    private Set<CircleResponse> circles;
 
     public IdentificationResponse(LinkedHashSet<CircleResponse> circles) {
         this.circles = circles;
@@ -35,7 +35,7 @@ public class IdentificationResponse {
         return new IdentificationResponse(from(circles));
     }
 
-    public LinkedHashSet<CircleResponse> getCircles() {
+    public Set<CircleResponse> getCircles() {
         return circles;
     }
 
