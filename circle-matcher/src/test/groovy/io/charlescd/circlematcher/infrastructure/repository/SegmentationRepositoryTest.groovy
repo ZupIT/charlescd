@@ -38,7 +38,7 @@ class SegmentationRepositoryTest extends Specification {
 
     void setup() {
         objectMapper.registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         segmentationRepository = new SegmentationRepository(redisTemplate, objectMapper)
     }
 
