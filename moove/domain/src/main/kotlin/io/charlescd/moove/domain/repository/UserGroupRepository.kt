@@ -36,8 +36,4 @@ interface UserGroupRepository {
     fun addMember(userGroup: UserGroup, member: User)
 
     fun removeMember(userGroup: UserGroup, member: User)
-
-    fun findPermissionsFromUserGroupAssociations(userGroup: UserGroup): Map<String, List<Permission>>
-
-    fun findPermissions(workspaceId: String, userGroup: UserGroup): List<Permission>
 }
