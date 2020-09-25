@@ -18,12 +18,12 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: zupcharles/openresty:openidc
           ports:
           - containerPort: 80        
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
+              mountPath: /usr/local/openresty/nginx/conf/nginx.conf
               subPath: nginx.conf
       volumes:
         - name: nginx-config
