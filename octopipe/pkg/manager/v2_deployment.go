@@ -48,8 +48,9 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 	log.WithFields(log.Fields{"function": "runV2Deployments", "deployments": v2Pipeline.Deployments}).Info("START:RUN_V2_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, deployment := range v2Pipeline.Deployments {
+		currentDeployment := deployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, deployment,v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("FINISH:RUN_V2_DEPLOYMENTS")
@@ -60,8 +61,9 @@ func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
 	log.WithFields(log.Fields{"function": "runV2Rollbacks", "rollbacks": v2Pipeline.RollbackDeployments}).Info("START:RUN_V2_ROLLBACKS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, rollbackDeployment := range v2Pipeline.RollbackDeployments {
+		currentRollbackDeployment := rollbackDeployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, rollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("FINISH:RUN_V2_ROLLBACKS")
@@ -72,8 +74,9 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments", "proxyDeployments": v2Pipeline.ProxyDeployments}).Info("START:RUN_V2_PROXY_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+		currentProxyDeployment := proxyDeployment
 		errs.Go(func() error {
-			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, proxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("FINISH:RUN_V2_PROXY_DEPLOYMENTS")
