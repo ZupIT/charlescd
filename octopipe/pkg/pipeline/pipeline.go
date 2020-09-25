@@ -77,21 +77,6 @@ type Pipeline struct {
 	Config    cloudprovider.Cloudprovider `json:"config"`
 }
 
-type V2Deployment struct {
-	ComponentName		 string					`json:"componentName"`
-	HelmRepositoryConfig repository.Repository  `json:"helmRepositoryConfig"`
-	HelmConfig   	     helm.HelmTemplate		`json:"helmConfig"`
-}
-
-type V2Pipeline struct {
-	Namespace 		 	string						`json:"namespace"`
-	Deployments 	 	[]V2Deployment				`json:"deployments"`
-	RollbackDeployments	[]V2Deployment				`json:"rollbackDeployments"`
-	ProxyDeployments 	[]map[string]interface{}    `json:"proxyDeployments"`
-	CallbackUrl   		string           			`json:"callbackUrl"`
-	ClusterConfig    	cloudprovider.Cloudprovider `json:"clusterConfig"`
-}
-
 func (main PipelineMain) NewPipeline() Pipeline {
 	return Pipeline{}
 }

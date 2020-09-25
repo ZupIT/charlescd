@@ -41,6 +41,7 @@ func (api *API) NewV2PipelineAPI(managerMain manager.MainUseCases) {
 	controller := PipelineAPI{manager}
 
 	api.v2.POST(path, controller.executeV2Deployment)
+	api.v2.POST(path, controller.executeV2Undeployment)
 }
 
 func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
@@ -54,9 +55,17 @@ func (api *PipelineAPI) CreateOrUpdatePipeline(ctx *gin.Context) {
 }
 
 func (api *PipelineAPI) executeV2Deployment(ctx *gin.Context) {
-	var v2Pipeline pipeline.V2Pipeline
+	var v2Pipeline pipeline.V2DeploymentPipeline
 	ctx.Bind(&v2Pipeline)
 	incomingCircleId := ctx.GetHeader("x-circle-id")
 	api.manager.ExecuteV2DeploymentPipeline(v2Pipeline, incomingCircleId)
+	ctx.JSON(204, nil)
+}
+
+func (api *PipelineAPI) executeV2Undeployment(ctx *gin.Context) {
+	var v2Pipeline pipeline.V2UndeploymentPipeline
+	ctx.Bind(&v2Pipeline)
+	incomingCircleId := ctx.GetHeader("x-circle-id")
+	api.manager.ExecuteV2UndeploymentPipeline(v2Pipeline, incomingCircleId)
 	ctx.JSON(204, nil)
 }
