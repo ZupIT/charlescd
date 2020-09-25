@@ -14,7 +14,7 @@ type MetricsGroupAction struct {
 	util.BaseModel
 	Nickname            string                `json:"nickname"`
 	MetricsGroupID      uuid.UUID             `json:"metricsGroupId"`
-	ActionsID           uuid.UUID             `json:"actionsId"`
+	ActionID            uuid.UUID             `json:"actionId"`
 	ExecutionParameters json.RawMessage       `json:"executionParameters"`
 	DeletedAt           *time.Time            `json:"-"`
 	Configuration       ActionsConfigurations `json:"configuration"`

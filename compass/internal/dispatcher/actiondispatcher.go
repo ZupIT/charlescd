@@ -19,10 +19,11 @@
 package dispatcher
 
 import (
+	"compass/internal/action"
 	"compass/internal/configuration"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
-	"compass/internal/metricsgroupaction"
+	"compass/internal/plugin"
 	"compass/pkg/logger"
 	"log"
 	"sync"
@@ -34,9 +35,10 @@ type ActionUseCases interface {
 }
 
 type ActionDispatcher struct {
-	metricGroup       metricsgroup.UseCases
-	metricGroupAction metricsgroupaction.UseCases
-	mux               sync.Mutex
+	metricGroup      metricsgroup.UseCases
+	actionRepository action.UseCases
+	pluginRepository plugin.UseCases
+	mux              sync.Mutex
 }
 
 func NewActionDispatcher(metric metric.UseCases) UseCases {
@@ -44,23 +46,28 @@ func NewActionDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
-	metricExecutions, err := dispatcher.metricGroup.FindAll()
+	metricGroups, err := dispatcher.metricGroup.FindAll()
 	if err != nil {
 		logger.Panic("Cannot find any metric group", "Dispatch", err, nil)
 	}
 
-	for _, execution := range metricExecutions {
-		go dispatcher.getMetricResult(execution)
+	for _, execution := range metricGroups {
+		go dispatcher.doAction(execution)
 	}
 
 	logger.Info("After 5 seconds... ", time.Now())
 }
 
 func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
-	validateGroupNeedsAction(group.Metrics[0])
+	if validateGroupNeedsAction(group.Metrics) {
+		for _, groupAction := range group.Actions {
+			action, _ := dispatcher.actionRepository.FindActionById(groupAction.ActionID.String())
+			dispatcher.pluginRepository.GetPluginBySrc(action.Type)
+		}
+	}
 }
 
-func validateGroupNeedsAction(resumes []metricsgroup.MetricGroupResume) bool {
+func validateGroupNeedsAction(metrics []metric.Metric) bool {
 
 	return false
 }
