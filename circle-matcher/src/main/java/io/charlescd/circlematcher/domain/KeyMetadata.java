@@ -38,7 +38,8 @@ public class KeyMetadata {
     private String workspaceId;
 
     private Boolean isDefault;
-
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
 
     public KeyMetadata() {
