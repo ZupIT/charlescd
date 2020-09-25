@@ -95,8 +95,8 @@ const Routes = () => {
 
   const renderRoutes = () => (
     <Switch>
-      <Route exact path={routes.error403} component={Forbidden403} />
-      <Route exact path={routes.error404} component={NotFound404} />
+      <Route path={routes.error403} component={Forbidden403} />
+      <Route path={routes.error404} component={NotFound404} />
       <Route path={routes.main} component={Main} />
     </Switch>
   );
