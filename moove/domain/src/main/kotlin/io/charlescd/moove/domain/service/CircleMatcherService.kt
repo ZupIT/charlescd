@@ -27,7 +27,7 @@ interface CircleMatcherService {
 
     fun create(circle: Circle, matcherUri: String)
 
-    fun update(circle: Circle, previousReference: String, matcherUri: String, status: Boolean)
+    fun update(circle: Circle, previousReference: String, matcherUri: String, active: Boolean)
 
     fun delete(reference: String, matcherUri: String)
 

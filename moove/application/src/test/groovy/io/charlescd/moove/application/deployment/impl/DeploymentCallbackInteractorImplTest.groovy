@@ -31,7 +31,6 @@ import io.charlescd.moove.infrastructure.service.CircleMatcherClientService
 import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import spock.lang.Specification
-
 import java.time.LocalDateTime
 
 class DeploymentCallbackInteractorImplTest extends Specification {
