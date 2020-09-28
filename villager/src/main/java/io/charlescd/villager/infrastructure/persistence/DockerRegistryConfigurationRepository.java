@@ -217,15 +217,25 @@ public class DockerRegistryConfigurationRepository {
             case AWS:
                 var awsRegistryAuth = deserializeConnectionData(rs);
                 entity.connectionData = new DockerRegistryConfigurationEntity.AWSDockerRegistryConnectionData(
-                        awsRegistryAuth.get("address"), awsRegistryAuth.get("accessKey"),
+                        awsRegistryAuth.get("address"),
+                        awsRegistryAuth.get("accessKey"),
                         awsRegistryAuth.get("secretKey"),
                         awsRegistryAuth.get("region"));
                 break;
             case AZURE:
                 var azureRegistryAuth = deserializeConnectionData(rs);
                 entity.connectionData = new DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData(
-                        azureRegistryAuth.get("address"), azureRegistryAuth.get("username"),
+                        azureRegistryAuth.get("address"),
+                        azureRegistryAuth.get("username"),
                         azureRegistryAuth.get("password"));
+                break;
+            case GCP:
+                var gcpRegistryAuth = deserializeConnectionData(rs);
+                entity.connectionData = new DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData(
+                        gcpRegistryAuth.get("address"),
+                        gcpRegistryAuth.get("organization"),
+                        gcpRegistryAuth.get("username"),
+                        gcpRegistryAuth.get("jsonKey"));
                 break;
             default:
                 entity.connectionData = null;

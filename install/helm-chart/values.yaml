@@ -11,7 +11,7 @@ butler:
     ssl: false
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-butler:0.3.6
+    name: zupcharles/charlescd-butler:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-butler
@@ -32,6 +32,7 @@ moove:
   name: "charlescd-moove"
   allowedOriginHost: "http://charles.info.example"
   keycloakHost: "http://charlescd-keycloak-http/keycloak/auth"
+  internalIdmEnabled: true
   database:
     name: charlescd_moove
     host: charlescd-postgresql
@@ -40,7 +41,7 @@ moove:
     password: 7Qs2KuM9gYzw48BS
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-moove:0.3.6
+    name: zupcharles/charlescd-moove:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-moove
@@ -71,7 +72,7 @@ villager:
 
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-villager:0.3.6
+    name: zupcharles/charlescd-villager:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-villager
@@ -91,10 +92,14 @@ ui:
   enabled: true
   name: charlescd-ui
   apiHost: http://charles.info.example
-  keycloakHost: http://charles.info.example/keycloak
+  authUri: http://charles.info.example/keycloak
+  isIdmEnabled: "0"
+  idmLoginUri: /protocol/openid-connect/auth
+  idmLogoutUri: /protocol/openid-connect/logout
+  idmRedirectHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-ui:0.3.6
+    name: zupcharles/charlescd-ui:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-ui
@@ -121,7 +126,7 @@ circlematcher:
   allowedOriginHost: http://charles.info.example
   replicaCount: 1
   image:
-    name: zupcharles/charlescd-circle-matcher:0.3.6
+    name: zupcharles/charlescd-circle-matcher:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-circle-matcher
@@ -191,6 +196,8 @@ nginx:
     enabled: true
   octopipe:
     enabled: true
+  idm:
+    endpoint: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration
 
 octopipe:
   enabled: true
@@ -224,7 +231,7 @@ compass:
     - name: DISPATCHER_INTERVAL
       value: "15s"
   image:
-    name: zupcharles/charlescd-compass:0.3.6
+    name: zupcharles/charlescd-compass:0.3.9
     pullPolicy: Always
   service:
     name: charlescd-compass

@@ -173,7 +173,6 @@ data:
 apiVersion: v1
 data:
   nginx.conf: |-
-    user       nginx;
     worker_processes  5;
     worker_rlimit_nofile 8192;
     events {
@@ -181,7 +180,13 @@ data:
     }
 
     http {
-        index    index.html index.htm index.php;
+        resolver kube-dns.kube-system.svc.cluster.local;
+        lua_package_path '/usr/local/openresty/site/?.lua;;';
+        # cache for discovery metadata documents
+        lua_shared_dict discovery 1m;
+        # cache for JWKs
+        lua_shared_dict jwks 1m;    
+
         default_type application/octet-stream;
         log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
                         '$status $body_bytes_sent "$http_referer" '
@@ -189,8 +194,10 @@ data:
         sendfile on;
         tcp_nopush   on;
         server_names_hash_bucket_size 128;
+
         server {
             listen 80;
+
             
             location / {
                 proxy_http_version 1.1;
@@ -198,6 +205,22 @@ data:
             }
             
             location /moove/ {
+
+                access_by_lua '
+                    local opts = {
+                      discovery = "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration",
+                      token_signing_alg_values_expected = {  },
+                      ssl_verify = "no"
+                    }
+                    -- call bearer_jwt_verify for OAuth 2.0 JWT validation
+                    local res, err = require("resty.openidc").bearer_jwt_verify(opts)
+                    if err or not res then
+                      ngx.status = 401
+                      ngx.say(err and err or "no access_token provided")
+                      ngx.exit(ngx.HTTP_UNAUTHORIZED)
+                    end
+                ';
+
                 proxy_http_version 1.1;
                 proxy_pass http://charlescd-moove:8080/;
                 if ($request_method = 'OPTIONS') {
@@ -686,8 +709,7 @@ metadata:
 spec:
   externalTrafficPolicy: Cluster
   ports:
-  - nodePort: 30803
-    port: 80
+  - port: 80
     protocol: TCP
     targetPort: 80
   selector:
@@ -1051,12 +1073,12 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: zupcharles/openresty:openidc
           ports:
           - containerPort: 80        
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
+              mountPath: /usr/local/openresty/nginx/conf/nginx.conf
               subPath: nginx.conf
       volumes:
         - name: nginx-config
@@ -1165,9 +1187,15 @@ spec:
         app: charlescd-butler
         version: charlescd-butler
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
-          image: zupcharles/charlescd-butler:0.3.6
+          image: zupcharles/charlescd-butler:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1247,7 +1275,7 @@ spec:
     spec:
       containers:
         - name: charlescd-circle-matcher
-          image: zupcharles/charlescd-circle-matcher:0.3.6
+          image: zupcharles/charlescd-circle-matcher:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1313,9 +1341,15 @@ spec:
         app: charlescd-compass
         version: charlescd-compass
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
-          image: zupcharles/charlescd-compass:0.3.6
+          image: zupcharles/charlescd-compass:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1388,9 +1422,15 @@ spec:
         app: charlescd-moove
         version: charlescd-moove
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
-          image: zupcharles/charlescd-moove:0.3.6
+          image: zupcharles/charlescd-moove:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1431,6 +1471,8 @@ spec:
               value: "realm-charlescd"
             - name: KEYCLOAK_CLIENT_SECRET
               value: "a79e9316-2196-41d1-8dfe-98cc48241fe3"
+            - name: INTERNAL_IDM_ENABLED
+              value: "true"
             - name: ORIGIN_HOSTS
               value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,http://charles.info.example"
             - name: ENCRYPTION_KEY
@@ -1471,7 +1513,7 @@ spec:
     spec:
       containers:
         - name: charlescd-ui
-          image: zupcharles/charlescd-ui:0.3.6
+          image: zupcharles/charlescd-ui:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -1502,6 +1544,14 @@ spec:
               value: charlescd
             - name: REACT_APP_AUTH_CLIENT_ID
               value: charlescd-client
+            - name: REACT_APP_IDM
+              value: "0"
+            - name: REACT_APP_IDM_LOGIN_URI
+              value: /protocol/openid-connect/auth
+            - name: REACT_APP_IDM_LOGOUT_URI
+              value: /protocol/openid-connect/logout
+            - name: REACT_APP_IDM_REDIRECT_URI
+              value: http://charles.info.example
           resources:
             limits:
               cpu: 128m
@@ -1533,9 +1583,15 @@ spec:
         app: charlescd-villager
         version: charlescd-villager
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h charlescd-postgresql -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
-          image: zupcharles/charlescd-villager:0.3.6
+          image: zupcharles/charlescd-villager:0.3.9
           livenessProbe:
             failureThreshold: 3
             httpGet:
