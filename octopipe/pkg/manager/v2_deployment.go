@@ -26,18 +26,12 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("START:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 	err := manager.runV2Deployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_DEPLOYMENTS")
-		rollbackErr := manager.runV2Rollbacks(v2Pipeline)
-		if rollbackErr != nil {
-			log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_ROLLBACKS")
-		}
-		manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+		manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 	err = manager.runV2ProxyDeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_PROXY_DEPLOYMENTS")
-		manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+		manager.handleV2ProxyDeploymentError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
@@ -58,13 +52,15 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 }
 
 func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
-	log.WithFields(log.Fields{"function": "runV2Rollbacks", "rollbacks": v2Pipeline.RollbackDeployments}).Info("START:RUN_V2_ROLLBACKS")
+	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("START:RUN_V2_ROLLBACKS")
 	errs, _ := errgroup.WithContext(context.Background())
-	for _, rollbackDeployment := range v2Pipeline.RollbackDeployments {
-		currentRollbackDeployment := rollbackDeployment
-		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
-		})
+	for _, deployment := range v2Pipeline.Deployments {
+		if deployment.RollbackIfFailed {
+			currentRollbackDeployment := deployment
+			errs.Go(func() error {
+				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+			})
+		}
 	}
 	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("FINISH:RUN_V2_ROLLBACKS")
 	return errs.Wait()
@@ -74,11 +70,28 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments", "proxyDeployments": v2Pipeline.ProxyDeployments}).Info("START:RUN_V2_PROXY_DEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
-		currentProxyDeployment := proxyDeployment
+		currentProxyDeployment := map[string]interface{}{} // TODO improve this
+		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
 			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("FINISH:RUN_V2_PROXY_DEPLOYMENTS")
 	return errs.Wait()
+}
+
+func (manager Manager) handleV2DeploymentError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string) {
+	log.WithFields(log.Fields{"function": "handleV2DeploymentError", "error": err.Error()}).Info("START:HANDLE_V2_DEPLOYMENT_ERROR")
+	rollbackErr := manager.runV2Rollbacks(v2Pipeline)
+	if rollbackErr != nil {
+		log.WithFields(log.Fields{"function": "handleV2DeploymentError", "error": err.Error()}).Info("ERROR:RUN_V2_ROLLBACKS")
+	}
+	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+	log.WithFields(log.Fields{"function": "handleV2DeploymentError"}).Info("FINISH:HANDLE_V2_DEPLOYMENT_ERROR")
+}
+
+func (manager Manager) handleV2ProxyDeploymentError(v2Pipeline V2DeploymentPipeline, err error, incomingCircleId string) {
+	log.WithFields(log.Fields{"function": "handleV2ProxyDeploymentError", "error": err.Error()}).Info("START:HANDLE_V2_PROXY_DEPLOYMENT_ERROR")
+	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+	log.WithFields(log.Fields{"function": "handleV2ProxyDeploymentError"}).Info("FINISH:HANDLE_V2_PROXY_DEPLOYMENT_ERROR")
 }

@@ -10,14 +10,12 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 	log.WithFields(log.Fields{"function": "ExecuteV2UndeploymentPipeline"}).Info("START:EXECUTE_V2_UNDEPLOYMENT_PIPELINE")
 	err := manager.runV2ProxyUndeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2UndeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_PROXY_UNDEPLOYMENTS")
-		manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+		manager.handleV2ProxyUndeploymentError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 	err = manager.runV2Undeployments(v2Pipeline)
 	if err != nil {
-		log.WithFields(log.Fields{"function": "ExecuteV2UndeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_UNDEPLOYMENTS")
-		manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+		manager.handleV2UndeploymentError(v2Pipeline, err, incomingCircleId)
 		return
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
@@ -46,4 +44,16 @@ func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) err
 	}
 	log.WithFields(log.Fields{"function": "runV2Undeployments"}).Info("FINISH:RUN_V2_UNDEPLOYMENTS")
 	return errs.Wait()
+}
+
+func (manager Manager) handleV2ProxyUndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
+	log.WithFields(log.Fields{"function": "handleV2ProxyUndeploymentError", "error": err.Error()}).Info("START:HANDLE_V2_PROXY_UNDEPLOYMENT_ERROR")
+	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+	log.WithFields(log.Fields{"function": "handleV2ProxyUndeploymentError"}).Info("FINISH:HANDLE_V2_PROXY_UNDEPLOYMENT_ERROR")
+}
+
+func (manager Manager) handleV2UndeploymentError(v2Pipeline V2UndeploymentPipeline, err error, incomingCircleId string) {
+	log.WithFields(log.Fields{"function": "handleV2UndeploymentError", "error": err.Error()}).Info("START:HANDLE_V2_UNDEPLOYMENT_ERROR")
+	manager.triggerV2Callback(v2Pipeline.CallbackUrl, UNDEPLOYMENT_CALLBACK, FAILED_STATUS, incomingCircleId)
+	log.WithFields(log.Fields{"function": "handleV2UndeploymentError"}).Info("FINISH:HANDLE_V2_UNDEPLOYMENT_ERROR")
 }
