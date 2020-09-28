@@ -410,7 +410,7 @@ class CardServiceUnitTest {
         every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
         every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
 
-        cardService.delete(card.id, workspaceId)
+        cardService.delete(card.id, workspaceId, true)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
@@ -421,9 +421,34 @@ class CardServiceUnitTest {
         }
     }
 
+
     @Test
-    fun `should delete only the card`() {
+    fun `should delete only the card | blacklist rule`() {
         val card = buildSoftwareCard("master")
+
+        val gitConfigurationId = module1.workspace.gitConfigurationId!!
+
+        every { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) } returns Optional.of(card)
+        every { cardRepository.deleteLabelsRelationship(any()) } answers {}
+        every { cardRepository.deleteMembersRelationship(any()) } answers {}
+        every { cardRepository.delete(card) } answers {}
+        every { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) } answers {}
+        every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
+
+        cardService.delete(card.id, workspaceId)
+
+        verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
+        verify(exactly = 1) { cardRepository.delete(card) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
+        verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
+        verify(exactly = 2) {
+            gitConfigurationRepository.findById(gitConfigurationId)
+        }
+    }
+
+    @Test
+    fun `should delete only the card | service option rule`() {
+        val card = buildSoftwareCard()
 
         val gitConfigurationId = module1.workspace.gitConfigurationId!!
 
