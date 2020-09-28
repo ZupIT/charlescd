@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.8 (25/09/2020)
+- [#537](https://github.com/ZupIT/charlescd/pull/537) Rename compass docker-repository name
+- [#536](https://github.com/ZupIT/charlescd/pull/536) Fix Create Workspace
+- [#533](https://github.com/ZupIT/charlescd/pull/533) CI Update of charts and changelog
+
+---
+
 ## 0.3.7 (25/09/2020)
 - [#535](https://github.com/ZupIT/charlescd/pull/535) Revert "Building villager native"
 - [#477](https://github.com/ZupIT/charlescd/pull/477) Support to Google Cloud Registry
