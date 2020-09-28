@@ -21,6 +21,12 @@ spec:
         app: {{ .Values.compass.name }}
         version: {{ .Values.compass.name }}
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h {{ .Values.compass.database.host}} -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: {{ .Values.compass.name }}
           image: {{ .Values.compass.image.name }}
@@ -46,6 +52,16 @@ spec:
             timeoutSeconds: 1 
           imagePullPolicy: {{ .Values.compass.image.pullPolicy }}
           env:
+          - name: DB_HOST
+            value: "{{ .Values.compass.database.host}}"
+          - name: DB_PORT
+            value: "{{ .Values.compass.database.port}}"
+          - name: DB_USER
+            value: "{{ .Values.compass.database.user}}"
+          - name: DB_PASSWORD
+            value: "{{ .Values.compass.database.password}}"
+          - name: DB_NAME
+            value: "{{ .Values.compass.database.name}}"
           {{ range $i, $var := .Values.compass.envVars -}}
           - name: {{ $var.name | upper}}
             value: {{ $var.value | quote}}
