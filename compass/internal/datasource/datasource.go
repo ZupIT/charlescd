@@ -19,8 +19,8 @@ type DataSource struct {
 	Name        string          `json:"name"`
 	PluginSrc   string          `json:"pluginSrc"`
 	Health      bool            `json:"healthy"`
-	Data        json.RawMessage `json:"_" gorm:"type:jsonb"`
-	WorkspaceID uuid.UUID       `json:"-"`
+	Data        json.RawMessage `json:"data" gorm:"type:jsonb"`
+	WorkspaceID uuid.UUID       `json:"workspaceId"`
 	DeletedAt   *time.Time      `json:"-"`
 }
 
