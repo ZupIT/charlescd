@@ -72,7 +72,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     control,
     register,
     handleSubmit,
-    formState: { isValid }
+    formState: { isValid },
+    setValue,
   } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
@@ -241,6 +242,11 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         metricGroup.metrics
       );
 
+      // setValue('metrics', [allOption, ...normalizedSelectOptions]);
+
+      // const { metrics } = getValues();
+      // console.log(metrics);
+
       return (
         <Styled.MetricsGroupsCard key={metricGroup.id}>
           <Styled.MetricsGroupsCardHeader>
@@ -297,6 +303,8 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
                 <MonitoringMetrics
                   metricsGroupId={metricGroup.id}
                   selectFilters={selectMetric[metricGroup.id]}
+                  setValue={setValue}
+                  options={normalizedSelectOptions}
                 />
               )}
               <Styled.MetricCardTableHead>
