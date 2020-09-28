@@ -72,9 +72,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
     control,
     register,
     handleSubmit,
-    formState: { isValid },
-    setValue,
-    getValues
+    formState: { isValid }
   } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
