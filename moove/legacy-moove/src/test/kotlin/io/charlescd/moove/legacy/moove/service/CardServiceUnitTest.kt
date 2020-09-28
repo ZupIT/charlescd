@@ -441,7 +441,7 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.delete(card) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
-        verify(exactly = 2) {
+        verify(exactly = 0) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
     }
@@ -465,7 +465,7 @@ class CardServiceUnitTest {
         verify(exactly = 1) { cardRepository.delete(card) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module1.name, card.feature.branchName) }
         verify(exactly = 0) { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) }
-        verify(exactly = 2) {
+        verify(exactly = 0) {
             gitConfigurationRepository.findById(gitConfigurationId)
         }
     }
@@ -507,7 +507,7 @@ class CardServiceUnitTest {
                 BusinessExceptionLegacy.of(MooveErrorCodeLegacy.GIT_ERROR_BRANCH_NOT_FOUND)
         every { gitService.deleteBranch(gitCredential, module2.name, card.feature.branchName) } answers {}
 
-        cardService.delete(card.id, workspaceId)
+        cardService.delete(card.id, workspaceId, true)
 
         verify(exactly = 1) { cardRepository.findByIdAndWorkspaceId(card.id, workspaceId) }
         verify(exactly = 1) { cardRepository.delete(card) }
