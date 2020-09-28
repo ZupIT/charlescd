@@ -39,7 +39,7 @@ export class ComponentEntityV2 implements Component {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
 
-  @Column({ name: 'namespace' })
+  @Column({ name: 'namespace', nullable: true, type: 'varchar' })
   public namespace!: string | null
 
   constructor(

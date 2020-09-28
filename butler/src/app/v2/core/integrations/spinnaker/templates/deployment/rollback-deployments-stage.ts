@@ -60,7 +60,7 @@ export const getRollbackDeploymentsStage = (
       }
     ]
   },
-  location: `${component.namespace || (configuration.configurationData as ISpinnakerConfigurationData).namespace}`,
+  location: `${CommonTemplateUtils.getNamespace(component, configuration)}`,
   mode: 'label',
   name: `Delete Deployment ${component.name} ${component.imageTag}`,
   options: {

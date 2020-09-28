@@ -16,6 +16,7 @@
 
 import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
+import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 
 @EntityRepository(DeploymentEntityV2)
 export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
@@ -26,4 +27,6 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where('deployment.active = true')
       .getMany()
   }
+
+
 }

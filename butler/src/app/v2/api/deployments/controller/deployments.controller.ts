@@ -22,6 +22,9 @@ import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
+import { UniquenessComponentNameByNamespacePipe } from '../pipes/uniqueness-component-name-by-namespace-pipe.service'
+
+
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -33,6 +36,7 @@ export class DeploymentsController {
 
   @Post('/')
   @UsePipes(SimultaneousDeploymentValidationPipe)
+  @UsePipes(UniquenessComponentNameByNamespacePipe)
   @UsePipes(CdConfigurationExistencePipe)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createDeployment(

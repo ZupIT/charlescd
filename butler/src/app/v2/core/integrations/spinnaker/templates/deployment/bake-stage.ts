@@ -51,7 +51,7 @@ export const getBakeStage = (component: Component, configuration: CdConfiguratio
     }
   ],
   name: `Bake ${component.name} ${component.imageTag}`,
-  namespace:  component.namespace || (configuration.configurationData as ISpinnakerConfigurationData).namespace,
+  namespace:  CommonTemplateUtils.getNamespace(component, configuration),
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': component.imageUrl,

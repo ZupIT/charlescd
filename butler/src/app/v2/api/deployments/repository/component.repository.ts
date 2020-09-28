@@ -16,6 +16,8 @@
 
 import { EntityRepository, Repository } from 'typeorm'
 import { ComponentEntityV2 } from '../entity/component.entity'
+import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
+import { AppConstants } from '../../../../v1/core/constants'
 
 @EntityRepository(ComponentEntityV2)
 export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
@@ -48,6 +50,16 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .andWhere('deployment.circle_id is null')
       .andWhere('v2components.running = true')
+      .getMany()
+  }
+
+  public async findComponentDeploymentInAnotherNamespace(component: CreateComponentRequestDto, namespace: string): Promise<ComponentEntityV2[]> {
+    return  this.createQueryBuilder('v2components')
+      .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .leftJoin('deployment.cdConfiguration', 'cd_configurations')
+      .addSelect(`PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
+      .where(`NOT (PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB  @> '{ "namespace":"${namespace}" }')`)
+      .andWhere('v2components.name = :componentName', { componentName: component.componentName })
       .getMany()
   }
 }

@@ -17,6 +17,7 @@
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
 import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
+import { CommonTemplateUtils } from '../../utils/common-template.utils'
 
 export const getUndeploymentEmptyVirtualServiceStage = (
   component: Component,
@@ -35,7 +36,7 @@ export const getUndeploymentEmptyVirtualServiceStage = (
       kind: 'VirtualService',
       metadata: {
         name: component.name,
-        namespace: `${component.namespace || (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${CommonTemplateUtils.getNamespace(component, deployment.cdConfiguration)}`
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],

@@ -37,7 +37,7 @@ export const getDestinationRulesStage = (
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${component.namespace || (deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${CommonTemplateUtils.getNamespace(component, deployment.cdConfiguration)}`
       },
       spec: {
         host: component.name,
