@@ -59,9 +59,9 @@ const MultiCheck = ({
       defaultValue={defaultValue}
       label={label}
       isLoading={isLoading}
-      onChange={([selected]) => {
-        onChange && onChange(selected);
-        return selected?.value;
+      onChange={([selectedOptions]) => {
+        onChange && onChange(selectedOptions);
+        return selectedOptions;
       }}
     />
   </div>
