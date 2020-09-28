@@ -209,6 +209,25 @@ func (s *SuiteMetricGroup) TestSave() {
 }
 
 func (s *SuiteMetricGroup) TestUpdate() {
+	circleID := uuid.New()
+	metricgroup := metricsgroup.MetricsGroup{
+		Name:        "group 1",
+		CircleID:    circleID,
+		WorkspaceID: uuid.New(),
+	}
+
+	s.DB.Create(&metricgroup)
+
+	metricgroup.Name = "group 2"
+	metricgroup.CircleID = uuid.New()
+	createMetricGroup, err := s.repository.Update(metricgroup.ID.String(), metricgroup)
+	require.NoError(s.T(), err)
+
+	metricgroup.BaseModel = createMetricGroup.BaseModel
+	require.Equal(s.T(), createMetricGroup, metricgroup)
+}
+
+func (s *SuiteMetricGroup) TestUpdateName() {
 	metricgroup := metricsgroup.MetricsGroup{
 		Name:        "group 1",
 		CircleID:    uuid.New(),
@@ -217,12 +236,11 @@ func (s *SuiteMetricGroup) TestUpdate() {
 
 	s.DB.Create(&metricgroup)
 
-	metricgroup.Name = "group 2"
-	createMetricGroup, err := s.repository.Update(metricgroup.ID.String(), metricgroup)
-	require.NoError(s.T(), err)
+	newName := "group 2"
+	createMetricGroup, err := s.repository.UpdateName(metricgroup.ID.String(), newName)
 
-	metricgroup.BaseModel = createMetricGroup.BaseModel
-	require.Equal(s.T(), createMetricGroup, metricgroup)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), createMetricGroup.Name, newName)
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
