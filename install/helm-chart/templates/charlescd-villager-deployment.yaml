@@ -21,6 +21,12 @@ spec:
         app: {{ .Values.villager.name }}
         version: {{ .Values.villager.name }}
     spec:
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        command: ['sh', '-c', 
+          'until pg_isready -h {{ .Values.villager.database.host}} -p 5432; 
+          do echo waiting for database; sleep 2; done;']
       containers:
         - name: {{ .Values.villager.name }}
           image: {{ .Values.villager.image.name }}
