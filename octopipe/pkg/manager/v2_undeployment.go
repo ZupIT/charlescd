@@ -29,7 +29,7 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
-			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION, true)
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments"}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")

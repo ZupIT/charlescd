@@ -16,14 +16,13 @@ func (manager Manager) executeV2Manifests(
 	manifests map[string]interface{},
 	namespace string,
 	action string,
-	forceUpdate bool,
 ) error {
 	log.WithFields(log.Fields{"function": "executeV2Manifests"}).Info("START:EXECUTE_V2_MANIFESTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, manifest := range manifests {
 		currentManifest := manifest
 		errs.Go(func() error {
-			return manager.applyV2Manifest(clusterConfig, currentManifest.(map[string]interface{}), namespace, action, forceUpdate)
+			return manager.applyV2Manifest(clusterConfig, currentManifest.(map[string]interface{}), namespace, action)
 		})
 	}
 	log.WithFields(log.Fields{"function": "executeV2Manifests"}).Info("FINISH:EXECUTE_V2_MANIFESTS")
@@ -35,7 +34,6 @@ func (manager Manager) applyV2Manifest(
 	manifest map[string]interface{},
 	namespace string,
 	action string,
-	forceUpdate bool,
 ) error {
 	log.WithFields(log.Fields{"function": "applyV2Manifest"}).Info("START:APPLY_V2_MANIFEST")
 	cloudprovider := manager.cloudproviderMain.NewCloudProvider(clusterConfig)
@@ -45,7 +43,7 @@ func (manager Manager) applyV2Manifest(
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(action, forceUpdate, namespace, manifest, config)
+	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config)
 	err = deployment.Do()
 	if err != nil {
 		log.WithFields(log.Fields{"function": "applyV2Manifest", "error": err.Error()}).Info("ERROR:DO_DEPLOYMENT")
@@ -68,7 +66,7 @@ func (manager Manager) executeV2HelmManifests(
 		log.WithFields(log.Fields{"function": "executeV2HelmManifests", "error": err.Error()}).Info("ERROR:GET_V2_HELM_MANIFESTS")
 		return err
 	}
-	err = manager.executeV2Manifests(clusterConfig, manifests, namespace, action, forceUpdate)
+	err = manager.executeV2Manifests(clusterConfig, manifests, namespace, action)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeV2HelmManifests", "error": err.Error()}).Info("ERROR:EXECUTE_V2_MANIFESTS")
 		return err
