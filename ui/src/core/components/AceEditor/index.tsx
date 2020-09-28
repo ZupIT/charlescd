@@ -28,6 +28,8 @@ export interface Props {
   value?: string;
   readOnly?: boolean;
   height?: string;
+  width?: string;
+  placeholder?: string;
 }
 
 const AceEditor = ({
@@ -36,7 +38,9 @@ const AceEditor = ({
   theme = 'dracula',
   mode,
   readOnly = true,
-  height = '150px'
+  height = '150px',
+  width = '500px',
+  placeholder = ''
 }: Props) => {
   return (
     <Styled.Wrapper>
@@ -45,6 +49,7 @@ const AceEditor = ({
         theme={theme}
         onChange={onChange}
         value={value}
+        width={width}
         fontSize={12}
         showPrintMargin={false}
         setOptions={{ useWorker: false }}
@@ -52,6 +57,7 @@ const AceEditor = ({
         height={height}
         highlightActiveLine={false}
         readOnly={readOnly}
+        placeholder={placeholder}
       />
     </Styled.Wrapper>
   );
