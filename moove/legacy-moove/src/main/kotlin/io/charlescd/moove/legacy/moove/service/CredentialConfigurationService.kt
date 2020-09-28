@@ -206,22 +206,6 @@ class CredentialConfigurationService(
             }
     }
 
-    private fun buildGitCredentialsWithToken(createGitConfigRequest: CreateGitConfigurationRequest): Map<String, Any> {
-        return mapOf(
-            "address" to createGitConfigRequest.address,
-            "accessToken" to createGitConfigRequest.accessToken.orEmpty(),
-            "serviceProvider" to createGitConfigRequest.serviceProvider.name
-        )
-    }
-
-    private fun buildGitCredentialsWithLogin(createGitConfigRequest: CreateGitConfigurationRequest): Map<String, Any> {
-        return mapOf(
-            "address" to createGitConfigRequest.address,
-            "username" to createGitConfigRequest.username.orEmpty(),
-            "password" to createGitConfigRequest.password.orEmpty(),
-            "serviceProvider" to createGitConfigRequest.serviceProvider.name
-        )
-    }
 
     private fun findUser(id: String): User =
         this.userRepository.findById(id)
