@@ -27,6 +27,4 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where('deployment.active = true')
       .getMany()
   }
-
-
 }
