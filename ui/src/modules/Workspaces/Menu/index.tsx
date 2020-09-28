@@ -90,7 +90,7 @@ const WorkspaceMenu = ({
   const renderModal = () =>
     toggleModal && (
       <Modal.Default onClose={() => setToggleModal(false)}>
-        <form onSubmit={() => handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Modal.Title color="light">
             Create workspace
           </Styled.Modal.Title>

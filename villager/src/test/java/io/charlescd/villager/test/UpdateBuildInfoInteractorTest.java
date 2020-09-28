@@ -19,6 +19,7 @@ package io.charlescd.villager.test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
+import io.charlescd.villager.exceptions.ResourceNotFoundException;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryClient;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import io.charlescd.villager.infrastructure.persistence.BuildEntity;
@@ -145,7 +147,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.of(Response.ok().build()));
+        when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.of(Response.ok().build()));
 
         // Execute
         var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
@@ -155,7 +157,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(4)).findById(registryConfigurationId);
 
-        verify(registryClient, times(8)).getImage(anyString(), anyString());
+        verify(registryClient, times(8)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
         verify(componentRepository, times(1)).findByModuleId(module2.id);
@@ -272,7 +274,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenAnswer(invocationOnMock -> {
+        when(registryClient.getImage(anyString(), anyString(), any())).thenAnswer(invocationOnMock -> {
             var name = invocationOnMock.getArgument(0);
             var tagName = invocationOnMock.getArgument(1);
             if (componentEntity1.name.equals(name) && componentEntity1.tagName.equals(tagName) ||
@@ -291,7 +293,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(2)).findById(registryConfigurationId);
 
-        verify(registryClient, times(4)).getImage(anyString(), anyString());
+        verify(registryClient, times(4)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
 
@@ -386,7 +388,7 @@ public class UpdateBuildInfoInteractorTest {
 
         // Mock - Registry Client
         doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
-        when(registryClient.getImage(anyString(), anyString())).thenReturn(Optional.empty());
+        when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.empty());
 
         // Execute
         var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
@@ -396,7 +398,7 @@ public class UpdateBuildInfoInteractorTest {
         // Check
         verify(dockerRegistryConfigurationRepository, times(2)).findById(registryConfigurationId);
 
-        verify(registryClient, times(2)).getImage(anyString(), anyString());
+        verify(registryClient, times(2)).getImage(anyString(), anyString(), any());
 
         verify(componentRepository, times(1)).findByModuleId(module1.id);
         verify(componentRepository, times(1)).findByModuleId(module2.id);
@@ -408,6 +410,43 @@ public class UpdateBuildInfoInteractorTest {
 
         verify(buildRepository, times(0)).persist(Mockito.any(BuildEntity.class));
 
+    }
+
+    @Test
+    public void testDockerRegistryNotFound() throws ResourceNotFoundException {
+        // Mock - Docker Registry Configuration
+        var registryConfigurationId = "a69c3cfb-5587-448f-b011-beae9a4a3fbb";
+        when(dockerRegistryConfigurationRepository.findById(registryConfigurationId)).then(invocationOnMock -> Optional.empty());
+
+        // Mock - Builds
+        BuildEntity build = BuildEntity.create("tag_1", "http://callback.org", "42780fcb-1a6a-442c-97a4-78ffb90a5dc7");
+        build.id = "189fa7e8-2985-46a1-8aad-72c768df3fcd";
+
+        // Mock - Modules
+        ModuleEntity module = ModuleEntity
+                .create("4f94780e-ebe1-4d4c-8a97-e3b01997492a", "module_1", "tag_1", build.id, registryConfigurationId,
+                        "http://registry/test");
+        module.id = "274fead7-6334-4d58-9834-d1bfa57fd1ef";
+
+        mockModulesByStatus(module);
+
+        // Mock - Components
+        var componentEntity1 = ComponentEntity.create("module_1_component_1", "tag_1", module.id);
+        componentEntity1.id = "2dcd0966-526b-44d7-be00-db6dfc779ecf";
+        var componentEntity2 = ComponentEntity.create("module_1_component_2", "tag_1", module.id);
+        componentEntity2.id = "1e873458-97f8-492b-9863-cc3ca71d7e23";
+
+        var mockModuleComponentData = new HashMap<ModuleEntity, List<ComponentEntity>>();
+        mockModuleComponentData.put(module, List.of(componentEntity1, componentEntity2));
+
+        mockComponentsByModule(mockModuleComponentData);
+
+        //Execute
+        var interactor = new UpdateBuildInfoInteractorImpl(buildRepository, moduleRepository, componentRepository,
+                buildNotificationService, dockerRegistryConfigurationRepository, registryClient, 10);
+        Exception exception = assertThrows(ResourceNotFoundException.class, interactor::execute);
+
+        assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
     }
 
     private void mockComponentsByModule(Map<ModuleEntity, List<ComponentEntity>> mockData) {
