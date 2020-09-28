@@ -18,7 +18,6 @@ import { CircleState } from 'modules/Circles/interfaces/CircleState';
 import { WorkspaceState } from 'modules/Workspaces/interfaces/WorkspaceState';
 import { UserState } from 'modules/Users/interfaces/UserState';
 import { NotificationState } from 'core/components/Notification/interfaces/NotificationState';
-import { ModalWizardState } from 'core/components/Modal/Wizard/interfaces/ModalWizardState';
 import { UserGroupState } from 'modules/Groups/interfaces/UserGroupState';
 import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
 import { HypothesesState } from 'modules/Hypotheses/interfaces';
@@ -28,7 +27,6 @@ export interface State {
   workspaces: WorkspaceState;
   users: UserState;
   notification: NotificationState;
-  wizard: ModalWizardState;
   userGroups: UserGroupState;
   modules: ModuleState;
   hypothesis: HypothesesState;

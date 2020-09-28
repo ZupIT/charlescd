@@ -27,6 +27,7 @@ import { saveWorkspace } from 'core/utils/workspace';
 import { isRoot } from 'core/utils/auth';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
+import { removeWizard } from 'modules/Settings/helpers';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import Loader from './Loaders';
@@ -82,6 +83,7 @@ const WorkspaceMenu = ({
 
   useEffect(() => {
     if (saveWorkspaceResponse) {
+      removeWizard();
       saveWorkspace(saveWorkspaceResponse);
       history.push(routes.credentials);
     }

@@ -18,7 +18,6 @@ import React, { memo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import { setUserAbilities } from 'core/utils/abilities';
-import { toogleModalWizardNewUser } from 'core/components/Modal/Wizard/state/actions';
 import { useDispatch, useGlobalState } from 'core/state/hooks';
 import {
   statusWorkspaceAction,
@@ -42,9 +41,6 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
 
   const handleClick = () => {
-    if (status === WORKSPACE_STATUS.INCOMPLETE) {
-      dispatch(toogleModalWizardNewUser({ newUser: true }));
-    }
     saveWorkspace({ id, name });
     selectedWorkspace(name);
     setUserAbilities();

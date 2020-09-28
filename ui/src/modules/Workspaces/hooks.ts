@@ -22,7 +22,6 @@ import { useDispatch } from 'core/state/hooks';
 import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
-import { toogleModalWizard } from 'core/components/Modal/Wizard/state/actions';
 
 export const useWorkspace = (): [Function, Function, boolean] => {
   const dispatch = useDispatch();
@@ -65,8 +64,6 @@ export const useSaveWorkspace = (): {
           status: 'error'
         })
       );
-    } else if (response) {
-      dispatch(toogleModalWizard({ isOpen: true, newUser: false }));
     }
   }, [dispatch, error, response]);
 
