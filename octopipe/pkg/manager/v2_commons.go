@@ -11,20 +11,32 @@ import (
 	"octopipe/pkg/cloudprovider"
 )
 
-func (manager Manager) executeV2Manifests(clusterConfig cloudprovider.Cloudprovider, manifests map[string]interface{}, namespace string, action string) error {
+func (manager Manager) executeV2Manifests(
+	clusterConfig cloudprovider.Cloudprovider,
+	manifests map[string]interface{},
+	namespace string,
+	action string,
+	forceUpdate bool,
+) error {
 	log.WithFields(log.Fields{"function": "executeV2Manifests"}).Info("START:EXECUTE_V2_MANIFESTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, manifest := range manifests {
 		currentManifest := manifest
 		errs.Go(func() error {
-			return manager.applyV2Manifest(clusterConfig, currentManifest.(map[string]interface{}), namespace, action)
+			return manager.applyV2Manifest(clusterConfig, currentManifest.(map[string]interface{}), namespace, action, forceUpdate)
 		})
 	}
 	log.WithFields(log.Fields{"function": "executeV2Manifests"}).Info("FINISH:EXECUTE_V2_MANIFESTS")
 	return errs.Wait()
 }
 
-func (manager Manager) applyV2Manifest(clusterConfig cloudprovider.Cloudprovider, manifest map[string]interface{}, namespace string, action string) error {
+func (manager Manager) applyV2Manifest(
+	clusterConfig cloudprovider.Cloudprovider,
+	manifest map[string]interface{},
+	namespace string,
+	action string,
+	forceUpdate bool,
+) error {
 	log.WithFields(log.Fields{"function": "applyV2Manifest"}).Info("START:APPLY_V2_MANIFEST")
 	cloudprovider := manager.cloudproviderMain.NewCloudProvider(clusterConfig)
 	config, err := cloudprovider.GetClient()
@@ -33,7 +45,7 @@ func (manager Manager) applyV2Manifest(clusterConfig cloudprovider.Cloudprovider
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config)
+	deployment := manager.deploymentMain.NewDeployment(action, forceUpdate, namespace, manifest, config)
 	err = deployment.Do()
 	if err != nil {
 		log.WithFields(log.Fields{"function": "applyV2Manifest", "error": err.Error()}).Info("ERROR:DO_DEPLOYMENT")
@@ -43,14 +55,20 @@ func (manager Manager) applyV2Manifest(clusterConfig cloudprovider.Cloudprovider
 	return nil
 }
 
-func (manager Manager) executeV2HelmManifests(clusterConfig cloudprovider.Cloudprovider, deployment V2Deployment, namespace string, action string) error {
+func (manager Manager) executeV2HelmManifests(
+	clusterConfig cloudprovider.Cloudprovider,
+	deployment V2Deployment,
+	namespace string,
+	action string,
+	forceUpdate bool,
+) error {
 	log.WithFields(log.Fields{"function": "executeV2HelmManifests"}).Info("START:EXECUTE_V2_HELM_MANIFESTS")
 	manifests, err := manager.getV2HelmManifests(deployment)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeV2HelmManifests", "error": err.Error()}).Info("ERROR:GET_V2_HELM_MANIFESTS")
 		return err
 	}
-	err = manager.executeV2Manifests(clusterConfig, manifests, namespace, action)
+	err = manager.executeV2Manifests(clusterConfig, manifests, namespace, action, forceUpdate)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeV2HelmManifests", "error": err.Error()}).Info("ERROR:EXECUTE_V2_MANIFESTS")
 		return err

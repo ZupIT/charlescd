@@ -26,8 +26,10 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments"}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
+		currentProxyDeployment := map[string]interface{}{} // TODO improve this
+		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
-			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, proxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION, true)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments"}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")
@@ -38,8 +40,9 @@ func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) err
 	log.WithFields(log.Fields{"function": "runV2Undeployments"}).Info("START:RUN_V2_UNDEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, undeployment := range v2Pipeline.Undeployments {
+		currentUndeployment := undeployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, undeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUndeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION, false)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Undeployments"}).Info("FINISH:RUN_V2_UNDEPLOYMENTS")

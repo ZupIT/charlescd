@@ -44,7 +44,7 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 	for _, deployment := range v2Pipeline.Deployments {
 		currentDeployment := deployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION, false)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("FINISH:RUN_V2_DEPLOYMENTS")
@@ -58,7 +58,7 @@ func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
 		if deployment.RollbackIfFailed {
 			currentRollbackDeployment := deployment
 			errs.Go(func() error {
-				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION, false)
 			})
 		}
 	}
@@ -73,7 +73,7 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
 		currentProxyDeployment["default"] = proxyDeployment
 		errs.Go(func() error {
-			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
+			return manager.executeV2Manifests(v2Pipeline.ClusterConfig, currentProxyDeployment, v2Pipeline.Namespace, DEPLOY_ACTION, true)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("FINISH:RUN_V2_PROXY_DEPLOYMENTS")
