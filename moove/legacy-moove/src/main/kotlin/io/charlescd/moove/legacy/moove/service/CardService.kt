@@ -90,12 +90,12 @@ class CardService(
     }
 
     @Transactional
-    fun delete(id: String, workspaceId: String) {
+    fun delete(id: String, workspaceId: String, branchDeletion: Boolean = false) {
         return cardRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("card", id) }
             .also { deleteCardRelationships(it) }
             .also { this.cardRepository.delete(it) }
-            .let { deleteFeatureBranches(it) }
+            .let { deleteFeatureBranches(it, branchDeletion) }
     }
 
     @Transactional
@@ -152,8 +152,8 @@ class CardService(
             .let { this.cardRepository.save(it) }
     }
 
-    private fun deleteFeatureBranches(card: Card) {
-        if (card is SoftwareCard) {
+    private fun deleteFeatureBranches(card: Card, branchDeletion: Boolean = false) {
+        if (card is SoftwareCard && branchDeletion) {
             card.feature.modules.forEach { module ->
                 validateWorkspace(module.workspace)
                 deleteBranch(
