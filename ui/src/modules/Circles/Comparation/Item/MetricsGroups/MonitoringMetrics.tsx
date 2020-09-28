@@ -20,15 +20,23 @@ import Styled from './styled';
 import { AreaChart } from 'core/components/Charts';
 import areaChartOption from './areaChart.options';
 import { useMetricQuery } from './hooks';
+import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import { getMetricSeries, filterMetricsSeries } from './helpers';
 import Loader from '../Loaders/index';
 
 type Props = {
   metricsGroupId: string;
   selectFilters: OptionTypeBase[];
+  setValue: Function;
+  options: OptionTypeBase[];
 };
 
-const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
+const MonitoringMetrics = ({
+  metricsGroupId,
+  selectFilters,
+  setValue,
+  options
+}: Props) => {
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
@@ -44,6 +52,12 @@ const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
       })
       .finally(() => setChartDataLoading(false));
   }, [getMetricByQuery, metricsGroupId, period, interval]);
+
+  useEffect(() => {
+    if (chartData) {
+      setValue('metrics', [allOption, ...options]);
+    }
+  }, [options, setValue]);
 
   const toogleChartPeriod = (chartPeriod: string, chartInterval: string) => {
     setPeriod(chartPeriod);
