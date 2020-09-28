@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.9 (25/09/2020)
+- [#540](https://github.com/ZupIT/charlescd/pull/540) Issues
+- [#538](https://github.com/ZupIT/charlescd/pull/538) CI Update of charts and changelog
+
+---
+
 ## 0.3.8 (25/09/2020)
 - [#537](https://github.com/ZupIT/charlescd/pull/537) Rename compass docker-repository name
 - [#536](https://github.com/ZupIT/charlescd/pull/536) Fix Create Workspace
