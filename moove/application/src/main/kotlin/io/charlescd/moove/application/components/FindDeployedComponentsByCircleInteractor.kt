@@ -4,5 +4,5 @@ import io.charlescd.moove.application.module.response.SimpleComponentResponse
 
 interface FindDeployedComponentsByCircleInteractor {
 
-    fun execute(workspaceId: String, circleId: String) : List<SimpleComponentResponse>
+    fun execute(workspaceId: String, circleId: String): List<SimpleComponentResponse>
 }

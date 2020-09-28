@@ -11,7 +11,7 @@ data class SimpleComponentResponse(
     val moduleName: String
 ) {
     companion object {
-        fun from(simpleComponent: SimpleComponent) : SimpleComponentResponse {
+        fun from(simpleComponent: SimpleComponent): SimpleComponentResponse {
             return SimpleComponentResponse(
                 id = simpleComponent.id,
                 name = simpleComponent.name,
@@ -23,4 +23,3 @@ data class SimpleComponentResponse(
         }
     }
 }
-

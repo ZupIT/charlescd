@@ -8,10 +8,10 @@ import io.charlescd.moove.domain.repository.ComponentRepository
 class FindDeployedComponentsByCircleInteractorImpl(private val componentRepository: ComponentRepository) : FindDeployedComponentsByCircleInteractor {
 
     override fun execute(workspaceId: String, circleId: String): List<SimpleComponentResponse> {
-       return convert( componentRepository.findAllDeployedAtCircle(circleId, workspaceId))
+        return convert(componentRepository.findAllDeployedAtCircle(circleId, workspaceId))
     }
 
-    private fun convert(listComponent: List<SimpleComponent>): List<SimpleComponentResponse>{
-        return listComponent.map{ SimpleComponentResponse.from(it)}
+    private fun convert(listComponent: List<SimpleComponent>): List<SimpleComponentResponse> {
+        return listComponent.map { SimpleComponentResponse.from(it) }
     }
 }

@@ -177,7 +177,7 @@ class V2ModuleController(
     fun findDeployedComponentsByCircle(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @NotBlank @PathVariable("cirleId") circleId: String
-    ) : List<SimpleComponentResponse> {
+    ): List<SimpleComponentResponse> {
         return findDeployedComponentsByCircleInteractor.execute(workspaceId, circleId)
     }
 }
