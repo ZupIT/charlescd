@@ -23,6 +23,8 @@ import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } fr
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 
+
+
 @Controller('v2/deployments')
 export class DeploymentsController {
 
@@ -33,6 +35,7 @@ export class DeploymentsController {
 
   @Post('/')
   @UsePipes(SimultaneousDeploymentValidationPipe)
+  @UsePipes(UniquenessComponentNamespaceValidationPipe)
   @UsePipes(CdConfigurationExistencePipe)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createDeployment(
