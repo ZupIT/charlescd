@@ -27,4 +27,13 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .where('deployment.active = true')
       .getMany()
   }
+
+  public async findComponentDeploymentInAnotherNamespace(component: CreateComponentRequestDto, namespace: string): Promise<DeploymentEntityV2[]> {
+    return this.createQueryBuilder('v2components')
+      .leftJoin('v2components.deployment', 'deployment')
+      .leftJoin('deployment.cdConfiguration', 'configuration')
+      .where('configuration.namespace != namespace')
+      .where('component.componentName = :componentName', { componentName: component.componentName })
+      .getMany()
+  }
 }
