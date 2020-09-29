@@ -15,16 +15,18 @@
  */
 
 import React from 'react';
-import MutationObserver from 'mutation-observer'
-import { render, wait } from 'unit-test/testUtils';
-import Settings from '..';
+import { render } from 'unit-test/testUtils';
+import AceEditor from '..';
 
-(global as any).MutationObserver = MutationObserver
+const props = {
+  mode: "json",
+}
 
-test('render Settings default component', async () => {
-  const { getByTestId } = render(
-    <Settings />
+test('render Ace Editor', () => {
+
+  const { container } = render(
+    <AceEditor {...props} />
   );
 
-  await wait(() => expect(getByTestId('placeholder-placeholder-settings')).toBeInTheDocument());
+  expect(container.innerHTML).toMatch("ace-editor")
 });

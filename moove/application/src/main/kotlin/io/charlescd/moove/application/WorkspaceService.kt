@@ -64,8 +64,4 @@ class WorkspaceService(
     fun findAllUsers(workspaceId: String, name: String?, email: String?, pageRequest: PageRequest): Page<User> {
         return this.userRepository.findByWorkspace(workspaceId, name, email, pageRequest)
     }
-
-    fun findUserPermissions(workspaceId: String, user: User): Map<String, List<Permission>> {
-        return workspaceRepository.findPermissions(workspaceId, user)
-    }
 }

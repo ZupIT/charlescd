@@ -29,6 +29,7 @@ import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.charlescd.villager.infrastructure.persistence.ModuleRepository;
 import io.charlescd.villager.interactor.build.UpdateBuildInfoInteractor;
 import io.charlescd.villager.service.BuildNotificationService;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -139,16 +140,22 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
     }
 
     private boolean componentIsPresent(ComponentEntity component, String registryConfigurationId) {
-        var optionalEntity = this.dockerRegistryConfigurationRepository.findById(registryConfigurationId);
-        var entity = optionalEntity
+        var entity =
+                this.dockerRegistryConfigurationRepository.findById(registryConfigurationId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(ResourceNotFoundException.ResourceEnum.DOCKER_REGISTRY));
 
-        this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+        try {
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData);
 
-        // TODO: Verificar necessidade de serializacao
-        return registryClient.getImage(component.name, component.tagName).isPresent()
-                && registryClient.getImage(component.name, component.tagName).get().getStatus() == 200;
+            // TODO: Verificar necessidade de serializacao
+            return registryClient.getImage(component.name, component.tagName, entity.connectionData).isPresent()
+                    && registryClient.getImage(component.name, component.tagName, entity.connectionData)
+                    .get().getStatus() == 200;
+        } finally {
+            this.registryClient.closeQuietly();
+        }
+
     }
 
 }

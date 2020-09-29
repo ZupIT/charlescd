@@ -8,3 +8,8 @@ keycloak:
   enabled: true
 octopipe:
   enabled: true
+compass:
+  enabled: true
+idm:
+  endpoint: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+  alg: RS256

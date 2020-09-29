@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
+import { useGlobalState } from 'core/state/hooks';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
@@ -34,19 +36,24 @@ import { Datasource } from './Sections/MetricProvider/interfaces';
 
 const Credentials = () => {
   const id = getWorkspaceId();
-  const [form, setForm] = useState<string>(null);
-  const [workspace, loadWorkspace, , loading, update] = useWorkspace();
+  const [form, setForm] = useState<string>('');
+  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
   const { responseAll, getAll: getAllDatasources } = useDatasource();
+  const { item: workspace, status } = useGlobalState(
+    ({ workspaces }) => workspaces
+  );
   const { register, handleSubmit } = useForm();
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
-    update(name);
+    updateWorkspace(name);
   };
 
   useEffect(() => {
-    !form && loadWorkspace(id);
-    !form && getAllDatasources();
-  }, [id, loadWorkspace, form]);
+    if (isNull(form)) {
+      loadWorkspace(id);
+      getAllDatasources();
+    }
+  }, [id, form, loadWorkspace]);
 
   const renderContent = () => (
     <Layer>
@@ -121,7 +128,11 @@ const Credentials = () => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {loading || isEmpty(workspace) ? <Loader.Tab /> : renderPanel()}
+      {status === 'pending' || isEmpty(workspace.id) ? (
+        <Loader.Tab />
+      ) : (
+          renderPanel()
+        )}
     </Styled.Wrapper>
   );
 };
