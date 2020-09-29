@@ -23,67 +23,40 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useMetricProvider, useSectionTestConnection } from './hooks';
+import { useDatasource, useMetricProvider, useSectionTestConnection } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
-import { ConnectionStatusEnum as statusConnection } from './interfaces';
+import { ConnectionStatusEnum as statusConnection, Datasource } from './interfaces';
 import FormMetricProvider from './Form';
 import Styled from './styled';
+import { map } from 'lodash';
 
 interface Props {
   form: string;
   setForm: Function;
-  data: MetricConfiguration;
+  data: Datasource[];
 }
 
 const MetricProvider = ({ form, setForm, data }: Props) => {
-  const [isAction, setIsAction] = useState(true);
-  const { remove, loadingRemove, responseRemove } = useMetricProvider();
-  const {
-    testProviderConnectionSection,
-    response
-  } = useSectionTestConnection();
-
-  useEffect(() => {
-    setIsAction(true);
-  }, [responseRemove]);
-
-  useEffect(() => {
-    if (data) {
-      setIsAction(false);
-      testProviderConnectionSection(
-        { metricConfigurationId: data.id },
-        getWorkspaceId()
-      );
-    }
-  }, [data, testProviderConnectionSection]);
-
-  const renderConnectionMessage = () => (
-    <Styled.StatusWrapper status="error">
-      <Icon size="10px" name="error" />
-      <Text.h5>Connection to metric provider failed.</Text.h5>
-    </Styled.StatusWrapper>
-  );
+  const [datasources, setDatasources] = useState(data);
+  const { remove, loadingRemove, responseRemove } = useDatasource();
 
   const renderSection = () => (
     <Section
-      name="Metrics Provider"
+      name="Datasources"
       icon="metrics"
-      showAction={isAction}
+      showAction
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
-      {data && !responseRemove && (
-        <>
+      {datasources &&
+        map(datasources, datasource => (
           <Card.Config
             icon="metrics"
-            description={data.provider}
+            description={datasource.name}
             isLoading={loadingRemove}
             onClose={() => remove()}
           />
-          {response?.status === statusConnection.FAILED &&
-            renderConnectionMessage()}
-        </>
-      )}
-    </Section>
+        ))}
+    </Section >
   );
 
   const renderForm = () =>

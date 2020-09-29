@@ -29,11 +29,14 @@ import Section from './Sections';
 import Loader from './Loaders';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
+import { useDatasource } from './Sections/MetricProvider/hooks';
+import { Datasource } from './Sections/MetricProvider/interfaces';
 
 const Credentials = () => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>(null);
   const [workspace, loadWorkspace, , loading, update] = useWorkspace();
+  const { responseAll, getAll: getAllDatasources } = useDatasource();
   const { register, handleSubmit } = useForm();
 
   const handleSaveClick = ({ name }: Record<string, string>) => {
@@ -42,6 +45,7 @@ const Credentials = () => {
 
   useEffect(() => {
     !form && loadWorkspace(id);
+    !form && getAllDatasources();
   }, [id, loadWorkspace, form]);
 
   const renderContent = () => (
@@ -110,7 +114,7 @@ const Credentials = () => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={workspace.metricConfiguration}
+        data={responseAll as Datasource[]}
       />
     </TabPanel>
   );

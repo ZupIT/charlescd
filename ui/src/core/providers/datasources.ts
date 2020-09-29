@@ -14,44 +14,14 @@
  * limitations under the License.
  */
 
-export interface Props {
-  onSave: Function;
-}
+import { baseRequest, postRequest, deleteRequest } from './base';
 
-export interface Provider {
-  label: string;
-  value: string;
-  icon?: string;
-}
+const endpoint = '/compass/api/v1';
 
-export interface MetricProvider {
-  provider: string;
-  authorId?: string;
-  url: string;
-}
+export const getAllPlugins = () => baseRequest(`${endpoint}/plugins`)
 
-export interface Datasource {
-  id: string;
-  name: string;
-  pluginSrc: string;
-  healthy: boolean;
-}
+export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
 
-export interface Plugin {
-  name: string;
-  src: string;
-}
+export const createDatasource = (datasourcePayload: any) => postRequest(`${endpoint}/datasources`, datasourcePayload)
 
-export interface TestConnectionResponse {
-  status?: string;
-}
-
-export enum ConnectionStatusEnum {
-  FAILED = 'FAILED',
-  SUCCESS = 'SUCCESS'
-}
-
-export interface Response {
-  id: string;
-  provider: string;
-}
+export const deleteDatasource = (datasourceId: string) => deleteRequest(`${endpoint}/datasources/${datasourceId}`)
