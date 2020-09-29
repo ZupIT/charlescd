@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupChartData } from './fixtures';
+import { MetricsGroupChartData } from '../../__tests__/fixtures';
 import MonitoringMetrics from '../MonitoringMetrics';
 
 beforeEach(() => {

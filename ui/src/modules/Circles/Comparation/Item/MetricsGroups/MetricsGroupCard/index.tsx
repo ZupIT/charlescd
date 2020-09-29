@@ -30,14 +30,14 @@ import MetricsCard from './Metrics';
 import Styled from './styled';
 import { MetricsGroup } from '../types';
 
-interface Props {
+type Props = {
   metricGroup: MetricsGroup;
   loadingStatus: boolean;
   handleAddMetric: Function;
   handleDeleteMetricsGroup: Function;
   handleDeleteMetric: Function;
   handleEditMetric: Function;
-}
+};
 
 const MetricsGroupCard = ({
   metricGroup,
@@ -97,7 +97,7 @@ const MetricsGroupCard = ({
               <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
             </LabeledIcon>
             {chartOpen && (
-              <LabeledIcon icon="filter" isActive={true}>
+              <LabeledIcon icon="filter" isActive={renderLabelText()}>
                 <Styled.MultiSelect
                   control={control}
                   name="metrics"
