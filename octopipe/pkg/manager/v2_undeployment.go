@@ -7,7 +7,7 @@ import (
 )
 
 func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPipeline, incomingCircleId string) {
-	log.WithFields(log.Fields{"function": "ExecuteV2UndeploymentPipeline"}).Info("START:EXECUTE_V2_UNDEPLOYMENT_PIPELINE")
+	log.WithFields(log.Fields{"function": "ExecuteV2UndeploymentPipeline", "pipeline": v2Pipeline}).Info("START:EXECUTE_V2_UNDEPLOYMENT_PIPELINE")
 	err := manager.runV2ProxyUndeployments(v2Pipeline)
 	if err != nil {
 		manager.handleV2ProxyUndeploymentError(v2Pipeline, err, incomingCircleId)
@@ -23,7 +23,7 @@ func (manager Manager) ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPi
 }
 
 func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline) error {
-	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments"}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")
+	log.WithFields(log.Fields{"function": "runV2ProxyUndeployments", "proxyDeployments": v2Pipeline.ProxyDeployments}).Info("START:RUN_V2_PROXY_UNDEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, proxyDeployment := range v2Pipeline.ProxyDeployments {
 		currentProxyDeployment := map[string]interface{}{} // TODO improve this
@@ -37,12 +37,12 @@ func (manager Manager) runV2ProxyUndeployments(v2Pipeline V2UndeploymentPipeline
 }
 
 func (manager Manager) runV2Undeployments(v2Pipeline V2UndeploymentPipeline) error {
-	log.WithFields(log.Fields{"function": "runV2Undeployments"}).Info("START:RUN_V2_UNDEPLOYMENTS")
+	log.WithFields(log.Fields{"function": "runV2Undeployments", "undeployments": v2Pipeline.Undeployments}).Info("START:RUN_V2_UNDEPLOYMENTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, undeployment := range v2Pipeline.Undeployments {
 		currentUndeployment := undeployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUndeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION, false)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUndeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Undeployments"}).Info("FINISH:RUN_V2_UNDEPLOYMENTS")

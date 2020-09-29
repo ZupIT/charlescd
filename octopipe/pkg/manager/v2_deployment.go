@@ -23,7 +23,7 @@ import (
 )
 
 func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeline, incomingCircleId string) {
-	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("START:EXECUTE_V2_DEPLOYMENT_PIPELINE")
+	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "v2Pipeline": v2Pipeline}).Info("START:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 	err := manager.runV2Deployments(v2Pipeline)
 	if err != nil {
 		manager.handleV2DeploymentError(v2Pipeline, err, incomingCircleId)
@@ -44,7 +44,7 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 	for _, deployment := range v2Pipeline.Deployments {
 		currentDeployment := deployment
 		errs.Go(func() error {
-			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION, false)
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentDeployment, v2Pipeline.Namespace, DEPLOY_ACTION)
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2Deployments"}).Info("FINISH:RUN_V2_DEPLOYMENTS")
@@ -52,13 +52,13 @@ func (manager Manager) runV2Deployments(v2Pipeline V2DeploymentPipeline) error {
 }
 
 func (manager Manager) runV2Rollbacks(v2Pipeline V2DeploymentPipeline) error {
-	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("START:RUN_V2_ROLLBACKS")
+	log.WithFields(log.Fields{"function": "runV2Rollbacks", "rollbacks": v2Pipeline.Deployments}).Info("START:RUN_V2_ROLLBACKS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, deployment := range v2Pipeline.Deployments {
 		if deployment.RollbackIfFailed {
 			currentRollbackDeployment := deployment
 			errs.Go(func() error {
-				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION, false)
+				return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentRollbackDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
 			})
 		}
 	}

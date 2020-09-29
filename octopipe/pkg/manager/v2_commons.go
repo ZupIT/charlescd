@@ -17,7 +17,7 @@ func (manager Manager) executeV2Manifests(
 	namespace string,
 	action string,
 ) error {
-	log.WithFields(log.Fields{"function": "executeV2Manifests"}).Info("START:EXECUTE_V2_MANIFESTS")
+	log.WithFields(log.Fields{"function": "executeV2Manifests", "manifests": manifests, "action": action, "namespace": namespace}).Info("START:EXECUTE_V2_MANIFESTS")
 	errs, _ := errgroup.WithContext(context.Background())
 	for _, manifest := range manifests {
 		currentManifest := manifest
@@ -35,7 +35,7 @@ func (manager Manager) applyV2Manifest(
 	namespace string,
 	action string,
 ) error {
-	log.WithFields(log.Fields{"function": "applyV2Manifest"}).Info("START:APPLY_V2_MANIFEST")
+	log.WithFields(log.Fields{"function": "applyV2Manifest", "manifest": manifest, "action": action, "namespace": namespace}).Info("START:APPLY_V2_MANIFEST")
 	cloudprovider := manager.cloudproviderMain.NewCloudProvider(clusterConfig)
 	config, err := cloudprovider.GetClient()
 	if err != nil {
@@ -58,9 +58,8 @@ func (manager Manager) executeV2HelmManifests(
 	deployment V2Deployment,
 	namespace string,
 	action string,
-	forceUpdate bool,
 ) error {
-	log.WithFields(log.Fields{"function": "executeV2HelmManifests"}).Info("START:EXECUTE_V2_HELM_MANIFESTS")
+	log.WithFields(log.Fields{"function": "executeV2HelmManifests", "deployment": deployment}).Info("START:EXECUTE_V2_HELM_MANIFESTS")
 	manifests, err := manager.getV2HelmManifests(deployment)
 	if err != nil {
 		log.WithFields(log.Fields{"function": "executeV2HelmManifests", "error": err.Error()}).Info("ERROR:GET_V2_HELM_MANIFESTS")
