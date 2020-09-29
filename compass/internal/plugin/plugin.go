@@ -53,7 +53,7 @@ func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, error) {
 			return []Plugin{}, err
 		}
 
-		newPlugin.Src = fmt.Sprintf("%s/%s", pluginsDir, p.Name())
+		newPlugin.Src = fmt.Sprintf("%s/%s/%s/%s", pluginsDir, categoryName, p.Name(), p.Name())
 		newPlugin.Category = categoryName
 		plugins = append(plugins, newPlugin)
 	}

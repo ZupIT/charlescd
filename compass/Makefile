@@ -15,7 +15,7 @@ COMPOSE_TESTS=./test/docker-compose.test.yaml
 
 
 start:
-				for plugin in ./plugins/datasource/*/; do $(GOBUILDPLUGIN) -o ./plugins "$$plugin"/*.go ; done
+				sh build-plugins.sh
 				$(GORUN) $(CMD_PATH)
 build: 
 				$(GOBUILD) -o $(DIST_PATH)/$(BINARY_NAME) $(CMD_PATH)
