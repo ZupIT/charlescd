@@ -31,7 +31,7 @@ interface Item {
 }
 
 export interface Props {
-  onClose?: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
+  onClose: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
 }
 
 const Wizard = ({ onClose }: Props) => {
