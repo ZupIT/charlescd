@@ -27,7 +27,7 @@ import {
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import TabPanel from 'core/components/TabPanel';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';

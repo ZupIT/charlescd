@@ -15,12 +15,9 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait, act, waitForElement, screen } from 'unit-test/testUtils';
+import { render, fireEvent, act, waitForElement } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
 import ModalResetPassword from '..';
-import { renderHook } from '@testing-library/react-hooks';
-import { useResetPassword } from 'modules/Users/hooks';
-import { useDispatch } from 'core/state/hooks';
 
 const originalNavigator = { ...navigator };
 
