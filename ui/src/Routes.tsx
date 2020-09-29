@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, { Suspense, lazy, useEffect, useState, Fragment } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from 'core/constants/routes';
 import { getParam } from 'core/utils/routes';
@@ -94,11 +94,11 @@ const Routes = () => {
   }, [grants, findByEmail, getCircleId]);
 
   const renderRoutes = () => (
-    <Fragment>
+    <Switch>
       <Route path={routes.error403} component={Forbidden403} />
       <Route path={routes.error404} component={NotFound404} />
       <Route path={routes.main} component={Main} />
-    </Fragment>
+    </Switch>
   );
 
   return (
