@@ -25,14 +25,15 @@ import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { getProfileByKey } from 'core/utils/profile';
 import ConnectionStatus from './ConnectionStatus';
-import { MetricProvider } from './interfaces';
+import { MetricProvider, Plugin } from './interfaces';
+import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
-import { useMetricProvider, useFromTestConnection } from './hooks';
+import { useMetricProvider, useFromTestConnection, useDatasource, usePlugins } from './hooks';
 import { metricProviders } from 'core/constants/metrics-providers';
 import Styled from './styled';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
-  const { responseAdd, save, loadingSave, loadingAdd } = useMetricProvider();
+  const { responseAdd, save, loadingSave, loadingAdd } = useDatasource();
   const {
     testProviderConnectionForm,
     response,
@@ -40,11 +41,13 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   } = useFromTestConnection();
   const [isDisabled, setIsDisabled] = useState(true);
   const [provider, setProvider] = useState<Option>();
+  const { response: plugins, getAll } = usePlugins()
   const { control, register, handleSubmit, getValues } = useForm<
     MetricProvider
   >();
 
   useEffect(() => {
+    getAll()
     if (responseAdd) onFinish();
   }, [onFinish, responseAdd]);
 
@@ -100,8 +103,8 @@ const FormMetricProvider = ({ onFinish }: Props) => {
     <Select.Single
       control={control}
       name="url"
-      label="Select a type server"
-      options={metricProviders}
+      label="Select a datasource plugin"
+      options={serializePlugins(plugins as Plugin[])}
       onChange={option => onChange(option)}
     />
   );
@@ -124,7 +127,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
   return (
     <Styled.Content>
       <Text.h2 color="light">
-        Add Metrics Provider
+        Add Datasource
         <Popover
           title="Why we ask for Metrics Provider?"
           icon="info"

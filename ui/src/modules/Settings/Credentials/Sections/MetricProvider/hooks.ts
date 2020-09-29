@@ -21,12 +21,113 @@ import {
   verifyProviderConnection,
   metricProviderConfigConnection
 } from 'core/providers/metricProvider';
+
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
-import { MetricProvider, Response, TestConnectionResponse } from './interfaces';
+import { Datasource, MetricProvider, Plugin, Response, TestConnectionResponse } from './interfaces';
 import { buildParams, URLParams } from 'core/utils/query';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import { getAllDatasources, createDatasource, deleteDatasource, getAllPlugins } from 'core/providers/datasources';
+
+export const useDatasource = (): FetchProps => {
+  const dispatch = useDispatch();
+  const [createData, createDatasource] = useFetch<Response>(create);
+  const [datasourceData, getDatasources] = useFetch<Datasource[]>(
+    getAllDatasources
+  );
+  const [delData, delDatasource] = useFetch(delConfig);
+  const {
+    loading: loadingSave,
+    response: responseSave,
+    error: errorSave
+  } = createData;
+  const {
+    loading: loadingAdd,
+    response: responseAdd,
+    error: errorAdd
+  } = delData;
+  const { loading: loadingAll, response, error } = datasourceData;
+  const { response: responseRemove, error: errorRemove } = delData;
+
+  const save = useCallback(
+    (metricProvider: MetricProvider) => {
+      createDatasource(metricProvider);
+    },
+    [createDatasource]
+  );
+
+  useEffect(() => {
+    if (errorSave) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorSave.status}] Datasource could not be saved.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorSave, dispatch]);
+
+  const getAll = useCallback(() => {
+    getDatasources();
+  }, [getDatasources]);
+
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        toogleNotification({
+          text: `[${error.status}] Dat could not be fetched.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [error, dispatch]);
+
+  const remove = useCallback((id: string) => {
+    deleteDatasource(id);
+  }, [delDatasource]);
+
+  useEffect(() => {
+    if (errorRemove) {
+      dispatch(
+        toogleNotification({
+          text: `[${errorRemove.status}] Datasource could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }, [errorRemove, dispatch]);
+
+  return {
+    getAll,
+    save,
+    remove,
+    responseAll: response,
+    responseAdd,
+    responseRemove,
+    loadingSave,
+    loadingAdd
+  };
+}
+
+export const usePlugins = (): FetchProps => {
+  const [allPlugins, getPlugins] = useFetch<
+    Plugin[]
+  >(getAllPlugins);
+
+  const { response, loading } = allPlugins;
+
+  const getAll = useCallback(() => {
+    getPlugins()
+  }, [getPlugins]);
+
+  return {
+    getAll,
+    response,
+    loading
+  };
+};
+
 
 export const useMetricProvider = (): FetchProps => {
   const dispatch = useDispatch();
