@@ -198,7 +198,8 @@ nginx:
   octopipe:
     enabled: true
   idm:
-    endpoint: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+    endpoint: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+    alg: RS256
 
 octopipe:
   enabled: true
