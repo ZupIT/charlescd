@@ -18,6 +18,8 @@ import { EntityRepository, Repository } from 'typeorm'
 import { ComponentEntityV2 } from '../entity/component.entity'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 import { AppConstants } from '../../../../v1/core/constants'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { CommonTemplateUtils } from '../../../core/integrations/spinnaker/utils/common-template.utils'
 
 @EntityRepository(ComponentEntityV2)
 export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
@@ -53,13 +55,14 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
 
-  public async findComponentDeploymentInAnotherNamespace(component: CreateComponentRequestDto, namespace: string): Promise<ComponentEntityV2[]> {
+  public async findComponentDeploymentInSameNamespace(component: ComponentEntityV2, cdConfiguration: CdConfigurationEntity): Promise<ComponentEntityV2[]> {
     return  this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .leftJoin('deployment.cdConfiguration', 'cd_configurations')
       .addSelect(`PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
-      .where(`NOT (PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB  @> '{ "namespace":"${namespace}" }')`)
-      .andWhere('v2components.name = :componentName', { componentName: component.componentName })
+      .where(`PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB  @> '{ "namespace":"${CommonTemplateUtils.getNamespace(component, cdConfiguration)}"}'`)
+      .andWhere('v2components.name = :componentName', { componentName: component.name })
+      .andWhere('cd_configurations.workspaceId != :workspaceId', { workspaceId: cdConfiguration.workspaceId })
       .getMany()
   }
 }

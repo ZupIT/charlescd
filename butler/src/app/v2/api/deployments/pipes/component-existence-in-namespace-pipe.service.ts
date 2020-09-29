@@ -22,10 +22,9 @@ import { CreateModuleDeploymentDto } from '../dto/create-module-request.dto'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
 import { ComponentsRepositoryV2 } from '../repository'
-import * as util from 'util'
 
 @Injectable()
-export class UniquenessComponentNameByNamespacePipe implements PipeTransform {
+export class ComponentExistenceInNamespacePipe implements PipeTransform {
   constructor(
     @InjectRepository(ComponentsRepositoryV2)
     private componentsRepository: ComponentsRepositoryV2,
@@ -35,33 +34,26 @@ export class UniquenessComponentNameByNamespacePipe implements PipeTransform {
 
   public async transform(createDeploymentDto: CreateDeploymentRequestDto) : Promise<CreateDeploymentRequestDto> {
     const cdConfiguration = await this.cdConfigurationRepository.findDecrypted(createDeploymentDto.cdConfigurationId)
-    const result = await Promise.all(
+    await Promise.all(
       createDeploymentDto.modules.map(
-        module => this.verifyExistenceofModuleComponentsInAnotherNamespace(module, cdConfiguration)
-      )
-    )
-
+        module => this.verifyExistenceofModuleComponentsInNamespace(module, cdConfiguration)
+      ))
     return createDeploymentDto
   }
 
-  private verifyExistenceofModuleComponentsInAnotherNamespace(module: CreateModuleDeploymentDto, configuration: CdConfigurationEntity) {
+  private verifyExistenceofModuleComponentsInNamespace(module: CreateModuleDeploymentDto, configuration: CdConfigurationEntity) {
     return Promise.all(
       module.components.map(
-        component => this.verifyExistenceofComponentInAnotherNamespace(component, configuration)
+        component => this.verifyExistenceOfComponentInNamespace(component, configuration, module)
       )
     )
   }
 
-  private async verifyExistenceofComponentInAnotherNamespace(component: CreateComponentRequestDto, configuration: CdConfigurationEntity) {
-    const componentsInAnotherNamespace =  await this.componentsRepository.
-      findComponentDeploymentInAnotherNamespace(component, this.getDeployNamespace(component, configuration))
-    if (componentsInAnotherNamespace && componentsInAnotherNamespace.length) {
-      console.log(util.inspect(componentsInAnotherNamespace, false, 3))
-      throw new UnprocessableEntityException('Component already deployed in another namespace')
+  private async verifyExistenceOfComponentInNamespace(component: CreateComponentRequestDto, configuration: CdConfigurationEntity, module:CreateModuleDeploymentDto) {
+    const components = await this.componentsRepository.findComponentDeploymentInSameNamespace(component.toEntity(module.helmRepository), configuration)
+    if (components && components.length) {
+      throw new UnprocessableEntityException('Component already deployed in same namespace with another workspace')
     }
   }
 
-  private getDeployNamespace(component: CreateComponentRequestDto, configuration: CdConfigurationEntity) {
-    return component.namespace || configuration.configurationData.namespace
-  }
 }

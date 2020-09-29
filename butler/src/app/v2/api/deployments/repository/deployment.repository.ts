@@ -17,6 +17,11 @@
 import { EntityRepository, Repository } from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
+import { AppConstants } from '../../../../v1/core/constants'
+import { CommonTemplateUtils } from '../../../core/integrations/spinnaker/utils/common-template.utils'
+import { CdConfigurationEntity } from '../../../../v1/api/configurations/entity'
+import { ComponentEntity } from '../../../../v1/api/components/entity'
+import { ComponentEntityV2 } from '../entity/component.entity'
 
 @EntityRepository(DeploymentEntityV2)
 export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
@@ -28,12 +33,14 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .getMany()
   }
 
-  public async findComponentDeploymentInAnotherNamespace(component: CreateComponentRequestDto, namespace: string): Promise<DeploymentEntityV2[]> {
-    return this.createQueryBuilder('v2components')
-      .leftJoin('v2components.deployment', 'deployment')
-      .leftJoin('deployment.cdConfiguration', 'configuration')
-      .where('configuration.namespace != namespace')
-      .where('component.componentName = :componentName', { componentName: component.componentName })
+  public async findComponentDeploymentInSameNamespace(component: ComponentEntityV2, configuration: CdConfigurationEntity): Promise<DeploymentEntityV2[]> {
+    return  this.createQueryBuilder('v2components')
+      .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .leftJoin('deployment.cdConfiguration', 'cd_configurations')
+      .addSelect(`PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
+      .where(`(PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB  @> '{ "namespace":"${CommonTemplateUtils.getNamespace(component, configuration)}" }'`)
+      .andWhere('v2components.name = :componentName', { componentName: component.name })
+      .andWhere('cd_configurations.workspaceId != :workspaceId', { workspaceId: configuration.workspaceId })
       .getMany()
   }
 }
