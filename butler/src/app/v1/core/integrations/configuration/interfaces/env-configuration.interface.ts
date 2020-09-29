@@ -38,7 +38,7 @@ export default interface IEnvConfiguration {
 
   darwinIstioDeploymentCallbackUrl: string
 
-  spinnakerUrl: string
+  spinnakerUrl: string // TODO remove this
 
   octopipeUrl: string
 
@@ -49,4 +49,17 @@ export default interface IEnvConfiguration {
   helmPrefixUrl: string
 
   helmRepoBranch: string
+
+  deploymentExpireTime: number
+
+  pgBossConfig: {
+    host: string,
+    database: string,
+    user: string,
+    password: string
+    max: number
+    retentionDays: number
+  }
+
+  butlerUrl: string
 }
