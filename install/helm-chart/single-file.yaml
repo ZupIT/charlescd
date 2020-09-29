@@ -1,4 +1,26 @@
 ---
+# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-mongodb
+  namespace: charles
+  labels:
+    app: mongodb
+    chart: mongodb-7.14.2
+    release: "charlescd"
+    heritage: "Helm"
+secrets:
+  - name: charlescd-mongodb
+---
+# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+  name: charlescd-octopipe
+  namespace: charles
+---
 # Source: Charles-CD/charts/keycloak/templates/realm-keycloak.yaml
 apiVersion: v1
 data:
@@ -208,8 +230,8 @@ data:
 
                 access_by_lua '
                     local opts = {
-                      discovery = "http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration",
-                      token_signing_alg_values_expected = {  },
+                      discovery = "http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration",
+                      token_signing_alg_values_expected = { "RS256" },
                       ssl_verify = "no"
                     }
                     -- call bearer_jwt_verify for OAuth 2.0 JWT validation
@@ -488,28 +510,6 @@ spec:
   resources:
     requests:
       storage: "8Gi"
----
-# Source: Charles-CD/charts/mongodb/templates/serviceaccount.yml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: charlescd-mongodb
-  namespace: charles
-  labels:
-    app: mongodb
-    chart: mongodb-7.14.2
-    release: "charlescd"
-    heritage: "Helm"
-secrets:
-  - name: charlescd-mongodb
----
-# Source: Charles-CD/charts/octopipe-charlescd/templates/service-account.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-  name: charlescd-octopipe
-  namespace: charles
 ---
 # Source: Charles-CD/charts/octopipe-charlescd/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
