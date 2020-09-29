@@ -37,6 +37,7 @@ type UseCases interface {
 	Save(metricsGroup MetricsGroup) (MetricsGroup, error)
 	FindById(id string) (MetricsGroup, error)
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, error)
+	UpdateName(id string, name string) (MetricsGroup, error)
 	Remove(id string) error
 	QueryByGroupID(id, period, interval string) ([]datasourcePKG.MetricValues, error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, error)
