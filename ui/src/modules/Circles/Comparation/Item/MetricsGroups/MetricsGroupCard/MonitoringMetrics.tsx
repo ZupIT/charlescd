@@ -19,9 +19,9 @@ import { OptionTypeBase } from 'react-select';
 import Styled from './styled';
 import { AreaChart } from 'core/components/Charts';
 import areaChartOption from './areaChart.options';
-import { useMetricQuery } from './hooks';
-import { getMetricSeries, filterMetricsSeries } from './helpers';
-import Loader from '../Loaders/index';
+import { useMetricQuery } from '../hooks';
+import { getMetricSeries, filterMetricsSeries } from '../helpers';
+import Loader from '../../Loaders/index';
 
 type Props = {
   metricsGroupId: string;
