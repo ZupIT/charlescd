@@ -25,6 +25,7 @@ import (
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"regexp"
 	"sort"
@@ -258,6 +259,22 @@ func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, err
 		logger.Error(util.UpdateMetricsGroupError, "Update", db.Error, metricsGroup)
 		return MetricsGroup{}, db.Error
 	}
+	return metricsGroup, nil
+}
+
+func (main Main) UpdateName(id string, name string) (MetricsGroup, error) {
+	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", name)
+	if db.Error != nil {
+		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", db.Error, fmt.Sprintf("metricGroup: id = %s, name = %s", id, name))
+		return MetricsGroup{}, db.Error
+	}
+	metricsGroup, findErr := main.FindById(id)
+
+	if findErr != nil {
+		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", db.Error, fmt.Sprintf("metricGroup: id = %s, name = %s", id, name))
+		return MetricsGroup{}, findErr
+	}
+
 	return metricsGroup, nil
 }
 
