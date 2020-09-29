@@ -34,11 +34,6 @@ interface ButtonIconProps {
   isActive: boolean;
 }
 
-interface ThresholdIconProps {
-  color: string;
-  hasTreshold: boolean;
-}
-
 const Icon = styled(ComponentIcon)`
   animation: ${slideInRight} 1s forwards;
   margin-bottom: 20px;
