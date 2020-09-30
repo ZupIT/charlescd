@@ -28,7 +28,6 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.infrastructure.service.CircleMatcherClientService
-import io.charlescd.moove.infrastructure.service.client.CircleMatcherClient
 import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import spock.lang.Specification
 import java.time.LocalDateTime
@@ -41,13 +40,12 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
 
-    private CircleMatcherClient circleMatcherClient = Mock(CircleMatcherClient)
     private CircleMatcherService circleMatcherService
     private WorkspaceService workspaceService
 
     void setup() {
-        this.circleMatcherService = new CircleMatcherClientService(circleMatcherClient, new ObjectMapper())
         this.workspaceService = new WorkspaceService(workspaceRepository, userRepository)
+        this.circleMatcherService = Mock(CircleMatcherService)
         this.deploymentCallbackInteractor = new DeploymentCallbackInteractorImpl(deploymentRepository, circleMatcherService, workspaceService)
 
     }
@@ -117,7 +115,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
             return deployment
         }
-        1 * circleMatcherClient.update(_, _, _)
+        1 * circleMatcherService.update(_, _ , _, _)
 
                 notThrown()
     }
@@ -284,6 +282,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
             return deployment
         }
+        0 * this.circleMatcherService.update(_, _, _,_)
 
         notThrown()
     }
@@ -307,7 +306,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         then:
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
         1 * this.deploymentRepository.update(_)
-        0 * this.circleMatcherClient.update(_, _, _)
+        0 * circleMatcherService.update(_, _, _, _)
     }
 
     def 'when callback of deploy is SUCCEEDED should update status to active in circle matcher'() {
@@ -343,16 +342,17 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.deploymentRepository.update(_)
 
-        1 * this.circleMatcherClient.update(_, _, _, ) >> { arguments ->
-            def matcherUrl = arguments[0]
-            def  reference = arguments[1]
-            def circleMatcherRequest = arguments[2]
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
 
-            assert circleMatcherRequest instanceof CircleMatcherRequest
-            assert circleMatcherRequest instanceof CircleMatcherRequest
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
             assert matcherUrl.toString() == workspace.circleMatcherUrl
             assert reference == circle.reference
-            assert circleMatcherRequest.active == true
+            assert active == true
         }
 
     }
@@ -385,16 +385,17 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
-        1 * this.circleMatcherClient.update(_, _, _, ) >> { arguments ->
-            def matcherUrl = arguments[0]
-            def  reference = arguments[1]
-            def circleMatcherRequest = arguments[2]
+        1 * this.circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
 
-            assert circleMatcherRequest instanceof CircleMatcherRequest
-            assert circleMatcherRequest instanceof CircleMatcherRequest
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
             assert matcherUrl.toString() == workspace.circleMatcherUrl
             assert reference == circle.reference
-            assert circleMatcherRequest.active == false
+            assert active == false
         }
     }
     def 'when callback of deploy is FAILED should not update status in circle matcher'() {
@@ -426,7 +427,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
-        0 * this.circleMatcherClient.update(_, _, _, )
+        0 * this.circleMatcherService.update(_, _, _, _)
     }
 
     def 'when callback of deploy is UNDEPLOY_FAILED should not update status in circle matcher'() {
@@ -458,7 +459,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
-        0 * this.circleMatcherClient.update(_, _, _, )
+        0 * this.circleMatcherService.update(_, _, _, )
     }
 
 }
