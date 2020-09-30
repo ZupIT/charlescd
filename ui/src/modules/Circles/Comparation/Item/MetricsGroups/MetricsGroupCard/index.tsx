@@ -37,6 +37,7 @@ type Props = {
   handleDeleteMetricsGroup: Function;
   handleDeleteMetric: Function;
   handleEditMetric: Function;
+  handleEditGroup: Function;
 };
 
 const MetricsGroupCard = ({
@@ -45,7 +46,8 @@ const MetricsGroupCard = ({
   handleAddMetric,
   handleDeleteMetricsGroup,
   handleDeleteMetric,
-  handleEditMetric
+  handleEditMetric,
+  handleEditGroup
 }: Props) => {
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
     metricGroup.metrics
@@ -58,7 +60,7 @@ const MetricsGroupCard = ({
     setChartOpen(!chartOpen);
     setSelectMetric(undefined);
   };
-  
+
   const renderLabelText = () => {
     if (isUndefined(selectMetric)) return false;
     if (isEmpty(selectMetric)) return true;
@@ -73,6 +75,11 @@ const MetricsGroupCard = ({
           {metricGroup.name}
         </Text.h2>
         <Dropdown icon="vertical-dots" size="16px">
+          <Dropdown.Item
+            icon="edit"
+            name="Edit group name"
+            onClick={() => handleEditGroup(metricGroup)}
+          />
           <Dropdown.Item
             icon="add"
             name="Add metric"
