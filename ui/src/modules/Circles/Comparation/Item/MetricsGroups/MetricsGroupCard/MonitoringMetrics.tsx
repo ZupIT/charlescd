@@ -26,9 +26,14 @@ import Loader from '../../Loaders/index';
 type Props = {
   metricsGroupId: string;
   selectFilters: OptionTypeBase[];
+  onChangePeriod: Function;
 };
 
-const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
+const MonitoringMetrics = ({
+  metricsGroupId,
+  selectFilters,
+  onChangePeriod
+}: Props) => {
   const [chartData, setChartData] = useState([]);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [period, setPeriod] = useState('1h');
@@ -46,6 +51,7 @@ const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
   }, [getMetricByQuery, metricsGroupId, period, interval]);
 
   const toogleChartPeriod = (chartPeriod: string, chartInterval: string) => {
+    onChangePeriod();
     setPeriod(chartPeriod);
     setInterval(chartInterval);
   };

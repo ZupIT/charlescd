@@ -24,6 +24,7 @@ import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import isUndefined from 'lodash/isUndefined';
+import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import MonitoringMetrics from './MonitoringMetrics';
 import MetricsCard from './Metrics';
@@ -52,7 +53,14 @@ const MetricsGroupCard = ({
   );
   const [chartOpen, setChartOpen] = useState(false);
   const [selectMetric, setSelectMetric] = useState<OptionTypeBase[]>();
-  const { control } = useForm();
+  const { control, setValue } = useForm();
+
+  const handleChangePeriod = () => {
+    if (isEmpty(selectMetric)) {
+      setSelectMetric(undefined);
+      setValue('metrics', [allOption, ...normalizedSelectOptions]);
+    }
+  };
 
   const handleViewChart = () => {
     setChartOpen(!chartOpen);
@@ -114,6 +122,7 @@ const MetricsGroupCard = ({
             <MonitoringMetrics
               metricsGroupId={metricGroup.id}
               selectFilters={selectMetric}
+              onChangePeriod={handleChangePeriod}
             />
           )}
           <Styled.MetricCardTableHead>
@@ -122,7 +131,7 @@ const MetricsGroupCard = ({
             <Text.h5 color="dark">Last Value</Text.h5>
           </Styled.MetricCardTableHead>
           <Styled.MetricsGroupsCardContent>
-            {metricGroup.metrics.map(metric => (
+            {map(metricGroup.metrics, metric => (
               <MetricsCard
                 metric={metric}
                 metricGroup={metricGroup}
