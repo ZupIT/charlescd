@@ -39,9 +39,7 @@ const Login = () => {
   }, [getValues, watchFields, setIsDisabled]);
 
   useEffect(() => {
-    if (status === 'resolved') {
-      redirectTo(routes.workspaces);
-    }
+    if (status === 'resolved') redirectTo(routes.workspaces);
   }, [status, history]);
 
   const onSubmit = () => {
