@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.deployment.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.deployment.DeploymentCallbackInteractor
 import io.charlescd.moove.application.deployment.request.DeploymentCallbackRequest
@@ -27,8 +26,6 @@ import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
-import io.charlescd.moove.infrastructure.service.CircleMatcherClientService
-import io.charlescd.moove.infrastructure.service.client.request.CircleMatcherRequest
 import spock.lang.Specification
 import java.time.LocalDateTime
 
