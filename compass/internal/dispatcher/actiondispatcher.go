@@ -23,6 +23,7 @@ import (
 	"compass/internal/configuration"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
+	"compass/internal/metricsgroupaction"
 	"compass/internal/plugin"
 	"compass/pkg/logger"
 	"log"
@@ -35,10 +36,12 @@ type ActionUseCases interface {
 }
 
 type ActionDispatcher struct {
-	metricGroup      metricsgroup.UseCases
-	actionRepository action.UseCases
-	pluginRepository plugin.UseCases
-	mux              sync.Mutex
+	metricGroupRepo metricsgroup.UseCases
+	actionRepo      action.UseCases
+	pluginRepo      plugin.UseCases
+	metricRepo      metric.UseCases
+	groupActionRepo metricsgroupaction.UseCases
+	mux             sync.Mutex
 }
 
 func NewActionDispatcher(metric metric.UseCases) UseCases {
@@ -46,30 +49,67 @@ func NewActionDispatcher(metric metric.UseCases) UseCases {
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
-	metricGroups, err := dispatcher.metricGroup.FindAll()
+	metricGroups, err := dispatcher.metricGroupRepo.FindAll()
 	if err != nil {
-		logger.Panic("Cannot find any metric group", "Dispatch", err, nil)
+		logger.Error("Cannot find any metric group", "Dispatch", err, nil)
 	}
 
-	for _, execution := range metricGroups {
-		go dispatcher.doAction(execution)
+	for _, group := range metricGroups {
+		if dispatcher.validateGroupReachedAllMetrics(group.Metrics) {
+			go dispatcher.doAction(group)
+		}
 	}
 
 	logger.Info("After 5 seconds... ", time.Now())
 }
 
 func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
-	if validateGroupNeedsAction(group.Metrics) {
-		for _, groupAction := range group.Actions {
-			action, _ := dispatcher.actionRepository.FindActionById(groupAction.ActionID.String())
-			dispatcher.pluginRepository.GetPluginBySrc(action.Type)
+	defer dispatcher.mux.Unlock()
+	dispatcher.mux.Lock()
+
+	for _, groupAction := range group.Actions {
+		if dispatcher.groupActionRepo.ValidateActionCanBeExecuted(groupAction) {
+			go dispatcher.executeAction(groupAction)
 		}
 	}
 }
 
-func validateGroupNeedsAction(metrics []metric.Metric) bool {
+func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupAction) {
+	defer dispatcher.mux.Unlock()
+	dispatcher.mux.Lock()
 
-	return false
+	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID.String())
+	if err != nil {
+		logger.Error("error creating execution", "ActionDispatcherExecuteAction", err, nil)
+		return
+	}
+
+	act, _ := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
+	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(act.Type)
+	if err != nil {
+		logger.Error("error finding actionPlugin", "doAction", err, act)
+		dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		return
+	}
+
+	_, err = actionPlugin.Lookup("Do")
+	if err != nil {
+		logger.Error("error executing plugin do action", "doAction", err, actionPlugin)
+		dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		return
+	}
+
+	dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID.String(), "action executed with success")
+}
+
+func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []metric.Metric) bool {
+	for _, m := range metrics {
+		if !dispatcher.metricRepo.ValidateIfExecutionReached(m.MetricExecution) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (dispatcher *ActionDispatcher) getInterval() (time.Duration, error) {
