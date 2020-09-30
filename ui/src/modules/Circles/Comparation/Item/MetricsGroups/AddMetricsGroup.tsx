@@ -19,35 +19,39 @@ import { useForm } from 'react-hook-form';
 import Modal from 'core/components/Modal';
 import { useCreateMetricsGroup } from './hooks';
 import Styled from './styled';
+import { MetricsGroup } from './types';
 
 interface Props {
   id: string;
-  closeModal: Function;
-  getNewMetricsGroups: Function;
+  onCloseModal: Function;
+  onSaveGroup: Function;
+  metricGroup?: MetricsGroup;
 }
 
-const AddMetricsGroup = ({ id, closeModal, getNewMetricsGroups }: Props) => {
-  const {
-    createMetricsGroup,
-    status: statusCreating
-  } = useCreateMetricsGroup();
+const AddMetricsGroup = ({
+  id,
+  onCloseModal,
+  onSaveGroup,
+  metricGroup
+}: Props) => {
+  const { createMetricsGroup, status } = useCreateMetricsGroup(metricGroup?.id);
+
   const {
     register,
     handleSubmit,
     formState: { isValid }
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', defaultValues: metricGroup ?? {} });
 
-  const onSubmit = ({ name }: Record<string, string>) => {
+  const onSubmit = ({ name }: Partial<MetricsGroup>) => {
     createMetricsGroup(name, id).then(response => {
       if (response) {
-        getNewMetricsGroups();
-        closeModal();
+        onSaveGroup();
       }
     });
   };
 
   return (
-    <Modal.Default onClose={() => closeModal()}>
+    <Modal.Default onClose={() => onCloseModal()}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Modal.Title color="light">Add metrics group</Styled.Modal.Title>
         <Styled.Modal.Input
@@ -59,9 +63,9 @@ const AddMetricsGroup = ({ id, closeModal, getNewMetricsGroups }: Props) => {
         <Styled.Modal.Button
           type="submit"
           isDisabled={!isValid}
-          isLoading={statusCreating.isPending}
+          isLoading={status.isPending}
         >
-          Add group
+          Save group
         </Styled.Modal.Button>
       </form>
     </Modal.Default>
