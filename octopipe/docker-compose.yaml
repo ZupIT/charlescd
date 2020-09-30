@@ -1,12 +1,9 @@
-# to run define K3S_TOKEN, K3S_VERSION is optional, eg:
-#   K3S_TOKEN=${RANDOM}${RANDOM}${RANDOM} docker-compose up
-
 version: '3'
 services:
 
   server:
     image: "rancher/k3s:${K3S_VERSION:-latest}"
-    command: server
+    command: server --bind-address server
     tmpfs:
     - /run
     - /var/run
@@ -29,16 +26,6 @@ services:
       - KUBECONFIG=/app/kubeconfig.yaml
     volumes:
       - ./kubeconfig.yaml:/app/kubeconfig.yaml
-
-  # agent:
-  #   image: "rancher/k3s:${K3S_VERSION:-latest}"
-  #   tmpfs:
-  #   - /run
-  #   - /var/run
-  #   privileged: true
-  #   environment:
-  #   - K3S_URL=https://server:6443
-  #   - K3S_TOKEN=292752682514621
 
 volumes:
   k3s-server: {}
