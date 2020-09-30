@@ -18,22 +18,11 @@
 
 package io.charlescd.moove.domain.service
 
-import io.charlescd.moove.domain.Permission
-import io.charlescd.moove.domain.User
-
 interface KeycloakService {
-
-    fun addPermissionsToUser(workspaceId: String, user: User, permissions: List<Permission>)
-
-    fun removePermissionsFromUser(workspaceId: String, user: User, permissions: List<Permission>)
-
-    fun associatePermissionsToNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
-
-    fun disassociatePermissionsFromNewUsers(user: User, workspacePermissionsMapping: Map<String, List<Permission>>)
 
     fun resetPassword(id: String, newPassword: String)
 
-    fun createUser(email: String, name: String, password: String, isRoot: Boolean)
+    fun createUser(email: String, name: String, password: String)
 
     fun getEmailByAccessToken(authorization: String): String
 
