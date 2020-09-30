@@ -59,15 +59,28 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
                 var azureConfig = (DockerRegistryConfigurationEntity.AzureDockerRegistryConnectionData) config;
                 this.client.register(new CommonBasicAuthenticator(azureConfig.username, azureConfig.password));
                 break;
+            case GCP:
+                var gcpConfig = (DockerRegistryConfigurationEntity.GCPDockerRegistryConnectionData) config;
+                this.client.register(new CommonBasicAuthenticator(gcpConfig.username, gcpConfig.jsonKey));
+                break;
             default:
                 throw new IllegalArgumentException("Registry type is not supported!");
         }
     }
 
     @Override
-    public Optional<Response> getImage(String name, String tagName) {
+    public Optional<Response> getImage(
+            String name,
+            String tagName,
+            DockerRegistryConfigurationEntity.DockerRegistryConnectionData connectionData
+    ) {
 
-        String url = createGetImageUrl(this.baseAddress, name, tagName);
+        String url;
+        if (connectionData.organization.isEmpty()) {
+            url = createGetImageUrl(this.baseAddress, name, tagName);
+        } else {
+            url = createGetImageUrl(this.baseAddress, connectionData.organization, name, tagName);
+        }
 
         return Optional.ofNullable(this.client.target(url).request().get());
 
@@ -79,6 +92,14 @@ public class DockerRegistryHttpApiV2Client implements RegistryClient {
         builder.path("/v2/{name}/manifests/{tagName}");
 
         return builder.build(name, tagName).toString();
+    }
+
+    private String createGetImageUrl(String baseAddress, String organization, String name, String tagName) {
+
+        UriBuilder builder = UriBuilder.fromUri(baseAddress);
+        builder.path("/v2/{organization}/{name}/manifests/{tagName}");
+
+        return builder.build(organization, name, tagName).toString();
     }
 
     @Override
