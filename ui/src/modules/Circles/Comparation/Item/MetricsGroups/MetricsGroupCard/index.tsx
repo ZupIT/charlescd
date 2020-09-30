@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { OptionTypeBase } from 'react-select';
 import { useForm } from 'react-hook-form';
 import Text from 'core/components/Text';
@@ -47,19 +47,18 @@ const MetricsGroupCard = ({
   handleDeleteMetric,
   handleEditMetric
 }: Props) => {
-  const [chartOpen, setChartOpen] = useState(false);
-  const [selectMetric, setSelectMetric] = useState<OptionTypeBase[]>();
   const normalizedSelectOptions = normalizeSelectOptionsNickname(
     metricGroup.metrics
   );
-  const { control, setValue } = useForm();
+  const [chartOpen, setChartOpen] = useState(false);
+  const [selectMetric, setSelectMetric] = useState<OptionTypeBase[]>();
+  const { control } = useForm();
 
-  useEffect(() => {
-    if (metricGroup.metrics) {
-      setValue('metrics', [allOption, ...normalizedSelectOptions]);
-    }
-  }, [metricGroup.metrics, setValue, normalizedSelectOptions]);
-
+  const handleViewChart = () => {
+    setChartOpen(!chartOpen);
+    setSelectMetric(undefined);
+  };
+  
   const renderLabelText = () => {
     if (isUndefined(selectMetric)) return false;
     if (isEmpty(selectMetric)) return true;
@@ -92,12 +91,12 @@ const MetricsGroupCard = ({
             <LabeledIcon
               isActive={chartOpen}
               icon={chartOpen ? 'view' : 'no-view'}
-              onClick={() => setChartOpen(!chartOpen)}
+              onClick={handleViewChart}
             >
               <Text.h5 color={chartOpen ? 'light' : 'dark'}>View Chart</Text.h5>
             </LabeledIcon>
             {chartOpen && (
-              <LabeledIcon icon="filter" isActive={renderLabelText()}>
+              <LabeledIcon icon="filter" isActive={!renderLabelText()}>
                 <Styled.MultiSelect
                   control={control}
                   name="metrics"
@@ -105,7 +104,7 @@ const MetricsGroupCard = ({
                   customOption={CustomOption.Check}
                   options={normalizedSelectOptions}
                   label={renderLabelText() && 'Select metrics'}
-                  defaultValue={[allOption]}
+                  defaultValue={[allOption, ...normalizedSelectOptions]}
                   onChange={e => setSelectMetric(e)}
                 />
               </LabeledIcon>

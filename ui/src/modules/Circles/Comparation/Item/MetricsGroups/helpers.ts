@@ -20,7 +20,6 @@ import { conditionOptions, operatorsOptions } from './constants';
 import { Option } from 'core/components/Form/Select/interfaces';
 import find from 'lodash/find';
 import isUndefined from 'lodash/isUndefined';
-import isEmpty from 'lodash/isEmpty';
 import filter from 'lodash/filter';
 import {
   MetricFilter,
@@ -114,17 +113,16 @@ export const filterMetricsSeries = (
   data: ChartData[],
   selectFilters: OptionTypeBase[]
 ) => {
-  if (isUndefined(selectFilters) || selectFilters[0]?.value === '*')
+  if (isUndefined(selectFilters) || selectFilters[0]?.value === '*') {
     return data;
+  }
 
-  if (isEmpty(selectFilters)) return [];
-
-  let newData: ChartData[] = [];
-
-  map(selectFilters, filterItem => {
-    const filteredData = filter(data, item => item.name === filterItem.label);
-    newData = newData.concat(filteredData);
+  const filteredData = filter(data, item => {
+    return find(
+      selectFilters,
+      (filterItem: OptionTypeBase) => filterItem.label === item.name
+    );
   });
 
-  return newData;
+  return filteredData as ChartData[];
 };
