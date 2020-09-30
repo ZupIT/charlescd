@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-import { Radio } from 'core/components/RadioGroup';
+import React from 'react';
+import { render } from 'unit-test/testUtils';
+import AceEditor from '..';
 
-export const FORM_REGISTRY = 'registry';
+const props = {
+  mode: "json",
+}
 
-export const radios: Radio[] = [
-  { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', name: 'GCP', value: 'GCP' }
-];
+test('render Ace Editor', () => {
+
+  const { container } = render(
+    <AceEditor {...props} />
+  );
+
+  expect(container.innerHTML).toMatch("ace-editor")
+});

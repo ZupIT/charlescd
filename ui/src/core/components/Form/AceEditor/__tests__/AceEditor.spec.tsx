@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-import { Radio } from 'core/components/RadioGroup';
+import React from 'react';
+import { render, fireEvent, wait } from 'unit-test/testUtils';
+import AceEditorForm from '..';
+import {Control, useForm} from 'react-hook-form'
 
-export const FORM_REGISTRY = 'registry';
+jest.mock('react-hook-form', () => {
+  return {
+    __esModule: true,
+    Controller: ({as}: any) => (
+      <>
+        {as}
+      </>
+    )
+  };
+});
 
-export const radios: Radio[] = [
-  { icon: 'aws', name: 'AWS', value: 'AWS' },
-  { icon: 'azure', name: 'Azure', value: 'AZURE' },
-  { icon: 'gcp', name: 'GCP', value: 'GCP' }
-];
+test('renders AceEditor component inside Controller', () => {
+  const controlMock:Control = null;
+  const { container } = render(
+    <AceEditorForm control={controlMock} name="keyName" mode="json" />
+  );
+
+  expect(container.innerHTML).toMatch('ace-editor');
+});
