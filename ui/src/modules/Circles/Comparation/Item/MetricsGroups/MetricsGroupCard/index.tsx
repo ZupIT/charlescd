@@ -58,7 +58,7 @@ const MetricsGroupCard = ({
     setChartOpen(!chartOpen);
     setSelectMetric(undefined);
   };
-  
+
   const renderLabelText = () => {
     if (isUndefined(selectMetric)) return false;
     if (isEmpty(selectMetric)) return true;

@@ -87,8 +87,6 @@ const MonitoringMetrics = ({ metricsGroupId, selectFilters }: Props) => {
     </Styled.MonitoringMetricsPeriodFilter>
   );
 
-  // console.log(filterMetricsSeries(chartData, selectFilters));
-
   return (
     <Styled.MonitoringMetricsContent data-testid="monitoring-metrics">
       {chartDataLoading ? (
