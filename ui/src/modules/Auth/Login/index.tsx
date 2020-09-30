@@ -21,6 +21,7 @@ import Icon from 'core/components/Icon';
 import Form from 'core/components/Form';
 import { validFields } from 'core/utils/validation';
 import routes from 'core/constants/routes';
+import { redirectTo } from 'core/utils/routes';
 import Styled from '../styled';
 import { useLogin } from './hook';
 
@@ -39,7 +40,7 @@ const Login = () => {
 
   useEffect(() => {
     if (status === 'resolved') {
-      history.push({ pathname: routes.workspaces });
+      redirectTo(routes.workspaces);
     }
   }, [status, history]);
 
