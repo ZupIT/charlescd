@@ -5,17 +5,19 @@ import (
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"time"
 )
 
 type Action struct {
 	util.BaseModel
+	WorkspaceId   string          `json:"workspaceId"`
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
+	Description   string          `json:"description"`
 	Configuration json.RawMessage `json:"configuration"`
-	WorkspaceId   string          `json:"workspaceId"`
-	DeletedAt     *time.Time      `json:"-"`
+	DeletedAt     time.Time       `json:"-"`
 }
 
 func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
@@ -32,21 +34,53 @@ func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
 
 func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
+	needConfigValidation := true
 
 	if action.Nickname == "" {
-		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("Action nickname is required").Error()})
-	}
-
-	if action.Type == "" {
-		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("Action type is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("action nickname is required").Error()})
 	}
 
 	if action.Configuration == nil || len(action.Configuration) == 0 {
-		ers = append(ers, util.ErrorUtil{Field: "configuration", Error: errors.New("Action configuration is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "configuration", Error: errors.New("action configuration is required").Error()})
+		needConfigValidation = false
 	}
 
 	if action.WorkspaceId == "" {
-		ers = append(ers, util.ErrorUtil{Field: "workspaceId", Error: errors.New("WorkspaceId is required").Error()})
+		ers = append(ers, util.ErrorUtil{Field: "workspaceId", Error: errors.New("workspaceId is required").Error()})
+	}
+
+	if action.Type == "" {
+		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("action type is required").Error()})
+		needConfigValidation = false
+	}
+
+	if needConfigValidation {
+		ers = append(ers, main.validateActionConfig(action.Type, action.Configuration)...)
+	}
+
+	return ers
+}
+
+func (main Main) validateActionConfig(actionType string, actionConfiguration json.RawMessage) []util.ErrorUtil {
+	ers := make([]util.ErrorUtil, 0)
+
+	plugin, err := main.pluginRepo.GetPluginBySrc(actionType)
+	if err != nil {
+		logger.Error("error finding plugin", "ValidateActionConfig", err, actionType)
+		return []util.ErrorUtil{{Field: "type", Error: errors.New("action type is invalid").Error()}}
+	}
+
+	pluginErrs, err := plugin.Lookup("ValidateActionConfiguration")
+	if err != nil {
+		logger.Error("error looking up for plugin", "ValidateActionConfig", err, fmt.Sprintf("%+v", plugin))
+		return []util.ErrorUtil{{Field: "type", Error: errors.New("action type is invalid").Error()}}
+	}
+
+	configErs := pluginErrs.(func(actionConfig []byte) []error)(actionConfiguration)
+	if len(configErs) > 0 {
+		for _, err := range configErs {
+			ers = append(ers, util.ErrorUtil{Field: "configuration", Error: err.Error()})
+		}
 	}
 
 	return ers
@@ -59,15 +93,16 @@ func (main Main) FindActionById(id string) (Action, error) {
 		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
 	}
+
 	return action, nil
 }
 
-func (main Main) FindAllActions() ([]Action, error) {
+func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Action, error) {
 	var actions []Action
 
-	db := main.db.Set("gorm:auto_preload", true).Find(&actions)
+	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id = ? and deleted_at is null", workspaceID).Find(&actions)
 	if db.Error != nil {
-		logger.Error(util.FindActionError, "FindAllActions", db.Error, actions)
+		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", db.Error, actions)
 		return []Action{}, db.Error
 	}
 	return actions, nil
@@ -77,15 +112,6 @@ func (main Main) SaveAction(action Action) (Action, error) {
 	db := main.db.Create(&action)
 	if db.Error != nil {
 		logger.Error(util.SaveActionError, "SaveAction", db.Error, action)
-		return Action{}, db.Error
-	}
-	return action, nil
-}
-
-func (main Main) UpdateAction(id string, action Action) (Action, error) {
-	db := main.db.Table("actions").Where("id = ?", id).Update(&action)
-	if db.Error != nil {
-		logger.Error(util.UpdateActionError, "UpdateAction", db.Error, action)
 		return Action{}, db.Error
 	}
 	return action, nil

@@ -3,6 +3,7 @@ package v1
 import (
 	"compass/internal/action"
 	"compass/web/api"
+	"errors"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -15,59 +16,37 @@ func (v1 V1) NewActionApi(actionMain action.UseCases) ActionApi {
 	apiPath := "/actions"
 	actionApi := ActionApi{actionMain}
 
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.List))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.FindById))
-	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.Create))
-	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.Delete))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.Update))
+	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.list))
+	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(actionApi.create))
+	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(actionApi.delete))
+
 	return actionApi
 }
 
-func (actionApi ActionApi) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
-	act, err := actionApi.actionMain.ParseAction(r.Body)
+func (actionApi ActionApi) create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
+	request, err := actionApi.actionMain.ParseAction(r.Body)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
+		return
+	}
+	request.WorkspaceId = workspaceId
+
+	if err := actionApi.actionMain.ValidateAction(request); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "could not save action")
+		return
+	}
+
+	createdAction, err := actionApi.actionMain.SaveAction(request)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	if err := actionApi.actionMain.ValidateAction(act); len(err) > 0 {
-		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save action")
-		return
-	}
-
-	createdCircle, err := actionApi.actionMain.SaveAction(act)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, createdCircle)
+	api.NewRestSuccess(w, http.StatusCreated, createdAction)
 }
 
-func (actionApi ActionApi) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	id := ps.ByName("id")
-	act, err := actionApi.actionMain.ParseAction(r.Body)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	if err := actionApi.actionMain.ValidateAction(act); len(err) > 0 {
-		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not update action")
-		return
-	}
-
-	updatedAction, err := actionApi.actionMain.UpdateAction(id, act)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, updatedAction)
-}
-
-func (actionApi ActionApi) List(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, workspaceId string) {
-	actions, err := actionApi.actionMain.FindAllActions()
+func (actionApi ActionApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, workspaceId string) {
+	actions, err := actionApi.actionMain.FindAllActionsByWorkspace(workspaceId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -76,23 +55,12 @@ func (actionApi ActionApi) List(w http.ResponseWriter, _ *http.Request, _ httpro
 	api.NewRestSuccess(w, http.StatusOK, actions)
 }
 
-func (actionApi ActionApi) FindById(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	id := ps.ByName("id")
-
-	act, err := actionApi.actionMain.FindActionById(id)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, act)
-}
-
-func (actionApi ActionApi) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
+func (actionApi ActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	err := actionApi.actionMain.DeleteAction(ps.ByName("id"))
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
+
 	api.NewRestSuccess(w, http.StatusNoContent, nil)
 }

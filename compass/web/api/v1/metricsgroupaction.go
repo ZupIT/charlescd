@@ -3,6 +3,7 @@ package v1
 import (
 	"compass/internal/metricsgroupaction"
 	"compass/web/api"
+	"errors"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -15,71 +16,83 @@ func (v1 V1) NewMetricsGroupActionApi(main metricsgroupaction.UseCases) MetricsG
 	apiPath := "/actions-execution"
 	metricsGroupActionApi := MetricsGroupActionApi{main}
 
-	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.List))
-	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.FindById))
 	v1.Router.POST(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.Create))
 	v1.Router.DELETE(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.Delete))
-	v1.Router.PUT(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.Update))
+	v1.Router.GET(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.FindById))
+	v1.Router.PATCH(v1.getCompletePath(apiPath+"/:id"), api.HttpValidator(metricsGroupActionApi.Update))
+
+	v1.Router.GET(v1.getCompletePath(apiPath), api.HttpValidator(metricsGroupActionApi.List)) // List all by GroupId
+
 	return metricsGroupActionApi
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, workspaceId string) {
-	act, err := metricsGroupActionApi.main.Parse(r.Body)
+func (metricsGroupActionApi MetricsGroupActionApi) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params, _ string) {
+	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
+		return
+	}
+
+	if err := metricsGroupActionApi.main.ValidateGroupAction(act); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "could not save action")
+		return
+	}
+
+	_, err = metricsGroupActionApi.main.SaveGroupAction(act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	if err := metricsGroupActionApi.main.Validate(act); len(err) > 0 {
-		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save action")
+	act.Configuration = metricsgroupaction.ActionsConfigurations{
+		MetricActionId: act.ID,
+		Repeatable:     false,
+		NumberOfCycles: 1,
+	}
+
+	if err := metricsGroupActionApi.main.ValidateJobConfiguration(act.Configuration); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "could not save action")
 		return
 	}
 
-	createdCircle, err := metricsGroupActionApi.main.Save(act)
+	api.NewRestSuccess(w, http.StatusOK, act)
+}
+
+func (metricsGroupActionApi MetricsGroupActionApi) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
+	err := metricsGroupActionApi.main.DeleteGroupAction(ps.ByName("id"))
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error deleting action")})
+		return
+	}
+	api.NewRestSuccess(w, http.StatusNoContent, nil)
+}
+
+func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ string) {
+	id := ps.ByName("id")
+
+	act, err := metricsGroupActionApi.main.FindGroupActionById(id)
+	if err != nil {
+		api.NewRestError(w, http.StatusNotFound, []error{errors.New("action not found")})
 		return
 	}
 
-	api.NewRestSuccess(w, http.StatusOK, createdCircle)
+	api.NewRestSuccess(w, http.StatusOK, act)
 }
 
 func (metricsGroupActionApi MetricsGroupActionApi) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
-	act, err := metricsGroupActionApi.main.Parse(r.Body)
+	act, err := metricsGroupActionApi.main.ParseGroupAction(r.Body)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
 		return
 	}
 
-	if err := metricsGroupActionApi.main.Validate(act); len(err) > 0 {
-		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save action")
+	if err := metricsGroupActionApi.main.ValidateGroupAction(act); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "could not save action")
 		return
 	}
 
-	updatedMetricsGroupAct, err := metricsGroupActionApi.main.Update(id, act)
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, updatedMetricsGroupAct)
-}
-
-func (metricsGroupActionApi MetricsGroupActionApi) List(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, workspaceId string) {
-	actions, err := metricsGroupActionApi.main.FindAll()
-	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
-		return
-	}
-
-	api.NewRestSuccess(w, http.StatusOK, actions)
-}
-
-func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	id := ps.ByName("id")
-
-	act, err := metricsGroupActionApi.main.FindById(id)
+	_, err = metricsGroupActionApi.main.UpdateGroupAction(id, act)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
@@ -88,11 +101,12 @@ func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWrite
 	api.NewRestSuccess(w, http.StatusOK, act)
 }
 
-func (metricsGroupActionApi MetricsGroupActionApi) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
-	err := metricsGroupActionApi.main.Delete(ps.ByName("id"))
+func (metricsGroupActionApi MetricsGroupActionApi) List(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, _ string) {
+	actions, err := metricsGroupActionApi.main.FindAllGroupActions()
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
-	api.NewRestSuccess(w, http.StatusNoContent, nil)
+
+	api.NewRestSuccess(w, http.StatusOK, actions)
 }

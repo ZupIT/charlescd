@@ -125,32 +125,34 @@ func GetExecutionConfigTemplate() ([]byte, error) {
 	return template, nil
 }
 
-func ValidateExecutionConfiguration(executionConfig []byte) error {
+func ValidateExecutionConfiguration(executionConfig []byte) []error {
+	errs := make([]error, 0)
 	var config executionConfiguration
 	err := json.Unmarshal(executionConfig, &config)
 	if err != nil {
 		logger.Error("VALIDATE_CIRCLE_ACTION_EXECUTION_CONFIG", "ValidateExecutionConfiguration", err, nil)
-		return errors.New("error validating execution configuration")
+		return append(errs, errors.New("error validating execution configuration"))
 	}
 
 	if config.DestinationCircleID == "" {
-		return errors.New("destination circle id is required")
+		errs = append(errs, errors.New("destination circle id is required"))
 	}
 
-	return nil
+	return errs
 }
 
-func ValidateActionConfiguration(actionConfig []byte) error {
+func ValidateActionConfiguration(actionConfig []byte) []error {
+	errs := make([]error, 0)
 	var config actionConfiguration
 	err := json.Unmarshal(actionConfig, &config)
 	if err != nil {
 		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, nil)
-		return errors.New("error validating action configuration")
+		return append(errs, errors.New("error validating action configuration"))
 	}
 
 	if config.MooveURL == "" {
-		return errors.New("moove url is required")
+		errs = append(errs, errors.New("moove url is required"))
 	}
 
-	return nil
+	return errs
 }

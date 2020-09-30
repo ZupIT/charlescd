@@ -75,14 +75,21 @@ const (
 )
 
 const (
-	FindActionError   = "FIND_ACTION_ERROR"
-	SaveActionError   = "SAVE_ACTION_ERROR"
-	UpdateActionError = "UPDATE_ACTION_ERROR"
-	DeleteActionError = "DELETE_ACTION_ERROR"
+	FindActionError              = "FIND_ACTION_ERROR"
+	SaveActionError              = "SAVE_ACTION_ERROR"
+	UpdateActionError            = "UPDATE_ACTION_ERROR"
+	DeleteActionError            = "DELETE_ACTION_ERROR"
+	SaveActionConfigurationError = "SAVE_ACTION_CONFIGURATION_ERROR"
 )
 
 const (
-	SaveActionExecutionError = "SAVE_ACTION_EXECUTION_ERROR"
+	FindActionExecutionError        = "FIND_ACTION_EXECUTION_ERROR"
+	CreateActionExecutionError      = "CREATE_ACTION_EXECUTION_ERROR"
+	SetExecutionFailedError         = "SET_ACTION_EXECUTION_FAILED_ERROR"
+	SetExecutionFailedErrorFinding  = "SET_ACTION_EXECUTION_FAILED_FINDING_ERROR"
+	SetExecutionSuccessError        = "SET_ACTION_EXECUTION_SUCCESS_ERROR"
+	SetExecutionSuccessErrorFinding = "SET_ACTION_EXECUTION_SUCCESS_FINDING_ERROR"
+	ExecutionNotInExecution         = "ACTION_EXECUTION_NOT_IN_EXECUTION"
 )
 
 type ErrorUtil struct {
