@@ -21,13 +21,22 @@ import io.charlescd.villager.infrastructure.persistence.ComponentEntity;
 import io.charlescd.villager.infrastructure.persistence.ModuleEntity;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.persistence.LockModeType;
 
 class MockBasePanacheQuery<T> implements PanacheQuery<T> {
+
+    @Override
+    public <T1> PanacheQuery<T1> project(Class<T1> type) {
+        return null;
+    }
+
     @Override
     public <T1 extends T> PanacheQuery<T1> page(Page page) {
         return null;
@@ -79,12 +88,32 @@ class MockBasePanacheQuery<T> implements PanacheQuery<T> {
     }
 
     @Override
+    public <T1 extends T> PanacheQuery<T1> range(int startIndex, int lastIndex) {
+        return null;
+    }
+
+    @Override
     public <T1 extends T> PanacheQuery<T1> withLock(LockModeType lockModeType) {
         return null;
     }
 
     @Override
     public <T1 extends T> PanacheQuery<T1> withHint(String s, Object o) {
+        return null;
+    }
+
+    @Override
+    public <T1 extends T> PanacheQuery<T1> filter(String filterName, Parameters parameters) {
+        return null;
+    }
+
+    @Override
+    public <T1 extends T> PanacheQuery<T1> filter(String filterName, Map<String, Object> parameters) {
+        return null;
+    }
+
+    @Override
+    public <T1 extends T> PanacheQuery<T1> filter(String filterName) {
         return null;
     }
 

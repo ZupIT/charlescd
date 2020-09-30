@@ -28,13 +28,18 @@ import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
+import AceEditorForm from 'core/components/Form/AceEditor';
+import { useDispatch } from 'core/state/hooks';
+import { toogleNotification } from 'core/components/Notification/state/actions';
+import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 
 const FormRegistry = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useRegistry();
   const [registryType, setRegistryType] = useState('');
   const [awsUseSecret, setAwsUseSecret] = useState(false);
-  const { register, unregister, handleSubmit, reset } = useForm<Registry>();
+  const { register, handleSubmit, reset, control } = useForm<Registry>();
   const profileId = getProfileByKey('id');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -52,13 +57,24 @@ const FormRegistry = ({ onFinish }: Props) => {
       provider: registryType
     };
 
+    if (registryType === 'GCP') {
+      try {
+        JSON.parse(registry.jsonKey);
+      } catch (error) {
+        dispatch(
+          toogleNotification({
+            text: 'Error when validating json file: ' + error.message,
+            status: 'error'
+          })
+        );
+        return;
+      }
+    }
+
     save(registry);
   };
 
   const renderAwsFields = () => {
-    unregister('username');
-    unregister('password');
-
     return (
       <>
         <Form.Input
@@ -91,17 +107,36 @@ const FormRegistry = ({ onFinish }: Props) => {
   };
 
   const renderAzureFields = () => {
-    unregister('accessKey');
-    unregister('secretKey');
-    unregister('region');
-
     return (
       <>
         <Form.Input ref={register} name="username" label="Enter the username" />
         <Form.Password
-          ref={register}
+          ref={register({ required: true })}
           name="password"
           label="Enter the password"
+        />
+      </>
+    );
+  };
+
+  const renderGCPFields = () => {
+    return (
+      <>
+        <Form.Input
+          ref={register({ required: true })}
+          name="organization"
+          label="Enter the project id"
+        />
+        <Styled.Subtitle fontSize={HEADINGS_FONT_SIZE.h4} color="dark">
+          Enter the json key below:
+        </Styled.Subtitle>
+        <AceEditorForm
+          width={'270px'}
+          mode="json"
+          name="jsonKey"
+          rules={{ required: true }}
+          control={control}
+          theme="monokai"
         />
       </>
     );
@@ -110,6 +145,9 @@ const FormRegistry = ({ onFinish }: Props) => {
   const handleFields = () => {
     if (registryType === 'AWS') {
       return renderAwsFields();
+    }
+    if (registryType === 'GCP') {
+      return renderGCPFields();
     }
     return renderAzureFields();
   };
