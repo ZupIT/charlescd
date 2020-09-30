@@ -87,7 +87,7 @@ const getCircleHTTPRules = (newComponent: Component, circleId: string, activeCom
 
   const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && component.deployment.defaultCircle)
   if (defaultComponent && defaultComponent.deployment) {
-    rules.push(getHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment?.circleId))
+    rules.push(getHTTPDefaultRule(defaultComponent.name,  defaultComponent.deployment.circleId))
   }
   return rules
 }
