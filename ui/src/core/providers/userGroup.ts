@@ -23,6 +23,9 @@ const groupPath = 'groups';
 
 export const findAll = () => baseRequest(`${endpoint}`);
 
+export const findByName = (name: string) =>
+  baseRequest(`${endpoint}?name=${name}`);
+
 export const create = (id: string, groupRoles: GroupRoles) =>
   postRequest(`${endpointWorkspace}/${id}/${groupPath}`, groupRoles);
 
