@@ -38,16 +38,16 @@ export interface HelmConfig {
   overrideValues: HelmOverrideValues
 }
 
-export interface Deployment {
+export interface Undeployment {
   componentName: string
   helmRepositoryConfig: HelmRepositoryConfig
   helmConfig: HelmConfig
   rollbackIfFailed: boolean
 }
 
-export interface OctopipeDeployment {
+export interface OctopipeUndeployment {
   namespace: string;
-  deployments: Deployment[]
+  undeployments: Undeployment[]
   proxyDeployments: K8sManifest[]
   callbackUrl: string
   clusterConfig?: IEKSClusterConfig | IGenericClusterConfig | null

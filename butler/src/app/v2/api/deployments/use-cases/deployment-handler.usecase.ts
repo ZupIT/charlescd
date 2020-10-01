@@ -31,6 +31,7 @@ import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
 import { PgBossWorker } from '../jobs/pgboss.worker'
 import { ComponentsRepositoryV2 } from '../repository'
+import { CdStrategyFactory } from '../../../core/integrations/cd-strategy-factory'
 
 type ExecutionJob = JobWithDoneCallback<Execution, unknown>
 
@@ -47,7 +48,7 @@ export class DeploymentHandlerUseCase {
     private cdConfigurationsRepository: CdConfigurationsRepository,
     @Inject(forwardRef(() => PgBossWorker))
     private pgBoss: PgBossWorker,
-    private spinnakerConnector: SpinnakerConnector,
+    private cdStrategy: CdStrategyFactory,
     @Inject(IoCTokensConstants.ENV_CONFIGURATION)
     private envConfiguration: IEnvConfiguration,
   ) { }
@@ -84,7 +85,8 @@ export class DeploymentHandlerUseCase {
 
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdResponse = await this.spinnakerConnector.createDeployment(
+    const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+    const cdResponse = await cdConnector.createDeployment(
       deployment,
       activeComponents,
       { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }
@@ -98,7 +100,8 @@ export class DeploymentHandlerUseCase {
     this.consoleLoggerService.log('START:RUN_UNDEPLOYMENT_EXECUTION', { deployment: deployment.id, job: job.id })
     const activeComponents = await this.componentsRepository.findActiveComponents()
     this.consoleLoggerService.log('GET:ACTIVE_COMPONENTS', { activeComponents: activeComponents.map(c => c.id) })
-    const cdResponse = await this.spinnakerConnector.createUndeployment(
+    const cdConnector = this.cdStrategy.create(deployment.cdConfiguration.type)
+    const cdResponse = await cdConnector.createUndeployment(
       deployment,
       activeComponents,
       { executionId: job.data.id, incomingCircleId: job.data.incomingCircleId }

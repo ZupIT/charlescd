@@ -36,9 +36,9 @@ import {
   getUndeploymentProxyEvaluationStage, getUndeploymentsDeleteUnusedStage, getUndeploymentsSuccessWebhookStage,
   getUndeploymentVirtualServiceStage
 } from './templates/undeployment'
-import { ConnectorConfiguration } from './connector'
 import { DeploymentTemplateUtils } from './utils/deployment-template.utils'
 import { UndeploymentTemplateUtils } from './utils/undeployment-template.utils'
+import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 
 export class SpinnakerPipelineBuilder {
 
