@@ -119,7 +119,6 @@ const triggerS3 = async () => {
             console.log('not cached')
             const s3ObjectContent: S3.GetObjectOutput = s3Object[s3ObjectKey]
             getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then((r) => {
-              console.log('resposta', r)
               createCacheFile(s3Object[s3ObjectKey].ETag, s3ObjectKey)
             })
               .catch((err) => console.log(err))
