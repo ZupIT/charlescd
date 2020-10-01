@@ -106,8 +106,9 @@ public abstract class SegmentationRequest {
     }
 
     public Segmentation toSegmentation() {
-        return new Segmentation(this.name, this.node, this.reference, this.circleId, this.type, workspaceId,
-                isDefault, active);
+        return new Segmentation(
+            this.name, this.node, this.reference, this.circleId, this.type, workspaceId, isDefault, active
+        );
     }
 
     public Boolean getActive() {
