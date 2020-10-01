@@ -31,5 +31,5 @@ data class CreateVillagerRegistryConfigurationRequest(
 )
 
 enum class CreateVillagerRegistryConfigurationProvider {
-    AWS, Azure, GCP
+    AWS, Azure, GCP, DOCKER_HUB
 }
