@@ -4,10 +4,14 @@ import Axios from 'axios'
 import FormData from 'form-data'
 import { S3 } from 'aws-sdk'
 import fs from 'fs'
+import { getToken } from './auth/getCharlesToken'
 
 const s3 = new S3()
 
 const envValues = {
+  username: process.env.CHARLES_USER,
+  password: process.env.CHARLES_PASS,
+  keycloak: process.env.CHARLES_KEYCLOAK,
   moove: process.env.MOOVE_URL,
   bucket: process.env.BUCKET_NAME,
   workspace: process.env.WORKSPACE_ID
@@ -118,7 +122,7 @@ const triggerS3 = async () => {
           } else {
             console.log('not cached')
             const s3ObjectContent: S3.GetObjectOutput = s3Object[s3ObjectKey]
-            getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then((r) => {
+            getFinalData(s3ObjectContent, s3ObjectKey.slice(0, -1)).then(() => {
               createCacheFile(s3Object[s3ObjectKey].ETag, s3ObjectKey)
             })
               .catch((err) => console.log(err))
@@ -145,10 +149,12 @@ const buildFormData = (buffer: Buffer, circleId: string, name: string) => {
 }
 
 const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
+  const token = await getToken(envValues.username, envValues.password, envValues.keycloak)
   const circle = await Axios.get(
     `${envValues.moove}/v2/circles/${circleId}`,
     {
       headers: {
+        authorization: `Bearer ${token}`,
         'x-workspace-id': process.env.WORKSPACE_ID
       }
     }
@@ -162,6 +168,7 @@ const getFinalData = async (s3Object: S3.GetObjectOutput, circleId: string) => {
       data.getBuffer(),
       {
         headers: {
+          authorization: `Bearer ${token}`,
           ...data.getHeaders(),
           'x-workspace-id': envValues.workspace
         }
