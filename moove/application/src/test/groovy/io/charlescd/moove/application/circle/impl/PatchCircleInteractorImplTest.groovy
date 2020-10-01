@@ -244,6 +244,76 @@ class PatchCircleInteractorImplTest extends Specification {
         "3de80951-94b1-4894-b784-c0b069994640" | new PatchCircleRequest([new PatchOperation(OpCodeEnum.ADD, "/workspaceId", "5rED80951-94b1-4894-b784-c0b069994888")]) | "Path /workspaceId is not allowed."
     }
 
+    def "should throw an exception when clauses is null"() {
+        given:
+        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, null, null)
+
+        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
+        def request = new PatchCircleRequest(patches)
+
+        when:
+        this.patchCircleInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Clauses cannot be null"
+    }
+
+    def "should throw an exception when key is null"() {
+        given:
+        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def rulePart = new NodePart.RulePart(null, NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
+        def request = new PatchCircleRequest(patches)
+
+        when:
+        this.patchCircleInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Key cannot be null"
+    }
+
+    def "should throw an exception when key is blank"() {
+        given:
+        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def rulePart = new NodePart.RulePart("", NodePart.ConditionEnum.EQUAL, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
+        def request = new PatchCircleRequest(patches)
+
+        when:
+        this.patchCircleInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Key cannot be blank"
+    }
+
+    def "should throw an exception when condition is null"() {
+        given:
+        def circleId = "3de80951-94b1-4894-b784-c0b069994640"
+        def rulePart = new NodePart.RulePart("username", null, ["zup"])
+        def rule = new NodePart(NodePart.NodeTypeRequest.RULE, null, null, rulePart)
+        def nodePart = new NodePart(NodePart.NodeTypeRequest.CLAUSE, NodePart.LogicalOperatorRequest.OR, [rule], null)
+
+        def patches = [new PatchOperation(OpCodeEnum.ADD, "/rules", nodePart)]
+        def request = new PatchCircleRequest(patches)
+
+        when:
+        this.patchCircleInteractor.execute(circleId, request)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Condition cannot be null"
+    }
+
     private Deployment getDummyDeployment(String deploymentId, User user, Circle circle, String buildId, String workspaceId) {
         new Deployment(
                 deploymentId,

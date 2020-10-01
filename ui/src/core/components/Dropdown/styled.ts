@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { scaleIn } from 'core/assets/style/animate';
+
+type DropDownProps = {
+  isBase?: boolean;
+};
 
 const Wrapper = styled.div`
   position: relative;
@@ -23,23 +27,61 @@ const Wrapper = styled.div`
   height: auto;
 `;
 
-const Dropdown = styled.div`
+const Dropdown = styled.div<DropDownProps>`
   animation: ${scaleIn} 0.15s cubic-bezier(0.2, 0, 0.13, 1.5);
   position: absolute;
+  right: 0;
+  top: 0;
   background: ${({ theme }) => theme.dropdown.background};
   border-radius: 4px;
   width: 136px;
-  right: 8px;
-  top: 27px;
   box-shadow: 0px 2px 10px 0px ${({ theme }) => theme.dropdown.shadow};
   display: flex;
   overflow-y: auto;
   justify-content: flex-start;
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
+
+  ${({ isBase }) =>
+    isBase &&
+    css`
+      right: 8px;
+      top: 27px;
+    `}
+`;
+
+const PopperContainer = styled.div`
+  z-index: 3;
+  background-color: white;
+  height: auto;
+  width: auto;
+
+  #arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    &:after {
+      content: ' ';
+      box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+      position: absolute;
+      top: -25px;
+      left: 0;
+      transform: rotate(45deg);
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  &[data-popper-placement^='top'] > #arrow {
+    bottom: -30px;
+    :after {
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    }
+  }
 `;
 
 export default {
   Wrapper,
-  Dropdown
+  Dropdown,
+  PopperContainer
 };

@@ -16,7 +16,12 @@
 
 import React from 'react';
 import isEmpty from 'lodash/isEmpty';
-import { useFieldArray, useForm, FormContext, ArrayField } from 'react-hook-form';
+import {
+  useFieldArray,
+  useForm,
+  FormContext,
+  ArrayField
+} from 'react-hook-form';
 import Icon from 'core/components/Icon';
 import { Rule as IRule } from './interfaces/Rule';
 import { getGroupVerticalLine, changeOperatorValue } from './helpers';
@@ -60,7 +65,10 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
   const group = getGroupVerticalLine(fields);
   const hasGroup = fields.length > ONE;
 
-  const renderGroup = (group: Partial<ArrayField<Record<string, any>, "id">>, index: number) => {
+  const renderGroup = (
+    group: Partial<ArrayField<Record<string, any>, 'id'>>,
+    index: number
+  ) => {
     return (
       <Styled.Group key={group.id}>
         {group.type === 'CLAUSE' ? (
@@ -93,11 +101,11 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           </Styled.Button.Clause>
         )}
       </Styled.Group>
-    )
-  }
+    );
+  };
 
-  const renderGroups = () => 
-    fieldArray.fields?.map((group, index) => renderGroup(group, index))
+  const renderGroups = () =>
+    fieldArray.fields?.map((group, index) => renderGroup(group, index));
 
   return (
     <FormContext {...form}>
@@ -107,17 +115,20 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           top={group.top}
           verticalLine={group.height}
           hasGroup={hasGroup}
+          viewMode={viewMode}
         >
-          <Styled.Operator top={group.operator} hasGroup={hasGroup}>
-            <Styled.InputOperator
-              readOnly
-              type="text"
-              ref={register}
-              name="logicalOperator"
-              onClick={() => changeOperatorValue('logicalOperator', form)}
-              defaultValue={rules?.logicalOperator}
-            />
-          </Styled.Operator>
+          {!viewMode && (
+            <Styled.Operator top={group.operator} hasGroup={hasGroup}>
+              <Styled.InputOperator
+                readOnly
+                type="text"
+                ref={register}
+                name="logicalOperator"
+                onClick={() => changeOperatorValue('logicalOperator', form)}
+                defaultValue={rules?.logicalOperator}
+              />
+            </Styled.Operator>
+          )}
           <Styled.Input type="hidden" ref={form.register} name="type" />
           {renderGroups()}
         </Styled.Group>

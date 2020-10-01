@@ -35,8 +35,8 @@ class UserGroupService(private val userGroupRepository: UserGroupRepository) {
             .orElseThrow { NotFoundException("user_group", id) }
     }
 
-    fun find(pageRequest: PageRequest): Page<UserGroup> {
-        return this.userGroupRepository.find(pageRequest)
+    fun find(name: String?, pageRequest: PageRequest): Page<UserGroup> {
+        return this.userGroupRepository.find(name, pageRequest)
     }
 
     fun delete(userGroup: UserGroup) {
@@ -53,13 +53,5 @@ class UserGroupService(private val userGroupRepository: UserGroupRepository) {
 
     fun removeMember(userGroup: UserGroup, member: User) {
         this.userGroupRepository.removeMember(userGroup, member)
-    }
-
-    fun findPermissionsFromUserGroupAssociations(userGroup: UserGroup): Map<String, List<Permission>> {
-        return userGroupRepository.findPermissionsFromUserGroupAssociations(userGroup)
-    }
-
-    fun findPermissionsFromWorkspaceAndUserGroupAssociation(workspaceId: String, userGroup: UserGroup): List<Permission> {
-        return userGroupRepository.findPermissions(workspaceId, userGroup)
     }
 }

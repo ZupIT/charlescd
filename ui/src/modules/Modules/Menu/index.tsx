@@ -17,7 +17,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
-import Can from 'core/components/Can';
+import Can from 'containers/Can';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';

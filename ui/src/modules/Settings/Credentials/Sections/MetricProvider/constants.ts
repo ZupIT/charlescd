@@ -14,14 +14,4 @@
  * limitations under the License.
  */
 
-import { Option } from 'core/components/Form/Select/interfaces';
-
 export const FORM_METRIC_PROVIDER = 'metric-provider';
-
-export const metricProviders: Option[] = [
-  {
-    label: 'Prometheus',
-    value: 'PROMETHEUS',
-    icon: 'prometheus'
-  }
-];

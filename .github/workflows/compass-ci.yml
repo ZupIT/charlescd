@@ -1,0 +1,57 @@
+name: build compass
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'compass/**'
+    tags: 
+      - '!*'
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'compass/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.2'
+
+      - name: Up Docker tests
+        working-directory: ./compass
+        run: make tests-dep-up
+
+      - name: Run Unit tests
+        working-directory: ./compass
+        run: |
+          go test -v -coverpkg ./... ./internal/tests/ -coverprofile=coverage.cov
+
+      - name: Tests coverage
+        uses: codecov/codecov-action@v1.0.13
+        with:
+          file: ./compass/coverage.cov
+          flags: compass
+          fail_ci_if_error: true
+
+      - name: Code Style
+        uses: docker://morphy/revive-action:v1
+        with:
+          config: ./compass/revive.toml
+          path: "./compass/..."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

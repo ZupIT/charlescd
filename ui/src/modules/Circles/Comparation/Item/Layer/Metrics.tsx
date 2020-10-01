@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Button from 'core/components/Button';
@@ -23,8 +23,7 @@ import Text from 'core/components/Text';
 import Layer from 'core/components/Layer';
 import CircleMetrics from 'containers/Metrics/Chart';
 import ContentIcon from 'core/components/ContentIcon';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
+import { useGlobalState } from 'core/state/hooks';
 import { METRICS_TYPE, CHART_TYPE } from 'containers/Metrics/Chart/enums';
 import {
   getActiveMetric,
@@ -38,17 +37,10 @@ interface Props {
 }
 
 const LayerMetrics = ({ id }: Props) => {
-  const [response, loadWorkspace] = useWorkspace();
-  const [isWorkspaceLoaded, setIsWorkspaceLoaded] = useState(false);
+  const { item: response, status } = useGlobalState(
+    ({ workspaces }) => workspaces
+  );
   const history = useHistory();
-
-  useEffect(() => {
-    if (response === null) {
-      loadWorkspace(getWorkspaceId());
-    } else {
-      setIsWorkspaceLoaded(true);
-    }
-  }, [loadWorkspace, response]);
 
   const [activeMetricType, setActiveMetricType] = useState(
     METRICS_TYPE.REQUESTS_BY_CIRCLE
@@ -106,7 +98,9 @@ const LayerMetrics = ({ id }: Props) => {
         </ContentIcon>
         {!isEmpty(response?.metricConfiguration) && renderMetricsControl()}
       </Styled.MetricsTitle>
-      {isWorkspaceLoaded && <Styled.Content>{renderContent()}</Styled.Content>}
+      {status === 'resolved' && (
+        <Styled.Content>{renderContent()}</Styled.Content>
+      )}
     </Layer>
   );
 };

@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { humanizeDateFromSeconds } from 'core/utils/date';
+import { humanizeDurationFromSeconds } from 'core/utils/date';
 import Text from 'core/components/Text';
 import HistoryComponent from './History';
 import Loader from '../Loaders/index';
@@ -60,7 +60,7 @@ const Circles = () => {
               {loading ? (
                 <Loader.CircleAverageTime />
               ) : (
-                `${humanizeDateFromSeconds(response?.averageLifeTime)}`
+                `${humanizeDurationFromSeconds(response?.averageLifeTime)}`
               )}
             </Text.h1>
           </Styled.CirclesData>
