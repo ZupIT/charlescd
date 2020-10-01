@@ -80,7 +80,7 @@ const Wizard = ({ onClose }: Props) => {
         >
           <Styled.Item.Active status={setItemStatus(item, index)} />
           <Styled.Item.Text status={setItemStatus(item, index)}>
-            {item.title}
+            {item.menu}
           </Styled.Item.Text>
         </Styled.Item.Wrapper>
       ))}

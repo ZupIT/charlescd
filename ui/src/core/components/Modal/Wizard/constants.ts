@@ -18,6 +18,7 @@ export const WizardItems = [
   {
     icon: 'empty-workspaces',
     name: 'welcome',
+    menu: 'Welcome',
     title: 'Welcome!',
     backgroundColor: 'welcome',
     size: '190px',
@@ -27,6 +28,7 @@ export const WizardItems = [
   {
     icon: 'empty-groups',
     name: 'user-group',
+    menu: 'User group',
     title: 'User group',
     backgroundColor: 'userGroup',
     size: '200px',
@@ -36,6 +38,7 @@ export const WizardItems = [
   {
     icon: 'empty-hypothesis',
     name: 'git',
+    menu: 'Git',
     title: 'Git',
     backgroundColor: 'git',
     size: '200px',
@@ -45,6 +48,7 @@ export const WizardItems = [
   {
     icon: 'empty-modules',
     name: 'registry',
+    menu: 'Registry',
     title: 'Registry',
     backgroundColor: 'registry',
     size: '177px',
@@ -54,6 +58,7 @@ export const WizardItems = [
   {
     icon: 'empty-circles',
     name: 'cdConfig',
+    menu: 'CD configuration',
     title: 'CD configuration',
     backgroundColor: 'cdConfig',
     size: '220px',
@@ -63,6 +68,7 @@ export const WizardItems = [
   {
     icon: 'wizard-circle-matcher',
     name: 'circle-matcher',
+    menu: 'Circle matcher',
     title: 'Circle matcher',
     backgroundColor: 'circleMatcher',
     size: '200px',
@@ -72,6 +78,7 @@ export const WizardItems = [
   {
     icon: 'wizard-metrics',
     name: 'metrics-provider',
+    menu: 'Metrics provider',
     title: 'Metrics provider',
     backgroundColor: 'metricsProvider',
     size: '190px',
