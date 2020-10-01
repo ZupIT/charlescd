@@ -119,9 +119,13 @@ func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 	}
 
 	v1Api := v1.NewAPI(apiClient)
-	buildedRangePeriod := fmt.Sprintf("%d%s", request.RangePeriod.Value, request.RangePeriod.Unit)
-	buildedInterval := fmt.Sprintf("%d%s", request.Interval.Value, request.Interval.Unit)
-	buildedQuery := createQueryByMetric(request.Filters, request.Query, buildedRangePeriod, buildedInterval)
+	buildedQuery := createQueryByMetric(request.Filters, request.Query, "", "")
+	if request.RangePeriod.Value != 0 && request.RangePeriod.Unit != "" {
+		buildedRangePeriod := fmt.Sprintf("%d%s", request.RangePeriod.Value, request.RangePeriod.Unit)
+		buildedInterval := fmt.Sprintf("%d%s", request.Interval.Value, request.Interval.Unit)
+		buildedQuery = createQueryByMetric(request.Filters, request.Query, buildedRangePeriod, buildedInterval)
+	}
+
 	result, _, err := v1Api.Query(context.Background(), buildedQuery, time.Now())
 	if err != nil {
 		return nil, err
