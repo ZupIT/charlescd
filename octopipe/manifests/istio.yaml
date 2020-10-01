@@ -9,46 +9,40 @@ spec:
   repo: https://storage.googleapis.com/istio-release/releases/1.2.2/charts/
   targetNamespace: istio-system
   valuesContent: |-
-    certmanager:
-      enabled: true
     gateways:
       enabled: true
       istio-egressgateway:
         enabled: true
-      istio-ingressgateway:
-        enabled: true
-        sds:
-          enabled: true
     global:
-      controlPlaneSecurityEnabled: true
+      controlPlaneSecurityEnabled: false
       disablePolicyChecks: false
       hub: docker.io/istio
       mtls:
-        enabled: true
+        enabled: false
       outboundTrafficPolicy:
         mode: ALLOW_ANY
       proxy:
         includeInboundPorts: '*'
       tag: 1.2.2
     grafana:
-      enabled: true
+      enabled: false
     istio_cni:
       enabled: false
     kiali:
-      enabled: true
+      enabled: false
       createDemoSecret: true
     mixer:
       adapters:
         stdio:
-          enabled: true
+          enabled: false
       policy:
-        enabled: true
+        enabled: false
       telemetry:
-        enabled: true
+        enabled: false
     prometheus:
-      enabled: true
+      enabled: false
     sidecarInjectorWebhook:
-      enabled: true
-      rewriteAppHTTPProbe: true
+      enabled: false
+      rewriteAppHTTPProbe: false
     tracing:
-      enabled: true
+      enabled: false

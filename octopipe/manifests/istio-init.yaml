@@ -13,4 +13,4 @@ spec:
       hub: docker.io/istio
       tag: 1.2.2
     certmanager:
-      enabled: true
+      enabled: false

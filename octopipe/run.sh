@@ -10,16 +10,16 @@ echo '### Setup k3s'
 ${EXEC} 'until kubectl wait --for=condition=available deployment/coredns -n kube-system; do sleep 1; done' 2>/dev/null
 echo
 
-echo "### Setup OpenEBS"
-${EXEC} 'kubectl create namespace openebs'
-${EXEC} 'kubectl apply -f-' < manifests/openebs.yaml
-${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-admission-server -n openebs; do sleep 1; done' 2>/dev/null
-${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-apiserver -n openebs; do sleep 1; done' 2>/dev/null
-${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-localpv-provisioner -n openebs; do sleep 1; done' 2>/dev/null
-${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-ndm-operator -n openebs; do sleep 1; done' 2>/dev/null
-${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-provisioner -n openebs; do sleep 1; done' 2>/dev/null
-${EXEC} "kubectl patch storageclass openebs-hostpath -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
-echo
+# echo "### Setup OpenEBS"
+# ${EXEC} 'kubectl create namespace openebs'
+# ${EXEC} 'kubectl apply -f-' < manifests/openebs.yaml
+# ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-admission-server -n openebs; do sleep 1; done' 2>/dev/null
+# ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-apiserver -n openebs; do sleep 1; done' 2>/dev/null
+# ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-localpv-provisioner -n openebs; do sleep 1; done' 2>/dev/null
+# ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-ndm-operator -n openebs; do sleep 1; done' 2>/dev/null
+# ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-provisioner -n openebs; do sleep 1; done' 2>/dev/null
+# ${EXEC} "kubectl patch storageclass openebs-hostpath -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
+# echo
 
 echo "### Setup Istio"
 ${EXEC} 'kubectl create namespace istio-system'
