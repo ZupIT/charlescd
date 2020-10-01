@@ -16,6 +16,12 @@ spec:
           value: http://charlescd-moove:8080
         - name: BUCKET_NAME
           value: example
+        - name: CHARLES_USER
+          value: example
+        - name: CHARLES_PASS
+          value: example
+        - name: CHARLES_KEYCLOAK
+          value: http://charlescd-keycloak-http:8080
         - name: PERIOD
           value: 10000
         - name: LIST_BUCKETS
