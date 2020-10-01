@@ -20,7 +20,7 @@ services:
     ports:
     - 6443:6443
 
-  app:
+  setup:
     image: "bitnami/kubectl:latest"
     entrypoint: /app/run.sh
     environment:
@@ -29,6 +29,17 @@ services:
       - ./manifests:/manifests
       - ./run.sh:/app/run.sh
       - ./kubeconfig.yaml:/app/kubeconfig.yaml
+
+  app:
+    image: "golang:1.14-buster"
+    command: "sleep infinity"
+    environment:
+      - KUBECONFIG=/app/kubeconfig.yaml
+    volumes:
+      - ./:/app
+      - ./kubeconfig.yaml:/app/kubeconfig.yaml
+    ports:
+      - 8080:8080
 
 volumes:
   k3s-server: {}
