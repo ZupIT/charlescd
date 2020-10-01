@@ -34,10 +34,10 @@ services:
     image: "golang:1.14-buster"
     command: "sleep infinity"
     environment:
-      - KUBECONFIG=/app/kubeconfig.yaml
+      - KUBECONFIG=OUT_OF_CLUSTER
     volumes:
       - ./:/app
-      - ./kubeconfig.yaml:/app/kubeconfig.yaml
+      - ./kubeconfig.yaml:/root/.kube/config
     ports:
       - 8080:8080
 
