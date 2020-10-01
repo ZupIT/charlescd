@@ -154,7 +154,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
             <Styled.Input
               name="nickname"
               ref={register({ required: true })}
-              label="Type a nickname for metric"
+              label="Type a nickname for the metric"
               maxLength={100}
             />
             {!!errors.nickname && (
@@ -254,8 +254,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
                 <Styled.Title color="light">Threshold</Styled.Title>
                 <Styled.Subtitle color="dark">
-                  Set the threshold to indicate when to reach the configured
-                  numeric value.
+                  Set the threshold for this metric:
                 </Styled.Subtitle>
 
                 {!showThresholdForm && (
