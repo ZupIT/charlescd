@@ -60,4 +60,18 @@ class ConditionTest extends Specification {
 
         assert expression == "['north','south'].indexOf(getPath(input, 'region')) >= 0"
     }
+
+    def "Starts With expression should compare only one value"() {
+
+        given:
+        def key = "region"
+        def values = ["north", "south"]
+        when:
+
+        def expression = Condition.STARTS_WITH.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "toStr(getPath(input, 'region')).startsWith(toStr('north'))"
+    }
 }
