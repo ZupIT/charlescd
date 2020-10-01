@@ -19,6 +19,9 @@ This tool has been created to facilitate this process, Matcher-s3-sync will get 
     - WORKSPACE_ID: Workspace ID where your applications is saved.
     - MOOVE_URL: Internal URL of charlescd-moove.
     - BUCKET_NAME: Name of S3 bucket with all circles and csv files.
+    - KEYCLOAK_URL: Used to get charlescd token.
+    - CHARLES_USER: User with maintainer permissions on the used workspace.
+    - CHARLES_PASS: Password of user.
     - PERIOD: time in milliseconds to execute the sync function.
     - LIST_BUCKETS: 0 for false and 1 for true, used to validate AWS credentials, this will skip all steps and just list buckets from S3.
 
