@@ -200,7 +200,7 @@ class ConditionTest extends Specification {
         def values = ["25"]
         when:
 
-        def expression = Condition.BETWEEN.expression(OpUtils.inputValue(key), values)
+        Condition.BETWEEN.expression(OpUtils.inputValue(key), values)
 
         then:
 
@@ -219,5 +219,19 @@ class ConditionTest extends Specification {
         then:
 
         assert expression == "((getPath(input, 'age') >= parseFloat(25)) && (getPath(input, 'age') <= parseFloat(35)))"
+    }
+
+    def "Default expression should fail when values is empty"() {
+
+        given:
+        def key = "age"
+        def values = []
+        when:
+
+        Condition.EQUAL.defaultExpression(OpUtils.inputValue(key), values)
+
+        then:
+
+        thrown(NoSuchElementException)
     }
 }
