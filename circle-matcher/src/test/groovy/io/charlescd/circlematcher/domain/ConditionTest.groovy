@@ -5,6 +5,26 @@ import spock.lang.Specification
 
 class ConditionTest extends Specification {
 
+    def "Create condition from string"() {
+
+        given:
+        def conditionString = "NOT_CONTAINS"
+        when:
+        def condition = Condition.from(conditionString)
+        then:
+        assert condition == Condition.NOT_CONTAINS
+    }
+
+    def "Return Not_found when no condition found"() {
+
+        given:
+        def conditionString = "WRONG_CONDITION"
+        when:
+        def condition = Condition.from(conditionString)
+        then:
+        assert condition == Condition.NOT_FOUND
+    }
+
     def "Equal expression should process a single value"() {
 
         given:
