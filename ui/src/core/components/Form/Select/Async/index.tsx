@@ -16,55 +16,78 @@
 
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { OptionTypeBase } from 'react-select';
-import { Option } from '../interfaces';
 import Select from './Select';
+import { Option } from '../interfaces';
+import { OptionsType } from 'react-select';
 
 interface Props {
   name: string;
   control: Control<unknown>;
-  options?: OptionTypeBase[];
+  options: Option[];
   rules?: Partial<{ required: boolean | string }>;
-  defaultValue?: Option[];
+  defaultValue?: Option;
   className?: string;
   label?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
-  onChange?: (value: Option[]) => void;
+  onChange?: (value: Option) => void;
   onInputChange?: (value: string) => void;
   customOption?: React.ReactNode;
   closeMenuOnSelect?: boolean;
   hideSelectedOptions?: boolean;
+  hasError?: boolean;
+  loadOptions?: (
+    inputValue: string,
+    callback: (options: OptionsType<any>) => void
+  ) => Promise<any> | void;
 }
 
-const MultiCheck = ({
+const AsyncSelect = ({
   name,
   control,
   options,
-  customOption,
-  className,
+  rules,
   defaultValue,
+  className,
   label,
   onChange,
-  isLoading
+  onInputChange,
+  isDisabled = false,
+  isLoading = false,
+  customOption,
+  closeMenuOnSelect = true,
+  hideSelectedOptions,
+  hasError,
+  loadOptions
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={<Select />}
+      as={
+        <Select
+          placeholder={label}
+          className={className}
+          isDisabled={isDisabled}
+          isLoading={isLoading}
+          customOption={customOption}
+          onInputChange={onInputChange}
+          defaultValue={defaultValue}
+          closeMenuOnSelect={closeMenuOnSelect}
+          hideSelectedOptions={hideSelectedOptions}
+          loadOptions={loadOptions}
+          hasError={hasError}
+        />
+      }
+      onChange={([selected]) => {
+        onChange && onChange(selected);
+        return selected?.value;
+      }}
+      defaultValue={defaultValue?.value}
+      rules={rules}
+      control={control}
       options={options}
       name={name}
-      control={control}
-      customOption={customOption}
-      className={className}
-      defaultValue={defaultValue}
-      label={label}
-      isLoading={isLoading}
-      onChange={([selectedOptions]) => {
-        onChange && onChange(selectedOptions);
-        return selectedOptions;
-      }}
     />
   </div>
 );
 
-export default MultiCheck;
+export default AsyncSelect;
