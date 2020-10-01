@@ -116,4 +116,18 @@ class ConditionTest extends Specification {
 
         assert expression == "toNumber(getPath(input, 'age')) <= toNumber(43)"
     }
+
+    def "Greater than expression should parse to number and then compare only the first value"() {
+
+        given:
+        def key = "age"
+        def values = ["43", "32"]
+        when:
+
+        def expression = Condition.GREATER_THAN.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "toNumber(getPath(input, 'age')) > toNumber(43)"
+    }
 }
