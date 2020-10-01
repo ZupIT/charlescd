@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';
@@ -48,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <Fragment>
       <Icon name="charles-logo" />
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Title color="light">
@@ -77,6 +77,7 @@ const Login = () => {
           )}
         </Styled.Field>
         <Styled.Button
+          id="submit"
           type="submit"
           size="EXTRA_SMALL"
           isDisabled={isDisabled}
@@ -85,7 +86,7 @@ const Login = () => {
           Continue
         </Styled.Button>
       </Styled.Form>
-    </>
+    </Fragment>
   );
 };
 
