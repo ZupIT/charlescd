@@ -15,10 +15,11 @@
  */
 
 import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, act, wait, fireEvent } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
 import Login from '..';
 
-test('render Login page', async () => {
+test('render Login page', () => {
   render(<Login />);
 
   const iconCharles = screen.queryByTestId('icon-charles-logo');
@@ -30,4 +31,17 @@ test('render Login page', async () => {
   expect(inputPassword).toBeInTheDocument();
   expect(buttonSubmit).toBeInTheDocument();
   expect(buttonSubmit).toBeDisabled();
+});
+
+test('render Login page', async () => {
+  render(<Login />);
+
+  const inputEmail = screen.queryByTestId('input-email-email');
+  const inputPassword = screen.queryByTestId('input-password-password');
+  const buttonSubmit = screen.queryByTestId('button-default-submit');
+  
+  await act(async () => userEvent.type(inputEmail, 'charlescd@zup.com.br'));
+  await act(async () => userEvent.type(inputPassword, '123mudar'));
+
+  expect(buttonSubmit).not.toBeDisabled();
 });
