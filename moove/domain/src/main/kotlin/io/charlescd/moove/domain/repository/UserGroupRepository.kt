@@ -29,15 +29,11 @@ interface UserGroupRepository {
 
     fun findById(id: String): Optional<UserGroup>
 
-    fun find(page: PageRequest): Page<UserGroup>
+    fun find(name: String?, page: PageRequest): Page<UserGroup>
 
     fun delete(userGroup: UserGroup)
 
     fun addMember(userGroup: UserGroup, member: User)
 
     fun removeMember(userGroup: UserGroup, member: User)
-
-    fun findPermissionsFromUserGroupAssociations(userGroup: UserGroup): Map<String, List<Permission>>
-
-    fun findPermissions(workspaceId: String, userGroup: UserGroup): List<Permission>
 }

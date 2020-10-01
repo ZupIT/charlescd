@@ -30,7 +30,7 @@ const Button = styled(ComponentButton.Rounded)`
 `;
 
 const Modal = styled(ModalDefault)`
-  .modal-content {
+  .modal-container {
     padding: 10px 70px;
     width: 1111px;
     background-color: ${COLOR_BLACK_RUSSIAN};

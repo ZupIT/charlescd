@@ -17,7 +17,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
-import copyToClipboard from 'clipboard-copy';
+import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useUpdateProfile, useDeleteUser } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
@@ -25,13 +25,16 @@ import TabPanel from 'core/components/TabPanel';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
+import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
 import Modal from 'core/components/Modal';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
 import { isRoot } from 'core/utils/auth';
+import { getProfileByKey } from 'core/utils/profile';
 import { getUserPathByEmail } from './helpers';
 import Loader from './Loaders';
+import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 
 interface Props {
@@ -40,39 +43,42 @@ interface Props {
 }
 
 const UsersComparationItem = ({ email, onChange }: Props) => {
+  const loggedUserId = getProfileByKey('id');
   const history = useHistory();
+  const [isOpenModalPassword, toggleModalPassword] = useState(false);
   const [action, setAction] = useState('');
-  const [user, setCurrentUser] = useState<User>();
+  const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit } = useForm<User>();
-  const [loadedUser, , loadUser, ,] = useUser();
+  const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
-  const [, loadingUpdate, updateProfile] = useUpdateProfile();
+  const [loadingUpdate, updateProfile] = useUpdateProfile();
+  const isAbleToReset = loggedUserId !== user?.id;
 
-  const refresh = useCallback(() => loadUser(email), [loadUser, email]);
+  const refresh = useCallback(() => findByEmail(email), [findByEmail, email]);
 
   useEffect(() => {
-    if (loadedUser) setCurrentUser(loadedUser);
-  }, [loadedUser]);
+    if (user) setCurrentUser(user);
+  }, [user]);
 
   useEffect(() => {
     onChange(delUserResponse);
     if (delUserResponse === 'Deleted') {
-      delParam('user', routes.usersComparation, history, user.email);
+      delParam('user', routes.usersComparation, history, currentUser.email);
     }
   });
 
   useEffect(() => {
     if (!loadingUpdate) {
-      loadUser(email);
+      findByEmail(email);
     }
-  }, [loadingUpdate, email, loadUser]);
+  }, [loadingUpdate, email, findByEmail]);
 
   const onSubmit = (profile: User) => {
     setCurrentUser(null);
-    updateProfile(user.id, {
+    updateProfile(currentUser.id, {
       ...profile,
-      email: user.email,
-      photoUrl: user.photoUrl
+      email: currentUser.email,
+      photoUrl: currentUser.photoUrl
     });
   };
 
@@ -86,7 +92,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       title="Do you want to delete this user?"
       dismissLabel="Cancel, keep user"
       continueLabel="Yes, delete user"
-      onContinue={() => handleDelete(user.id, user.name)}
+      onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
       By deleting this user, his information will be also deleted. Do you wish
@@ -99,7 +105,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Dropdown.Item
         icon="copy"
         name="Copy link"
-        onClick={() => copyToClipboard(getUserPathByEmail(user.email))}
+        onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
       <Dropdown.Item
         icon="delete"
@@ -109,13 +115,27 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     </Dropdown>
   );
 
+  const renderResetPassword = () =>
+    isAbleToReset && (
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text.h5 color="dark">Reset password</Text.h5>
+      </LabeledIcon>
+    );
+
   const renderActions = () => (
-    <Styled.Actions>{renderDropdown()}</Styled.Actions>
+    <Styled.Actions>
+      {renderResetPassword()}
+      {renderDropdown()}
+    </Styled.Actions>
   );
 
   const renderPanel = () => (
     <TabPanel
-      title={user.name}
+      title={currentUser.name}
       onClose={() => delParam('user', routes.usersComparation, history, email)}
       actions={renderActions()}
       name="user"
@@ -125,9 +145,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
           <Avatar
-            key={user.photoUrl}
+            key={currentUser.photoUrl}
             size="68px"
-            profile={user}
+            profile={currentUser}
             onFinish={refresh}
           />
         </Styled.ContentIcon>
@@ -136,22 +156,22 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         <ContentIcon icon="user">
           {isRoot() ? (
             <InputTitle
-              key={user.name}
+              key={currentUser.name}
               name="name"
               resume
               ref={register({ required: true })}
-              defaultValue={user.name}
+              defaultValue={currentUser.name}
               onClickSave={handleSubmit(onSubmit)}
             />
           ) : (
-            <Text.h2 color="light">user.name</Text.h2>
+            <Text.h2 color="light">currentUser.name</Text.h2>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
           <Text.h2 color="light">Email</Text.h2>
-          <Text.h4 color="dark">{user.email}</Text.h4>
+          <Text.h4 color="dark">{currentUser.email}</Text.h4>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
@@ -164,7 +184,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
 
   return (
     <Styled.Wrapper data-testid={`users-comparation-item-${email}`}>
-      {!user ? <Loader.Tab /> : renderPanel()}
+      {!currentUser ? <Loader.Tab /> : renderPanel()}
+      {isOpenModalPassword && (
+        <ModalResetPassword user={currentUser} onClose={toggleModalPassword} />
+      )}
     </Styled.Wrapper>
   );
 };

@@ -17,6 +17,7 @@
 import { WorkspacesActionTypes, ACTION_TYPES } from './actions';
 import { WorkspacePagination } from '../interfaces/WorkspacePagination';
 import { WorkspaceState } from '../interfaces/WorkspaceState';
+import { WORKSPACE_STATUS } from '../enums';
 
 const initialListState: WorkspacePagination = {
   content: [],
@@ -28,7 +29,14 @@ const initialListState: WorkspacePagination = {
 
 export const workspaceInitialState: WorkspaceState = {
   list: initialListState,
-  item: null
+  item: {
+    id: '',
+    name: '',
+    status: WORKSPACE_STATUS.COMPLETE,
+    authorId: '',
+    createdAt: ''
+  },
+  status: 'idle'
 };
 
 export const workspaceReducer = (
@@ -46,6 +54,12 @@ export const workspaceReducer = (
       return {
         ...state,
         item: action.payload
+      };
+    }
+    case ACTION_TYPES.statusWorkspace: {
+      return {
+        ...state,
+        status: action.payload
       };
     }
     default: {

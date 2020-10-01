@@ -23,11 +23,12 @@ interface Props {
   placeholder?: string;
   className?: string;
   defaultValue?: string;
+  maxLength?: number;
 }
 
 const Number = React.forwardRef(
   (
-    { name, label, placeholder, className, defaultValue }: Props,
+    { name, label, placeholder, className, defaultValue, maxLength }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +44,7 @@ const Number = React.forwardRef(
         className={className}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        maxLength={maxLength}
       />
     );
   }
