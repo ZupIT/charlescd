@@ -43,7 +43,7 @@ test('render Login page', () => {
   expect(buttonSubmit).toBeDisabled();
 });
 
-test.only('render Login page', async () => {
+test('render Login page', async () => {
   window.location = {
     ...window.location,
     href: '',
