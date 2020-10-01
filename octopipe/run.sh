@@ -11,6 +11,7 @@ ${EXEC} 'until kubectl wait --for=condition=available deployment/coredns -n kube
 echo
 
 echo "### Setup OpenEBS"
+${EXEC} 'kubectl create namespace openebs'
 ${EXEC} 'kubectl apply -f-' < manifests/openebs.yaml
 ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-admission-server -n openebs; do sleep 1; done' 2>/dev/null
 ${EXEC} 'until kubectl wait --for=condition=available deployment/openebs-apiserver -n openebs; do sleep 1; done' 2>/dev/null
@@ -21,6 +22,7 @@ ${EXEC} "kubectl patch storageclass openebs-hostpath -p '{\"metadata\": {\"annot
 echo
 
 echo "### Setup Istio"
+${EXEC} 'kubectl create namespace istio-system'
 ${EXEC} 'kubectl apply -f-' < manifests/istio-init.yaml
 ${EXEC} 'until kubectl wait --for=condition=complete job/istio-init-crd-10 -n istio-system; do sleep 1; done' 2>/dev/null
 ${EXEC} 'until kubectl wait --for=condition=complete job/istio-init-crd-11 -n istio-system; do sleep 1; done' 2>/dev/null
@@ -37,3 +39,4 @@ echo
 END_TIME=`date "+%s"`
 
 echo "### Running time: $((${END_TIME} - ${START_TIME}))s"
+sleep infinity
