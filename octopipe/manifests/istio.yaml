@@ -1,0 +1,54 @@
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: istio
+  namespace: kube-system
+spec:
+  chart: istio
+  repo: https://storage.googleapis.com/istio-release/releases/1.2.2/charts/
+  targetNamespace: istio-system
+  valuesContent: |-
+    certmanager:
+      enabled: true
+    gateways:
+      enabled: true
+      istio-egressgateway:
+        enabled: true
+      istio-ingressgateway:
+        enabled: true
+        sds:
+          enabled: true
+    global:
+      controlPlaneSecurityEnabled: true
+      disablePolicyChecks: false
+      hub: docker.io/istio
+      mtls:
+        enabled: true
+      outboundTrafficPolicy:
+        mode: ALLOW_ANY
+      proxy:
+        includeInboundPorts: '*'
+      tag: 1.2.2
+    grafana:
+      enabled: true
+    istio_cni:
+      enabled: false
+    kiali:
+      enabled: true
+      createDemoSecret: true
+    mixer:
+      adapters:
+        stdio:
+          enabled: true
+      policy:
+        enabled: true
+      telemetry:
+        enabled: true
+    prometheus:
+      enabled: true
+    sidecarInjectorWebhook:
+      enabled: true
+      rewriteAppHTTPProbe: true
+    tracing:
+      enabled: true
