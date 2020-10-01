@@ -81,6 +81,7 @@ class VillagerClientService(private val villagerClient: VillagerClient) : Villag
             is AzureRegistryConfiguration -> buildAzureRegistryRequest(registryConfiguration)
             is AWSRegistryConfiguration -> buildAWSRegistryRequest(registryConfiguration)
             is GCPRegistryConfiguration -> buildGCPRegistryRequest(registryConfiguration)
+            is DockerHubRegistryConfiguration -> buildDockerHubRegistryRequest(registryConfiguration)
             else -> throw IllegalArgumentException("Provider type not supported")
         }
     }
@@ -115,6 +116,17 @@ class VillagerClientService(private val villagerClient: VillagerClient) : Villag
             provider = CreateVillagerRegistryConfigurationProvider.GCP,
             organization = registryConfiguration.organization,
             jsonKey = registryConfiguration.jsonKey,
+            authorId = registryConfiguration.author.id
+        )
+    }
+
+    private fun buildDockerHubRegistryRequest(registryConfiguration: DockerHubRegistryConfiguration): CreateVillagerRegistryConfigurationRequest {
+        return CreateVillagerRegistryConfigurationRequest(
+            name = registryConfiguration.name,
+            address = registryConfiguration.address,
+            provider = CreateVillagerRegistryConfigurationProvider.GCP,
+            username = registryConfiguration.username,
+            password = registryConfiguration.password,
             authorId = registryConfiguration.author.id
         )
     }
