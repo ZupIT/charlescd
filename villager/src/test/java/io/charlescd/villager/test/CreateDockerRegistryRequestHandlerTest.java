@@ -19,6 +19,7 @@ package io.charlescd.villager.test;
 import io.charlescd.villager.api.handlers.impl.CreateDockerRegistryRequestHandler;
 import io.charlescd.villager.api.resources.registry.AWSCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.AzureCreateDockerRegistryRequest;
+import io.charlescd.villager.api.resources.registry.DockerHubCreateDockerRegistryRequest;
 import io.charlescd.villager.api.resources.registry.GCPCreateDockerRegistryRequest;
 import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,32 @@ public class CreateDockerRegistryRequestHandlerTest {
         assertThat(result.getName(), is(name));
         assertThat(result.getAddress(), is(address));
         assertThat(result.getRegistryType(), is(RegistryType.GCP));
+        assertThat(result.getWorkspaceId(), is(workspaceId));
+    }
+
+    @Test
+    public void createDockerHubRegistry() {
+        var name = "dockerhub-registry";
+        var address = "https://url";
+        var organization = "user";
+        var username = "user";
+        var password = "pass";
+
+        var config = new DockerHubCreateDockerRegistryRequest(name, address, organization, username, password);
+        assertThat(config.getName(), is(name));
+        assertThat(config.getAddress(), is(address));
+        assertThat(config.getOrganization(), is(organization));
+        assertThat(config.getUsername(), is(username));
+        assertThat(config.getPassword(), is(password));
+
+        var workspaceId = "03232654-a863-4e87-b4d0-5536ad0d119f";
+
+        var handler = new  CreateDockerRegistryRequestHandler(workspaceId, config);
+
+        var result = handler.handle();
+        assertThat(result.getName(), is(name));
+        assertThat(result.getAddress(), is(address));
+        assertThat(result.getRegistryType(), is(RegistryType.DOCKER_HUB));
         assertThat(result.getWorkspaceId(), is(workspaceId));
     }
 }

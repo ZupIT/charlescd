@@ -56,7 +56,7 @@ public class GetDockerRegistryTagInteractorImpl implements GetDockerRegistryTagI
         }
 
         try {
-            this.registryClient.configureAuthentication(entity.type, entity.connectionData);
+            this.registryClient.configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
 
             var response =
                     this.registryClient.getImage(input.getArtifactName(), input.getName(), entity.connectionData);
