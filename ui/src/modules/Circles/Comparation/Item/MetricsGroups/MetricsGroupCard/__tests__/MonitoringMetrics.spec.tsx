@@ -26,8 +26,9 @@ beforeEach(() => {
 
 test('render Monitoring Metrics with data', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  const handleChangePeriod = jest.fn();
   
-  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]}/>);
+  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);
 
   await wait();
 
@@ -38,8 +39,9 @@ test('render Monitoring Metrics with data', async () => {
 
 test('render Monitoring Metrics with data and toogle chart period', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  const handleChangePeriod = jest.fn();
   
-  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]}/>);
+  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);
 
   await wait();
 
