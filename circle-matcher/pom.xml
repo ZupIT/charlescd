@@ -112,7 +112,7 @@
     <build>
         <finalName>charlescd-circle-matcher</finalName>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/main/groovy</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
         <plugins>
 
             <plugin>
