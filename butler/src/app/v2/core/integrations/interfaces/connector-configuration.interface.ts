@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
-import { ConnectorResult } from '../../interfaces/connector-result.interface'
-import { ConnectorResultError } from '../../interfaces/connector-result.interface'
-
-export {
-  SpinnakerPipeline,
-  ConnectorResult,
-  ConnectorResultError
+export interface ConnectorConfiguration {
+  incomingCircleId: string | null
+  executionId: string
 }

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import { SpinnakerPipeline } from './spinnaker-pipeline.interface'
-import { ConnectorResult } from '../../interfaces/connector-result.interface'
-import { ConnectorResultError } from '../../interfaces/connector-result.interface'
+import { Component, Deployment } from '../../../api/deployments/interfaces'
+import { ConnectorResult, ConnectorResultError } from '../spinnaker/interfaces'
+import { ConnectorConfiguration } from './connector-configuration.interface'
 
-export {
-  SpinnakerPipeline,
-  ConnectorResult,
-  ConnectorResultError
+export interface CdConnector {
+
+  createDeployment(
+    deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration
+  ): Promise<ConnectorResult | ConnectorResultError>
+
+  createUndeployment(
+    deployment: Deployment, activeComponents: Component[], configuration: ConnectorConfiguration
+  ): Promise<ConnectorResult | ConnectorResultError>
 }

@@ -15,6 +15,7 @@
  */
 
 import { DeploymentNotificationRequestDto } from '../../../../api/deployments/dto/deployment-notification-request.dto'
+import { Manifest } from '../../interfaces/k8s-manifest.interface'
 
 interface StageDefaultArtifact {
     customKind: boolean
@@ -66,91 +67,6 @@ interface Options {
 interface TrafficManagement {
     enabled: boolean
     options: Options
-}
-
-interface Metadata {
-    name: string
-    namespace: string
-}
-
-interface Labels {
-    component: string
-    tag: string
-    circleId: string
-}
-
-interface Subset {
-    labels: Labels
-    name: string
-}
-
-interface Cookie {
-    regex: string
-}
-
-interface XCircleId {
-    exact: string
-}
-
-interface Headers {
-    cookie?: Cookie
-    'x-circle-id'?: XCircleId,
-    'unreachable-cookie-name'?: XCircleId
-}
-
-interface Match {
-    headers: Headers
-}
-
-interface Destination {
-    host: string
-    subset?: string
-}
-
-interface RequestSet {
-    'x-circle-source': string
-}
-
-interface Request {
-    set: RequestSet
-}
-
-interface ResponseSet {
-    'x-circle-source': string
-}
-
-interface Response {
-    set: ResponseSet
-}
-
-interface RouteHeaders {
-    request: Request
-    response: Response
-}
-
-interface Route {
-    destination: Destination
-    headers?: RouteHeaders
-}
-
-interface Http {
-    match?: Match[]
-    route: Route[]
-}
-
-interface Spec {
-    host?: string
-    subsets?: Subset[]
-    hosts?: string[]
-    http?: Http[]
-    gateways?: string[]
-}
-
-interface Manifest {
-    apiVersion: string
-    kind: string
-    metadata: Metadata
-    spec: Spec
 }
 
 interface CustomHeaders {
@@ -250,8 +166,6 @@ interface SpinnakerPipeline {
 }
 
 export {
-  Subset,
-  Http,
   Stage,
   ExpectedArtifact,
   SpinnakerPipeline

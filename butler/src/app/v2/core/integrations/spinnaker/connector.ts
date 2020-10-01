@@ -8,14 +8,11 @@ import { AppConstants } from '../../../../v1/core/constants'
 import { SpinnakerPipelineBuilder } from './pipeline-builder'
 import { ConnectorResultError } from './interfaces'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
-
-export interface ConnectorConfiguration {
-    incomingCircleId: string | null
-    executionId: string
-}
+import { CdConnector } from '../interfaces/cd-connector.interface'
+import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 
 @Injectable()
-export class SpinnakerConnector {
+export class SpinnakerConnector implements CdConnector {
 
   constructor(
     private spinnakerApiService: SpinnakerApiService,
