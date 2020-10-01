@@ -1,15 +1,14 @@
 package io.charlescd.moove.application.user.impl
 
+
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
-import io.charlescd.moove.application.usergroup.request.AddMemberToUserGroupRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
-import io.charlescd.moove.domain.service.KeycloakCustomService
 import io.charlescd.moove.domain.service.KeycloakService
 import spock.lang.Specification
 
@@ -25,7 +24,8 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
     void setup() {
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
                 new UserService(userRepository),
-                keycloakService
+                keycloakService,
+                true
         )
     }
 
@@ -69,4 +69,26 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
         new User("user-id", "charles", email, "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
 
+    def "when using external idm should throw an exception"() {
+        given:
+        def userEmail = "user-email"
+        def authorization = "authorization"
+        def request = new ChangeUserPasswordRequest("old-password", "new-password")
+
+        this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
+                new UserService(userRepository),
+                keycloakService,
+                false
+        )
+
+        when:
+        this.changeUserPasswordInteractor.execute(authorization, request)
+
+        then:
+        0 * this.keycloakService.getEmailByAccessToken(authorization) >> userEmail
+        0 * this.userRepository.findByEmail(userEmail) >> Optional.empty()
+
+        def ex = thrown(BusinessException)
+        ex.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
+    }
 }

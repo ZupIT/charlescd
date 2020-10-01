@@ -16,6 +16,8 @@
 
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.AddGroupsRequest
@@ -70,6 +72,23 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         response.photoUrl == request.photoUrl
     }
 
+    def "shouldn't update user cause using external idm"() {
+        given:
+        service = new UserServiceLegacy(repository, keycloakService, false)
+
+        def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
+
+        when:
+        service.update(representation.id, request)
+
+        then:
+        0 * repository.findById(representation.id) >> Optional.of(user)
+        0 * repository.saveAndFlush(user) >> user
+
+        def exception = thrown(BusinessExceptionLegacy)
+        exception.errorCode == MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN
+    }
+
     def "should throw exception on update if user id do not exist"() {
         given:
         def request = new UpdateUserRequest("John Doe", "email", "https://www.photos.com/johndoe")
@@ -109,21 +128,20 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
         ex.id == "test"
     }
 
-    def "should delete user and shouldnt delete on keycloak"() {
+    def "shouldn't delete user cause using external idm"() {
         given:
         service = new UserServiceLegacy(repository, keycloakService, false)
 
         when:
-        def response = service.delete(representation.id)
+        service.delete(representation.id)
 
         then:
-        1 * repository.findById(representation.id) >> Optional.of(user)
+        0 * repository.findById(representation.id) >> Optional.of(user)
         0 * keycloakService.deleteUserByEmail(_)
-        1 * repository.delete(user)
-        response.id == representation.id
-        response.name == representation.name
-        response.photoUrl == representation.photoUrl
-        notThrown()
+        0 * repository.delete(user)
+
+        def exception = thrown(BusinessExceptionLegacy)
+        exception.errorCode == MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN
     }
 
     def "should add groups to an user"() {
@@ -200,4 +218,21 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     }
 
+    def "shouldn't reset password to an user cause using external idm"() {
+
+        given:
+        service = new UserServiceLegacy(repository, keycloakService, false)
+
+        def email = "john.doe@zup.com.br"
+        def request = new ResetPasswordRequest("newPassword")
+
+        when:
+        service.resetPassword(email, request)
+
+        then:
+        0 * keycloakService.resetPassword(email, request.newPassword)
+
+        def exception = thrown(BusinessExceptionLegacy)
+        exception.errorCode == MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN
+    }
 }

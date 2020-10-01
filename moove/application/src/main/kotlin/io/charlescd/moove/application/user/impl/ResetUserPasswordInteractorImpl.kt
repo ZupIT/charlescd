@@ -27,6 +27,7 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.KeycloakService
+import org.springframework.beans.factory.annotation.Value
 import java.util.*
 import javax.inject.Named
 
@@ -34,21 +35,27 @@ import javax.inject.Named
 class ResetUserPasswordInteractorImpl(
     private val passGenerator: UserPasswordGeneratorService,
     private val keycloakService: KeycloakService,
-    private val userService: UserService
+    private val userService: UserService,
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) : ResetUserPasswordInteractor {
+
     override fun execute(authorization: String, id: UUID): UserNewPasswordResponse {
-        val userPasswordFormat = UserPasswordFormat(
-            numberDigits = 2,
-            numberLowerCase = 4,
-            numberUpperCase = 2,
-            numberSpecialChars = 2,
-            passwordLength = 10
-        )
-        val userToResetPassword = userService.find(id.toString())
-        validateUser(authorization, userToResetPassword)
-        val newPassword = passGenerator.create(userPasswordFormat)
-        keycloakService.resetPassword(userToResetPassword.email, newPassword)
-        return UserNewPasswordResponse(newPassword)
+        if (internalIdmEnabled) {
+            val userPasswordFormat = UserPasswordFormat(
+                numberDigits = 2,
+                numberLowerCase = 4,
+                numberUpperCase = 2,
+                numberSpecialChars = 2,
+                passwordLength = 10
+            )
+            val userToResetPassword = userService.find(id.toString())
+            validateUser(authorization, userToResetPassword)
+            val newPassword = passGenerator.create(userPasswordFormat)
+            keycloakService.resetPassword(userToResetPassword.email, newPassword)
+            return UserNewPasswordResponse(newPassword)
+        } else {
+            throw BusinessException.of(MooveErrorCode.EXTERNAL_IDM_FORBIDDEN)
+        }
     }
 
     private fun validateUser(authorization: String, userToResetPassword: User) {

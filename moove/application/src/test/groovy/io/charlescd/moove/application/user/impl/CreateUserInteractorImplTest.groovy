@@ -19,7 +19,11 @@ class CreateUserInteractorImplTest extends Specification {
     private KeycloakService keycloakService = Mock(KeycloakService)
 
     def setup() {
-        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository), userRepository, keycloakService, true)
+        createUserInteractor = new CreateUserInteractorImpl(
+                new UserService(userRepository),
+                userRepository,
+                keycloakService,
+                true)
     }
 
     def "when trying to create user should do it successfully"() {
@@ -147,5 +151,32 @@ class CreateUserInteractorImplTest extends Specification {
         1 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
         1 * userRepository.save(_) >> user
         1 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
+    }
+
+    def "when using external idm should throw exception"(){
+        given:
+        def userEmail = "manager@test.com.br"
+        def authorizedUser = new User(UUID.randomUUID().toString(), "Manager User", userEmail, "https://www.photos.com/manager", [], true, LocalDateTime.now())
+        def createUserRequest = new CreateUserRequest("John Doe", "123fakepassword", "newuser@teste.com", "https://www.photos.com/johndoe", false)
+        def authorization = "Bearer "
+
+        createUserInteractor = new CreateUserInteractorImpl(
+                new UserService(userRepository),
+                userRepository,
+                keycloakService,
+                false)
+
+        when:
+        createUserInteractor.execute(createUserRequest, authorization)
+
+        then:
+        0 * userRepository.findByEmail(createUserRequest.email) >> Optional.empty()
+        0 * userRepository.findByEmail(userEmail) >> Optional.of(authorizedUser)
+        0 * userRepository.save(_) >> _
+        0 * keycloakService.createUser(createUserRequest.email, createUserRequest.name, createUserRequest.password)
+        0 * keycloakService.getEmailByAccessToken(authorization) >> userEmail.toLowerCase().trim()
+
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.EXTERNAL_IDM_FORBIDDEN
     }
 }
