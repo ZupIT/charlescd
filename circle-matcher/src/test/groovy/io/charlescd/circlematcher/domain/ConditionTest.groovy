@@ -172,4 +172,32 @@ class ConditionTest extends Specification {
 
         assert expression == "(['@zup.com.br','@itau-unibanco.com'].indexOf(toStr(getPath(input, 'email'))) < 0)"
     }
+
+    def "Between expression should fail when values if different than 2"() {
+
+        given:
+        def key = "age"
+        def values = ["25"]
+        when:
+
+        def expression = Condition.BETWEEN.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        thrown(IllegalArgumentException)
+    }
+
+    def "Between expression should parse to float and then compare against values"() {
+
+        given:
+        def key = "age"
+        def values = ["25", "35"]
+        when:
+
+        def expression = Condition.BETWEEN.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "((getPath(input, 'age') >= parseFloat(25)) && (getPath(input, 'age') <= parseFloat(35)))"
+    }
 }
