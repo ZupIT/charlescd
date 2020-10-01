@@ -144,4 +144,18 @@ class ConditionTest extends Specification {
 
         assert expression == "toNumber(getPath(input, 'age')) >= toNumber(43)"
     }
+
+    def "Contains expression should compare the values array"() {
+
+        given:
+        def key = "email"
+        def values = ["@zup.com.br", "@itau-unibanco.com"]
+        when:
+
+        def expression = Condition.CONTAINS.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "(['@zup.com.br','@itau-unibanco.com'].indexOf(toStr(getPath(input, 'email'))) >= 0)"
+    }
 }
