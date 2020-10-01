@@ -7,7 +7,7 @@ spec:
   serviceAccountName: job-s3
   containers:
     - name: aws-pod-test
-      image: zupcharles;matcher-s3-sync:latest
+      image: zupcharles/matcher-s3-sync:latest
       imagePullPolicy: Always
       env:
         - name: WORKSPACE_ID
