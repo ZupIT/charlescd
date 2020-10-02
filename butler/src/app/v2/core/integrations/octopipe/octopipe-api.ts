@@ -15,7 +15,7 @@
  */
 
 import { OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment } from './interfaces/octopipe-undeployment.interface'
+import { OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
 import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
@@ -44,7 +44,7 @@ export class OctopipeApi {
     )
   }
 
-  public undeploy(undeployment: OctopipeUndeployment, incomingCircleId: string | null): Observable<AxiosResponse> {
+  public undeploy(undeployment: OctopipeUndeploymentRequest, incomingCircleId: string | null): Observable<AxiosResponse> {
     return this.httpService.post(
       `${this.envConfiguration.octopipeUrl}/api/v2/undeployments`,
       undeployment,

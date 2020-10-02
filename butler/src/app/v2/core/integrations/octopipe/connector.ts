@@ -40,11 +40,14 @@ export class OctopipeConnector implements CdConnector {
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
+      this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       const octopipeDeployment =
         new OctopipeRequestBuilder().buildDeploymentRequest(deployment, activeComponents, configuration)
       await this.octopipeApi.deploy(octopipeDeployment, configuration.incomingCircleId).toPromise()
+      this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_DEPLOYMENT')
       return { status: 'SUCCEEDED' }
     } catch(error) {
+      this.consoleLoggerService.log('ERROR:CREATE_V2_OCTOPIPE_DEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
   }
@@ -56,11 +59,14 @@ export class OctopipeConnector implements CdConnector {
   ): Promise<ConnectorResult | ConnectorResultError> {
 
     try {
+      this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       const octopipeUndeployment =
         new OctopipeRequestBuilder().buildUndeploymentRequest(deployment, activeComponents, configuration)
       await this.octopipeApi.undeploy(octopipeUndeployment, configuration.incomingCircleId).toPromise()
+      this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_UNDEPLOYMENT')
       return { status: 'SUCCEEDED' }
     } catch(error) {
+      this.consoleLoggerService.log('ERROR:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { error })
       return { status: 'ERROR', error: error }
     }
   }
