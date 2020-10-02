@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import { notEmptyField } from "../validation";
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+test("should validate a empty field", () => {
+  const emptyValue = '   ';
+  const nonEmptyValue = 'x';
 
-  return status;
-};
-
-export const notEmptyField = (value: string) => !!value.trim();
+  expect(notEmptyField(emptyValue)).toBeFalsy();
+  expect(notEmptyField(nonEmptyValue)).toBeTruthy();
+});
