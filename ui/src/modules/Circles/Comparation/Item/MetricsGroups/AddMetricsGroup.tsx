@@ -53,7 +53,12 @@ const AddMetricsGroup = ({ id, closeModal, getNewMetricsGroups }: Props) => {
         <Styled.Modal.Input
           name="name"
           label="Type a name for the metrics group"
-          ref={register({ required: true })}
+          ref={register({
+            required: true,
+            validate: value => {
+              return !!value.trim();
+            }
+          })}
           maxLength={100}
         />
         <Styled.Modal.Button
