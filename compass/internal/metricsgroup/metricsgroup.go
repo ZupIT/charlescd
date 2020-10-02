@@ -263,16 +263,27 @@ func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, err
 }
 
 func (main Main) UpdateName(id string, name string) (MetricsGroup, error) {
+
+	metricsGroup, findErr := main.FindById(id)
+
+	if findErr != nil {
+		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", findErr, fmt.Sprintf("metricGroup: id = %s, name = %s", id, name))
+		return MetricsGroup{}, findErr
+	}
+	metricsGroup.Name = name
+	errs := main.Validate(metricsGroup)
+	if errs != nil {
+		for _, err := range errs {
+			validationError := errors.New(err.Error)
+			logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", validationError, fmt.Sprintf("metricGroup: id = %s, name = %s - %s", id, name, err.Error))
+			return MetricsGroup{}, validationError
+		}
+	}
+
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", name)
 	if db.Error != nil {
 		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", db.Error, fmt.Sprintf("metricGroup: id = %s, name = %s", id, name))
 		return MetricsGroup{}, db.Error
-	}
-	metricsGroup, findErr := main.FindById(id)
-
-	if findErr != nil {
-		logger.Error(util.UpdateNameMetricsGroupError, "UpdateName", db.Error, fmt.Sprintf("metricGroup: id = %s, name = %s", id, name))
-		return MetricsGroup{}, findErr
 	}
 
 	return metricsGroup, nil
