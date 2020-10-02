@@ -95,7 +95,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         <Styled.MetricsGroupsHeader>
           <Text.h4 color="dark">Group name</Text.h4>
           <Text.h4 color="dark">Metrics</Text.h4>
-          <Text.h4 color="dark">Tresholds</Text.h4>
+          <Text.h4 color="dark">Thresholds</Text.h4>
         </Styled.MetricsGroupsHeader>
         {status.isResolved && renderMetricsGroupsCard(resume)}
         <Styled.MetricsGroupsFooter>
