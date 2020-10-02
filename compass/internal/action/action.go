@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"time"
 )
 
 type Action struct {
 	util.BaseModel
-	WorkspaceId   string          `json:"workspaceId"`
+	WorkspaceId   uuid.UUID       `json:"workspaceId"`
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
 	Description   string          `json:"description"`
@@ -45,7 +46,7 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 		needConfigValidation = false
 	}
 
-	if action.WorkspaceId == "" {
+	if action.WorkspaceId == uuid.Nil {
 		ers = append(ers, util.ErrorUtil{Field: "workspaceId", Error: errors.New("workspaceId is required").Error()})
 	}
 
@@ -86,9 +87,9 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionById(id string) (Action, error) {
+func (main Main) FindActionByIdAndWorkspaceID(id string, workspaceID string) (Action, error) {
 	action := Action{}
-	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspaceId = ?", id, workspaceID).First(&action)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
