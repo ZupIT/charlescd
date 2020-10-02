@@ -17,7 +17,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { login, renewToken } from '../auth';
-import { getRefreshToken, isIDMAuthFlow } from 'core/utils/auth';
+import { getRefreshToken, isIDMEnabled } from 'core/utils/auth';
 import { redirectTo } from 'core/utils/routes';
 import routes from 'core/constants/routes';
 
@@ -58,7 +58,7 @@ const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>
   fn().catch(async (error: any) => {
     if (HTTP_STATUS.unauthorized === error.status) {
       try {
-        if (!isLoginRequest && !isIDMAuthFlow()) {
+        if (!isLoginRequest && !isIDMEnabled()) {
           await renewToken(getRefreshToken())({});
         }
         return fn();

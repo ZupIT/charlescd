@@ -27,7 +27,7 @@ import Styled from './styled';
 import Loader from './Loaders';
 import useQueryStrings from 'core/utils/query';
 import { addParam, delParam } from 'core/utils/path';
-import { isIDMAuthFlow } from 'core/utils/auth';
+import { isIDMEnabled } from 'core/utils/auth';
 
 interface Props {
   items: UserPaginationItem[];
@@ -59,7 +59,7 @@ const UserMenu = ({ items, onSearch, isLoading }: Props) => {
 
   return (
     <Fragment>
-      {!isIDMAuthFlow() && (
+      {!isIDMEnabled() && (
         <Styled.Actions>
           <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
             <LabeledIcon icon="plus-circle" marginContent="5px">
