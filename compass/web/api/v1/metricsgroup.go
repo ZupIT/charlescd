@@ -170,18 +170,25 @@ func (metricsGroupApi MetricsGroupApi) update(w http.ResponseWriter, r *http.Req
 
 func (metricsGroupApi MetricsGroupApi) updateName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, workspaceId string) {
 	id := ps.ByName("id")
-	metricsGroup, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
+	metricsGroupAux, err := metricsGroupApi.metricsGroupMain.Parse(r.Body)
+
+	metricsGroup, err := metricsGroupApi.metricsGroupMain.FindById(id)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
 
-	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.UpdateName(id, metricsGroup.Name)
+	metricsGroup.Name = metricsGroupAux.Name
+	if err := metricsGroupApi.metricsGroupMain.Validate(metricsGroup); len(err) > 0 {
+		api.NewRestValidateError(w, http.StatusInternalServerError, err, "Could not save metrics-group")
+		return
+	}
+
+	updatedWorkspace, err := metricsGroupApi.metricsGroupMain.UpdateName(id, metricsGroup)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{err})
 		return
 	}
-
 	api.NewRestSuccess(w, http.StatusOK, updatedWorkspace)
 }
 

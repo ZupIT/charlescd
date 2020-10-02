@@ -237,40 +237,11 @@ func (s *SuiteMetricGroup) TestUpdateName() {
 	s.DB.Create(&metricgroup)
 
 	newName := "group 2"
-	createMetricGroup, err := s.repository.UpdateName(metricgroup.ID.String(), newName)
+	metricgroup.Name = newName
+	createMetricGroup, err := s.repository.UpdateName(metricgroup.ID.String(), metricgroup)
 
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), createMetricGroup.Name, newName)
-}
-
-func (s *SuiteMetricGroup) TestUpdateNameErrorFindById() {
-	metricgroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-
-	s.DB.Create(&metricgroup)
-
-	newName := "group 2"
-	_, err := s.repository.UpdateName("any-id", newName)
-
-	require.Error(s.T(), err)
-}
-
-func (s *SuiteMetricGroup) TestUpdateNameErrorValidation() {
-	metricgroup := metricsgroup.MetricsGroup{
-		Name:        "group 1",
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
-
-	s.DB.Create(&metricgroup)
-
-	newName := "groupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupgroupGroup"
-	_, err := s.repository.UpdateName(metricgroup.ID.String(), newName)
-
-	require.Error(s.T(), err)
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
