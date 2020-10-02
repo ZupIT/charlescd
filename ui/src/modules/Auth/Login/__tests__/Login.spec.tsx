@@ -67,9 +67,9 @@ test('render Login page', async () => {
     workspaces: [{ id: '1', name: 'workspace' }]
   }));
 
-  const inputEmail = screen.queryByTestId('input-email-email');
-  const inputPassword = screen.queryByTestId('input-password-password');
-  const buttonSubmit = screen.queryByTestId('button-default-submit');
+  const inputEmail = await screen.findByTestId('input-email-email');
+  const inputPassword = await screen.findByTestId('input-password-password');
+  const buttonSubmit = await screen.findByTestId('button-default-submit');
   
   await act(async () => userEvent.type(inputEmail, 'charlescd@zup.com.br'));
   await act(async () => userEvent.type(inputPassword, '123mudar'));
