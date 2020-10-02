@@ -20,6 +20,11 @@ services:
     ports:
     - 6443:6443
 
+  registry:
+    image: registry:2.7.1
+    ports:
+      - 5000:5000
+
   setup:
     image: "bitnami/kubectl:latest"
     entrypoint: /app/run.sh
@@ -40,6 +45,8 @@ services:
       - ./kubeconfig.yaml:/root/.kube/config
     ports:
       - 8080:8080
+    depends_on:
+      - "server"
 
 volumes:
   k3s-server: {}
