@@ -9,10 +9,8 @@ const CommonTemplateUtils = {
 
   getCircleId: (circleId: string | null): string => {
     return circleId ? circleId : AppConstants.DEFAULT_CIRCLE_ID
-  },
-  getNamespace(component: Component, configuration: CdConfiguration) {
-    return component.namespace || (configuration.configurationData as ISpinnakerConfigurationData).namespace
   }
+
 }
 
 export { CommonTemplateUtils }

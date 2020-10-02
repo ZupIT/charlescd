@@ -51,7 +51,7 @@ export const getBakeStage = (component: Component, configuration: CdConfiguratio
     }
   ],
   name: `Bake ${component.name} ${component.imageTag}`,
-  namespace:  CommonTemplateUtils.getNamespace(component, configuration),
+  namespace: component.namespace,
   outputName: `${component.name}-${component.imageTag}`,
   overrides: {
     'image.tag': component.imageUrl,

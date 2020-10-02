@@ -109,7 +109,7 @@ export class OctopipeService implements ICdServiceStrategy {
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
-      appNamespace: deploymentConfiguration.namespace,
+      appNamespace: 'sandbox',
       git: {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
@@ -130,7 +130,7 @@ export class OctopipeService implements ICdServiceStrategy {
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
-      appNamespace: deploymentConfiguration.namespace,
+      appNamespace: 'sandbox',
       git: {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
@@ -147,7 +147,7 @@ export class OctopipeService implements ICdServiceStrategy {
 
     payload.istio.virtualService = this.buildVirtualServices(
       configuration.componentName,
-      deploymentConfiguration.namespace,
+      'sandbox',
       configuration.pipelineCirclesOptions.pipelineCircles,
       [configuration.componentName],
       configuration.pipelineCirclesOptions.pipelineVersions,
@@ -157,7 +157,7 @@ export class OctopipeService implements ICdServiceStrategy {
 
     payload.istio.destinationRules = createDestinationRules(
       configuration.componentName,
-      deploymentConfiguration.namespace,
+      'sandbox',
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions,
       configuration.hostValue
@@ -170,7 +170,7 @@ export class OctopipeService implements ICdServiceStrategy {
     const deploymentConfiguration: OctopipeConfigurationData = configuration.cdConfiguration as OctopipeConfigurationData
     let payload = {
       appName: configuration.componentName,
-      appNamespace: deploymentConfiguration.namespace,
+      appNamespace: 'sandbox',
       git: {
         provider: deploymentConfiguration.gitProvider,
         token: deploymentConfiguration.gitToken
@@ -187,7 +187,7 @@ export class OctopipeService implements ICdServiceStrategy {
 
     payload.istio.virtualService = this.buildVirtualServices(
       configuration.componentName,
-      deploymentConfiguration.namespace,
+      'sandbox',
       configuration.pipelineCirclesOptions.pipelineCircles,
       [configuration.componentName],
       configuration.pipelineCirclesOptions.pipelineVersions,
@@ -197,7 +197,7 @@ export class OctopipeService implements ICdServiceStrategy {
 
     payload.istio.destinationRules = createDestinationRules(
       configuration.componentName,
-      deploymentConfiguration.namespace,
+      'sandbox',
       configuration.pipelineCirclesOptions.pipelineCircles,
       configuration.pipelineCirclesOptions.pipelineVersions,
       configuration.hostValue

@@ -66,7 +66,7 @@ export class SpinnakerService implements ICdServiceStrategy {
     const cdConfiguration = configuration.cdConfiguration as ISpinnakerConfigurationData
     return {
       account: cdConfiguration.account,
-      appNamespace: cdConfiguration.namespace,
+      appNamespace: 'sandbox',
       pipelineName: configuration.componentId,
       applicationName: `${AppConstants.SPINNAKER_APPLICATION_PREFIX}${configuration.applicationName}`,
       appName: configuration.componentName,

@@ -20,7 +20,5 @@ export interface ISpinnakerConfigurationData {
 
     account: string
 
-    namespace: string
-
     url: string
 }

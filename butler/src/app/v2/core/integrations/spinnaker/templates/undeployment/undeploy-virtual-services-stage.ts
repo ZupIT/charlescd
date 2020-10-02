@@ -38,7 +38,7 @@ export const getUndeploymentVirtualServiceStage = (
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${CommonTemplateUtils.getNamespace(component, deployment.cdConfiguration)}`
+        namespace: `${component.namespace}`
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],

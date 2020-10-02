@@ -25,7 +25,6 @@ export interface IEKSConfig {
     awsClusterName: string
     gitProvider: GitProvidersEnum
     gitToken: string
-    namespace: string
 }
 
 export interface IGenericConfig {
@@ -36,14 +35,12 @@ export interface IGenericConfig {
     clientKey: string
     gitProvider: GitProvidersEnum
     gitToken: string
-    namespace: string
 }
 
 export interface IDefaultConfig {
     provider: ClusterProviderEnum.DEFAULT
     gitProvider: GitProvidersEnum
     gitToken: string
-    namespace: string
 }
 
 export type OctopipeConfigurationData = IEKSConfig | IGenericConfig | IDefaultConfig

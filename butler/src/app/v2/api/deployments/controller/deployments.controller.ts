@@ -22,7 +22,6 @@ import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
-import { ComponentExistenceInNamespacePipe } from '../pipes/component-existence-in-namespace-pipe.service'
 
 
 @Controller('v2/deployments')
@@ -35,7 +34,6 @@ export class DeploymentsController {
 
   @Post('/')
   @UsePipes(SimultaneousDeploymentValidationPipe)
-  @UsePipes(ComponentExistenceInNamespacePipe)
   @UsePipes(CdConfigurationExistencePipe)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async createDeployment(

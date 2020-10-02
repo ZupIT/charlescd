@@ -29,7 +29,7 @@ export interface Component {
 
     gatewayName: string | null
 
-    namespace: string | null
+    namespace: string
 
     name: string
 

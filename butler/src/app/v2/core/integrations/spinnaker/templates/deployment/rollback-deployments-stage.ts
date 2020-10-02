@@ -60,7 +60,7 @@ export const getRollbackDeploymentsStage = (
       }
     ]
   },
-  location: `${CommonTemplateUtils.getNamespace(component, configuration)}`,
+  location: `${component.namespace}`,
   mode: 'label',
   name: `Delete Deployment ${component.name} ${component.imageTag}`,
   options: {

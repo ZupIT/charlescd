@@ -39,8 +39,8 @@ export class ComponentEntityV2 implements Component {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
 
-  @Column({ name: 'namespace', nullable: true, type: 'varchar' })
-  public namespace!: string | null
+  @Column({ name: 'namespace', nullable: false })
+  public namespace!: string
 
   constructor(
     helmUrl: string,
@@ -50,7 +50,7 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
-    namespace: string | null,
+    namespace: string,
     merged = false
   ) {
     this.helmUrl = helmUrl

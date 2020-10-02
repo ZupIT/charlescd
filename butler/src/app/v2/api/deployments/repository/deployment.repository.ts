@@ -33,14 +33,4 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .getMany()
   }
 
-  public async findComponentDeploymentInSameNamespace(component: ComponentEntityV2, configuration: CdConfigurationEntity): Promise<DeploymentEntityV2[]> {
-    return  this.createQueryBuilder('v2components')
-      .leftJoinAndSelect('v2components.deployment', 'deployment')
-      .leftJoin('deployment.cdConfiguration', 'cd_configurations')
-      .addSelect(`PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')`, 'configurationData')
-      .where(`(PGP_SYM_DECRYPT(cd_configurations.configuration_data::bytea, '${AppConstants.ENCRYPTION_KEY}', 'cipher-algo=aes256')::JSONB  @> '{ "namespace":"${CommonTemplateUtils.getNamespace(component, configuration)}" }'`)
-      .andWhere('v2components.name = :componentName', { componentName: component.name })
-      .andWhere('cd_configurations.workspaceId != :workspaceId', { workspaceId: configuration.workspaceId })
-      .getMany()
-  }
 }

@@ -60,7 +60,7 @@ export const getUndeploymentsDeleteUnusedStage = (
       }
     ]
   },
-  location: `${CommonTemplateUtils.getNamespace(component, configuration)}`,
+  location: `${component.namespace}`,
   mode: 'label',
   name: `Delete Unused Deployment ${component.name} ${component.imageTag}`,
   nameStage: 'Delete Deployments',

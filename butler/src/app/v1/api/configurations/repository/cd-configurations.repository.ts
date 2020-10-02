@@ -93,8 +93,8 @@ export class CdConfigurationsRepository extends Repository<CdConfigurationEntity
 
   private trimObject(configurationData: ICdConfigurationData) {
     return mapValues(configurationData, (value) => {
-      if (typeof value === 'string') {
-        return value.trim()
+      if (typeof value === 'string' ) {
+        return (value as string).trim()
       }
       return value
     })
