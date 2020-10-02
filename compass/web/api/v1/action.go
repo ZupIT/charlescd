@@ -4,6 +4,7 @@ import (
 	"compass/internal/action"
 	"compass/web/api"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -29,7 +30,12 @@ func (actionApi ActionApi) create(w http.ResponseWriter, r *http.Request, _ http
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
 		return
 	}
-	request.WorkspaceId = workspaceId
+	workspaceUuid, err := uuid.Parse(workspaceId)
+	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid workspaceID")})
+		return
+	}
+	request.WorkspaceId = workspaceUuid
 
 	if err := actionApi.actionMain.ValidateAction(request); len(err) > 0 {
 		api.NewRestValidateError(w, http.StatusInternalServerError, err, "could not save action")

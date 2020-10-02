@@ -75,11 +75,12 @@ const (
 )
 
 const (
-	FindActionError              = "FIND_ACTION_ERROR"
-	SaveActionError              = "SAVE_ACTION_ERROR"
-	UpdateActionError            = "UPDATE_ACTION_ERROR"
-	DeleteActionError            = "DELETE_ACTION_ERROR"
-	SaveActionConfigurationError = "SAVE_ACTION_CONFIGURATION_ERROR"
+	FindActionError                     = "FIND_ACTION_ERROR"
+	SaveActionError                     = "SAVE_ACTION_ERROR"
+	UpdateActionError                   = "UPDATE_ACTION_ERROR"
+	DeleteActionError                   = "DELETE_ACTION_ERROR"
+	SaveActionConfigurationError        = "SAVE_ACTION_CONFIGURATION_ERROR"
+	ListGroupActionExecutionStatusError = "LIST_GROUP_ACTION_EXECUTION_STATUS_ERROR"
 )
 
 const (
