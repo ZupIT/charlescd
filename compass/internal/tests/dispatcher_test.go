@@ -19,13 +19,13 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/dispatcher"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"

@@ -19,11 +19,11 @@
 package metric
 
 import (
-	"compass/internal/util"
-	"compass/pkg/datasource"
-	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io"
 
 	"github.com/google/uuid"

@@ -19,8 +19,8 @@
 package v1
 
 import (
-	"compass/internal/plugin"
-	"compass/web/api"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"

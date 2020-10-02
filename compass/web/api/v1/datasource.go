@@ -19,9 +19,9 @@
 package v1
 
 import (
-	"compass/internal/datasource"
-	"compass/web/api"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/web/api"
 	"github.com/google/uuid"
 	"net/http"
 

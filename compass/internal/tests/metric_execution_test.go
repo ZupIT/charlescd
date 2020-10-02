@@ -19,13 +19,13 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	metric2 "compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	metric2 "github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"os"
 	"testing"
 

@@ -19,10 +19,10 @@
 package main
 
 import (
-	"compass/pkg/datasource"
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"strconv"
 	"time"
 

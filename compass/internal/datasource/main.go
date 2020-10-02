@@ -19,9 +19,9 @@
 package datasource
 
 import (
-	"compass/internal/plugin"
-	"compass/internal/util"
-	"compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"io"
 
 	"github.com/jinzhu/gorm"

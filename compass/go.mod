@@ -1,4 +1,4 @@
-module compass
+module github.com/ZupIT/charlescd/compass
 
 go 1.14
 

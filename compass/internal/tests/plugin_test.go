@@ -19,7 +19,7 @@
 package tests
 
 import (
-	"compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"os"

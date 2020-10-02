@@ -19,11 +19,11 @@
 package metricsgroup
 
 import (
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	"compass/internal/plugin"
-	"compass/internal/util"
-	datasourcePKG "compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"io"
 
 	"github.com/jinzhu/gorm"

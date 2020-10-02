@@ -19,12 +19,12 @@
 package v1
 
 import (
-	"compass/internal/datasource"
-	"compass/internal/metric"
-	"compass/internal/metricsgroup"
-	"compass/internal/plugin"
-	"compass/pkg/logger"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 

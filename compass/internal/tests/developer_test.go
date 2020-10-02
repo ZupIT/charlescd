@@ -19,8 +19,8 @@
 package tests
 
 import (
-	"compass/internal/plugin"
-	utils "compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	utils "github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"os"
