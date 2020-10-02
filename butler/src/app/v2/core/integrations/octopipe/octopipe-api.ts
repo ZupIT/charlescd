@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-import { OctopipeDeployment } from './interfaces/octopipe-deployment.interface'
+import { OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
 import { OctopipeUndeployment } from './interfaces/octopipe-undeployment.interface'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
+import IEnvConfiguration from '../../../../v1/core/integrations/configuration/interfaces/env-configuration.interface'
+import { IoCTokensConstants } from '../../../../v1/core/constants/ioc'
+import { Observable } from 'rxjs'
+import { AxiosResponse } from 'axios'
 
 @Injectable()
 export class OctopipeApi {
@@ -26,7 +31,7 @@ export class OctopipeApi {
     private readonly envConfiguration: IEnvConfiguration
   ) {}
 
-  public deploy(deployment: OctopipeDeployment, incomingCircleId: string | null): Observable<AxiosResponse> {
+  public deploy(deployment: OctopipeDeploymentRequest, incomingCircleId: string | null): Observable<AxiosResponse> {
     return this.httpService.post(
       `${this.envConfiguration.octopipeUrl}/api/v2/deployments`,
       deployment,

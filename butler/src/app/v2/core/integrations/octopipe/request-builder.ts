@@ -18,7 +18,7 @@ import {
   OctopipeDeployment,
   OctopipeDeploymentRequest
 } from './interfaces/octopipe-deployment.interface'
-import { OctopipeUndeployment } from './interfaces/octopipe-undeployment.interface'
+import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
 import { OctopipeConfigurationData } from '../../../../v1/api/configurations/interfaces'
@@ -33,6 +33,7 @@ import {
 } from '../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
+import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
 
 export class OctopipeRequestBuilder {
 
@@ -56,14 +57,14 @@ export class OctopipeRequestBuilder {
     deployment: Deployment,
     activeComponents: Component[],
     configuration: ConnectorConfiguration
-  ): OctopipeUndeployment {
+  ): OctopipeUndeploymentRequest {
 
     return {
       namespace: (deployment.cdConfiguration?.configurationData as OctopipeConfigurationData).namespace,
-      undeployments: [], // TODO fill this
-      proxyDeployments: [], // TODO fill this
+      undeployments: this.getUndeploymentsArray(deployment),
+      proxyDeployments: this.getProxyUndeploymentsArray(deployment, activeComponents),
       callbackUrl: UrlUtils.getDeploymentNotificationUrl(configuration.executionId),
-      clusterConfig: null // TODO fill this
+      clusterConfig: this.getClusterConfig(deployment.cdConfiguration.configurationData as OctopipeConfigurationData)
     }
   }
 
@@ -90,6 +91,31 @@ export class OctopipeRequestBuilder {
       proxyDeployments.push(IstioDeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
     })
     return proxyDeployments
+  }
+
+  private getUndeploymentsArray(deployment: Deployment): OctopipeUndeployment[] {
+    if (!deployment?.components) {
+      return []
+    }
+    return deployment.components.map(component => ({ //TODO improve this object later - It shouldnt be equal to the deployment object
+      componentName: component.name,
+      helmRepositoryConfig: this.getHelmRepositoryConfig(component, deployment.cdConfiguration),
+      helmConfig: this.getHelmConfig(component, deployment.circleId),
+      rollbackIfFailed: false
+    }))
+  }
+
+  private getProxyUndeploymentsArray(deployment: Deployment, activeComponents: Component[]): K8sManifest[] {
+    if (!deployment?.components) {
+      return []
+    }
+    const proxyUndeployments: K8sManifest[] = []
+    deployment.components.forEach(component => {
+      const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
+      proxyUndeployments.push(IstioUndeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
+      proxyUndeployments.push(IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
+    })
+    return proxyUndeployments
   }
 
   private getUnusedDeploymentsArray(deployment: Deployment, activeComponents: Component[]): OctopipeDeployment[] {

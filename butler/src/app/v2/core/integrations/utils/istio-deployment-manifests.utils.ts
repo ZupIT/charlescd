@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import { K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
+import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { ISpinnakerConfigurationData } from '../../../../v1/api/configurations/interfaces'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
 import { IstioManifestsUtils } from './istio-manifests.utilts'
-import { Http } from '../spinnaker/interfaces/spinnaker-pipeline.interface'
-import { AppConstants } from '../../../../v1/core/constants'
 
 const IstioDeploymentManifestsUtils = {
 

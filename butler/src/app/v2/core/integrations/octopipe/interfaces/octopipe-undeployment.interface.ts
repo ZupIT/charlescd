@@ -21,16 +21,16 @@ import {
 } from '../../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { HelmConfig, HelmRepositoryConfig } from './helm-config.interface'
 
-export interface Undeployment {
+export interface OctopipeUndeployment {
   componentName: string
   helmRepositoryConfig: HelmRepositoryConfig
   helmConfig: HelmConfig
   rollbackIfFailed: boolean
 }
 
-export interface OctopipeUndeployment {
+export interface OctopipeUndeploymentRequest {
   namespace: string;
-  undeployments: Undeployment[],
+  undeployments: OctopipeUndeployment[],
   proxyDeployments: K8sManifest[]
   callbackUrl: string
   clusterConfig?: IEKSClusterConfig | IGenericClusterConfig | null
