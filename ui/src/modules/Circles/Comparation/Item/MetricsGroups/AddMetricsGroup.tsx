@@ -20,7 +20,7 @@ import Modal from 'core/components/Modal';
 import { useCreateMetricsGroup } from './hooks';
 import Styled from './styled';
 import { MetricsGroup } from './types';
-import { isNotEmptyField } from 'core/utils/validation';
+import { isNotBlank } from 'core/utils/validation';
 
 interface Props {
   id: string;
@@ -60,7 +60,7 @@ const AddMetricsGroup = ({
           label="Type a name for the metrics group"
           ref={register({
             required: true,
-            validate: isNotEmptyField
+            validate: isNotBlank
           })}
           maxLength={100}
         />
