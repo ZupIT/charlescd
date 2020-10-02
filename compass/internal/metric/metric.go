@@ -32,23 +32,28 @@ import (
 
 type Metric struct {
 	util.BaseModel
-	MetricsGroupID  uuid.UUID                 `json:"metricGroupId"`
-	DataSourceID    uuid.UUID                 `json:"dataSourceId"`
-	Nickname        string                    `json:"nickname"`
-	Query           string                    `json:"query"`
-	Metric          string                    `json:"metric"`
-	Filters         []datasource.MetricFilter `json:"filters"`
-	GroupBy         []MetricGroupBy           `json:"groupBy"`
-	Condition       string                    `json:"condition"`
-	Threshold       float64                   `json:"threshold"`
-	CircleID        uuid.UUID                 `json:"circleId"`
-	MetricExecution MetricExecution           `json:"execution"`
+	MetricsGroupID  uuid.UUID       `json:"metricGroupId"`
+	DataSourceID    uuid.UUID       `json:"dataSourceId"`
+	Nickname        string          `json:"nickname"`
+	Query           string          `json:"query"`
+	Metric          string          `json:"metric"`
+	Filters         []Filters       `json:"filters"`
+	GroupBy         []MetricGroupBy `json:"groupBy"`
+	Condition       string          `json:"condition"`
+	Threshold       float64         `json:"threshold"`
+	CircleID        uuid.UUID       `json:"circleId"`
+	MetricExecution MetricExecution `json:"execution"`
 }
 
 type MetricGroupBy struct {
 	util.BaseModel
 	MetricID uuid.UUID `json:"-"`
 	Field    string    `json:"field"`
+}
+
+type Filters struct {
+	util.BaseModel
+	datasource.MetricFilter
 }
 
 func (main Main) Validate(metric Metric) []util.ErrorUtil {
@@ -91,7 +96,7 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	return ers
 }
 
-func validateMetricFilter(metricFilter datasource.MetricFilter) []util.ErrorUtil {
+func validateMetricFilter(metricFilter Filters) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if len(metricFilter.Field) > 100 {
@@ -267,14 +272,22 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 	query := main.getQueryByMetric(metric)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, datasource.MetricFilter{
-			Field:    "circle_source",
-			Operator: "=",
-			Value:    metric.CircleID.String(),
+		metric.Filters = append(metric.Filters, Filters{
+			MetricFilter: datasource.MetricFilter{
+				Field:    "circle_source",
+				Operator: "=",
+				Value:    metric.CircleID.String(),
+			},
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, metric.Filters)
+	filterList := make([]datasource.MetricFilter, 0)
+
+	for _, mfilter := range metric.Filters {
+		filterList = append(filterList, mfilter.MetricFilter)
+	}
+
+	return getQuery.(func(datasourceConfiguration, metric []byte, filters []datasource.MetricFilter) (float64, error))(dataSourceConfigurationData, query, filterList)
 }
 
 func (main Main) Query(metric Metric, period, interval string) (interface{}, error) {
@@ -301,12 +314,20 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, datasource.MetricFilter{
-			Field:    "circle_source",
-			Operator: "=",
-			Value:    metric.CircleID.String(),
+		metric.Filters = append(metric.Filters, Filters{
+			MetricFilter: datasource.MetricFilter{
+				Field:    "circle_source",
+				Operator: "=",
+				Value:    metric.CircleID.String(),
+			},
 		})
 	}
 
-	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), metric.Filters)
+	filterList := make([]datasource.MetricFilter, 0)
+
+	for _, mfilter := range metric.Filters {
+		filterList = append(filterList, mfilter.MetricFilter)
+	}
+
+	return getQuery.(func(datasourceConfiguration, query, period, interval []byte, filters []datasource.MetricFilter) ([]datasource.Value, error))(dataSourceConfigurationData, query, []byte(period), []byte(interval), filterList)
 }

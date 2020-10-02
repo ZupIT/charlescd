@@ -19,10 +19,10 @@
 package tests
 
 import (
-	"compass/internal/configuration"
-	datasource2 "compass/internal/datasource"
-	"compass/internal/plugin"
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
