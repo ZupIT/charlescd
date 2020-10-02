@@ -78,7 +78,7 @@ class ConditionTest extends Specification {
 
         then:
 
-        assert expression == "['north','south'].indexOf(getPath(input, 'region')) >= 0"
+        assert expression == "['north','south'].indexOf(getPath(input, 'region')) == -1"
     }
 
     def "Starts With expression should compare only the first value"() {
