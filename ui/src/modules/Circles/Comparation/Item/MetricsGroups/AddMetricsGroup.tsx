@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form';
 import Modal from 'core/components/Modal';
 import { useCreateMetricsGroup } from './hooks';
 import Styled from './styled';
+import { notEmptyField } from 'core/utils/validation';
 
 interface Props {
   id: string;
@@ -55,9 +56,7 @@ const AddMetricsGroup = ({ id, closeModal, getNewMetricsGroups }: Props) => {
           label="Type a name for the metrics group"
           ref={register({
             required: true,
-            validate: value => {
-              return !!value.trim();
-            }
+            validate: notEmptyField
           })}
           maxLength={100}
         />
