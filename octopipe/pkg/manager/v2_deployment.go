@@ -35,6 +35,10 @@ func (manager Manager) ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeli
 		return
 	}
 	manager.triggerV2Callback(v2Pipeline.CallbackUrl, DEPLOYMENT_CALLBACK, SUCCEEDED_STATUS, incomingCircleId)
+	err = manager.runV2UnusedDeployments(v2Pipeline)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline", "error": err.Error()}).Info("ERROR:RUN_V2_UNUSED_DEPLOYMENTS")
+	}
 	log.WithFields(log.Fields{"function": "ExecuteV2DeploymentPipeline"}).Info("FINISH:EXECUTE_V2_DEPLOYMENT_PIPELINE")
 }
 
@@ -77,6 +81,19 @@ func (manager Manager) runV2ProxyDeployments(v2Pipeline V2DeploymentPipeline) er
 		})
 	}
 	log.WithFields(log.Fields{"function": "runV2ProxyDeployments"}).Info("FINISH:RUN_V2_PROXY_DEPLOYMENTS")
+	return errs.Wait()
+}
+
+func (manager Manager) runV2UnusedDeployments(v2Pipeline V2DeploymentPipeline) error {
+	log.WithFields(log.Fields{"function": "runV2UnusedDeployments", "rollbacks": v2Pipeline.Deployments}).Info("START:RUN_V2_UNUSED_DEPLOYMENTS")
+	errs, _ := errgroup.WithContext(context.Background())
+	for _, deployment := range v2Pipeline.UnusedDeployments {
+		currentUnusedDeployment := deployment
+		errs.Go(func() error {
+			return manager.executeV2HelmManifests(v2Pipeline.ClusterConfig, currentUnusedDeployment, v2Pipeline.Namespace, UNDEPLOY_ACTION)
+		})
+	}
+	log.WithFields(log.Fields{"function": "runV2Rollbacks"}).Info("FINISH:RUN_V2_ROLLBACKS")
 	return errs.Wait()
 }
 
