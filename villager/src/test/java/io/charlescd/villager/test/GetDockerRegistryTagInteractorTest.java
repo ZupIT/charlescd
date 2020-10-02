@@ -73,6 +73,9 @@ public class GetDockerRegistryTagInteractorTest {
             tags.add("tag_2");
             tagsResponse.setTags(tags);
 
+            assertThat(tagsResponse.getName(), is("name"));
+            assertThat(tagsResponse.getTags(), is(tags));
+
             var builtResponse = new BuiltResponse(200, new Headers<>(), tagsResponse, annotations);
             var response = new ServerResponse(builtResponse);
 
@@ -94,8 +97,10 @@ public class GetDockerRegistryTagInteractorTest {
 
         assertThat(component.getName(), is("test"));
         assertThat(component.getArtifact(), is("test.org/name:test"));
-        verify(registryClient, times(1)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(1)).getImage("name", "test", entity.connectionData);
+        verify(registryClient, times(1))
+                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+        verify(registryClient, times(1))
+                .getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
@@ -120,8 +125,10 @@ public class GetDockerRegistryTagInteractorTest {
                 .build();
 
         assertTrue(interactor.execute(input).isEmpty());
-        verify(registryClient, times(1)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(1)).getImage("name", "test", entity.connectionData);
+        verify(registryClient, times(1))
+                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+        verify(registryClient, times(1))
+                .getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
     }
 
@@ -147,8 +154,10 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         assertThat(exception.getMessage(), is("This docker registry does not belongs to the request application id."));
-        verify(registryClient, times(0)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(0)).getImage("name", "test", entity.connectionData);
+        verify(registryClient, times(0))
+                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+        verify(registryClient, times(0))
+                .getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
@@ -175,8 +184,10 @@ public class GetDockerRegistryTagInteractorTest {
         });
 
         assertThat(exception.getMessage(), is("Resource DOCKER_REGISTRY not found"));
-        verify(registryClient, times(0)).configureAuthentication(entity.type, entity.connectionData);
-        verify(registryClient, times(0)).getImage("name", "test", entity.connectionData);
+        verify(registryClient, times(0))
+                .configureAuthentication(entity.type, entity.connectionData, input.getArtifactName());
+        verify(registryClient, times(0))
+                .getImage("name", "test", entity.connectionData);
         verify(dockerRegistryConfigurationRepository, times(1)).findById("123");
 
     }
