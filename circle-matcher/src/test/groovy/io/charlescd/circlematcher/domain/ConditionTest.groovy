@@ -234,4 +234,18 @@ class ConditionTest extends Specification {
 
         thrown(NoSuchElementException)
     }
+
+    def "Matches expression should apply regex only on the first value"() {
+
+        given:
+        def key = "email"
+        def values = [".+@zup\\.com\\.br\$"]
+        when:
+
+        def expression = Condition.MATCHES.expression(OpUtils.inputValue(key), values)
+
+        then:
+
+        assert expression == "/.+@zup\\.com\\.br\$/.test(getPath(input, 'email'))"
+    }
 }

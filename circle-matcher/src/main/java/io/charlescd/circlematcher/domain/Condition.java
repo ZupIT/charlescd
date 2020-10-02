@@ -106,6 +106,14 @@ public enum Condition {
         }
     },
 
+    MATCHES("/%s/.test(%s)") {
+        public String expression(String key, List<String> values) {
+            return String.format(this.jsExpression,
+                    OpUtils.singleVal(values).orElseThrow(),
+                    key);
+        }
+    },
+
     NOT_FOUND(null) {
         public String expression(String key, List<String> values) {
             throw new IllegalArgumentException("Invalid null expression");
