@@ -71,7 +71,9 @@ const Input = React.forwardRef(
       setIsFocused(!isEmptyValue || disabled);
     }, [rest.defaultValue, disabled]);
 
-    useImperativeHandle(ref, () => inputRef.current);
+    useImperativeHandle(ref, () => {
+      return inputRef.current;
+    });
 
     const handleChange = (event: ChangeInputEvent) => {
       setIsFocused(!isEmpty(event.currentTarget.value));
