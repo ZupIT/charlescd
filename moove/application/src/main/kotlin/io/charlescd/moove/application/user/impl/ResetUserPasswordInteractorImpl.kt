@@ -27,9 +27,9 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.KeycloakService
-import org.springframework.beans.factory.annotation.Value
 import java.util.*
 import javax.inject.Named
+import org.springframework.beans.factory.annotation.Value
 
 @Named
 class ResetUserPasswordInteractorImpl(

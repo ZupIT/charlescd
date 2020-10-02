@@ -10,9 +10,9 @@ import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
-import org.springframework.beans.factory.annotation.Value
 import javax.inject.Inject
 import javax.inject.Named
+import org.springframework.beans.factory.annotation.Value
 
 @Named
 class CreateUserInteractorImpl @Inject constructor(
