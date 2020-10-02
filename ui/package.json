@@ -28,7 +28,7 @@
     "react-infinite-scroll-component": "^5.0.5",
     "react-popper": "^2.2.3",
     "react-router-dom": "^5.1.2",
-    "react-select": "^3.0.8",
+    "react-select": "3.0.8",
     "react-svg": "^11.0.11",
     "react-tooltip": "^4.2.6",
     "single-spa-react": "^3.0.1",
