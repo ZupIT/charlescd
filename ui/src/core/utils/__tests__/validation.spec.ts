@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { notEmptyField } from "../validation";
+import { isNotEmptyField } from "../validation";
 
 test("should validate a empty field", () => {
   const emptyValue = '   ';
   const nonEmptyValue = 'x';
 
-  expect(notEmptyField(emptyValue)).toBeFalsy();
-  expect(notEmptyField(nonEmptyValue)).toBeTruthy();
+  expect(isNotEmptyField(emptyValue)).toBeFalsy();
+  expect(isNotEmptyField(nonEmptyValue)).toBeTruthy();
 });
