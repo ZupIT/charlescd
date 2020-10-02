@@ -65,8 +65,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
     def "when deployment exists should update status of current and previous as well"() {
         given:
-
-
         def deploymentId = "314d7293-47d0-4d68-900c-02b834a15cef"
         def request = new DeploymentCallbackRequest(DeploymentRequestStatus.SUCCEEDED)
 
@@ -92,7 +90,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         this.deploymentCallbackInteractor.execute(deploymentId, request)
 
         then:
-
         1 * this.deploymentRepository.findById(deploymentId) >> Optional.of(currentDeployment)
 
         1 * this.deploymentRepository.find(circle.id, DeploymentStatusEnum.DEPLOYED) >> Optional.of(previousDeployment)
@@ -114,7 +111,7 @@ class DeploymentCallbackInteractorImplTest extends Specification {
         }
         1 * circleMatcherService.update(_, _ , _, _)
 
-                notThrown()
+        notThrown()
     }
 
     def "when deployment exists and callback is success should update status of current and do not update previous deployment because is default circle"() {
