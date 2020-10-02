@@ -19,35 +19,19 @@ import {
   IEKSClusterConfig,
   IGenericClusterConfig
 } from '../../../../../v1/core/integrations/octopipe/interfaces/octopipe-payload.interface'
+import { HelmConfig, HelmRepositoryConfig } from './helm-config.interface'
 
-export interface HelmRepositoryConfig {
-  type: string
-  url: string
-  token: string
-}
-
-export interface HelmOverrideValues {
-  'image.tag': string
-  deploymentName: string
-  component: string
-  tag: string
-  circleId: string
-}
-
-export interface HelmConfig {
-  overrideValues: HelmOverrideValues
-}
-
-export interface Deployment {
+export interface OctopipeDeployment {
   componentName: string
   helmRepositoryConfig: HelmRepositoryConfig
   helmConfig: HelmConfig
   rollbackIfFailed: boolean
 }
 
-export interface OctopipeDeployment {
+export interface OctopipeDeploymentRequest {
   namespace: string;
-  deployments: Deployment[]
+  deployments: OctopipeDeployment[],
+  unusedDeployments: OctopipeDeployment[],
   proxyDeployments: K8sManifest[]
   callbackUrl: string
   clusterConfig?: IEKSClusterConfig | IGenericClusterConfig | null

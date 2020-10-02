@@ -15,7 +15,7 @@
  */
 
 import { DeploymentNotificationRequestDto } from '../../../../api/deployments/dto/deployment-notification-request.dto'
-import { Manifest } from '../../interfaces/k8s-manifest.interface'
+import { K8sManifest } from '../../interfaces/k8s-manifest.interface'
 
 interface StageDefaultArtifact {
     customKind: boolean
@@ -115,7 +115,7 @@ interface Stage {
     skipExpressionEvaluation?: boolean
     source?: string
     trafficManagement?: TrafficManagement
-    manifests?: Manifest[]
+    manifests?: K8sManifest[]
     customHeaders?: CustomHeaders
     method?: string
     payload?: DeploymentNotificationRequestDto

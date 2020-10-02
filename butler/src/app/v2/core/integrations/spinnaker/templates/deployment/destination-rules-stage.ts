@@ -15,9 +15,9 @@
  */
 
 import { ISpinnakerConfigurationData } from '../../../../../../v1/api/configurations/interfaces'
-import { Stage, Subset } from '../../interfaces/spinnaker-pipeline.interface'
+import { Stage } from '../../interfaces/spinnaker-pipeline.interface'
 import { Component, Deployment } from '../../../../../api/deployments/interfaces'
-import { CommonTemplateUtils } from '../../utils/common-template.utils'
+import { IstioDeploymentManifestsUtils } from '../../../utils/istio-deployment-manifests.utils'
 
 export const getDestinationRulesStage = (
   component: Component,
@@ -32,18 +32,7 @@ export const getDestinationRulesStage = (
   continuePipeline: true,
   failPipeline: false,
   manifests: [
-    {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'DestinationRule',
-      metadata: {
-        name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
-      },
-      spec: {
-        host: component.name,
-        subsets: deployment?.components ? getSubsets(component, deployment.circleId, activeComponents) : []
-      }
-    }
+    IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeComponents)
   ],
   moniker: {
     app: 'default'
@@ -68,32 +57,3 @@ export const getDestinationRulesStage = (
   },
   type: 'deployManifest'
 })
-
-const getSubsets = (newComponent: Component, circleId: string | null, activeComponents: Component[]): Subset[] => {
-  const subsets: Subset[] = []
-  subsets.push(getSubsetObject(newComponent, circleId))
-
-  activeComponents.forEach(component => {
-    const activeCircleId = component.deployment?.circleId
-    if (activeCircleId && activeCircleId !== circleId) {
-      subsets.push(getSubsetObject(component, activeCircleId))
-    }
-  })
-
-  const defaultComponent: Component | undefined = activeComponents.find(component => component.deployment && !component.deployment.circleId)
-  if (defaultComponent) {
-    subsets.push(getSubsetObject(defaultComponent, null))
-  }
-  return subsets
-}
-
-const getSubsetObject = (component: Component, circleId: string | null): Subset => {
-  return {
-    labels: {
-      component: component.name,
-      tag: component.imageTag,
-      circleId: CommonTemplateUtils.getCircleId(circleId)
-    },
-    name: CommonTemplateUtils.getCircleId(circleId)
-  }
-}

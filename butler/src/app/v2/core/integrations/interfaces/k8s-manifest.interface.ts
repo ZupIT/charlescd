@@ -63,20 +63,10 @@ interface Route {
   headers?: RouteHeaders
 }
 
-interface Http {
-  match?: Match[]
-  route: Route[]
-}
-
 interface Labels {
   component: string
   tag: string
   circleId: string
-}
-
-interface Subset {
-  labels: Labels
-  name: string
 }
 
 interface Spec {
@@ -90,6 +80,16 @@ interface Spec {
 interface ManifestMetadata {
   name: string
   namespace: string
+}
+
+export interface Http {
+  match?: Match[]
+  route: Route[]
+}
+
+export interface Subset {
+  labels: Labels
+  name: string
 }
 
 export interface K8sManifest {

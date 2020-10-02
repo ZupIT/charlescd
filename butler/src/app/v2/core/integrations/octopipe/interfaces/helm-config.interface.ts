@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-const DateUtils = {
-  now: (): Date => {
-    return new Date(Date.now())
-  }
+export interface HelmOverrideValues {
+  'image.tag': string
+  deploymentName: string
+  component: string
+  tag: string
+  circleId: string
 }
 
-export { DateUtils }
+export interface HelmRepositoryConfig {
+  type: string
+  url: string
+  token: string
+}
+
+export interface HelmConfig {
+  overrideValues: HelmOverrideValues
+}
