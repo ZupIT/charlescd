@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.charlescd.villager.infrastructure.integration.registry;
+import { notEmptyField } from "../validation";
 
-public enum RegistryType {
+test("should validate a empty field", () => {
+  const emptyValue = '   ';
+  const nonEmptyValue = 'x';
 
-    AWS, AZURE, GCP, DOCKER_HUB, UNSUPPORTED
-
-}
+  expect(notEmptyField(emptyValue)).toBeFalsy();
+  expect(notEmptyField(nonEmptyValue)).toBeTruthy();
+});
