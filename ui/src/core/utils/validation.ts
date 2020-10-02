@@ -28,4 +28,4 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-export const isNotEmptyField = (value: string) => !!value.trim();
+export const isNotBlank = (value: string) => !!value.trim();
