@@ -29,13 +29,14 @@ beforeEach(() => {
   global.window.location = Object.assign({}, location)
 })
 
-test('render Login page', () => {
+test('render Login page', async () => {
   render(<Login />);
 
-  const iconCharles = screen.queryByTestId('icon-charles-logo');
-  const inputEmail = screen.queryByTestId('input-email-email');
-  const inputPassword = screen.queryByTestId('input-password-password');
-  const buttonSubmit = screen.queryByTestId('button-default-submit');
+  const iconCharles = await screen.findByTestId('icon-charles-logo');
+  const inputEmail = await screen.findByTestId('input-email-email');
+  const inputPassword = await screen.findByTestId('input-password-password');
+  const buttonSubmit = await screen.findByTestId('button-default-submit');
+
   expect(iconCharles).toBeInTheDocument();
   expect(inputEmail).toBeInTheDocument();
   expect(inputPassword).toBeInTheDocument();
