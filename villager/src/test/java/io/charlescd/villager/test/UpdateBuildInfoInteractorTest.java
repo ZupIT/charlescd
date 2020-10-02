@@ -146,7 +146,7 @@ public class UpdateBuildInfoInteractorTest {
         mockComponentsByModule(mockModuleComponentData);
 
         // Mock - Registry Client
-        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
+        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any(), any());
         when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.of(Response.ok().build()));
 
         // Execute
@@ -273,7 +273,7 @@ public class UpdateBuildInfoInteractorTest {
         mockComponentsByModule(mockModuleComponentData);
 
         // Mock - Registry Client
-        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
+        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any(), any());
         when(registryClient.getImage(anyString(), anyString(), any())).thenAnswer(invocationOnMock -> {
             var name = invocationOnMock.getArgument(0);
             var tagName = invocationOnMock.getArgument(1);
@@ -387,7 +387,7 @@ public class UpdateBuildInfoInteractorTest {
         mockComponentsByModule(mockModuleComponentData);
 
         // Mock - Registry Client
-        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any());
+        doNothing().when(registryClient).configureAuthentication(eq(RegistryType.AZURE), any(), any());
         when(registryClient.getImage(anyString(), anyString(), any())).thenReturn(Optional.empty());
 
         // Execute
