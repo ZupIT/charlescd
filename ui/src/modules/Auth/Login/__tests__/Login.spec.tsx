@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, act, wait, fireEvent } from 'unit-test/testUtils';
+import { render, screen, act, wait } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Login from '..';
 import routes from 'core/constants/routes';
@@ -76,9 +76,7 @@ test('render Login page', async () => {
 
   expect(buttonSubmit).not.toBeDisabled();
 
-  fireEvent.click(buttonSubmit);
+  await act(async () => userEvent.click(buttonSubmit));
 
-  await wait();
-
-  expect(window.location.href).toEqual(routes.workspaces);
+  await wait(() => expect(window.location.href).toEqual(routes.workspaces));
 });
