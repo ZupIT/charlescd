@@ -80,6 +80,11 @@ const Input = styled.input<InputProps>`
     + ${Label} {
       top: 0px;
     }
+
+  :autofill {
+    + ${Label} {
+      top: 0px;
+    }
   }
 
   ${({ resume }) =>
