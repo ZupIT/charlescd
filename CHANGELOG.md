@@ -1,5 +1,89 @@
 # Changelog
 
+## 0.3.9 (25/09/2020)
+- [#540](https://github.com/ZupIT/charlescd/pull/540) Issues
+- [#538](https://github.com/ZupIT/charlescd/pull/538) CI Update of charts and changelog
+
+---
+
+## 0.3.8 (25/09/2020)
+- [#537](https://github.com/ZupIT/charlescd/pull/537) Rename compass docker-repository name
+- [#536](https://github.com/ZupIT/charlescd/pull/536) Fix Create Workspace
+- [#533](https://github.com/ZupIT/charlescd/pull/533) CI Update of charts and changelog
+
+---
+
+## 0.3.7 (25/09/2020)
+- [#535](https://github.com/ZupIT/charlescd/pull/535) Revert "Building villager native"
+- [#477](https://github.com/ZupIT/charlescd/pull/477) Support to Google Cloud Registry
+- [#531](https://github.com/ZupIT/charlescd/pull/531) Adding files for installation with new idm integration
+- [#529](https://github.com/ZupIT/charlescd/pull/529) CI Update of charts and changelog
+- [#532](https://github.com/ZupIT/charlescd/pull/532) Revert "Revert "[DevCraft] IDM and microfrontend feature""
+- [#530](https://github.com/ZupIT/charlescd/pull/530) Revert "[DevCraft] IDM and microfrontend feature"
+- [#507](https://github.com/ZupIT/charlescd/pull/507) [DevCraft] IDM and microfrontend feature
+- [#466](https://github.com/ZupIT/charlescd/pull/466) Charlescd adapter to work with devcraft
+- [#527](https://github.com/ZupIT/charlescd/pull/527) CI Update of charts and changelog
+- [#524](https://github.com/ZupIT/charlescd/pull/524) Add gcr support
+- [#526](https://github.com/ZupIT/charlescd/pull/526) Fixing variables at workflows.
+- [#525](https://github.com/ZupIT/charlescd/pull/525) Fix cd configuration eks form names
+- [#435](https://github.com/ZupIT/charlescd/pull/435) Building villager native
+- [#455](https://github.com/ZupIT/charlescd/pull/455) Upgrade Quarkus 1.2.1 to 1.7.1 and fix Test for new version of Quarkus
+- [#516](https://github.com/ZupIT/charlescd/pull/516) Issue workspace switch
+- [#522](https://github.com/ZupIT/charlescd/pull/522) Revert "Support to Google Cloud Registry"
+- [#481](https://github.com/ZupIT/charlescd/pull/481) Bump node-fetch from 2.6.0 to 2.6.1 in /ui
+- [#506](https://github.com/ZupIT/charlescd/pull/506) Feature change login process
+- [#497](https://github.com/ZupIT/charlescd/pull/497) Using database permissions on moove filter
+- [#487](https://github.com/ZupIT/charlescd/pull/487) Remove proxy
+- [#480](https://github.com/ZupIT/charlescd/pull/480) Bump node-fetch from 2.6.0 to 2.6.1 in /butler
+- [#510](https://github.com/ZupIT/charlescd/pull/510) CI Update of charts and changelog
+- [#512](https://github.com/ZupIT/charlescd/pull/512) fix-villager-swagger-path
+- [#503](https://github.com/ZupIT/charlescd/pull/503) fix users load workspace
+
+---
+
+## 0.3.6 (21/09/2020)
+- [#511](https://github.com/ZupIT/charlescd/pull/511) Fix import csv bug
+
+---
+
+## 0.3.5 (19/09/2020)
+- [#509](https://github.com/ZupIT/charlescd/pull/509) Change Octopipe to not update deployed resources
+- [#508](https://github.com/ZupIT/charlescd/pull/508) Updating java version of moove dev release
+- [#495](https://github.com/ZupIT/charlescd/pull/495) CI Update of charts and changelog
+- [#442](https://github.com/ZupIT/charlescd/pull/442) Fix multiple registry auth bug
+
+---
+
+## 0.3.4 (16/09/2020)
+- [#502](https://github.com/ZupIT/charlescd/pull/502) Update application-k8s.properties
+- [#501](https://github.com/ZupIT/charlescd/pull/501) Fix chart error
+- [#500](https://github.com/ZupIT/charlescd/pull/500) Update Nginx Chart.yaml
+- [#499](https://github.com/ZupIT/charlescd/pull/499) Compass copyright
+- [#452](https://github.com/ZupIT/charlescd/pull/452) Removing authorization from keycloak
+- [#496](https://github.com/ZupIT/charlescd/pull/496) Fix compass installation
+- [#491](https://github.com/ZupIT/charlescd/pull/491) lock Casl version
+- [#494](https://github.com/ZupIT/charlescd/pull/494) fix compass chart
+- [#414](https://github.com/ZupIT/charlescd/pull/414) Fixing workspace permissions.
+- [#486](https://github.com/ZupIT/charlescd/pull/486) Notification transaction
+- [#488](https://github.com/ZupIT/charlescd/pull/488) Fix compass job
+- [#485](https://github.com/ZupIT/charlescd/pull/485) Adding compass chart
+- [#483](https://github.com/ZupIT/charlescd/pull/483) Transaction on create deployment use-case
+- [#463](https://github.com/ZupIT/charlescd/pull/463) CI Update of charts and changelog
+- [#473](https://github.com/ZupIT/charlescd/pull/473) Fix average time
+- [#476](https://github.com/ZupIT/charlescd/pull/476) Change on click expand for a redirect to that circle
+- [#474](https://github.com/ZupIT/charlescd/pull/474) fix hardcoded sandbox namespace
+- [#472](https://github.com/ZupIT/charlescd/pull/472) fix one deployment issues
+- [#470](https://github.com/ZupIT/charlescd/pull/470) Update link to documentation
+- [#428](https://github.com/ZupIT/charlescd/pull/428) Adding filter to UserGroup findAll
+- [#438](https://github.com/ZupIT/charlescd/pull/438) Circle segments validation on PATCH
+- [#348](https://github.com/ZupIT/charlescd/pull/348) Reset password - Root View
+- [#423](https://github.com/ZupIT/charlescd/pull/423) Segmentation view - Hide logical operator and vertical line
+- [#418](https://github.com/ZupIT/charlescd/pull/418) Create metrics groups
+- [#468](https://github.com/ZupIT/charlescd/pull/468) V2 one deployment circle
+- [#467](https://github.com/ZupIT/charlescd/pull/467) Removing comments on nginx-conf.yaml
+
+---
+
 ## 0.3.4-rc.3 (04/09/2020)
 - [#462](https://github.com/ZupIT/charlescd/pull/462) Refinement UI
 - [#460](https://github.com/ZupIT/charlescd/pull/460) Butler stabilization version concat validation

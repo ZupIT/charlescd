@@ -15,7 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
@@ -31,14 +31,11 @@ interface CircleMatcherResponse {
 
 export const useCircleMatcher = (): {
   getCircleId: Function;
-  loading: boolean;
 } => {
-  const [, , getCircleMatcher] = useFetch<CircleMatcherResponse>(circleMatcher);
-  const [loading, setLoading] = useState(null);
+  const getCircleMatcher = useFetchData<CircleMatcherResponse>(circleMatcher);
 
   const getCircleId = useCallback(
     async (data: unknown) => {
-      setLoading(true);
       try {
         const response = await getCircleMatcher(data);
         if (response) {
@@ -47,15 +44,13 @@ export const useCircleMatcher = (): {
         }
       } catch (e) {
         saveCircleId(CIRCLE_UNMATCHED);
-        setLoading(false);
       }
     },
     [getCircleMatcher]
   );
 
   return {
-    getCircleId,
-    loading
+    getCircleId
   };
 };
 
@@ -71,17 +66,16 @@ export const useLogin = (): {
 } => {
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
-  const [profile, , getUserByEmail] = useUser();
+  const { findByEmail, user } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (profile) {
-      const profileBase64 = btoa(JSON.stringify(profile));
-      saveProfile(profileBase64);
+    if (user) {
+      saveProfile(user);
       setStatus('resolved');
     }
-  }, [profile]);
+  }, [user]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -91,14 +85,14 @@ export const useLogin = (): {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
         await getCircleId({ username: email });
-        getUserByEmail(email);
+        findByEmail(email);
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, getUserByEmail]
+    [getSession, getCircleId, findByEmail]
   );
 
   return {
