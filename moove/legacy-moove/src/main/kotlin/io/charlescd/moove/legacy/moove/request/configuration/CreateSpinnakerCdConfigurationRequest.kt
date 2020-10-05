@@ -40,7 +40,6 @@ data class CreateSpinnakerCdConfigurationRequest(
         return CreateDeploySpinnakerCdConfigurationData(
             this.configurationData.account,
             this.configurationData.gitAccount,
-            this.configurationData.namespace,
             this.configurationData.url
         )
     }
@@ -49,6 +48,5 @@ data class CreateSpinnakerCdConfigurationRequest(
 data class CreateSpinnakerCdConfigurationData(
     val account: String,
     val gitAccount: String,
-    val namespace: String,
     val url: String
 )

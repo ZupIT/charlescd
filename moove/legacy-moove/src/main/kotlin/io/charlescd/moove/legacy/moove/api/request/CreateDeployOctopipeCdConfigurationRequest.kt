@@ -42,7 +42,6 @@ data class CreateDeployOctopipeCdConfigurationData(
     val gitProvider: GitProvidersEnum,
     val provider: K8sClusterProvidersEnum,
     val gitToken: String?,
-    val namespace: String?,
     val caData: String?,
     val awsSID: String?,
     val awsSecret: String?,

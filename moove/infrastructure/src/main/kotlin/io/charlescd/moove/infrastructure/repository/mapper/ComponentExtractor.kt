@@ -43,6 +43,6 @@ class ComponentExtractor : ResultSetExtractor<Set<Component>> {
             workspaceId = resultSet.getString("components_workspace_id"),
             hostValue = resultSet.getString("components_host_value"),
             gatewayName = resultSet.getString("components_gateway_name"),
-            namespace = resultSet.getString("component_snapshot_namespace")
+            namespace = resultSet.getString("components_namespace")
     )
 }
