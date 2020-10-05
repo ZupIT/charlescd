@@ -17,14 +17,14 @@
 import {
   COLOR_BASTILLE,
   COLOR_LAVENDER_GREY,
-  COLOR_DODGER_BLUE
+  COLOR_PURPLE_HEART
 } from 'core/assets/colors';
 
 export const light = {};
 
 export const dark = {
   checked: {
-    background: COLOR_DODGER_BLUE
+    background: COLOR_PURPLE_HEART
   },
   unchecked: {
     background: COLOR_BASTILLE,
