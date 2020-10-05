@@ -33,20 +33,23 @@ const Credentials = lazy(() => import('modules/Settings/Credentials'));
 const Settings = () => {
   const profileName = getProfileByKey('name');
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
+  const [showWizard, setShowWizard] = useState(false);
   const [isVeteranUser, setIsVeteranUser] = useState<boolean>(
     getWizardByUser()
   );
 
+  const onCloseWizard = (enabledWizard: boolean) => {
+    setWizard(enabledWizard);
+    setIsVeteranUser(true);
+  };
+
+  const showWizardModal =
+    (!isVeteranUser && workspace.status === WORKSPACE_STATUS.INCOMPLETE) ||
+    showWizard;
+
   return (
     <Page>
-      {!isVeteranUser && workspace.status === WORKSPACE_STATUS.INCOMPLETE && (
-        <Modal.Wizard
-          onClose={() => {
-            setWizard();
-            setIsVeteranUser(true);
-          }}
-        />
-      )}
+      {showWizardModal && <Modal.Wizard onClose={onCloseWizard} />}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
@@ -54,7 +57,9 @@ const Settings = () => {
         <Switch>
           <PrivateRoute
             path={routes.credentials}
-            component={Credentials}
+            render={() => (
+              <Credentials onClickHelp={() => setShowWizard(true)} />
+            )}
             allowedRoles={['maintenance_write']}
           />
           <Route>

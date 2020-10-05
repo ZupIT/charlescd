@@ -20,22 +20,38 @@ import isUndefined from 'lodash/isUndefined';
 import { getConfigByKey, setConfig } from 'core/utils/config';
 import { getProfileByKey } from 'core/utils/profile';
 
+type WizardItem = {
+  email: string;
+  enabled: boolean;
+};
+
 export const getWizardByUser = () => {
   const email = getProfileByKey('email');
   const wizard = getConfigByKey('wizard');
 
-  return !isUndefined(find(wizard, (mail: string) => mail === btoa(email)));
+  return !isUndefined(
+    find(wizard, (item: WizardItem) => item.email === btoa(email))
+  );
 };
 
-export const setWizard = () => {
+export const setWizard = (enabled: boolean) => {
   const email = getProfileByKey('email');
   const wizard = getConfigByKey('wizard');
-  setConfig('wizard', [...(wizard || []), btoa(email)]);
+  setConfig('wizard', [
+    ...(wizard || []),
+    {
+      email: btoa(email),
+      enabled
+    }
+  ]);
 };
 
 export const removeWizard = () => {
   const email = getProfileByKey('email');
   const wizard = getConfigByKey('wizard');
-  const newWizard = filter(wizard, (mail: string) => mail !== btoa(email));
+  const newWizard = filter(
+    wizard,
+    item => !item.enabled && item.mail !== btoa(email)
+  );
   setConfig('wizard', newWizard);
 };

@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import Text from 'core/components/Text';
 import ButtonComponent from 'core/components/Button/Rounded';
 import IconComponent from 'core/components/Icon';
+import SwitchComponet from 'core/components/Switch';
 
 const Icon = styled(IconComponent)``;
 
@@ -139,15 +140,9 @@ const ItemText = styled(Text.h4)<ItemProps>`
       ? theme.modal.wizard.text.inactive
       : theme.modal.wizard.text.active};
   margin-left: ${({ status }) => (status === 'active' ? '9px' : '0')};
-
-  :hover {
-    transform: scale(1.05);
-    color: ${({ theme }) => theme.modal.wizard.text.active};
-  }
 `;
 
 const Item = styled.div`
-  cursor: pointer;
   margin-top: 30px;
   display: flex;
   flex-direction: row;
@@ -160,6 +155,15 @@ const ActiveItem = styled.div<ItemProps>`
   box-sizing: border-box;
   border-radius: 1.5px;
   background: ${({ theme }) => theme.modal.wizard.text.active};
+`;
+
+const Switch = styled(SwitchComponet)`
+  margin-top: 26px;
+  justify-content: normal;
+
+  > :last-child {
+    margin-left: 10px;
+  }
 `;
 
 export default {
@@ -182,5 +186,6 @@ export default {
     Title,
     Subtitle,
     Icon
-  }
+  },
+  Switch
 };

@@ -16,13 +16,10 @@
 
 import React from 'react';
 import { render, wait, fireEvent } from 'unit-test/testUtils';
-import { ModalWizard } from '../interfaces/ModalWizard';
 import Modal from 'core/components/Modal';
 
-const wizard: ModalWizard = { isOpen: true, newUser: true };
-
 test('render Trigger', async () => {
-  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
+  const { getByTestId } = render(<Modal.Wizard onClose={jest.fn} />);
 
   const element = getByTestId('modal-wizard');
   const button = getByTestId('button-iconRounded-next');
@@ -31,7 +28,7 @@ test('render Trigger', async () => {
 });
 
 test('Next button click', async () => {
-  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
+  const { getByTestId } = render(<Modal.Wizard onClose={jest.fn} />);
 
   const welcome = getByTestId('modal-wizard-info-welcome');
   const button = getByTestId('button-iconRounded-next');
@@ -46,45 +43,4 @@ test('Next button click', async () => {
   );
 });
 
-test("Let's Start button click", async () => {
-  const onClose = jest.fn();
-  const { getByTestId } = render(
-    <Modal.Wizard wizard={wizard} onClose={onClose} />
-  );
 
-  const welcome = getByTestId('modal-wizard-info-welcome');
-  const metricsItem = getByTestId('modal-wizard-menu-item-metrics-provider');
-  const button = getByTestId('button-iconRounded-next');
-
-  await wait(() => expect(welcome).toBeInTheDocument());
-  await wait(() => expect(metricsItem).toBeInTheDocument());
-  await wait(() => expect(button).toBeInTheDocument());
-
-  fireEvent.click(metricsItem);
-
-  await wait(() =>
-    expect(
-      getByTestId('modal-wizard-info-metrics-provider')
-    ).toBeInTheDocument()
-  );
-
-  fireEvent.click(button);
-
-  expect(onClose).toHaveBeenCalled();
-});
-
-test('Menu item click', async () => {
-  const { getByTestId } = render(<Modal.Wizard wizard={wizard} />);
-
-  const welcome = getByTestId('modal-wizard-info-welcome');
-  const cdConfigItem = getByTestId('modal-wizard-menu-item-cdConfig');
-
-  await wait(() => expect(welcome).toBeInTheDocument());
-  await wait(() => expect(cdConfigItem).toBeInTheDocument());
-
-  fireEvent.click(cdConfigItem);
-
-  await wait(() =>
-    expect(getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument()
-  );
-});

@@ -19,7 +19,9 @@ import indexOf from 'lodash/indexOf';
 import map from 'lodash/map';
 import Text from 'core/components/Text';
 import { WizardItems } from './constants';
+import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';
+import { getWizardByUser } from 'modules/Settings/helpers';
 
 interface Item {
   icon: string;
@@ -31,13 +33,18 @@ interface Item {
 }
 
 export interface Props {
-  onClose: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
+  onClose: (enabled: boolean) => void;
 }
 
 const Wizard = ({ onClose }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
+  const [isWizardEnabled, setIsWizardEnabled] = useState(!getWizardByUser());
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
+
+  useOutsideClick(modalRef, () => {
+    onClose(isWizardEnabled);
+  });
 
   useEffect(() => {
     setIndexOfItemSelect(indexOf(WizardItems, itemSelect));
@@ -53,7 +60,7 @@ const Wizard = ({ onClose }: Props) => {
     if (!isFinalStep()) {
       setIndexOfItemSelect(indexOfItemSelect + 1);
     } else {
-      onClose && onClose();
+      onClose && onClose(isWizardEnabled);
     }
   };
 
@@ -76,7 +83,6 @@ const Wizard = ({ onClose }: Props) => {
         <Styled.Item.Wrapper
           key={item.name}
           data-testid={`modal-wizard-menu-item-${item.name}`}
-          onClick={() => setItemSelect(item)}
         >
           <Styled.Item.Active status={setItemStatus(item, index)} />
           <Styled.Item.Text status={setItemStatus(item, index)}>
@@ -93,6 +99,11 @@ const Wizard = ({ onClose }: Props) => {
       >
         {isFinalStep() ? "Let's Start" : 'Next'}
       </Styled.Button>
+      <Styled.Switch
+        label="Don't show me again."
+        active={!isWizardEnabled}
+        onChange={() => setIsWizardEnabled(!isWizardEnabled)}
+      />
     </Styled.SideMenu>
   );
 
