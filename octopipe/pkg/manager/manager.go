@@ -32,7 +32,9 @@ type Payload struct {
 }
 
 type UseCases interface {
-	Start(pipeline pipelinePKG.Pipeline)
+	ExecuteV1Pipeline(pipeline pipelinePKG.Pipeline)
+	ExecuteV2DeploymentPipeline(v2Pipeline V2DeploymentPipeline, incomingCircleId string)
+	ExecuteV2UndeploymentPipeline(v2Pipeline V2UndeploymentPipeline, incomingCircleId string)
 }
 
 type Manager struct {
@@ -43,7 +45,7 @@ func (main ManagerMain) NewManager() UseCases {
 	return Manager{main}
 }
 
-func (manager Manager) Start(pipeline pipelinePKG.Pipeline) {
+func (manager Manager) ExecuteV1Pipeline(pipeline pipelinePKG.Pipeline) {
 	go manager.executeStages(pipeline)
 }
 
@@ -155,7 +157,7 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 
 	deployment := manager.deploymentMain.NewDeployment(
 		step.Action,
-		step.Update,
+		false,
 		pipeline.Namespace,
 		manifest,
 		config,
@@ -170,21 +172,6 @@ func (manager Manager) executeManifest(pipeline pipelinePKG.Pipeline, step pipel
 	}
 
 	return nil
-}
-
-func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
-	repository, err := manager.repositoryMain.NewRepository(step.Repository)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error(err.Error())
-		return "", "", err
-	}
-	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
-	if err != nil {
-		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
-		return "", "", err
-	}
-
-	return templateContent, valueContent, nil
 }
 
 func (manager *Manager) getManifestsbyTemplate(name string, step pipelinePKG.Step) (map[string]interface{}, error) {
@@ -206,4 +193,19 @@ func (manager *Manager) getManifestsbyTemplate(name string, step pipelinePKG.Ste
 	}
 
 	return manifests, nil
+}
+
+func (manager Manager) getFilesFromRepository(name string, step pipelinePKG.Step) (string, string, error) {
+	repository, err := manager.repositoryMain.NewRepository(step.Repository)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "executeStep"}).Error(err.Error())
+		return "", "", err
+	}
+	templateContent, valueContent, err := repository.GetTemplateAndValueByName(name)
+	if err != nil {
+		log.WithFields(log.Fields{"function": "executeStep"}).Error("Cannot get content by repository. Error: " + err.Error())
+		return "", "", err
+	}
+
+	return templateContent, valueContent, nil
 }
