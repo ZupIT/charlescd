@@ -45,7 +45,7 @@ services:
       - ./run.sh:/app/run.sh
       - ./kubeconfig.yaml:/app/kubeconfig.yaml
 
-  app:
+  octopipe:
     image: "golang:1.14-buster"
     command: "sleep infinity"
     environment:
