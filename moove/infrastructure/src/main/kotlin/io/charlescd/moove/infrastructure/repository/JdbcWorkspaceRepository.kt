@@ -21,9 +21,11 @@ package io.charlescd.moove.infrastructure.repository
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.Page
+import io.charlescd.moove.domain.PageRequest
+import io.charlescd.moove.domain.Permission
+import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.repository.WorkspaceRepository
-import io.charlescd.moove.infrastructure.repository.mapper.UserPermissionsExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.WorkspaceExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
@@ -32,8 +34,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class JdbcWorkspaceRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val workspaceExtractor: WorkspaceExtractor,
-    private val userPermissionsExtractor: UserPermissionsExtractor
+    private val workspaceExtractor: WorkspaceExtractor
 ) : WorkspaceRepository {
 
     private val objectMapper =
@@ -107,10 +108,6 @@ class JdbcWorkspaceRepository(
 
     override fun disassociateUserGroupAndPermissions(workspaceId: String, userGroupId: String) {
         deleteAssociation(workspaceId, userGroupId)
-    }
-
-    override fun findPermissions(workspaceId: String, user: User): Map<String, List<Permission>> {
-        return findUserPermissions(workspaceId, user.id)
     }
 
     private fun findAllWorkspaces(parameters: Map<String, String>, pageRequest: PageRequest): Page<Workspace> {
@@ -311,24 +308,5 @@ class JdbcWorkspaceRepository(
             workspaceId,
             userGroupId
         )
-    }
-
-    private fun findUserPermissions(workspaceId: String, userId: String): Map<String, List<Permission>> {
-        val statement = """
-            SELECT users.id,
-                   users.name,
-                   workspaces_user_groups.workspace_id,
-                   workspaces_user_groups.user_group_id,
-                   user_groups.name,
-                   workspaces_user_groups.permissions
-            FROM workspaces_user_groups
-                     LEFT JOIN user_groups ON workspaces_user_groups.user_group_id = user_groups.id
-                     LEFT JOIN user_groups_users ON user_groups_users.user_group_id = user_groups.id
-                     LEFT JOIN users ON users.id = user_groups_users.user_id
-            AND workspace_id = ?
-            AND users.id = ?
-
-        """
-        return this.jdbcTemplate.query(statement, arrayOf(workspaceId, userId), userPermissionsExtractor) ?: emptyMap()
     }
 }
