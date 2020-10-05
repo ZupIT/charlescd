@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+package io.charlescd.villager.interactor.registry;
 
-import com.fasterxml.jackson.annotation.JsonProperty
+public class GCPDockerRegistryAuth implements DockerRegistryAuth {
+    private String organization;
+    private String username;
+    private String jsonKey;
 
-data class WorkspacePermissionsMapping(
-    @JsonProperty("id")
-    val id: String,
-    @JsonProperty("permissions")
-    val permissions: List<String>
-)
+    public GCPDockerRegistryAuth(String organization, String username, String jsonKey) {
+        this.organization = organization;
+        this.username = username;
+        this.jsonKey = jsonKey;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public String getUsername() {
+        return  username;
+    }
+
+    public String getJsonKey() {
+        return jsonKey;
+    }
+}

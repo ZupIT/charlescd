@@ -15,9 +15,9 @@
  */
 
 import React from 'react';
-import { render, screen, wait } from 'unit-test/testUtils';
+import { render, screen, wait, fireEvent } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { MetricsGroupChartData } from './fixtures';
+import { MetricsGroupChartData } from '../../__tests__/fixtures';
 import MonitoringMetrics from '../MonitoringMetrics';
 
 beforeEach(() => {
@@ -26,12 +26,32 @@ beforeEach(() => {
 
 test('render Monitoring Metrics with data', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  const handleChangePeriod = jest.fn();
   
-  render(<MonitoringMetrics metricsGroupId={'1'} />);
+  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);
 
   await wait();
 
   expect(screen.getByTestId('monitoring-metrics')).toBeInTheDocument();
   expect(screen.getByTestId('apexcharts-mock')).toBeInTheDocument();
   expect(screen.getByTestId('monitoring-metrics-period-filter')).toBeInTheDocument();
+});
+
+test('render Monitoring Metrics with data and toogle chart period', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify(MetricsGroupChartData));
+  const handleChangePeriod = jest.fn();
+  
+  render(<MonitoringMetrics metricsGroupId={'1'} selectFilters={[]} onChangePeriod={handleChangePeriod}/>);
+
+  await wait();
+
+  expect(screen.getByTestId('monitoring-metrics')).toBeInTheDocument();
+  expect(screen.getByTestId('apexcharts-mock')).toBeInTheDocument();
+  expect(screen.getByTestId('monitoring-metrics-period-filter')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('Hour'));
+  fireEvent.click(screen.getByText('Day'));
+  fireEvent.click(screen.getByText('Week'));
+  fireEvent.click(screen.getByText('Month'));
+
 });
