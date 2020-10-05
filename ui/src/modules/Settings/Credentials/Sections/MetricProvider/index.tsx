@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
-import { getWorkspaceId } from 'core/utils/workspace';
-import { MetricConfiguration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useDatasource, useMetricProvider, useSectionTestConnection } from './hooks';
+import { useDatasource } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
-import { ConnectionStatusEnum as statusConnection, Datasource } from './interfaces';
+import { Datasource } from './interfaces';
 import FormMetricProvider from './Form';
-import Styled from './styled';
 import { map } from 'lodash';
 
 interface Props {
@@ -37,8 +32,8 @@ interface Props {
 }
 
 const MetricProvider = ({ form, setForm, data }: Props) => {
-  const [datasources, setDatasources] = useState(data);
-  const { remove, loadingRemove, responseRemove } = useDatasource();
+  const [datasources] = useState(data);
+  const { remove, loadingRemove } = useDatasource();
 
   const renderSection = () => (
     <Section
@@ -47,15 +42,15 @@ const MetricProvider = ({ form, setForm, data }: Props) => {
       showAction
       action={() => setForm(FORM_METRIC_PROVIDER)}
     >
-      {datasources &&
-        map(datasources, datasource => (
-          <Card.Config
-            icon="metrics"
-            description={datasource.name}
-            isLoading={loadingRemove}
-            onClose={() => remove()}
-          />
-        ))}
+      {map(datasources, datasource => (
+        <Card.Config
+          key={datasource.id}
+          icon="metrics"
+          description={datasource.name}
+          isLoading={loadingRemove}
+          onClose={() => remove(datasource.id)}
+        />
+      ))}
     </Section >
   );
 

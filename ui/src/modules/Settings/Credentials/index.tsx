@@ -38,7 +38,7 @@ const Credentials = () => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const [, loadWorkspace, , updateWorkspace] = useWorkspace();
-  const { responseAll, getAll: getAllDatasources } = useDatasource();
+  const { responseAll: datasources, getAll: getAllDatasources } = useDatasource();
   const { item: workspace, status } = useGlobalState(
     ({ workspaces }) => workspaces
   );
@@ -51,9 +51,9 @@ const Credentials = () => {
   useEffect(() => {
     if (isNull(form)) {
       loadWorkspace(id);
-      getAllDatasources();
     }
-  }, [id, form, loadWorkspace]);
+    getAllDatasources();
+  }, [id, form, loadWorkspace, getAllDatasources]);
 
   const renderContent = () => (
     <Layer>
@@ -121,14 +121,14 @@ const Credentials = () => {
       <Section.MetricProvider
         form={form}
         setForm={setForm}
-        data={responseAll as Datasource[]}
+        data={datasources as Datasource[]}
       />
     </TabPanel>
   );
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || isEmpty(workspace.id) ? (
+      {status === 'pending' || (isEmpty(workspace.id) && isEmpty(datasources)) ? (
         <Loader.Tab />
       ) : (
           renderPanel()
