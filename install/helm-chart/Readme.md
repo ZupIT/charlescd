@@ -76,6 +76,7 @@ This installation is recommended for who has already setup your infrastructure d
 | circlematcher.redis.host                     | hostname of Redis instance                                                  | charlescd-redis-master                            |
 | circlematcher.redis.port                     | port of Redis instance                                                      | 6379                                              |
 | circlematcher.redis.password                 | password of Redis                                                           | hb2Fj9MGKjBkZ6zV                                  |
+| circlematcher.redis.ssl                      | enable ssl connection                                                       | false                                              |
 | circlematcher.allowedOriginHost              | host of frontend (cors use)                                                 | -                                                 |
 | circlematcher.replicaCount                   | number of pods to run                                                       | 1                                                 |
 | circlematcher.image.name                     | name of Circle Matcher image                                                | zupcharles/charlescd-circle-matcher:0.2.2         |
