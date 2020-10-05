@@ -38,7 +38,7 @@ var initialValues = map[string]string{
 	"DB_SSL":              "disable",
 	"DB_PORT":             "5432",
 	"PLUGINS_DIR":         "./plugins",
-	"MOOVE_URL":           "http://charlescd-moove:8080",
+	"MOOVE_URL":           "http://localhost:8082",
 	"DISPATCHER_INTERVAL": "15s",
 }
 

@@ -1,170 +1,149 @@
 package health
 
 import (
-	"compass/internal/configuration"
 	"compass/internal/util"
 	datasourcePKG "compass/pkg/datasource"
 	"compass/pkg/logger"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/http"
 )
 
-const (
-	REQUESTS_BY_CIRCLE         = "req/s"
-	REQUESTS_ERRORS_BY_CIRCLE  = "%"
-	REQUESTS_LATENCY_BY_CIRCLE = "ms"
-)
-
-type ComponentMetricRepresentation struct {
-	Period     string
-	Type       string
-	Components []ComponentRepresentation
+type CircleHealthRepresentation struct {
+	requests CircleRequestsRepresentation
+	latency  CircleHealthTypeRepresentation
+	errors   CircleHealthTypeRepresentation
 }
 
-type ComponentRepresentation struct {
-	Name   string
-	Module string
-	Data   []datasourcePKG.Value
+type CircleRequestsRepresentation struct {
+	value float64
+	unit  string
 }
 
-func (main Main) getHealthPlugin(workspaceId, query string, period, interval datasourcePKG.Period) ([]datasourcePKG.Value, error) {
+type CircleHealthTypeRepresentation struct {
+	unit             string
+	circleComponents []CircleComponentHealthRepresentation
+}
+
+type CircleComponentHealthRepresentation struct {
+	Name      string
+	Threshold float64
+	Value     float64
+	Status    string
+}
+
+// TODO: Send lookup plugin method to plugin pkg
+func (main Main) getResultQuery(workspaceId, query string) (float64, error) {
+
+	fmt.Println("QUERY: ", query)
+
 	datasource, err := main.datasource.FindHealthByWorkspaceId(workspaceId)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getHealthPlugin", err, "prometheus")
-		return nil, err
+		logger.Error(util.QueryGetPluginError, "getResultQuery", err, "prometheus")
+		return 0, err
 	}
 
-	plugin, err := main.pluginMain.GetPluginBySrc("prometheus")
+	plugin, err := main.pluginMain.GetPluginBySrc(datasource.PluginSrc)
 	if err != nil {
-		logger.Error(util.QueryGetPluginError, "getHealthPlugin", err, "prometheus")
-		return nil, err
+		logger.Error(util.QueryGetPluginError, "getResultQuery", err, "prometheus")
+		return 0, err
 	}
 
-	getQuery, err := plugin.Lookup("Query")
+	getQuery, err := plugin.Lookup("Result")
 	if err != nil {
-		logger.Error(util.PluginLookupError, "getHealthPlugin", err, plugin)
-		return nil, err
+		logger.Error(util.PluginLookupError, "getResultQuery", err, plugin)
+		return 0, err
 	}
 
-	return getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, error))(datasourcePKG.QueryRequest{
-		ResultRequest: datasourcePKG.ResultRequest{
-			DatasourceConfiguration: datasource.Data,
-			Query:                   query,
-			Filters:                 []datasourcePKG.MetricFilter{},
-		},
-		RangePeriod: period,
-		Interval:    interval,
+	return getQuery.(func(request datasourcePKG.ResultRequest) (float64, error))(datasourcePKG.ResultRequest{
+		datasource.Data,
+		query,
+		[]datasourcePKG.MetricFilter{},
 	})
 }
 
-func (main Main) getPeriodAndIntervalByProjectionType(projectionType string) (datasourcePKG.Period, datasourcePKG.Period) {
-	period := allProjectionsType[projectionType][0]
-	interval := allProjectionsType[projectionType][1]
-
-	return period, interval
-}
-
-func (main Main) GetTotalRequests(workspaceId, projectionType, circleSource string, isGrouped bool) ([]datasourcePKG.Value, error) {
-	groupBy := ""
-	if isGrouped {
-		groupBy = "by(destination_component)"
+func (main Main) getComponentStatus(thresholdValue, metricValue float64) string {
+	if metricValue > thresholdValue {
+		return "ERROR"
+	} else if metricValue < thresholdValue && metricValue >= thresholdValue-(thresholdValue*0.1) {
+		return "WARNING"
 	}
 
-	metricName := "istio_charles_requests_total"
-	query := fmt.Sprintf("ceil(sum(irate(%s{circle_source=%s}[1m])) %s)", metricName, circleSource, groupBy)
-	period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-
-	return main.getHealthPlugin(workspaceId, query, period, interval)
+	return "STABLE"
 }
 
-func (main Main) GetAverageLatency(workspaceId, circleSource, projectionType string) ([]datasourcePKG.Value, error) {
-	metricName := "istio_charles_request_duration_seconds"
-	query := fmt.Sprintf("round((sum(irate(%s_sum{circle_source=%s}[1m])) by(destination_component) / sum(irate(%s_count{circle_source=%s}[1m])) by(destination_component) * 1000)", metricName, circleSource, metricName, circleSource)
-
-	period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-	return main.getHealthPlugin(workspaceId, query, period, interval)
-}
-
-func (main Main) GetAverageHttpErrorsPercentage(workspaceId, circleSource, projectionType string) ([]datasourcePKG.Value, error) {
-	metricName := "istio_charles_request_total"
-	filter := fmt.Sprintf("circle_source=%s", circleSource)
-	finalFilter := fmt.Sprintf("%s, response_status=~\"^5.*$\"", filter)
-	query := fmt.Sprintf("round((sum(irate(%s{%s}[1m])) by(destination_component) scalar(sum(irate(%s{%s}[1m])) by(destination_component) * 100), 0.01)", metricName, finalFilter, metricName, filter)
-
-	period, interval := main.getPeriodAndIntervalByProjectionType(projectionType)
-	return main.getHealthPlugin(workspaceId, query, period, interval)
-}
-
-func (main Main) getMooveComponents(circleId string) ([]map[string]string, error) {
-	mooveUrl := fmt.Sprintf("%s/v2/circles/%s", configuration.GetConfiguration("MOOVE_URL"), circleId)
-
-	res, err := http.Get(mooveUrl)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != http.StatusOK {
-		return nil, errors.New("Internal server error")
-	}
-
-	var body map[string]interface{}
-	err = json.NewDecoder(res.Body).Decode(&body)
-	if err != nil {
-		return nil, err
-	}
-
-	deployment := body["deployment"].(map[string]interface{})
-	artifacts := deployment["artifacts"].([]map[string]interface{})
-
-	components := []map[string]string{}
-	for _, artifact := range artifacts {
-		components = append(components, map[string]string{
-			"componentName": artifact["componentName"].(string),
-			"moduleName":    artifact["moduleName"].(string),
-		})
-	}
-
-	return components, nil
-}
-
-func (main Main) ComponentsHealth(workspaceId, circleId, projectionType, metricType string) {
-	// TODO: CREATE COMPONENTS HEALTH METRIC
-}
-
-func (main Main) getDatasourceValuesByMetricType(workspaceId, circleId, projectionType, metricType string) ([]datasourcePKG.Value, error) {
-	switch metricType {
-	case "REQUESTS_BY_CIRCLE":
-		return main.GetTotalRequests(workspaceId, projectionType, circleId, true)
-	case "REQUESTS_ERRORS_BY_CIRCLE":
-		return main.GetAverageLatency(workspaceId, circleId, projectionType)
-	case "REQUESTS_LATENCY_BY_CIRCLE":
-		return main.GetAverageHttpErrorsPercentage(workspaceId, circleId, projectionType)
-	default:
-		return nil, errors.New("Not found metric type")
-	}
-}
-
-func (main Main) Components(workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error) {
-	metricComponents := ComponentMetricRepresentation{}
+func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
 	components, err := main.getMooveComponents(circleId)
 	if err != nil {
-		return ComponentMetricRepresentation{}, err
+		logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
+		return nil, err
 	}
 
+	circleComponents := []CircleComponentHealthRepresentation{}
 	for _, component := range components {
-		data, err := main.getDatasourceValuesByMetricType(workspaceId, circleId, projectionType, metricType)
+		query := main.GetAverageHttpErrorsPercentageStringQuery(workspaceId, circleId)
+		value, err := main.getResultQuery(workspaceId, query)
 		if err != nil {
-			return ComponentMetricRepresentation{}, err
+			logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
+			return nil, err
 		}
 
-		metricComponents.Components = append(metricComponents.Components, ComponentRepresentation{
-			Name:   component["componentName"],
-			Module: component["moduleName"],
-			Data:   data,
+		circleComponents = append(circleComponents, CircleComponentHealthRepresentation{
+			Name:      component.Name,
+			Value:     value,
+			Threshold: component.ErrorThreshold,
+			Status:    main.getComponentStatus(component.ErrorThreshold, value),
 		})
 	}
 
-	return metricComponents, nil
+	return circleComponents, nil
+}
+
+func (main Main) getComponentsLatency(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
+	components, err := main.getMooveComponents(circleId)
+	if err != nil {
+		logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
+		return nil, err
+	}
+
+	circleComponents := []CircleComponentHealthRepresentation{}
+	for _, component := range components {
+		query := main.GetAverageHttpErrorsPercentageStringQuery(workspaceId, circleId)
+		value, err := main.getResultQuery(workspaceId, query)
+		if err != nil {
+			logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
+			return nil, err
+		}
+
+		circleComponents = append(circleComponents, CircleComponentHealthRepresentation{
+			Name:      component.Name,
+			Value:     value,
+			Threshold: component.LatencyThreshold,
+			Status:    main.getComponentStatus(component.LatencyThreshold, value),
+		})
+	}
+
+	return circleComponents, nil
+}
+
+func (main Main) ComponentsHealth(workspaceId, circleId string) (CircleHealthRepresentation, error) {
+	requestTotalQueryString := main.getTotalRequestStringQuery(workspaceId, circleId, true)
+	requestsTotal, err := main.getResultQuery(workspaceId, requestTotalQueryString)
+	if err != nil {
+		return CircleHealthRepresentation{}, err
+	}
+
+	componentsErrorPercentage, err := main.getComponentsErrorPercentage(workspaceId, circleId)
+	if err != nil {
+		return CircleHealthRepresentation{}, err
+	}
+
+	componentsErrorLatency, err := main.getComponentsLatency(workspaceId, circleId)
+	if err != nil {
+		return CircleHealthRepresentation{}, err
+	}
+
+	return CircleHealthRepresentation{
+		requests: CircleRequestsRepresentation{requestsTotal, REQUESTS_BY_CIRCLE},
+		errors:   CircleHealthTypeRepresentation{REQUESTS_ERRORS_BY_CIRCLE, componentsErrorPercentage},
+		latency:  CircleHealthTypeRepresentation{REQUESTS_LATENCY_BY_CIRCLE, componentsErrorLatency},
+	}, nil
 }
