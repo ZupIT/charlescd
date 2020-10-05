@@ -58,8 +58,8 @@ class CardService(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    @Value("\${charlescd.blacklisted.branches}")
-    lateinit var blacklistedBranches: Array<String>
+    @Value("\${charlescd.protected.branches}")
+    lateinit var protectedBranches: Array<String>
 
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
@@ -206,7 +206,7 @@ class CardService(
     }
 
     private fun isExcludableBranch(branchName: String) : Boolean {
-       return !blacklistedBranches.contains(branchName)
+       return !protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(

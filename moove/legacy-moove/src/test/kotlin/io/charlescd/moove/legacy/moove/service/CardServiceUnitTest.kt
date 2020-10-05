@@ -129,7 +129,7 @@ class CardServiceUnitTest {
 
     @Before
     fun setup() {
-        ReflectionTestUtils.setField(cardService, "blacklistedBranches", arrayOf("master", "main"))
+        ReflectionTestUtils.setField(cardService, "protectedBranches", arrayOf("master", "main"))
 
         every {
             gitConfigurationRepository.findById(module1.workspace.gitConfigurationId!!)
