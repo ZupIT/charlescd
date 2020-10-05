@@ -9,6 +9,7 @@ import (
 
 type UseCases interface {
 	Components(workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error)
+	ComponentsHealth(workspaceId, circleId string) (CircleHealthRepresentation, error)
 }
 
 type Main struct {

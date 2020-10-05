@@ -22,6 +22,7 @@ import (
 	"compass/internal/configuration"
 	"compass/internal/datasource"
 	"compass/internal/dispatcher"
+	"compass/internal/health"
 	"compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/plugin"
@@ -50,6 +51,7 @@ func main() {
 	datasourceMain := datasource.NewMain(db, pluginMain)
 	metricMain := metric.NewMain(db, datasourceMain, pluginMain)
 	metricsgroupMain := metricsgroup.NewMain(db, metricMain, datasourceMain, pluginMain)
+	healthMain := health.NewMain(db, datasourceMain, pluginMain)
 	dispatcher := dispatcher.NewDispatcher(metricMain)
 
 	stopChan := make(chan bool, 0)
@@ -61,5 +63,6 @@ func main() {
 	v1.NewMetricApi(metricMain, metricsgroupMain)
 	v1.NewDataSourceApi(datasourceMain)
 	v1.NewCircleApi(metricsgroupMain)
+	v1.NewHealthApi(healthMain)
 	v1.Start()
 }
