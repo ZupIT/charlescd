@@ -41,16 +41,9 @@ class ResetUserPasswordInteractorImpl(
 
     override fun execute(authorization: String, id: UUID): UserNewPasswordResponse {
         if (internalIdmEnabled) {
-            val userPasswordFormat = UserPasswordFormat(
-                numberDigits = 2,
-                numberLowerCase = 4,
-                numberUpperCase = 2,
-                numberSpecialChars = 2,
-                passwordLength = 10
-            )
             val userToResetPassword = userService.find(id.toString())
             validateUser(authorization, userToResetPassword)
-            val newPassword = passGenerator.create(userPasswordFormat)
+            val newPassword = generatePassword()
             keycloakService.resetPassword(userToResetPassword.email, newPassword)
             return UserNewPasswordResponse(newPassword)
         } else {
@@ -61,8 +54,19 @@ class ResetUserPasswordInteractorImpl(
     private fun validateUser(authorization: String, userToResetPassword: User) {
         val parsedEmail = keycloakService.getEmailByAccessToken(authorization)
         val registeredUser = userService.findByEmail(parsedEmail)
-        if (registeredUser.email.equals(userToResetPassword.email)) {
+        if (registeredUser.email == userToResetPassword.email) {
             throw BusinessException.of(MooveErrorCode.CANNOT_RESET_YOUR_OWN_PASSWORD)
         }
+    }
+
+    private fun generatePassword(): String {
+        val userPasswordFormat = UserPasswordFormat(
+            numberDigits = 2,
+            numberLowerCase = 4,
+            numberUpperCase = 2,
+            numberSpecialChars = 2,
+            passwordLength = 10
+        )
+        return passGenerator.create(userPasswordFormat)
     }
 }
