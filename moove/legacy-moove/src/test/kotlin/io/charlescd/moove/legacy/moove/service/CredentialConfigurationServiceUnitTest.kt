@@ -92,7 +92,7 @@ class CredentialConfigurationServiceUnitTest {
 
         val createdAt = LocalDateTime.now()
         val incomingRequestConfigData =
-            CreateSpinnakerCdConfigurationData("account", "git-account", "namespace", "http://my-spinnaker.com")
+            CreateSpinnakerCdConfigurationData("account", "git-account", "http://my-spinnaker.com")
         val incomingRequest = CreateSpinnakerCdConfigurationRequest(incomingRequestConfigData, "name", "authorId")
         val deployRequest = incomingRequest.toDeployRequest()
         val deployResponse = CreateDeployCdConfigurationResponse("id", "name", "authorId", "workspaceId", createdAt)
@@ -130,8 +130,7 @@ class CredentialConfigurationServiceUnitTest {
             provider = K8sClusterProvidersEnum.GENERIC,
             host = "https://k8s-cluster.com",
             clientCertificate = "client-cert-data,",
-            clientKey = "client-key-data",
-            namespace = "cluster-namespace"
+            clientKey = "client-key-data"
         )
         val incomingRequest = CreateOctopipeCdConfigurationRequest(incomingRequestConfigData, "name", "authorId")
         val deployRequest = incomingRequest.toDeployRequest()
