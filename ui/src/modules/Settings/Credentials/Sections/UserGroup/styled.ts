@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import SelectComponent from 'core/components/Form/Select';
+import AsyncSelect from 'core/components/Form/Select/Async';
 import { fadeIn } from 'core/assets/style/animate';
 
 const Title = styled.div`
@@ -64,6 +65,10 @@ const Select = styled(SelectComponent.Single)`
   width: 271px;
 `;
 
+const SelectAsync = styled(AsyncSelect)`
+  width: 271px;
+`;
+
 const Fields = styled.div`
   margin-top: 19px;
   display: flex;
@@ -79,6 +84,7 @@ export default {
   Content,
   Title,
   Select,
+  SelectAsync,
   Fields,
   Roles,
   Description

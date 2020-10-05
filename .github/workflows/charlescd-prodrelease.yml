@@ -3,7 +3,7 @@ name: charlescd-prodrelease
 on:
   release:
     types:
-      - created
+      - released
     branches: [ master ]
 
 jobs:
@@ -94,10 +94,10 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: Set up JDK 1.8
+    - name: Set up JDK 1.11
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 1.11
 
     - uses: actions/cache@v1
       with:
@@ -175,9 +175,9 @@ jobs:
       with:
         node-version: 12.x
 
-    - run: npm install
+    - run: yarn install
       working-directory: ./ui
-    - run: npm run build
+    - run: yarn build:all
       working-directory: ./ui
       env:
         CI: true
@@ -263,6 +263,47 @@ jobs:
         tag_with_ref: false
         tag_with_sha: false
 
+  build_and_push_release_matcher_s3_sync:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - run: npm ci
+      working-directory: ./utils/matcher-s3-sync
+      
+    - run: npm run build --if-present
+      working-directory: ./utils/matcher-s3-sync
+      env:
+        CI: true
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        path: ./utils/matcher-s3-sync
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_PASSWORD}}
+        repository: zupcharles/matcher-s3-sync
+        dockerfile: ./utils/matcher-s3-sync/Dockerfile
+        tags: latest,${{ steps.get_version.outputs.VERSION }}
+        tag_with_ref: false
+        tag_with_sha: false
+
   deploy:
     runs-on: ubuntu-latest
     needs: [ build_and_push_release_butler, 
@@ -333,6 +374,10 @@ jobs:
         sed -i -E "s/name: charlescd_(.*)/name: charlescd\1/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/user: charlescd_(.*)/user: charlesadmin/" ./install/helm-chart/values.yaml &&
         sed -i -E "s/password: (.*)/password: firstpassword/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/internalIdmEnabled: true/internalIdmEnabled: false/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/isIdmEnabled: \"0\"/isIdmEnabled: \"1\"/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/authUri: .*\/keycloak/authUri: https:\/\/${{ secrets.IDM_HOST }}/" ./install/helm-chart/values.yaml &&
+        sed -i -E "s/authRealm: charlescd/authRealm: Zup/" ./install/helm-chart/values.yaml &&
         sed -i -E "/REDIS_PASSWORD/d" ./install/helm-chart/templates/charlescd-circle-matcher-deployment.yaml &&
         sed -i -E "/redis\.password/d" ./install/helm-chart/templates/charlescd-circle-matcher-deployment.yaml &&
         sed -i -E "s/redis-standalone/default/" ./install/helm-chart/templates/charlescd-circle-matcher-deployment.yaml &&
