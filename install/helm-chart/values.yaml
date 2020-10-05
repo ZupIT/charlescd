@@ -93,6 +93,7 @@ ui:
   name: charlescd-ui
   apiHost: http://charles.info.example
   authUri: http://charles.info.example/keycloak
+  authRealm: charlescd
   isIdmEnabled: "0"
   idmLoginUri: /protocol/openid-connect/auth
   idmLogoutUri: /protocol/openid-connect/logout
@@ -197,7 +198,8 @@ nginx:
   octopipe:
     enabled: true
   idm:
-    endpoint: http://charlescd-keycloak-http/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+    endpoint: http://charlescd-keycloak-http.charles.svc.cluster.local/keycloak/auth/realms/charlescd/.well-known/openid-configuration
+    alg: RS256
 
 octopipe:
   enabled: true
