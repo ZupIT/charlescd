@@ -44,17 +44,20 @@ export class ReceiveNotificationUseCase {
   ) {}
 
   public async execute(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution>{
+    this.consoleLoggerService.log('START:RECEIVE_NOTIFICATION_USECASE', { executionId, notification: deploymentNotificationDto })
     switch (deploymentNotificationDto.type) {
       case ExecutionTypeEnum.DEPLOYMENT:
         return await this.handleDeploymentNotification(executionId, deploymentNotificationDto)
       case ExecutionTypeEnum.UNDEPLOYMENT:
         return await this.handleUndeploymentNotification(executionId, deploymentNotificationDto)
       default:
+        this.consoleLoggerService.log('ERROR:INVALID_EXECUTION_TYPE', { type: deploymentNotificationDto.type })
         throw new Error('Invalid Execution Type')
     }
   }
 
   private async handleDeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+    this.consoleLoggerService.log('START:HANDLE_DEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail({ id: executionId }, { relations: ['deployment', 'deployment.components'] })
     const currentActiveDeployment = await this.deploymentRepository.findOne({ where: { circleId: execution.deployment.circleId, active: true } })
 
@@ -98,6 +101,7 @@ export class ReceiveNotificationUseCase {
     })
 
     await this.notifyMooveAndUpdateDeployment(savedExecution)
+    this.consoleLoggerService.log('FINISH:HANDLE_DEPLOYMENT_NOTIFICATION')
     return await this.executionRepository.findOneOrFail(savedExecution.id, { relations: ['deployment', 'deployment.components'] })
   }
 
@@ -133,6 +137,7 @@ export class ReceiveNotificationUseCase {
   }
 
   private async handleUndeploymentNotification(executionId: string, deploymentNotificationDto: DeploymentNotificationRequestDto): Promise<Execution> {
+    this.consoleLoggerService.log('START:HANDLE_UNDEPLOYMENT_NOTIFICATION')
     const execution = await this.executionRepository.findOneOrFail(executionId, { relations: ['deployment', 'deployment.components'] })
     execution.finishedAt = DateUtils.now()
     execution.deployment.components = execution.deployment.components.map(c => {
@@ -154,10 +159,11 @@ export class ReceiveNotificationUseCase {
       await this.componentRepository.save(execution.deployment.components)
       const updatedExecution = await this.executionRepository.save(execution)
       await this.notifyMooveAndUpdateDeployment(updatedExecution)
+      this.consoleLoggerService.log('FINISH:HANDLE_UNDEPLOYMENT_NOTIFICATION')
       return await this.executionRepository.findOneOrFail(updatedExecution.id, { relations: ['deployment', 'deployment.components'] })
     }
     catch (error) {
-      this.consoleLoggerService.log('ERROR:Failed to save deployment')
+      this.consoleLoggerService.log('ERROR:FAILED_TO_SAVE_DEPLOYMENT')
       throw new InternalServerErrorException()
     }
   }

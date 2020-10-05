@@ -43,6 +43,7 @@ export class OctopipeConnector implements CdConnector {
       this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_DEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       const octopipeDeployment =
         new OctopipeRequestBuilder().buildDeploymentRequest(deployment, activeComponents, configuration)
+      this.consoleLoggerService.log('GET:OCTOPIPE_DEPLOYMENT_OBJECT', { octopipeDeployment })
       await this.octopipeApi.deploy(octopipeDeployment, configuration.incomingCircleId).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_DEPLOYMENT')
       return { status: 'SUCCEEDED' }
@@ -62,6 +63,7 @@ export class OctopipeConnector implements CdConnector {
       this.consoleLoggerService.log('START:CREATE_V2_OCTOPIPE_UNDEPLOYMENT', { deployment: deployment.id, activeComponents: activeComponents.map(c => c.id) })
       const octopipeUndeployment =
         new OctopipeRequestBuilder().buildUndeploymentRequest(deployment, activeComponents, configuration)
+      this.consoleLoggerService.log('GET:OCTOPIPE_UNDEPLOYMENT_OBJECT', { octopipeUndeployment })
       await this.octopipeApi.undeploy(octopipeUndeployment, configuration.incomingCircleId).toPromise()
       this.consoleLoggerService.log('FINISH:CREATE_V2_OCTOPIPE_UNDEPLOYMENT')
       return { status: 'SUCCEEDED' }

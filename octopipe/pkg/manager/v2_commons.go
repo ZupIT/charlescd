@@ -155,6 +155,7 @@ func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2Callb
 		log.WithFields(log.Fields{"function": "mountV2WebhookRequest", "error": err.Error()}).Info("ERROR:CREATE_REQUEST_OBJECT")
 		return nil, err
 	}
+	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("x-circle-id", incomingCircleId)
 	log.WithFields(log.Fields{"function": "mountV2WebhookRequest"}).Info("FINISH:MOUNT_V2_WEBHOOK_REQUEST")
 	return request, nil

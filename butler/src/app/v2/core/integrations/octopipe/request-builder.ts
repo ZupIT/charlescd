@@ -34,6 +34,10 @@ import {
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
+import {
+  getUndeploymentEmptyVirtualServiceStage,
+  getUndeploymentVirtualServiceStage
+} from '../spinnaker/templates/undeployment'
 
 export class OctopipeRequestBuilder {
 
@@ -113,7 +117,10 @@ export class OctopipeRequestBuilder {
     deployment.components.forEach(component => {
       const activeByName: Component[] = DeploymentUtils.getActiveComponentsByName(activeComponents, component.name)
       proxyUndeployments.push(IstioUndeploymentManifestsUtils.getDestinationRulesManifest(deployment, component, activeByName))
-      proxyUndeployments.push(IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName))
+      proxyUndeployments.push(activeByName.length > 1 ?
+        IstioUndeploymentManifestsUtils.getVirtualServiceManifest(deployment, component, activeByName) :
+        IstioUndeploymentManifestsUtils.getEmptyVirtualServiceManifest(deployment, component)
+      )
     })
     return proxyUndeployments
   }
