@@ -30,16 +30,32 @@ export interface MetricProvider {
   url: string;
 }
 
+export interface DatasourceData {
+  [key: string]: string
+}
+
 export interface Datasource {
   id: string;
   name: string;
   pluginSrc: string;
   healthy: boolean;
+  data: DatasourceData;
+}
+
+export interface Input {
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
 }
 
 export interface Plugin {
+  id: string;
   name: string;
   src: string;
+  description: string;
+  inputs: Input[];
+  health: boolean;
 }
 
 export interface TestConnectionResponse {

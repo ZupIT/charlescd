@@ -15,6 +15,7 @@
  */
 
 import { baseRequest, postRequest, deleteRequest } from './base';
+import { Datasource } from 'modules/Settings/Credentials/Sections/MetricProvider/interfaces';
 
 const endpoint = '/compass/api/v1';
 
@@ -22,6 +23,6 @@ export const getAllPlugins = () => baseRequest(`${endpoint}/plugins`)
 
 export const getAllDatasources = () => baseRequest(`${endpoint}/datasources`);
 
-export const createDatasource = (datasourcePayload: any) => postRequest(`${endpoint}/datasources`, datasourcePayload)
+export const createDatasource = (datasourcePayload: Datasource) => postRequest(`${endpoint}/datasources`, datasourcePayload)
 
 export const deleteDatasource = (datasourceId: string) => deleteRequest(`${endpoint}/datasources/${datasourceId}`)

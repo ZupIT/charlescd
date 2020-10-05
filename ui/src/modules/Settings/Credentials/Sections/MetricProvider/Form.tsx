@@ -23,81 +23,68 @@ import Select from 'core/components/Form/Select';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
-import { getProfileByKey } from 'core/utils/profile';
-import ConnectionStatus from './ConnectionStatus';
-import { MetricProvider, Plugin } from './interfaces';
+import { Datasource, Plugin } from './interfaces';
 import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
-import { useMetricProvider, useFromTestConnection, useDatasource, usePlugins } from './hooks';
-import { metricProviders } from 'core/constants/metrics-providers';
+import { useDatasource, usePlugins } from './hooks';
 import Styled from './styled';
+import { find, map } from 'lodash';
 
 const FormMetricProvider = ({ onFinish }: Props) => {
   const { responseAdd, save, loadingSave, loadingAdd } = useDatasource();
-  const {
-    testProviderConnectionForm,
-    response,
-    loading
-  } = useFromTestConnection();
   const [isDisabled, setIsDisabled] = useState(true);
-  const [provider, setProvider] = useState<Option>();
+  const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins()
-  const { control, register, handleSubmit, getValues } = useForm<
-    MetricProvider
+  const { control, register, handleSubmit } = useForm<
+    Datasource
   >();
 
   useEffect(() => {
     getAll()
     if (responseAdd) onFinish();
-  }, [onFinish, responseAdd]);
+  }, [onFinish, responseAdd, getAll]);
 
-  const onSubmit = (metricProvider: MetricProvider) => {
+  const onSubmit = (datasource: Datasource) => {
     save({
-      ...metricProvider,
-      authorId: getProfileByKey('id'),
-      provider: provider.value
+      ...datasource,
+      pluginSrc: plugin.src,
+      healthy: plugin.health,
     });
   };
 
-  const onClick = () => {
-    const { url } = getValues();
-    testProviderConnectionForm({ provider: url, providerType: provider.value });
-  };
 
   const onChange = (option: Option) => {
-    setProvider(option);
-    setIsDisabled(!isEmpty(option));
+    setPlugin(find((plugins as Plugin[]), { id: option['value'] }));
+    setIsDisabled(!isEmpty(plugin));
   };
 
   const onClose = () => {
-    setProvider(null);
+    setPlugin(null);
     setIsDisabled(true);
   };
 
   const renderFields = () => (
     <>
       <Card.Config
-        icon={provider.icon}
-        description={provider.label}
+        icon="prometheus"
+        description={plugin.name}
         onClose={() => onClose()}
       />
       <Styled.Input
         ref={register}
-        name="url"
-        label="Insert the url"
-        onChange={({ currentTarget }) => setIsDisabled(!currentTarget.value)}
+        name="name"
+        label="Datasource name"
       />
-      {response && <ConnectionStatus status={response.status} />}
-      <Styled.TestConnectionButton
-        type="button"
-        onClick={() => onClick()}
-        isLoading={loading}
-        isDisabled={isDisabled}
-      >
-        Test connection
-      </Styled.TestConnectionButton>
+      {map(plugin.inputs, input => (
+        <Styled.Input
+          key={input.name}
+          ref={register}
+          name={`data.${input.name}`}
+          label={input.label}
+        />
+      ))}
     </>
-  );
+  )
 
   const renderSelect = () => (
     <Select.Single
@@ -111,7 +98,7 @@ const FormMetricProvider = ({ onFinish }: Props) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      {provider ? renderFields() : renderSelect()}
+      {plugin ? renderFields() : renderSelect()}
       <div>
         <Button.Default
           type="submit"

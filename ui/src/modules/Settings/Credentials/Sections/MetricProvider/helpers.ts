@@ -4,6 +4,6 @@ import { Plugin } from './interfaces'
 
 export const serializePlugins = (plugins: Plugin[]): Option[] => map(plugins, (plugin: Plugin) => ({
   label: plugin.name,
-  value: plugin.src,
+  value: plugin.id,
   icon: 'prometheus'
 }))
