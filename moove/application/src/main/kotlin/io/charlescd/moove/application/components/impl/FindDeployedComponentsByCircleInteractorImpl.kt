@@ -4,7 +4,9 @@ import io.charlescd.moove.application.components.FindDeployedComponentsByCircleI
 import io.charlescd.moove.application.module.response.SimpleComponentResponse
 import io.charlescd.moove.domain.SimpleComponent
 import io.charlescd.moove.domain.repository.ComponentRepository
+import javax.inject.Named
 
+@Named
 class FindDeployedComponentsByCircleInteractorImpl(private val componentRepository: ComponentRepository) : FindDeployedComponentsByCircleInteractor {
 
     override fun execute(workspaceId: String, circleId: String): List<SimpleComponentResponse> {
