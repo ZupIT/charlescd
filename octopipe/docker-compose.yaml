@@ -25,6 +25,16 @@ services:
     ports:
       - 5000:5000
 
+  github_mock:
+    build:
+      context: ./mock_resources
+      dockerfile: github.Dockerfile
+    volumes:
+      - ./mock_resources/server.rb:/mock/server.rb
+      - ./mock_resources/charts:/mock/charts/
+    ports:
+    - 4567:4567
+
   setup:
     image: "bitnami/kubectl:latest"
     entrypoint: /app/run.sh
