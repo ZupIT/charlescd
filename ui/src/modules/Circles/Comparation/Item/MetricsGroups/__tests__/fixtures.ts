@@ -1,4 +1,4 @@
-import { Metric } from "../types";
+import { Metric, ChartData } from "../types";
 
 export const MetricsGroupChartData = {
   id: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
@@ -35,6 +35,14 @@ export const MetricsGroupData = [{
   circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
   name: "test 1",
   metrics: [metricsData],
+  status: "ACTIVE"
+}];
+
+export const MetricsGroupWithoutMetricData = [{
+  id: "d4b69bf8-34cd-4bf0-81c3-781202f17fe7",
+  circleId: "d4b69bf8-34cd-4bf0-81c3-781202f16dd6",
+  name: "test 1",
+  metrics: [],
   status: "ACTIVE"
 }];
 
@@ -79,6 +87,16 @@ export const dataForMetricsSeriesTests = [{
       period: 1
     }
   ]
+},
+{
+  id: '2',
+  metric: 'test 2',
+  result: [
+    {
+      total: 10,
+      period: 1
+    }
+  ]
 }];
 
 export const dataFormatted = [{
@@ -89,4 +107,32 @@ export const dataFormatted = [{
       x: 1000
     }
   ]
+},{
+  name: 'test 2',
+  data: [
+    {
+      y: 10,
+      x: 1000
+    }
+  ]
+}] as ChartData[];
+
+export const allSelect = [{
+  label: 'select all',
+  value: '*'
 }];
+
+export const someIsSelect = [{
+  label: 'test 2',
+  value: 'test 2'
+}];
+
+export const dataFormattedAndFilter = [{
+  name: 'test 2',
+  data: [
+    {
+      y: 10,
+      x: 1000
+    }
+  ]
+}] as ChartData[];
