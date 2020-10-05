@@ -19,15 +19,14 @@
 package logger
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/sirupsen/logrus"
 	"time"
 )
 
 func Info(msg string, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
-		return
-	}
+	//if configuration.GetConfiguration("ENV") == "TEST" {
+	//	return
+	//}
 
 	logrus.WithFields(logrus.Fields{
 		"Data": data,
@@ -35,9 +34,9 @@ func Info(msg string, data interface{}) {
 }
 
 func Error(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
-		return
-	}
+	//if configuration.GetConfiguration("ENV") == "TEST" {
+	//	return
+	//}
 
 	logrus.WithFields(logrus.Fields{
 		"Error":        err,
@@ -46,9 +45,9 @@ func Error(msg string, functionName string, err error, data interface{}) {
 	}).WithTime(time.Now()).Errorln(msg)
 }
 func Panic(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
-		return
-	}
+	//if configuration.GetConfiguration("ENV") == "TEST" {
+	//	return
+	//}
 
 	logrus.WithFields(logrus.Fields{
 		"Error":        err,

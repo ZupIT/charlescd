@@ -19,8 +19,6 @@
 package datasource
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/util"
-
 	"github.com/google/uuid"
 )
 
@@ -36,7 +34,6 @@ type UseCases interface {
 }
 
 type MetricFilter struct {
-	util.BaseModel
 	MetricID uuid.UUID `json:"-"`
 	Field    string    `json:"field"`
 	Value    string    `json:"value"`

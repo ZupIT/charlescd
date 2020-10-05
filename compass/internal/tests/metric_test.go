@@ -26,15 +26,14 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"io/ioutil"
-	"os"
-	"strings"
-	"testing"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"os"
+	"strings"
+	"testing"
 )
 
 type SuiteMetric struct {
@@ -74,8 +73,10 @@ func TestInitMetric(t *testing.T) {
 }
 
 func (s *SuiteMetric) TestValidateMetric() {
-	filters := make([]datasource2.MetricFilter, 0)
-	filters = append(filters, datasource2.MetricFilter{Field: BigString, Value: BigString, Operator: "="})
+	filters := make([]metric2.MetricFilters, 0)
+	filters = append(filters, metric2.MetricFilters{
+		MetricFilter: datasource2.MetricFilter{Field: BigString, Value: BigString, Operator: "="},
+	})
 
 	groupBy := make([]metric2.MetricGroupBy, 0)
 	groupBy = append(groupBy, metric2.MetricGroupBy{Field: BigString})
@@ -248,7 +249,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
+		Filters:        []metric2.MetricFilters{},
 		GroupBy:        []metric2.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
@@ -336,7 +337,7 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
+		Filters:        []metric2.MetricFilters{},
 		GroupBy:        []metric2.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
@@ -373,7 +374,7 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
+		Filters:        []metric2.MetricFilters{},
 		GroupBy:        []metric2.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
@@ -390,7 +391,7 @@ func (s *SuiteMetric) TestQueryDatasourceError() {
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
+		Filters:        []metric2.MetricFilters{},
 		GroupBy:        []metric2.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
@@ -408,7 +409,7 @@ func (s *SuiteMetric) TestCountMetrics() {
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
-		Filters:        []datasource2.MetricFilter{},
+		Filters:        []metric2.MetricFilters{},
 		GroupBy:        []metric2.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      5,

@@ -37,7 +37,7 @@ type Metric struct {
 	Nickname        string          `json:"nickname"`
 	Query           string          `json:"query"`
 	Metric          string          `json:"metric"`
-	Filters         []Filters       `json:"filters"`
+	Filters         []MetricFilters `json:"filters"`
 	GroupBy         []MetricGroupBy `json:"groupBy"`
 	Condition       string          `json:"condition"`
 	Threshold       float64         `json:"threshold"`
@@ -51,7 +51,7 @@ type MetricGroupBy struct {
 	Field    string    `json:"field"`
 }
 
-type Filters struct {
+type MetricFilters struct {
 	util.BaseModel
 	datasource.MetricFilter
 }
@@ -96,7 +96,7 @@ func (main Main) Validate(metric Metric) []util.ErrorUtil {
 	return ers
 }
 
-func validateMetricFilter(metricFilter Filters) []util.ErrorUtil {
+func validateMetricFilter(metricFilter MetricFilters) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 
 	if len(metricFilter.Field) > 100 {
@@ -272,7 +272,7 @@ func (main Main) ResultQuery(metric Metric) (float64, error) {
 	query := main.getQueryByMetric(metric)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, Filters{
+		metric.Filters = append(metric.Filters, MetricFilters{
 			MetricFilter: datasource.MetricFilter{
 				Field:    "circle_source",
 				Operator: "=",
@@ -314,7 +314,7 @@ func (main Main) Query(metric Metric, period, interval string) (interface{}, err
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, Filters{
+		metric.Filters = append(metric.Filters, MetricFilters{
 			MetricFilter: datasource.MetricFilter{
 				Field:    "circle_source",
 				Operator: "=",
