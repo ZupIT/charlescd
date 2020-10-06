@@ -27,14 +27,14 @@ import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
+import java.time.LocalDateTime
+import java.util.*
+import kotlin.test.*
 import org.junit.Before
 import org.junit.Test
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.util.ReflectionTestUtils
-import java.time.LocalDateTime
-import java.util.*
-import kotlin.test.*
 
 class HypothesisServiceTest {
 

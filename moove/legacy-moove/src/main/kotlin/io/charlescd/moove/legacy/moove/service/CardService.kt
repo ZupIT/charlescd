@@ -289,7 +289,7 @@ class CardService(
             is SoftwareCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .also { cardRepository.deleteById(it.id) }
                 .also { cardRepository.save(it) }
-                .also { deleteFeatureBranches(this) }
+                .also { deleteFeatureBranches(this, updateCardRequest.branchDeletion) }
             is ActionCard -> this.buildUpdatedActionCard(updateCardRequest)
                 .let { cardRepository.save(it) }
             else -> throw IllegalArgumentException("Invalid card type")
