@@ -19,21 +19,21 @@ import userEvent from '@testing-library/user-event';
 import { normalizeRGBColor, renderWithTheme, screen } from 'unit-test/testUtils';
 import { getTheme } from "core/utils/themes";
 import { ThemeScheme } from 'core/assets/themes';
-import Tabs from '..';
+import NavTabs from '..';
 
 const theme = getTheme() as ThemeScheme;
 const tabItemBorderColor = normalizeRGBColor(theme.tabs.item.border);
 
 test('render Tabs default component', async () => {
   renderWithTheme(
-    <Tabs>
-      <Tabs.Tab title="Tab 1">
+    <NavTabs>
+      <NavTabs.Tab title="Tab 1">
         Content 1
-      </Tabs.Tab>
-      <Tabs.Tab title="Tab 2">
+      </NavTabs.Tab>
+      <NavTabs.Tab title="Tab 2">
         Content 2
-      </Tabs.Tab>
-    </Tabs>
+      </NavTabs.Tab>
+    </NavTabs>
   );
   
   const activeTabLabel = screen.getByTestId('tab-0');
@@ -47,14 +47,14 @@ test('render Tabs default component', async () => {
 
 test('render and select Tab', async () => {
   renderWithTheme(
-    <Tabs>
-      <Tabs.Tab title="Tab 1">
+    <NavTabs>
+      <NavTabs.Tab title="Tab 1">
         Content 1
-      </Tabs.Tab>
-      <Tabs.Tab title="Tab 2">
+      </NavTabs.Tab>
+      <NavTabs.Tab title="Tab 2">
         Content 2
-      </Tabs.Tab>
-    </Tabs>
+      </NavTabs.Tab>
+    </NavTabs>
   );
   
   const secondTab = screen.getByTestId('tab-1');
