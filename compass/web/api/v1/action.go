@@ -30,6 +30,7 @@ func (actionApi ActionApi) create(w http.ResponseWriter, r *http.Request, _ http
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid payload")})
 		return
 	}
+
 	workspaceUuid, err := uuid.Parse(workspaceId)
 	if err != nil {
 		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("invalid workspaceID")})
@@ -44,7 +45,7 @@ func (actionApi ActionApi) create(w http.ResponseWriter, r *http.Request, _ http
 
 	createdAction, err := actionApi.actionMain.SaveAction(request)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error saving action")})
 		return
 	}
 
@@ -54,7 +55,7 @@ func (actionApi ActionApi) create(w http.ResponseWriter, r *http.Request, _ http
 func (actionApi ActionApi) list(w http.ResponseWriter, _ *http.Request, _ httprouter.Params, workspaceId string) {
 	actions, err := actionApi.actionMain.FindAllActionsByWorkspace(workspaceId)
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error listing actions")})
 		return
 	}
 
@@ -64,7 +65,7 @@ func (actionApi ActionApi) list(w http.ResponseWriter, _ *http.Request, _ httpro
 func (actionApi ActionApi) delete(w http.ResponseWriter, _ *http.Request, ps httprouter.Params, _ string) {
 	err := actionApi.actionMain.DeleteAction(ps.ByName("id"))
 	if err != nil {
-		api.NewRestError(w, http.StatusInternalServerError, []error{err})
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error deleting action")})
 		return
 	}
 

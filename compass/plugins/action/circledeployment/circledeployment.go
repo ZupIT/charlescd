@@ -19,24 +19,26 @@
 package main
 
 import (
-	"compass/pkg/action"
 	"compass/pkg/logger"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 const adminEmail = "charlesadmin@admin"
 
 type executionConfiguration struct {
 	DestinationCircleID string `json:"destinationCircleId"`
+	OriginCircleID      string `json:"originCircleId"`
+	WorkspaceID         string `json:"workspaceId"`
 }
 
 type actionConfiguration struct {
 	MooveURL string `json:"mooveUrl"`
 }
 
-func Do(actionConfig []byte, executionConfig []byte, parameters action.DataParameters) error {
+func Do(actionConfig []byte, executionConfig []byte) error {
 	var ac *actionConfiguration
 	err := json.Unmarshal(actionConfig, &ac)
 	if err != nil {
@@ -51,17 +53,16 @@ func Do(actionConfig []byte, executionConfig []byte, parameters action.DataParam
 		return err
 	}
 
-	var workspaceID = parameters.Group.WorkspaceID.String()
-	deployment, err := getCurrentDeploymentAtCircle(parameters.Group.CircleID.String(), workspaceID, ac.MooveURL)
+	deployment, err := getCurrentDeploymentAtCircle(ec.OriginCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, parameters.Group.CircleID.String(), workspaceID)
+		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.OriginCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
 		return err
 	}
 
 	if deployment.BuildId == "" {
 		err = errors.New("circle has no active build")
-		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", parameters.Group.CircleID.String(), workspaceID)
+		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", ec.OriginCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
 		return err
 	}
@@ -78,10 +79,10 @@ func Do(actionConfig []byte, executionConfig []byte, parameters action.DataParam
 		BuildID:  deployment.BuildId,
 	}
 
-	err = deployBuildAtCircle(request, workspaceID, ac.MooveURL)
+	err = deployBuildAtCircle(request, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleId: %s, BuildId: %s, AuthorId: %s",
-			ac.MooveURL, workspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
+			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
 		logger.Error("DO_CIRCLE_DEPLOYMENT", "DoDeploymentAction", err, dataErr)
 		return err
 	}
@@ -134,8 +135,16 @@ func ValidateExecutionConfiguration(executionConfig []byte) []error {
 		return append(errs, errors.New("error validating execution configuration"))
 	}
 
-	if config.DestinationCircleID == "" {
+	if strings.TrimSpace(config.DestinationCircleID) == "" {
 		errs = append(errs, errors.New("destination circle id is required"))
+	}
+
+	if strings.TrimSpace(config.OriginCircleID) == "" {
+		errs = append(errs, errors.New("origin circle id is required"))
+	}
+
+	if strings.TrimSpace(config.WorkspaceID) == "" {
+		errs = append(errs, errors.New("workspace id is required"))
 	}
 
 	return errs
@@ -150,7 +159,7 @@ func ValidateActionConfiguration(actionConfig []byte) []error {
 		return append(errs, errors.New("error validating action configuration"))
 	}
 
-	if config.MooveURL == "" {
+	if strings.TrimSpace(config.MooveURL) == "" {
 		errs = append(errs, errors.New("moove url is required"))
 	}
 

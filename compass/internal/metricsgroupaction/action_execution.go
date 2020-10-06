@@ -35,11 +35,11 @@ const (
 
 type ActionsExecutions struct {
 	util.BaseModel
-	MetricActionId string    `json:"metricActionId"`
-	ExecutionLog   string    `json:"executionLog"`
-	Status         string    `json:"status"`
-	StartedAt      time.Time `json:"startedAt"`
-	FinishedAt     time.Time `json:"finishedAt"`
+	MetricActionId string     `json:"metricActionId"`
+	ExecutionLog   string     `json:"executionLog"`
+	Status         string     `json:"status"`
+	StartedAt      *time.Time `json:"startedAt"`
+	FinishedAt     *time.Time `json:"finishedAt"`
 }
 
 func (main Main) FindExecutionById(actionExecutionID string) (ActionsExecutions, error) {
@@ -55,11 +55,13 @@ func (main Main) FindExecutionById(actionExecutionID string) (ActionsExecutions,
 }
 
 func (main Main) CreateNewExecution(metricActionID string) (ActionsExecutions, error) {
+	timeNow := time.Now()
 	execution := ActionsExecutions{
 		Status:         InExecution,
-		StartedAt:      time.Now(),
+		StartedAt:      &timeNow,
 		MetricActionId: metricActionID,
 	}
+
 	db := main.db.Create(&execution)
 	if db.Error != nil {
 		logger.Error(util.CreateActionExecutionError, "CreateActionExecution", db.Error, nil)
@@ -82,7 +84,8 @@ func (main Main) SetExecutionFailed(actionExecutionID string, executionLog strin
 	}
 
 	execution.Status = ExecutionFailed
-	execution.FinishedAt = time.Now()
+	timeNow := time.Now()
+	execution.FinishedAt = &timeNow
 	execution.ExecutionLog = executionLog
 	result := main.db.Table("actions_executions").Where("id = ?", actionExecutionID).Update(&execution)
 	if result.Error != nil {
@@ -107,7 +110,8 @@ func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog stri
 	}
 
 	execution.Status = ExecutionSuccess
-	execution.FinishedAt = time.Now()
+	timeNow := time.Now()
+	execution.FinishedAt = &timeNow
 	execution.ExecutionLog = executionLog
 	result := main.db.Table("actions_executions").Where("id = ?", actionExecutionID).Update(&execution)
 	if result.Error != nil {

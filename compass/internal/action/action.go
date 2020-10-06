@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"io"
+	"strings"
 	"time"
 )
 
@@ -18,7 +19,7 @@ type Action struct {
 	Type          string          `json:"type"`
 	Description   string          `json:"description"`
 	Configuration json.RawMessage `json:"configuration"`
-	DeletedAt     time.Time       `json:"-"`
+	DeletedAt     *time.Time      `json:"-"`
 }
 
 func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
@@ -30,6 +31,10 @@ func (main Main) ParseAction(action io.ReadCloser) (Action, error) {
 		return Action{}, err
 	}
 
+	nAction.Nickname = strings.TrimSpace(nAction.Nickname)
+	nAction.Type = strings.TrimSpace(nAction.Type)
+	nAction.Description = strings.TrimSpace(nAction.Description)
+
 	return *nAction, nil
 }
 
@@ -37,8 +42,12 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 	ers := make([]util.ErrorUtil, 0)
 	needConfigValidation := true
 
-	if action.Nickname == "" {
+	if strings.TrimSpace(action.Nickname) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "nickname", Error: errors.New("action nickname is required").Error()})
+	}
+
+	if strings.TrimSpace(action.Description) == "" {
+		ers = append(ers, util.ErrorUtil{Field: "description", Error: errors.New("description is required").Error()})
 	}
 
 	if action.Configuration == nil || len(action.Configuration) == 0 {
@@ -50,7 +59,7 @@ func (main Main) ValidateAction(action Action) []util.ErrorUtil {
 		ers = append(ers, util.ErrorUtil{Field: "workspaceId", Error: errors.New("workspaceId is required").Error()})
 	}
 
-	if action.Type == "" {
+	if strings.TrimSpace(action.Type) == "" {
 		ers = append(ers, util.ErrorUtil{Field: "type", Error: errors.New("action type is required").Error()})
 		needConfigValidation = false
 	}
@@ -87,9 +96,20 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspaceID(id string, workspaceID string) (Action, error) {
+func (main Main) FindActionByIdAndWorkspace(id string, workspaceID string) (Action, error) {
 	action := Action{}
-	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspaceId = ?", id, workspaceID).First(&action)
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ? and workspace_id = ?", id, workspaceID).First(&action)
+	if db.Error != nil {
+		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
+		return Action{}, db.Error
+	}
+
+	return action, nil
+}
+
+func (main Main) FindActionById(id string) (Action, error) {
+	action := Action{}
+	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&action)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindActionById", db.Error, "Id = "+id)
 		return Action{}, db.Error
@@ -101,7 +121,7 @@ func (main Main) FindActionByIdAndWorkspaceID(id string, workspaceID string) (Ac
 func (main Main) FindAllActionsByWorkspace(workspaceID string) ([]Action, error) {
 	var actions []Action
 
-	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id = ? and deleted_at is null", workspaceID).Find(&actions)
+	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id = ?", workspaceID).Find(&actions)
 	if db.Error != nil {
 		logger.Error(util.FindActionError, "FindAllActionsByWorkspace", db.Error, actions)
 		return []Action{}, db.Error

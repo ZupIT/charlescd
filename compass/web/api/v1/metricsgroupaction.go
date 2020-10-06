@@ -4,6 +4,7 @@ import (
 	"compass/internal/metricsgroupaction"
 	"compass/web/api"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -65,6 +66,9 @@ func (metricsGroupActionApi MetricsGroupActionApi) FindById(w http.ResponseWrite
 
 	act, err := metricsGroupActionApi.main.FindGroupActionById(id)
 	if err != nil {
+		api.NewRestError(w, http.StatusInternalServerError, []error{errors.New("error finding action")})
+		return
+	} else if act.ID == uuid.Nil {
 		api.NewRestError(w, http.StatusNotFound, []error{errors.New("action not found")})
 		return
 	}
