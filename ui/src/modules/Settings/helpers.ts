@@ -16,7 +16,8 @@
 
 import find from 'lodash/find';
 import filter from 'lodash/filter';
-import isUndefined from 'lodash/isUndefined';
+import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 import { getConfigByKey, setConfig } from 'core/utils/config';
 import { getProfileByKey } from 'core/utils/profile';
 
@@ -29,21 +30,11 @@ export const getWizardByUser = () => {
   const email = getProfileByKey('email');
   const wizard = getConfigByKey('wizard');
 
-  return !isUndefined(
-    find(wizard, (item: WizardItem) => item.email === btoa(email))
-  );
-};
-
-export const setWizard = (enabled: boolean) => {
-  const email = getProfileByKey('email');
-  const wizard = getConfigByKey('wizard');
-  setConfig('wizard', [
-    ...(wizard || []),
-    {
-      email: btoa(email),
-      enabled
+  return (
+    find(wizard, (item: WizardItem) => item.email === btoa(email)) || {
+      enabled: true
     }
-  ]);
+  );
 };
 
 export const removeWizard = () => {
@@ -54,4 +45,26 @@ export const removeWizard = () => {
     item => !item.enabled && item.mail !== btoa(email)
   );
   setConfig('wizard', newWizard);
+};
+
+export const setWizard = (enabled: boolean) => {
+  const email = getProfileByKey('email');
+  const wizard = getConfigByKey('wizard');
+
+  if (!isEmpty(getWizardByUser().email)) {
+    setConfig(
+      'wizard',
+      map(wizard, item =>
+        item.email === btoa(email) ? { ...item, enabled } : item
+      )
+    );
+  } else {
+    setConfig('wizard', [
+      ...(wizard || []),
+      {
+        email: btoa(email),
+        enabled
+      }
+    ]);
+  }
 };

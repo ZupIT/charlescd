@@ -23,6 +23,7 @@ import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import { useGlobalState } from 'core/state/hooks';
+import isEmpty from 'lodash/isEmpty';
 import Menu from './Menu';
 import { SettingsMenu } from './constants';
 import { getWizardByUser, setWizard } from './helpers';
@@ -34,13 +35,13 @@ const Settings = () => {
   const profileName = getProfileByKey('name');
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const [showWizard, setShowWizard] = useState(false);
-  const [isVeteranUser, setIsVeteranUser] = useState<boolean>(
-    getWizardByUser()
-  );
+  const hasWizard = !isEmpty(getWizardByUser().email);
+  const [isVeteranUser, setIsVeteranUser] = useState<boolean>(hasWizard);
 
   const onCloseWizard = (enabledWizard: boolean) => {
     setWizard(enabledWizard);
     setIsVeteranUser(true);
+    setShowWizard(false);
   };
 
   const showWizardModal =

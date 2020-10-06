@@ -39,7 +39,8 @@ export interface Props {
 const Wizard = ({ onClose }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
   const [itemSelect, setItemSelect] = useState<Item>(WizardItems[0]);
-  const [isWizardEnabled, setIsWizardEnabled] = useState(!getWizardByUser());
+  const wizard = getWizardByUser();
+  const [isWizardEnabled, setIsWizardEnabled] = useState(wizard.enabled);
   const [indexOfItemSelect, setIndexOfItemSelect] = useState(0);
 
   useOutsideClick(modalRef, () => {
@@ -77,7 +78,7 @@ const Wizard = ({ onClose }: Props) => {
   const sideMenu = () => (
     <Styled.SideMenu className="modal-sidemenu">
       <Text.h3 color="light" weight="bold">
-        Configure the Workspace
+        Configure the workspace
       </Text.h3>
       {map(WizardItems, (item, index) => (
         <Styled.Item.Wrapper
