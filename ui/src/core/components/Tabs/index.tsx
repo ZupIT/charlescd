@@ -43,9 +43,7 @@ const Tabs = ({ children }: Props) => {
     </Styled.TabList>
   );
 
-  const renderContent = () => {
-    return children[activeTab];
-  };
+  const renderContent = () => children[activeTab];
 
   return (
     <div>
