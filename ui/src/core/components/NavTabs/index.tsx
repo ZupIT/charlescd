@@ -15,15 +15,17 @@
  */
 
 import React, { useState } from 'react';
-import Tab from './Tab';
+import Tab, { Props as TabProps } from './Tab';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
+type Child = Pick<TabProps, 'title'>;
+
 type Props = {
-  children: React.ReactElement[];
+  children: React.ReactElement<Child>[];
 };
 
-const Tabs = ({ children }: Props) => {
+const NavTabs = ({ children }: Props) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const renderTitles = () => (
@@ -53,6 +55,6 @@ const Tabs = ({ children }: Props) => {
   );
 };
 
-Tabs.Tab = Tab;
+NavTabs.Tab = Tab;
 
-export default Tabs;
+export default NavTabs;

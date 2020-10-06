@@ -17,13 +17,13 @@
 import React from 'react';
 import Styled from './styled';
 
-type Props = {
+export type Props = {
   children: React.ReactNode;
   title: string;
 };
 
-const TabPanel = ({ children }: Props) => {
-  return <Styled.TabPanel>{children}</Styled.TabPanel>;
+const Tab = ({ children }: Props) => {
+  return <Styled.Tab>{children}</Styled.Tab>;
 };
 
-export default TabPanel;
+export default Tab;

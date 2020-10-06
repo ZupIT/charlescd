@@ -25,7 +25,7 @@ const TabList = styled.div`
   border-bottom: 2px solid ${({ theme }) => theme.tabs.list.border};
 `;
 
-const TabPanel = styled.div`
+const Tab = styled.div`
   padding: 20px 0;
 `;
 
@@ -44,6 +44,6 @@ const TabItem = styled.div<TabItemProps>`
 
 export default {
   TabList,
-  TabPanel,
+  Tab,
   TabItem
 };
