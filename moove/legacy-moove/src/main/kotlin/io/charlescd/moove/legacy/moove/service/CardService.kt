@@ -57,6 +57,9 @@ class CardService(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
+    @Value("\${charlescd.protected.branches}")
+    lateinit var protectedBranches: Array<String>
+
     @Transactional
     fun create(createCardRequest: CreateCardRequest, workspaceId: String): CardRepresentation {
         return createCardRequest.toEntity(workspaceId)
@@ -162,8 +165,10 @@ class CardService(
 
     private fun deleteBranch(gitCredentials: GitCredentials, repository: String, branchName: String) {
         try {
-            gitServiceMapperLegacy.getByType(gitCredentials.serviceProvider)
-                .deleteBranch(gitCredentials, repository, branchName)
+            if (isExcludableBranch(branchName)) {
+                gitServiceMapperLegacy.getByType(gitCredentials.serviceProvider)
+                    .deleteBranch(gitCredentials, repository, branchName)
+            }
         } catch (e: Exception) {
             log.error("failed to delete branch: $branchName with error: $e")
         }
@@ -197,6 +202,10 @@ class CardService(
     private fun validateWorkspace(workspace: Workspace) {
         workspace.gitConfigurationId
             ?: throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.WORKSPACE_GIT_CONFIGURATION_IS_MISSING)
+    }
+
+    private fun isExcludableBranch(branchName: String): Boolean {
+        return !protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(
