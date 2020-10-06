@@ -1,11 +1,11 @@
 databaseChangeLog:
   - changeSet:
-      id: 20200831142700-1
+      id: 20201006103400-0
       author: thalles.freitas
-      comment: "Add namespace column to components table"
+      comment: "Add namespace column to component_snapshots table"
       changes:
         - addColumn:
-            tableName: components
+            tableName: component_snapshots
             column:
               name: namespace
               type: varchar(255)
