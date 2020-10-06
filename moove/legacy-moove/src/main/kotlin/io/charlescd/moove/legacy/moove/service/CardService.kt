@@ -166,7 +166,7 @@ class CardService(
 
     private fun deleteBranch(gitCredentials: GitCredentials, repository: String, branchName: String) {
         try {
-            if(isExcludableBranch(branchName)) {
+            if (isExcludableBranch(branchName)) {
                 gitServiceMapperLegacy.getByType(gitCredentials.serviceProvider)
                     .deleteBranch(gitCredentials, repository, branchName)
             }
@@ -205,8 +205,8 @@ class CardService(
             ?: throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.WORKSPACE_GIT_CONFIGURATION_IS_MISSING)
     }
 
-    private fun isExcludableBranch(branchName: String) : Boolean {
-       return !protectedBranches.contains(branchName)
+    private fun isExcludableBranch(branchName: String): Boolean {
+        return !protectedBranches.contains(branchName)
     }
 
     private fun createNewBranch(
