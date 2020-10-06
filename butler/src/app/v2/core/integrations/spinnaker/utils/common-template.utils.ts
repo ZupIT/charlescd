@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CdConfiguration, Component, Deployment } from '../../../../api/deployments/interfaces'
 import { Component } from '../../../../api/deployments/interfaces'
 import { AppConstants } from '../../../../../v1/core/constants'
-import { ISpinnakerConfigurationData } from '../../../../../v1/api/configurations/interfaces'
+
 
 const CommonTemplateUtils = {
   getDeploymentName: (component: Component, circleId: string | null): string => {
