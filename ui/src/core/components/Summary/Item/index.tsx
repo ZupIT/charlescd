@@ -24,13 +24,11 @@ type Props = {
   name: string;
 };
 
-const SummaryItem = ({ name, color, className }: Props) => {
-  return (
-    <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
-      <Styled.Dot color={color} />
-      <Text.h5 color="dark">{name}</Text.h5>
-    </Styled.Item>
-  );
-};
+const SummaryItem = ({ name, color, className }: Props) => (
+  <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
+    <Styled.Dot color={color} />
+    <Text.h5 color="dark">{name}</Text.h5>
+  </Styled.Item>
+);
 
 export default SummaryItem;

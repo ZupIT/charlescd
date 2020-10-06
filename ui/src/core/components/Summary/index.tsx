@@ -23,13 +23,11 @@ type Props = {
   className?: string;
 };
 
-const Summary = ({ children, className }: Props) => {
-  return (
-    <Styled.Summary data-testid="summary" className={className}>
-      {children}
-    </Styled.Summary>
-  );
-};
+const Summary = ({ children, className }: Props) => (
+  <Styled.Summary data-testid="summary" className={className}>
+    {children}
+  </Styled.Summary>
+);
 
 Summary.Item = Item;
 
