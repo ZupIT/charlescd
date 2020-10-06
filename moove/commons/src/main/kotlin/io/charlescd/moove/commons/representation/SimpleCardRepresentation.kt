@@ -29,5 +29,6 @@ data class SimpleCardRepresentation(
     val feature: SimpleFeatureRepresentation?,
     val hypothesisId: String,
     val members: List<UserRepresentation> = emptyList(),
-    val index: Int?
+    val index: Int?,
+    val isProtected: Boolean = false
 )
