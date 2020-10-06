@@ -33,6 +33,7 @@ const Tabs = ({ children }: Props) => {
           key={index}
           isActive={index === activeTab}
           onClick={() => setActiveTab(index)}
+          data-testid={`tab-${index}`}
         >
           <Text.h5 color={index === activeTab ? 'light' : 'dark'}>
             {child.props.title}
