@@ -25,8 +25,6 @@ import useCircles, { CIRCLE_TYPES, CIRCLE_STATUS } from './hooks';
 import Menu from './Menu';
 import Styled from './styled';
 import getQueryStrings from 'core/utils/query';
-import Tabs from 'core/components/Tabs';
-import Text from 'core/components/Text';
 
 const CirclesList = lazy(() => import('modules/Circles/List'));
 const CirclesComparation = lazy(() => import('modules/Circles/Comparation'));

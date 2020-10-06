@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 import Tab from './Tab';
 import Text from 'core/components/Text';
-import Styled from './styles';
+import Styled from './styled';
 
 type Props = {
   children: React.ReactElement[];
@@ -35,9 +35,9 @@ const Tabs = ({ children }: Props) => {
           onClick={() => setActiveTab(index)}
           data-testid={`tab-${index}`}
         >
-          <Text.h5 color={index === activeTab ? 'light' : 'dark'}>
+          <Text.h4 color={index === activeTab ? 'light' : 'dark'}>
             {child.props.title}
-          </Text.h5>
+          </Text.h4>
         </Styled.TabItem>
       ))}
     </Styled.TabList>

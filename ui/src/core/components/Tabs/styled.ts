@@ -22,7 +22,7 @@ type TabItemProps = {
 
 const TabList = styled.div`
   display: flex;
-  border-bottom: 2px solid #79797a;
+  border-bottom: 2px solid ${({ theme }) => theme.tabs.list.border};
 `;
 
 const TabPanel = styled.div`
@@ -30,7 +30,7 @@ const TabPanel = styled.div`
 `;
 
 const TabItem = styled.div<TabItemProps>`
-  padding: 0 26px 18px 26px;
+  padding: 16px 26px 18px 26px;
   position: relative;
   top: 2px;
   cursor: pointer;
@@ -38,7 +38,7 @@ const TabItem = styled.div<TabItemProps>`
   ${({ isActive }) =>
     isActive &&
     css`
-      border-bottom: 2px solid #f4f4fa;
+      border-bottom: 2px solid ${({ theme }) => theme.tabs.item.border};
     `}
 `;
 

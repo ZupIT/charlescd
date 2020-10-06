@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
+import { COLOR_GHOST_WHITE, COLOR_SANTAS_GREY } from '../colors';
 
-type Props = {
-  children: React.ReactNode;
-  title: string;
+export const light = {};
+
+export const dark = {
+  list: {
+    border: COLOR_SANTAS_GREY
+  },
+  item: {
+    border: COLOR_GHOST_WHITE
+  }
 };
-
-const TabPanel = ({ children }: Props) => {
-  return <Styled.TabPanel>{children}</Styled.TabPanel>;
-};
-
-export default TabPanel;
