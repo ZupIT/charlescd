@@ -55,13 +55,13 @@ fun Label.toSimpleRepresentation() = SimpleLabelRepresentation(
     authorName = this.author.name
 )
 
-fun Hypothesis.toRepresentation() = HypothesisRepresentation(
+fun Hypothesis.toRepresentation(isProtected: Boolean = false) = HypothesisRepresentation(
     id = this.id,
     author = this.author.toSimpleRepresentation(),
     description = this.description,
     name = this.name,
     labels = this.labels.map { it.toSimpleRepresentation() },
-    cards = this.cards.map { it.toSimpleRepresentation() },
+    cards = this.cards.map { it.toSimpleRepresentation(isProtected) },
     builds = this.builds.map { it.toRepresentation() }
 )
 
@@ -72,7 +72,7 @@ fun Hypothesis.toSimpleRepresentation() = SimpleHypothesisRepresentation(
     labels = this.labels.map { it.toSimpleRepresentation() }
 )
 
-fun SoftwareCard.buildSoftwareCardSimpleRepresentation(): SimpleCardRepresentation = SimpleCardRepresentation(
+fun SoftwareCard.buildSoftwareCardSimpleRepresentation(isProtected: Boolean): SimpleCardRepresentation = SimpleCardRepresentation(
     id = this.id,
     name = this.name,
     labels = this.labels.map { it.toSimpleRepresentation() },
@@ -81,7 +81,8 @@ fun SoftwareCard.buildSoftwareCardSimpleRepresentation(): SimpleCardRepresentati
     members = this.members.map { it.toRepresentation() },
     hypothesisId = this.hypothesis.id,
     feature = this.feature.toSimpleRepresentation(),
-    index = this.index
+    index = this.index,
+    isProtected = isProtected
 )
 
 fun ActionCard.buildActionCardSimpleRepresentation(): SimpleCardRepresentation = SimpleCardRepresentation(
@@ -96,9 +97,9 @@ fun ActionCard.buildActionCardSimpleRepresentation(): SimpleCardRepresentation =
     index = this.index
 )
 
-fun Card.toSimpleRepresentation(): SimpleCardRepresentation {
+fun Card.toSimpleRepresentation(isProtected: Boolean = false): SimpleCardRepresentation {
     return when (this) {
-        is SoftwareCard -> buildSoftwareCardSimpleRepresentation()
+        is SoftwareCard -> buildSoftwareCardSimpleRepresentation(isProtected)
         is ActionCard -> buildActionCardSimpleRepresentation()
         else -> throw throw IllegalArgumentException("Type not supported")
     }

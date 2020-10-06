@@ -27,6 +27,7 @@ import io.charlescd.moove.legacy.repository.entity.*
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
+import org.junit.Before
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.*
@@ -40,6 +41,10 @@ import org.junit.Test
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.util.ReflectionTestUtils
+import org.springframework.test.util.ReflectionTestUtils
+import java.time.LocalDateTime
+import java.util.*
+import kotlin.test.*
 
 class HypothesisServiceTest {
 
@@ -166,15 +171,20 @@ class HypothesisServiceTest {
     )
 
     private val hypothesisRepository: HypothesisRepository = mockkClass(
-        HypothesisRepository::class)
+        HypothesisRepository::class
+    )
     private val labelRepository: LabelRepository = mockkClass(
-        LabelRepository::class)
+        LabelRepository::class
+    )
     private val userRepository: UserRepository = mockkClass(
-        UserRepository::class)
+        UserRepository::class
+    )
     private val cardColumnRepository: CardColumnRepository = mockkClass(
-        CardColumnRepository::class)
+        CardColumnRepository::class
+    )
     private val cardRepository: CardRepository = mockkClass(
-        CardRepository::class)
+        CardRepository::class
+    )
 
     private val hypothesisService: HypothesisServiceLegacy = HypothesisServiceLegacy(
         hypothesisRepository,
