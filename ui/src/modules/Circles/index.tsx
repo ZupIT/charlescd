@@ -25,6 +25,8 @@ import useCircles, { CIRCLE_TYPES, CIRCLE_STATUS } from './hooks';
 import Menu from './Menu';
 import Styled from './styled';
 import getQueryStrings from 'core/utils/query';
+import Tabs from 'core/components/Tabs';
+import Text from 'core/components/Text';
 
 const CirclesList = lazy(() => import('modules/Circles/List'));
 const CirclesComparation = lazy(() => import('modules/Circles/Comparation'));
@@ -52,6 +54,22 @@ const Circles = () => {
     />
   );
 
+  const renderTabPanel = () => {
+    return (
+      <Tabs>
+        <Tabs.Tab title="Tab 1">
+          <Text.h1 color="light">Content 1</Text.h1>
+        </Tabs.Tab>
+        <Tabs.Tab title="Tab 2">
+          <Text.h1 color="light">Content 2</Text.h1>
+        </Tabs.Tab>
+        <Tabs.Tab title="Tab 3">
+          <Text.h1 color="light">Content 3</Text.h1>
+        </Tabs.Tab>
+      </Tabs>
+    );
+  };
+
   return (
     <Page>
       <Page.Menu>
@@ -66,7 +84,7 @@ const Circles = () => {
       <Suspense fallback="">
         <Switch>
           <Route exact path={routes.circles}>
-            {renderPlaceholder()}
+            {renderTabPanel()}
           </Route>
           <Route exact path={routes.circlesMetrics}>
             <Styled.Scrollable>
