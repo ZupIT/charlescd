@@ -16,11 +16,16 @@
 
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from 'unit-test/testUtils';
+import { normalizeRGBColor, renderWithTheme, screen } from 'unit-test/testUtils';
+import { getTheme } from "core/utils/themes";
+import { ThemeScheme } from 'core/assets/themes';
 import Tabs from '..';
 
+const theme = getTheme() as ThemeScheme;
+const tabItemBorderColor = normalizeRGBColor(theme.tabs.item.border);
+
 test('render Tabs default component', async () => {
-  render (
+  renderWithTheme(
     <Tabs>
       <Tabs.Tab title="Tab 1">
         Content 1
@@ -35,13 +40,13 @@ test('render Tabs default component', async () => {
   const firstTabContent = screen.getByText('Content 1');
   const secondTabContent = screen.queryByText('Content 2');
 
-  expect(activeTabLabel).toHaveStyle('border-bottom: 2px solid #f4f4fa');
+  expect(activeTabLabel).toHaveStyle(`border-bottom: 2px solid ${tabItemBorderColor}`);
   expect(firstTabContent).toBeInTheDocument();
   expect(secondTabContent).not.toBeInTheDocument();
 });
 
-test('render Tabs default component', async () => {
-  render (
+test('render and select Tab', async () => {
+  renderWithTheme(
     <Tabs>
       <Tabs.Tab title="Tab 1">
         Content 1
@@ -59,7 +64,7 @@ test('render Tabs default component', async () => {
   const firstTabContent = screen.queryByText('Content 1');
   const secondTabContent = screen.getByText('Content 2');
 
-  expect(secondTab).toHaveStyle('border-bottom: 2px solid #f4f4fa');
+  expect(secondTab).toHaveStyle(`border-bottom: 2px solid ${tabItemBorderColor}`);
   expect(firstTabContent).not.toBeInTheDocument();
   expect(secondTabContent).toBeInTheDocument();
 });
