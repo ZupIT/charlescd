@@ -157,14 +157,14 @@ func (s *SuiteMetricGroup) TestFindAll() {
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
-			Actions:     []metricsgroupaction.MetricsGroupAction{},
+			Actions:     []metricsgroupaction.MetricsGroupActions{},
 		},
 		{
 			Name:        "group 2",
 			Metrics:     []metric.Metric{},
 			CircleID:    uuid.New(),
 			WorkspaceID: uuid.New(),
-			Actions:     []metricsgroupaction.MetricsGroupAction{},
+			Actions:     []metricsgroupaction.MetricsGroupActions{},
 		},
 	}
 
@@ -195,7 +195,7 @@ func (s *SuiteMetricGroup) TestFindById() {
 		Metrics:     []metric.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupAction{},
+		Actions:     []metricsgroupaction.MetricsGroupActions{},
 	}
 
 	s.DB.Create(&metricgroup)

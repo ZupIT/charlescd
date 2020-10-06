@@ -6,6 +6,7 @@ import (
 	metric2 "compass/internal/metric"
 	"compass/internal/metricsgroup"
 	"compass/internal/metricsgroupaction"
+	"compass/internal/plugin"
 	"compass/internal/util"
 	"encoding/json"
 	"github.com/google/uuid"
@@ -23,7 +24,9 @@ type MetricsGroupActionSuite struct {
 	DB *gorm.DB
 
 	repository metricsgroupaction.UseCases
-	mga        metricsgroupaction.MetricsGroupAction
+	pluginRepo plugin.UseCases
+	actionRepo action.UseCases
+	mga        metricsgroupaction.MetricsGroupActions
 }
 
 func (s *MetricsGroupActionSuite) SetupSuite() {
@@ -38,7 +41,7 @@ func (s *MetricsGroupActionSuite) BeforeTest(suiteName, testName string) {
 
 	s.DB.LogMode(dbLog)
 
-	s.repository = metricsgroupaction.NewMain(s.DB)
+	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)
 	s.DB.Exec("DELETE FROM metrics_group_actions")
 	s.DB.Exec("DELETE FROM actions")
 	s.DB.Exec("DELETE FROM metrics_groups")
@@ -52,33 +55,47 @@ func TestInitMetricsGroupActions(t *testing.T) {
 	suite.Run(t, new(MetricsGroupActionSuite))
 }
 
-func (s *MetricsGroupActionSuite) TestParseMetricsGroupAction() {
+func (s *ActionSuite) TestParseGroupAction() {
 	stringReader := strings.NewReader(`{
-    "nickname": "ExecutionName",
+    "nickname": " ExecutionName ",
     "metricsGroupId": "8800ba87-94e9-443e-9e10-59efe8c58706",
     "actionsId": "f1fbe330-c7f6-4215-8311-83015b8df761",
     "executionParameters": {
         "circleId": "123456789"
-    }
+    },
+	"configuration": {
+		"repeatable": true,
+		"numberOfCycles": 0
+	}"
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	res, err := s.repository.Parse(stringReadCloser)
+	res, err := s.repository.ParseAction(stringReadCloser)
+
+	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
 
 	require.NoError(s.T(), err)
 	require.NotNil(s.T(), res)
+
+	require.Equal(s.T(), "Open-sea up", res.Nickname)
+	require.Equal(s.T(), "CircleUpstream", res.Type)
+	require.Equal(s.T(), "", res.Description)
+	require.Equal(s.T(), wsID, res.WorkspaceId)
+	require.NotNil(s.T(), res.Configuration)
+	require.True(s.T(), len(res.Configuration) > 0)
 }
 
-func (s *MetricsGroupActionSuite) TestParseMetricsGroupActionError() {
+func (s *ActionSuite) TestParseGroupActionError() {
 	stringReader := strings.NewReader(``)
 	stringReadCloser := ioutil.NopCloser(stringReader)
 
-	_, err := s.repository.Parse(stringReadCloser)
+	_, err := s.repository.ParseAction(stringReadCloser)
+
 	require.Error(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestValidateMetricsGroupAction() {
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "",
 		MetricsGroupID:      uuid.UUID{},
@@ -108,7 +125,7 @@ func (s *MetricsGroupActionSuite) TestSaveMetricsGroupAction() {
 	}
 	s.DB.Create(&actionStruct)
 
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      metricGroup.ID,
@@ -125,7 +142,7 @@ func (s *MetricsGroupActionSuite) TestSaveMetricsGroupAction() {
 }
 
 func (s *MetricsGroupActionSuite) TestSaveMetricsGroupActionError() {
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      uuid.New(),
@@ -156,7 +173,7 @@ func (s *MetricsGroupActionSuite) TestFindByIdMetricsGroupAction() {
 	}
 	s.DB.Create(&actionStruct)
 
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      metricGroup.ID,
@@ -195,7 +212,7 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupAction() {
 	}
 	s.DB.Create(&actionStruct)
 
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      metricGroup.ID,
@@ -237,7 +254,7 @@ func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupAction() {
 	}
 	s.DB.Create(&actionStruct)
 
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      metricGroup.ID,
@@ -275,7 +292,7 @@ func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
 	}
 	s.DB.Create(&actionStruct)
 
-	mgaStruct := metricsgroupaction.MetricsGroupAction{
+	mgaStruct := metricsgroupaction.MetricsGroupActions{
 		BaseModel:           util.BaseModel{},
 		Nickname:            "ActionNickname",
 		MetricsGroupID:      metricGroup.ID,
@@ -293,7 +310,7 @@ func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionError() {
-	mgaStruct := metricsgroupaction.MetricsGroupAction{}
+	mgaStruct := metricsgroupaction.MetricsGroupActions{}
 	s.DB.Close()
 
 	_, err := s.repository.Update("12345", mgaStruct)

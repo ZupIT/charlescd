@@ -55,9 +55,11 @@ func main() {
 	actionMain := action.NewMain(db, pluginMain)
 	metricsGroupActionMain := metricsgroupaction.NewMain(db, pluginMain, actionMain)
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
+	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
 	stopChan := make(chan bool, 0)
 	go metricDispatcher.Start(stopChan)
+	go actionDispatcher.Start(stopChan)
 
 	v1Api := v1.NewV1()
 	v1Api.NewPluginApi(pluginMain)

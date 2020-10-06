@@ -3,7 +3,7 @@ package tests
 import (
 	"compass/internal/action"
 	"compass/internal/configuration"
-	"compass/internal/util"
+	"compass/internal/plugin"
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -21,13 +21,14 @@ type ActionSuite struct {
 
 	repository action.UseCases
 	actions    action.Action
+	plugins    plugin.UseCases
 }
 
 func (s *ActionSuite) SetupSuite() {
 	os.Setenv("ENV", "TEST")
 }
 
-func (s *ActionSuite) BeforeTest(suiteName, testName string) {
+func (s *ActionSuite) BeforeTest(_, _ string) {
 	var err error
 
 	s.DB, err = configuration.GetDBConnection("../../migrations")
@@ -35,11 +36,11 @@ func (s *ActionSuite) BeforeTest(suiteName, testName string) {
 
 	s.DB.LogMode(dbLog)
 
-	s.repository = action.NewMain(s.DB)
+	s.repository = action.NewMain(s.DB, s.plugins)
 	s.DB.Exec("DELETE FROM actions")
 }
 
-func (s *ActionSuite) AfterTest(suiteName, testName string) {
+func (s *ActionSuite) AfterTest(_, _ string) {
 	s.DB.Close()
 }
 
@@ -50,7 +51,8 @@ func TestInitActions(t *testing.T) {
 func (s *ActionSuite) TestParseAction() {
 	stringReader := strings.NewReader(`{
     "nickname": "Open-sea up",
-    "type": "CircleUpstream",
+    "type": "  CircleUpstream  ",
+    "description": "    ",
     "configuration": {
         "authorId": "123456789",
         "destinyCircle": "open-sea"
@@ -61,8 +63,17 @@ func (s *ActionSuite) TestParseAction() {
 
 	res, err := s.repository.ParseAction(stringReadCloser)
 
+	wsID, _ := uuid.Parse("5b17f1ec-41ab-472a-b307-f0495e480a1c")
+
 	require.NoError(s.T(), err)
 	require.NotNil(s.T(), res)
+
+	require.Equal(s.T(), "Open-sea up", res.Nickname)
+	require.Equal(s.T(), "CircleUpstream", res.Type)
+	require.Equal(s.T(), "", res.Description)
+	require.Equal(s.T(), wsID, res.WorkspaceId)
+	require.NotNil(s.T(), res.Configuration)
+	require.True(s.T(), len(res.Configuration) > 0)
 }
 
 func (s *ActionSuite) TestParseActionError() {
@@ -74,57 +85,86 @@ func (s *ActionSuite) TestParseActionError() {
 	require.Error(s.T(), err)
 }
 
-func (s *ActionSuite) TestValidateAction() {
-	action := action.Action{
-		BaseModel: util.BaseModel{},
-		DeletedAt: nil,
-	}
-	res := s.repository.ValidateAction(action)
-
-	require.NotEmpty(s.T(), res)
-}
-
-func (s *ActionSuite) TestFindByIdAction() {
-	actionStruct := action.Action{
+func (s *ActionSuite) TestFindActionById() {
+	actionToFind := action.Action{
 		Nickname:      "ActionName",
 		Type:          "CircleUp",
 		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
+		WorkspaceId:   uuid.New(),
 		DeletedAt:     nil,
 	}
 
-	s.DB.Create(&actionStruct)
-	res, err := s.repository.FindActionById(actionStruct.ID.String())
+	s.DB.Create(&actionToFind)
+	res, err := s.repository.FindActionById(actionToFind.ID.String())
 
 	require.NoError(s.T(), err)
-	actionStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), actionStruct, res)
+	actionToFind.BaseModel = res.BaseModel
+	require.Equal(s.T(), actionToFind, res)
 }
 
-func (s *ActionSuite) TestFindByIdActionError() {
+func (s *ActionSuite) TestFindActionByIdError() {
+	s.DB.Close()
 	_, err := s.repository.FindActionById(uuid.New().String())
 	require.Error(s.T(), err)
 }
 
-func (s *ActionSuite) TestFindByAllAction() {
-	actionStruct := action.Action{
+func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
+	workspaceID := uuid.New()
+	actionToFind := action.Action{
 		Nickname:      "ActionName",
 		Type:          "CircleUp",
 		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
+		WorkspaceId:   workspaceID,
 		DeletedAt:     nil,
 	}
 
-	s.DB.Create(&actionStruct)
-	res, err := s.repository.FindAllActions()
+	s.DB.Create(&actionToFind)
+	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID.String(), workspaceID.String())
+
+	require.NoError(s.T(), err)
+	actionToFind.BaseModel = res.BaseModel
+	require.Equal(s.T(), actionToFind, res)
+	require.Equal(s.T(), workspaceID, res.WorkspaceId)
+}
+
+func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
+	s.DB.Close()
+	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New().String(), uuid.New().String())
+	require.Error(s.T(), err)
+}
+
+func (s *ActionSuite) TestFindAllActionByWorkspace() {
+	wspID := uuid.New()
+	actionStruct1 := action.Action{
+		Nickname:      "ActionName1",
+		Type:          "CircleUp",
+		Description:   "Desc",
+		Configuration: json.RawMessage(`{"config": "some-config"}`),
+		WorkspaceId:   wspID,
+		DeletedAt:     nil,
+	}
+
+	actionStruct2 := action.Action{
+		Nickname:      "ActionName2",
+		Type:          "CircleDown",
+		Description:   "Desc",
+		Configuration: json.RawMessage(`{"config": "some-config"}`),
+		WorkspaceId:   wspID,
+		DeletedAt:     nil,
+	}
+
+	s.DB.Create([]action.Action{actionStruct1, actionStruct2})
+
+	res, err := s.repository.FindAllActionsByWorkspace(wspID.String())
 
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), res)
+	require.Len(s.T(), res, 2)
 }
 
 func (s *ActionSuite) TestFindByAllActionError() {
 	s.DB.Close()
-	_, err := s.repository.FindAllActions()
+	_, err := s.repository.FindAllActionsByWorkspace(uuid.New().String())
 
 	require.Error(s.T(), err)
 }
@@ -133,19 +173,21 @@ func (s *ActionSuite) TestSaveAction() {
 	actionStruct := action.Action{
 		Nickname:      "ActionName",
 		Type:          "CircleUp",
+		Description:   "Desc",
 		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
+		WorkspaceId:   uuid.New(),
 		DeletedAt:     nil,
 	}
 
 	res, err := s.repository.SaveAction(actionStruct)
-
 	require.NoError(s.T(), err)
+
 	actionStruct.BaseModel = res.BaseModel
 	require.Equal(s.T(), actionStruct, res)
 }
 
 func (s *ActionSuite) TestSaveActionError() {
+	s.DB.Close()
 	actionStruct := action.Action{}
 	_, err := s.repository.SaveAction(actionStruct)
 
@@ -156,8 +198,9 @@ func (s *ActionSuite) TestDeleteAction() {
 	actionStruct := action.Action{
 		Nickname:      "ActionName",
 		Type:          "CircleUp",
+		Description:   "Desc",
 		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
+		WorkspaceId:   uuid.New(),
 		DeletedAt:     nil,
 	}
 
@@ -169,40 +212,5 @@ func (s *ActionSuite) TestDeleteAction() {
 func (s *ActionSuite) TestDeleteActionError() {
 	s.DB.Close()
 	err := s.repository.DeleteAction(uuid.New().String())
-	require.Error(s.T(), err)
-}
-
-func (s *ActionSuite) TestUpdateAction() {
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-
-	s.DB.Create(&actionStruct)
-
-	actionStruct.Type = "CircleDown"
-	res, err := s.repository.UpdateAction(actionStruct.ID.String(), actionStruct)
-
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), actionStruct.Type, res.Type)
-}
-
-func (s *ActionSuite) TestUpdateActionError() {
-	actionStruct := action.Action{
-		Nickname:      "ActionName",
-		Type:          "CircleUp",
-		Configuration: json.RawMessage(`{"config": "some-config"}`),
-		WorkspaceId:   uuid.New().String(),
-		DeletedAt:     nil,
-	}
-
-	s.DB.Create(&actionStruct)
-	actionStruct.Nickname = ""
-	s.DB.Close()
-	_, err := s.repository.UpdateAction(actionStruct.ID.String(), actionStruct)
-
 	require.Error(s.T(), err)
 }

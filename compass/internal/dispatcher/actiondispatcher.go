@@ -44,8 +44,11 @@ type ActionDispatcher struct {
 	mux             sync.Mutex
 }
 
-func NewActionDispatcher(metric metric.UseCases) UseCases {
-	return &Dispatcher{metric, sync.Mutex{}}
+func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo action.UseCases, pluginRepo plugin.UseCases,
+	metricRepo metric.UseCases, groupActionRepo metricsgroupaction.UseCases) UseCases {
+
+	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
+		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}}
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
@@ -74,7 +77,7 @@ func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
 	}
 }
 
-func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupAction) {
+func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupActions) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -88,18 +91,36 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(act.Type)
 	if err != nil {
 		logger.Error("error finding actionPlugin", "doAction", err, act)
-		dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		if err != nil {
+			logger.Error("error setting execution as failed", "doAction", err, act)
+		}
 		return
 	}
 
-	_, err = actionPlugin.Lookup("Do")
+	exec, err := actionPlugin.Lookup("Do")
 	if err != nil {
-		logger.Error("error executing plugin do action", "doAction", err, actionPlugin)
-		dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		logger.Error("error finding action plugin", "doAction", err, actionPlugin)
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		if err != nil {
+			logger.Error("error setting execution as failed", "doAction", err, act)
+		}
 		return
 	}
 
-	dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID.String(), "action executed with success")
+	result := exec.(func(actionConfig []byte, executionConfig []byte) error)
+	if result != nil {
+		logger.Error("error executing plugin do action", "doAction", err, actionPlugin)
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error())
+		if err != nil {
+			logger.Error("error setting execution as failed", "doAction", err, act)
+		}
+	}
+
+	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID.String(), "action executed with success")
+	if err != nil {
+		logger.Error("error setting execution as success", "doAction", err, act)
+	}
 }
 
 func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []metric.Metric) bool {
