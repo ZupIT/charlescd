@@ -22,7 +22,7 @@ type TabItemProps = {
 
 const TabList = styled.div`
   display: flex;
-  border-bottom: 2px solid ${({ theme }) => theme.tabs.list.border};
+  border-bottom: 2px solid ${({ theme }) => theme.navTabs.list.border};
 `;
 
 const Tab = styled.div`
@@ -38,7 +38,7 @@ const TabItem = styled.div<TabItemProps>`
   ${({ isActive }) =>
     isActive &&
     css`
-      border-bottom: 2px solid ${({ theme }) => theme.tabs.item.border};
+      border-bottom: 2px solid ${({ theme }) => theme.navTabs.item.border};
     `}
 `;
 

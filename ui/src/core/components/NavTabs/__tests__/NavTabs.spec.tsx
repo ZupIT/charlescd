@@ -22,9 +22,9 @@ import { ThemeScheme } from 'core/assets/themes';
 import NavTabs from '..';
 
 const theme = getTheme() as ThemeScheme;
-const tabItemBorderColor = normalizeRGBColor(theme.tabs.item.border);
+const tabItemBorderColor = normalizeRGBColor(theme.navTabs.item.border);
 
-test('render Tabs default component', async () => {
+test('render NavTabs default component', async () => {
   renderWithTheme(
     <NavTabs>
       <NavTabs.Tab title="Tab 1">
@@ -45,7 +45,7 @@ test('render Tabs default component', async () => {
   expect(secondTabContent).not.toBeInTheDocument();
 });
 
-test('render and select Tab', async () => {
+test('render NavTabs and select a Tab', async () => {
   renderWithTheme(
     <NavTabs>
       <NavTabs.Tab title="Tab 1">
