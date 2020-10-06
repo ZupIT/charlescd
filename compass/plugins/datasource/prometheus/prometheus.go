@@ -24,6 +24,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
@@ -59,6 +60,10 @@ func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult 
 			return nil, err
 		}
 
+		if math.IsNaN(valueParsed) {
+			valueParsed = 0
+		}
+
 		datasourceValues = append(datasourceValues, datasource.Value{
 			Total:  valueParsed,
 			Period: value.Timestamp.String(),
@@ -79,6 +84,10 @@ func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult 
 			valueParsed, err := strconv.ParseFloat(value.Value.String(), 64)
 			if err != nil {
 				return nil, err
+			}
+
+			if math.IsNaN(valueParsed) {
+				valueParsed = 0
 			}
 
 			datasourceValues = append(datasourceValues, datasource.Value{
