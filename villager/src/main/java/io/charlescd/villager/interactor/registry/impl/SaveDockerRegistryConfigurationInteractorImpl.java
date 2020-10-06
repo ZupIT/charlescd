@@ -20,6 +20,7 @@ import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurat
 import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
 import io.charlescd.villager.interactor.registry.AWSDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.AzureDockerRegistryAuth;
+import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
 import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
 import io.charlescd.villager.interactor.registry.SaveDockerRegistryConfigurationInteractor;
@@ -80,6 +81,15 @@ public class SaveDockerRegistryConfigurationInteractorImpl implements SaveDocker
                                 gcpRegistryAuth.getOrganization(),
                                 gcpRegistryAuth.getUsername(),
                                 gcpRegistryAuth.getJsonKey());
+                break;
+            case DOCKER_HUB:
+                var dockerHubRegistryAuth = ((DockerHubDockerRegistryAuth) input.getAuth());
+                connectionData =
+                        new DockerRegistryConfigurationEntity.DockerHubDockerRegistryConnectionData(
+                                input.getAddress(),
+                                dockerHubRegistryAuth.getOrganization(),
+                                dockerHubRegistryAuth.getUsername(),
+                                dockerHubRegistryAuth.getPassword());
                 break;
             default:
                 throw new IllegalStateException("Registry type not supported!");
