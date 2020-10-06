@@ -50,7 +50,7 @@ const filterNewestFile = (filesGroup: S3.ListObjectsOutput) => {
 }
 
 const getSubFolders = async () => {
-  const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/' }
+  const paramsSubfolders = { Bucket: process.env.BUCKET_NAME, Delimiter: '/', Prefix: process.env.PREFIX }
   return s3.listObjects(paramsSubfolders).promise()
 }
 
