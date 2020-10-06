@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  OctopipeDeployment,
-  OctopipeDeploymentRequest
-} from './interfaces/octopipe-deployment.interface'
+import { OctopipeDeployment, OctopipeDeploymentRequest } from './interfaces/octopipe-deployment.interface'
 import { OctopipeUndeployment, OctopipeUndeploymentRequest } from './interfaces/octopipe-undeployment.interface'
 import { CdConfiguration, Component, Deployment } from '../../../api/deployments/interfaces'
 import { ConnectorConfiguration } from '../interfaces/connector-configuration.interface'
@@ -34,10 +31,6 @@ import {
 import { K8sManifest } from '../interfaces/k8s-manifest.interface'
 import { IstioDeploymentManifestsUtils } from '../utils/istio-deployment-manifests.utils'
 import { IstioUndeploymentManifestsUtils } from '../utils/istio-undeployment-manifests.utils'
-import {
-  getUndeploymentEmptyVirtualServiceStage,
-  getUndeploymentVirtualServiceStage
-} from '../spinnaker/templates/undeployment'
 
 export class OctopipeRequestBuilder {
 
