@@ -30,6 +30,8 @@ import io.charlescd.moove.legacy.repository.entity.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
+import kotlin.streams.toList
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -42,6 +44,10 @@ class HypothesisServiceLegacy(
     private val cardColumnRepository: CardColumnRepository,
     private val cardRepository: CardRepository
 ) {
+
+    @Value("\${charlescd.protected.branches}")
+    lateinit var protectedBranches: Array<String>
+
     fun findValidatedBuildsByHypothesisId(id: String, workspaceId: String): List<SimpleBuildRepresentation> {
         return this.hypothesisRepository.findByIdAndWorkspaceId(id, workspaceId)
             .orElseThrow { NotFoundExceptionLegacy("hypothesis", id) }
@@ -237,12 +243,13 @@ class HypothesisServiceLegacy(
         return if (isItDeployedReleasesColumn(cardColumn)) {
             getCardsWithValidDeployments(cardColumn, hypothesis)
         } else {
+            val isProtectedCard = isProtectedCard(hypothesis)
             return cardColumn.copy(
                 id = cardColumn.id,
                 name = cardColumn.name,
                 cards = hypothesis.cards.filter { it.column.id == cardColumn.id && it.status == CardStatus.ACTIVE }
                     .sortedBy { it.index }
-                    .map { it.toSimpleRepresentation() },
+                    .map { it.toSimpleRepresentation(isProtectedCard) },
                 builds = hypothesis.builds.filter { it.column?.id == cardColumn.id && it.status != BuildStatus.ARCHIVED }
                     .orderDeploymentsByDate()
                     .sortedByDescending { it.createdAt }
@@ -384,5 +391,14 @@ class HypothesisServiceLegacy(
             it.name == ColumnConstants.BUILDS_COLUMN_NAME ||
                     it.name == ColumnConstants.DEPLOYED_RELEASES_COLUMN_NAME
         } ?: throw RuntimeException("Invalid column")
+    }
+
+    private fun isProtectedCard(hypothesis: Hypothesis): Boolean {
+        val branchNames = hypothesis.cards.filterIsInstance<SoftwareCard>().toList().stream().map { it.feature.branchName }.toList()
+        return branchNames.stream().filter { isProtectedBranch(it) }.findAny().isPresent
+    }
+
+    private fun isProtectedBranch(branchName: String): Boolean {
+        return protectedBranches.contains(branchName)
     }
 }
