@@ -54,22 +54,6 @@ const Circles = () => {
     />
   );
 
-  const renderTabPanel = () => {
-    return (
-      <Tabs>
-        <Tabs.Tab title="Tab 1">
-          <Text.h1 color="light">Content 1</Text.h1>
-        </Tabs.Tab>
-        <Tabs.Tab title="Tab 2">
-          <Text.h1 color="light">Content 2</Text.h1>
-        </Tabs.Tab>
-        <Tabs.Tab title="Tab 3">
-          <Text.h1 color="light">Content 3</Text.h1>
-        </Tabs.Tab>
-      </Tabs>
-    );
-  };
-
   return (
     <Page>
       <Page.Menu>
@@ -84,7 +68,7 @@ const Circles = () => {
       <Suspense fallback="">
         <Switch>
           <Route exact path={routes.circles}>
-            {renderTabPanel()}
+            {renderPlaceholder()}
           </Route>
           <Route exact path={routes.circlesMetrics}>
             <Styled.Scrollable>
