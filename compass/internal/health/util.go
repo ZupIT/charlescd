@@ -23,22 +23,29 @@ type DeploymentInCircle struct {
 	ModuleName       string  `json:"moduleName"`
 }
 
-func (main Main) getMooveComponents(circleId string) ([]DeploymentInCircle, error) {
+func (main Main) getMooveComponents(circleId, workspaceId string) ([]DeploymentInCircle, error) {
 	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", configuration.GetConfiguration("MOOVE_URL"), circleId)
 
 	fmt.Println(mooveUrl)
 
-	res, err := http.Get(mooveUrl)
+	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
 	if err != nil {
 		return nil, err
 	}
+	request.Header.Add("x-workspace-id", workspaceId)
 
-	if res.StatusCode != http.StatusOK {
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
 		return nil, errors.New("Internal server error")
 	}
 
 	var body []DeploymentInCircle
-	err = json.NewDecoder(res.Body).Decode(&body)
+	err = json.NewDecoder(response.Body).Decode(&body)
 	if err != nil {
 		return nil, err
 	}

@@ -8,26 +8,26 @@ import (
 )
 
 type CircleHealthRepresentation struct {
-	requests CircleRequestsRepresentation
-	latency  CircleHealthTypeRepresentation
-	errors   CircleHealthTypeRepresentation
+	Requests CircleRequestsRepresentation   `json:"requests"`
+	Latency  CircleHealthTypeRepresentation `json:"latency"`
+	Errors   CircleHealthTypeRepresentation `json:"errors"`
 }
 
 type CircleRequestsRepresentation struct {
-	value float64
-	unit  string
+	Value float64 `json:"value"`
+	Unit  string  `json:"unit"`
 }
 
 type CircleHealthTypeRepresentation struct {
-	unit             string
-	circleComponents []CircleComponentHealthRepresentation
+	Unit             string                                `json:"unit"`
+	CircleComponents []CircleComponentHealthRepresentation `json:"circleComponents"`
 }
 
 type CircleComponentHealthRepresentation struct {
-	Name      string
-	Threshold float64
-	Value     float64
-	Status    string
+	Name      string  `json:"name"`
+	Threshold float64 `json:"threshold"`
+	Value     float64 `json:"value"`
+	Status    string  `json:"status"`
 }
 
 // TODO: Send lookup plugin method to plugin pkg
@@ -71,7 +71,7 @@ func (main Main) getComponentStatus(thresholdValue, metricValue float64) string 
 }
 
 func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	components, err := main.getMooveComponents(circleId)
+	components, err := main.getMooveComponents(circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsErrorPercentage", err, nil)
 		return nil, err
@@ -98,7 +98,7 @@ func (main Main) getComponentsErrorPercentage(workspaceId, circleId string) ([]C
 }
 
 func (main Main) getComponentsLatency(workspaceId, circleId string) ([]CircleComponentHealthRepresentation, error) {
-	components, err := main.getMooveComponents(circleId)
+	components, err := main.getMooveComponents(circleId, workspaceId)
 	if err != nil {
 		logger.Error(util.QueryGetPluginError, "getComponentsLatency", err, nil)
 		return nil, err
@@ -142,8 +142,8 @@ func (main Main) ComponentsHealth(workspaceId, circleId string) (CircleHealthRep
 	}
 
 	return CircleHealthRepresentation{
-		requests: CircleRequestsRepresentation{requestsTotal, REQUESTS_BY_CIRCLE},
-		errors:   CircleHealthTypeRepresentation{REQUESTS_ERRORS_BY_CIRCLE, componentsErrorPercentage},
-		latency:  CircleHealthTypeRepresentation{REQUESTS_LATENCY_BY_CIRCLE, componentsErrorLatency},
+		Requests: CircleRequestsRepresentation{requestsTotal, REQUESTS_BY_CIRCLE},
+		Errors:   CircleHealthTypeRepresentation{REQUESTS_ERRORS_BY_CIRCLE, componentsErrorPercentage},
+		Latency:  CircleHealthTypeRepresentation{REQUESTS_LATENCY_BY_CIRCLE, componentsErrorLatency},
 	}, nil
 }

@@ -8,15 +8,15 @@ import (
 )
 
 type ComponentMetricRepresentation struct {
-	Period     string
-	Type       string
-	Components []ComponentRepresentation
+	Period     string                    `json:"period"`
+	Type       string                    `json:"type"`
+	Components []ComponentRepresentation `json:"components"`
 }
 
 type ComponentRepresentation struct {
-	Name   string
-	Module string
-	Data   []datasourcePKG.Value
+	Name   string                `json:"name"`
+	Module string                `json:"module"`
+	Data   []datasourcePKG.Value `json:"data"`
 }
 
 // TODO: Send lookup plugin method to plugin pkg
@@ -83,8 +83,12 @@ func (main Main) getDatasourceValuesByMetricType(workspaceId, circleId, projecti
 }
 
 func (main Main) Components(workspaceId, circleId, projectionType, metricType string) (ComponentMetricRepresentation, error) {
-	metricComponents := ComponentMetricRepresentation{}
-	components, err := main.getMooveComponents(circleId)
+	metricComponents := ComponentMetricRepresentation{
+		Period: projectionType,
+		Type:   metricType,
+	}
+
+	components, err := main.getMooveComponents(circleId, workspaceId)
 	if err != nil {
 		return ComponentMetricRepresentation{}, err
 	}
