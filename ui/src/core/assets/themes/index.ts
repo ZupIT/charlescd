@@ -47,6 +47,7 @@ import { dark as darkCircleSegmentation } from './circleSegmentation';
 import { dark as darkCheckbox } from './checkbox';
 import { dark as darkCircleGroupMetrics } from './circleGroupMetrics';
 import { dark as darkTabs } from './tabs';
+import { dark as darkSummary } from './summary';
 import { zIndex } from '../zindex';
 
 const common = {
@@ -91,7 +92,8 @@ const dark = {
   circleSegmentation: darkCircleSegmentation,
   checkbox: darkCheckbox,
   circleGroupMetrics: darkCircleGroupMetrics,
-  tabs: darkTabs
+  tabs: darkTabs,
+  summary: darkSummary
 };
 
 export type ThemeScheme = typeof dark;
