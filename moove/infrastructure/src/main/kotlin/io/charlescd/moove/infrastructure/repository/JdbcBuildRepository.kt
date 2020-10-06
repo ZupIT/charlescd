@@ -298,7 +298,7 @@ class JdbcBuildRepository(private val jdbcTemplate: JdbcTemplate, private val bu
                     "host_value," +
                     "gateway_name," +
                     "namespace) VALUES(" +
-                    "?,?,?,?,?,?,?,?)"
+                    "?,?,?,?,?,?,?,?,?)"
 
             this.jdbcTemplate.batchUpdate(
                 statement,
