@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
+import Text from 'core/components/Text';
+import Styled from './styled';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
-
-  return status;
+type Props = {
+  className?: string;
+  color: string;
+  name: string;
 };
 
-export const isNotBlank = (value: string) => !!value.trim();
+const SummaryItem = ({ name, color, className }: Props) => (
+  <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
+    <Styled.Dot color={color} />
+    <Text.h5 color="dark">{name}</Text.h5>
+  </Styled.Item>
+);
+
+export default SummaryItem;
