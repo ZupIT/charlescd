@@ -15,8 +15,9 @@
  */
 
 import React from 'react';
-import { render, wait, fireEvent } from 'unit-test/testUtils';
+import { render, wait, screen } from 'unit-test/testUtils';
 import Modal from 'core/components/Modal';
+import userEvent from '@testing-library/user-event';
 
 test('render Trigger', async () => {
   const { getByTestId } = render(<Modal.Wizard onClose={jest.fn} />);
@@ -28,18 +29,18 @@ test('render Trigger', async () => {
 });
 
 test('Next button click', async () => {
-  const { getByTestId } = render(<Modal.Wizard onClose={jest.fn} />);
+  render(<Modal.Wizard onClose={jest.fn} />);
 
-  const welcome = getByTestId('modal-wizard-info-welcome');
-  const button = getByTestId('button-iconRounded-next');
+  const welcome = screen.getByTestId('modal-wizard-info-welcome');
+  const button = screen.getByTestId('button-iconRounded-next');
 
   await wait(() => expect(welcome).toBeInTheDocument());
   await wait(() => expect(button).toBeInTheDocument());
 
-  fireEvent.click(button);
+  userEvent.click(button);
 
   await wait(() =>
-    expect(getByTestId('modal-wizard-info-user-group')).toBeInTheDocument()
+    expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument()
   );
 });
 
