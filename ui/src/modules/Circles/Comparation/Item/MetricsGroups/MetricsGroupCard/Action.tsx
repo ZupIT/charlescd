@@ -23,7 +23,7 @@ import { Action, MetricsGroup } from '../types';
 
 interface Props {
   action: Action;
-  metricGroup: MetricsGroup;
+  metricGroup?: MetricsGroup;
 }
 
 const MetricCard = ({ action, metricGroup }: Props) => {
@@ -32,7 +32,10 @@ const MetricCard = ({ action, metricGroup }: Props) => {
       key={action.id}
       data-testid={`metric-group-card-${action.nickname}`}
     >
-      <Styled.ActionCardStauts status={camelCase(action.status)} />
+      <Styled.ActionCardStauts
+        status={camelCase(action.status)}
+        data-testid={`action-status-${camelCase(action.status)}`}
+      />
       <Styled.ActionNickname
         color="light"
         title={action.nickname}
