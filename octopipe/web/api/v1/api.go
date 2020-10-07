@@ -19,6 +19,7 @@ package v1
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 	"net/http"
 	"os"
@@ -66,6 +67,7 @@ func getLimiter() *rate.Limiter {
 	limitRequestsBySecond, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BY_SECOND"), 0, 32)
 	limitRequestsBurstBySecond, error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"), 0, 32)
 	if error != nil {
+		log.WithFields(log.Fields{"function": "getLimiter"}).Error("Cannot read env var. Error: " + error.Error())
 		limitRequestsBySecond = DefaultLimitRequestsBySecond
 		limitRequestsBurstBySecond = DefaultLimitRequestsBurstBySecond
 	}
