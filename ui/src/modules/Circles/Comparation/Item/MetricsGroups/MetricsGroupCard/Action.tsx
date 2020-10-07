@@ -17,6 +17,7 @@
 import React from 'react';
 import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
+import camelCase from 'lodash/camelCase';
 import Styled from './styled';
 import { Action, MetricsGroup } from '../types';
 
@@ -31,7 +32,7 @@ const MetricCard = ({ action, metricGroup }: Props) => {
       key={action.id}
       data-testid={`metric-group-card-${action.nickname}`}
     >
-      <Styled.ActionCardStauts status={action.status} />
+      <Styled.ActionCardStauts status={camelCase(action.status)} />
       <Styled.ActionNickname
         color="light"
         title={action.nickname}

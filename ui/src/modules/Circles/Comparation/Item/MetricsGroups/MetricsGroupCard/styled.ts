@@ -218,10 +218,11 @@ interface Line {
 const ActionCardStauts = styled.div<Line>`
   height: calc(100% - 5px);
   width: 5px;
-  background-color: red;
+  background-color: ${({ theme, status }) =>
+    theme.circleGroupMetrics.action.status[status]};
   margin-left: 5px;
   border-radius: 10px;
-`; //  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
+`;
 
 const ActionNickname = styled(Text.h5)`
   white-space: nowrap;
