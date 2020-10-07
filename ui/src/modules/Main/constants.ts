@@ -112,7 +112,7 @@ export const rootWorkspaceMenu = [
     id: genMenuId(routes.settings),
     icon: 'settings',
     text: 'Settings',
-    to: routes.settings,
+    to: routes.credentials,
     action: 'write',
     subject: 'maintenance'
   }
