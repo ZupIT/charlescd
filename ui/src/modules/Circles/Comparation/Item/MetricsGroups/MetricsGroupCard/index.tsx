@@ -22,16 +22,18 @@ import LabeledIcon from 'core/components/LabeledIcon';
 import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
+import NavTabs from 'core/components/NavTabs';
+import Button from 'core/components/Button';
+import Summary from 'core/components/Summary';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import MonitoringMetrics from './MonitoringMetrics';
 import MetricsCard from './Metrics';
+import ActionCard from './Action';
+import CardHeader from './CardHeader';
 import Styled from './styled';
 import { MetricsGroup } from '../types';
-import CardHeader from './CardHeader';
-import NavTabs from 'core/components/NavTabs';
-import Button from 'core/components/Button';
 
 type Props = {
   metricGroup: MetricsGroup;
@@ -75,6 +77,33 @@ const MetricsGroupCard = ({
 
     return false;
   };
+
+  const renderActionContent = () => (
+    <>
+      <Summary>
+        <Summary.Item name="Executed" color="green" />
+        <Summary.Item name="Executing" color="darkBlue" />
+        <Summary.Item name="Not executed" color="lightBlue" />
+        <Summary.Item name="Failed" color="red" />
+      </Summary>
+      <Styled.ActionCardHead>
+        <Text.h5 color="dark">Nickname</Text.h5>
+        <Text.h5 color="dark">Type</Text.h5>
+        <Text.h5 color="dark">Triggered at</Text.h5>
+      </Styled.ActionCardHead>
+      <Styled.MetricsGroupsCardContent>
+        {map(metricGroup.actions, action => (
+          <ActionCard
+            action={action}
+            metricGroup={metricGroup}
+            key={action.id}
+            // handleDeleteMetric={handleDeleteMetric}
+            // handleEditMetric={handleEditMetric}
+          />
+        ))}
+      </Styled.MetricsGroupsCardContent>
+    </>
+  );
 
   const renderMetricsContent = () => (
     <>
@@ -133,7 +162,6 @@ const MetricsGroupCard = ({
         metricGroup={metricGroup}
         handleDeleteMetricsGroup={handleDeleteMetricsGroup}
       />
-      (
       <NavTabs>
         <NavTabs.Tab title="Metrics">
           {!isEmpty(metricGroup.metrics) ? (
@@ -151,10 +179,14 @@ const MetricsGroupCard = ({
           </Styled.MetricsGroupsFooter>
         </NavTabs.Tab>
         <NavTabs.Tab title="Actions">
-          <NavTabs.Placeholder
-            title="No actions in this metrics group."
-            subTitle="An action is an automated workflow that connects your applications and services through metrics triggers."
-          />
+          {!isEmpty(metricGroup.actions) ? (
+            renderActionContent()
+          ) : (
+            <NavTabs.Placeholder
+              title="No actions in this metrics group."
+              subTitle="An action is an automated workflow that connects your applications and services through metrics triggers."
+            />
+          )}
           <Styled.MetricsGroupsFooter>
             <Button.Default>Add action</Button.Default>
           </Styled.MetricsGroupsFooter>

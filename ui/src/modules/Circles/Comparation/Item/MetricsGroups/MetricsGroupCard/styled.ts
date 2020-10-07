@@ -191,6 +191,62 @@ const MetricsGroupsFooter = styled.div`
   margin-top: 15px;
 `;
 
+const ActionCardHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+
+  span {
+    margin: 0 90px 10px 20px;
+  }
+`;
+
+const ActionCardBody = styled.div`
+  background-color: ${({ theme }) => theme.circleGroupMetrics.content.card};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  height: 40px;
+`;
+
+interface Line {
+  status: string;
+}
+
+const ActionCardStauts = styled.div<Line>`
+  height: calc(100% - 5px);
+  width: 5px;
+  background-color: red;
+  margin-left: 5px;
+  border-radius: 10px;
+`; //  background-color: ${({ theme, status }) => theme.metrics.circles[status]};
+
+const ActionNickname = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 125px;
+  margin-left: -15px;
+`;
+
+const ActionType = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 125px;
+  margin-left: 10px;
+`;
+
+const ActionTypeTriggeredAt = styled(Text.h5)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 125px;
+  margin-left: 10px;
+`;
+
 export default {
   MetricsGroupsCard,
   MetricsGroupsCardHeader,
@@ -207,5 +263,11 @@ export default {
   MetricLastValue,
   MetricDropdown,
   MetricCardTableHead,
-  MetricsGroupsFooter
+  MetricsGroupsFooter,
+  ActionCardHead,
+  ActionCardBody,
+  ActionCardStauts,
+  ActionNickname,
+  ActionType,
+  ActionTypeTriggeredAt
 };

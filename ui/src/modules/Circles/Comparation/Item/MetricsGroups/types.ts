@@ -29,8 +29,17 @@ export type MetricsGroup = {
   createdAt?: string;
   name: string;
   metrics?: Metric[];
+  actions?: Action[];
   status?: string;
   circleId: string;
+};
+
+export type Action = {
+  id: string;
+  nickname: string;
+  status: string;
+  triggeredAt: string;
+  actionType: string;
 };
 
 export type Metric = {
