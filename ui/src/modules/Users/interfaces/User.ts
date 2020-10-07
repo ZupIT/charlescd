@@ -16,7 +16,8 @@
 
 export interface Workspace {
   id: string;
-  name: string;
+  name?: string;
+  permissions?: string[];
 }
 
 interface Base {

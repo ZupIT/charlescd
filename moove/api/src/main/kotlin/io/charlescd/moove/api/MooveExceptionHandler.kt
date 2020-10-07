@@ -22,6 +22,7 @@ import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.ForbiddenException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -105,6 +106,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
             ex.getParameters()
                 ?.let { messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH) }
                 ?: ex.message)
+    }
+
+    @ExceptionHandler(ForbiddenException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    fun forbiddenException(request: HttpServletRequest, ex: ForbiddenException): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.FORBIDDEN, ex.message!!)
     }
 
     @ExceptionHandler(BusinessExceptionLegacy::class)

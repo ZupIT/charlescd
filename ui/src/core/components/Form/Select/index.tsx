@@ -16,8 +16,10 @@
 
 import Single from './Single';
 import MultiCheck from './MultiCheck';
+import Async from './Async';
 
 export default {
   Single,
-  MultiCheck
+  MultiCheck,
+  Async
 };

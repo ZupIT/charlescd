@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.security
+import { COLOR_GHOST_WHITE, COLOR_SANTAS_GREY } from '../colors';
 
-import com.fasterxml.jackson.annotation.JsonProperty
+export const light = {};
 
-data class WorkspacePermissionsMapping(
-    @JsonProperty("id")
-    val id: String,
-    @JsonProperty("permissions")
-    val permissions: List<String>
-)
+export const dark = {
+  list: {
+    border: COLOR_SANTAS_GREY
+  },
+  item: {
+    border: COLOR_GHOST_WHITE
+  }
+};

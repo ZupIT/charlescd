@@ -18,14 +18,15 @@ import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 import AceEditor, { Props as AceEditorProps } from 'core/components/AceEditor';
 
-type Props = {
+export interface Props extends AceEditorProps {
   name: string;
   control: Control<unknown>;
   className?: string;
-  mode?: string;
+  mode: string;
   defaultValue?: string;
   rules?: Partial<{ required: boolean | string }>;
-} & AceEditorProps;
+  placeholder?: string;
+}
 
 const AceEditorForm = ({
   name,
@@ -36,7 +37,9 @@ const AceEditorForm = ({
   value,
   onChange,
   height,
-  rules
+  width,
+  rules,
+  placeholder
 }: Props) => (
   <Controller
     as={
@@ -46,6 +49,8 @@ const AceEditorForm = ({
         value={value}
         readOnly={false}
         height={height}
+        width={width}
+        placeholder={placeholder}
       />
     }
     rules={rules}
