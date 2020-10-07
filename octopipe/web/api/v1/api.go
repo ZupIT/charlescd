@@ -21,6 +21,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 type API struct {
@@ -30,12 +32,13 @@ type API struct {
 
 const (
 	v1Path = "/api/v1"
-	limitRequestBySeconds = 10
-	limitRequestBurstBySeconds = 10
+	DefaultLimitRequestBySeconds = 10
+	DefaultlimitRequestBurstBySeconds = 10
 )
 
 func NewAPI() *API {
-	requestLimiter := rate.NewLimiter(limitRequestBySeconds, limitRequestBurstBySeconds)
+
+	requestLimiter := getLimiter()
 	router := gin.Default()
 	router.Use(throttle(requestLimiter))
 	v1 := router.Group(v1Path)
@@ -59,4 +62,14 @@ func throttle(requestLimiter *rate.Limiter) gin.HandlerFunc {
 		context.Error(errors.New("limit of requests by second reached"))
 		context.AbortWithStatus(http.StatusTooManyRequests)
 	}
+}
+func getLimiter() *rate.Limiter {
+
+	limitRequestBurstBySeconds,error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BY_SECOND"),0,32)
+	limitRequestBySeconds,error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"),0,32)
+	if error != nil {
+		limitRequestBurstBySeconds = DefaultLimitRequestBySeconds
+		limitRequestBySeconds = DefaultlimitRequestBurstBySeconds
+	}
+	return rate.NewLimiter(rate.Limit(limitRequestBySeconds), int(limitRequestBurstBySeconds));
 }
