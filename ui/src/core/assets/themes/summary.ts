@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
+import {
+  COLOR_MOUNTAIN_MEADOW,
+  COLOR_FREE_SPEECH_BLUE,
+  COLOR_NEON_BLUE,
+  COLOR_RED_ORANGE
+} from 'core/assets/colors';
 
-export const validFields = (fields: object) => {
-  let status = true;
-  forEach(fields, (value: string) => {
-    if (isEmpty(value)) {
-      status = false;
-    }
-  });
+export const light = {};
 
-  return status;
+export const dark = {
+  colors: {
+    green: COLOR_MOUNTAIN_MEADOW,
+    darkBlue: COLOR_FREE_SPEECH_BLUE,
+    lightBlue: COLOR_NEON_BLUE,
+    red: COLOR_RED_ORANGE
+  }
 };
-
-export const isNotBlank = (value: string) => !!value.trim();
