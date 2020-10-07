@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { SelectComponentsConfig, OptionTypeBase } from 'react-select';
+import {
+  SelectComponentsConfig,
+  OptionTypeBase,
+  OptionsType
+} from 'react-select';
 
 export type Option = {
   [key: string]: string;
@@ -26,6 +30,10 @@ export interface Props {
   defaultValue?: Option | Option[];
   isDisabled?: boolean;
   isLoading?: boolean;
+  loadOptions?: (
+    inputValue: string,
+    callback: (options: OptionsType<any>) => void
+  ) => Promise<any> | void;
   className?: string;
   onChange?: (event: unknown) => void;
   onInputChange?: (value: string) => void;

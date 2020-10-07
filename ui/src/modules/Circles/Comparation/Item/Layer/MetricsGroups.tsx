@@ -54,15 +54,23 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
 
       return (
         <Styled.MetricsGroupsCard key={metric?.id}>
-          <Styled.MetricsGroupsNameContent color={'light'} title={metric?.name}>
+          <Styled.MetricsGroupsNameContent
+            color={'light'}
+            title={metric?.name}
+            data-testid={`${metric.name}-group-name`}
+          >
             {metric?.name}
           </Styled.MetricsGroupsNameContent>
-          <Styled.MetricsGroupsCountContent color={'light'}>
+          <Styled.MetricsGroupsCountContent
+            color={'light'}
+            data-testid={`${metric.name}-group-count`}
+          >
             {metric.metricsCount}
           </Styled.MetricsGroupsCountContent>
           <Styled.MetricsGroupsThresholdsContent
             hasTreshold={metric.thresholds === 0}
             colorSVG={thresholdStatus.color}
+            data-testid={`${metric.name}-group-thresholds`}
           >
             {!(metric.thresholds === 0) && (
               <Icon
@@ -95,7 +103,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId }: Props) => {
         <Styled.MetricsGroupsHeader>
           <Text.h4 color="dark">Group name</Text.h4>
           <Text.h4 color="dark">Metrics</Text.h4>
-          <Text.h4 color="dark">Tresholds</Text.h4>
+          <Text.h4 color="dark">Thresholds</Text.h4>
         </Styled.MetricsGroupsHeader>
         {status.isResolved && renderMetricsGroupsCard(resume)}
         <Styled.MetricsGroupsFooter>

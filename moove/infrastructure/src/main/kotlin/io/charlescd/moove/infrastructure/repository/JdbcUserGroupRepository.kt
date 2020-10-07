@@ -21,7 +21,6 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.UserGroupRepository
 import io.charlescd.moove.infrastructure.repository.mapper.UserGroupExtractor
-import io.charlescd.moove.infrastructure.repository.mapper.WorkspacePermissionsExtractor
 import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -29,8 +28,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class JdbcUserGroupRepository(
     private val jdbcTemplate: JdbcTemplate,
-    private val userGroupExtractor: UserGroupExtractor,
-    private val workspacePermissionsExtractor: WorkspacePermissionsExtractor
+    private val userGroupExtractor: UserGroupExtractor
 ) : UserGroupRepository {
 
     companion object {
@@ -86,14 +84,6 @@ class JdbcUserGroupRepository(
 
     override fun removeMember(userGroup: UserGroup, member: User) {
         removeMemberFromUserGroup(userGroup.id, member.id)
-    }
-
-    override fun findPermissionsFromUserGroupAssociations(userGroup: UserGroup): Map<String, List<Permission>> {
-        return findPermissionsByUserGroup(userGroup.id)
-    }
-
-    override fun findPermissions(workspaceId: String, userGroup: UserGroup): List<Permission> {
-        return findPermissionsByWorkspaceAndUserGroup(workspaceId, userGroup.id)
     }
 
     private fun createUserGroup(userGroup: UserGroup) {
@@ -213,17 +203,6 @@ class JdbcUserGroupRepository(
     private fun removeMemberFromUserGroup(id: String, memberId: String) {
         val statement = "DELETE FROM user_groups_users WHERE user_group_id = ? AND user_id = ?"
         this.jdbcTemplate.update(statement, id, memberId)
-    }
-
-    private fun findPermissionsByUserGroup(id: String): Map<String, List<Permission>> {
-        val statement = "SELECT workspace_id, permissions FROM workspaces_user_groups where user_group_id = ?"
-        return this.jdbcTemplate.query(statement, arrayOf(id), workspacePermissionsExtractor) ?: emptyMap()
-    }
-
-    private fun findPermissionsByWorkspaceAndUserGroup(workspaceId: String, userGroupId: String): List<Permission> {
-        val statement = "SELECT workspace_id, permissions FROM workspaces_user_groups where workspace_id = ? and user_group_id = ?"
-        val permissionsFromAssociation = this.jdbcTemplate.query(statement, arrayOf(workspaceId, userGroupId), workspacePermissionsExtractor)
-        return permissionsFromAssociation?.get(workspaceId) ?: emptyList()
     }
 
     private fun createPagedStatement(name: String?, pageRequest: PageRequest): String {
