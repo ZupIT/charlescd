@@ -33,7 +33,7 @@ type API struct {
 const (
 	v1Path = "/api/v1"
 	DefaultLimitRequestBySeconds = 10
-	DefaultlimitRequestBurstBySeconds = 10
+	DefaultLimitRequestBurstBySeconds = 10
 )
 
 func NewAPI() *API {
@@ -67,7 +67,7 @@ func getLimiter() *rate.Limiter {
 	limitRequestBySeconds,error := strconv.ParseInt(os.Getenv("LIMIT_REQUESTS_BURST_BY_SECOND"), 0, 32)
 	if error != nil {
 		limitRequestBurstBySeconds = DefaultLimitRequestBySeconds
-		limitRequestBySeconds = DefaultlimitRequestBurstBySeconds
+		limitRequestBySeconds = DefaultLimitRequestBurstBySeconds
 	}
 	return rate.NewLimiter(rate.Limit(limitRequestBySeconds), int(limitRequestBurstBySeconds));
 }
